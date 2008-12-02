@@ -28,6 +28,7 @@ New Features:
 Bugfixes:
 
   * Fix category pagination when using MS SQL (hanspeterklapf).
+  * Fix broken links to Lucene search help on the search page (hanspeterklapf).
 
 Translation Updates:
 
