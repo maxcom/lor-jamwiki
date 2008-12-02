@@ -12,13 +12,6 @@
 	<artifactId>jamwiki-core</artifactId>
 	<packaging>jar</packaging>
 	<name>JAMWiki Core</name>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>jflex</id>
-			<name>JFlex repository</name>
-			<url>http://jflex.sourceforge.net/repo/</url>
-		</pluginRepository>
-	</pluginRepositories>
 	<dependencies>
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -79,7 +72,7 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>de.jflex.maven.plugin</groupId>
+				<groupId>de.jflex</groupId>
 				<artifactId>maven-jflex-plugin</artifactId>
 				<version>0.3</version>
 				<executions>
