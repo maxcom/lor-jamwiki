@@ -27,7 +27,7 @@ New Features:
 
 Bugfixes:
 
-  * None
+  * Fix category pagination when using MS SQL (hanspeterklapf).
 
 Translation Updates:
 
