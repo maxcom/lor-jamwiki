@@ -33,6 +33,7 @@ Bugfixes:
 Translation Updates:
 
   * Added Portugese (Brazilian) translations (leandes).
+  * Updated Chinese translations (hfl).
 
 
 0.6.7
