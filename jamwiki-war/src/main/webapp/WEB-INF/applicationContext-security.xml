@@ -132,6 +132,17 @@
 	</b:bean>
 
 	<!--
+	This filter is executed after all others.  By default it is disabled, but when using LDAP
+	or another external validation system it MUST be enabled to ensure that the proper JAMWiki
+	database records for the user have been setup, otherwise the user will be unable to edit
+	despite having been properly validated.
+	-->
+	<b:bean id="jamwikiPostAuthenticationFilter" class="org.jamwiki.authentication.JAMWikiPostAuthenticationFilter">
+		<b:property name="jamwikiPostAuthenticationFilterEnabled" value="false" />
+		<custom-filter after="SWITCH_USER_FILTER " />
+	</b:bean>
+
+	<!--
 	Standard Spring Security integration with EhCache is available to implement object caching.
 	-->
 	<!-- disable for now until configuration issues are resolved
