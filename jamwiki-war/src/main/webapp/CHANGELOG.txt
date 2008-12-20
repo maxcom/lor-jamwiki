@@ -34,6 +34,7 @@ Translation Updates:
 
   * Added Portugese (Brazilian) translations (leandes).
   * Updated Chinese translations (hfl).
+  * Updated German translations (axelclk).
 
 
 0.6.7
