@@ -342,7 +342,7 @@ public class WikiUtil {
 				logger.warning("No topic in URL: " + request.getRequestURI());
 				return null;
 			}
-			topic = topic.substring(0, topic.indexOf('#'));
+			topic = topic.substring(0, pos);
 		}
 		pos = topic.indexOf('?');
 		if (pos != -1) {
@@ -351,7 +351,16 @@ public class WikiUtil {
 				logger.warning("No topic in URL: " + request.getRequestURI());
 				return null;
 			}
-			topic = topic.substring(0, topic.indexOf('?'));
+			topic = topic.substring(0, pos);
+		}
+		pos = topic.indexOf(';');
+		if (pos != -1) {
+			// some servlet containers return parameters of the form ";jsessionid=1234" when getRequestURI is called.
+			if (pos == 0) {
+				logger.warning("No topic in URL: " + request.getRequestURI());
+				return null;
+			}
+			topic = topic.substring(0, pos);
 		}
 		if (!StringUtils.isBlank(topic)) {
 			topic = Utilities.decodeAndEscapeTopicName(topic, true);

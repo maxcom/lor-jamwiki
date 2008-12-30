@@ -29,6 +29,9 @@ Bugfixes:
 
   * Fix category pagination when using MS SQL (hanspeterklapf).
   * Fix broken links to Lucene search help on the search page (hanspeterklapf).
+  * Ensure that URI parameters of the form ";jsessionid=1234" are not included
+    in topic names.  Affects Jetty and possibly other containers, reported by
+    spiralmike.
 
 Translation Updates:
 
