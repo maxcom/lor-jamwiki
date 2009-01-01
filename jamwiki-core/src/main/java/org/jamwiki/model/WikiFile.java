@@ -17,6 +17,7 @@
 package org.jamwiki.model;
 
 import java.sql.Timestamp;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -24,13 +25,14 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class WikiFile {
 
+	public static final String UNKNOWN_MIME_TYPE = "application/unknown";
 	// FIXME - consider making this an ACL (more flexible)
 	private boolean adminOnly = false;
 	private Timestamp deleteDate = null;
 	private int fileId = -1;
 	private String fileName = null;
 	private long fileSize = -1;
-	private String mimeType = null;
+	private String mimeType = UNKNOWN_MIME_TYPE;
 	private boolean readOnly = false;
 	private String url = null;
 	private int topicId = -1;
@@ -130,10 +132,12 @@ public class WikiFile {
 	}
 
 	/**
-	 *
+	 * This method will either return the MIME type set for the file, or a default
+	 * MIME type indicating that the MIME type is unknown.  This method will never
+	 * return <code>null</code>.
 	 */
 	public String getMimeType() {
-		return this.mimeType;
+		return (StringUtils.isBlank(this.mimeType)) ? UNKNOWN_MIME_TYPE : this.mimeType;
 	}
 
 	/**

@@ -32,6 +32,8 @@ Bugfixes:
   * Ensure that URI parameters of the form ";jsessionid=1234" are not included
     in topic names.  Affects Jetty and possibly other containers, reported by
     spiralmike.
+  * Use a default MIME type of "application/unknown" for file uploads without
+    MIME types to prevent database errors.  Reported by Tim.
 
 Translation Updates:
 

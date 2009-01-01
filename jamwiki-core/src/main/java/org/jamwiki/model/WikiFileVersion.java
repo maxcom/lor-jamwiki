@@ -17,6 +17,7 @@
 package org.jamwiki.model;
 
 import java.sql.Timestamp;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -29,7 +30,7 @@ public class WikiFileVersion {
 	private int fileId = -1;
 	private long fileSize = -1;
 	private int fileVersionId = -1;
-	private String mimeType = null;
+	private String mimeType = WikiFile.UNKNOWN_MIME_TYPE;
 	private String uploadComment = null;
 	private Timestamp uploadDate = new Timestamp(System.currentTimeMillis());
 	private String url = null;
@@ -112,10 +113,12 @@ public class WikiFileVersion {
 	}
 
 	/**
-	 *
+	 * This method will either return the MIME type set for the file, or a default
+	 * MIME type indicating that the MIME type is unknown.  This method will never
+	 * return <code>null</code>.
 	 */
 	public String getMimeType() {
-		return this.mimeType;
+		return (StringUtils.isBlank(this.mimeType)) ? WikiFile.UNKNOWN_MIME_TYPE : this.mimeType;
 	}
 
 	/**
