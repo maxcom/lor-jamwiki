@@ -23,11 +23,13 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.security.Authentication;
+import org.springframework.security.GrantedAuthority;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.anonymous.AnonymousAuthenticationToken;
 import org.springframework.security.userdetails.UserDetails;
@@ -44,13 +46,25 @@ public class JAMWikiPostAuthenticationFilter implements Filter {
 
 	/** Standard logger. */
 	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiPostAuthenticationFilter.class.getName());
-	/** Property indicating whether or not this filter is enabled. */
-	private boolean jamwikiPostAuthenticationFilterEnabled = false;
+	private String key;
 
 	/**
 	 *
 	 */
-	public void init(FilterConfig filterConfig) throws ServletException {
+	private GrantedAuthority[] combineAuthorities(GrantedAuthority[] list1, GrantedAuthority[] list2) {
+		if (list1 == null || list2 == null) {
+			return null;
+		}
+		// add these roles to a single array of authorities
+		int authoritySize = list1.length + list2.length;
+		GrantedAuthority[] combinedAuthorities = new GrantedAuthority[authoritySize];
+		for (int i = 0; i < list1.length; i++) {
+			combinedAuthorities[i] = list1[i];
+		}
+		for (int i = 0; i < list2.length; i++) {
+			combinedAuthorities[i + list1.length] = list2[i];
+		}
+		return combinedAuthorities;
 	}
 
 	/**
@@ -63,17 +77,16 @@ public class JAMWikiPostAuthenticationFilter implements Filter {
 	 *
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		if (jamwikiPostAuthenticationFilterEnabled) {
-			String username = retrieveUserCredentials();
-			try {
-				if (!StringUtils.isBlank(username) && !jamwikiUserExists(username)) {
-					// if there is a valid security credential & no JAMWiki record for the user, create one
-					setupJamwikiUser(username);
-				}
-			} catch (Exception e) {
-				logger.severe("Failure while processing user credentials for " + username, e);
-				throw new ServletException(e);
-			}
+		if (!(request instanceof HttpServletRequest)) {
+			throw new ServletException("HttpServletRequest required");
+		}
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth instanceof AnonymousAuthenticationToken) {
+			// anonymous user
+			this.handleAnonymousUser(auth);
+		} else if (auth != null && auth.isAuthenticated()) {
+			// registered user
+			this.handleRegisteredUser(auth);
 		}
 		chain.doFilter(request, response);
 	}
@@ -81,49 +94,66 @@ public class JAMWikiPostAuthenticationFilter implements Filter {
 	/**
 	 *
 	 */
-	private boolean jamwikiUserExists(String username) throws Exception {
-		return (WikiBase.getDataHandler().lookupWikiUser(username) != null);
-	}
-
-	/**
-	 * Determine the user name from the Spring Security authentication object.  Returns
-	 * <code>null</code> if the user has not been validated or is anonymous.
-	 */
-	private String retrieveUserCredentials() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
-			// no valid credentials
-			return null;
+	private void handleAnonymousUser(Authentication auth) {
+		// get arrays of existing Spring Security roles and JAMWiki anonymous user roles
+		GrantedAuthority[] springSecurityAnonymousAuthorities = auth.getAuthorities();
+		GrantedAuthority[] jamwikiAnonymousAuthorities = JAMWikiAuthenticationConfiguration.getJamwikiAnonymousAuthorities();
+		GrantedAuthority[] anonymousAuthorities = combineAuthorities(springSecurityAnonymousAuthorities, jamwikiAnonymousAuthorities);
+		if (anonymousAuthorities == null) {
+			return;
 		}
-		Object principal = authentication.getPrincipal();
-		if (!(principal instanceof UserDetails)) {
-			logger.warning("Unknown principal type: " + principal);
-			return null;
-		}
-		return ((UserDetails)principal).getUsername();
+		// replace the existing anonymous authentication object with the new authentication array
+		AnonymousAuthenticationToken jamwikiAuth = new AnonymousAuthenticationToken(this.getKey(), auth.getPrincipal(), anonymousAuthorities);
+		jamwikiAuth.setDetails(auth.getDetails());
+		jamwikiAuth.setAuthenticated(auth.isAuthenticated());
+		SecurityContextHolder.getContext().setAuthentication(jamwikiAuth);
 	}
 
 	/**
 	 *
 	 */
-	private void setupJamwikiUser(String username) throws Exception {
-		WikiUser user = new WikiUser(username);
-		// default the password empty so that the user cannot login directly
-		String encryptedPassword = "";
-		WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword);
+	private void handleRegisteredUser(Authentication auth) throws ServletException {
+		Object principal = auth.getPrincipal();
+		if (!(principal instanceof UserDetails)) {
+			logger.warning("Unknown principal type: " + principal);
+			return;
+		}
+		String username = ((UserDetails)principal).getUsername();
+		if (StringUtils.isBlank(username)) {
+			logger.warning("Null or empty username found for authenticated principal");
+			return;
+		}
+		try {
+			if (WikiBase.getDataHandler().lookupWikiUser(username) == null) {
+				// if there is a valid security credential & no JAMWiki record for the user, create one
+				WikiUser user = new WikiUser(username);
+				// default the password empty so that the user cannot login directly
+				String encryptedPassword = "";
+				WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword);
+			}
+		} catch (Exception e) {
+			logger.severe("Failure while processing user credentials for " + username, e);
+			throw new ServletException(e);
+		}
 	}
 
 	/**
-	 * Bean property indicating whether or not this filter is enabled.
+	 *
 	 */
-	public boolean getJamwikiPostAuthenticationFilterEnabled() {
-		return this.jamwikiPostAuthenticationFilterEnabled;
+	public void init(FilterConfig filterConfig) throws ServletException {
 	}
 
 	/**
-	 * Bean property indicating whether or not this filter is enabled.
+	 *
 	 */
-	public void setJamwikiPostAuthenticationFilterEnabled(boolean jamwikiPostAuthenticationFilterEnabled) {
-		this.jamwikiPostAuthenticationFilterEnabled = jamwikiPostAuthenticationFilterEnabled;
+	public String getKey() {
+		return key;
+	}
+
+	/**
+	 *
+	 */
+	public void setKey(String key) {
+		this.key = key;
 	}
 }

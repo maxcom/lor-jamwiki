@@ -88,16 +88,6 @@
 	-->
 
 	<!--
-	In addition to the standard Spring Security anonymous processing filter a custom anonymous
-	processing filter is used to add JAMWiki-specific anonymous roles to the user authentication
-	object.  These roles can be configured from the Special:Roles page in the JAMWiki admin.
-	-->
-	<b:bean id="anonymousProcessingFilter" class="org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter">
-		<b:property name="key" value="jam35Wiki" />
-		<custom-filter after="ANONYMOUS_FILTER" />
-	</b:bean>
-
-	<!--
 	The error message provider adds a page-specific error message to be used when a user is denied
 	access to a page.  For example, a different error is shown to users who are not allowed to edit
 	a page than to those who are denied access to the admin pages.
@@ -142,13 +132,16 @@
 	</b:bean>
 
 	<!--
-	This filter is executed after all others.  By default it is disabled, but when using LDAP
-	or another external validation system it MUST be enabled to ensure that the proper JAMWiki
-	database records for the user have been setup, otherwise the user will be unable to edit
-	despite having been properly validated.
+	This filter is executed after the user has been authenticated.  It performs two functions:
+	
+	1. For users authenticated by LDAP or another system, this filter will create the necessary
+	   JAMWiki user database records automatically.
+	2. If anonymous users are allowed then this filter will automatically add the roles from the
+	   JAMWiki GROUP_ANONYMOUS group.  These roles can be configured through the Special:Roles
+	   admin page.
 	-->
 	<b:bean id="jamwikiPostAuthenticationFilter" class="org.jamwiki.authentication.JAMWikiPostAuthenticationFilter">
-		<b:property name="jamwikiPostAuthenticationFilterEnabled" value="true" />
+		<b:property name="key" value="jam35Wiki" />
 		<custom-filter before="EXCEPTION_TRANSLATION_FILTER " />
 	</b:bean>
 
