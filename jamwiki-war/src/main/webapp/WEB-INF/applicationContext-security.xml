@@ -45,7 +45,7 @@
 		<intercept-url pattern="/js/**" filters="none" />
 		<intercept-url pattern="/upload/**" filters="none" />
 		<intercept-url pattern="/**" access="ROLE_VIEW" />
-		<remember-me key="jam35Wiki" user-service-ref="jamWikiAuthenticationDao" />
+		<remember-me key="jam35Wiki" />
 		<anonymous key="jam35Wiki" />
 		<!-- note that the JAMWiki LoginServlet will add the appropriate logout success URL to the request during logout -->
 		<logout />
@@ -76,6 +76,16 @@
 	</authentication-provider>
 	<b:bean id="jamWikiAuthenticationDao" class="org.jamwiki.authentication.JAMWikiDaoImpl" />
 	<b:bean id="jamwikiPasswordEncoder" class="org.jamwiki.authentication.JAMWikiPasswordEncoder" />
+	<!--
+	LDAP.  See the Spring Security documentation for configuration information.  When using LDAP comment
+	out the authentication provider configuration above.
+	-->
+	<!--
+	<ldap-server id="ldapServer" ldif="classpath:users.ldif" port="33389"/>
+	<authentication-provider>
+		<ldap-user-service server-ref="ldapServer" group-search-filter="member={0}" group-search-base="ou=groups" user-search-base="ou=people" user-search-filter="uid={0}" />
+	</authentication-provider>
+	-->
 
 	<!--
 	In addition to the standard Spring Security anonymous processing filter a custom anonymous
@@ -138,8 +148,8 @@
 	despite having been properly validated.
 	-->
 	<b:bean id="jamwikiPostAuthenticationFilter" class="org.jamwiki.authentication.JAMWikiPostAuthenticationFilter">
-		<b:property name="jamwikiPostAuthenticationFilterEnabled" value="false" />
-		<custom-filter after="SWITCH_USER_FILTER " />
+		<b:property name="jamwikiPostAuthenticationFilterEnabled" value="true" />
+		<custom-filter before="EXCEPTION_TRANSLATION_FILTER " />
 	</b:bean>
 
 	<!--

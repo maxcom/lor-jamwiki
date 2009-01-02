@@ -88,6 +88,19 @@ public class WikiUserDetails implements UserDetails {
 	}
 
 	/**
+	 * Private copy constructor.
+	 */
+	private WikiUserDetails(UserDetails userDetails) {
+		this.username = userDetails.getUsername();
+		this.password = userDetails.getPassword();
+		this.enabled = userDetails.isEnabled();
+		this.accountNonExpired = userDetails.isAccountNonExpired();
+		this.credentialsNonExpired = userDetails.isCredentialsNonExpired();
+		this.accountNonLocked = userDetails.isAccountNonLocked();
+		this.setAuthorities(userDetails.getAuthorities());
+	}
+
+	/**
 	 * Returns granted authorites.
 	 *
 	 * @return authorites, never null.
@@ -192,11 +205,14 @@ public class WikiUserDetails implements UserDetails {
 		if (auth == null) {
 			throw new AuthenticationCredentialsNotFoundException("No authentication credential available");
 		}
-		if (auth instanceof AnonymousAuthenticationToken || !(auth.getPrincipal() instanceof WikiUserDetails)) {
+		if (auth instanceof AnonymousAuthenticationToken || !(auth.getPrincipal() instanceof UserDetails)) {
 			// anonymous user
 			return new WikiUserDetails(ANONYMOUS_USER_USERNAME, "", true, true, true, true, auth.getAuthorities());
 		}
 		// logged-in (or remembered) user
-		return (WikiUserDetails)auth.getPrincipal();
+		if (auth.getPrincipal() instanceof WikiUserDetails) {
+			return (WikiUserDetails)auth.getPrincipal();
+		}
+		return new WikiUserDetails((UserDetails)auth.getPrincipal());
 	}
 }

@@ -23,6 +23,14 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import org.apache.commons.lang.StringUtils;
+import org.jamwiki.WikiBase;
+import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.WikiLogger;
+import org.springframework.security.Authentication;
+import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.providers.anonymous.AnonymousAuthenticationToken;
+import org.springframework.security.userdetails.UserDetails;
 
 /**
  * For systems using LDAP or other external authentication systems, once authenticated
@@ -34,6 +42,8 @@ import javax.servlet.ServletResponse;
  */
 public class JAMWikiPostAuthenticationFilter implements Filter {
 
+	/** Standard logger. */
+	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiPostAuthenticationFilter.class.getName());
 	/** Property indicating whether or not this filter is enabled. */
 	private boolean jamwikiPostAuthenticationFilterEnabled = false;
 
@@ -53,9 +63,17 @@ public class JAMWikiPostAuthenticationFilter implements Filter {
 	 *
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		if (jamwikiPostAuthenticationFilterEnabled && validCredentials() && !validateJamwikiUserExists()) {
-			// if there is a valid security credential && no JAMWiki record for the user, create one
-			setupJamwikiUser();
+		if (jamwikiPostAuthenticationFilterEnabled) {
+			String username = retrieveUserCredentials();
+			try {
+				if (!StringUtils.isBlank(username) && !jamwikiUserExists(username)) {
+					// if there is a valid security credential & no JAMWiki record for the user, create one
+					setupJamwikiUser(username);
+				}
+			} catch (Exception e) {
+				logger.severe("Failure while processing user credentials for " + username, e);
+				throw new ServletException(e);
+			}
 		}
 		chain.doFilter(request, response);
 	}
@@ -63,24 +81,36 @@ public class JAMWikiPostAuthenticationFilter implements Filter {
 	/**
 	 *
 	 */
-	private void setupJamwikiUser() {
-		// TODO - implement
+	private boolean jamwikiUserExists(String username) throws Exception {
+		return (WikiBase.getDataHandler().lookupWikiUser(username) != null);
+	}
+
+	/**
+	 * Determine the user name from the Spring Security authentication object.  Returns
+	 * <code>null</code> if the user has not been validated or is anonymous.
+	 */
+	private String retrieveUserCredentials() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+			// no valid credentials
+			return null;
+		}
+		Object principal = authentication.getPrincipal();
+		if (!(principal instanceof UserDetails)) {
+			logger.warning("Unknown principal type: " + principal);
+			return null;
+		}
+		return ((UserDetails)principal).getUsername();
 	}
 
 	/**
 	 *
 	 */
-	private boolean validCredentials() {
-		// TODO - implement
-		return true;
-	}
-
-	/**
-	 *
-	 */
-	private boolean validateJamwikiUserExists() {
-		// TODO - implement
-		return true;
+	private void setupJamwikiUser(String username) throws Exception {
+		WikiUser user = new WikiUser(username);
+		// default the password empty so that the user cannot login directly
+		String encryptedPassword = "";
+		WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword);
 	}
 
 	/**

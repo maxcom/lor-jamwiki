@@ -156,6 +156,23 @@ public class ServletUtil {
 	}
 
 	/**
+	 * Retrieve the current <code>WikiUserDetails</code> from Spring Security
+	 * <code>SecurityContextHolder</code>.  If the current user is not
+	 * logged-in then this method will return an empty <code>WikiUserDetails</code>
+	 * object.
+	 *
+	 * @return The current logged-in <code>WikiUserDetails</code>, or an empty
+	 *  <code>WikiUserDetails</code> if there is no user currently logged in.
+	 *  This method will never return <code>null</code>.
+	 * @throws AuthenticationCredentialsNotFoundException If authentication
+	 *  credentials are unavailable.
+	 */
+	public static WikiUserDetails currentUserDetails() throws AuthenticationCredentialsNotFoundException {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		return WikiUserDetails.initWikiUserDetails(auth);
+	}
+
+	/**
 	 * Retrieve the current <code>WikiUser</code> using the <code>WikiUserDetails</code>
 	 * from Spring Security <code>SecurityContextHolder</code>.  If there is no current
 	 * user (the user is not logged in) then this method will return an empty WikiUser.
@@ -187,23 +204,6 @@ public class ServletUtil {
 			}
 		}
 		return user;
-	}
-
-	/**
-	 * Retrieve the current <code>WikiUserDetails</code> from Spring Security
-	 * <code>SecurityContextHolder</code>.  If the current user is not
-	 * logged-in then this method will return an empty <code>WikiUserDetails</code>
-	 * object.
-	 *
-	 * @return The current logged-in <code>WikiUserDetails</code>, or an empty
-	 *  <code>WikiUserDetails</code> if there is no user currently logged in.
-	 *  This method will never return <code>null</code>.
-	 * @throws AuthenticationCredentialsNotFoundException If authentication
-	 *  credentials are unavailable.
-	 */
-	public static WikiUserDetails currentUserDetails() throws AuthenticationCredentialsNotFoundException {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		return WikiUserDetails.initWikiUserDetails(auth);
 	}
 
 	/**
