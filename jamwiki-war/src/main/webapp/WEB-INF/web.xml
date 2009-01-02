@@ -81,14 +81,10 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
-	<servlet-mapping>
-		<servlet-name>jamwiki</servlet-name>
-		<url-pattern>/en/*</url-pattern>
-	</servlet-mapping>
 	<!-- virtual wiki mapping(s) -->
 	<servlet-mapping>
 		<servlet-name>jamwiki</servlet-name>
-		<url-pattern>/test/*</url-pattern>
+		<url-pattern>/en/*</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>
