@@ -142,7 +142,7 @@
 	-->
 	<b:bean id="jamwikiPostAuthenticationFilter" class="org.jamwiki.authentication.JAMWikiPostAuthenticationFilter">
 		<b:property name="key" value="jam35Wiki" />
-		<custom-filter before="EXCEPTION_TRANSLATION_FILTER " />
+		<custom-filter before="EXCEPTION_TRANSLATION_FILTER" />
 	</b:bean>
 
 	<!--

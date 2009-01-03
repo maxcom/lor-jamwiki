@@ -118,11 +118,16 @@ public class JAMWikiPostAuthenticationFilter implements Filter {
 			logger.warning("Unknown principal type: " + principal);
 			return;
 		}
+		if (principal instanceof WikiUserDetails) {
+			// user has gone through the normal authentication path, no need to process further
+			return;
+		}
 		String username = ((UserDetails)principal).getUsername();
 		if (StringUtils.isBlank(username)) {
 			logger.warning("Null or empty username found for authenticated principal");
 			return;
 		}
+		// for LDAP and other authentication methods, verify that JAMWiki database records exist
 		try {
 			if (WikiBase.getDataHandler().lookupWikiUser(username) == null) {
 				// if there is a valid security credential & no JAMWiki record for the user, create one
