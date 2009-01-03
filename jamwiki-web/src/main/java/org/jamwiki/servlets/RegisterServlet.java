@@ -85,6 +85,8 @@ public class RegisterServlet extends JAMWikiServlet {
 			locales.put(value, key);
 		}
 		next.addObject("locales", locales);
+		Map editors = WikiConfiguration.getInstance().getEditors();
+		next.addObject("editors", editors);
 		next.addObject("newuser", user);
 		pageInfo.setSpecial(true);
 		pageInfo.setContentJsp(JSP_REGISTER);
@@ -163,6 +165,8 @@ public class RegisterServlet extends JAMWikiServlet {
 		user.setDisplayName(request.getParameter("displayName"));
 		user.setDefaultLocale(request.getParameter("defaultLocale"));
 		user.setEmail(request.getParameter("email"));
+		user.setEditor(request.getParameter("editor"));
+		user.setSignature(request.getParameter("signature"));
 		// FIXME - need to distinguish between add & update
 		user.setCreateIpAddress(ServletUtil.getIpAddress(request));
 		user.setLastLoginIpAddress(ServletUtil.getIpAddress(request));

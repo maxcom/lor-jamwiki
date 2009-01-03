@@ -17,6 +17,7 @@
 package org.jamwiki.model;
 
 import java.sql.Timestamp;
+import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -31,7 +32,7 @@ public class WikiUser {
 	private String defaultLocale = null;
 	private String displayName = null;
 	/** The user's preferred editor (if any). */
-	private String editor = null;
+	private String editor = Environment.getValue(Environment.PROP_TOPIC_EDITOR);
 	private String email = null;
 	private Timestamp lastLoginDate = new Timestamp(System.currentTimeMillis());
 	private String lastLoginIpAddress = "0.0.0.0";

@@ -102,6 +102,9 @@ public class EditServlet extends JAMWikiServlet {
 			// editing a full new or existing topic
 			contents = (topic == null) ? "" : topic.getTopicContent();
 		}
+		WikiUser user = ServletUtil.currentWikiUser();
+		String editor = user.getEditor();
+		next.addObject("editor", editor);
 		next.addObject("contents", contents);
 	}
 

@@ -89,6 +89,29 @@
 <!--
    ====================================================================
 
+   Editors are used when editing topics and define which of the available
+   editing tools the user will use.
+
+   name  - The name of the editing tool.
+   key   - A string that will be stored in the user preferences if the
+           editing tool is selected.
+
+   ======================================================================
+-->
+<editors>
+	<editor>
+		<name>None</name>
+		<key>none</key>
+	</editor>
+	<editor>
+		<name>Toolbar</name>
+		<key>toolbar</key>
+	</editor>
+</editors>
+
+<!--
+   ====================================================================
+
    Search engines that can be used with JAMWiki:
 
    name  - A human-readable name for the search engine.

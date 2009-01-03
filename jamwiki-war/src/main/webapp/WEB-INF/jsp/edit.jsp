@@ -54,25 +54,11 @@
 <input type="hidden" name="section" value="<c:out value="${section}"/>" />
 <input type="hidden" name="topicVersionId" value="<c:out value="${topicVersionId}"/>" />
 
-<jamwiki:enabled property="PROP_TOPIC_WYSIWYG">
-
-<script type="text/javascript">
-/*<![CDATA[*/
-document.writeln("<div id='toolbar'>");
-addButton('../images/button_bold.png','<f:message key="edit.button.bold"/>','\'\'\'','\'\'\'','<f:message key="edit.button.bold.text"/>');
-addButton('../images/button_italic.png','<f:message key="edit.button.italic"/>','\'\'','\'\'','<f:message key="edit.button.italic.text"/>');
-addButton('../images/button_underline.png','<f:message key="edit.button.underline"/>','<u>','</u>','<f:message key="edit.button.underline.text"/>');
-addButton('../images/button_link.png','<f:message key="edit.button.internal.link"/>','[[',']]','<f:message key="edit.button.internal.link.text"/>');
-addButton('../images/button_extlink.png','<f:message key="edit.button.external.link"/>','[',']','<f:message key="edit.button.external.link.text"/>');
-addButton('../images/button_headline.png','<f:message key="edit.button.head2"/>','\n== ',' ==\n','<f:message key="edit.button.head2.text"/>');
-addButton('../images/button_image.png','<f:message key="edit.button.image"/>','[[Image:',']]','<f:message key="edit.button.image.text"/>');
-addButton('../images/button_nowiki.png','<f:message key="edit.button.nowiki"/>','<nowiki>','</nowiki>','<f:message key="edit.button.nowiki.text"/>');
-addButton('../images/button_sig.png','<f:message key="edit.button.signature"/>','--~~~~','','');
-addButton('../images/button_hr.png','<f:message key="edit.button.line"/>','\n----\n','','');
-document.writeln("</div>");
-/*]]>*/ 
-</script>
-</jamwiki:enabled>
+<c:choose>
+	<c:when test="${editor == 'toolbar'}">
+		<%@ include file="editor-toolbar-include.jsp" %>
+	</c:when>
+</c:choose>
 
 <p>
 <textarea name="contents" rows="25" cols="80" accesskey=","><c:out value="${contents}" escapeXml="true" /></textarea>

@@ -7,6 +7,9 @@
 <!ELEMENT data-handlers (data-handler*)>
 <!ELEMENT data-handler (name, class, key?, state?)>
 
+<!ELEMENT editors (editor*)>
+<!ELEMENT editor (name, key)>
+
 <!ELEMENT search-engines (search-engine*)>
 <!ELEMENT search-engine (name, class, key?, state?)>
 

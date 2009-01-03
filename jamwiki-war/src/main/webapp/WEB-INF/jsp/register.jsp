@@ -61,14 +61,17 @@
 <%-- new or existing user --%>
 
 <div class="formentry">
-	<span class="formcaption"><label for="registerDisplayName"><f:message key="register.caption.displayname" /></label>:</span>
-	<span class="formelement"><input type="text" name="displayName" value="<c:out value="${newuser.displayName}" />" id="registerDisplayName" /></span>
-	<div class="formhelp"><f:message key="register.help.displayname" /></div>
-</div>
-<div class="formentry">
 	<span class="formcaption"><label for="registerEmail"><f:message key="register.caption.email" /></label>:</span>
 	<span class="formelement"><input type="text" name="email" value="<c:out value="${newuser.email}" />" id="registerEmail" /></span>
 	<div class="formhelp"><f:message key="register.help.email" /></div>
+</div>
+</fieldset>
+<fieldset>
+<legend><f:message key="register.caption.userpreferences" /></legend>
+<div class="formentry">
+	<span class="formcaption"><label for="registerDisplayName"><f:message key="register.caption.displayname" /></label>:</span>
+	<span class="formelement"><input type="text" name="displayName" value="<c:out value="${newuser.displayName}" />" id="registerDisplayName" /></span>
+	<div class="formhelp"><f:message key="register.help.displayname" /></div>
 </div>
 <div class="formentry">
 	<span class="formcaption"><f:message key="register.caption.locale" />:</span>
@@ -81,6 +84,24 @@
 	</span>
 	<div class="formhelp"><f:message key="register.help.locale" /></div>
 </div>
+<div class="formentry">
+	<span class="formcaption"><label for="registerEditor"><f:message key="register.caption.editor" /></label>:</span>
+	<span class="formelement">
+		<select name="editor" id="registerEditor">
+		<c:forEach items="${editors}" var="editor">
+		<option value="<c:out value="${editor.key}" />"<c:if test="${newuser.editor == editor.key}"> selected</c:if>><c:out value="${editor.value}" /></option>
+		</c:forEach>
+		</select>
+	</span>
+	<div class="formhelp"><f:message key="register.help.editor" /></div>
+</div>
+<%--
+<div class="formentry">
+	<span class="formcaption"><label for="registerSignature"><f:message key="register.caption.signature" /></label>:</span>
+	<span class="formelement"><input type="text" name="signature" value="<c:out value="${newuser.signature}" />" id="registerSignature" /></span>
+	<div class="formhelp"><f:message key="register.help.signature" /></div>
+</div>
+--%>
 </fieldset>
 
 <%-- existing user --%>

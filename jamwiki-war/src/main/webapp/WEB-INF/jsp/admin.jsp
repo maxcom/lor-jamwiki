@@ -129,9 +129,17 @@ function onRSS() {
 	<span class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_USE_PREVIEW}" value="true" checked="${props[PROP_TOPIC_USE_PREVIEW]}" id="${PROP_TOPIC_USE_PREVIEW}" /></span>
 </div>
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
-	<span class="formcaption"><label for="<%= Environment.PROP_TOPIC_WYSIWYG %>"><f:message key="admin.caption.wysiwyg" /></label></span>
-	<c:set var="PROP_TOPIC_WYSIWYG"><%= Environment.PROP_TOPIC_WYSIWYG %></c:set>
-	<span class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_WYSIWYG}" value="true" checked="${props[PROP_TOPIC_WYSIWYG]}" id="${PROP_TOPIC_WYSIWYG}" /></span>
+	<span class="formcaption"><label for="<%= Environment.PROP_TOPIC_EDITOR %>"><f:message key="admin.caption.editor" /></label></span>
+	<c:set var="PROP_TOPIC_EDITOR"><%= Environment.PROP_TOPIC_EDITOR %></c:set>
+	<span class="formelement">
+		<select name="<%= Environment.PROP_TOPIC_EDITOR %>" id="<%= Environment.PROP_TOPIC_EDITOR %>">
+		<c:set var="PROP_TOPIC_EDITOR"><%= Environment.PROP_TOPIC_EDITOR %></c:set>
+		<c:forEach items="${editors}" var="editor">
+		<option value="<c:out value="${editor.key}" />"<c:if test="${props[PROP_TOPIC_EDITOR] == editor.key}"> selected="selected"</c:if>><c:out value="${editor.value}" /></option>
+		</c:forEach>
+		</select>
+	</span>
+	<div class="formhelp"><f:message key="admin.help.editor" /></div>
 </div>
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
 	<span class="formcaption"><label for="<%= Environment.PROP_PRINT_NEW_WINDOW %>"><f:message key="admin.caption.printnewwindow" /></label></span>
