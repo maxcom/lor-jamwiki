@@ -792,6 +792,8 @@ public class AnsiDataHandler implements DataHandler {
 			user.setLastLoginIpAddress(rs.getString("last_login_ip_address"));
 			user.setDefaultLocale(rs.getString("default_locale"));
 			user.setEmail(rs.getString("email"));
+			user.setEditor(rs.getString("editor"));
+			user.setSignature(rs.getString("signature"));
 			return user;
 		} catch (Exception e) {
 			logger.severe("Failure while initializing user", e);
@@ -1407,6 +1409,8 @@ public class AnsiDataHandler implements DataHandler {
 		checkLength(user.getLastLoginIpAddress(), 39);
 		checkLength(user.getDefaultLocale(), 8);
 		checkLength(user.getEmail(), 100);
+		checkLength(user.getEditor(), 50);
+		checkLength(user.getSignature(), 255);
 	}
 
 	/**

@@ -841,6 +841,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setString(7, user.getLastLoginIpAddress());
 		stmt.setString(8, user.getDefaultLocale());
 		stmt.setString(9, user.getEmail());
+		stmt.setString(10, user.getEditor());
+		stmt.setString(11, user.getSignature());
 		stmt.executeUpdate(conn);
 	}
 
@@ -1186,7 +1188,9 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setString(4, user.getLastLoginIpAddress());
 		stmt.setString(5, user.getDefaultLocale());
 		stmt.setString(6, user.getEmail());
-		stmt.setInt(7, user.getUserId());
+		stmt.setString(7, user.getEditor());
+		stmt.setString(8, user.getSignature());
+		stmt.setInt(9, user.getUserId());
 		stmt.executeUpdate(conn);
 	}
 }

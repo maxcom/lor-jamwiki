@@ -96,11 +96,15 @@ followed by 0.5.3.
               );
        c) Populate the new characters_changed column for recent changes by
           reloading recent changes from the Special:Maintenance page.
-       d) Add the email column to the jam_wiki_user table.
+       d) Add several new columns to the jam_wiki_user table.
             Oracle:
               alter table jam_wiki_user add (email VARCHAR(100));
+              alter table jam_wiki_user add (editor VARCHAR(50));
+              alter table jam_wiki_user add (signature VARCHAR(255));
             Other Databases:
               alter table jam_wiki_user add column email VARCHAR(100);
+              alter table jam_wiki_user add column editor VARCHAR(50);
+              alter table jam_wiki_user add column signature VARCHAR(255);
        e) Populate the new email column for the jam_wiki_user table.
               update jam_wiki_user set email = (
                     select email from jam_wiki_user_info

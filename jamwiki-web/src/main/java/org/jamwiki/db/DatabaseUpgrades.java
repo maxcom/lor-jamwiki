@@ -292,6 +292,20 @@ public class DatabaseUpgrades {
 			    + ") ";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added email column to jam_wiki_user");
+			// add new columns to jam_wiki_user
+			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
+				sql = "alter table jam_wiki_user add (editor VARCHAR(50)) ";
+			} else {
+				sql = "alter table jam_wiki_user add column editor VARCHAR(50) ";
+			}
+			DatabaseConnection.executeUpdate(sql, conn);
+			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
+				sql = "alter table jam_wiki_user add (signature VARCHAR(255)) ";
+			} else {
+				sql = "alter table jam_wiki_user add column signature VARCHAR(255) ";
+			}
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Added editor and signature columns to jam_wiki_user");
 			if (dbType.equals(WikiBase.DATA_HANDLER_HSQL)) {
 				DatabaseConnection.executeUpdate(HSqlQueryHandler.STATEMENT_CREATE_USERS_TABLE, conn);
 			} else {

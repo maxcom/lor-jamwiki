@@ -30,9 +30,13 @@ public class WikiUser {
 	private String createIpAddress = "0.0.0.0";
 	private String defaultLocale = null;
 	private String displayName = null;
+	/** The user's preferred editor (if any). */
+	private String editor = null;
 	private String email = null;
 	private Timestamp lastLoginDate = new Timestamp(System.currentTimeMillis());
 	private String lastLoginIpAddress = "0.0.0.0";
+	/** The user's custom signature (if any). */
+	private String signature = null;
 	private String username = null;
 	private int userId = -1;
 
@@ -108,6 +112,20 @@ public class WikiUser {
 	/**
 	 *
 	 */
+	public String getEditor() {
+		return this.editor;
+	}
+
+	/**
+	 *
+	 */
+	public void setEditor(String editor) {
+		this.editor = editor;
+	}
+
+	/**
+	 *
+	 */
 	public String getEmail() {
 		return this.email;
 	}
@@ -145,6 +163,20 @@ public class WikiUser {
 	 */
 	public void setLastLoginIpAddress(String lastLoginIpAddress) {
 		this.lastLoginIpAddress = lastLoginIpAddress;
+	}
+
+	/**
+	 *
+	 */
+	public String getSignature() {
+		return this.signature;
+	}
+
+	/**
+	 *
+	 */
+	public void setSignature(String signature) {
+		this.signature = signature;
 	}
 
 	/**
