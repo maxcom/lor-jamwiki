@@ -17,6 +17,7 @@
 package org.jamwiki.model;
 
 import java.sql.Timestamp;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 
@@ -114,7 +115,7 @@ public class WikiUser {
 	 *
 	 */
 	public String getEditor() {
-		return this.editor;
+		return (StringUtils.isBlank(this.editor)) ? Environment.getValue(Environment.PROP_TOPIC_EDITOR) : this.editor;
 	}
 
 	/**
