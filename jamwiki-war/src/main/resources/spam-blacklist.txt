@@ -18,7 +18,6 @@ display\:none
 free\-site\-host
 freehost(ing)?\.(com|net)
 gigazu\.com
-google\.[a-z]{2,3}(\.[a-z]{2,3})*/group
 hice\ site
 hostaim\.com
 hostvo\.com
