@@ -95,13 +95,11 @@
 	</span>
 	<div class="formhelp"><f:message key="register.help.editor" /></div>
 </div>
-<%--
 <div class="formentry">
 	<span class="formcaption"><label for="registerSignature"><f:message key="register.caption.signature" /></label>:</span>
 	<span class="formelement"><input type="text" name="signature" value="<c:out value="${newuser.signature}" />" id="registerSignature" /></span>
 	<div class="formhelp"><f:message key="register.help.signature" /></div>
 </div>
---%>
 </fieldset>
 
 <%-- existing user --%>

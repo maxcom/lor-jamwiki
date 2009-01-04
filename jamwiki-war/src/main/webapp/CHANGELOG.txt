@@ -12,6 +12,8 @@ New Features:
     history and other pages to match Mediawiki.
   * Signficant (5-10x or more) performance improvement of image rendering by
     making better use of cache.  Suggestions from Jim.
+  * Allow users to create custom signatures, rather than using the same
+    signature pattern for all users.
   * Modify Special:Specialpages so that it is localized for each visitor,
     rather than always defaulting to the language for which the wiki was setup.
   * Provide the capability to redirect to a virtual wiki using syntax of the
