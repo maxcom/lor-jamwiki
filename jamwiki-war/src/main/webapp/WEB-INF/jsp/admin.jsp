@@ -49,24 +49,6 @@ function onUploadType() {
 	document.getElementById("<%= Environment.PROP_FILE_BLACKLIST %>").disabled = blacklistDisabled;
 	document.getElementById("<%= Environment.PROP_FILE_WHITELIST %>").disabled = whitelistDisabled;
 }
-<%--
-function onLdap() {
-	var disabled = true;
-	if (document.getElementById("<%= Environment.PROP_BASE_USER_HANDLER %>").options[document.getElementById("<%= Environment.PROP_BASE_USER_HANDLER %>").selectedIndex].value == "<%= WikiBase.USER_HANDLER_LDAP %>") {
-		disabled = false;
-	}
-	document.getElementById("<%= Environment.PROP_LDAP_FACTORY_CLASS %>").disabled = disabled;
-	document.getElementById("<%= Environment.PROP_LDAP_URL %>").disabled = disabled;
-	document.getElementById("<%= Environment.PROP_LDAP_CONTEXT %>").disabled = disabled;
-	document.getElementById("<%= Environment.PROP_LDAP_FIELD_EMAIL %>").disabled = disabled;
-	document.getElementById("<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>").disabled = disabled;
-	document.getElementById("<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>").disabled = disabled;
-	document.getElementById("<%= Environment.PROP_LDAP_FIELD_USERID %>").disabled = disabled;
-	document.getElementById("<%= Environment.PROP_LDAP_LOGIN %>").disabled = disabled;
-	document.getElementById("<%= Environment.PROP_LDAP_PASSWORD %>").disabled = disabled;
-	document.getElementById("<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>").disabled = disabled;
-}
---%>
 function onRSS() {
 	var disabled = true;
 	if (document.getElementById("<%= Environment.PROP_RSS_ALLOWED %>").checked) {
@@ -80,7 +62,7 @@ function onRSS() {
 
 <div class="submenu">
 <a href="#general"><f:message key="admin.header.general" /></a> | <a href="#parser"><f:message key="admin.header.parser" /></a> | <a href="#database"><f:message key="admin.header.persistence" /></a> | <a href="#upload"><f:message key="admin.header.upload" /></a><br />
-<%-- <a href="#authentication"><f:message key="admin.header.ldap" /></a> | --%><a href="#cache"><f:message key="admin.header.cache" /></a> | <a href="#rss"><f:message key="admin.header.rss" /></a> | <a href="#save"><f:message key="admin.action.save" /></a>
+<a href="#cache"><f:message key="admin.header.cache" /></a> | <a href="#rss"><f:message key="admin.header.rss" /></a> | <a href="#save"><f:message key="admin.action.save" /></a>
 </div>
 
 <c:if test="${!empty message}">
@@ -411,73 +393,6 @@ FIXME - Email not supported right now, comment this out
 </div>
 </fieldset>
 <!-- END FILE UPLOAD -->
-
-<!-- BEGIN AUTHENTICATION -->
-<%--
-<a name="authentication"></a>
-<fieldset>
-<legend><f:message key="admin.header.ldap" /></legend>
-<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<span class="formcaption"><label for="<%= Environment.PROP_LDAP_FACTORY_CLASS %>"><f:message key="admin.ldap.caption.factory" /></label></span>
-	<c:set var="PROP_LDAP_FACTORY_CLASS"><%= Environment.PROP_LDAP_FACTORY_CLASS %></c:set>
-	<span class="formelement"><jamwiki:text name="${PROP_LDAP_FACTORY_CLASS}" id="${PROP_LDAP_FACTORY_CLASS}" value="${props[PROP_LDAP_FACTORY_CLASS]}" size="50" /></span>
-</div>
-<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<span class="formcaption"><label for="<%= Environment.PROP_LDAP_URL %>"><f:message key="admin.ldap.caption.url" /></label></span>
-	<c:set var="PROP_LDAP_URL"><%= Environment.PROP_LDAP_URL %></c:set>
-	<span class="formelement"><jamwiki:text name="${PROP_LDAP_URL}" id="${PROP_LDAP_URL}" value="${props[PROP_LDAP_URL]}" size="50" /></span>
-</div>
-<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<span class="formcaption"><label for="<%= Environment.PROP_LDAP_CONTEXT %>"><f:message key="admin.ldap.caption.context" /></label></span>
-	<c:set var="PROP_LDAP_CONTEXT"><%= Environment.PROP_LDAP_CONTEXT %></c:set>
-	<span class="formelement"><jamwiki:text name="${PROP_LDAP_CONTEXT}" id="${PROP_LDAP_CONTEXT}" value="${props[PROP_LDAP_CONTEXT]}" size="50" /></span>
-	<div class="formhelp"><f:message key="admin.ldap.help.context" /></div>
-</div>
-<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<span class="formcaption"><label for="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>"><f:message key="admin.ldap.caption.security" /></label></span>
-	<c:set var="PROP_LDAP_SECURITY_AUTHENTICATION"><%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %></c:set>
-	<span class="formelement"><jamwiki:text name="${PROP_LDAP_SECURITY_AUTHENTICATION}" id="${PROP_LDAP_SECURITY_AUTHENTICATION}" value="${props[PROP_LDAP_SECURITY_AUTHENTICATION]}" size="20" /></span>
-	<div class="formhelp"><f:message key="admin.ldap.help.security" /></div>
-</div>
-<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<span class="formcaption"><label for="<%= Environment.PROP_LDAP_LOGIN %>"><f:message key="admin.ldap.caption.login" /></label></span>
-	<c:set var="PROP_LDAP_LOGIN"><%= Environment.PROP_LDAP_LOGIN %></c:set>
-	<span class="formelement"><jamwiki:text name="${PROP_LDAP_LOGIN}" id="${PROP_LDAP_LOGIN}" value="${props[PROP_LDAP_LOGIN]}" size="30" /></span>
-	<div class="formhelp"><f:message key="admin.ldap.help.login" /></div>
-</div>
-<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<span class="formcaption"><label for="<%= Environment.PROP_LDAP_PASSWORD %>"><f:message key="admin.ldap.caption.password" /></label></span>
-	<span class="formelement"><input type="password" name="<%= Environment.PROP_LDAP_PASSWORD %>" id="<%= Environment.PROP_LDAP_PASSWORD %>" value="<c:out value="${ldapPassword}" />" size="30" /></span>
-	<div class="formhelp"><f:message key="admin.ldap.help.password" /></div>
-</div>
-<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<span class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_USERID %>"><f:message key="admin.ldap.caption.field.userid" /></label></span>
-	<c:set var="PROP_LDAP_FIELD_USERID"><%= Environment.PROP_LDAP_FIELD_USERID %></c:set>
-	<span class="formelement"><jamwiki:text name="${PROP_LDAP_FIELD_USERID}" id="${PROP_LDAP_FIELD_USERID}" value="${props[PROP_LDAP_FIELD_USERID]}" size="20" /></span>
-</div>
-<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<span class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>"><f:message key="admin.ldap.caption.field.firstname" /></label></span>
-	<c:set var="PROP_LDAP_FIELD_FIRST_NAME"><%= Environment.PROP_LDAP_FIELD_FIRST_NAME %></c:set>
-	<span class="formelement"><jamwiki:text name="${PROP_LDAP_FIELD_FIRST_NAME}" id="${PROP_LDAP_FIELD_FIRST_NAME}" value="${props[PROP_LDAP_FIELD_FIRST_NAME]}" size="20" /></span>
-</div>
-<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<span class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>"><f:message key="admin.ldap.caption.field.lastname" /></label></span>
-	<c:set var="PROP_LDAP_FIELD_LAST_NAME"><%= Environment.PROP_LDAP_FIELD_LAST_NAME %></c:set>
-	<span class="formelement"><jamwiki:text name="${PROP_LDAP_FIELD_LAST_NAME}" id="${PROP_LDAP_FIELD_LAST_NAME}" value="${props[PROP_LDAP_FIELD_LAST_NAME]}" size="20" /></span>
-</div>
-<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<span class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_EMAIL %>"><f:message key="admin.ldap.caption.field.email" /></label></span>
-	<c:set var="PROP_LDAP_FIELD_EMAIL"><%= Environment.PROP_LDAP_FIELD_EMAIL %></c:set>
-	<span class="formelement"><jamwiki:text name="${PROP_LDAP_FIELD_EMAIL}" id="${PROP_LDAP_FIELD_EMAIL}" value="${props[PROP_LDAP_FIELD_EMAIL]}" size="20" /></span>
-</div>
-<script type="text/javascript">
-onPersistenceType()
-onUploadType()
-onLdap()
-</script>
-</fieldset>
---%>
-<!-- END AUTHENTICATION -->
 
 <!-- BEGIN CACHE -->
 <a name="cache"></a>
