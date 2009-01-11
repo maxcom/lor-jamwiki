@@ -109,6 +109,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	private void register(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWikiName = pageInfo.getVirtualWikiName();
 		WikiUser user = this.setWikiUser(request);
+		boolean isUpdate = (user.getUserId() != -1);
 		next.addObject("newuser", user);
 		Vector errors = validate(request, user);
 		if (!errors.isEmpty()) {
@@ -143,9 +144,14 @@ public class RegisterServlet extends JAMWikiServlet {
 				Locale locale = LocaleUtils.toLocale(user.getDefaultLocale());
 				request.getSession().setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, locale);
 			}
-			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
-			String topic = virtualWiki.getDefaultTopicName();
-			ServletUtil.redirect(next, virtualWikiName, topic);
+			if (isUpdate) {
+				next.addObject("updateMessage", new WikiMessage("register.caption.updatesuccess"));
+				this.view(request, next, pageInfo);
+			} else {
+				VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
+				String topic = virtualWiki.getDefaultTopicName();
+				ServletUtil.redirect(next, virtualWikiName, topic);
+			}
 		}
 	}
 

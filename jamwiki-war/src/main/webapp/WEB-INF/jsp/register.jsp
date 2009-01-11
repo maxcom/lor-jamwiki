@@ -28,6 +28,9 @@
 <c:if test="${!empty errors}">
 <div class="message red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></div>
 </c:if>
+<c:if test="${!empty updateMessage}">
+<div class="message green"><f:message key="${updateMessage.key}" /></div>
+</c:if>
 <fieldset>
 <legend><f:message key="register.caption.accountdetails" /></legend>
 
@@ -36,15 +39,15 @@
 <c:if test="${newuser.userId < 1}">
 <div class="formentry">
 	<span class="formcaption"><label for="registerLogin"><f:message key="common.login" /></label>:</span>
-	<span class="formelement"><input type="text" name="login" value="<c:out value="${newuser.username}" />" id="registerLogin" /></span>
+	<span class="formelement"><input type="text" name="login" value="<c:out value="${newuser.username}" />" id="registerLogin" size="50" /></span>
 </div>
 <div class="formentry">
 	<span class="formcaption"><label for="registerNewPassword"><f:message key="register.caption.newpassword" /></label>:</span>
-	<span class="formelement"><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" id="registerNewPassword" /></span>
+	<span class="formelement"><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" id="registerNewPassword" size="50" /></span>
 </div>
 <div class="formentry">
 	<span class="formcaption"><label for="registerConfirmPassword"><f:message key="register.caption.confirmpassword" /></label>:</span>
-	<span class="formelement"><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="registerConfirmPassword" /></span>
+	<span class="formelement"><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="registerConfirmPassword" size="50" /></span>
 </div>
 </c:if>
 
@@ -62,7 +65,7 @@
 
 <div class="formentry">
 	<span class="formcaption"><label for="registerEmail"><f:message key="register.caption.email" /></label>:</span>
-	<span class="formelement"><input type="text" name="email" value="<c:out value="${newuser.email}" />" id="registerEmail" /></span>
+	<span class="formelement"><input type="text" name="email" value="<c:out value="${newuser.email}" />" id="registerEmail" size="50" /></span>
 	<div class="formhelp"><f:message key="register.help.email" /></div>
 </div>
 </fieldset>
@@ -70,7 +73,7 @@
 <legend><f:message key="register.caption.userpreferences" /></legend>
 <div class="formentry">
 	<span class="formcaption"><label for="registerDisplayName"><f:message key="register.caption.displayname" /></label>:</span>
-	<span class="formelement"><input type="text" name="displayName" value="<c:out value="${newuser.displayName}" />" id="registerDisplayName" /></span>
+	<span class="formelement"><input type="text" name="displayName" value="<c:out value="${newuser.displayName}" />" id="registerDisplayName" size="50" /></span>
 	<div class="formhelp"><f:message key="register.help.displayname" /></div>
 </div>
 <div class="formentry">
@@ -97,7 +100,7 @@
 </div>
 <div class="formentry">
 	<span class="formcaption"><label for="registerSignature"><f:message key="register.caption.signature" /></label>:</span>
-	<span class="formelement"><input type="text" name="signature" value="<c:out value="${newuser.signature}" />" id="registerSignature" /></span>
+	<span class="formelement"><input type="text" name="signature" value="<c:out value="${newuser.signature}" />" id="registerSignature" size="50" /></span>
 	<div class="formhelp"><f:message key="register.help.signature" /></div>
 </div>
 </fieldset>
@@ -109,15 +112,15 @@
 <legend><f:message key="register.caption.changepassword" /></legend>
 <div class="formentry">
 	<span class="formcaption"><label for="registerOldPassword"><f:message key="register.caption.oldpassword" /></label>:</span>
-	<span class="formelement"><input type="password" name="oldPassword" value="<c:out value="${oldPassword}" />" id="registerOldPassword" /></span>
+	<span class="formelement"><input type="password" name="oldPassword" value="<c:out value="${oldPassword}" />" id="registerOldPassword" size="50" /></span>
 </div>
 <div class="formentry">
 	<span class="formcaption"><label for="registerNewPassword"><f:message key="register.caption.newpassword" /></label>:</span>
-	<span class="formelement"><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" id="registerNewPassword" /></span>
+	<span class="formelement"><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" id="registerNewPassword" size="50" /></span>
 </div>
 <div class="formentry">
 	<span class="formcaption"><label for="registerConfirmPassword"><f:message key="register.caption.confirmpassword" /></label>:</span>
-	<span class="formelement"><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="registerConfirmPassword" /></span>
+	<span class="formelement"><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="registerConfirmPassword" size="50" /></span>
 </div>
 </fieldset>
 </c:if>
