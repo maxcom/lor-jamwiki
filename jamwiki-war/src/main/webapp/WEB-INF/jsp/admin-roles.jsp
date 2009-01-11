@@ -26,6 +26,8 @@
 <a href="#assign"><f:message key="roles.header.group" /></a> | <a href="#assign"><f:message key="roles.header.user" /></a> | <a href="#create"><f:message key="roles.header.modify" /></a>
 </div>
 
+<div class="message"><f:message key="roles.caption.instructions" /></div>
+
 <c:if test="${!empty message}">
 <div class="message green"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div>
 </c:if>

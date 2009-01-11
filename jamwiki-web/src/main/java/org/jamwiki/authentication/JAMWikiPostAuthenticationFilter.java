@@ -47,6 +47,7 @@ public class JAMWikiPostAuthenticationFilter implements Filter {
 	/** Standard logger. */
 	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiPostAuthenticationFilter.class.getName());
 	private String key;
+	private boolean useJAMWikiAnonymousRoles;
 
 	/**
 	 *
@@ -95,6 +96,11 @@ public class JAMWikiPostAuthenticationFilter implements Filter {
 	 *
 	 */
 	private void handleAnonymousUser(Authentication auth) {
+		if (!this.getUseJAMWikiAnonymousRoles()) {
+			// the configuration file indicates that JAMWiki anonymous roles should not be 
+			// used, so assume that an external system is providing this information.
+			return;
+		}
 		// get arrays of existing Spring Security roles and JAMWiki anonymous user roles
 		GrantedAuthority[] springSecurityAnonymousAuthorities = auth.getAuthorities();
 		GrantedAuthority[] jamwikiAnonymousAuthorities = JAMWikiAuthenticationConfiguration.getJamwikiAnonymousAuthorities();
@@ -160,5 +166,21 @@ public class JAMWikiPostAuthenticationFilter implements Filter {
 	 */
 	public void setKey(String key) {
 		this.key = key;
+	}
+
+	/**
+	 * Provide a flag to disable the addition of JAMWiki GROUP_ANONYMOUS permissions to
+	 * all anonymous users.
+	 */
+	public boolean getUseJAMWikiAnonymousRoles() {
+		return useJAMWikiAnonymousRoles;
+	}
+
+	/**
+	 * Provide a flag to disable the addition of JAMWiki GROUP_ANONYMOUS permissions to
+	 * all anonymous users.
+	 */
+	public void setUseJAMWikiAnonymousRoles(boolean useJAMWikiAnonymousRoles) {
+		this.useJAMWikiAnonymousRoles = useJAMWikiAnonymousRoles;
 	}
 }

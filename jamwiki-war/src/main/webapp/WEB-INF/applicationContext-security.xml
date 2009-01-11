@@ -138,11 +138,13 @@
 	   JAMWiki user database records automatically.
 	2. If anonymous users are allowed then this filter will automatically add the roles from the
 	   JAMWiki GROUP_ANONYMOUS group.  These roles can be configured through the Special:Roles
-	   admin page.
+	   admin page.  Set the useJAMWikiAnonymousRoles property to false if JAMWiki anonymous
+	   roles should not be assigned.
 	-->
 	<b:bean id="jamwikiPostAuthenticationFilter" class="org.jamwiki.authentication.JAMWikiPostAuthenticationFilter">
 		<b:property name="key" value="jam35Wiki" />
 		<custom-filter before="EXCEPTION_TRANSLATION_FILTER" />
+		<b:property name="useJAMWikiAnonymousRoles" value="true" />
 	</b:bean>
 
 	<!--
