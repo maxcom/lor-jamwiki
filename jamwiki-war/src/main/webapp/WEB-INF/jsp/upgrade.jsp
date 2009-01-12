@@ -44,18 +44,17 @@ body, input, select {
 #upgrade-table {
 	border: 2px solid #333333;
 	padding: 10px;
+	width: 95%;
+}
+#upgrade-messages {
+	font: verdana, helvetica, sans-serif;
+	padding: 10px 0;
 }
 .red {
-	font: verdana, helvetica, sans-serif;
-	font-size: 110%;
 	color: #ff0000;
-	text-align: center;
 }
 .green {
-	font: verdana, helvetica, sans-serif;
-	font-size: 110%;
 	color: #009900;
-	text-align: center;
 }
 </style>
 </head>
@@ -64,55 +63,49 @@ body, input, select {
 
 <h3><f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /><f:param value="${pageInfo.pageTitle.params[1]}" /></f:message></h3>
 
-<c:if test="${!empty message}">
-<div class="green"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div>
-</c:if>
-
-<c:if test="${!empty error}">
-<div class="red"><f:message key="${error.key}" /></div>
-</c:if>
-
-<c:if test="${!empty errors}">
-<c:forEach items="${errors}" var="message">
-<div class="red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /><f:param value="${message.params[1]}" /></f:message></div>
-</c:forEach>
-</c:if>
-
-<c:if test="${!empty messages}">
-<c:forEach items="${messages}" var="message">
-<div class="green"><c:out value="${message}" /></div>
-</c:forEach>
-</c:if>
-
-<c:if test="${empty message && empty failure}">
 <form name="adminUpgrade" method="post">
 <input type="hidden" name="function" value="upgrade" />
 <table id="upgrade-table">
-<tr><td colspan="2"><f:message key="upgrade.caption.detected" /></td></tr>
-<c:if test="${!empty upgradeDetails}">
+<c:if test="${!empty message || !empty error || !empty errors || !empty messages}">
 	<tr>
 		<td colspan="2">
-			<ul>
-				<c:forEach items="${upgradeDetails}" var="upgradeDetail">
-					<li><f:message key="${upgradeDetail.key}" /></li>
-				</c:forEach>
-			</ul>
+			<div id="upgrade-messages">
+				<c:if test="${!empty message}"><div class="green"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div></c:if>
+				<c:if test="${!empty error}"><div class="red"><f:message key="${error.key}"><f:param value="${error.params[0]}" /></f:message></div></c:if>
+				<c:if test="${!empty errors}">
+					<c:forEach items="${errors}" var="message"><div class="red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /><f:param value="${message.params[1]}" /></f:message></div></c:forEach>
+				</c:if>
+				<c:if test="${!empty messages}">
+					<c:forEach items="${messages}" var="message"><div class="green"><c:out value="${message}" /></div></c:forEach>
+				</c:if>
+			</div>
 		</td>
 	</tr>
 </c:if>
-<tr><td colspan="2"><f:message key="upgrade.caption.login" /></td></tr>
-<tr>
-	<td><label for="loginUsername"><f:message key="login.username"/></label></td>
-	<td><input type="text" name="username" value="<c:out value="${param.username}" />" id="loginUsername" /></td>
-</tr>
-<tr>
-	<td><label for="loginPassword"><f:message key="login.password"/></label></td>
-	<td><input type="password" name="password" id="loginPassword" /></td>
-</tr>
-<tr><td colspan="2" align="center"><input type="submit" name="button" value="Submit" /></td></tr>
+<c:if test="${empty message && empty failure}">
+	<tr><td colspan="2"><f:message key="upgrade.caption.detected" /></td></tr>
+	<c:if test="${!empty upgradeDetails}">
+		<tr>
+			<td colspan="2">
+				<ul>
+					<c:forEach items="${upgradeDetails}" var="upgradeDetail"><li><f:message key="${upgradeDetail.key}" /></li></c:forEach>
+				</ul>
+			</td>
+		</tr>
+	</c:if>
+	<tr><td colspan="2"><f:message key="upgrade.caption.login" /></td></tr>
+	<tr>
+		<td><label for="loginUsername"><f:message key="login.username"/></label></td>
+		<td><input type="text" name="username" value="<c:out value="${param.username}" />" id="loginUsername" /></td>
+	</tr>
+	<tr>
+		<td><label for="loginPassword"><f:message key="login.password"/></label></td>
+		<td><input type="password" name="password" id="loginPassword" /></td>
+	</tr>
+	<tr><td colspan="2" align="center"><input type="submit" name="button" value="Submit" /></td></tr>
+</c:if>
 </table>
 </form>
-</c:if>
 
 </div>
 </body>
