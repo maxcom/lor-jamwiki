@@ -108,27 +108,25 @@ public class UpgradeServlet extends JAMWikiServlet {
 		Vector messages = new Vector();
 		boolean success = true;
 		// first perform database upgrades
-		if (!Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("FILE")) {
-			try {
-				if (oldVersion.before(0, 6, 0)) {
-					messages = DatabaseUpgrades.upgrade060(messages);
-				}
-				if (oldVersion.before(0, 6, 1)) {
-					messages = DatabaseUpgrades.upgrade061(messages);
-				}
-				if (oldVersion.before(0, 6, 3)) {
-					messages = DatabaseUpgrades.upgrade063(messages);
-				}
-				if (oldVersion.before(0, 7, 0)) {
-					messages = DatabaseUpgrades.upgrade070(messages);
-				}
-			} catch (Exception e) {
-				// FIXME - hard coding
-				String msg = "Unable to complete upgrade to new JAMWiki version.";
-				logger.severe(msg, e);
-				messages.add(msg + ": " + e.getMessage());
-				success = false;
+		try {
+			if (oldVersion.before(0, 6, 0)) {
+				messages = DatabaseUpgrades.upgrade060(messages);
 			}
+			if (oldVersion.before(0, 6, 1)) {
+				messages = DatabaseUpgrades.upgrade061(messages);
+			}
+			if (oldVersion.before(0, 6, 3)) {
+				messages = DatabaseUpgrades.upgrade063(messages);
+			}
+			if (oldVersion.before(0, 7, 0)) {
+				messages = DatabaseUpgrades.upgrade070(messages);
+			}
+		} catch (Exception e) {
+			// FIXME - hard coding
+			String msg = "Unable to complete upgrade to new JAMWiki version.";
+			logger.severe(msg, e);
+			messages.add(msg + ": " + e.getMessage());
+			success = false;
 		}
 		// then perform other needed upgrades
 		boolean stylesheet = false;
