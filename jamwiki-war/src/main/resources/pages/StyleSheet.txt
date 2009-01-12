@@ -526,7 +526,7 @@ img.gallery {
 }
 textarea.translation {
 	width: 100%;
-	overflow:hidden;
+	overflow:auto;
 	height:5em;
 }
 textarea.medium {
