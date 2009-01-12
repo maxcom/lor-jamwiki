@@ -22,17 +22,28 @@
 
 <%@ include file="page-init.jsp" %>
 
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+	<title><f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /><f:param value="${pageInfo.pageTitle.params[1]}" /></f:message></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <style>
 body {
 	background: #f9f9f9;
 	color: black;
-	margin: 0;
 	padding: 5px;
 }
 body, input, select {
 	font: 95% sans-serif, tahoma;
+}
+#upgrade-container {
+	margin: 20px auto;
+	width: 800px;
+	padding: 10px 5px;
+}
+#upgrade-table {
+	border: 2px solid #333333;
+	padding: 10px;
 }
 .red {
 	font: verdana, helvetica, sans-serif;
@@ -49,32 +60,47 @@ body, input, select {
 </style>
 </head>
 <body>
+<div id="upgrade-container">
+
+<h3><f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /><f:param value="${pageInfo.pageTitle.params[1]}" /></f:message></h3>
 
 <c:if test="${!empty message}">
-<p class="green"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></p>
+<div class="green"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div>
 </c:if>
 
 <c:if test="${!empty error}">
-<p class="red"><f:message key="${error.key}" /></p>
+<div class="red"><f:message key="${error.key}" /></div>
 </c:if>
 
 <c:if test="${!empty errors}">
 <c:forEach items="${errors}" var="message">
-<p class="red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /><f:param value="${message.params[1]}" /></f:message></p>
+<div class="red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /><f:param value="${message.params[1]}" /></f:message></div>
 </c:forEach>
 </c:if>
 
 <c:if test="${!empty messages}">
 <c:forEach items="${messages}" var="message">
-<p class="green"><c:out value="${message}" /></p>
+<div class="green"><c:out value="${message}" /></div>
 </c:forEach>
 </c:if>
 
 <c:if test="${empty message && empty failure}">
 <form name="adminUpgrade" method="post">
 <input type="hidden" name="function" value="upgrade" />
-<table style="border:2px solid #333333;padding=1em;">
+<table id="upgrade-table">
 <tr><td colspan="2"><f:message key="upgrade.caption.detected" /></td></tr>
+<c:if test="${!empty upgradeDetails}">
+	<tr>
+		<td colspan="2">
+			<ul>
+				<c:forEach items="${upgradeDetails}" var="upgradeDetail">
+					<li><f:message key="${upgradeDetail.key}" /></li>
+				</c:forEach>
+			</ul>
+		</td>
+	</tr>
+</c:if>
+<tr><td colspan="2"><f:message key="upgrade.caption.login" /></td></tr>
 <tr>
 	<td><label for="loginUsername"><f:message key="login.username"/></label></td>
 	<td><input type="text" name="username" value="<c:out value="${param.username}" />" id="loginUsername" /></td>
@@ -88,5 +114,6 @@ body, input, select {
 </form>
 </c:if>
 
+</div>
 </body>
 </html>

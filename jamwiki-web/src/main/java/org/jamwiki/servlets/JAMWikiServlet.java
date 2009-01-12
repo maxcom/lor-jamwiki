@@ -240,6 +240,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 			next = this.handleJAMWikiRequest(request, response, next, pageInfo);
 			if (next != null && this.layout) {
 				this.loadLayout(request, next, pageInfo);
+			}
+			if (next != null) {
 				next.addObject(ServletUtil.PARAMETER_PAGE_INFO, pageInfo);
 			}
 		} catch (Throwable t) {

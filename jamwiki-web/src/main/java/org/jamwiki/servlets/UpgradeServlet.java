@@ -93,9 +93,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private void upgrade(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		if (!this.login(request)) {
 			next.addObject("error", new WikiMessage("error.login"));
-			pageInfo.setContentJsp(JSP_UPGRADE);
-			pageInfo.setSpecial(true);
-			pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
+			this.view(request, next, pageInfo);
 			return;
 		}
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
@@ -109,18 +107,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 		boolean success = true;
 		// first perform database upgrades
 		try {
-			if (oldVersion.before(0, 6, 0)) {
-				messages = DatabaseUpgrades.upgrade060(messages);
-			}
-			if (oldVersion.before(0, 6, 1)) {
-				messages = DatabaseUpgrades.upgrade061(messages);
-			}
-			if (oldVersion.before(0, 6, 3)) {
-				messages = DatabaseUpgrades.upgrade063(messages);
-			}
-			if (oldVersion.before(0, 7, 0)) {
-				messages = DatabaseUpgrades.upgrade070(messages);
-			}
+			this.upgradeDatabase(true, messages);
 		} catch (Exception e) {
 			// FIXME - hard coding
 			String msg = "Unable to complete upgrade to new JAMWiki version.";
@@ -128,33 +115,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 			messages.add(msg + ": " + e.getMessage());
 			success = false;
 		}
-		// then perform other needed upgrades
-		boolean stylesheet = false;
-		if (oldVersion.before(0, 5, 1)) {
-			stylesheet = true;
-		}
-		if (oldVersion.before(0, 6, 0)) {
-			stylesheet = true;
-		}
-		if (oldVersion.before(0, 6, 1)) {
-			stylesheet = true;
-		}
-		if (oldVersion.before(0, 6, 2)) {
-			stylesheet = true;
-		}
-		if (oldVersion.before(0, 6, 3)) {
-			stylesheet = true;
-		}
-		if (oldVersion.before(0, 6, 6)) {
-			stylesheet = true;
-		}
-		if (oldVersion.before(0, 6, 7)) {
-			stylesheet = true;
-		}
-		if (oldVersion.before(0, 7, 0)) {
-			stylesheet = true;
-		}
-		if (stylesheet) {
+		if (this.upgradeStyleSheetRequired()) {
 			// upgrade stylesheet
 			if (!upgradeStyleSheet(request, messages)) {
 				success = false;
@@ -193,7 +154,40 @@ public class UpgradeServlet extends JAMWikiServlet {
 		next.addObject("messages", messages);
 		pageInfo.setContentJsp(JSP_UPGRADE);
 		pageInfo.setSpecial(true);
-		pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
+		pageInfo.setPageTitle(new WikiMessage("upgrade.title", Environment.getValue(Environment.PROP_BASE_WIKI_VERSION), WikiVersion.CURRENT_WIKI_VERSION));
+	}
+
+	/**
+	 *
+	 */
+	private boolean upgradeDatabase(boolean performUpgrade, Vector messages) throws Exception {
+		boolean upgradeRequired = false;
+		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
+		if (oldVersion.before(0, 6, 0)) {
+			upgradeRequired = true;
+			if (performUpgrade) {
+				messages = DatabaseUpgrades.upgrade060(messages);
+			}
+		}
+		if (oldVersion.before(0, 6, 1)) {
+			upgradeRequired = true;
+			if (performUpgrade) {
+				messages = DatabaseUpgrades.upgrade061(messages);
+			}
+		}
+		if (oldVersion.before(0, 6, 3)) {
+			upgradeRequired = true;
+			if (performUpgrade) {
+				messages = DatabaseUpgrades.upgrade063(messages);
+			}
+		}
+		if (oldVersion.before(0, 7, 0)) {
+			upgradeRequired = true;
+			if (performUpgrade) {
+				messages = DatabaseUpgrades.upgrade070(messages);
+			}
+		}
+		return upgradeRequired;
 	}
 
 	/**
@@ -220,6 +214,38 @@ public class UpgradeServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private boolean upgradeStyleSheetRequired() {
+		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
+		if (oldVersion.before(0, 5, 1)) {
+			return true;
+		}
+		if (oldVersion.before(0, 6, 0)) {
+			return true;
+		}
+		if (oldVersion.before(0, 6, 1)) {
+			return true;
+		}
+		if (oldVersion.before(0, 6, 2)) {
+			return true;
+		}
+		if (oldVersion.before(0, 6, 3)) {
+			return true;
+		}
+		if (oldVersion.before(0, 6, 6)) {
+			return true;
+		}
+		if (oldVersion.before(0, 6, 7)) {
+			return true;
+		}
+		if (oldVersion.before(0, 7, 0)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 *
+	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 		if (oldVersion.before(0, 5, 0)) {
@@ -227,8 +253,18 @@ public class UpgradeServlet extends JAMWikiServlet {
 			errors.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.5.0"));
 			next.addObject("errors", errors);
 		}
+		Vector upgradeDetails = new Vector();
+		upgradeDetails.add(new WikiMessage("upgrade.caption.releasenotes"));
+		upgradeDetails.add(new WikiMessage("upgrade.caption.manual"));
+		if (this.upgradeDatabase(false, null)) {
+			upgradeDetails.add(new WikiMessage("upgrade.caption.database"));
+		}
+		if (this.upgradeStyleSheetRequired()) {
+			upgradeDetails.add(new WikiMessage("upgrade.caption.stylesheet"));
+		}
+		next.addObject("upgradeDetails", upgradeDetails);
 		pageInfo.setContentJsp(JSP_UPGRADE);
 		pageInfo.setSpecial(true);
-		pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
+		pageInfo.setPageTitle(new WikiMessage("upgrade.title", Environment.getValue(Environment.PROP_BASE_WIKI_VERSION), WikiVersion.CURRENT_WIKI_VERSION));
 	}
 }
