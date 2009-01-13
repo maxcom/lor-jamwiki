@@ -66,11 +66,11 @@ body, input, select {
 <form name="adminUpgrade" method="post">
 <input type="hidden" name="function" value="upgrade" />
 <table id="upgrade-table">
-<c:if test="${!empty message || !empty error || !empty errors || !empty messages}">
+<c:if test="${!empty successMessage || !empty error || !empty errors || !empty messages}">
 	<tr>
 		<td colspan="2">
 			<div id="upgrade-messages">
-				<c:if test="${!empty message}"><div class="green"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div></c:if>
+				<c:if test="${!empty successMessage}"><h4><f:message key="${successMessage.key}"><f:param value="${successMessage.params[0]}" /></f:message></h4></c:if>
 				<c:if test="${!empty error}"><div class="red"><f:message key="${error.key}"><f:param value="${error.params[0]}" /></f:message></div></c:if>
 				<c:if test="${!empty errors}">
 					<c:forEach items="${errors}" var="message"><div class="red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /><f:param value="${message.params[1]}" /></f:message></div></c:forEach>
@@ -82,7 +82,7 @@ body, input, select {
 		</td>
 	</tr>
 </c:if>
-<c:if test="${empty message && empty failure}">
+<c:if test="${empty successMessage && empty failure}">
 	<tr><td colspan="2"><f:message key="upgrade.caption.detected" /></td></tr>
 	<c:if test="${!empty upgradeDetails}">
 		<tr>

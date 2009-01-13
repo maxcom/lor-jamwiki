@@ -133,7 +133,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 				WikiMessage wm = new WikiMessage("upgrade.caption.upgradecomplete");
 				// do not escape the HTML link
 				wm.setParamsWithoutEscaping(new String[]{htmlLink});
-				next.addObject("message", wm);
+				next.addObject("successMessage", wm);
 				// force logout to ensure current user will be re-validated.  this is
 				// necessary because the upgrade may have changed underlying data structures.
 				SecurityContextHolder.clearContext();

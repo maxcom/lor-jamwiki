@@ -226,7 +226,7 @@ public class SetupServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		pageInfo.setContentJsp(JSP_SETUP);
 		pageInfo.setSpecial(true);
-		pageInfo.setPageTitle(new WikiMessage("setup.title"));
+		pageInfo.setPageTitle(new WikiMessage("setup.title", WikiVersion.CURRENT_WIKI_VERSION));
 		Collection dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
 		next.addObject("dataHandlers", dataHandlers);
 		WikiMessage logMessage = new WikiMessage("setup.help.logfile", WikiLogger.getDefaultLogFile(), WikiLogger.getLogConfigFile());

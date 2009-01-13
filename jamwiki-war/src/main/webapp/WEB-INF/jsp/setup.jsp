@@ -26,18 +26,21 @@
 
 <%@ include file="page-init.jsp" %>
 
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+	<title><f:message key="${pageInfo.pageTitle.key}" ><f:param value="${pageInfo.pageTitle.params[0]}" /><f:param value="${pageInfo.pageTitle.params[1]}" /></f:message></title>
 <style>
 body {
 	background: #f9f9f9;
 	color: black;
-	margin: 0;
 	padding: 5px;
 }
-
 body, input, select {
 	font: 95% sans-serif, tahoma;
+}
+#setup-container {
+	padding: 10px 5px;
 }
 td.formcaption {
 }
@@ -54,9 +57,6 @@ td.formhelp {
 	text-align: center;
 }
 </style>
-</head>
-<body>
-
 <script type="text/javascript">
 function onPersistenceType() {
 	if (document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").options[document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").selectedIndex].value == "<%= WikiBase.PERSISTENCE_INTERNAL %>") {
@@ -74,6 +74,11 @@ function onPersistenceType() {
 	}
 }
 </script>
+</head>
+<body>
+<div id="setup-container">
+
+<h3><f:message key="${pageInfo.pageTitle.key}" ><f:param value="${pageInfo.pageTitle.params[0]}" /><f:param value="${pageInfo.pageTitle.params[1]}" /></f:message></h3>
 
 <c:if test="${!empty messageObject}"><p class="red"><f:message key="${messageObject.key}"><f:param value="${messageObject.params[0]}" /><f:param value="${messageObject.params[1]}" /></f:message></p></c:if>
 
@@ -179,5 +184,6 @@ function onPersistenceType() {
 onPersistenceType();
 </script>
 
+</div>
 </body>
 </html>
