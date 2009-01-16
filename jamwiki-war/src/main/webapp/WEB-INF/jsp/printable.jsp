@@ -39,7 +39,7 @@
 </head>
 <body style="background:none">
 
-<div id="contents-header"><f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /></f:message></div>
+<h1 id="contents-header"><f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /></f:message></h1>
 
 <%@ include file="category-include.jsp" %>
 <%@ include file="view-topic-include.jsp" %>

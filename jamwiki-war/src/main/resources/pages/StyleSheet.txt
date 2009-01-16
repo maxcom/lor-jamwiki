@@ -184,9 +184,7 @@ div.submenu {
 	border: 1px solid #D8D8E7;
 }
 #contents-header {
-	font-size: 200%;
-	padding: 0.2em 0em 0.2em 0em;
-	border-bottom: 1px solid #D8D8E7;
+	margin-bottom: 0.1em;
 }
 #contents-subheader {
 	font-size: 100%;
@@ -343,16 +341,15 @@ div.submenu {
 
 #user-menu {
 	float: right;
-	margin: 0.4em 2em 0.4em 0;
+	margin-right: 2em;
 	padding: 0;
 	text-align: center;
 }
-#user-menu .menu-item {
-	float: left;
+#user-menu li {
+	display: inline;
+	list-style-type: none;
+	padding: 0 0.8em;
 	font-size: 90%;
-	padding: 0;
-	margin: 0 0.8em;
-	white-space: nowrap;
 }
 
 /* footer */
