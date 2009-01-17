@@ -5,8 +5,8 @@
 body {
 	background: #f9f9f9 url(../images/denalibg.jpg) 0 0 no-repeat;
 	color: black;
-	margin: 0px;
-	padding: 0px;
+	margin: 0;
+	padding: 0;
 }
 body, input, select {
 	font: 95% sans-serif, tahoma;
@@ -135,7 +135,7 @@ legend {
 }
 div.message {
 	margin: 1.5em 0 1.5em 0;
-	padding: 0px 5px;
+	padding: 0 5px;
 }
 div.submenu {
 	margin: 1.0em 6em 0.8em 6em;
@@ -150,14 +150,14 @@ div.submenu {
 #wiki-page {
 	font-size: 100%;
 	color: black;
-	padding: 5px;
+	padding: 0 5px;
 }
 #wiki-navigation {
 	position: absolute;
 	top: 5px;
 	left: 5px;
 	font-size: 90%;
-	padding: 5px 5px 5px 0px;
+	padding: 5px 5px 5px 0;
 	vertical-align: top;
 	width: 180px;
 }
@@ -171,7 +171,7 @@ div.submenu {
 	clear: both;
 	font-size: 80%;
 	color: gray;
-	padding: 15px 0px 5px 0px;
+	padding: 15px 0 5px 0;
 	text-align: right;
 }
 
@@ -197,8 +197,8 @@ div.submenu {
 /* navbar elements */
 
 #logo {
-	border: 0px;
-	margin: 8px 0px 0px 0px;
+	border: 0;
+	margin: 8px 0 0 0;
 	text-align: center;
 	vertical-align: middle;
 }
@@ -207,7 +207,7 @@ div.submenu {
 	border: 1px solid #D8D8E7;
 	border-bottom: 0;
 	font-size: 90%;
-	margin: 2px 0px 8px 0px;
+	margin: 2px 0 8px 0;
 }
 #nav-menu hr {
 	display: none;
@@ -216,19 +216,19 @@ div.submenu {
 	padding: 8px;
 	list-style-type: none;
 	border-bottom: 1px solid #D8D8E7;
-	margin-left: 0px;
+	margin-left: 0;
 }
 #nav-search {
 	background: white;
-	margin: 18px 0px 8px 0px;
+	margin: 18px 0 8px 0;
 	padding: 8px;
-	padding-top: 0px;
+	padding-top: 0;
 	text-align: center;
 	border: 1px solid #D8D8E7;
 }
 #nav-search form {
-	padding: 0px;
-	margin: 0px;
+	padding: 0;
+	margin: 0;
 }
 #nav-search br {
 	padding-top: 4px;
@@ -320,8 +320,8 @@ div.submenu {
 /* tab menu */
 
 #tab-menu {
-	padding: 0px;
-	margin: 0px;
+	padding: 0;
+	margin: 0;
 	margin-left: 6px;
 }
 #tab-menu .tab-item {
@@ -331,7 +331,7 @@ div.submenu {
 	border: 1px solid #D8D8E7;
 	border-bottom: none;
 	padding: 0.2em 0.5em 0.2em 0.5em;
-	margin: 0px;
+	margin: 0;
 	margin-right: 6px;
 	font-size: 85%;
 	text-align: center;
@@ -379,7 +379,7 @@ li.undeletechange {
 /* topic pages */
 
 #content-article {
-	padding: 10px 0px 10px 0px;
+	padding: 10px 0 10px 0;
 }
 #content-article pre {
 	overflow: hidden;
@@ -394,10 +394,10 @@ li.undeletechange {
 /* images */
 
 img.wikiimg {
-	border: 0px;
+	border: 0;
 }
 a.wikiimg {
-	border: 0px;
+	border: 0;
 }
 div.imgcaption {
 	padding: 0.3em 0em 0.2em 0em;
@@ -444,8 +444,8 @@ img.gallery {
 	text-decoration: none;
 }
 #toolbar a img {
-	padding: 0px;
-	margin: 0px 1px 0px 0px;
+	padding: 0;
+	margin: 0 1px 0 0;
 	border: 1px solid #7E7ECB;
 }
 #toolbar a img:hover {
