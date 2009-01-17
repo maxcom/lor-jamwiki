@@ -22,6 +22,7 @@ New Features:
     clicked, as requested by many users and as implemented by Mediawiki.
   * Allow updating of account information on Special:Register without entering
     the old password EXCEPT when changing password.
+  * Update CSS / HTML to use semantic code when possible - no visible changes.
   * Update the UI of the upgrade screen to provide additional information.
   * Updated spam filter patterns.
   * Upgrade to Lucene Search 2.4.0.
@@ -37,6 +38,9 @@ Bugfixes:
     spiralmike.
   * Use a default MIME type of "application/unknown" for file uploads without
     MIME types to prevent database errors.  Reported by Tim.
+  * Fix incorrect paragraph parsing when there is a blank line containing
+    one or more whitespace characters between the paragraphs.  Reported by
+    James Teer (j_teer).
 
 Translation Updates:
 

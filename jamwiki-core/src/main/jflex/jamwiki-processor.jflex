@@ -108,7 +108,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 startparagraph     = ([^< \n])|{inlinetagopen}|{imagelinkcaption}|{wikilink}|{htmllink}|{bold}|{bolditalic}|{italic}|{entity}
 startparagraphempty = ({newline}) ({newline})+ ({startparagraph})
 endparagraph1      = ({newline}){1,2} ({hr}|{wikiheading}|{listitem}|{wikiprestart}|{tablestart})
-endparagraph2      = ({newline}){2}
+endparagraph2      = (({newline})([ \t]*)){2}
 endparagraph3      = {blockleveltagopen}|{htmlprestart}|{blockleveltagclose}
 endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
