@@ -148,7 +148,7 @@ public class ParserUtil {
 	 * @param locale The locale for which the content is being parsed.
 	 * @param virtualWiki The virtual wiki for the topic being parsed.
 	 * @param topicName The name of the topic being parsed.
-	 * @param targetSection The section to be sliced and returned.
+	 * @param section The section to be sliced and returned.
 	 * @return Returns the raw topic content for the target section.
 	 * @throws Exception Thrown if a parser error occurs.
 	 */

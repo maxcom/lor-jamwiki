@@ -53,7 +53,7 @@ import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- * An implementation of {@link org.jamwiki.search.SearchEngine} that uses
+ * An implementation of {@link org.jamwiki.SearchEngine} that uses
  * <a href="http://lucene.apache.org/java/">Lucene</a> to perform searches of
  * Wiki content.
  */

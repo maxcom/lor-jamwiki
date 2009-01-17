@@ -357,7 +357,7 @@ public abstract class JFlexLexer {
 	 * and HTML <td> or <th> tag.
 	 *
 	 * @param text The text to be parsed.
-	 * @param tag The HTML tag text, either "td" or "th".
+	 * @param tagType The HTML tag type, either "td" or "th".
 	 * @param markup The Wiki markup for the tag, either "|", "|+" or "!"
 	 */
 	protected void parseTableCell(String text, String tagType, String markup) {

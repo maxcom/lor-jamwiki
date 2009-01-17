@@ -256,8 +256,8 @@ public class WikiPageInfo {
 	}
 
 	/**
-	 * Return the name of the page, i.e. the name of the topic displayed by
-	 * the current page, without the namespace.
+	 * Return the name of the current page, which is the name of the topic
+	 * being viewed (without the namespace).
 	 *
 	 * @return Name of the page.
 	 */
@@ -334,9 +334,6 @@ public class WikiPageInfo {
 	 * created.  This will normally be taken directly from the request and default
 	 * to the wiki default virtual wiki, although in rare cases (such as redirects
 	 * to other virtual wikis) it may differ.
-	 *
-	 * @param virtualWikiName The name of the virtual wiki currently associated
-	 *  with this page info object.
 	 */
 	public String getVirtualWikiName() {
 		if (StringUtils.isBlank(virtualWikiName)) {

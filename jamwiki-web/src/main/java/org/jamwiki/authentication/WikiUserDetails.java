@@ -26,7 +26,10 @@ import org.springframework.security.userdetails.UserDetails;
 import org.springframework.security.providers.anonymous.AnonymousAuthenticationToken;
 
 /**
- * 
+ * JAMWiki implementation of the Spring Security <code>UserDetails</code> interface.
+ * This object will be populated on successful login and made available as a way of
+ * verifying user credentials.  Spring Security will use this object to determine
+ * access rights.
  */
 public class WikiUserDetails implements UserDetails {
 
@@ -47,8 +50,8 @@ public class WikiUserDetails implements UserDetails {
 	private boolean enabled = true;
 
 	/**
-	 * Construct the <code>User</code> with the details required by
-	 * {@link org.springframework.security.providers.dao.DaoAuthenticationProvider}.  This
+	 * Construct the <code>User</code> with the details required by Spring Security
+	 * <code>org.springframework.security.providers.dao.DaoAuthenticationProvider</code>.  This
 	 * method should be used by systems that do NOT use the default JAMWiki
 	 * user and group roles.  This method will NOT assign default roles to the
 	 * user, and as a result the Special:Roles functionality will be ignored.
@@ -101,7 +104,7 @@ public class WikiUserDetails implements UserDetails {
 	}
 
 	/**
-	 * Returns granted authorites.
+	 * Standard get method for determining the user's granted authorites (permissions).
 	 *
 	 * @return authorites, never null.
 	 */
@@ -110,7 +113,8 @@ public class WikiUserDetails implements UserDetails {
 	}
 
 	/**
-	 *
+	 * Standard set method for setting an array of granted authorities (permissions) for
+	 * the user.  This method will overwrite any existing authorities.
 	 */
 	protected void setAuthorities(GrantedAuthority[] authorities) {
 		if (authorities == null) {
@@ -125,28 +129,29 @@ public class WikiUserDetails implements UserDetails {
 	}
 
 	/**
-	 *
+	 * Standard get method to determine if the user account has expired.
 	 */
 	public boolean isAccountNonExpired() {
 		return this.accountNonExpired;
 	}
 
 	/**
-	 *
+	 * Standard get method to determine if the user account has been locked.
 	 */
 	public boolean isAccountNonLocked() {
 		return this.accountNonLocked;
 	}
 
 	/**
-	 *
+	 * Standard get method to determine if the user is still valid or if
+	 * re-validation is required.
 	 */
 	public boolean isCredentialsNonExpired() {
 		return this.credentialsNonExpired;
 	}
 
 	/**
-	 *
+	 * Standard get method to determine if the current user account is enabled.
 	 */
 	public boolean isEnabled() {
 		return this.enabled;
@@ -160,7 +165,7 @@ public class WikiUserDetails implements UserDetails {
 	}
 
 	/**
-	 *
+	 * Standard get method for the username (login).
 	 */
 	public String getUsername() {
 		return this.username;

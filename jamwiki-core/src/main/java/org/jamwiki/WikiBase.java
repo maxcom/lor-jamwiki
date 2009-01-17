@@ -29,7 +29,7 @@ import org.jamwiki.utils.WikiLogger;
  * for resetting core structures including caches and permissions.
  *
  * @see org.jamwiki.DataHandler
- * @see org.jamwiki.search.SearchEngine
+ * @see org.jamwiki.SearchEngine
  */
 public class WikiBase {
 

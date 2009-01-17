@@ -35,12 +35,12 @@ import org.springframework.security.providers.anonymous.AnonymousAuthenticationT
 import org.springframework.security.userdetails.UserDetails;
 
 /**
- * For systems using LDAP or other external authentication systems, once authenticated
- * a user may not have records in the jam_wiki_user or similar tables, so this method
- * will create the records necessary to track editing history and similar information.
- *
- * For a standard JAMWiki setup this filter is disabled by default since the user
- * registration process creates the required records.
+ * Provide processing of a successfully authenticated user.  This filter will examine
+ * the authentication credentails for systems using LDAP or other external
+ * authentication systems, and verify that the authenticated user has valid records in
+ * the jam_wiki_user and similar tables; if no such records exist they will be created to
+ * allow tracking of edit history and user contributions.  Additionally, this filter
+ * provides capabilities for adding anonymous group permissions to anonymous users.
  */
 public class JAMWikiPostAuthenticationFilter implements Filter {
 
@@ -155,7 +155,9 @@ public class JAMWikiPostAuthenticationFilter implements Filter {
 	}
 
 	/**
-	 *
+	 * Standard get method to return the anonymous authentication token key configured
+	 * for anonymous users.  This value is set from the configuration file and MUST match
+	 * the value used when creating anonymous authentication credentials.
 	 */
 	public String getKey() {
 		return key;

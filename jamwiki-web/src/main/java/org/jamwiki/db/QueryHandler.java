@@ -674,7 +674,7 @@ public interface QueryHandler {
 	 * Retrieve a result set containing the encrypted password for a user given
 	 * the username.
 	 *
-	 * @param userame The name of the user whose enrypted password is being retrieved.
+	 * @param username The name of the user whose enrypted password is being retrieved.
 	 * @return A WikiResultSet containing the encrypted password.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
@@ -806,7 +806,7 @@ public interface QueryHandler {
 	/**
 	 * Update user authentication credentials.
 	 *
-	 * @param user The user authentication credentials to update.
+	 * @param userDetails The user authentication credentials to update.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @throws SQLException Thrown if any error occurs during method execution.

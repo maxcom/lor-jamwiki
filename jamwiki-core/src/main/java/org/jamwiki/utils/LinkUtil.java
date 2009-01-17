@@ -27,9 +27,9 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiImage;
 
 /**
- * General utility methods for handling both wiki topic links such as
- * "Topic?query=param#Section", as well as HTML links of the form
- * http://example.com/.
+ * General utility methods for handling both wiki topic links and HTML links.
+ * Wiki topic links are generally of the form "Topic?query=param#Section".
+ * HTML links are of the form http://example.com/.
  */
 public class LinkUtil {
 
@@ -394,8 +394,8 @@ public class LinkUtil {
 	}
 
 	/**
-	 * Parse a topic name of the form "Topic?Query#Section", and return a WikiLink
-	 * object representing the link.
+	 * Parse a wiki topic link and return a <code>WikiLink</code> object
+	 * representing the link.  Wiki topic links are of the form "Topic?Query#Section".
 	 *
 	 * @param raw The raw topic link text.
 	 * @return A WikiLink object that represents the link.

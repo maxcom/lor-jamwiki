@@ -70,8 +70,6 @@ public class WikiUtil {
 	 * request.
 	 *
 	 * @param request The servlet request object.
-	 * @param next A ModelAndView object corresponding to the page being
-	 *  constructed.
 	 * @return A Pagination object constructed from parameters found in the
 	 *  request object.
 	 */
@@ -675,7 +673,8 @@ public class WikiUtil {
 	 * Utility method for determining if a password is valid for use on the wiki.
 	 *
 	 * @param password The password value.
-	 * @param passwordConfirmation The password confirmation.
+	 * @param confirmPassword Passwords must be entered twice to avoid tying errors.
+	 *  This field represents the confirmed password entry.
 	 */
 	public static void validatePassword(String password, String confirmPassword) throws WikiException {
 		if (StringUtils.isBlank(password)) {

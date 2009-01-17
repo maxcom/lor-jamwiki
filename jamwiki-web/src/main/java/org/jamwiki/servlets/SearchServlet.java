@@ -29,7 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 /**
  * Used to display search results.
  *
- * @see org.jamwiki.search.SearchEngine
+ * @see org.jamwiki.SearchEngine
  */
 public class SearchServlet extends JAMWikiServlet {
 
