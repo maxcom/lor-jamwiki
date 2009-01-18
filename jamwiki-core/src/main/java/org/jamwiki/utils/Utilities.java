@@ -182,21 +182,49 @@ public class Utilities {
 	/**
 	 * Returns any trailing period, comma, semicolon, or colon characters
 	 * from the given string.  This method is useful when parsing raw HTML
-	 * links, in which case trailing punctuation must be removed.
+	 * links, in which case trailing punctuation must be removed.  Note that
+	 * only punctuation that is not previously matched is trimmed - if the
+	 * input is "http://example.com/page_(page)" then the trailing parantheses
+	 * will not be trimmed.
 	 *
 	 * @param text The text from which trailing punctuation should be returned.
 	 * @return Any trailing punctuation from the given text, or an empty string
 	 *  otherwise.
 	 */
 	public static String extractTrailingPunctuation(String text) {
+		if (StringUtils.isBlank(text)) {
+			return "";
+		}
 		StringBuffer buffer = new StringBuffer();
 		for (int i = text.length() - 1; i >= 0; i--) {
 			char c = text.charAt(i);
-			if (c == '.' || c == ';' || c == ',' || c == ':' || c == ')' || c == '(' || c == ']' || c == '[') {
+			if (c == '.' || c == ';' || c == ',' || c == ':' || c == '(' || c == '[') {
 				buffer.append(c);
-			} else {
-				break;
+				continue;
 			}
+			// if the value ends with ) or ] then strip it UNLESS there is a matching
+			// opening tag
+			if (c == ')' || c == ']') {
+				char closeChar = c;
+				char openChar = (closeChar == ')') ? '(' : '[';
+				int openCount = 1;
+				for (int j = (i - 1); j > 0; j--) {
+					if (text.charAt(j) == closeChar) {
+						openCount++;
+					}
+					if (text.charAt(j) == openChar) {
+						openCount--;
+					}
+					if (openCount == 0) {
+						break;
+					}
+				}
+				if (openCount != 0) {
+					buffer.append(c);
+					continue;
+				}
+			}
+			break;
 		}
 		if (buffer.length() == 0) {
 			return "";

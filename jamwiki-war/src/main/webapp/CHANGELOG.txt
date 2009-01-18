@@ -40,8 +40,10 @@ Bugfixes:
     MIME types to prevent database errors.  Reported by Tim.
   * Fix incorrect paragraph parsing when there is a blank line containing
     one or more whitespace characters between the paragraphs.  Reported by
-    James Teer (j_teer).
+    James Teer.
   * Fix parsing of multiple newlines to match Mediawiki.
+  * Fix parsing of links containing parantheses such as
+    http://example.com/page_(page).  Reported by  Michael Habbert.
 
 Translation Updates:
 

@@ -288,6 +288,14 @@ public class UtilitiesTest extends TestCase {
 	/**
 	 *
 	 */
+	public void testExtractTrailingPunctuation26() throws Throwable {
+		String result = Utilities.extractTrailingPunctuation(null);
+		assertEquals("result", "", result);
+	}
+
+	/**
+	 *
+	 */
 	public void testIsIpAddress() throws Throwable {
 		//test ipv4 addresses
 		assertTrue("0.0.0.0", Utilities.isIpAddress("0.0.0.0"));
@@ -315,18 +323,6 @@ public class UtilitiesTest extends TestCase {
 		//empty and null
 		assertFalse("empty string", Utilities.isIpAddress(""));
 		assertFalse("null string", Utilities.isIpAddress(null));
-	}
-
-	/**
-	 *
-	 */
-	public void testExtractTrailingPunctuationThrowsNullPointerException() throws Throwable {
-		try {
-			Utilities.extractTrailingPunctuation(null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
 	}
 
 	/**
