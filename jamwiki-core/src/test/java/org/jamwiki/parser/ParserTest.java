@@ -61,18 +61,18 @@ public class ParserTest extends TestCase {
 	/**
 	 *
 	 */
-	private void executeParserTest(String topicName) throws Exception {
-		String parserResult = this.parserResult(topicName);
-		String expectedResult = this.expectedResult(topicName);
-		assertEquals(parserResult, expectedResult);
+	private void executeParserTest(String fileName) throws Exception {
+		String parserResult = this.parserResult(fileName);
+		String expectedResult = this.expectedResult(fileName);
+		assertEquals(expectedResult, parserResult);
 	}
 
 	/**
 	 *
 	 */
-	private String expectedResult(String topicName) throws Exception {
-		String raw = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_TOPICS_DIR, topicName);
-		return this.parse(topicName, raw);
+	private String expectedResult(String fileName) throws Exception {
+		String result = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_RESULTS_DIR, fileName);
+		return this.sanitize(result);
 	}
 
 	/**
@@ -118,9 +118,10 @@ public class ParserTest extends TestCase {
 	/**
 	 *
 	 */
-	private String parserResult(String topicName) throws Exception {
-		String result = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_RESULTS_DIR, topicName);
-		return this.sanitize(result);
+	private String parserResult(String fileName) throws Exception {
+		String raw = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_TOPICS_DIR, fileName);
+		String topicName = TestFileUtil.decodeTopicName(fileName);
+		return this.parse(topicName, raw);
 	}
 
 	/**
