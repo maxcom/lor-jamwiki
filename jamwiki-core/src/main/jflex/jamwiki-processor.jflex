@@ -28,6 +28,7 @@ import org.jamwiki.utils.WikiLogger;
 newline            = "\n"
 whitespace         = [ \n\t\f]
 entity             = (&#([0-9]{2,4});) | (&[A-Za-z]{2,6};)
+emptyline          = ([ \t])* ({newline})
 
 /* non-container expressions */
 hr                 = "----"
@@ -106,7 +107,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 /* paragraphs */
 /* TODO: this pattern does not match text such as "< is a less than sign" */
 startparagraph     = ([^< \n])|{inlinetagopen}|{imagelinkcaption}|{wikilink}|{htmllink}|{bold}|{bolditalic}|{italic}|{entity}
-startparagraphempty = ({newline}) ({newline})+ ({startparagraph})
+paragraphempty     = ({emptyline}) ({emptyline})+
 endparagraph1      = ({newline}){1,2} ({hr}|{wikiheading}|{listitem}|{wikiprestart}|{tablestart})
 endparagraph2      = (({newline})([ \t]*)){2}
 endparagraph3      = {blockleveltagopen}|{htmlprestart}|{blockleveltagclose}
@@ -373,10 +374,9 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     return "";
 }
 
-<YYINITIAL>^{startparagraphempty} {
-    logger.finer("startparagraphempty: " + yytext() + " (" + yystate() + ")");
-    this.parseParagraphStartEmpty(yytext());
-    beginState(PARAGRAPH);
+<YYINITIAL>^{paragraphempty} {
+    logger.finer("paragraphempty: " + yytext() + " (" + yystate() + ")");
+    this.parseParagraphEmpty(yytext());
     return "";
 }
 
@@ -552,6 +552,11 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
         return raw;
     }
     return StringEscapeUtils.escapeHtml(raw);
+}
+
+<YYINITIAL>^{emptyline} {
+    // suppress superfluous empty lines
+    return "";
 }
 
 <YYINITIAL, WIKIPRE, PRE, LIST, TABLE, JAVASCRIPT, PARAGRAPH>{whitespace} {

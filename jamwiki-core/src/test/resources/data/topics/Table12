@@ -1,5 +1,4 @@
 <!-- test basic wiki table formatting.  example taken from http://meta.wikimedia.org/wiki/Help:Tables. -->
-
 producing the below table:
 
 {| border="5" cellspacing="5" cellpadding="2"

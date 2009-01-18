@@ -465,29 +465,26 @@ public abstract class JFlexLexer {
 	/**
 	 *
 	 */
-	protected void parseParagraphStartEmpty(String raw) {
-		// push back everything except for any opening newlines that were matched
-		yypushback(StringUtils.stripStart(raw, "\n\r\t").length());
+	protected void parseParagraphEmpty(String raw) {
+		// push back everything up to the last of the opening newlines that were matched
+		yypushback(StringUtils.stripStart(raw, "\n\r\t").length() + 1);
 		if (this.mode < JFlexParser.MODE_LAYOUT) {
 			return;
 		}
-		if (this.peekTag().getTagType().equals("p")) {
-			// if a paragraph is already opened, close it before opening a new paragraph
-			this.popTag("p");
-		}
-		this.pushTag("p", null);
-		this.append("<br />\n");
+		int newlineCount = 0;
 		for (int i = 0; i < raw.length(); i++) {
-			// if more than three newlines start this pattern create additional empty paragraphs
 			if (raw.charAt(i) != '\n') {
-				break;
-			}
-			if (i < 4) {
+				// only count newlines for paragraph creation
 				continue;
 			}
-			this.popTag("p");
+			newlineCount++;
+			if (newlineCount % 2 != 0) {
+				// two newlines are required to create a paragraph
+				continue;
+			}
 			this.pushTag("p", null);
 			this.append("<br />\n");
+			this.popTag("p");
 		}
 	}
 

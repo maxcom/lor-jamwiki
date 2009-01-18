@@ -41,6 +41,7 @@ Bugfixes:
   * Fix incorrect paragraph parsing when there is a blank line containing
     one or more whitespace characters between the paragraphs.  Reported by
     James Teer (j_teer).
+  * Fix parsing of multiple newlines to match Mediawiki.
 
 Translation Updates:
 
