@@ -108,7 +108,7 @@ public class Utilities {
 	 */
 	public static String decodeTopicName(String url, boolean decodeUnderlines) {
 		if (StringUtils.isBlank(url)) {
-			throw new IllegalArgumentException("Topic name not specified in decodeTopicName");
+			return url;
 		}
 		return (decodeUnderlines) ? StringUtils.replace(url, "_", " ") : url;
 	}
@@ -127,7 +127,7 @@ public class Utilities {
 	 */
 	public static String decodeAndEscapeTopicName(String url, boolean decodeUnderlines) {
 		if (StringUtils.isBlank(url)) {
-			throw new IllegalArgumentException("Topic name not specified in decodeAndEscapeTopicName");
+			return url;
 		}
 		String result = url;
 		try {
@@ -148,7 +148,7 @@ public class Utilities {
 	 */
 	public static String encodeTopicName(String url) {
 		if (StringUtils.isBlank(url)) {
-			throw new IllegalArgumentException("Topic name not specified in encodeTopicName");
+			return url;
 		}
 		return StringUtils.replace(url, " ", "_");
 	}
@@ -163,7 +163,7 @@ public class Utilities {
 	 */
 	public static String encodeAndEscapeTopicName(String url) {
 		if (StringUtils.isBlank(url)) {
-			throw new IllegalArgumentException("Topic name not specified in encodeAndEscapeTopicName");
+			return url;
 		}
 		String result = Utilities.encodeTopicName(url);
 		try {

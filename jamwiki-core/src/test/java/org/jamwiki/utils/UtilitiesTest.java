@@ -57,36 +57,24 @@ public class UtilitiesTest extends TestCase {
 	 *
 	 */
 	public void testdecodeAndEscapeTopicName2() throws Throwable {
-		try {
-			String result = Utilities.decodeAndEscapeTopicName(null, true);
-			fail("Expected IllegalArgumentException to be thrown");
-		} catch (IllegalArgumentException ex) {
-			// exception thrown as expected
-		}
+		String result = Utilities.decodeAndEscapeTopicName(null, true);
+		assertNull(result);
 	}
 
 	/**
 	 *
 	 */
 	public void testdecodeAndEscapeTopicName3() throws Throwable {
-		try {
-			String result = Utilities.decodeAndEscapeTopicName(" ", true);
-			fail("Expected IllegalArgumentException to be thrown");
-		} catch (IllegalArgumentException ex) {
-			// exception thrown as expected
-		}
+		String result = Utilities.decodeAndEscapeTopicName(" ", true);
+		assertEquals(" ", result);
 	}
 
 	/**
 	 *
 	 */
 	public void testEncodeAndEscapeTopicName() throws Throwable {
-		try {
-			String result = Utilities.encodeAndEscapeTopicName(null);
-			fail("Expected IllegalArgumentException to be thrown");
-		} catch (IllegalArgumentException ex) {
-			// exception thrown as expected
-		}
+		String result = Utilities.encodeAndEscapeTopicName(null);
+		assertNull(result);
 	}
 
 	/**
