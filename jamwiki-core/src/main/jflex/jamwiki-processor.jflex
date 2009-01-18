@@ -106,7 +106,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* paragraphs */
 /* TODO: this pattern does not match text such as "< is a less than sign" */
-startparagraph     = ([^< \n])|{inlinetagopen}|{imagelinkcaption}|{wikilink}|{htmllink}|{bold}|{bolditalic}|{italic}|{entity}
+startparagraph     = ({emptyline})? ({emptyline})? ([^< \n])|{inlinetagopen}|{imagelinkcaption}|{wikilink}|{htmllink}|{bold}|{bolditalic}|{italic}|{entity}
 paragraphempty     = ({emptyline}) ({emptyline})+
 endparagraph1      = ({newline}){1,2} ({hr}|{wikiheading}|{listitem}|{wikiprestart}|{tablestart})
 endparagraph2      = (({newline})([ \t]*)){2}
@@ -557,6 +557,11 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 <YYINITIAL>^{emptyline} {
     // suppress superfluous empty lines
     return "";
+}
+
+<PARAGRAPH>{newline} {
+    // convert newlines within paragraphs to spaces
+    return " ";
 }
 
 <YYINITIAL, WIKIPRE, PRE, LIST, TABLE, JAVASCRIPT, PARAGRAPH>{whitespace} {

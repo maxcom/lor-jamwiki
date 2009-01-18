@@ -448,18 +448,32 @@ public abstract class JFlexLexer {
 			// closed explicitly with a "</p>".
 			this.popTag("p");
 		}
-		// push back everything except for any opening newlines that were matched
-		yypushback(StringUtils.stripStart(raw, "\n\r\t").length());
+		// push back everything except for any opening newline that was matched
+		int pushback = raw.length();
+		int pos = raw.indexOf("\n");
+		if (pos != -1 && pos < raw.length()) {
+			pushback = raw.substring(pos + 1).length();
+		}
+		yypushback(pushback);
 	}
 
 	/**
 	 *
 	 */
 	protected void parseParagraphStart(String raw) {
+		int pushback = raw.length();
 		if (this.mode >= JFlexParser.MODE_LAYOUT) {
 			this.pushTag("p", null);
+			int newlineCount = StringUtils.countMatches(raw, "\n");
+			if (newlineCount > 0) {
+				pushback = StringUtils.stripStart(raw, " \n\r\t").length();
+			}
+			if (newlineCount == 2) {
+				// if the pattern matched two opening newlines then start the paragraph with a <br /> tag
+				this.append("<br />\n");
+			}
 		}
-		yypushback(yytext().length());
+		yypushback(pushback);
 	}
 
 	/**
@@ -467,7 +481,7 @@ public abstract class JFlexLexer {
 	 */
 	protected void parseParagraphEmpty(String raw) {
 		// push back everything up to the last of the opening newlines that were matched
-		yypushback(StringUtils.stripStart(raw, "\n\r\t").length() + 1);
+		yypushback(StringUtils.stripStart(raw, " \n\r\t").length() + 1);
 		if (this.mode < JFlexParser.MODE_LAYOUT) {
 			return;
 		}
