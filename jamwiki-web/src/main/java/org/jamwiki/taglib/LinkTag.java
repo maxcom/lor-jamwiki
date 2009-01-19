@@ -77,7 +77,7 @@ public class LinkTag extends BodyTagSupport {
 				url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, wikiLink, tagText, this.style, tagTarget, true);
 			} else {
 				// return raw link of the form "/wiki/en/Special:Edit"
-				url = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, wikiLink);
+				url = LinkUtil.buildTopicUrl(request.getContextPath(), virtualWiki, wikiLink);
 			}
 			this.pageContext.getOut().print(url);
 		} catch (Exception e) {

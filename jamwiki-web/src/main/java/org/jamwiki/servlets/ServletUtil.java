@@ -479,7 +479,7 @@ public class ServletUtil {
 	 *  target.  An example might be "Special:Login".
 	 */
 	protected static void redirect(ModelAndView next, String virtualWiki, String destination) throws Exception {
-		String target = LinkUtil.buildInternalLinkUrl(null, virtualWiki, destination);
+		String target = LinkUtil.buildTopicUrl(null, virtualWiki, destination, true);
 		String view = ServletUtil.SPRING_REDIRECT_PREFIX + target;
 		next.clear();
 		next.setViewName(view);
@@ -678,7 +678,7 @@ public class ServletUtil {
 		if (topic.getTopicType() == Topic.TYPE_REDIRECT && (request.getParameter("redirect") == null || !request.getParameter("redirect").equalsIgnoreCase("no"))) {
 			Topic child = WikiUtil.findRedirectedTopic(topic, 0);
 			if (!child.getName().equals(topic.getName())) {
-				String redirectUrl = LinkUtil.buildInternalLinkUrl(request.getContextPath(), topic.getVirtualWiki(), topic.getName());
+				String redirectUrl = LinkUtil.buildTopicUrl(request.getContextPath(), topic.getVirtualWiki(), topic.getName(), true);
 				// FIXME - hard coding
 				redirectUrl += LinkUtil.appendQueryParam("", "redirect", "no");
 				String redirectName = topic.getName();

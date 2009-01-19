@@ -76,7 +76,7 @@ public class PaginationTag extends BodyTagSupport {
 			String query = LinkUtil.appendQueryParam(wikiLink.getQuery(), "num", Integer.toString(num));
 			query += "&amp;offset=0";
 			wikiLink.setQuery(query);
-			output.append(LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, wikiLink));
+			output.append(LinkUtil.buildTopicUrl(request.getContextPath(), virtualWiki, wikiLink));
 			output.append("\">");
 			output.append(num);
 			output.append("</a>");
@@ -130,7 +130,7 @@ public class PaginationTag extends BodyTagSupport {
 			String query = LinkUtil.appendQueryParam(wikiLink.getQuery(), "num", Integer.toString(pagination.getNumResults()));
 			query += "&amp;offset=" + offset;
 			wikiLink.setQuery(query);
-			output.append(LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, wikiLink));
+			output.append(LinkUtil.buildTopicUrl(request.getContextPath(), virtualWiki, wikiLink));
 			output.append("\">");
 			if (previous) {
 				output.append(Utilities.formatMessage("common.pagination.previous", request.getLocale(), objects));

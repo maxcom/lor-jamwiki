@@ -102,7 +102,28 @@ public class LinkUtil {
 		// FIXME - hard coding
 		wikiLink.setDestination("Special:Edit");
 		wikiLink.setQuery(query);
-		return LinkUtil.buildInternalLinkUrl(context, virtualWiki, wikiLink);
+		return LinkUtil.buildTopicUrl(context, virtualWiki, wikiLink);
+	}
+
+	/**
+	 * Utility method for building the URL to an image file (NOT the image topic
+	 * page).  If the file does not exist then this method will return
+	 * <code>null</code>.
+	 *
+	 * @param context The current servlet context.
+	 * @param virtualWiki The virtual wiki for the URL that is being created.
+	 * @param topicName The name of the image for which a link is being created.
+	 * @return The URL to an image file (not the image topic) or <code>null</code>
+	 *  if the file does not exist.
+	 * @throws Exception Thrown if any error occurs while builing the image URL.
+	 */
+	public static String buildImageFileUrl(String context, String virtualWiki, String topicName) throws Exception {
+		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
+		if (wikiFile == null) {
+			return null;
+		}
+		String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + wikiFile.getUrl());
+		return FilenameUtils.separatorsToUnix(url);
 	}
 
 	/**
@@ -140,20 +161,19 @@ public class LinkUtil {
 	 *  HTML.
 	 */
 	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, int maxDimension, boolean suppressLink, String style, boolean escapeHtml) throws Exception {
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
-		if (topic == null) {
+		String url = LinkUtil.buildImageFileUrl(context, virtualWiki, topicName);
+		if (url == null) {
 			WikiLink uploadLink = LinkUtil.parseWikiLink("Special:Upload");
 			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, uploadLink, topicName, "edit", null, true);
 		}
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		String html = "";
 		if (topic.getTopicType() == Topic.TYPE_FILE) {
 			// file, not an image
 			if (StringUtils.isBlank(caption)) {
 				caption = topicName.substring(NamespaceHandler.NAMESPACE_IMAGE.length() + 1);
 			}
-			String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + wikiFile.getUrl());
-			url = FilenameUtils.separatorsToUnix(url);
 			html += "<a href=\"" + url + "\">";
 			if (escapeHtml) {
 				html += StringEscapeUtils.escapeHtml(caption);
@@ -185,17 +205,15 @@ public class LinkUtil {
 			html = html.trim() + "\">";
 		}
 		if (wikiImage.getWidth() > 0) {
-			html += "<div style=\"width:" + (wikiImage.getWidth() + 2) + "px\">";
+			html += "<div style=\"width:" + (wikiImage.getWidth() + 2) + "px;\">";
 		}
 		if (!suppressLink) {
-			html += "<a class=\"wikiimg\" href=\"" + LinkUtil.buildInternalLinkUrl(context, virtualWiki, topicName) + "\">";
+			html += "<a class=\"wikiimg\" href=\"" + LinkUtil.buildTopicUrl(context, virtualWiki, topicName, true) + "\">";
 		}
 		if (StringUtils.isBlank(style)) {
 			style = "wikiimg";
 		}
 		html += "<img class=\"" + style + "\" src=\"";
-		String url = new File(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH), wikiImage.getUrl()).getPath();
-		url = FilenameUtils.separatorsToUnix(url);
 		html += url;
 		html += "\"";
 		html += " width=\"" + wikiImage.getWidth() + "\"";
@@ -244,7 +262,7 @@ public class LinkUtil {
 	 *  HTML.
 	 */
 	public static String buildInternalLinkHtml(String context, String virtualWiki, WikiLink wikiLink, String text, String style, String target, boolean escapeHtml) throws Exception {
-		String url = LinkUtil.buildInternalLinkUrl(context, virtualWiki, wikiLink);
+		String url = LinkUtil.buildTopicUrl(context, virtualWiki, wikiLink);
 		String topic = wikiLink.getDestination();
 		if (StringUtils.isBlank(text)) {
 			text = topic;
@@ -287,15 +305,21 @@ public class LinkUtil {
 	 *  which breaks HTML links but is useful for servlet redirection URLs.
 	 * @param virtualWiki The virtual wiki for the link that is being created.
 	 * @param topic The topic name for the URL that is being generated.
-	 * @throws Exception Thrown if any error occurs while builing the link
-	 *  URL.
+	 * @param validateTopic Set to <code>true</code> if the topic must exist and
+	 *  must not be a "Special:" page.  If the topic does not exist then a link to
+	 *  an edit page will be returned.
+	 * @throws Exception Thrown if any error occurs while builing the link URL.
 	 */
-	public static String buildInternalLinkUrl(String context, String virtualWiki, String topic) throws Exception {
+	public static String buildTopicUrl(String context, String virtualWiki, String topic, boolean validateTopic) throws Exception {
 		if (StringUtils.isBlank(topic)) {
 			return null;
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(topic);
-		return LinkUtil.buildInternalLinkUrl(context, virtualWiki, wikiLink);
+		if (validateTopic) {
+			return LinkUtil.buildTopicUrl(context, virtualWiki, wikiLink);
+		} else {
+			return LinkUtil.buildTopicUrlNoEdit(context, virtualWiki, wikiLink.getDestination(), wikiLink.getSection(), wikiLink.getQuery());
+		}
 	}
 
 	/**
@@ -307,18 +331,41 @@ public class LinkUtil {
 	 * @param virtualWiki The virtual wiki for the link that is being created.
 	 * @param wikiLink The WikiLink object containing all relevant information
 	 *  about the link being generated.
-	 * @throws Exception Thrown if any error occurs while builing the link
-	 *  URL.
+	 * @throws Exception Thrown if any error occurs while builing the link URL.
 	 */
-	public static String buildInternalLinkUrl(String context, String virtualWiki, WikiLink wikiLink) throws Exception {
+	public static String buildTopicUrl(String context, String virtualWiki, WikiLink wikiLink) throws Exception {
 		String topic = wikiLink.getDestination();
 		String section = wikiLink.getSection();
 		String query = wikiLink.getQuery();
+		String url = LinkUtil.buildTopicUrlNoEdit(context, virtualWiki, topic, section, query);
 		if (StringUtils.isBlank(topic) && !StringUtils.isBlank(section)) {
-			return "#" + Utilities.encodeAndEscapeTopicName(section);
+			// do not check existence for section links
+			return url;
 		}
 		if (!LinkUtil.isExistingArticle(virtualWiki, topic)) {
-			return LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, -1);
+			url = LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, -1);
+		}
+		return url;
+	}
+
+	/**
+	 * Build a URL to the topic page for a given topic.  This method does NOT verify
+	 * if the topic exists or if it is a "Special:" page, simply returning the URL
+	 * for the topic and virtual wiki.
+	 *
+	 * @param context The servlet context path.  If this value is
+	 *  <code>null</code> then the resulting URL will NOT include context path,
+	 *  which breaks HTML links but is useful for servlet redirection URLs.
+	 * @param virtualWiki The virtual wiki for the link that is being created.
+	 * @param topicName The name of the topic for which a link is being built.
+	 * @param section The section of the page (#section) for which a link is
+	 *  being built.
+	 * @param queryString Query string parameters to append to the link.
+	 * @throws Exception Thrown if any error occurs while builing the link URL.
+	 */
+	private static String buildTopicUrlNoEdit(String context, String virtualWiki, String topicName, String section, String queryString) throws Exception {
+		if (StringUtils.isBlank(topicName) && !StringUtils.isBlank(section)) {
+			return "#" + Utilities.encodeAndEscapeTopicName(section);
 		}
 		String url = "";
 		if (context != null) {
@@ -329,12 +376,12 @@ public class LinkUtil {
 		// get the virtual wiki, which should have been set by the parent servlet
 		url += Utilities.encodeAndEscapeTopicName(virtualWiki);
 		url += "/";
-		url += Utilities.encodeAndEscapeTopicName(topic);
-		if (!StringUtils.isBlank(query)) {
-			if (!query.startsWith("?")) {
+		url += Utilities.encodeAndEscapeTopicName(topicName);
+		if (!StringUtils.isBlank(queryString)) {
+			if (!queryString.startsWith("?")) {
 				url += "?";
 			}
-			url += query;
+			url += queryString;
 		}
 		if (!StringUtils.isBlank(section)) {
 			if (!section.startsWith("#")) {
