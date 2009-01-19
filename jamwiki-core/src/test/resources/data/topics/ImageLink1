@@ -1,0 +1,6 @@
+<!-- test basic image links -->
+[[Image:Test Image.gif]]
+
+[[:Image:Test Image.gif]]
+
+[[:Image:Test Image.gif|Caption for link]]

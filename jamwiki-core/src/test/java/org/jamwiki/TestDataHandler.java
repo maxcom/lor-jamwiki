@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -220,14 +221,28 @@ public class TestDataHandler implements DataHandler {
 	 *
 	 */
 	public VirtualWiki lookupVirtualWiki(String virtualWikiName) throws Exception {
-		throw new UnsupportedOperationException();
+		if (!StringUtils.equals(virtualWikiName, "en")) {
+			// test handler, so hard-code "en" as the only valid virtual wiki
+			return null;
+		}
+		VirtualWiki virtualWiki = new VirtualWiki();
+		virtualWiki.setName(virtualWikiName);
+		return virtualWiki;
 	}
 
 	/**
 	 *
 	 */
-	public WikiFile lookupWikiFile(String virtualWiki, String topicName) throws Exception {
-		throw new UnsupportedOperationException();
+	public WikiFile lookupWikiFile(String virtualWiki, String fileName) throws Exception {
+		String content = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_TOPICS_DIR, fileName);
+		if (content == null) {
+			return null;
+		}
+		WikiFile wikiFile = new WikiFile();
+		wikiFile.setFileName(fileName);
+		wikiFile.setVirtualWiki(virtualWiki);
+		wikiFile.setUrl(StringUtils.trim(content));
+		return wikiFile;
 	}
 
 	/**

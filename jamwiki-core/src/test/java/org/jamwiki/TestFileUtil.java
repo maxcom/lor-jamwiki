@@ -30,8 +30,8 @@ import org.jamwiki.utils.WikiLogger;
 public class TestFileUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(TestFileUtil.class.getName());
-	public static final String TEST_TOPICS_DIR = "data/topics/";
 	public static final String TEST_RESULTS_DIR = "data/results/";
+	public static final String TEST_TOPICS_DIR = "data/topics/";
 
 	/**
 	 *
