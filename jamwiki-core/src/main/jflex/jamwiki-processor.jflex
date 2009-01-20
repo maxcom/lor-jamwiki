@@ -106,7 +106,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* paragraphs */
 /* TODO: this pattern does not match text such as "< is a less than sign" */
-startparagraph     = ({emptyline})? ({emptyline})? ([^< \n])|{inlinetagopen}|{imagelinkcaption}|{wikilink}|{htmllink}|{bold}|{bolditalic}|{italic}|{entity}
+startparagraph     = ({emptyline})? ({emptyline})? ([^< \n])|{inlinetagopen}|{imagelinkcaption}|{wikilink}|{htmllink}|{bold}|{bolditalic}|{italic}|{entity}|{nowiki}
 paragraphempty     = ({emptyline}) ({emptyline})+
 endparagraph1      = ({newline}){1,2} ({hr}|{wikiheading}|{listitem}|{wikiprestart}|{tablestart})
 endparagraph2      = (({newline})([ \t]*)){2}
@@ -116,6 +116,28 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 %state TABLE, LIST, PRE, JAVASCRIPT, WIKIPRE, PARAGRAPH
 
 %%
+
+/* ----- paragraphs ----- */
+
+<YYINITIAL>^{startparagraph} {
+    logger.finer("startparagraph: " + yytext() + " (" + yystate() + ")");
+    this.parseParagraphStart(yytext());
+    beginState(PARAGRAPH);
+    return "";
+}
+
+<YYINITIAL>^{paragraphempty} {
+    logger.finer("paragraphempty: " + yytext() + " (" + yystate() + ")");
+    this.parseParagraphEmpty(yytext());
+    return "";
+}
+
+<PARAGRAPH>{endparagraph} {
+    logger.finer("endparagraph: " + yytext() + " (" + yystate() + ")");
+    this.parseParagraphEnd(yytext());
+    endState();
+    return "";
+}
 
 /* ----- nowiki ----- */
 
@@ -363,28 +385,6 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
         return "";
     }
     return yytext();
-}
-
-/* ----- paragraphs ----- */
-
-<YYINITIAL>^{startparagraph} {
-    logger.finer("startparagraph: " + yytext() + " (" + yystate() + ")");
-    this.parseParagraphStart(yytext());
-    beginState(PARAGRAPH);
-    return "";
-}
-
-<YYINITIAL>^{paragraphempty} {
-    logger.finer("paragraphempty: " + yytext() + " (" + yystate() + ")");
-    this.parseParagraphEmpty(yytext());
-    return "";
-}
-
-<PARAGRAPH>{endparagraph} {
-    logger.finer("endparagraph: " + yytext() + " (" + yystate() + ")");
-    this.parseParagraphEnd(yytext());
-    endState();
-    return "";
 }
 
 /* ----- wiki links ----- */
