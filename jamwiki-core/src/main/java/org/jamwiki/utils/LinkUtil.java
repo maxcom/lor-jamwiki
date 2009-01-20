@@ -441,6 +441,27 @@ public class LinkUtil {
 	}
 
 	/**
+	 * Make sure a URL does not contain any extraneous characters such as "//" in
+	 * places where it should not.
+	 *
+	 * @param url The URL to be normalized.
+	 * @return The normalized URL.
+	 */
+	public static String normalize(String url) {
+		if (StringUtils.isBlank(url)) {
+			return url;
+		}
+		// first find the protocol
+		int pos = url.indexOf("://");
+		if (pos == -1 || pos == (url.length() - 1)) {
+			return url;
+		}
+		String protocol = url.substring(0, pos + "://".length());
+		String remainder = url.substring(protocol.length());
+		return protocol + StringUtils.replace(remainder, "//", "/");
+	}
+
+	/**
 	 * Parse a wiki topic link and return a <code>WikiLink</code> object
 	 * representing the link.  Wiki topic links are of the form "Topic?Query#Section".
 	 *

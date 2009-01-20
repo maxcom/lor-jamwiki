@@ -24,6 +24,7 @@ New Features:
     the old password EXCEPT when changing password.
   * Update CSS / HTML to use semantic code when possible - no visible changes.
   * Update the UI of the upgrade screen to provide additional information.
+  * Initial (and limited) implementation of some Mediawiki parser functions.
   * Updated spam filter patterns.
   * Upgrade to Lucene Search 2.4.0.
   * Upgrade to Spring Framework 2.5.6.

@@ -16,6 +16,8 @@
  */
 package org.jamwiki.parser.jflex;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,6 +28,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Topic;
@@ -121,6 +124,12 @@ public class TemplateTag {
 	private static final String MAGIC_SCRIPT_PATH = "SCRIPTPATH";
 	private static final String MAGIC_SERVER_NAME = "SERVERNAME";
 	private static Vector MAGIC_WORDS = new Vector();
+	private static final String PARSER_FUNCTION_ANCHOR_ENCODE = "anchorencode:";
+	private static final String PARSER_FUNCTION_FILE_PATH = "filepath:";
+	private static final String PARSER_FUNCTION_FULL_URL = "fullurl:";
+	private static final String PARSER_FUNCTION_LOCAL_URL = "localurl:";
+	private static final String PARSER_FUNCTION_URL_ENCODE = "urlencode:";
+	private static Vector PARSER_FUNCTIONS = new Vector();
 	protected static final String TEMPLATE_INCLUSION = "template-inclusion";
 	private static Pattern PARAM_NAME_VALUE_PATTERN = null;
 
@@ -206,6 +215,12 @@ public class TemplateTag {
 		MAGIC_WORDS.add(MAGIC_SERVER);
 		MAGIC_WORDS.add(MAGIC_SCRIPT_PATH);
 		MAGIC_WORDS.add(MAGIC_SERVER_NAME);
+		// parser functions
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_ANCHOR_ENCODE);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_FILE_PATH);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_FULL_URL);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOCAL_URL);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_URL_ENCODE);
 	}
 
 	/**
@@ -279,7 +294,13 @@ public class TemplateTag {
 		try {
 			parserInput.incrementTemplateDepth();
 			// extract the template name
-			String name = this.parseTemplateName(raw);
+			if (StringUtils.isBlank(raw)) {
+				throw new Exception("Empty template text");
+			}
+			if (!raw.startsWith("{{") || !raw.endsWith("}}")) {
+				throw new Exception ("Invalid template text: " + raw);
+			}
+			String name = raw.substring("{{".length(), raw.length() - "}}".length());
 			if (this.isMagicWord(name)) {
 				if (mode <= JFlexParser.MODE_MINIMAL) {
 					parserInput.decrementTemplateDepth();
@@ -289,6 +310,19 @@ public class TemplateTag {
 				parserInput.decrementTemplateDepth();
 				return output;
 			}
+			String[] parserFunctionInfo = this.parseParserFunctionInfo(name);
+			if (parserFunctionInfo != null) {
+				if (mode <= JFlexParser.MODE_MINIMAL) {
+					parserInput.decrementTemplateDepth();
+					return raw;
+				}
+				String output = this.processParserFunction(parserInput, parserFunctionInfo[0], parserFunctionInfo[1]);
+				if (output != null) {
+					parserInput.decrementTemplateDepth();
+					return output;
+				}
+			}
+			name = this.parseTemplateName(name);
 			boolean inclusion = false;
 			if (name.startsWith(NamespaceHandler.NAMESPACE_SEPARATOR)) {
 				name = name.substring(1);
@@ -361,6 +395,25 @@ public class TemplateTag {
 	}
 
 	/**
+	 * Determine if a template name corresponds to a parser function requiring
+	 * special handling.  See http://meta.wikimedia.org/wiki/Help:Magic_words
+	 * for a list of Mediawiki parser functions.  If the template name is a parser
+	 * function then return the parser function name and argument.
+	 */
+	private String[] parseParserFunctionInfo(String name) {
+		int pos = name.indexOf(":");
+		if (pos == -1 || (pos + 2) > name.length()) {
+			return null;
+		}
+		String parserFunction = name.substring(0, pos + 1).trim();
+		String parserFunctionArguments = name.substring(pos + 2).trim();
+		if (!PARSER_FUNCTIONS.contains(parserFunction) || StringUtils.isBlank(parserFunctionArguments)) {
+			return null;
+		}
+		return new String[]{parserFunction, parserFunctionArguments};
+	}
+
+	/**
 	 * After template parameter values have been set, process the template body
 	 * and replace parameters with parameter values or defaults, processing any
 	 * embedded parameters or templates.
@@ -391,23 +444,12 @@ public class TemplateTag {
 	 * the template name.
 	 */
 	private String parseTemplateName(String raw) throws Exception {
-		if (StringUtils.isBlank(raw)) {
-			throw new Exception("Empty template text");
-		}
-		if (!raw.startsWith("{{") || !raw.endsWith("}}")) {
-			throw new Exception ("Invalid template text: " + raw);
-		}
+		String name = raw;
 		int pos = raw.indexOf('|');
-		String name = null;
 		if (pos != -1) {
-			name = raw.substring("{{".length(), pos);
-		} else {
-			name = raw.substring("{{".length(), raw.length() - "}}".length());
+			name = name.substring(0, pos);
 		}
 		name = Utilities.decodeTopicName(name.trim(), true);
-		if (this.isMagicWord(name)) {
-			return name;
-		}
 		if (StringUtils.isBlank(name)) {
 			// FIXME - no need for an exception
 			throw new Exception("No template name specified");
@@ -723,6 +765,43 @@ public class TemplateTag {
 		}
 		*/
 		return name;
+	}
+
+	/**
+	 * Process a parser function, returning the value corresponding to the parser
+	 * function result.  See http://meta.wikimedia.org/wiki/Help:Magic_words for a
+	 * list of Mediawiki parser functions.
+	 */
+	private String processParserFunction(ParserInput parserInput, String parserFunction, String parserFunctionArguments) throws Exception {
+		if (parserFunction.equals(PARSER_FUNCTION_ANCHOR_ENCODE)) {
+			return Utilities.encodeAndEscapeTopicName(parserFunctionArguments);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_FILE_PATH)) {
+			// pre-pend the image namespace to the file name
+			String filename = NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR + parserFunctionArguments;
+			String result = LinkUtil.buildImageFileUrl(parserInput.getContext(), parserInput.getVirtualWiki(), filename);
+			if (result == null) {
+				return "";
+			}
+			// add nowiki tags so that the next round of parsing does not convert to an HTML link
+			return "<nowiki>" + LinkUtil.normalize(Environment.getValue(Environment.PROP_FILE_SERVER_URL) + result) + "</nowiki>";
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_FULL_URL)) {
+			String result = LinkUtil.buildTopicUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserFunctionArguments, false);
+			return LinkUtil.normalize(Environment.getValue(Environment.PROP_SERVER_URL) + result);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_LOCAL_URL)) {
+			return LinkUtil.buildTopicUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserFunctionArguments, false);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_URL_ENCODE)) {
+			try {
+				return URLEncoder.encode(parserFunctionArguments, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				// this should never happen
+				throw new IllegalStateException("Unsupporting encoding UTF-8");
+			}
+		}
+		return null;
 	}
 
 	/**
