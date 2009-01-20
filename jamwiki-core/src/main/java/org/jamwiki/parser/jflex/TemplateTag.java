@@ -119,17 +119,19 @@ public class TemplateTag {
 			if (!raw.startsWith("{{") || !raw.endsWith("}}")) {
 				throw new Exception ("Invalid template text: " + raw);
 			}
-			String name = raw.substring("{{".length(), raw.length() - "}}".length());
-			if (MagicWordUtil.isMagicWord(name)) {
+			String templateContent = raw.substring("{{".length(), raw.length() - "}}".length());
+			// parse for nested templates
+			templateContent = JFlexParserUtil.parseFragment(parserInput, templateContent, mode);
+			if (MagicWordUtil.isMagicWord(templateContent)) {
 				if (mode <= JFlexParser.MODE_MINIMAL) {
 					parserInput.decrementTemplateDepth();
 					return raw;
 				}
-				String output = MagicWordUtil.processMagicWord(parserInput, name);
+				String output = MagicWordUtil.processMagicWord(parserInput, templateContent);
 				parserInput.decrementTemplateDepth();
 				return output;
 			}
-			String[] parserFunctionInfo = ParserFunctionUtil.parseParserFunctionInfo(name);
+			String[] parserFunctionInfo = ParserFunctionUtil.parseParserFunctionInfo(templateContent);
 			if (parserFunctionInfo != null) {
 				if (mode <= JFlexParser.MODE_MINIMAL) {
 					parserInput.decrementTemplateDepth();
@@ -141,7 +143,7 @@ public class TemplateTag {
 					return output;
 				}
 			}
-			name = this.parseTemplateName(name);
+			String name = this.parseTemplateName(templateContent);
 			boolean inclusion = false;
 			if (name.startsWith(NamespaceHandler.NAMESPACE_SEPARATOR)) {
 				name = name.substring(1);

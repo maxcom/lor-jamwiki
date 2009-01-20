@@ -26,6 +26,7 @@ New Features:
   * Update the UI of the upgrade screen to provide additional information.
   * Initial (and limited) implementation of some Mediawiki parser functions.
   * Add support for the {{SITENAME}} and {{SERVER}} magic words.
+  * Allow nesting of templates ("{{template1|content={{template2}}}}").
   * Updated spam filter patterns.
   * Upgrade to Lucene Search 2.4.0.
   * Upgrade to Spring Framework 2.5.6.

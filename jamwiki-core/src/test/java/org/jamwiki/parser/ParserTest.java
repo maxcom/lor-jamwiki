@@ -91,7 +91,6 @@ public class ParserTest extends TestCase {
 		failures.add("PreformattedInvalid1");
 		failures.add("Heading5");
 		failures.add("ImageLink2"); // bad paragraph parsing - no <p> around <div> tags
-		failures.add("ParserFunctions2"); // failure of nested templates
 		return (failures.indexOf(fileName) != -1);
 	}
 
