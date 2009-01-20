@@ -61,7 +61,7 @@ public class ParserFunctionUtil {
 			return null;
 		}
 		String parserFunction = name.substring(0, pos + 1).trim();
-		String parserFunctionArguments = name.substring(pos + 2).trim();
+		String parserFunctionArguments = name.substring(pos + 1).trim();
 		if (!PARSER_FUNCTIONS.contains(parserFunction) || StringUtils.isBlank(parserFunctionArguments)) {
 			return null;
 		}
