@@ -211,6 +211,7 @@ public class AdminServlet extends JAMWikiServlet {
 	private void properties(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		Properties props = new Properties();
 		try {
+			setProperty(props, request, Environment.PROP_SERVER_URL);
 			setProperty(props, request, Environment.PROP_BASE_DEFAULT_TOPIC);
 			setProperty(props, request, Environment.PROP_BASE_LOGO_IMAGE);
 			setProperty(props, request, Environment.PROP_BASE_META_DESCRIPTION);
@@ -254,6 +255,7 @@ public class AdminServlet extends JAMWikiServlet {
 			props.setProperty(Environment.PROP_FILE_MAX_FILE_SIZE, Integer.toString(maxFileSizeInKB * 1000));
 			setProperty(props, request, Environment.PROP_FILE_DIR_FULL_PATH);
 			setProperty(props, request, Environment.PROP_FILE_DIR_RELATIVE_PATH);
+			setProperty(props, request, Environment.PROP_FILE_SERVER_URL);
 			setProperty(props, request, Environment.PROP_FILE_BLACKLIST_TYPE);
 			setProperty(props, request, Environment.PROP_FILE_BLACKLIST);
 			setProperty(props, request, Environment.PROP_FILE_WHITELIST);

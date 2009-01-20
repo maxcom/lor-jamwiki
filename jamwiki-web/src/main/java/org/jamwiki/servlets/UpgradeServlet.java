@@ -33,6 +33,7 @@ import org.jamwiki.db.DatabaseUpgrades;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -113,6 +114,11 @@ public class UpgradeServlet extends JAMWikiServlet {
 				if (!upgradeStyleSheet(request, messages)) {
 					success = false;
 				}
+			}
+			// perform any additional upgrades required
+			if (oldVersion.before(0, 7, 0)) {
+				Environment.setValue(Environment.PROP_FILE_SERVER_URL, Utilities.getServerUrl(request));
+				Environment.setValue(Environment.PROP_SERVER_URL, Utilities.getServerUrl(request));
 			}
 			Vector errors = ServletUtil.validateSystemSettings(Environment.getInstance());
 			if (!errors.isEmpty()) {

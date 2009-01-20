@@ -77,6 +77,12 @@ function onRSS() {
 <fieldset>
 <legend><f:message key="admin.header.general" /></legend>
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
+	<span class="formcaption"><label for="<%= Environment.PROP_SERVER_URL %>"><f:message key="admin.caption.serverurl" /></label></span>
+	<c:set var="PROP_SERVER_URL"><%= Environment.PROP_SERVER_URL %></c:set>
+	<span class="formelement"><jamwiki:text name="${PROP_SERVER_URL}" value="${props[PROP_SERVER_URL]}" size="50" id="${PROP_SERVER_URL}" /></span>
+	<div class="formhelp"><f:message key="admin.help.serverurl" /></div>
+</div>
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
 	<span class="formcaption"><label for="<%= Environment.PROP_BASE_DEFAULT_TOPIC %>"><f:message key="admin.caption.defaulttopic" /></label></span>
 	<c:set var="PROP_BASE_DEFAULT_TOPIC"><%= Environment.PROP_BASE_DEFAULT_TOPIC %></c:set>
 	<span class="formelement"><jamwiki:text name="${PROP_BASE_DEFAULT_TOPIC}" value="${props[PROP_BASE_DEFAULT_TOPIC]}" size="30" id="${PROP_BASE_DEFAULT_TOPIC}" /></span>
@@ -367,6 +373,12 @@ FIXME - Email not supported right now, comment this out
 	<c:set var="PROP_FILE_DIR_RELATIVE_PATH"><%= Environment.PROP_FILE_DIR_RELATIVE_PATH %></c:set>
 	<span class="formelement"><jamwiki:text name="${PROP_FILE_DIR_RELATIVE_PATH}" value="${props[PROP_FILE_DIR_RELATIVE_PATH]}" size="50" id="${PROP_FILE_DIR_RELATIVE_PATH}" /></span>
 	<div class="formhelp"><f:message key="admin.upload.help.uploaddirrel" /></div>
+</div>
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="upload" />">
+	<span class="formcaption"><label for="<%= Environment.PROP_FILE_SERVER_URL %>"><f:message key="admin.upload.caption.serverurl" /></label></span>
+	<c:set var="PROP_FILE_SERVER_URL"><%= Environment.PROP_FILE_SERVER_URL %></c:set>
+	<span class="formelement"><jamwiki:text name="${PROP_FILE_SERVER_URL}" value="${props[PROP_FILE_SERVER_URL]}" size="50" id="${PROP_FILE_SERVER_URL}" /></span>
+	<div class="formhelp"><f:message key="admin.upload.help.serverurl" /></div>
 </div>
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="upload" />">
 	<span class="formcaption"><label for="<%= Environment.PROP_FILE_BLACKLIST_TYPE %>"><f:message key="admin.upload.caption.blacklisttype" /></label></span>

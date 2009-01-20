@@ -75,6 +75,7 @@ public class Environment {
 	public static final String PROP_FILE_DIR_FULL_PATH = "file-dir-full-path";
 	public static final String PROP_FILE_DIR_RELATIVE_PATH = "file-dir-relative-path";
 	public static final String PROP_FILE_MAX_FILE_SIZE = "max-file-size";
+	public static final String PROP_FILE_SERVER_URL = "file-server-url";
 	public static final String PROP_FILE_WHITELIST = "file-whitelist";
 	public static final String PROP_IMAGE_RESIZE_INCREMENT = "image-resize-increment";
 	public static final String PROP_PARSER_ALLOW_HTML = "allowHTML";
@@ -92,6 +93,7 @@ public class Environment {
 	public static final String PROP_RECENT_CHANGES_NUM = "recent-changes-days";
 	public static final String PROP_RSS_ALLOWED = "rss-allowed";
 	public static final String PROP_RSS_TITLE = "rss-title";
+	public static final String PROP_SERVER_URL = "server-url";
 	public static final String PROP_TOPIC_EDITOR = "default-editor";
 	// FIXME - this property can be removed once the abilitity to upgrade to 0.6.0 is removed
 	public static final String PROP_TOPIC_FORCE_USERNAME = "force-username";
@@ -185,6 +187,7 @@ public class Environment {
 		defaults.setProperty(PROP_FILE_DIR_RELATIVE_PATH, Environment.retrieveDefaultRelativeUploadDirectory());
 		// size is in bytes
 		defaults.setProperty(PROP_FILE_MAX_FILE_SIZE, "2000000");
+		defaults.setProperty(PROP_FILE_SERVER_URL, "");
 		defaults.setProperty(PROP_FILE_WHITELIST, "bmp,gif,jpeg,jpg,pdf,png,properties,svg,txt,zip");
 		defaults.setProperty(PROP_IMAGE_RESIZE_INCREMENT, "100");
 		defaults.setProperty(PROP_PARSER_ALLOW_HTML, Boolean.TRUE.toString());
@@ -202,6 +205,7 @@ public class Environment {
 		defaults.setProperty(PROP_RECENT_CHANGES_NUM, "100");
 		defaults.setProperty(PROP_RSS_ALLOWED, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_RSS_TITLE, "Wiki Recent Changes");
+		defaults.setProperty(PROP_SERVER_URL, "");
 		// FIXME - hard coding
 		defaults.setProperty(PROP_TOPIC_EDITOR, "toolbar");
 		defaults.setProperty(PROP_TOPIC_SPAM_FILTER, Boolean.TRUE.toString());

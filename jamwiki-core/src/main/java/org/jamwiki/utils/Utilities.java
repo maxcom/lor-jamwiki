@@ -34,6 +34,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.ObjectUtils;
@@ -350,6 +351,15 @@ public class Utilities {
 			throw new FileNotFoundException("Unable to find class loader root");
 		}
 		return file.getParentFile();
+	}
+
+	/**
+	 * Given a request, determine the server URL.
+	 *
+	 * @return A Server URL of the form http://www.example.com/
+	 */
+	public static String getServerUrl(HttpServletRequest request) {
+		return request.getScheme() + "://" + request.getServerName() + ((request.getServerPort() != 80) ? ":" + request.getServerPort() : "") + "/";
 	}
 
 	/**

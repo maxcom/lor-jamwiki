@@ -34,6 +34,7 @@ import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
@@ -196,6 +197,8 @@ public class SetupServlet extends JAMWikiServlet {
 		} else {
 			WikiDatabase.setupDefaultDatabase(Environment.getInstance());
 		}
+		Environment.setValue(Environment.PROP_FILE_SERVER_URL, Utilities.getServerUrl(request));
+		Environment.setValue(Environment.PROP_SERVER_URL, Utilities.getServerUrl(request));
 	}
 
 	/**
