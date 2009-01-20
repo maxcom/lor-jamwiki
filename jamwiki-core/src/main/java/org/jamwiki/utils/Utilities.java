@@ -359,7 +359,7 @@ public class Utilities {
 	 * @return A Server URL of the form http://www.example.com/
 	 */
 	public static String getServerUrl(HttpServletRequest request) {
-		return request.getScheme() + "://" + request.getServerName() + ((request.getServerPort() != 80) ? ":" + request.getServerPort() : "") + "/";
+		return request.getScheme() + "://" + request.getServerName() + ((request.getServerPort() != 80) ? ":" + request.getServerPort() : "");
 	}
 
 	/**

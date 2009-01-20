@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.Vector;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Topic;
@@ -437,26 +438,46 @@ public class MagicWordUtil {
 			return Utilities.encodeAndEscapeTopicName(WikiUtil.extractTopicLink(parserInput.getTopicName()));
 		}
 		Topic topic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), parserInput.getTopicName(), false, null);
-		TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId().intValue());
-		Date revision = topicVersion.getEditDate();
+		TopicVersion topicVersion = null;
+		Date revision = null;
+		// null check needed for the test data handler, which does not implement topic versions
+		if (topic != null && topic.getCurrentVersionId() != null) {
+			topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId().intValue());
+			revision = topicVersion.getEditDate();
+		}
 		formatter.setTimeZone(utc);
 		if (name.equals(MAGIC_REVISION_DAY)) {
+			if (revision == null) {
+				return "";
+			}
 			formatter.applyPattern("d");
 			return formatter.format(revision);
 		}
 		if (name.equals(MAGIC_REVISION_DAY2)) {
+			if (revision == null) {
+				return "";
+			}
 			formatter.applyPattern("dd");
 			return formatter.format(revision);
 		}
 		if (name.equals(MAGIC_REVISION_MONTH)) {
+			if (revision == null) {
+				return "";
+			}
 			formatter.applyPattern("MM");
 			return formatter.format(revision);
 		}
 		if (name.equals(MAGIC_REVISION_YEAR)) {
+			if (revision == null) {
+				return "";
+			}
 			formatter.applyPattern("yyyy");
 			return formatter.format(revision);
 		}
 		if (name.equals(MAGIC_REVISION_TIMESTAMP)) {
+			if (revision == null) {
+				return "";
+			}
 			formatter.applyPattern("yyyyMMddHHmmss");
 			return formatter.format(revision);
 		}
@@ -465,13 +486,18 @@ public class MagicWordUtil {
 		}
 		if (name.equals(MAGIC_SITE_NAME)) {
 		}
+		*/
 		if (name.equals(MAGIC_SERVER)) {
+			return Environment.getValue(Environment.PROP_SERVER_URL);
 		}
+		/*
 		if (name.equals(MAGIC_SCRIPT_PATH)) {
 		}
-		if (name.equals(MAGIC_SERVER_NAME)) {
-		}
 		*/
+		if (name.equals(MAGIC_SERVER_NAME)) {
+			// add nowiki tags so that the next round of parsing does not convert to an HTML link
+			return "<nowiki>" + Environment.getValue(Environment.PROP_SERVER_URL) + "</nowiki>";
+		}
 		return name;
 	}
 }

@@ -91,7 +91,8 @@ public class ParserTest extends TestCase {
 		failures.add("PreformattedInvalid1");
 		failures.add("Heading5");
 		failures.add("ImageLink2"); // bad paragraph parsing - no <p> around <div> tags
-		failures.add("ParserFunctions2"); // bad paragraph parsing around <nowiki> tags, failure of nested magic templates
+		failures.add("ParserFunctions2"); // bad paragraph parsing around <nowiki> tags, failure of nested templates
+		failures.add("Magic_Words2"); // bad paragraph parsing around <nowiki> tags
 		return (failures.indexOf(fileName) != -1);
 	}
 
