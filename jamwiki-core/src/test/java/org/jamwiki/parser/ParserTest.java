@@ -88,6 +88,7 @@ public class ParserTest extends TestCase {
 		failures.add("UnbalancedTag1");
 		failures.add("UnbalancedTag3");
 		failures.add("Paragraph13");
+		failures.add("Paragraph15"); // failure parsing of empty paragraphs with <nowiki>
 		failures.add("PreformattedInvalid1");
 		failures.add("Heading5");
 		failures.add("ImageLink2"); // bad paragraph parsing - no <p> around <div> tags
