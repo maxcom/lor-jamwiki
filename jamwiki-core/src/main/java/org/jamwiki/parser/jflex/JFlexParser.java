@@ -59,7 +59,7 @@ public class JFlexParser extends AbstractParser {
 	static {
 		try {
 			// is the topic a redirect?
-			REDIRECT_PATTERN = Pattern.compile("#REDIRECT[ ]+\\[\\[([^\\n\\r\\]]+)\\]\\]", Pattern.CASE_INSENSITIVE);
+			REDIRECT_PATTERN = Pattern.compile("(#REDIRECT[ ]+\\[\\[([^\\n\\r\\]]+)\\]\\])([ \t\n\r]*\\[\\[[ ]*Category\\:[^\\n\\r\\]]+\\]\\])*", Pattern.CASE_INSENSITIVE);
 		} catch (Exception e) {
 			logger.severe("Unable to compile pattern", e);
 		}
@@ -97,7 +97,7 @@ public class JFlexParser extends AbstractParser {
 			return null;
 		}
 		Matcher m = REDIRECT_PATTERN.matcher(content.trim());
-		return (m.matches()) ? Utilities.decodeAndEscapeTopicName(m.group(1).trim(), true) : null;
+		return (m.matches()) ? Utilities.decodeAndEscapeTopicName(m.group(2).trim(), true) : null;
 	}
 
 	/**
