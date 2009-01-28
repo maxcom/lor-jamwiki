@@ -102,7 +102,7 @@ public class WikiLinkTag {
 	 */
 	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
 		try {
-			this.processLinkMetadata(parserOutput, raw);
+			raw = this.processLinkMetadata(parserOutput, mode, raw);
 			if (mode <= JFlexParser.MODE_PREPROCESS) {
 				// do not parse to HTML when in preprocess mode
 				return raw;
@@ -177,26 +177,28 @@ public class WikiLinkTag {
 			// no destination or section
 			return raw;
 		}
-		if (!wikiLink.getColon() && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
-			// category tag, but not a category link
-			return "";
-		}
 		return this.buildInternalLinkUrl(parserInput, mode, raw);
 	}
 
 	/**
 	 *
 	 */
-	private void processLinkMetadata(ParserOutput parserOutput, String raw) {
+	private String processLinkMetadata(ParserOutput parserOutput, int mode, String raw) {
 		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(raw);
 		if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
-			return;
+			return raw;
 		}
-		if (!wikiLink.getColon() && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
+		String result = raw;
+		if (!wikiLink.getColon() && StringUtils.equals(wikiLink.getNamespace(), NamespaceHandler.NAMESPACE_CATEGORY)) {
 			parserOutput.addCategory(wikiLink.getDestination(), wikiLink.getText());
+			if (mode > JFlexParser.MODE_MINIMAL) {
+				// keep the category around in minimal parsing mode, otherwise suppress it from the output
+				result = "";
+			}
 		}
 		if (!StringUtils.isBlank(wikiLink.getDestination())) {
 			parserOutput.addLink(wikiLink.getDestination());
 		}
+		return result;
 	}
 }

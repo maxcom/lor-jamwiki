@@ -59,7 +59,7 @@ public class JFlexParser extends AbstractParser {
 	static {
 		try {
 			// is the topic a redirect?
-			REDIRECT_PATTERN = Pattern.compile("(#REDIRECT[ ]+\\[\\[([^\\n\\r\\]]+)\\]\\])([ \t\n\r]*\\[\\[[ ]*Category\\:[^\\n\\r\\]]+\\]\\])*", Pattern.CASE_INSENSITIVE);
+			REDIRECT_PATTERN = Pattern.compile("#REDIRECT[ ]+\\[\\[([^\\n\\r\\]]+)\\]\\]", Pattern.CASE_INSENSITIVE);
 		} catch (Exception e) {
 			logger.severe("Unable to compile pattern", e);
 		}
@@ -92,12 +92,14 @@ public class JFlexParser extends AbstractParser {
 	/**
 	 *
 	 */
-	protected String isRedirect(String content) {
-		if (StringUtils.isBlank(content)) {
+	private String isRedirect(ParserInput parserInput, String raw, int mode) throws Exception {
+		if (StringUtils.isBlank(raw) || mode <= JFlexParser.MODE_PREPROCESS) {
 			return null;
 		}
-		Matcher m = REDIRECT_PATTERN.matcher(content.trim());
-		return (m.matches()) ? Utilities.decodeAndEscapeTopicName(m.group(2).trim(), true) : null;
+		// pre-process parse to handle categories, HTML comments, etc.
+		String preprocessed = JFlexParserUtil.parseFragment(parserInput, raw, JFlexParser.MODE_PREPROCESS);
+		Matcher m = REDIRECT_PATTERN.matcher(preprocessed.trim());
+		return (m.matches()) ? Utilities.decodeAndEscapeTopicName(m.group(1).trim(), true) : null;
 	}
 
 	/**
@@ -120,15 +122,6 @@ public class JFlexParser extends AbstractParser {
 			lexer.append(line);
 		}
 		this.parserInput.decrementDepth();
-		// if the topic is a redirect store the redirect target
-		String redirect = this.isRedirect(raw);
-		if (!StringUtils.isBlank(redirect)) {
-			boolean colon = (redirect.length() > 1 && redirect.startsWith(":"));
-			if (colon) {
-				redirect = redirect.substring(1);
-			}
-			parserOutput.setRedirect(redirect);
-		}
 		return lexer.popAllTags();
 	}
 
@@ -176,7 +169,7 @@ public class JFlexParser extends AbstractParser {
 		output = this.parsePreProcess(parserOutput, output, JFlexParser.MODE_PREPROCESS);
 		output = this.parseProcess(parserOutput, output, JFlexParser.MODE_LAYOUT);
 		output = this.parsePostProcess(parserOutput, output, JFlexParser.MODE_POSTPROCESS);
-		if (!StringUtils.isBlank(this.isRedirect(raw))) {
+		if (!StringUtils.isBlank(parserOutput.getRedirect())) {
 			// redirects are parsed differently
 			output = this.parseRedirect(parserOutput, raw);
 		}
@@ -254,6 +247,15 @@ public class JFlexParser extends AbstractParser {
 	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
 	private String parseProcess(ParserOutput parserOutput, String raw, int mode) throws Exception {
+		// if the topic is a redirect store the redirect target
+		String redirect = this.isRedirect(parserInput, raw, mode);
+		if (!StringUtils.isBlank(redirect)) {
+			boolean colon = (redirect.length() > 1 && redirect.startsWith(":"));
+			if (colon) {
+				redirect = redirect.substring(1);
+			}
+			parserOutput.setRedirect(redirect);
+		}
 		StringReader reader = toStringReader(raw);
 		JAMWikiProcessor lexer = new JAMWikiProcessor(reader);
 		return this.lex(lexer, raw, parserOutput, mode);
@@ -288,7 +290,7 @@ public class JFlexParser extends AbstractParser {
 	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
 	protected String parseRedirect(ParserOutput parserOutput, String raw) throws Exception {
-		String redirect = this.isRedirect(raw);
+		String redirect = this.isRedirect(parserInput, raw, JFlexParser.MODE_LAYOUT);
 		WikiLink wikiLink = JFlexParserUtil.parseWikiLink("[[" + redirect + "]]");
 		String style = "redirect";
 		String virtualWiki = this.parserInput.getVirtualWiki();
