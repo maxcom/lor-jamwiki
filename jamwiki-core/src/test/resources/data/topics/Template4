@@ -1,0 +1,12 @@
+<!-- test inclusion - the specified wiki topic should be included verbatim -->
+test
+
+{{:Example1}}
+
+test
+
+{{:example2}}
+
+test
+
+{{:non existent topic}}

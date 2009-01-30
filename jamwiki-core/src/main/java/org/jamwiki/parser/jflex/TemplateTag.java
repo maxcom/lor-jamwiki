@@ -166,7 +166,7 @@ public class TemplateTag {
 				templateTopic = null;
 			}
 			if (inclusion) {
-				String output = this.processTemplateInclusion(parserInput, parserOutput, templateTopic, raw, name);
+				String output = this.processTemplateInclusion(parserInput, parserOutput, mode, templateTopic, raw, name);
 				parserInput.decrementTemplateDepth();
 				return output;
 			}
@@ -311,13 +311,13 @@ public class TemplateTag {
 	 * Given a template call of the form "{{:name}}" parse the template
 	 * inclusion.
 	 */
-	private String processTemplateInclusion(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String raw, String name) throws Exception {
+	private String processTemplateInclusion(ParserInput parserInput, ParserOutput parserOutput, int mode, Topic templateTopic, String raw, String name) throws Exception {
 		if (templateTopic == null) {
 			return "[[" + name + "]]";
 		}
 		// FIXME - disable section editing
 		parserInput.getTempParams().put(TEMPLATE_INCLUSION, "true");
-		return templateTopic.getTopicContent();
+		return (StringUtils.isBlank(templateTopic.getTopicContent())) ? templateTopic.getTopicContent() : JFlexParserUtil.parseFragment(parserInput, templateTopic.getTopicContent(), mode);
 	}
 
 	/**
