@@ -170,7 +170,7 @@ public class TemplateTag {
 				parserInput.decrementTemplateDepth();
 				return output;
 			}
-			String output = this.processTemplateContent(parserInput, parserOutput, templateTopic, raw, name);
+			String output = this.processTemplateContent(parserInput, parserOutput, templateTopic, templateContent, name);
 			parserInput.decrementTemplateDepth();
 			return output;
 		} catch (Throwable t) {
@@ -271,11 +271,10 @@ public class TemplateTag {
 	 * Given a template call of the form "{{name|param=value|param=value}}"
 	 * parse the parameter names and values.
 	 */
-	private void parseTemplateParameterValues(ParserInput parserInput, String raw) throws Exception {
-		String content = raw.substring("{{".length(), raw.length() - "}}".length());
-		Vector tokens = this.tokenizeParams(content);
+	private void parseTemplateParameterValues(ParserInput parserInput, String templateContent) throws Exception {
+		Vector tokens = this.tokenizeParams(templateContent);
 		if (tokens.isEmpty()) {
-			throw new Exception("No template name found in " + raw);
+			throw new Exception("No template name found in " + templateContent);
 		}
 		int count = -1;
 		for (Iterator iterator = tokens.iterator(); iterator.hasNext();) {
@@ -290,7 +289,7 @@ public class TemplateTag {
 			if (name == null) {
 				name = Integer.toString(count);
 			}
-			String value = (nameValue[1] == null) ? null : JFlexParserUtil.parseFragment(parserInput, nameValue[1].trim(), JFlexParser.MODE_PREPROCESS);
+			String value = (nameValue[1] == null) ? null : nameValue[1].trim();
 			this.parameterValues.put(name, value);
 		}
 	}
@@ -299,12 +298,12 @@ public class TemplateTag {
 	 * Given a template call of the form "{{name|param|param}}" return the
 	 * parsed output.
 	 */
-	private String processTemplateContent(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String raw, String name) throws Exception {
+	private String processTemplateContent(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String templateContent, String name) throws Exception {
 		if (templateTopic == null) {
 			return "[[" + name + "]]";
 		}
 		// set template parameter values
-		this.parseTemplateParameterValues(parserInput, raw);
+		this.parseTemplateParameterValues(parserInput, templateContent);
 		return this.parseTemplateBody(parserInput, templateTopic.getTopicContent());
 	}
 
