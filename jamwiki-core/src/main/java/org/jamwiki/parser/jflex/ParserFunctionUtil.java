@@ -74,34 +74,91 @@ public class ParserFunctionUtil {
 	 * list of Mediawiki parser functions.
 	 */
 	protected static String processParserFunction(ParserInput parserInput, String parserFunction, String parserFunctionArguments) throws Exception {
+		String[] parserFunctionArgumentArray = ParserFunctionUtil.parseParserFunctionArgumentArray(parserFunctionArguments);
 		if (parserFunction.equals(PARSER_FUNCTION_ANCHOR_ENCODE)) {
-			return Utilities.encodeAndEscapeTopicName(parserFunctionArguments);
+			return Utilities.encodeAndEscapeTopicName(parserFunctionArgumentArray[0]);
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_FILE_PATH)) {
-			// pre-pend the image namespace to the file name
-			String filename = NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR + parserFunctionArguments;
-			String result = LinkUtil.buildImageFileUrl(parserInput.getContext(), parserInput.getVirtualWiki(), filename);
-			if (result == null) {
-				return "";
-			}
-			// add nowiki tags so that the next round of parsing does not convert to an HTML link
-			return "<nowiki>" + LinkUtil.normalize(Environment.getValue(Environment.PROP_FILE_SERVER_URL) + result) + "</nowiki>";
+			return ParserFunctionUtil.parseFilePath(parserInput, parserFunctionArgumentArray);
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_FULL_URL)) {
-			String result = LinkUtil.buildTopicUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserFunctionArguments, false);
-			return LinkUtil.normalize(Environment.getValue(Environment.PROP_SERVER_URL) + result);
+			return ParserFunctionUtil.parseFileUrl(parserInput, parserFunctionArgumentArray);
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_LOCAL_URL)) {
-			return LinkUtil.buildTopicUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserFunctionArguments, false);
+			return ParserFunctionUtil.parseLocalUrl(parserInput, parserFunctionArgumentArray);
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_URL_ENCODE)) {
-			try {
-				return URLEncoder.encode(parserFunctionArguments, "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				// this should never happen
-				throw new IllegalStateException("Unsupporting encoding UTF-8");
-			}
+			return ParserFunctionUtil.parseUrlEncode(parserInput, parserFunctionArgumentArray);
 		}
 		return null;
+	}
+
+	/**
+	 * Parse the {{filepath}} parser function.
+	 */
+	private static String parseFilePath(ParserInput parserInput, String[] parserFunctionArgumentArray) throws Exception {
+		// pre-pend the image namespace to the file name
+		String filename = NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR + parserFunctionArgumentArray[0];
+		String result = LinkUtil.buildImageFileUrl(parserInput.getContext(), parserInput.getVirtualWiki(), filename);
+		if (result == null) {
+			return "";
+		}
+		result = LinkUtil.normalize(Environment.getValue(Environment.PROP_FILE_SERVER_URL) + result);
+		if (parserFunctionArgumentArray.length > 1 && parserFunctionArgumentArray[1].equalsIgnoreCase("nowiki")) {
+			// add nowiki tags so that the next round of parsing does not convert to an HTML link
+			result = "<nowiki>" + result + "</nowiki>";
+		}
+		return result;
+	}
+
+	/**
+	 * Parse the {{fileurl}} parser function.
+	 */
+	private static String parseFileUrl(ParserInput parserInput, String[] parserFunctionArgumentArray) throws Exception {
+		String result = LinkUtil.buildTopicUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserFunctionArgumentArray[0], false);
+		result = LinkUtil.normalize(Environment.getValue(Environment.PROP_SERVER_URL) + result);
+		if (parserFunctionArgumentArray.length > 1 && !StringUtils.isBlank(parserFunctionArgumentArray[1])) {
+			result += "?" + parserFunctionArgumentArray[1];
+		}
+		return result;
+	}
+
+	/**
+	 * Parse the {{localurl}} parser function.
+	 */
+	private static String parseLocalUrl(ParserInput parserInput, String[] parserFunctionArgumentArray) throws Exception {
+		String result = LinkUtil.buildTopicUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserFunctionArgumentArray[0], false);
+		if (parserFunctionArgumentArray.length > 1 && !StringUtils.isBlank(parserFunctionArgumentArray[1])) {
+			result += "?" + parserFunctionArgumentArray[1];
+		}
+		return result;
+	}
+
+	/**
+	 * Parse the {{urlencode}} parser function.
+	 */
+	private static String parseUrlEncode(ParserInput parserInput, String[] parserFunctionArgumentArray) {
+		try {
+			return URLEncoder.encode(parserFunctionArgumentArray[0], "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// this should never happen
+			throw new IllegalStateException("Unsupporting encoding UTF-8");
+		}
+	}
+
+	/**
+	 * Parse parser function arguments of the form "arg1|arg2", trimming excess whitespace
+	 * and returning an array of results.
+	 */
+	private static String[] parseParserFunctionArgumentArray(String parserFunctionArguments) {
+		if (StringUtils.isBlank(parserFunctionArguments)) {
+			return new String[0];
+		}
+		String[] parserFunctionArgumentArray = parserFunctionArguments.split("\\|");
+		// trim results
+		for (int i = 0; i < parserFunctionArgumentArray.length; i++) {
+			parserFunctionArgumentArray[i] = parserFunctionArgumentArray[i].trim();
+		}
+		return parserFunctionArgumentArray;
 	}
 }
