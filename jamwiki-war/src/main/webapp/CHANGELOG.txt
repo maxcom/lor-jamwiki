@@ -50,6 +50,8 @@ Bugfixes:
   * Fix parsing of multiple newlines to match Mediawiki.
   * Fix parsing of links containing parantheses such as
     http://example.com/page_(page).  Reported by  Michael Habbert.
+  * Fix parsing of nested tags of the form <tt><tt>test</tt></tt> which were
+    producing an extra closing tag.
 
 Translation Updates:
 

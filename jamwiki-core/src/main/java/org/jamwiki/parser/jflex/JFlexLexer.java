@@ -216,7 +216,7 @@ public abstract class JFlexLexer {
 		tag.setTagAttributes(tagAttributes);
 		// many HTML tags cannot nest (ie "<li><li></li></li>" is invalid), so if a non-nesting
 		// tag is being added and the previous tag is of the same type, close the previous tag
-		if (!JFlexParserUtil.isNestingTag(tagType) && this.peekTag().getTagType().equals(tagType)) {
+		if (JFlexParserUtil.isNonNestingTag(tagType) && this.peekTag().getTagType().equals(tagType)) {
 			this.popTag(tagType);
 		}
 		this.tagStack.push(tag);
