@@ -81,17 +81,18 @@ public class ParserTest extends TestCase {
 	// TODO - handle failure cases better.
 	private boolean knownFailure(String fileName) {
 		ArrayList failures = new ArrayList();
+		failures.add("Heading5");
+		failures.add("HtmlCommentTest2");
+		failures.add("HtmlMismatchTest3");
 		failures.add("HtmlXSS1");
+		failures.add("ImageLink2"); // bad paragraph parsing - no <p> around <div> tags
 		failures.add("NestedTable1");
 		failures.add("NestedTable2");
-		failures.add("HtmlMismatchTest3");
-		failures.add("UnbalancedTag1");
-		failures.add("UnbalancedTag3");
 		failures.add("Paragraph13");
 		failures.add("Paragraph15"); // failure parsing of empty paragraphs with <nowiki>
 		failures.add("PreformattedInvalid1");
-		failures.add("Heading5");
-		failures.add("ImageLink2"); // bad paragraph parsing - no <p> around <div> tags
+		failures.add("UnbalancedTag1");
+		failures.add("UnbalancedTag3");
 		return (failures.indexOf(fileName) != -1);
 	}
 
