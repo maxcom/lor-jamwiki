@@ -18,3 +18,7 @@ http://www.google.com/page_(page)
 http://www.google.com/page_()
 
 (http://www.google.com/page_())
+
+http://www.google.com/<br />
+
+http://www.google.com/'''bold'''

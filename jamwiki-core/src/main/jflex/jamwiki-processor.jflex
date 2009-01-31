@@ -94,7 +94,7 @@ tablecaption       = "|+" | "|+" ({tableattribute})+ "|" [^\|]
 wikilink           = "[[" [^\]\n]+ "]]" [a-z]*
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
 htmllinkwiki       = "[" ({protocol}) ([^\]\n]+) "]"
-htmllinkraw        = ({protocol}) ([^ \n\t]+)
+htmllinkraw        = ({protocol}) ([^ <'\n\t]+)
 htmllink           = ({htmllinkwiki}) | ({htmllinkraw})
 /* FIXME - hard-coding of image namespace */
 imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\]\[]* ({wikilink} | {htmllinkwiki}) [^\n\]\[]*)+ "]]"

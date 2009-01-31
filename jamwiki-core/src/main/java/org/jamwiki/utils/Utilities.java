@@ -199,15 +199,15 @@ public class Utilities {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = text.length() - 1; i >= 0; i--) {
 			char c = text.charAt(i);
-			if (c == '.' || c == ';' || c == ',' || c == ':' || c == '(' || c == '[') {
+			if (c == '.' || c == ';' || c == ',' || c == ':' || c == '(' || c == '[' || c == '{') {
 				buffer.append(c);
 				continue;
 			}
-			// if the value ends with ) or ] then strip it UNLESS there is a matching
+			// if the value ends with ), ] or } then strip it UNLESS there is a matching
 			// opening tag
-			if (c == ')' || c == ']') {
+			if (c == ')' || c == ']' || c == '}') {
 				char closeChar = c;
-				char openChar = (closeChar == ')') ? '(' : '[';
+				char openChar = (closeChar == ')') ? '(' : ((closeChar == ']') ? '[' : '{');
 				int openCount = 1;
 				for (int j = (i - 1); j > 0; j--) {
 					if (text.charAt(j) == closeChar) {
