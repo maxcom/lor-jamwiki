@@ -37,6 +37,10 @@ public class ParserFunctionUtil {
 	private static final String PARSER_FUNCTION_FILE_PATH = "filepath:";
 	private static final String PARSER_FUNCTION_FULL_URL = "fullurl:";
 	private static final String PARSER_FUNCTION_LOCAL_URL = "localurl:";
+	private static final String PARSER_FUNCTION_LOWER_CASE = "lc:";
+	private static final String PARSER_FUNCTION_LOWER_CASE_FIRST = "lcfirst:";
+	private static final String PARSER_FUNCTION_UPPER_CASE = "uc:";
+	private static final String PARSER_FUNCTION_UPPER_CASE_FIRST = "ucfirst:";
 	private static final String PARSER_FUNCTION_URL_ENCODE = "urlencode:";
 	private static Vector PARSER_FUNCTIONS = new Vector();
 
@@ -46,6 +50,10 @@ public class ParserFunctionUtil {
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_FILE_PATH);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_FULL_URL);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOCAL_URL);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOWER_CASE);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOWER_CASE_FIRST);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_UPPER_CASE);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_UPPER_CASE_FIRST);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_URL_ENCODE);
 	}
 
@@ -87,6 +95,18 @@ public class ParserFunctionUtil {
 		if (parserFunction.equals(PARSER_FUNCTION_LOCAL_URL)) {
 			return ParserFunctionUtil.parseLocalUrl(parserInput, parserFunctionArgumentArray);
 		}
+		if (parserFunction.equals(PARSER_FUNCTION_LOWER_CASE)) {
+			return ParserFunctionUtil.parseLowerCase(parserInput, parserFunctionArgumentArray);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_LOWER_CASE_FIRST)) {
+			return ParserFunctionUtil.parseLowerCaseFirst(parserInput, parserFunctionArgumentArray);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_UPPER_CASE)) {
+			return ParserFunctionUtil.parseUpperCase(parserInput, parserFunctionArgumentArray);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_UPPER_CASE_FIRST)) {
+			return ParserFunctionUtil.parseUpperCaseFirst(parserInput, parserFunctionArgumentArray);
+		}
 		if (parserFunction.equals(PARSER_FUNCTION_URL_ENCODE)) {
 			return ParserFunctionUtil.parseUrlEncode(parserInput, parserFunctionArgumentArray);
 		}
@@ -112,7 +132,7 @@ public class ParserFunctionUtil {
 	}
 
 	/**
-	 * Parse the {{fileurl}} parser function.
+	 * Parse the {{fileurl:}} parser function.
 	 */
 	private static String parseFileUrl(ParserInput parserInput, String[] parserFunctionArgumentArray) throws Exception {
 		String result = LinkUtil.buildTopicUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserFunctionArgumentArray[0], false);
@@ -124,7 +144,7 @@ public class ParserFunctionUtil {
 	}
 
 	/**
-	 * Parse the {{localurl}} parser function.
+	 * Parse the {{localurl:}} parser function.
 	 */
 	private static String parseLocalUrl(ParserInput parserInput, String[] parserFunctionArgumentArray) throws Exception {
 		String result = LinkUtil.buildTopicUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserFunctionArgumentArray[0], false);
@@ -135,7 +155,35 @@ public class ParserFunctionUtil {
 	}
 
 	/**
-	 * Parse the {{urlencode}} parser function.
+	 * Parse the {{lc:}} parser function.
+	 */
+	private static String parseLowerCase(ParserInput parserInput, String[] parserFunctionArgumentArray) throws Exception {
+		return StringUtils.lowerCase(parserFunctionArgumentArray[0]);
+	}
+
+	/**
+	 * Parse the {{lcfirst:}} parser function.
+	 */
+	private static String parseLowerCaseFirst(ParserInput parserInput, String[] parserFunctionArgumentArray) throws Exception {
+		return StringUtils.uncapitalize(parserFunctionArgumentArray[0]);
+	}
+
+	/**
+	 * Parse the {{uc:}} parser function.
+	 */
+	private static String parseUpperCase(ParserInput parserInput, String[] parserFunctionArgumentArray) throws Exception {
+		return StringUtils.upperCase(parserFunctionArgumentArray[0]);
+	}
+
+	/**
+	 * Parse the {{ucfirst:}} parser function.
+	 */
+	private static String parseUpperCaseFirst(ParserInput parserInput, String[] parserFunctionArgumentArray) throws Exception {
+		return StringUtils.capitalize(parserFunctionArgumentArray[0]);
+	}
+
+	/**
+	 * Parse the {{urlencode:}} parser function.
 	 */
 	private static String parseUrlEncode(ParserInput parserInput, String[] parserFunctionArgumentArray) {
 		try {

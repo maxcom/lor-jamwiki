@@ -9,3 +9,11 @@
 {{localurl: Test Topic}}
 
 {{urlencode: a_b 40% x y}}
+
+{{lc:aBcDe Fg}}
+
+{{lcfirst:ABcDe Fg}}
+
+{{uc:aBcDe Fg}}
+
+{{ucfirst:aBcDe Fg}}
