@@ -51,6 +51,10 @@
 		<class>org.jamwiki.db.AnsiDataHandler</class>
 	</data-handler>
 	<data-handler>
+		<name>h2</name>
+		<class>org.jamwiki.db.H2DataHandler</class>
+	</data-handler>
+	<data-handler>
 		<name>hsql</name>
 		<class>org.jamwiki.db.HSqlDataHandler</class>
 	</data-handler>

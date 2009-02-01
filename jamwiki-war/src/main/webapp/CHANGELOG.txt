@@ -30,6 +30,7 @@ New Features:
   * Add support for the {{SITENAME}} and {{SERVER}} magic words.
   * Allow nesting of templates ("{{template1|content={{template2}}}}").
   * Support categories on #REDIRECT pages to match Mediawiki.
+  * Add "H2" as a database configuration option.
   * Updated spam filter patterns.
   * Upgrade to Lucene Search 2.4.0.
   * Upgrade to Spring Framework 2.5.6.
