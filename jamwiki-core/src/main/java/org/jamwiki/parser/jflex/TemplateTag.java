@@ -75,44 +75,13 @@ public class TemplateTag {
 	}
 
 	/**
-	 * Search through content, starting at a specific position, and search for the
-	 * first position after a matching end tag for a specified start tag.  For instance,
-	 * if called with a start tag of "<b>" and an end tag of "</b>", this method
-	 * will operate as follows:
-	 *
-	 * "01<b>567</b>23" returns 12.
-	 * "01<b>56<b>01</b>67</b>23" returns 22.
-	 */
-	private int findMatchingEndTag(String content, int start, String startToken, String endToken) {
-		int pos = start;
-		int count = 0;
-		String substring = "";
-		while (pos < content.length()) {
-			substring = content.substring(pos);
-			if (substring.startsWith(startToken)) {
-				count++;
-				pos += startToken.length();
-			} else if (substring.startsWith(endToken)) {
-				count--;
-				pos += endToken.length();
-			} else {
-				pos++;
-			}
-			if (count == 0) {
-				return pos;
-			}
-		}
-		return -1;
-	}
-
-	/**
 	 * Parse a call to a Mediawiki template of the form "{{template|param1|param2}}"
 	 * and return the resulting template output.
 	 */
 	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
 		try {
 			parserInput.incrementTemplateDepth();
-			// extract the template name
+			// validate and extract the template content
 			if (StringUtils.isBlank(raw)) {
 				throw new Exception("Empty template text");
 			}
@@ -122,27 +91,21 @@ public class TemplateTag {
 			String templateContent = raw.substring("{{".length(), raw.length() - "}}".length());
 			// parse for nested templates
 			templateContent = JFlexParserUtil.parseFragment(parserInput, templateContent, mode);
-			if (MagicWordUtil.isMagicWord(templateContent)) {
-				if (mode <= JFlexParser.MODE_MINIMAL) {
-					parserInput.decrementTemplateDepth();
-					return raw;
-				}
-				String output = MagicWordUtil.processMagicWord(parserInput, templateContent);
-				parserInput.decrementTemplateDepth();
-				return output;
-			}
+			// check for magic word or parser function
 			String[] parserFunctionInfo = ParserFunctionUtil.parseParserFunctionInfo(templateContent);
-			if (parserFunctionInfo != null) {
+			if (MagicWordUtil.isMagicWord(templateContent) || parserFunctionInfo != null) {
 				if (mode <= JFlexParser.MODE_MINIMAL) {
 					parserInput.decrementTemplateDepth();
 					return raw;
 				}
-				String output = ParserFunctionUtil.processParserFunction(parserInput, parserFunctionInfo[0], parserFunctionInfo[1]);
-				if (output != null) {
-					parserInput.decrementTemplateDepth();
-					return output;
+				parserInput.decrementTemplateDepth();
+				if (MagicWordUtil.isMagicWord(templateContent)) {
+					return MagicWordUtil.processMagicWord(parserInput, templateContent);
+				} else {
+					return ParserFunctionUtil.processParserFunction(parserInput, parserFunctionInfo[0], parserFunctionInfo[1]);
 				}
 			}
+			// extract the template name
 			String name = this.parseTemplateName(templateContent);
 			boolean inclusion = false;
 			if (name.startsWith(NamespaceHandler.NAMESPACE_SEPARATOR)) {
@@ -227,7 +190,7 @@ public class TemplateTag {
 			String substring = content.substring(pos);
 			if (substring.startsWith("{{{")) {
 				// template
-				int endPos = findMatchingEndTag(content, pos, "{{{", "}}}");
+				int endPos = Utilities.findMatchingEndTag(content, pos, "{{{", "}}}");
 				if (endPos != -1) {
 					String param = content.substring(pos, endPos);
 					output.append(this.applyParameter(parserInput, param));
@@ -359,16 +322,16 @@ public class TemplateTag {
 			endPos = -1;
 			if (substring.startsWith("{{{")) {
 				// template parameter
-				endPos = findMatchingEndTag(content, pos, "{{{", "}}}");
+				endPos = Utilities.findMatchingEndTag(content, pos, "{{{", "}}}");
 			} else if (substring.startsWith("{{")) {
 				// template
-				endPos = findMatchingEndTag(content, pos, "{{", "}}");
+				endPos = Utilities.findMatchingEndTag(content, pos, "{{", "}}");
 			} else if (substring.startsWith("[[")) {
 				// link
-				endPos = findMatchingEndTag(content, pos, "[[", "]]");
+				endPos = Utilities.findMatchingEndTag(content, pos, "[[", "]]");
 			} else if (substring.startsWith("{|")) {
 				// table
-				endPos = findMatchingEndTag(content, pos, "{|", "|}");
+				endPos = Utilities.findMatchingEndTag(content, pos, "{|", "|}");
 			} else if (content.charAt(pos) == '|') {
 				// new token
 				tokens.add(new String(value));

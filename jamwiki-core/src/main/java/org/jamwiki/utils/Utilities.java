@@ -181,57 +181,80 @@ public class Utilities {
 	}
 
 	/**
-	 * Returns any trailing period, comma, semicolon, or colon characters
-	 * from the given string.  This method is useful when parsing raw HTML
-	 * links, in which case trailing punctuation must be removed.  Note that
-	 * only punctuation that is not previously matched is trimmed - if the
-	 * input is "http://example.com/page_(page)" then the trailing parantheses
-	 * will not be trimmed.
+	 * Search through content, starting at a specific position, and search for the
+	 * first position after a matching end tag for a specified start tag.  For instance,
+	 * if called with a start tag of "<b>" and an end tag of "</b>", this method
+	 * will operate as follows:
 	 *
-	 * @param text The text from which trailing punctuation should be returned.
-	 * @return Any trailing punctuation from the given text, or an empty string
-	 *  otherwise.
+	 * "01<b>567</b>23" returns 12.
+	 * "01<b>56<b>01</b>67</b>23" returns 22.
+	 *
+	 * @param content The string to be searched.
+	 * @param start The position within the string to start searching from.
+	 * @param startToken The opening tag to match.
+	 * @param endToken The closing tag to match.
+	 * @return -1 if no matching end tag is found, or the index within the string of the first
+	 *  character immediately following the end tag.
 	 */
-	public static String extractTrailingPunctuation(String text) {
-		if (StringUtils.isBlank(text)) {
-			return "";
+	public static int findMatchingEndTag(String content, int start, String startToken, String endToken) {
+		return Utilities.findMatchingTag(content, start, startToken, endToken, false);
+	}
+
+	/**
+	 * Search through content, starting at a specific position, and search backwards for the
+	 * first position before a matching start tag for a specified end tag.  For instance,
+	 * if called with an end tag of "</b>" and a start tag of "<b>", this method
+	 * will operate as follows:
+	 *
+	 * "01<b>567</b>23" returns 1.
+	 * "01234567</b>23" returns -1.
+	 *
+	 * @param content The string to be searched.
+	 * @param start The position within the string to start searching from.
+	 * @param startToken The opening tag to match.
+	 * @param endToken The closing tag to match.
+	 * @return -1 if no matching start tag is found, or the index within the string of the first
+	 *  character immediately preceding the start tag.
+	 */
+	public static int findMatchingStartTag(String content, int start, String startToken, String endToken) {
+		return Utilities.findMatchingTag(content, start, startToken, endToken, true);
+	}
+
+	/**
+	 * Find a matching start/end tag.
+	 */
+	private static int findMatchingTag(String content, int start, String startToken, String endToken, boolean reverse) {
+		if (StringUtils.isBlank(content) || start >= content.length()) {
+			return -1;
 		}
-		StringBuffer buffer = new StringBuffer();
-		for (int i = text.length() - 1; i >= 0; i--) {
-			char c = text.charAt(i);
-			if (c == '.' || c == ';' || c == ',' || c == ':' || c == '(' || c == '[' || c == '{') {
-				buffer.append(c);
-				continue;
+		int pos = start;
+		int count = 0;
+		String substring = null;
+		boolean atLeastOneMatch = false;
+		while (pos >= 0 && pos < content.length()) {
+			substring = (reverse) ? content.substring(0, pos + 1) : content.substring(pos);
+			if (!reverse && substring.startsWith(startToken)) {
+				count++;
+				atLeastOneMatch = true;
+				pos += startToken.length();
+			} else if (!reverse && substring.startsWith(endToken)) {
+				count--;
+				pos += endToken.length();
+			} else if (reverse && substring.endsWith(endToken)) {
+				count++;
+				atLeastOneMatch = true;
+				pos -= endToken.length();
+			} else if (reverse && substring.endsWith(startToken)) {
+				count--;
+				pos -= startToken.length();
+			} else {
+				pos = (reverse) ? (pos - 1) : (pos + 1);
 			}
-			// if the value ends with ), ] or } then strip it UNLESS there is a matching
-			// opening tag
-			if (c == ')' || c == ']' || c == '}') {
-				char closeChar = c;
-				char openChar = (closeChar == ')') ? '(' : ((closeChar == ']') ? '[' : '{');
-				int openCount = 1;
-				for (int j = (i - 1); j > 0; j--) {
-					if (text.charAt(j) == closeChar) {
-						openCount++;
-					}
-					if (text.charAt(j) == openChar) {
-						openCount--;
-					}
-					if (openCount == 0) {
-						break;
-					}
-				}
-				if (openCount != 0) {
-					buffer.append(c);
-					continue;
-				}
+			if (atLeastOneMatch && count == 0) {
+				return pos;
 			}
-			break;
 		}
-		if (buffer.length() == 0) {
-			return "";
-		}
-		buffer = buffer.reverse();
-		return buffer.toString();
+		return -1;
 	}
 
 	/**
