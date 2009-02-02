@@ -519,6 +519,6 @@ public class Utilities {
 	 * @return The value submitted to this method with all HTML tags removed from it.
 	 */
 	public static String stripMarkup(String value) {
-		return value.replaceAll("<[^>]+>", "");
+		return StringUtils.trim(value.replaceAll("<[^>]+>", ""));
 	}
 }
