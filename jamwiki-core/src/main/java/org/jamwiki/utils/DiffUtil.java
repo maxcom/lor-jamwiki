@@ -32,7 +32,7 @@ import org.jamwiki.model.WikiDiff;
  */
 public class DiffUtil {
 
-	protected static WikiLogger logger = WikiLogger.getLogger(DiffUtil.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(DiffUtil.class.getName());
 	/** The number of lines of unchanged text to display before and after each diff. */
 	// FIXME - make this a property value
 	private static final int DIFF_UNCHANGED_LINE_DISPLAY = 2;

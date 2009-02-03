@@ -19,7 +19,7 @@ import org.jamwiki.utils.WikiLogger;
 
 /* code copied verbatim into the generated .java file */
 %{
-    protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiSpliceProcessor.class.getName());
+    private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiSpliceProcessor.class.getName());
     protected int section = 0;
     protected int sectionDepth = 0;
     protected int targetSection = 0;
