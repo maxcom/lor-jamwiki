@@ -39,7 +39,7 @@ public class JAMWikiLocaleInterceptor extends LocaleChangeInterceptor {
 	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiServlet.class.getName());
 
 	/**
-	 *
+	 * Ensure that the session locale value is set.
 	 */
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException {
 		Locale locale = (Locale)request.getSession().getAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME);

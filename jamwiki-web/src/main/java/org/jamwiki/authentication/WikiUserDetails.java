@@ -22,8 +22,8 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.GrantedAuthority;
-import org.springframework.security.userdetails.UserDetails;
 import org.springframework.security.providers.anonymous.AnonymousAuthenticationToken;
+import org.springframework.security.userdetails.UserDetails;
 
 /**
  * JAMWiki implementation of the Spring Security <code>UserDetails</code> interface.
@@ -34,6 +34,7 @@ import org.springframework.security.providers.anonymous.AnonymousAuthenticationT
 public class WikiUserDetails implements UserDetails {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiUserDetails.class.getName());
+	/** The default anonymous username.  This value should match the Spring Security <code>AnonymousBeanDefinitionParser.DEF_USERNAME</code> value, which unfortunately is not public. */
 	public static final String ANONYMOUS_USER_USERNAME = "roleAnonymous";
 	private static final long serialVersionUID = -2818435399240684581L;
 	private String username = null;

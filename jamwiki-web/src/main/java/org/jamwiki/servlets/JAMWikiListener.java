@@ -14,35 +14,36 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package org.jamwiki.servlets;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.utils.WikiCache;
 
 /**
  * A ServletContextListener that will do necessary initialization
- * & cleanup when the Servlet Context is initialized & destroyed. 
+ * and cleanup when the Servlet Context is initialized and destroyed. 
  */
 public class JAMWikiListener implements ServletContextListener {
 
-    /* (non-Javadoc)
-     * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
-     */
-    public void contextInitialized(ServletContextEvent arg0) {
-        WikiDatabase.initialize();
-        WikiCache.initialize();
-    }
+	/**
+	 * Initialize the database connection pool and disk cache.
+	 *
+	 * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
+	 */
+	public void contextInitialized(ServletContextEvent arg0) {
+		WikiDatabase.initialize();
+		WikiCache.initialize();
+	}
 
-    /* (non-Javadoc)
-     * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
-     */
-    public void contextDestroyed(ServletContextEvent arg0) {
-        WikiDatabase.shutdown();
-        WikiCache.shutdown();
-    }
-
+	/**
+	 * Clean up the database connection pool and disk cache.
+	 *
+	 * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
+	 */
+	public void contextDestroyed(ServletContextEvent arg0) {
+		WikiDatabase.shutdown();
+		WikiCache.shutdown();
+	}
 }

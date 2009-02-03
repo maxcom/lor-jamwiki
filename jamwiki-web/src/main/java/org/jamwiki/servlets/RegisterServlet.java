@@ -49,6 +49,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 public class RegisterServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(RegisterServlet.class.getName());
+	/** The name of the JSP file used to render the servlet output when searching. */
 	protected static final String JSP_REGISTER = "register.jsp";
 
 	/**

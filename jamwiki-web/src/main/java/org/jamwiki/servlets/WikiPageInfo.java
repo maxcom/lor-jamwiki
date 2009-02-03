@@ -36,6 +36,7 @@ import org.jamwiki.utils.WikiUtil;
 public class WikiPageInfo {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiPageInfo.class.getName());
+	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_TOPIC = "topic.jsp";
 	private boolean admin = false;
 	private String contentJsp = JSP_TOPIC;

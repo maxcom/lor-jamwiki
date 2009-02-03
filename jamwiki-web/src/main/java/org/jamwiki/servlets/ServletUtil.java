@@ -71,9 +71,13 @@ import org.springframework.web.servlet.ModelAndView;
 public class ServletUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(ServletUtil.class.getName());
+	/** The name of the JSP file used to render the servlet output for logins. */
 	protected static final String JSP_LOGIN = "login.jsp";
+	/** The name of the output parameter used to store page information. */
 	public static final String PARAMETER_PAGE_INFO = "pageInfo";
+	/** The name of the output parameter used to store topic information. */
 	public static final String PARAMETER_TOPIC_OBJECT = "topicObject";
+	/** The name of the output parameter used to indicate that Spring should redirect to another servlet. */
 	protected static final String SPRING_REDIRECT_PREFIX = "redirect:";
 
 	/**

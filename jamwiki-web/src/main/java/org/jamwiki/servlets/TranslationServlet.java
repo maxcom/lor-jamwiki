@@ -45,6 +45,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class TranslationServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(TranslationServlet.class.getName());
+	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_ADMIN_TRANSLATION = "admin-translation.jsp";
 
 	/**
@@ -184,7 +185,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	protected void writeTopic(HttpServletRequest request, WikiPageInfo pageInfo) throws Exception {
+	private void writeTopic(HttpServletRequest request, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		String language = request.getParameter("language");
 		String topicName = NamespaceHandler.NAMESPACE_JAMWIKI + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeTopicName(filename(language), true);

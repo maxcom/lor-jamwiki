@@ -38,6 +38,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class RolesServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(RolesServlet.class.getName());
+	/** The name of the JSP file used to render the servlet output when searching. */
 	protected static final String JSP_ADMIN_ROLES = "admin-roles.jsp";
 
 	/**

@@ -38,6 +38,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class MoveServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(MoveServlet.class.getName());
+	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_MOVE = "move.jsp";
 
 	/**

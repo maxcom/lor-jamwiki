@@ -47,6 +47,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class EditServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(EditServlet.class.getName());
+	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_EDIT = "edit.jsp";
 
 	/**

@@ -41,14 +41,15 @@ public class JAMWikiFilter implements Filter {
 	private FilterConfig config = null;
 
 	/**
-	 *
+	 * Standard servlet filter destroy() method implementation.
 	 */
 	public void destroy() {
 	}
 
 	/**
-	 * Set request encoding to UTF-8.  See
-	 * http://wiki.apache.org/tomcat/Tomcat/UTF-8 for a further discussion.
+	 * Perform standard processing required by all servlets including setting request
+	 * encoding to UTF-8.  See http://wiki.apache.org/tomcat/Tomcat/UTF-8 for a further
+	 * discussion.
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		request.setCharacterEncoding("UTF-8");
@@ -59,7 +60,7 @@ public class JAMWikiFilter implements Filter {
 	}
 
 	/**
-	 *
+	 * Standard servlet filter init() method implementation.
 	 */
 	public void init(FilterConfig config) throws ServletException {
 		this.encoding = config.getInitParameter("encoding");

@@ -48,6 +48,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class UpgradeServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(UpgradeServlet.class.getName());
+	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_UPGRADE = "upgrade.jsp";
 
 	/**
