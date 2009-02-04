@@ -22,6 +22,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import javax.imageio.ImageIO;
 import net.sf.ehcache.Element;
 import org.jamwiki.Environment;
@@ -79,7 +80,7 @@ public class ImageUtil {
 	/**
 	 * Convert a Java Image object to a Java BufferedImage object.
 	 */
-	private static BufferedImage imageToBufferedImage(Image image) throws Exception {
+	private static BufferedImage imageToBufferedImage(Image image) {
 		BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB );
 		Graphics2D graphics = bufferedImage.createGraphics();
 		graphics.drawImage(image, 0, 0, null);
@@ -99,10 +100,10 @@ public class ImageUtil {
 	 *  WikiImage object.  Setting this value to 0 or less will cause the
 	 *  value to be ignored.
 	 * @return An initialized WikiImage object.
-	 * @throws Exception Thrown if an error occurs while initializing the
+	 * @throws IOException Thrown if an error occurs while initializing the
 	 *  WikiImage object.
 	 */
-	public static WikiImage initializeImage(WikiFile wikiFile, int maxDimension) throws Exception {
+	public static WikiImage initializeImage(WikiFile wikiFile, int maxDimension) throws IOException {
 		if (wikiFile == null) {
 			throw new IllegalArgumentException("wikiFile may not be null");
 		}
@@ -133,9 +134,9 @@ public class ImageUtil {
 	 *
 	 * @param file The File object for the file that is being examined.
 	 * @return Returns <code>true</code> if the file is an image object.
-	 * @throws Exception Thrown if any error occurs while reading the file.
+	 * @throws IOException Thrown if any error occurs while reading the file.
 	 */
-	public static boolean isImage(File file) throws Exception {
+	public static boolean isImage(File file) throws IOException {
 		return (ImageUtil.loadImage(file) != null);
 	}
 
@@ -143,16 +144,20 @@ public class ImageUtil {
 	 * Given a file that corresponds to an existing image, return a
 	 * BufferedImage object.
 	 */
-	private static BufferedImage loadImage(File file) throws Exception {
+	private static BufferedImage loadImage(File file) throws IOException {
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(file);
-			return ImageIO.read(fis);
+			BufferedImage image = ImageIO.read(fis);
+			if (image == null) {
+				throw new IOException("JDK is unable to process image file: " + file.getPath());
+			}
+			return image;
 		} finally {
 			if (fis != null) {
 				try {
 					fis.close();
-				} catch (Exception e) {}
+				} catch (IOException e) {}
 			}
 		}
 	}
@@ -162,7 +167,7 @@ public class ImageUtil {
 	 * be constrained so that the proportions are the same, but neither the width
 	 * or height exceeds the value specified.
 	 */
-	private static ImageDimensions resizeImage(WikiImage wikiImage, int maxDimension) throws Exception {
+	private static ImageDimensions resizeImage(WikiImage wikiImage, int maxDimension) throws IOException {
 		String newUrl = buildImagePath(wikiImage.getUrl(), maxDimension);
 		File newImageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), newUrl);
 		ImageDimensions dimensions = retrieveFromCache(newImageFile);
@@ -222,11 +227,11 @@ public class ImageUtil {
 	/**
 	 * Save an image to a specified file.
 	 */
-	private static void saveImage(BufferedImage image, File file) throws Exception {
+	private static void saveImage(BufferedImage image, File file) throws IOException {
 		String filename = file.getName();
 		int pos = filename.lastIndexOf('.');
 		if (pos == -1 || (pos + 1) >= filename.length()) {
-			throw new Exception("Unknown image type " + filename);
+			throw new IOException("Unknown image file type " + filename);
 		}
 		String imageType = filename.substring(pos + 1);
 		File imageFile = new File(file.getParent(), filename);
@@ -238,7 +243,7 @@ public class ImageUtil {
 			if (fos != null) {
 				try {
 					fos.close();
-				} catch (Exception e) {}
+				} catch (IOException e) {}
 			}
 		}
 	}
