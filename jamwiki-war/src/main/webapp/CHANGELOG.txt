@@ -53,6 +53,8 @@ Bugfixes:
     http://example.com/page_(page).  Reported by  Michael Habbert.
   * Fix parsing of nested tags of the form <tt><tt>test</tt></tt> which were
     producing an extra closing tag.
+  * Fix issues with the database migration code that could cause failures
+    when migrating categories or migrating very large data sets.
 
 Translation Updates:
 
