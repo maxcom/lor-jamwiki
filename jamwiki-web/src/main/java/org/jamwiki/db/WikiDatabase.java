@@ -216,11 +216,11 @@ public class WikiDatabase {
 				Object o;
 				// cycle through at most RECORDS_PER_CYCLE records at a time to avoid blowing up the system
 				int RECORDS_PER_CYCLE = 25;
-				for (int j = 0; j < maxIndex; j += RECORDS_PER_CYCLE) {
+				for (int j = 0; j <= maxIndex; j += RECORDS_PER_CYCLE) {
 					select = "SELECT * FROM " + JAMWIKI_DB_TABLE_INFO[i][0];
 					if (!StringUtils.isBlank(JAMWIKI_DB_TABLE_INFO[i][1])) {
-						select += " WHERE " + JAMWIKI_DB_TABLE_INFO[i][1] + " >= " + j;
-						select += " AND " + JAMWIKI_DB_TABLE_INFO[i][1] + " < " + (j + RECORDS_PER_CYCLE);
+						select += " WHERE " + JAMWIKI_DB_TABLE_INFO[i][1] + " > " + j;
+						select += " AND " + JAMWIKI_DB_TABLE_INFO[i][1] + " <= " + (j + RECORDS_PER_CYCLE);
 						select += " ORDER BY " + JAMWIKI_DB_TABLE_INFO[i][1];
 					}
 					insert = new StringBuffer();
