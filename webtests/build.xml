@@ -4,8 +4,10 @@
 This is a (nearly) empty WebTest project containing just a few examples for a quick start
 -->
 
-<project name="example" default="wt.full">
+<project name="example" basedir="." default="wt.full">
 
+	<!-- create this file and define any properties that should override the webtest.properties values -->
+	<property file="local.webtest.properties" />
 	<property file="webtest.properties" />
 
 	<!-- load the locale-specific translations file (if available) -->
