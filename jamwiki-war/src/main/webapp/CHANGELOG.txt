@@ -55,6 +55,7 @@ Bugfixes:
     producing an extra closing tag.
   * Fix issues with the database migration code that could cause failures
     when migrating categories or migrating very large data sets.
+  * Fix a case-sensitivity issue when building on UNIX machines (marcust).
 
 Translation Updates:
 

@@ -64,7 +64,7 @@ public class ParserTest extends TestCase {
 	private void executeParserTest(String fileName) throws Exception {
 		String parserResult = this.parserResult(fileName);
 		String expectedResult = this.expectedResult(fileName);
-		assertEquals(expectedResult, parserResult);
+		assertEquals("Testing file " + fileName,expectedResult, parserResult);
 	}
 
 	/**
