@@ -92,7 +92,7 @@ public class JFlexParser extends AbstractParser {
 	/**
 	 *
 	 */
-	private String isRedirect(ParserInput parserInput, String raw, int mode) throws Exception {
+	protected String isRedirect(ParserInput parserInput, String raw, int mode) throws Exception {
 		if (StringUtils.isBlank(raw) || mode <= JFlexParser.MODE_PREPROCESS) {
 			return null;
 		}
