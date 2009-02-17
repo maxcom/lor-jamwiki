@@ -17,13 +17,13 @@
 
 --%>
 <c:if test="${!badinput}">
-	<c:if test="${empty diffs}"><div class="message"><f:message key="diff.nochange" /></div></c:if>
+	<c:if test="${empty diffs}"><div class="message"><fmt:message key="diff.nochange" /></div></c:if>
 	<c:if test="${!empty diffs}">
 <div id="diff">
 		<c:set var="previousLineNumber" value="-10" />
 		<c:forEach items="${diffs}" var="diff">
 			<c:if test="${diff.lineNumber > (previousLineNumber + 1)}">
-<div class="diff-line"><f:message key="diff.line" /> <c:out value="${diff.lineNumber}" />:</div>
+<div class="diff-line"><fmt:message key="diff.line" /> <c:out value="${diff.lineNumber}" />:</div>
 			</c:if>
 <div class="diff-entry">
 			<c:if test="${!empty diff.oldLine && diff.change}">
@@ -50,5 +50,5 @@
 	</c:if>
 </c:if>
 <c:if test="${badinput=='true'}">
-	<f:message key="diff.badinput" />
+	<fmt:message key="diff.badinput" />
 </c:if>

@@ -21,16 +21,16 @@
 	<c:if test="${!empty topicObject}">
 <div id="content-article">
 <c:if test="${topicImage}"><jamwiki:image value="${topicObject.name}" /></c:if>
-<c:if test="${topicFile}"><div id="topic-file-download"><f:message key="topic.file.download" />:&#160;<a href="<c:out value="${fileVersions[0].url}" />"><c:out value="${topicObject.name}" /></a></div></c:if>
+<c:if test="${topicFile}"><div id="topic-file-download"><fmt:message key="topic.file.download" />:&#160;<a href="<c:out value="${fileVersions[0].url}" />"><c:out value="${topicObject.name}" /></a></div></c:if>
 <c:out value="${topicObject.topicContent}" escapeXml="false" />
 </div>
 <div class="clear"></div>
 		<c:if test="${!empty fileVersions}">
-<h2><f:message key="topic.filehistory" /></h2>
+<h2><fmt:message key="topic.filehistory" /></h2>
 <ul>
 			<c:forEach items="${fileVersions}" var="fileVersion">
 <li>
-<a href="<c:out value="${fileVersion.url}" />"><f:formatDate value="${fileVersion.uploadDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></a>
+<a href="<c:out value="${fileVersion.url}" />"><fmt:formatDate value="${fileVersion.uploadDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></a>
 &#160;(<c:out value="${fileVersion.fileSize}" /> bytes)
 				<c:if test="${!empty fileVersion.uploadComment}">&#160;(<i><c:out value="${fileVersion.uploadComment}" /></i>)</c:if>
 </li>
@@ -39,7 +39,7 @@
 		</c:if>
 	</c:if>
 	<c:if test="${!empty categories}">
-<div id="category-index"><jamwiki:link value="Special:Categories"><f:message key="topic.categories" /></jamwiki:link>:
+<div id="category-index"><jamwiki:link value="Special:Categories"><fmt:message key="topic.categories" /></jamwiki:link>:
 		<c:forEach items="${categories}" var="category" varStatus="status">
 <c:if test="${!status.first}">&#160;|&#160;</c:if><jamwiki:link value="${category.key}" text="${category.value}" />
 		</c:forEach>
@@ -48,5 +48,5 @@
 	</c:if>
 </c:if>
 <c:if test="${!empty notopic}">
-<div class="message"><f:message key="${notopic.key}"><f:param value="${notopic.params[0]}" /><f:param><jamwiki:link value="${notopic.params[0]}" text="${notopic.params[0]}" /></f:param></f:message></div>
+<div class="message"><fmt:message key="${notopic.key}"><fmt:param value="${notopic.params[0]}" /><fmt:param><jamwiki:link value="${notopic.params[0]}" text="${notopic.params[0]}" /></fmt:param></fmt:message></div>
 </c:if>

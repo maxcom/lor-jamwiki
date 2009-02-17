@@ -25,25 +25,25 @@
 <jamwiki:authmsg css="message red" />
 
 <fieldset>
-<legend><f:message key="${pageInfo.pageTitle.key}" /></legend>
+<legend><fmt:message key="${pageInfo.pageTitle.key}" /></legend>
 
 <form method="post" action="<c:url value="${springSecurityLoginUrl}" />">
 <input type="hidden" name="<c:out value="${springSecurityTargetUrlField}" />" value="<c:out value="${springSecurityTargetUrl}"/>" />
 <div class="formentry">
-	<span class="formcaption-small"><label for="loginUsername"><f:message key="login.username"/></label></span>
+	<span class="formcaption-small"><label for="loginUsername"><fmt:message key="login.username"/></label></span>
 	<span class="formelement"><input type="text" name="<c:out value="${springSecurityUsernameField}" />" value="<c:out value="${param.username}" />" id="loginUsername" /></span>
 </div>
 <div class="formentry">
-	<span class="formcaption-small"><label for="loginPassword"><f:message key="login.password"/></label></span>
+	<span class="formcaption-small"><label for="loginPassword"><fmt:message key="login.password"/></label></span>
 	<span class="formelement"><input type="password" name="<c:out value="${springSecurityPasswordField}" />" id="loginPassword" /></span>
 </div>
 <div class="formentry">
 	<span class="formcaption-small">&#160;</span>
-	<span class="formelement"><input type="checkbox" value="true" name="<c:out value="${springSecurityRememberMeField}" />" id="loginRemember" />&#160;<label for="loginRemember"><f:message key="login.rememberme" /></label></span>
+	<span class="formelement"><input type="checkbox" value="true" name="<c:out value="${springSecurityRememberMeField}" />" id="loginRemember" />&#160;<label for="loginRemember"><fmt:message key="login.rememberme" /></label></span>
 </div>
 <div class="formentry">
 	<span class="formcaption-small">&#160;</span>
-	<span class="formelement"><input type="submit" name="function" value="<f:message key="common.login" />" /></span>
+	<span class="formelement"><input type="submit" name="function" value="<fmt:message key="common.login" />" /></span>
 </div>
 </form>
 

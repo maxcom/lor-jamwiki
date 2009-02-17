@@ -23,7 +23,7 @@
 
 <%@ include file="page-init.jsp" %>
 
-<div class="message"><f:message key="common.caption.view" />: <jamwiki:pagination total="${itemCount}" rootUrl="${rootUrl}" /></div>
+<div class="message"><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${itemCount}" rootUrl="${rootUrl}" /></div>
 
 <ol start="<c:out value="${offset + 1}" />">
 <c:forEach items="${items}" var="item">

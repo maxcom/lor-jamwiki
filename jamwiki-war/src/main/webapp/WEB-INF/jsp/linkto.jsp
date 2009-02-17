@@ -23,7 +23,7 @@
 <%@ include file="page-init.jsp" %>
 
 <c:if test="${!empty results}">
-<div class="message"><f:message key="linkto.overview"><f:param value="${link}" /></f:message></div>
+<div class="message"><fmt:message key="linkto.overview"><fmt:param value="${link}" /></fmt:message></div>
 
 <ul>
 <c:forEach items="${results}" var="result">
@@ -33,5 +33,5 @@
 </c:if>
 
 <c:if test="${empty results}">
-<div class="message"><f:message key="linkto.none"><f:param value="${link}" /></f:message></div>
+<div class="message"><fmt:message key="linkto.none"><fmt:param value="${link}" /></fmt:message></div>
 </c:if>

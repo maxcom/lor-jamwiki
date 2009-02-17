@@ -20,9 +20,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title><f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /></f:message> - <f:message key="common.sitename" /></title>
+	<title><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /></fmt:message> - <fmt:message key="common.sitename" /></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="DC.Title" content="<f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /></f:message> - <f:message key="common.sitename" />" />
+	<meta name="DC.Title" content="<fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /></fmt:message> - <fmt:message key="common.sitename" />" />
 <c:if test="${!empty pageInfo.metaDescription}">
 	<meta name="description" content="<c:out value="${pageInfo.metaDescription}" />" />
 </c:if>
@@ -32,10 +32,10 @@
 </c:if>
 <jamwiki:enabled property="PROP_RSS_ALLOWED">
 	<%-- This RSS link is automatically recognized by (some) browsers --%>
-	<link rel="alternate" type="application/rss+xml" title="<c:out value="${pageInfo.RSSTitle}" /> (<c:out value="${virtualWiki}"/>): <f:message key="recentchanges.rss.feed1" />" href="<jamwiki:link value="Special:RecentChangesFeed"/>" />
-	<link rel="alternate" type="application/rss+xml" title="<c:out value="${pageInfo.RSSTitle}" /> (<c:out value="${virtualWiki}"/>): <f:message key="recentchanges.rss.feed2" />" href="<jamwiki:link value="Special:RecentChangesFeed?minorEdits=true"/>" />
-	<link rel="alternate" type="application/rss+xml" title="<c:out value="${pageInfo.RSSTitle}" /> (<c:out value="${virtualWiki}"/>): <f:message key="recentchanges.rss.feed3" />" href="<jamwiki:link value="Special:RecentChangesFeed?linkToVersion=true"/>" />
-	<link rel="alternate" type="application/rss+xml" title="<c:out value="${pageInfo.RSSTitle}" /> (<c:out value="${virtualWiki}"/>): <f:message key="recentchanges.rss.feed4" />" href="<jamwiki:link value="Special:RecentChangesFeed?minorEdits=true&amp;linkToVersion=true"/>" />
+	<link rel="alternate" type="application/rss+xml" title="<c:out value="${pageInfo.RSSTitle}" /> (<c:out value="${virtualWiki}"/>): <fmt:message key="recentchanges.rss.feed1" />" href="<jamwiki:link value="Special:RecentChangesFeed"/>" />
+	<link rel="alternate" type="application/rss+xml" title="<c:out value="${pageInfo.RSSTitle}" /> (<c:out value="${virtualWiki}"/>): <fmt:message key="recentchanges.rss.feed2" />" href="<jamwiki:link value="Special:RecentChangesFeed?minorEdits=true"/>" />
+	<link rel="alternate" type="application/rss+xml" title="<c:out value="${pageInfo.RSSTitle}" /> (<c:out value="${virtualWiki}"/>): <fmt:message key="recentchanges.rss.feed3" />" href="<jamwiki:link value="Special:RecentChangesFeed?linkToVersion=true"/>" />
+	<link rel="alternate" type="application/rss+xml" title="<c:out value="${pageInfo.RSSTitle}" /> (<c:out value="${virtualWiki}"/>): <fmt:message key="recentchanges.rss.feed4" />" href="<jamwiki:link value="Special:RecentChangesFeed?minorEdits=true&amp;linkToVersion=true"/>" />
 </jamwiki:enabled>
 	<link href="<jamwiki:link value="jamwiki.css?${cssRevision}" />" type="text/css" rel="stylesheet" />
 	<script type="text/javascript" src="<c:url value="/js/jamwiki.js" />"></script>

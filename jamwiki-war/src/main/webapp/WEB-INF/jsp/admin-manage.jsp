@@ -26,7 +26,7 @@
 <%@ include file="page-init.jsp" %>
 
 <c:if test="${!empty message}">
-<div class="message green"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div>
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 
 <c:if test="${deleted}">
@@ -34,20 +34,20 @@
 <form name="undelete" method="get" action="<jamwiki:link value="Special:Manage" />">
 <input type="hidden" name="<%= WikiUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 <fieldset>
-<legend><f:message key="manage.caption.undelete"><f:param value="${pageInfo.topicName}" /></f:message></legend>
+<legend><fmt:message key="manage.caption.undelete"><fmt:param value="${pageInfo.topicName}" /></fmt:message></legend>
 <div class="formentry">
-	<span class="formcaption-medium" nowrap><label for="undeleteComment"><f:message key="manage.undelete.reason" /></label>: </span>
+	<span class="formcaption-medium" nowrap><label for="undeleteComment"><fmt:message key="manage.undelete.reason" /></label>: </span>
 	<span class="formelement" width="90%"><input type="text" name="undeleteComment" value="" id="undeleteComment" size="60" /></span>
 </div>
 <c:if test="${!empty manageCommentsPage}">
 <div class="formentry">
-	<span class="formcaption-medium" colspan="2"><label for="manageCommentsPage"><f:message key="manage.undelete.commentspage" /></label>:</span>
+	<span class="formcaption-medium" colspan="2"><label for="manageCommentsPage"><fmt:message key="manage.undelete.commentspage" /></label>:</span>
 	<span class="formelement"><input type="checkbox" name="manageCommentsPage" value="<c:out value="${manageCommentsPage}" />" id="manageCommentsPage" /></span>
 </div>
 </c:if>
 <div class="formentry">
 	<span class="formcaption-medium">&#160;</span>
-	<span class="formelement"><input type="submit" name="undelete" value="<f:message key="common.undelete" />" /></span>
+	<span class="formelement"><input type="submit" name="undelete" value="<fmt:message key="common.undelete" />" /></span>
 </div>
 </fieldset>
 </form>
@@ -57,21 +57,21 @@
 <form name="delete" method="get" action="<jamwiki:link value="Special:Manage" />">
 <input type="hidden" name="<%= WikiUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 <fieldset>
-<legend><f:message key="manage.caption.delete"><f:param value="${pageInfo.topicName}" /></f:message></legend>
-<div class="message"><f:message key="manage.delete.warning" /></div>
+<legend><fmt:message key="manage.caption.delete"><fmt:param value="${pageInfo.topicName}" /></fmt:message></legend>
+<div class="message"><fmt:message key="manage.delete.warning" /></div>
 <div class="formentry">
-	<span class="formcaption-medium" nowrap><label for="deleteComment"><f:message key="manage.delete.reason" /></label>: </span>
+	<span class="formcaption-medium" nowrap><label for="deleteComment"><fmt:message key="manage.delete.reason" /></label>: </span>
 	<span class="formelement" width="90%"><input type="text" name="deleteComment" value="" id="deleteComment" size="60" /></span>
 </div>
 <c:if test="${!empty manageCommentsPage}">
 <div class="formentry">
-	<span class="formcaption-medium"><label for="manageCommentsPage"><f:message key="manage.delete.commentspage" /></label>:</span>
+	<span class="formcaption-medium"><label for="manageCommentsPage"><fmt:message key="manage.delete.commentspage" /></label>:</span>
 	<span class="formelement"><input type="checkbox" name="manageCommentsPage" value="<c:out value="${manageCommentsPage}" />" id="manageCommentsPage" /></span>
 </div>
 </c:if>
 <div class="formentry">
 	<span class="formcaption-medium">&#160;</span>
-	<span class="formelement"><input type="submit" name="delete" value="<f:message key="common.delete" />" /></span>
+	<span class="formelement"><input type="submit" name="delete" value="<fmt:message key="common.delete" />" /></span>
 </div>
 </fieldset>
 </form>
@@ -79,18 +79,18 @@
 <form name="permissions" method="get" action="<jamwiki:link value="Special:Manage" />">
 <input type="hidden" name="<%= WikiUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 <fieldset>
-<legend><f:message key="manage.caption.permissions" /></legend>
+<legend><fmt:message key="manage.caption.permissions" /></legend>
 <div class="formentry">
-	<span class="formcaption-medium" nowrap><label for="readOnly"><f:message key="manage.caption.readonly" /></label>: </span>
+	<span class="formcaption-medium" nowrap><label for="readOnly"><fmt:message key="manage.caption.readonly" /></label>: </span>
 	<span class="formelement"><input type="checkbox" name="readOnly" value="true"<c:if test="${readOnly}"> checked</c:if> id="readOnly" /></span>
 </div>
 <div class="formentry">
-	<span class="formcaption-medium" nowrap><label for="adminOnly"><f:message key="manage.caption.adminonly" /></label>: </span>
+	<span class="formcaption-medium" nowrap><label for="adminOnly"><fmt:message key="manage.caption.adminonly" /></label>: </span>
 	<span class="formelement"><input type="checkbox" name="adminOnly" value="true"<c:if test="${adminOnly}"> checked</c:if> id="adminOnly" /></span>
 </div>
 <div class="formentry">
 	<span class="formcaption-medium">&#160;</span>
-	<span class="formelement"><input type="submit" name="permissions" value="<f:message key="common.update" />" /></span>
+	<span class="formelement"><input type="submit" name="permissions" value="<fmt:message key="common.update" />" /></span>
 </div>
 </fieldset>
 </form>

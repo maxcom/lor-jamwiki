@@ -23,16 +23,16 @@
 <%@ include file="page-init.jsp" %>
 
 <c:if test="${!empty notopic}">
-<div class="message"><f:message key="topic.notcreated"><f:param value="${notopic}" /><f:param><jamwiki:link value="${notopic}" text="${notopic}" /></f:param></f:message></div>
+<div class="message"><fmt:message key="topic.notcreated"><fmt:param value="${notopic}" /><fmt:param><jamwiki:link value="${notopic}" text="${notopic}" /></fmt:param></fmt:message></div>
 </c:if>
 <c:forEach items="${results}" var="result">
 <div class="searchresult"><jamwiki:link value="${result.topic}" text="${result.topic}" /></div>
 <div class="searchsummary"><c:out value="${result.summary}" escapeXml="false" /></div>
 </c:forEach>
 <c:if test="${empty results}">
-<div class="message"><f:message key="searchresult.notfound"><f:param value="${searchField}" /></f:message></div>
-<div class="message"><f:message key="topic.notcreated"><f:param value="${searchField}" /><f:param><jamwiki:link value="${searchField}" text="${searchField}" /></f:param></f:message></div>
+<div class="message"><fmt:message key="searchresult.notfound"><fmt:param value="${searchField}" /></fmt:message></div>
+<div class="message"><fmt:message key="topic.notcreated"><fmt:param value="${searchField}" /><fmt:param><jamwiki:link value="${searchField}" text="${searchField}" /></fmt:param></fmt:message></div>
 </c:if>
 <br /><br /><br />
-<font size="-1"><i><f:message key="search.poweredby" /></i></font>
+<font size="-1"><i><fmt:message key="search.poweredby" /></i></font>
 <a href="http://lucene.apache.org/java/"><img src="../images/lucene_green_100.gif" alt="Lucene" border="0" /></a>

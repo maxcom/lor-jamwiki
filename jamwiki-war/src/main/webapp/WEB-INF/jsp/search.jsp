@@ -24,12 +24,12 @@
 
 <form name="searchForm" method="post" action="<jamwiki:link value="Special:Search" />">
 
-<div class="message"><label for="searchTerm"><f:message key="search.for"/></label>&#160;&#160;<input type="text" name="text" value="<c:out value="${text}" />" id="searchTerm" />&#160;&#160;<input type="submit" name="Submit" value="<f:message key="search.search"/>" /></div>
+<div class="message"><label for="searchTerm"><fmt:message key="search.for"/></label>&#160;&#160;<input type="text" name="text" value="<c:out value="${text}" />" id="searchTerm" />&#160;&#160;<input type="submit" name="Submit" value="<fmt:message key="search.search"/>" /></div>
 
-<div id="searchhints"><f:message key="search.hints"/></div>
+<div id="searchhints"><fmt:message key="search.hints"/></div>
 
 </form>
 
-<div id="searchpower"><f:message key="search.poweredby" /> <a href="http://lucene.apache.org/java/"><img src="../images/lucene_green_100.gif" alt="Lucene" border="0" /></a></div>
+<div id="searchpower"><fmt:message key="search.poweredby" /> <a href="http://lucene.apache.org/java/"><img src="../images/lucene_green_100.gif" alt="Lucene" border="0" /></a></div>
 
 <script type="text/javascript">document.searchForm.text.focus();</script>

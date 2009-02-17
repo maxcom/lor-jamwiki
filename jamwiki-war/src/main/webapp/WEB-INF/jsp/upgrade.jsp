@@ -25,7 +25,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title><f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /><f:param value="${pageInfo.pageTitle.params[1]}" /></f:message></title>
+	<title><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /><fmt:param value="${pageInfo.pageTitle.params[1]}" /></fmt:message></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <style>
 body {
@@ -61,7 +61,7 @@ body, input, select {
 <body>
 <div id="upgrade-container">
 
-<h3><f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /><f:param value="${pageInfo.pageTitle.params[1]}" /></f:message></h3>
+<h3><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /><fmt:param value="${pageInfo.pageTitle.params[1]}" /></fmt:message></h3>
 
 <form name="adminUpgrade" method="post">
 <input type="hidden" name="function" value="upgrade" />
@@ -70,10 +70,10 @@ body, input, select {
 	<tr>
 		<td colspan="2">
 			<div id="upgrade-messages">
-				<c:if test="${!empty successMessage}"><h4><f:message key="${successMessage.key}"><f:param value="${successMessage.params[0]}" /></f:message></h4></c:if>
-				<c:if test="${!empty error}"><div class="red"><f:message key="${error.key}"><f:param value="${error.params[0]}" /></f:message></div></c:if>
+				<c:if test="${!empty successMessage}"><h4><fmt:message key="${successMessage.key}"><fmt:param value="${successMessage.params[0]}" /></fmt:message></h4></c:if>
+				<c:if test="${!empty error}"><div class="red"><fmt:message key="${error.key}"><fmt:param value="${error.params[0]}" /></fmt:message></div></c:if>
 				<c:if test="${!empty errors}">
-					<c:forEach items="${errors}" var="message"><div class="red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /><f:param value="${message.params[1]}" /></f:message></div></c:forEach>
+					<c:forEach items="${errors}" var="message"><div class="red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /><fmt:param value="${message.params[1]}" /></fmt:message></div></c:forEach>
 				</c:if>
 				<c:if test="${!empty messages}">
 					<c:forEach items="${messages}" var="message"><div class="green"><c:out value="${message}" /></div></c:forEach>
@@ -83,23 +83,23 @@ body, input, select {
 	</tr>
 </c:if>
 <c:if test="${empty successMessage && empty failure}">
-	<tr><td colspan="2"><f:message key="upgrade.caption.detected" /></td></tr>
+	<tr><td colspan="2"><fmt:message key="upgrade.caption.detected" /></td></tr>
 	<c:if test="${!empty upgradeDetails}">
 		<tr>
 			<td colspan="2">
 				<ul>
-					<c:forEach items="${upgradeDetails}" var="upgradeDetail"><li><f:message key="${upgradeDetail.key}" /></li></c:forEach>
+					<c:forEach items="${upgradeDetails}" var="upgradeDetail"><li><fmt:message key="${upgradeDetail.key}" /></li></c:forEach>
 				</ul>
 			</td>
 		</tr>
 	</c:if>
-	<tr><td colspan="2"><f:message key="upgrade.caption.login" /></td></tr>
+	<tr><td colspan="2"><fmt:message key="upgrade.caption.login" /></td></tr>
 	<tr>
-		<td><label for="loginUsername"><f:message key="login.username"/></label></td>
+		<td><label for="loginUsername"><fmt:message key="login.username"/></label></td>
 		<td><input type="text" name="username" value="<c:out value="${param.username}" />" id="loginUsername" /></td>
 	</tr>
 	<tr>
-		<td><label for="loginPassword"><f:message key="login.password"/></label></td>
+		<td><label for="loginPassword"><fmt:message key="login.password"/></label></td>
 		<td><input type="password" name="password" id="loginPassword" /></td>
 	</tr>
 	<tr><td colspan="2" align="center"><input type="submit" name="button" value="Submit" /></td></tr>
