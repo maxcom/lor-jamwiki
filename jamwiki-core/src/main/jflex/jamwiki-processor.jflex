@@ -31,7 +31,7 @@ entity             = (&#([0-9]{2,4});) | (&[A-Za-z]{2,6};)
 emptyline          = ([ \t])* ({newline})
 
 /* non-container expressions */
-hr                 = "----"
+hr                 = ({newline})? "----" ({newline})
 wikiheading        = [\=]+ ([^\n\=]+|[^\n\=][^\n]+[^\n\=]) [\=]+
 bold               = "'''"
 bolditalic         = "'''''"
@@ -332,7 +332,9 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 <YYINITIAL>^{hr} {
     logger.finer("hr: " + yytext() + " (" + yystate() + ")");
-    return "<hr />\n";
+    // pushback the closing newline
+    yypushback(1);
+    return "<hr />";
 }
 
 <YYINITIAL, PARAGRAPH>^{wikiheading} {
