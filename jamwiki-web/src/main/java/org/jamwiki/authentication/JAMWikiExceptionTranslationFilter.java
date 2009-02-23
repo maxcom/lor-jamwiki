@@ -111,10 +111,6 @@ public class JAMWikiExceptionTranslationFilter implements Filter, InitializingBe
 			RequestDispatcher rd = request.getRequestDispatcher("/" + virtualWiki + this.errorPage);
 			rd.forward(request, response);
 		}
-		if (!response.isCommitted()) {
-			// send 403 after response has been written
-			response.sendError(HttpServletResponse.SC_FORBIDDEN, accessDeniedException.getMessage());
-		}
 	}
 
 	/**
