@@ -109,15 +109,11 @@
 	</b:bean>
 
 	<!--
-	This method executes after the default Spring exception translation filter and controls where
-	users are redirected to when they attempt to access a page and access is denied.  This custom
-	filter is needed in order to add virtual wiki and any message from the errorMessageProvider to
-	the redirect.
+	This method executes after the default Spring exception translation filter and adds any
+	message from the errorMessageProvider to the redirect.
 	-->
 	<b:bean id="exceptionTranslationFilter" class="org.jamwiki.authentication.JAMWikiExceptionTranslationFilter">
 		<b:property name="errorMessageProvider" ref="errorMessageProvider" />
-		<!-- do not include virtual wiki in the url, JAMWikiExceptionTranslationFilter adds it -->
-		<b:property name="errorPage" value="/Special:Login" />
 		<custom-filter after="EXCEPTION_TRANSLATION_FILTER" />
 	</b:bean>
 

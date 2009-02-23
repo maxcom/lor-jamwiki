@@ -41,7 +41,6 @@ import org.jamwiki.utils.WikiUtil;
 public class JAMWikiExceptionTranslationFilter implements Filter, InitializingBean {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiExceptionTranslationFilter.class.getName());
-	private String errorPage;
 	private JAMWikiErrorMessageProvider errorMessageProvider;
 
 	/**
@@ -95,7 +94,6 @@ public class JAMWikiExceptionTranslationFilter implements Filter, InitializingBe
 		if (exception instanceof AccessDeniedException) {
 			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_ACCESS_DENIED_ERROR_KEY, this.getErrorMessageProvider().getErrorMessageKey(request));
 			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_ACCESS_DENIED_URI_KEY, WikiUtil.getTopicFromURI(request));
-			this.handleAccessDenied(request, response, (AccessDeniedException)exception);
 		} else if (exception instanceof AuthenticationException) {
 			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_AUTHENTICATION_REQUIRED_KEY, this.getErrorMessageProvider().getErrorMessageKey(request));
 			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY, WikiUtil.getTopicFromURI(request));
@@ -105,34 +103,7 @@ public class JAMWikiExceptionTranslationFilter implements Filter, InitializingBe
 	/**
 	 *
 	 */
-	private void handleAccessDenied(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-		if (this.errorPage != null) {
-			String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
-			RequestDispatcher rd = request.getRequestDispatcher("/" + virtualWiki + this.errorPage);
-			rd.forward(request, response);
-		}
-	}
-
-	/**
-	 *
-	 */
 	public void init(FilterConfig filterConfig) throws ServletException {
-	}
-
-	/**
-	 * The error page to use. Must begin with a "/" and is interpreted relative to
-	 * the current context root.
-	 *
-	 * @param errorPage the dispatcher path to display
-	 *
-	 * @throws IllegalArgumentException if the argument doesn't comply with the above
-	 *  limitations
-	 */
-	public void setErrorPage(String errorPage) {
-		if (errorPage != null && !errorPage.startsWith("/")) {
-			throw new IllegalArgumentException("ErrorPage must begin with '/'");
-		}
-		this.errorPage = errorPage;
 	}
 
 	/**
