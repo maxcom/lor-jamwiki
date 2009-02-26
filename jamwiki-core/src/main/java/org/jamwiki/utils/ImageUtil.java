@@ -134,10 +134,13 @@ public class ImageUtil {
 	 *
 	 * @param file The File object for the file that is being examined.
 	 * @return Returns <code>true</code> if the file is an image object.
-	 * @throws IOException Thrown if any error occurs while reading the file.
 	 */
-	public static boolean isImage(File file) throws IOException {
-		return (ImageUtil.loadImage(file) != null);
+	public static boolean isImage(File file) {
+		try {
+			return (ImageUtil.loadImage(file) != null);
+		} catch (IOException x) {
+			return false;
+		}
 	}
 
 	/**
