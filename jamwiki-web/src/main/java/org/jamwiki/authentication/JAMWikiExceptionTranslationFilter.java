@@ -94,6 +94,9 @@ public class JAMWikiExceptionTranslationFilter implements Filter, InitializingBe
 		if (exception instanceof AccessDeniedException) {
 			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_ACCESS_DENIED_ERROR_KEY, this.getErrorMessageProvider().getErrorMessageKey(request));
 			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_ACCESS_DENIED_URI_KEY, WikiUtil.getTopicFromURI(request));
+			String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+			String accessDeniedRedirectUri = "/" + virtualWiki + "/Special:Login";
+			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_ACCESS_DENIED_REDIRECT_URI, accessDeniedRedirectUri);
 		} else if (exception instanceof AuthenticationException) {
 			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_AUTHENTICATION_REQUIRED_KEY, this.getErrorMessageProvider().getErrorMessageKey(request));
 			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY, WikiUtil.getTopicFromURI(request));
