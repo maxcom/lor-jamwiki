@@ -1,4 +1,12 @@
-﻿0.7.0
+﻿0.8.0
+=====
+
+New Features:
+
+  * Add an optional "Show Changes" button during editing to display a diff
+    view of the current edit.
+
+0.7.0
 =====
 
 New Features:

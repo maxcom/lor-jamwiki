@@ -77,14 +77,12 @@ public class EditServlet extends JAMWikiServlet {
 		topicName = topic.getName();
 		Integer lastTopicVersionId = retrieveLastTopicVersionId(request, topic);
 		next.addObject("lastTopicVersionId", lastTopicVersionId);
-		loadEdit(request, next, pageInfo, virtualWiki, topicName, true);
-		String contents = null;
+		String contents = (String)request.getParameter("contents");
 		if (isPreview(request)) {
 			preview(request, next, pageInfo);
-			return;
-		}
-		pageInfo.setContentJsp(JSP_EDIT);
-		if (!StringUtils.isBlank(request.getParameter("topicVersionId"))) {
+		} else if (isShowChanges(request)) {
+			showChanges(request, next, pageInfo, lastTopicVersionId);
+		} else if (!StringUtils.isBlank(request.getParameter("topicVersionId"))) {
 			// editing an older version
 			Integer topicVersionId = new Integer(request.getParameter("topicVersionId"));
 			TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId.intValue());
@@ -103,10 +101,7 @@ public class EditServlet extends JAMWikiServlet {
 			// editing a full new or existing topic
 			contents = (topic == null) ? "" : topic.getTopicContent();
 		}
-		WikiUser user = ServletUtil.currentWikiUser();
-		String editor = user.getEditor();
-		next.addObject("editor", editor);
-		next.addObject("contents", contents);
+		this.loadEdit(request, next, pageInfo, contents, virtualWiki, topicName, true);
 	}
 
 	/**
@@ -120,10 +115,8 @@ public class EditServlet extends JAMWikiServlet {
 		WikiMessage spam = new WikiMessage("edit.exception.spam", result);
 		next.addObject("spam", spam);
 		String virtualWiki = pageInfo.getVirtualWikiName();
-		next.addObject("contents", contents);
-		loadEdit(request, next, pageInfo, virtualWiki, topicName, false);
+		this.loadEdit(request, next, pageInfo, contents, virtualWiki, topicName, false);
 		next.addObject("editSpam", "true");
-		pageInfo.setContentJsp(JSP_EDIT);
 		return true;
 	}
 
@@ -144,7 +137,22 @@ public class EditServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void loadEdit(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String virtualWiki, String topicName, boolean useSection) throws Exception {
+	private boolean isShowChanges(HttpServletRequest request) {
+		return !StringUtils.isBlank(request.getParameter("showChanges"));
+	}
+
+	/**
+	 *
+	 */
+	private void loadDiff(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String contents1, String contents2) throws Exception {
+		Vector diffs = DiffUtil.diff(contents1, contents2);
+		next.addObject("diffs", diffs);
+	}
+
+	/**
+	 *
+	 */
+	private void loadEdit(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String contents, String virtualWiki, String topicName, boolean useSection) throws Exception {
 		pageInfo.setPageTitle(new WikiMessage("edit.title", topicName));
 		pageInfo.setTopicName(topicName);
 		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
@@ -163,6 +171,11 @@ public class EditServlet extends JAMWikiServlet {
 		if (request.getParameter("watchTopic") != null || (watchlist.containsTopic(topicName) && !isPreview(request))) {
 			next.addObject("watchTopic", new Boolean(true));
 		}
+		pageInfo.setContentJsp(JSP_EDIT);
+		WikiUser user = ServletUtil.currentWikiUser();
+		String editor = user.getEditor();
+		next.addObject("editor", editor);
+		next.addObject("contents", contents);
 	}
 
 	/**
@@ -213,7 +226,7 @@ public class EditServlet extends JAMWikiServlet {
 	}
 
 	/**
-	 *
+	 * Functionality to handle the "Preview" button being clicked.
 	 */
 	private void preview(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
@@ -224,8 +237,6 @@ public class EditServlet extends JAMWikiServlet {
 		previewTopic.setTopicContent(contents);
 		previewTopic.setVirtualWiki(virtualWiki);
 		next.addObject("editPreview", "true");
-		pageInfo.setContentJsp(JSP_EDIT);
-		next.addObject("contents", contents);
 		ServletUtil.viewTopic(request, next, pageInfo, null, previewTopic, false);
 	}
 
@@ -239,13 +250,10 @@ public class EditServlet extends JAMWikiServlet {
 		String contents1 = lastTopic.getTopicContent();
 		String contents2 = request.getParameter("contents");
 		next.addObject("lastTopicVersionId", lastTopic.getCurrentVersionId());
-		next.addObject("contents", contents1);
 		next.addObject("contentsResolve", contents2);
-		Vector diffs = DiffUtil.diff(contents1, contents2);
-		next.addObject("diffs", diffs);
-		loadEdit(request, next, pageInfo, virtualWiki, topicName, false);
+		this.loadDiff(request, next, pageInfo, contents1, contents2);
+		this.loadEdit(request, next, pageInfo, contents1, virtualWiki, topicName, false);
 		next.addObject("editResolve", "true");
-		pageInfo.setContentJsp(JSP_EDIT);
 	}
 
 	/**
@@ -256,7 +264,7 @@ public class EditServlet extends JAMWikiServlet {
 	}
 
 	/**
-	 *
+	 * Functionality to handle the "Save" button being clicked.
 	 */
 	private void save(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
@@ -335,5 +343,19 @@ public class EditServlet extends JAMWikiServlet {
 			target += "#" + sectionName;
 		}
 		ServletUtil.redirect(next, virtualWiki, target);
+	}
+
+	/**
+	 * Functionality to handle the "Show Changes" button being clicked.
+	 */
+	private void showChanges(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, Integer lastTopicVersionId) throws Exception {
+		String contents1 = request.getParameter("contents");
+		String contents2 = "";
+		if (lastTopicVersionId != null) {
+			TopicVersion lastTopicVersion = WikiBase.getDataHandler().lookupTopicVersion(lastTopicVersionId.intValue());
+			contents2 = lastTopicVersion.getVersionContent();
+		}
+		this.loadDiff(request, next, pageInfo, contents1, contents2);
+		next.addObject("editShowChanges", "true");
 	}
 }

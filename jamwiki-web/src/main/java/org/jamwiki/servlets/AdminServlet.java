@@ -222,6 +222,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_RECENT_CHANGES_NUM);
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_SPAM_FILTER);
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_USE_PREVIEW);
+			setBooleanProperty(props, request, Environment.PROP_TOPIC_USE_SHOW_CHANGES);
 			setBooleanProperty(props, request, Environment.PROP_PRINT_NEW_WINDOW);
 			setBooleanProperty(props, request, Environment.PROP_EXTERNAL_LINK_NEW_WINDOW);
 			setProperty(props, request, Environment.PROP_BASE_SEARCH_ENGINE);

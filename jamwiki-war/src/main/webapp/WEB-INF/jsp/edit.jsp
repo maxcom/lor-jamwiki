@@ -45,14 +45,20 @@
 </c:if>
 </jamwiki:enabled>
 
+<jamwiki:enabled property="PROP_TOPIC_USE_SHOW_CHANGES">
+<c:if test="${!empty editShowChanges}">
+<%@ include file="diff-include.jsp" %>
+</c:if>
+</jamwiki:enabled>
+
 <fieldset>
 <legend><fmt:message key="topic.caption.editlegend" /></legend>
 
 <form name="form" method="post" name="editform" action="<jamwiki:link value="Special:Edit" />">
-<input type="hidden" name="topic" value="<c:out value="${pageInfo.topicName}"/>" />
-<input type="hidden" name="lastTopicVersionId" value="<c:out value="${lastTopicVersionId}"/>" />
-<input type="hidden" name="section" value="<c:out value="${section}"/>" />
-<input type="hidden" name="topicVersionId" value="<c:out value="${topicVersionId}"/>" />
+<input type="hidden" name="topic" value="<c:out value="${pageInfo.topicName}" />" />
+<input type="hidden" name="lastTopicVersionId" value="<c:out value="${lastTopicVersionId}" />" />
+<input type="hidden" name="section" value="<c:out value="${section}" />" />
+<input type="hidden" name="topicVersionId" value="<c:out value="${topicVersionId}" />" />
 
 <c:choose>
 	<c:when test="${editor == 'toolbar'}">
@@ -65,9 +71,10 @@
 </p>
 <p><label for="editComment"><fmt:message key="edit.caption.comment" /></label>: <input type="text" name="editComment" value="<c:out value="${editComment}" />" size="60" id="editComment" /></p>
 <p>
-<input type="submit" name="save" value="<fmt:message key="common.save"/>"  accesskey="s"/>
+<input type="submit" name="save" value="<fmt:message key="common.save" />"  accesskey="s" />
 
-<jamwiki:enabled property="PROP_TOPIC_USE_PREVIEW"><input type="submit" name="preview" value="<fmt:message key="edit.action.preview"/>" accesskey="p"/></jamwiki:enabled>
+<jamwiki:enabled property="PROP_TOPIC_USE_PREVIEW"><input type="submit" name="preview" value="<fmt:message key="edit.action.preview" />" accesskey="p" /></jamwiki:enabled>
+<jamwiki:enabled property="PROP_TOPIC_USE_SHOW_CHANGES"><input type="submit" name="showChanges" value="<fmt:message key="edit.action.showchanges" />" accesskey="v" /></jamwiki:enabled>
 
 &nbsp;&nbsp;&nbsp;
 <input type="checkbox" value="true" name="minorEdit"<c:if test="${minorEdit}"> checked</c:if> id="minorEdit" accesskey="i" />

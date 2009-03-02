@@ -101,6 +101,7 @@ public class Environment {
 	public static final String PROP_TOPIC_NON_ADMIN_TOPIC_MOVE = "non-admin-redirect";
 	public static final String PROP_TOPIC_SPAM_FILTER = "use-spam-filter";
 	public static final String PROP_TOPIC_USE_PREVIEW = "use-preview";
+	public static final String PROP_TOPIC_USE_SHOW_CHANGES = "use-show-changes";
 	private static final String PROPERTY_FILE_NAME = "jamwiki.properties";
 
 	private static Properties defaults = null;
@@ -210,6 +211,7 @@ public class Environment {
 		defaults.setProperty(PROP_TOPIC_EDITOR, "toolbar");
 		defaults.setProperty(PROP_TOPIC_SPAM_FILTER, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_TOPIC_USE_PREVIEW, Boolean.TRUE.toString());
+		defaults.setProperty(PROP_TOPIC_USE_SHOW_CHANGES, Boolean.TRUE.toString());
 	}
 
 	/**

@@ -117,6 +117,11 @@ function onRSS() {
 	<span class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_USE_PREVIEW}" value="true" checked="${props[PROP_TOPIC_USE_PREVIEW]}" id="${PROP_TOPIC_USE_PREVIEW}" /></span>
 </div>
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
+	<span class="formcaption"><label for="<%= Environment.PROP_TOPIC_USE_SHOW_CHANGES %>"><fmt:message key="admin.caption.useshowchanges" /></label></span>
+	<c:set var="PROP_TOPIC_USE_SHOW_CHANGES"><%= Environment.PROP_TOPIC_USE_SHOW_CHANGES %></c:set>
+	<span class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_USE_SHOW_CHANGES}" value="true" checked="${props[PROP_TOPIC_USE_SHOW_CHANGES]}" id="${PROP_TOPIC_USE_SHOW_CHANGES}" /></span>
+</div>
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
 	<span class="formcaption"><label for="<%= Environment.PROP_TOPIC_EDITOR %>"><fmt:message key="admin.caption.editor" /></label></span>
 	<c:set var="PROP_TOPIC_EDITOR"><%= Environment.PROP_TOPIC_EDITOR %></c:set>
 	<span class="formelement">
