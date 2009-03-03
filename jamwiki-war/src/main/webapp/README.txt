@@ -13,7 +13,7 @@ PREREQUISITES
 JAMWiki requires a web application server (such as Tomcat or Websphere) that
 supports the following specifications:
 
-  JDK 1.4 or later
+  JDK 1.5 or later
   Servlet 2.4 or later
 
 JAMWiki can be configured to store its data either in an external database or
@@ -184,7 +184,7 @@ This command will copy the current development code (the "trunk") into a local
 directory named "jamwiki".
 
 The software can be built from the Maven build script provided.  To build the
-software, install Maven (http://maven.apache.org/) and a JDK version 1.4 or
+software, install Maven (http://maven.apache.org/) and a JDK version 1.5 or
 later.  Once Maven and the JDK are properly installed, run the following
 commands:
 
