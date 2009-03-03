@@ -7,6 +7,8 @@ New Features:
   * Add an optional "Show Changes" button during editing to display a diff
     view of the current edit.
   * Upgrade to JFlex 1.4.3.
+  * Upgrade to JSTL standard taglib 1.1.2.
+
 
 0.7.0
 =====
