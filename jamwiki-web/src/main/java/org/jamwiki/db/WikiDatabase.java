@@ -25,7 +25,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -288,10 +287,8 @@ public class WikiDatabase {
 			String updateSql = "UPDATE jam_topic SET current_version_id = ? WHERE topic_id = ?";
 			logger.info(updateSql);
 			PreparedStatement update = conn.prepareStatement(updateSql);
-			Iterator it = topicVersions.keySet().iterator();
-			while (it.hasNext()) {
-				Integer topicId = (Integer)it.next();
-				Integer topicVersionId = (Integer)topicVersions.get(topicId);
+			for (Integer topicId : topicVersions.keySet()) {
+				Integer topicVersionId = topicVersions.get(topicId);
 				update.setObject(1, topicVersionId);
 				update.setObject(2, topicId);
 				update.executeUpdate();
@@ -644,9 +641,8 @@ public class WikiDatabase {
 	 *
 	 */
 	private static void setupSpecialPages(Locale locale, WikiUser user) throws Exception {
-		List all = WikiBase.getDataHandler().getVirtualWikiList();
-		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
-			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
+		List<VirtualWiki> all = WikiBase.getDataHandler().getVirtualWikiList();
+		for (VirtualWiki virtualWiki : all) {
 			// create the default topics
 			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STARTING_POINTS, user, false);
 			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_LEFT_MENU, user, true);

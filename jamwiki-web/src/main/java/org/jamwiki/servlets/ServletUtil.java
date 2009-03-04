@@ -408,7 +408,7 @@ public class ServletUtil {
 		int i = 0;
 		// loop through the results and split out images and sub-categories
 		while (i < categoryTopics.size()) {
-			Category category = (Category)categoryTopics.get(i);
+			Category category = categoryTopics.get(i);
 			if (category.getTopicType() == Topic.TYPE_IMAGE) {
 				categoryTopics.remove(i);
 				categoryImages.add(category);
@@ -712,8 +712,7 @@ public class ServletUtil {
 		String content = ParserUtil.parse(parserInput, parserOutput, topic.getTopicContent());
 		if (parserOutput.getCategories().size() > 0) {
 			LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>();
-			for (Iterator iterator = parserOutput.getCategories().keySet().iterator(); iterator.hasNext();) {
-				String key = (String)iterator.next();
+			for (String key : parserOutput.getCategories().keySet()) {
 				String value = key.substring(NamespaceHandler.NAMESPACE_CATEGORY.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
 				categories.put(key, value);
 			}
@@ -724,10 +723,9 @@ public class ServletUtil {
 			loadCategoryContent(next, virtualWiki, topic.getName());
 		}
 		if (topic.getTopicType() == Topic.TYPE_IMAGE || topic.getTopicType() == Topic.TYPE_FILE) {
-			Collection fileVersions = WikiBase.getDataHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
-			for (Iterator iterator = fileVersions.iterator(); iterator.hasNext();) {
+			Collection<WikiFileVersion> fileVersions = WikiBase.getDataHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
+			for (WikiFileVersion fileVersion : fileVersions) {
 				// update version urls to include web root path
-				WikiFileVersion fileVersion = (WikiFileVersion)iterator.next();
 				String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + fileVersion.getUrl());
 				url = FilenameUtils.separatorsToUnix(url);
 				fileVersion.setUrl(url);

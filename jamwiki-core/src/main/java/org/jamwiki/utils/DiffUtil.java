@@ -280,16 +280,16 @@ public class DiffUtil {
 		Diff diffObject = new Diff(oldArray, newArray);
 		List<Difference> diffs = diffObject.diff();
 		Vector<WikiDiff> wikiDiffs = new Vector<WikiDiff>();
-		Difference currentDiff = null;
 		Difference previousDiff = null;
 		Difference nextDiff = null;
-		for (int i = 0; i < diffs.size(); i++) {
-			currentDiff = (Difference)diffs.get(i);
+		int i = 0;
+		for (Difference currentDiff : diffs) {
+			i++;
 			preBufferDifference(currentDiff, previousDiff, wikiDiffs, oldArray, newArray);
 			processDifference(currentDiff, wikiDiffs, oldArray, newArray);
 			nextDiff = null;
 			if ((i+1) < diffs.size() ) {
-				nextDiff = (Difference)diffs.get(i+1);
+				nextDiff = diffs.get(i+1);
 			}
 			postBufferDifference(currentDiff, nextDiff, wikiDiffs, oldArray, newArray);
 			previousDiff = currentDiff;

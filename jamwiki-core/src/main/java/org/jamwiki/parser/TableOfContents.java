@@ -16,7 +16,6 @@
  */
 package org.jamwiki.parser;
 
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
@@ -245,12 +244,9 @@ public class TableOfContents {
 	public String toHTML() {
 		StringBuffer text = new StringBuffer();
 		text.append("<table id=\"toc\">\n<tr>\n<td>\n");
-		TableOfContentsEntry entry = null;
 		int adjustedLevel = 0;
 		int previousLevel = 0;
-		Iterator tocIterator = this.entries.values().iterator();
-		while (tocIterator.hasNext()) {
-			entry = (TableOfContentsEntry)tocIterator.next();
+		for (TableOfContentsEntry entry : this.entries.values()) {
 			// adjusted level determines how far to indent the list
 			adjustedLevel = ((entry.level - minLevel) + 1);
 			// cannot increase TOC indent level more than one level at a time

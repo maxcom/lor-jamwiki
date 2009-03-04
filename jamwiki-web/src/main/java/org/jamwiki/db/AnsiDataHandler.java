@@ -19,7 +19,6 @@ package org.jamwiki.db;
 import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -407,7 +406,7 @@ public class AnsiDataHandler implements DataHandler {
 			Integer userId = new Integer(rs.getInt(DATA_WIKI_USER_ID));
 			RoleMap roleMap = new RoleMap();
 			if (roleMaps.containsKey(userId)) {
-				roleMap = (RoleMap)roleMaps.get(userId);
+				roleMap = roleMaps.get(userId);
 			} else {
 				roleMap.setUserId(userId);
 				roleMap.setUserLogin(rs.getString("username"));
@@ -430,7 +429,7 @@ public class AnsiDataHandler implements DataHandler {
 			RoleMap roleMap = new RoleMap();
 			String key = userId + "|" + groupId;
 			if (roleMaps.containsKey(key)) {
-				roleMap = (RoleMap)roleMaps.get(key);
+				roleMap = roleMaps.get(key);
 			} else {
 				if (userId > 0) {
 					roleMap.setUserId(new Integer(userId));
@@ -470,7 +469,7 @@ public class AnsiDataHandler implements DataHandler {
 			Integer groupId = new Integer(rs.getInt(DATA_GROUP_ID));
 			RoleMap roleMap = new RoleMap();
 			if (roleMaps.containsKey(groupId)) {
-				roleMap = (RoleMap)roleMaps.get(groupId);
+				roleMap = roleMaps.get(groupId);
 			} else {
 				roleMap.setGroupId(groupId);
 				roleMap.setGroupName(rs.getString("group_name"));
@@ -932,9 +931,8 @@ public class AnsiDataHandler implements DataHandler {
 		if (cacheElement != null) {
 			return (VirtualWiki)cacheElement.getObjectValue();
 		}
-		List virtualWikis = this.getVirtualWikiList();
-		for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
-			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
+		List<VirtualWiki> virtualWikis = this.getVirtualWikiList();
+		for (VirtualWiki virtualWiki : virtualWikis) {
 			if (virtualWiki.getName().equals(virtualWikiName)) {
 				WikiCache.addToCache(CACHE_VIRTUAL_WIKI, virtualWikiName, virtualWiki);
 				return virtualWiki;
@@ -957,15 +955,13 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	private String lookupVirtualWikiName(int virtualWikiId) throws Exception {
-		VirtualWiki virtualWiki = null;
 		Element cacheElement = WikiCache.retrieveFromCache(CACHE_VIRTUAL_WIKI, virtualWikiId);
 		if (cacheElement != null) {
-			virtualWiki = (VirtualWiki)cacheElement.getObjectValue();
+			VirtualWiki virtualWiki = (VirtualWiki)cacheElement.getObjectValue();
 			return (virtualWiki == null) ? null : virtualWiki.getName();
 		}
-		List virtualWikis = this.getVirtualWikiList();
-		for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
-			virtualWiki = (VirtualWiki)iterator.next();
+		List<VirtualWiki> virtualWikis = this.getVirtualWikiList();
+		for (VirtualWiki virtualWiki : virtualWikis) {
 			if (virtualWiki.getVirtualWikiId() == virtualWikiId) {
 				WikiCache.addToCache(CACHE_VIRTUAL_WIKI, virtualWikiId, virtualWiki);
 				return virtualWiki.getName();
@@ -1471,9 +1467,7 @@ public class AnsiDataHandler implements DataHandler {
 		try {
 			Connection conn = DatabaseConnection.getConnection();
 			this.queryHandler().deleteGroupAuthorities(groupId, conn);
-			Iterator roleIterator = roles.iterator();
-			while (roleIterator.hasNext()) {
-				String authority = (String)roleIterator.next();
+			for (String authority : roles) {
 				this.validateAuthority(authority);
 				this.queryHandler().insertGroupAuthority(groupId, authority, conn);
 			}
@@ -1498,9 +1492,7 @@ public class AnsiDataHandler implements DataHandler {
 		try {
 			Connection conn = DatabaseConnection.getConnection();
 			this.queryHandler().deleteUserAuthorities(username, conn);
-			Iterator roleIterator = roles.iterator();
-			while (roleIterator.hasNext()) {
-				String authority = (String)roleIterator.next();
+			for (String authority : roles) {
 				this.validateAuthority(authority);
 				this.queryHandler().insertUserAuthority(username, authority, conn);
 			}
@@ -1534,7 +1526,7 @@ public class AnsiDataHandler implements DataHandler {
 	 *  be visible to Wiki users.  This flag should be true except in rare
 	 *  cases, such as when temporarily deleting a topic during page moves.
 	 */
-	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, Vector links, boolean userVisible) throws Exception {
+	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, Vector links, boolean userVisible) throws Exception {
 		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
 			String key = WikiCache.key(topic.getVirtualWiki(), topic.getName());
@@ -1566,11 +1558,10 @@ public class AnsiDataHandler implements DataHandler {
 			if (categories != null) {
 				// add / remove categories associated with the topic
 				this.deleteTopicCategories(topic, conn);
-				for (Iterator iterator = categories.keySet().iterator(); iterator.hasNext();) {
-					String categoryName = (String)iterator.next();
+				for (String categoryName : categories.keySet()) {
 					Category category = new Category();
 					category.setName(categoryName);
-					category.setSortKey((String)categories.get(categoryName));
+					category.setSortKey(categories.get(categoryName));
 					category.setVirtualWiki(topic.getVirtualWiki());
 					category.setChildTopicName(topic.getName());
 					this.addCategory(category, conn);

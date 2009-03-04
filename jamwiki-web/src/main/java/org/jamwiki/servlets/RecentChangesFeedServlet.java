@@ -20,7 +20,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -177,10 +176,9 @@ public class RecentChangesFeedServlet extends AbstractController {
 	/**
 	 *
 	 */
-	private List<SyndEntry> getFeedEntries(Collection changes, boolean includeMinorEdits, boolean linkToVersion, String feedURL) {
+	private List<SyndEntry> getFeedEntries(Collection<RecentChange> changes, boolean includeMinorEdits, boolean linkToVersion, String feedURL) {
 		List<SyndEntry> entries = new ArrayList<SyndEntry>();
-		for (Iterator iter = changes.iterator(); iter.hasNext();) {
-			RecentChange change = (RecentChange)iter.next();
+		for (RecentChange change : changes) {
 			if (includeMinorEdits || (!change.getMinor())) {
 				entries.add(getFeedEntry(change, linkToVersion, feedURL));
 			}

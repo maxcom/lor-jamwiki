@@ -16,7 +16,6 @@
  */
 package org.jamwiki.utils;
 
-import java.util.Iterator;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiConfiguration;
@@ -65,11 +64,9 @@ public class NamespaceHandler {
 			// main namespace
 			return NAMESPACE_COMMENTS;
 		}
-		Map namespaces = WikiConfiguration.getInstance().getNamespaces();
-		Iterator iterator = namespaces.keySet().iterator();
-		while (iterator.hasNext()) {
-			String key = (String)iterator.next();
-			String[] values = (String[])namespaces.get(key);
+		Map<String, String[]> namespaces = WikiConfiguration.getInstance().getNamespaces();
+		for (String key : namespaces.keySet()) {
+			String[] values = namespaces.get(key);
 			String main = values[0];
 			String comments = values[1];
 			if (namespace.equals(NAMESPACE_SPECIAL)) {
@@ -91,11 +88,9 @@ public class NamespaceHandler {
 			// main namespace
 			return "";
 		}
-		Map namespaces = WikiConfiguration.getInstance().getNamespaces();
-		Iterator iterator = namespaces.keySet().iterator();
-		while (iterator.hasNext()) {
-			String key = (String)iterator.next();
-			String[] values = (String[])namespaces.get(key);
+		Map<String, String[]> namespaces = WikiConfiguration.getInstance().getNamespaces();
+		for (String key : namespaces.keySet()) {
+			String[] values = namespaces.get(key);
 			String main = values[0];
 			String comments = values[1];
 			if (namespace.equals(main) || (comments != null && namespace.equals(comments))) {
@@ -110,11 +105,9 @@ public class NamespaceHandler {
 	 *
 	 */
 	private static final String initializeNamespace(String name, boolean isComments) {
-		Map namespaces = WikiConfiguration.getInstance().getNamespaces();
-		Iterator iterator = namespaces.keySet().iterator();
-		while (iterator.hasNext()) {
-			String key = (String)iterator.next();
-			String[] values = (String[])namespaces.get(key);
+		Map<String, String[]> namespaces = WikiConfiguration.getInstance().getNamespaces();
+		for (String key : namespaces.keySet()) {
+			String[] values = namespaces.get(key);
 			String main = values[0];
 			String comments = values[1];
 			if (name.equals(key)) {

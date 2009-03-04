@@ -17,7 +17,6 @@
 package org.jamwiki.servlets;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
@@ -92,8 +91,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		Collection<String> allItems = new TreeSet<String>();
 		Collection<String> unlinkedTopics = WikiBase.getDataHandler().getAllTopicNames(virtualWiki);
-		for (Iterator iterator = unlinkedTopics.iterator(); iterator.hasNext();) {
-			String topicName = (String)iterator.next();
+		for (String topicName : unlinkedTopics) {
 			Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, new Object());
 			if (topic == null) {
 				logger.warning("No topic found: " + virtualWiki + " / " + topicName);
@@ -124,8 +122,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		// FIXME - this is a nasty hack until data can be retrieved properly for pagination
 		Collection<String> items = new TreeSet<String>();
 		int count = 0;
-		for (Iterator iterator = allItems.iterator(); iterator.hasNext();) {
-			String topicName = (String)iterator.next();
+		for (String topicName : allItems) {
 			count++;
 			if (count < (pagination.getOffset() + 1)) {
 				continue;
@@ -148,10 +145,9 @@ public class ItemsServlet extends JAMWikiServlet {
 	 */
 	private void viewUsers(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		Collection items = WikiBase.getDataHandler().lookupWikiUsers(pagination);
+		Collection<String> items = WikiBase.getDataHandler().lookupWikiUsers(pagination);
 		Vector<String> links = new Vector<String>();
-		for (Iterator iter = items.iterator(); iter.hasNext();) {
-			String link = (String)iter.next();
+		for (String link : items) {
 			links.add(NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + link);
 		}
 		next.addObject("itemCount", new Integer(items.size()));

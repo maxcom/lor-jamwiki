@@ -16,7 +16,6 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
@@ -72,11 +71,9 @@ public class RegisterServlet extends JAMWikiServlet {
 			user.setDefaultLocale(request.getLocale().toString());
 		}
 		TreeMap<String, String> locales = new TreeMap<String, String>();
-		Map translations = WikiConfiguration.getInstance().getTranslations();
-		Iterator iterator = translations.keySet().iterator();
-		while (iterator.hasNext()) {
-			String key = (String)iterator.next();
-			String value = key + " - " + (String)translations.get(key);
+		Map<String, String> translations = WikiConfiguration.getInstance().getTranslations();
+		for (String key : translations.keySet()) {
+			String value = key + " - " + translations.get(key);
 			locales.put(value, key);
 		}
 		Locale[] localeArray = Locale.getAvailableLocales();

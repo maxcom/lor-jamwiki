@@ -18,7 +18,6 @@ package org.jamwiki.servlets;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
@@ -175,10 +174,8 @@ public class RolesServlet extends JAMWikiServlet {
 		} else if (!StringUtils.isBlank(updateRole)) {
 			// FIXME - use a cached list of roles instead of iterating
 			// load details for the selected role
-			Collection roles = WikiBase.getDataHandler().getAllRoles();
-			Iterator roleIterator = roles.iterator();
-			while (roleIterator.hasNext()) {
-				Role tempRole = (Role)roleIterator.next();
+			Collection<Role> roles = WikiBase.getDataHandler().getAllRoles();
+			for (Role tempRole : roles) {
 				if (tempRole.getAuthority().equals(updateRole)) {
 					role = tempRole;
 				}

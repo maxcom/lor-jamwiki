@@ -17,7 +17,6 @@
 package org.jamwiki.parser.jflex;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,7 +66,7 @@ public class TemplateTag {
 		content = this.parseTemplateBody(parserInput, content);
 		String name = this.parseParamName(content);
 		String defaultValue = this.parseParamDefaultValue(parserInput, content);
-		String value = (String)this.parameterValues.get(name);
+		String value = this.parameterValues.get(name);
 		if (value == null && defaultValue == null) {
 			return param;
 		}
@@ -147,13 +146,13 @@ public class TemplateTag {
 	 * return the default value if it exists.
 	 */
 	private String parseParamDefaultValue(ParserInput parserInput, String raw) throws Exception {
-		Vector tokens = this.tokenizeParams(raw);
+		Vector<String> tokens = this.tokenizeParams(raw);
 		if (tokens.size() < 2) {
 			return null;
 		}
 		// table elements mess up default processing, so just return anything after
 		// the first parameter to avoid having to implement special table logic
-		String param1 = (String)tokens.elementAt(0);
+		String param1 = tokens.elementAt(0);
 		String value = raw.substring(param1.length() + 1);
 		return JFlexParserUtil.parseFragment(parserInput, value, JFlexParser.MODE_PREPROCESS);
 	}
@@ -235,13 +234,12 @@ public class TemplateTag {
 	 * parse the parameter names and values.
 	 */
 	private void parseTemplateParameterValues(ParserInput parserInput, String templateContent) throws Exception {
-		Vector tokens = this.tokenizeParams(templateContent);
+		Vector<String> tokens = this.tokenizeParams(templateContent);
 		if (tokens.isEmpty()) {
 			throw new Exception("No template name found in " + templateContent);
 		}
 		int count = -1;
-		for (Iterator iterator = tokens.iterator(); iterator.hasNext();) {
-			String token = (String)iterator.next();
+		for (String token : tokens) {
 			count++;
 			if (count == 0) {
 				// first token is template name
@@ -311,7 +309,7 @@ public class TemplateTag {
 	 * Parse a template string of the form "param1|param2|param3" into
 	 * tokens (param1, param2, and param3 in the example).
 	 */
-	private Vector tokenizeParams(String content) {
+	private Vector<String> tokenizeParams(String content) {
 		Vector<String> tokens = new Vector<String>();
 		int pos = 0;
 		int endPos = -1;

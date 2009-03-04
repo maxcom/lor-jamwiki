@@ -18,7 +18,6 @@ package org.jamwiki.model;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Vector;
 import org.jamwiki.utils.WikiLogger;
 
@@ -131,9 +130,7 @@ public class RoleMap {
 		if (this.roleNames == null) {
 			return results;
 		}
-		Iterator roleNameIterator = this.roleNames.iterator();
-		while (roleNameIterator.hasNext()) {
-			String key = (String)roleNameIterator.next();
+		for (String key : this.roleNames) {
 			String value = this.getUserGroup() + "|" + key;
 			results.put(key, value);
 		}

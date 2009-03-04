@@ -622,7 +622,7 @@ public interface DataHandler {
 	 *  otherwise.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, Vector links, boolean userVisible) throws Exception;
+	void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, Vector links, boolean userVisible) throws Exception;
 
 	/**
 	 * Add or update a VirtualWiki object.  This method will add a new record

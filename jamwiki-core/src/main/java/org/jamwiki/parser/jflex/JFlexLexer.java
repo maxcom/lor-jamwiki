@@ -70,7 +70,7 @@ public abstract class JFlexLexer {
 	 * Append content to the current tag in the tag stack.
 	 */
 	protected void append(String content) {
-		JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.peek();
+		JFlexTagItem currentTag = this.tagStack.peek();
 		currentTag.getTagContent().append(content);
 	}
 
@@ -96,7 +96,7 @@ public abstract class JFlexLexer {
 			logger.warning("Attempt to call endState for an empty stack with text: " + yytext());
 			return;
 		}
-		int next = ((Integer)states.pop()).intValue();
+		int next = states.pop();
 		yybegin(next);
 	}
 
@@ -162,7 +162,7 @@ public abstract class JFlexLexer {
 			// it should be parsed as "<u><strong>text</strong></u>".
 			JFlexTagItem parent = null;
 			if (this.tagStack.size() > 2) {
-				parent = (JFlexTagItem)this.tagStack.get(this.tagStack.size() - 2);
+				parent = this.tagStack.get(this.tagStack.size() - 2);
 			}
 			if (parent != null && parent.getTagType().equals(tagType)) {
 				parent.setCloseTagOverride(tagType);
@@ -171,16 +171,16 @@ public abstract class JFlexLexer {
 			// if the above checks fail then this is an attempt to pop a tag that is not
 			// currently open, so append the escaped close tag to the current tag
 			// content without modifying the tag stack.
-			JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.peek();
+			JFlexTagItem currentTag = this.tagStack.peek();
 			currentTag.getTagContent().append("&lt;/" + tagType + "&gt;");
 			return null;
 		}
-		JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.peek();
+		JFlexTagItem currentTag = this.tagStack.peek();
 		if (this.tagStack.size() > 1) {
 			// only pop if not the root tag
-			currentTag = (JFlexTagItem)this.tagStack.pop();
+			currentTag = this.tagStack.pop();
 		}
-		JFlexTagItem previousTag = (JFlexTagItem)this.tagStack.peek();
+		JFlexTagItem previousTag = this.tagStack.peek();
 		if (!JFlexParserUtil.isInlineTag(currentTag.getTagType()) || currentTag.getTagType().equals("pre")) {
 			// if the current tag is not an inline tag, make sure it is on its own lines
 			String trimmedContent = StringUtils.stripEnd(previousTag.getTagContent().toString(), null);
@@ -200,11 +200,11 @@ public abstract class JFlexLexer {
 	protected String popAllTags() {
 		// pop the stack down to (but not including) the root tag
 		while (this.tagStack.size() > 1) {
-			JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.peek();
+			JFlexTagItem currentTag = this.tagStack.peek();
 			this.popTag(currentTag.getTagType());
 		}
 		// now pop the root tag
-		JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.pop();
+		JFlexTagItem currentTag = this.tagStack.pop();
 		return (this.mode >= JFlexParser.MODE_LAYOUT) ? currentTag.toHtml().trim() : currentTag.toHtml();
 	}
 
@@ -230,7 +230,7 @@ public abstract class JFlexLexer {
 		int depth = 0;
 		int currentPos = this.tagStack.size() - 1;
 		while (currentPos >= 0) {
-			JFlexTagItem tag = (JFlexTagItem)this.tagStack.get(currentPos);
+			JFlexTagItem tag = this.tagStack.get(currentPos);
 			if (!StringUtils.equals(tag.getTagType(), "li") && !StringUtils.equals(tag.getTagType(), "dd") && !StringUtils.equals(tag.getTagType(), "dt")) {
 				break;
 			}
@@ -293,7 +293,7 @@ public abstract class JFlexLexer {
 		for (int i=0; i < previousDepth; i++) {
 			// get the tagType for the root list ("ul", "dl", etc, NOT "li")
 			int tagPos = this.tagStack.size() - ((previousDepth - i) * 2);
-			tagType = ((JFlexTagItem)this.tagStack.get(tagPos)).getTagType();
+			tagType = (this.tagStack.get(tagPos)).getTagType();
 			if (tagType.equals(this.calculateListType(wikiSyntax.charAt(i)))) {
 				continue;
 			}
@@ -311,7 +311,7 @@ public abstract class JFlexLexer {
 			this.pushTag(this.calculateListItemType(wikiSyntax.charAt(0)), null);
 		} else if (previousDepth == currentDepth) {
 			// pop the previous list item
-			tagType = ((JFlexTagItem)this.tagStack.peek()).getTagType();
+			tagType = (this.tagStack.peek()).getTagType();
 			popTag(tagType);
 			// add the new list item to the stack
 			this.pushTag(this.calculateListItemType(wikiSyntax.charAt(previousDepth - 1)), null);
@@ -319,7 +319,7 @@ public abstract class JFlexLexer {
 		// if the new list has additional elements, push them onto the stack
 		int counterStart = (previousDepth > 1) ? previousDepth : 1;
 		for (int i=counterStart; i < wikiSyntax.length(); i++) {
-			String previousTagType = ((JFlexTagItem)this.tagStack.peek()).getTagType();
+			String previousTagType = (this.tagStack.peek()).getTagType();
 			// handle a weird corner case.  if a "dt" is open and there are
 			// sub-lists, close the dt and open a "dd" for the sub-list
 			if (previousTagType.equals("dt")) {
@@ -345,9 +345,9 @@ public abstract class JFlexLexer {
 		String tagType;
 		for (int i=0; i < depth; i++) {
 			// pop twice since lists have a list tag and a list item tag ("<ul><li></li></ul>")
-			tagType = ((JFlexTagItem)this.tagStack.peek()).getTagType();
+			tagType = (this.tagStack.peek()).getTagType();
 			popTag(tagType);
-			tagType = ((JFlexTagItem)this.tagStack.peek()).getTagType();
+			tagType = (this.tagStack.peek()).getTagType();
 			popTag(tagType);
 		}
 	}
@@ -425,7 +425,7 @@ public abstract class JFlexLexer {
 			// "b" followed by "i" when it should be the reverse.
 			int stackLength = this.tagStack.size();
 			if (stackLength > 2) {
-				JFlexTagItem grandparent = (JFlexTagItem)this.tagStack.get(stackLength - 2);
+				JFlexTagItem grandparent = this.tagStack.get(stackLength - 2);
 				if (grandparent.getTagType().equals("b")) {
 					// swap the tag types and close the current tag
 					grandparent.changeTagType("i");

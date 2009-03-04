@@ -19,7 +19,6 @@ package org.jamwiki.search;
 import java.io.File;
 import java.io.StringReader;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Vector;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -122,7 +121,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * Create a basic Lucene document to add to the index that does treats
 	 * the topic content as a single keyword and does not tokenize it.
 	 */
-	private Document createKeywordDocument(Topic topic, Collection links) throws Exception {
+	private Document createKeywordDocument(Topic topic, Collection<String> links) throws Exception {
 		String topicContent = topic.getTopicContent();
 		if (topicContent == null) {
 			topicContent = "";
@@ -134,8 +133,7 @@ public class LuceneSearchEngine implements SearchEngine {
 			links = new Vector();
 		}
 		// index topic links for search purposes
-		for (Iterator iter = links.iterator(); iter.hasNext();) {
-			String linkTopic = (String)iter.next();
+		for (String linkTopic : links) {
 			doc.add(new Field(ITYPE_TOPIC_LINK, linkTopic, Field.Store.NO, Field.Index.NOT_ANALYZED));
 		}
 		return doc;
@@ -325,21 +323,19 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * @throws Exception Thrown if any error occurs while re-indexing the Wiki.
 	 */
 	public synchronized void refreshIndex() throws Exception {
-		Collection allWikis = WikiBase.getDataHandler().getVirtualWikiList();
+		Collection<VirtualWiki> allWikis = WikiBase.getDataHandler().getVirtualWikiList();
 		Topic topic;
-		for (Iterator iterator = allWikis.iterator(); iterator.hasNext();) {
+		for (VirtualWiki virtualWiki : allWikis) {
 			long start = System.currentTimeMillis();
 			int count = 0;
-			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
 			FSDirectory directory = FSDirectory.getDirectory(this.getSearchIndexPath(virtualWiki.getName()));
 			KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
 			IndexWriter writer = null;
 			// FIXME - move synchronization to the writer instance for this directory
 			try {
 				writer = new IndexWriter(directory, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-				Collection topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName());
-				for (Iterator iter = topicNames.iterator(); iter.hasNext();) {
-					String topicName = (String)iter.next();
+				Collection<String> topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName());
+				for (String topicName : topicNames) {
 					topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
 					Document standardDocument = createStandardDocument(topic);
 					writer.addDocument(standardDocument);

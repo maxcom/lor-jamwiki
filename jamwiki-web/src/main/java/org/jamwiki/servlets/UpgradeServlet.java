@@ -17,7 +17,6 @@
 package org.jamwiki.servlets;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -198,9 +197,8 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 */
 	private boolean upgradeStyleSheet(HttpServletRequest request, Vector<String> messages) throws Exception {
 		try {
-			Collection virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
-			for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
-				VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
+			Collection<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
+			for (VirtualWiki virtualWiki : virtualWikis) {
 				WikiBase.getDataHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, ServletUtil.getIpAddress(request));
 				messages.add("Updated stylesheet for virtual wiki " + virtualWiki.getName());
 			}
