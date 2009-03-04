@@ -9,6 +9,10 @@ New Features:
   * Upgrade to JFlex 1.4.3.
   * Upgrade to JSTL standard taglib 1.1.2.
 
+Translation Updates:
+
+  * Updated German translations (axelclk).
+
 
 0.7.0
 =====
