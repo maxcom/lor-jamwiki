@@ -32,7 +32,7 @@ public abstract class JFlexLexer {
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexLexer.class.getName());
 
 	/** Member variable used to keep track of the state history for the lexer. */
-	protected Stack states = new Stack();
+	protected Stack<Integer> states = new Stack<Integer>();
 	/** Parser configuration information. */
 	protected ParserInput parserInput = null;
 	/** Parser parsing results. */
@@ -40,7 +40,7 @@ public abstract class JFlexLexer {
 	/** Parser mode, which provides input to the parser about what steps to take. */
 	protected int mode = JFlexParser.MODE_POSTPROCESS;
 	/** Stack of currently parsed tag content. */
-	private Stack tagStack = new Stack();
+	private Stack<JFlexTagItem> tagStack = new Stack<JFlexTagItem>();
 
 	/**
 	 * Utility method used to indicate whether HTML tags are allowed in wiki syntax

@@ -76,7 +76,7 @@ public class DatabaseUpgrades {
 	/**
 	 *
 	 */
-	public static Vector upgrade060(Vector messages) throws Exception {
+	public static Vector<String> upgrade060(Vector<String> messages) throws Exception {
 		TransactionStatus status = DatabaseConnection.startTransaction(getTransactionDefinition());
 		try {
 			Connection conn = DatabaseConnection.getConnection();
@@ -165,7 +165,7 @@ public class DatabaseUpgrades {
 	/**
 	 *
 	 */
-	public static Vector upgrade061(Vector messages) throws Exception {
+	public static Vector<String> upgrade061(Vector<String> messages) throws Exception {
 		TransactionStatus status = DatabaseConnection.startTransaction(getTransactionDefinition());
 		try {
 			String sql = null;
@@ -190,7 +190,7 @@ public class DatabaseUpgrades {
 	/**
 	 *
 	 */
-	public static Vector upgrade063(Vector messages) throws Exception {
+	public static Vector<String> upgrade063(Vector<String> messages) throws Exception {
 		TransactionStatus status = DatabaseConnection.startTransaction(getTransactionDefinition());
 		try {
 			String sql = null;
@@ -256,7 +256,7 @@ public class DatabaseUpgrades {
 	/**
 	 *
 	 */
-	public static Vector upgrade070(Vector messages) throws Exception {
+	public static Vector<String> upgrade070(Vector<String> messages) throws Exception {
 		TransactionStatus status = DatabaseConnection.startTransaction(getTransactionDefinition());
 		String dbType = Environment.getValue(Environment.PROP_DB_TYPE);
 		try {

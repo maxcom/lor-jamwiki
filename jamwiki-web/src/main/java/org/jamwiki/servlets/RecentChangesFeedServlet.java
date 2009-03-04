@@ -177,8 +177,8 @@ public class RecentChangesFeedServlet extends AbstractController {
 	/**
 	 *
 	 */
-	private List getFeedEntries(Collection changes, boolean includeMinorEdits, boolean linkToVersion, String feedURL) {
-		List entries = new ArrayList();
+	private List<SyndEntry> getFeedEntries(Collection changes, boolean includeMinorEdits, boolean linkToVersion, String feedURL) {
+		List<SyndEntry> entries = new ArrayList<SyndEntry>();
 		for (Iterator iter = changes.iterator(); iter.hasNext();) {
 			RecentChange change = (RecentChange)iter.next();
 			if (includeMinorEdits || (!change.getMinor())) {

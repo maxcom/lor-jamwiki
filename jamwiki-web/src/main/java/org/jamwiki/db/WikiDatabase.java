@@ -161,7 +161,7 @@ public class WikiDatabase {
 	 * @param props Properties object containing the new database properties
 	 * @param errors Vector to add error messages to
 	 */
-	public static void migrateDatabase(Properties props, Vector errors) throws Exception {
+	public static void migrateDatabase(Properties props, Vector<WikiMessage> errors) throws Exception {
 		// verify that new database is different from the old database
 		if (StringUtils.equalsIgnoreCase(Environment.getValue(Environment.PROP_DB_URL), props.getProperty(Environment.PROP_DB_URL))) {
 			errors.add(new WikiMessage("error.databaseconnection", "Cannot migrate to the same database"));
@@ -198,7 +198,7 @@ public class WikiDatabase {
 			from.setReadOnly(true);
 			from.setAutoCommit(true);
 			// used to track current_version_id for each jam_topic row inserted
-			Map topicVersions = new HashMap();
+			Map<Integer, Integer> topicVersions = new HashMap<Integer, Integer>();
 			for (int i = 0; i < JAMWIKI_DB_TABLE_INFO.length; i++) {
 				// these 3 variables are for special handling of the jam_topic.current_version_id field
 				// which cannot be loaded on initial insert due to the jam_f_topic_topicv constraint
@@ -349,7 +349,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	private static Connection initializeNewDatabase(Properties props, Vector errors, QueryHandler newQueryHandler) {
+	private static Connection initializeNewDatabase(Properties props, Vector<WikiMessage> errors, QueryHandler newQueryHandler) {
 		String driver = props.getProperty(Environment.PROP_DB_DRIVER);
 		String url = props.getProperty(Environment.PROP_DB_URL);
 		String userName = props.getProperty(Environment.PROP_DB_USERNAME);
@@ -517,7 +517,7 @@ public class WikiDatabase {
 			logger.warning("Admin user already exists");
 		}
 		WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword);
-		Vector roles = new Vector();
+		Vector<String> roles = new Vector<String>();
 		roles.add(Role.ROLE_ADMIN.getAuthority());
 		roles.add(Role.ROLE_SYSADMIN.getAuthority());
 		roles.add(Role.ROLE_TRANSLATE.getAuthority());
@@ -559,7 +559,7 @@ public class WikiDatabase {
 		// FIXME - use message key
 		group.setDescription("All non-logged in users are automatically assigned to the anonymous group.");
 		WikiBase.getDataHandler().writeWikiGroup(group);
-		List anonymousRoles = new Vector();
+		List<String> anonymousRoles = new Vector<String>();
 		anonymousRoles.add(Role.ROLE_EDIT_EXISTING.getAuthority());
 		anonymousRoles.add(Role.ROLE_EDIT_NEW.getAuthority());
 		anonymousRoles.add(Role.ROLE_UPLOAD.getAuthority());
@@ -570,7 +570,7 @@ public class WikiDatabase {
 		// FIXME - use message key
 		group.setDescription("All logged in users are automatically assigned to the registered user group.");
 		WikiBase.getDataHandler().writeWikiGroup(group);
-		List userRoles = new Vector();
+		List<String> userRoles = new Vector<String>();
 		userRoles.add(Role.ROLE_EDIT_EXISTING.getAuthority());
 		userRoles.add(Role.ROLE_EDIT_NEW.getAuthority());
 		userRoles.add(Role.ROLE_MOVE.getAuthority());

@@ -46,6 +46,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.jamwiki.Environment;
 import org.jamwiki.SearchEngine;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.parser.ParserOutput;
@@ -196,8 +197,8 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * @return A collection of SearchResultEntry objects for all documents that
 	 *  link to the topic.
 	 */
-	public Collection findLinkedTo(String virtualWiki, String topicName) {
-		Collection results = new Vector();
+	public Collection<SearchResultEntry> findLinkedTo(String virtualWiki, String topicName) {
+		Collection<SearchResultEntry> results = new Vector<SearchResultEntry>();
 		IndexSearcher searcher = null;
 		try {
 			PhraseQuery query = new PhraseQuery();
@@ -237,9 +238,9 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * @return A collection of SearchResultEntry objects for all documents that
 	 *  contain the search term.
 	 */
-	public Collection findResults(String virtualWiki, String text) {
+	public Collection<SearchResultEntry> findResults(String virtualWiki, String text) {
 		StandardAnalyzer analyzer = new StandardAnalyzer();
-		Collection results = new Vector();
+		Collection<SearchResultEntry> results = new Vector<SearchResultEntry>();
 		logger.fine("search text: " + text);
 		IndexSearcher searcher = null;
 		try {

@@ -80,7 +80,7 @@ public class ParserTest extends TestCase {
 	 */
 	// TODO - handle failure cases better.
 	private boolean knownFailure(String fileName) {
-		ArrayList failures = new ArrayList();
+		ArrayList<String> failures = new ArrayList<String>();
 		failures.add("Heading5");
 		failures.add("HtmlCommentTest2");
 		failures.add("HtmlMismatchTest3");

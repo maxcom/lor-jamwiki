@@ -41,7 +41,7 @@ public class TemplateTag {
 	protected static final String TEMPLATE_INCLUSION = "template-inclusion";
 	private static Pattern PARAM_NAME_VALUE_PATTERN = null;
 
-	private final HashMap parameterValues = new HashMap();
+	private final HashMap<String, String> parameterValues = new HashMap<String, String>();
 
 	static {
 		try {
@@ -312,7 +312,7 @@ public class TemplateTag {
 	 * tokens (param1, param2, and param3 in the example).
 	 */
 	private Vector tokenizeParams(String content) {
-		Vector tokens = new Vector();
+		Vector<String> tokens = new Vector<String>();
 		int pos = 0;
 		int endPos = -1;
 		String substring = "";

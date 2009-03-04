@@ -35,7 +35,7 @@ public class ParserInput {
 	/** Template inclusion tracks whether or not template code is being parsed.  A counter is used to deal with nested templates. */
 	private int templateDepth = 0;
 	/** Hashtable of generic temporary objects used during parsing. */
-	private final Hashtable tempParams = new Hashtable();
+	private final Hashtable<String, Object> tempParams = new Hashtable<String, Object>();
 	private String topicName = null;
 	/** IP address of the current user. */
 	private String userIpAddress = null;
@@ -202,7 +202,7 @@ public class ParserInput {
 	 * @return The Hashtable of arbitrary temporary parameters associated with
 	 *  the current parser input instance.
 	 */
-	public Hashtable getTempParams() {
+	public Hashtable<String, Object> getTempParams() {
 		return this.tempParams;
 	}
 

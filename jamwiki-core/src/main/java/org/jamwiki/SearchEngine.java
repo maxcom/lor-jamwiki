@@ -17,6 +17,7 @@
 package org.jamwiki;
 
 import java.util.Collection;
+import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.model.Topic;
 
 /**
@@ -51,7 +52,7 @@ public interface SearchEngine {
 	 * @return A collection of SearchResultEntry objects for all documents that
 	 *  link to the topic.
 	 */
-	Collection findLinkedTo(String virtualWiki, String topicName);
+	Collection<SearchResultEntry> findLinkedTo(String virtualWiki, String topicName);
 
 	/**
 	 * Find all documents that contain a specific search term, ordered by relevance.
@@ -61,7 +62,7 @@ public interface SearchEngine {
 	 * @return A collection of SearchResultEntry objects for all documents that
 	 *  contain the search term.
 	 */
-	Collection findResults(String virtualWiki, String text);
+	Collection<SearchResultEntry> findResults(String virtualWiki, String text);
 
 	/**
 	 * Refresh the current search index by re-visiting all topic pages.

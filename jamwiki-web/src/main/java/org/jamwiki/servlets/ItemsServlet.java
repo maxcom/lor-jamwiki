@@ -90,8 +90,8 @@ public class ItemsServlet extends JAMWikiServlet {
 	private void viewOrphanedPages(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		Collection allItems = new TreeSet();
-		Collection unlinkedTopics = WikiBase.getDataHandler().getAllTopicNames(virtualWiki);
+		Collection<String> allItems = new TreeSet<String>();
+		Collection<String> unlinkedTopics = WikiBase.getDataHandler().getAllTopicNames(virtualWiki);
 		for (Iterator iterator = unlinkedTopics.iterator(); iterator.hasNext();) {
 			String topicName = (String)iterator.next();
 			Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, new Object());
@@ -122,7 +122,7 @@ public class ItemsServlet extends JAMWikiServlet {
 			}
 		}
 		// FIXME - this is a nasty hack until data can be retrieved properly for pagination
-		Collection items = new TreeSet();
+		Collection<String> items = new TreeSet<String>();
 		int count = 0;
 		for (Iterator iterator = allItems.iterator(); iterator.hasNext();) {
 			String topicName = (String)iterator.next();
@@ -149,7 +149,7 @@ public class ItemsServlet extends JAMWikiServlet {
 	private void viewUsers(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		Collection items = WikiBase.getDataHandler().lookupWikiUsers(pagination);
-		Vector links = new Vector();
+		Vector<String> links = new Vector<String>();
 		for (Iterator iter = items.iterator(); iter.hasNext();) {
 			String link = (String)iter.next();
 			links.add(NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + link);

@@ -20,9 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -553,7 +553,7 @@ public class WikiUtil {
 	 *  "txt", not ".txt".
 	 */
 	public static List retrieveUploadFileList() {
-		List list = new Vector();
+		List<String> list = new ArrayList<String>();
 		int blacklistType = Environment.getIntValue(Environment.PROP_FILE_BLACKLIST_TYPE);
 		String listString = "";
 		if (blacklistType == WikiBase.UPLOAD_BLACKLIST) {

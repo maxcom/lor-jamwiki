@@ -114,7 +114,7 @@ public class MagicWordUtil {
 	private static final String MAGIC_SERVER = "SERVER";
 	private static final String MAGIC_SCRIPT_PATH = "SCRIPTPATH";
 	private static final String MAGIC_SERVER_NAME = "SERVERNAME";
-	private static Vector MAGIC_WORDS = new Vector();
+	private static Vector<String> MAGIC_WORDS = new Vector<String>();
 
 	static {
 		// current date values

@@ -46,7 +46,7 @@ public class XMLTopicFactory extends DefaultHandler {
 	private final String authorIpAddress;
 	private int indentLevel = 0;
 	String virtualWiki = "en";
-	Hashtable namespaces = new Hashtable();
+	Hashtable<String, Object> namespaces = new Hashtable<String, Object>();
 	String ns14 = "Category";
 	String ns6 = "Image";
 	Integer nsKey = null;

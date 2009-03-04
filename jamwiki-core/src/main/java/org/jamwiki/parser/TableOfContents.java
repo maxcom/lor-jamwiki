@@ -54,7 +54,7 @@ public class TableOfContents {
 	 * example, if the TOC contains only h3 and h4 entries, this value would be 3.
 	 */
 	private int minLevel = 4;
-	private final Map entries = new LinkedHashMap();
+	private final Map<String, TableOfContentsEntry> entries = new LinkedHashMap<String, TableOfContentsEntry>();
 	private int status = STATUS_TOC_UNINITIALIZED;
 	/** The minimum number of headings that must be present for a TOC to appear, unless forceTOC is set to true. */
 	private static final int MINIMUM_HEADINGS = 4;

@@ -69,8 +69,8 @@ public class RolesServlet extends JAMWikiServlet {
 	 * @return A List of role names for the given id, or an empty
 	 *  List if no matching values are found.
 	 */
-	private static List buildRoleArray(int userId, int groupId, String[] valueArray) {
-		List results = new Vector();
+	private static List<String> buildRoleArray(int userId, int groupId, String[] valueArray) {
+		List<String> results = new Vector<String>();
 		if (valueArray == null) {
 			return results;
 		}
@@ -104,14 +104,14 @@ public class RolesServlet extends JAMWikiServlet {
 		// "userid|groupid|role".  process both, deleting all old roles for the
 		// candidate group array and adding the new roles in the groupRole
 		// array.
-		ArrayList errors = new ArrayList();
+		ArrayList<WikiMessage> errors = new ArrayList<WikiMessage>();
 		try {
 			String[] candidateGroups = request.getParameterValues("candidateGroup");
 			String[] groupRoles = request.getParameterValues("groupRole");
 			if (candidateGroups != null) {
 				for (int i = 0; i < candidateGroups.length; i++) {
 					int groupId = Integer.parseInt(candidateGroups[i]);
-					List roles = buildRoleArray(-1, groupId, groupRoles);
+					List<String> roles = buildRoleArray(-1, groupId, groupRoles);
 					WikiBase.getDataHandler().writeRoleMapGroup(groupId, roles);
 				}
 				next.addObject("message", new WikiMessage("roles.message.grouproleupdate"));
@@ -124,7 +124,7 @@ public class RolesServlet extends JAMWikiServlet {
 				for (int i = 0; i < candidateUsers.length; i++) {
 					int userId = Integer.parseInt(candidateUsers[i]);
 					String username = candidateUsernames[i];
-					List roles = buildRoleArray(userId, -1, userRoles);
+					List<String> roles = buildRoleArray(userId, -1, userRoles);
 					if (userId == ServletUtil.currentWikiUser().getUserId() && !roles.contains(Role.ROLE_SYSADMIN)) {
 						errors.add(new WikiMessage("roles.message.sysadminremove"));
 						roles.add(Role.ROLE_SYSADMIN.getAuthority());

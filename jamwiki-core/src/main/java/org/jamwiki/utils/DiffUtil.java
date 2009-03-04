@@ -197,7 +197,7 @@ public class DiffUtil {
 	 * If possible, try to append a few lines of unchanged text to the diff output to
 	 * be used for context.
 	 */
-	private static void postBufferDifference(Difference currentDiff, Difference nextDiff, Vector wikiDiffs, String[] oldArray, String[] newArray) {
+	private static void postBufferDifference(Difference currentDiff, Difference nextDiff, Vector<WikiDiff> wikiDiffs, String[] oldArray, String[] newArray) {
 		if (DIFF_UNCHANGED_LINE_DISPLAY <= 0) {
 			return;
 		}
@@ -236,7 +236,7 @@ public class DiffUtil {
 	 * If possible, try to prepend a few lines of unchanged text to the diff output to
 	 * be used for context.
 	 */
-	private static void preBufferDifference(Difference currentDiff, Difference previousDiff, Vector wikiDiffs, String[] oldArray, String[] newArray) {
+	private static void preBufferDifference(Difference currentDiff, Difference previousDiff, Vector<WikiDiff> wikiDiffs, String[] oldArray, String[] newArray) {
 		if (DIFF_UNCHANGED_LINE_DISPLAY <= 0) {
 			return;
 		}
@@ -278,8 +278,8 @@ public class DiffUtil {
 		String[] oldArray = buildArray(oldVersion);
 		String[] newArray = buildArray(newVersion);
 		Diff diffObject = new Diff(oldArray, newArray);
-		List diffs = diffObject.diff();
-		Vector wikiDiffs = new Vector();
+		List<Difference> diffs = diffObject.diff();
+		Vector<WikiDiff> wikiDiffs = new Vector<WikiDiff>();
 		Difference currentDiff = null;
 		Difference previousDiff = null;
 		Difference nextDiff = null;
@@ -300,7 +300,7 @@ public class DiffUtil {
 	/**
 	 * Process the diff object and add it to the output.
 	 */
-	private static void processDifference(Difference currentDiff, Vector wikiDiffs, String[] oldArray, String[] newArray) {
+	private static void processDifference(Difference currentDiff, Vector<WikiDiff> wikiDiffs, String[] oldArray, String[] newArray) {
 		int deletedCurrent = currentDiff.getDeletedStart();
 		int addedCurrent = currentDiff.getAddedStart();
 		int count = 0;

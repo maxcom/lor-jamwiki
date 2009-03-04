@@ -94,7 +94,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * tab menu links for the WikiPageInfo object.
 	 */
 	private LinkedHashMap buildTabMenu(HttpServletRequest request, WikiPageInfo pageInfo) {
-		LinkedHashMap links = new LinkedHashMap();
+		LinkedHashMap<String, WikiMessage> links = new LinkedHashMap<String, WikiMessage>();
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
 		String pageName = pageInfo.getTopicName();
 		String virtualWiki = pageInfo.getVirtualWikiName();
@@ -165,7 +165,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * user menu links for the WikiPageInfo object.
 	 */
 	private LinkedHashMap buildUserMenu(WikiPageInfo pageInfo) {
-		LinkedHashMap links = new LinkedHashMap();
+		LinkedHashMap<String, WikiMessage> links = new LinkedHashMap<String, WikiMessage>();
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
 		if (userDetails.hasRole(Role.ROLE_ANONYMOUS) && !userDetails.hasRole(Role.ROLE_EMBEDDED)) {
 			// include the current page in the login link 

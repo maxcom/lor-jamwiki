@@ -36,10 +36,10 @@ import org.jamwiki.utils.WikiLogger;
 public class WikiResultSet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiResultSet.class.getName());
-	private final Vector rows = new Vector();
+	private final Vector<LinkedHashMap<String, Object>> rows = new Vector<LinkedHashMap<String, Object>>();
 	private int rowPointer = -1;
 	private int totalRows = -1;
-	private LinkedHashMap currentRow = null;
+	private LinkedHashMap<String, Object> currentRow = null;
 
 	/**
 	 * Constructor used primarily for building new result sets.  Use this
@@ -60,7 +60,7 @@ public class WikiResultSet {
 		int size = rsmd.getColumnCount();
 		int type;
 		while (rs.next()) {
-			LinkedHashMap column = new LinkedHashMap();
+			LinkedHashMap<String, Object> column = new LinkedHashMap<String, Object>();
 			for (int i=1; i <= size; i++) {
 				String columnName = rsmd.getColumnLabel(i);
 				type = rsmd.getColumnType(i);
@@ -396,7 +396,7 @@ public class WikiResultSet {
 		if (this.rowPointer >= this.totalRows) {
 			throw new SQLException("Attempt to access beyond last row of result set");
 		}
-		this.currentRow = (LinkedHashMap)this.rows.elementAt(this.rowPointer);
+		this.currentRow = this.rows.elementAt(this.rowPointer);
 		if (columnName == null || !this.currentRow.containsKey(columnName)) {
 			throw new SQLException("Invalid column name " + columnName);
 		}

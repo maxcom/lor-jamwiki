@@ -98,8 +98,8 @@ public class TranslationServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private TreeSet retrieveTranslationCodes() throws Exception {
-		TreeSet codes = new TreeSet();
+	private TreeSet<String> retrieveTranslationCodes() throws Exception {
+		TreeSet<String> codes = new TreeSet<String>();
 		File propertyRoot = Utilities.getClassLoaderRoot();
 		File[] files = propertyRoot.listFiles();
 		File file;

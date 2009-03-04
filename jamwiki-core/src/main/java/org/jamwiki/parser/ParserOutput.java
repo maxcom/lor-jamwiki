@@ -27,11 +27,11 @@ import java.util.LinkedHashMap;
 public class ParserOutput implements Serializable {
 
 	private boolean cacheable = true;
-	private final LinkedHashMap categories = new LinkedHashMap();
-	private final Vector links = new Vector();
+	private final LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>();
+	private final Vector<String> links = new Vector<String>();
 	private String redirect = null;
 	private String sectionName = null;
-	private final Vector templates = new Vector();
+	private final Vector<String> templates = new Vector<String>();
 
 	/**
 	 *
@@ -131,7 +131,7 @@ public class ParserOutput implements Serializable {
 	 * @return A mapping of categories and their associated sort keys (if any)
 	 *  for all categories that are associated with the document being parsed.
 	 */
-	public LinkedHashMap getCategories() {
+	public LinkedHashMap<String, String> getCategories() {
 		return this.categories;
 	}
 
@@ -142,7 +142,7 @@ public class ParserOutput implements Serializable {
 	 * @return A collection of all topic names that are linked to from the
 	 *  current document.
 	 */
-	public Vector getLinks() {
+	public Vector<String> getLinks() {
 		return this.links;
 	}
 
@@ -180,7 +180,7 @@ public class ParserOutput implements Serializable {
 	 * @return A collection of all template names that are included in the
 	 *  current document.
 	 */
-	public Vector getTemplates() {
+	public Vector<String> getTemplates() {
 		return this.templates;
 	}
 

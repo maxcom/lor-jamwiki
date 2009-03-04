@@ -42,7 +42,7 @@ public class ParserFunctionUtil {
 	private static final String PARSER_FUNCTION_UPPER_CASE = "uc:";
 	private static final String PARSER_FUNCTION_UPPER_CASE_FIRST = "ucfirst:";
 	private static final String PARSER_FUNCTION_URL_ENCODE = "urlencode:";
-	private static Vector PARSER_FUNCTIONS = new Vector();
+	private static Vector<String> PARSER_FUNCTIONS = new Vector<String>();
 
 	static {
 		// parser functions

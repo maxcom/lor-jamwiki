@@ -61,8 +61,8 @@ public class TiddlyWikiParserTest extends TestCase {
 	}
 
 	private class WikiBaseMock implements TiddlyWikiParser.WikiBaseFascade {
-		public ArrayList topics = new ArrayList();
-		public ArrayList versions = new ArrayList();
+		public ArrayList<Topic> topics = new ArrayList<Topic>();
+		public ArrayList<TopicVersion> versions = new ArrayList<TopicVersion>();
 
 		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, Vector links, boolean userVisible, Object transactionObject) throws Exception {
 			topics.add(topic);

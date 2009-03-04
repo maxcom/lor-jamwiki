@@ -47,13 +47,13 @@ public class WikiConfiguration {
 
 	private static WikiConfiguration instance = null;
 
-	private List dataHandlers = null;
-	private Map editors = null;
-	private Map namespaces = null;
-	private List parsers = null;
-	private List pseudotopics = null;
-	private List searchEngines = null;
-	private Map translations = null;
+	private List<WikiConfigurationObject> dataHandlers = null;
+	private Map<String, String> editors = null;
+	private Map<String, String[]> namespaces = null;
+	private List<WikiConfigurationObject> parsers = null;
+	private List<String> pseudotopics = null;
+	private List<WikiConfigurationObject> searchEngines = null;
+	private Map<String, String> translations = null;
 
 	/** Name of the configuration file. */
 	public static final String JAMWIKI_CONFIGURATION_FILE = "jamwiki-configuration.xml";
@@ -99,49 +99,49 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
-	public Collection getDataHandlers() {
+	public Collection<WikiConfigurationObject> getDataHandlers() {
 		return this.dataHandlers;
 	}
 
 	/**
 	 *
 	 */
-	public Map getEditors() {
+	public Map<String, String> getEditors() {
 		return this.editors;
 	}
 
 	/**
 	 *
 	 */
-	public Map getNamespaces() {
+	public Map<String, String[]> getNamespaces() {
 		return this.namespaces;
 	}
 
 	/**
 	 *
 	 */
-	public Collection getParsers() {
+	public Collection<WikiConfigurationObject> getParsers() {
 		return this.parsers;
 	}
 
 	/**
 	 *
 	 */
-	public Collection getPseudotopics() {
+	public Collection<String> getPseudotopics() {
 		return this.pseudotopics;
 	}
 
 	/**
 	 *
 	 */
-	public Collection getSearchEngines() {
+	public Collection<WikiConfigurationObject> getSearchEngines() {
 		return this.searchEngines;
 	}
 
 	/**
 	 *
 	 */
-	public Map getTranslations() {
+	public Map<String, String> getTranslations() {
 		return this.translations;
 	}
 
@@ -150,13 +150,13 @@ public class WikiConfiguration {
 	 */
 	private void initialize() {
 		try {
-			this.dataHandlers = new ArrayList();
-			this.editors = new LinkedHashMap();
-			this.namespaces = new LinkedHashMap();
-			this.parsers = new ArrayList();
-			this.pseudotopics = new ArrayList();
-			this.searchEngines = new ArrayList();
-			this.translations = new LinkedHashMap();
+			this.dataHandlers = new ArrayList<WikiConfigurationObject>();
+			this.editors = new LinkedHashMap<String, String>();
+			this.namespaces = new LinkedHashMap<String, String[]>();
+			this.parsers = new ArrayList<WikiConfigurationObject>();
+			this.pseudotopics = new ArrayList<String>();
+			this.searchEngines = new ArrayList<WikiConfigurationObject>();
+			this.translations = new LinkedHashMap<String, String>();
 			File file = Utilities.getClassLoaderFile(JAMWIKI_CONFIGURATION_FILE);
 			Document document = XMLUtil.parseXML(file, false);
 			Node node = document.getElementsByTagName(XML_CONFIGURATION_ROOT).item(0);
@@ -214,8 +214,8 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
-	private List parseConfigurationObjects(Node node, String name) throws Exception {
-		List results = new ArrayList();
+	private List<WikiConfigurationObject> parseConfigurationObjects(Node node, String name) throws Exception {
+		List<WikiConfigurationObject> results = new ArrayList<WikiConfigurationObject>();
 		NodeList children = node.getChildNodes();
 		for (int j = 0; j < children.getLength(); j++) {
 			Node child = children.item(j);
@@ -231,7 +231,7 @@ public class WikiConfiguration {
 	/**
 	 * Utility method for parsing a key-value node.
 	 */
-	private void parseMapNode(Node node, Map resultMap) throws Exception {
+	private void parseMapNode(Node node, Map<String, String> resultMap) throws Exception {
 		NodeList children = node.getChildNodes();
 		String name = "";
 		String key = "";
@@ -251,7 +251,7 @@ public class WikiConfiguration {
 	/**
 	 * Utility method for parsing nodes that are collections of key-value pairs.
 	 */
-	private void parseMapNodes(Node node, Map resultsMap, String childNodeName) throws Exception {
+	private void parseMapNodes(Node node, Map<String, String> resultsMap, String childNodeName) throws Exception {
 		NodeList children = node.getChildNodes();
 		for (int j = 0; j < children.getLength(); j++) {
 			Node child = children.item(j);

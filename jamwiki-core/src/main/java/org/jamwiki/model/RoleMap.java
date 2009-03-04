@@ -32,7 +32,7 @@ public class RoleMap {
 	private static final WikiLogger logger = WikiLogger.getLogger(RoleMap.class.getName());
 	private Integer groupId = null;
 	private String groupName = null;
-	private Collection roleNames = null;
+	private Collection<String> roleNames = null;
 	private Integer userId = null;
 	private String userLogin = null;
 
@@ -75,7 +75,7 @@ public class RoleMap {
 	 */
 	public void addRole(String roleName) {
 		if (this.roleNames == null) {
-			this.roleNames = new Vector();
+			this.roleNames = new Vector<String>();
 		}
 		this.roleNames.add(roleName);
 	}
@@ -83,14 +83,14 @@ public class RoleMap {
 	/**
 	 *
 	 */
-	 public Collection getRoleNames() {
+	 public Collection<String> getRoleNames() {
 		return this.roleNames;
 	}
 
 	/**
 	 *
 	 */
-	public void setRoleNames(Collection roleNames) {
+	public void setRoleNames(Collection<String> roleNames) {
 		this.roleNames = roleNames;
 	}
 
@@ -126,8 +126,8 @@ public class RoleMap {
 	 * This method is simply a utility method to be used with JSTL for
 	 * determining if the current list of roles contains a specific role.
 	 */
-	 public HashMap getRoleNamesMap() {
-		HashMap results = new HashMap();
+	 public HashMap<String, String> getRoleNamesMap() {
+		HashMap<String, String> results = new HashMap<String, String>();
 		if (this.roleNames == null) {
 			return results;
 		}

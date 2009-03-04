@@ -37,6 +37,7 @@ import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
+import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.SpamFilter;
@@ -127,7 +128,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void migrateDatabase(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		Vector errors = new Vector();
+		Vector<WikiMessage> errors = new Vector<WikiMessage>();
 		Properties props = new Properties();
 		try {
 			setProperty(props, request, Environment.PROP_BASE_PERSISTENCE_TYPE);
@@ -181,7 +182,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void password(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		Vector errors = new Vector();
+		Vector<WikiMessage> errors = new Vector<WikiMessage>();
 		String userLogin = request.getParameter("passwordLogin");
 		String newPassword = request.getParameter("passwordPassword");
 		String confirmPassword = request.getParameter("passwordPasswordConfirm");
@@ -388,18 +389,18 @@ public class AdminServlet extends JAMWikiServlet {
 		pageInfo.setPageTitle(new WikiMessage("admin.title"));
 		Map editors = WikiConfiguration.getInstance().getEditors();
 		next.addObject("editors", editors);
-		Collection dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
+		Collection<WikiConfigurationObject> dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
 		next.addObject("dataHandlers", dataHandlers);
-		Collection searchEngines = WikiConfiguration.getInstance().getSearchEngines();
+		Collection<WikiConfigurationObject> searchEngines = WikiConfiguration.getInstance().getSearchEngines();
 		next.addObject("searchEngines", searchEngines);
-		Collection parsers = WikiConfiguration.getInstance().getParsers();
+		Collection<WikiConfigurationObject> parsers = WikiConfiguration.getInstance().getParsers();
 		next.addObject("parsers", parsers);
-		LinkedHashMap poolExhaustedMap = new LinkedHashMap();
+		LinkedHashMap<Integer, String> poolExhaustedMap = new LinkedHashMap<Integer, String>();
 		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_FAIL), "admin.persistence.caption.whenexhaustedaction.fail");
 		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_BLOCK), "admin.persistence.caption.whenexhaustedaction.block");
 		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_GROW), "admin.persistence.caption.whenexhaustedaction.grow");
 		next.addObject("poolExhaustedMap", poolExhaustedMap);
-		LinkedHashMap blacklistTypesMap = new LinkedHashMap();
+		LinkedHashMap<Integer, String> blacklistTypesMap = new LinkedHashMap<Integer, String>();
 		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_ALL), "admin.upload.caption.allowall");
 		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_NONE), "admin.upload.caption.allownone");
 		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_BLACKLIST), "admin.upload.caption.useblacklist");

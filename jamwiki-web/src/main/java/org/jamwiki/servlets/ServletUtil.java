@@ -402,9 +402,9 @@ public class ServletUtil {
 	protected static void loadCategoryContent(ModelAndView next, String virtualWiki, String topicName) throws Exception {
 		String categoryName = topicName.substring(NamespaceHandler.NAMESPACE_CATEGORY.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
 		next.addObject("categoryName", categoryName);
-		List categoryTopics = WikiBase.getDataHandler().lookupCategoryTopics(virtualWiki, topicName);
-		List categoryImages = new Vector();
-		LinkedHashMap subCategories = new LinkedHashMap();
+		List<Category> categoryTopics = WikiBase.getDataHandler().lookupCategoryTopics(virtualWiki, topicName);
+		List<Category> categoryImages = new Vector<Category>();
+		LinkedHashMap<String, String> subCategories = new LinkedHashMap<String, String>();
 		int i = 0;
 		// loop through the results and split out images and sub-categories
 		while (i < categoryTopics.size()) {
@@ -551,8 +551,8 @@ public class ServletUtil {
 	 * @return A Vector of WikiMessage objects containing any errors encountered,
 	 *  or an empty Vector if no errors are encountered.
 	 */
-	protected static Vector validateSystemSettings(Properties props) {
-		Vector errors = new Vector();
+	protected static Vector<WikiMessage> validateSystemSettings(Properties props) {
+		Vector<WikiMessage> errors = new Vector<WikiMessage>();
 		// test directory permissions & existence
 		WikiMessage baseDirError = WikiUtil.validateDirectory(props.getProperty(Environment.PROP_BASE_FILE_DIR));
 		if (baseDirError != null) {
@@ -711,7 +711,7 @@ public class ServletUtil {
 		ParserOutput parserOutput = new ParserOutput();
 		String content = ParserUtil.parse(parserInput, parserOutput, topic.getTopicContent());
 		if (parserOutput.getCategories().size() > 0) {
-			LinkedHashMap categories = new LinkedHashMap();
+			LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>();
 			for (Iterator iterator = parserOutput.getCategories().keySet().iterator(); iterator.hasNext();) {
 				String key = (String)iterator.next();
 				String value = key.substring(NamespaceHandler.NAMESPACE_CATEGORY.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());

@@ -48,7 +48,7 @@ public class WikiReferencesTag {
 				html += "<li id=\"" + reference.getNotationName() + "\">";
 				html += "<sup>";
 				int pos = 0;
-				Vector citations = new Vector();
+				Vector<WikiReference> citations = new Vector<WikiReference>();
 				while (pos < references.size()) {
 					WikiReference temp = (WikiReference)references.elementAt(pos);
 					if (temp.getName() != null && reference.getName() != null && reference.getName().equals(temp.getName())) {

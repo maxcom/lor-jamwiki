@@ -21,7 +21,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
+import org.jamwiki.model.Category;
+import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
+import org.jamwiki.model.RoleMap;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
@@ -97,7 +100,7 @@ public interface DataHandler {
 	 * @return A List of all Category objects for a given virutal wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	List getAllCategories(String virtualWiki, Pagination pagination) throws Exception;
+	List<Category> getAllCategories(String virtualWiki, Pagination pagination) throws Exception;
 
 	/**
 	 * Return a List of all Role objects for the wiki.
@@ -105,7 +108,7 @@ public interface DataHandler {
 	 * @return A List of all Role objects for the wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	List getAllRoles() throws Exception;
+	List<Role> getAllRoles() throws Exception;
 
 	/**
 	 * Return a List of all topic names for all non-deleted topics that
@@ -117,7 +120,7 @@ public interface DataHandler {
 	 *  exist for the virtual wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	List getAllTopicNames(String virtualWiki) throws Exception;
+	List<String> getAllTopicNames(String virtualWiki) throws Exception;
 
 	/**
 	 * Retrieve a List of all TopicVersions for a given topic, sorted
@@ -132,7 +135,7 @@ public interface DataHandler {
 	 *  If no matching topic exists then an exception is thrown.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	List getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception;
+	List<WikiFileVersion> getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception;
 
 	/**
 	 * Retrieve a List of all RecentChange objects for a given virtual
@@ -149,7 +152,7 @@ public interface DataHandler {
 	 *  wiki, sorted chronologically.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	List getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception;
+	List<RecentChange> getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception;
 
 	/**
 	 * Retrieve a List of all RecentChange objects for a given topic,
@@ -166,7 +169,7 @@ public interface DataHandler {
 	 *  sorted chronologically.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	List getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception;
+	List<RecentChange> getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception;
 
 	/**
 	 * Retrieve a List of RoleMap objects for all users whose login
@@ -181,7 +184,7 @@ public interface DataHandler {
 	 *  never return <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection getRoleMapByLogin(String loginFragment) throws Exception;
+	Collection<RoleMap> getRoleMapByLogin(String loginFragment) throws Exception;
 
 	/**
 	 * Retrieve a Collection of RoleMap objects for all users and groups who
@@ -194,7 +197,7 @@ public interface DataHandler {
 	 *  method will never return <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection getRoleMapByRole(String roleName) throws Exception;
+	Collection<RoleMap> getRoleMapByRole(String roleName) throws Exception;
 
 	/**
 	 * Retrieve all roles assigned to a given group.
@@ -215,7 +218,7 @@ public interface DataHandler {
 	 *  List.  This method will never return <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection getRoleMapGroups() throws Exception;
+	Collection<RoleMap> getRoleMapGroups() throws Exception;
 
 	/**
 	 * Retrieve all roles assigned to a given user.
@@ -240,7 +243,7 @@ public interface DataHandler {
 	 *  alphabetically.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	List getTopicsAdmin(String virtualWiki, Pagination pagination) throws Exception;
+	List<String> getTopicsAdmin(String virtualWiki, Pagination pagination) throws Exception;
 
 	/**
 	 * Retrieve a List of RecentChange objects corresponding to all
@@ -260,7 +263,7 @@ public interface DataHandler {
 	 *  changes made by a particular user.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	List getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception;
+	List<RecentChange> getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception;
 
 	/**
 	 * Return a List of all VirtualWiki objects that exist for the wiki.
@@ -269,7 +272,7 @@ public interface DataHandler {
 	 *  wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	List getVirtualWikiList() throws Exception;
+	List<VirtualWiki> getVirtualWikiList() throws Exception;
 
 	/**
 	 * Retrieve a user's watchlist.
@@ -296,7 +299,7 @@ public interface DataHandler {
 	 *  watchlist.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	List getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception;
+	List<RecentChange> getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception;
 
 	/**
 	 * Retrieve a List of Category objects corresponding to all topics
@@ -310,7 +313,7 @@ public interface DataHandler {
 	 *  or category sort key (if specified).
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	List lookupCategoryTopics(String virtualWiki, String categoryName) throws Exception;
+	List<Category> lookupCategoryTopics(String virtualWiki, String categoryName) throws Exception;
 
 	/**
 	 * Retrieve a Topic object that matches the given virtual wiki and topic
@@ -356,7 +359,7 @@ public interface DataHandler {
 	 *  virtual wiki that match a specific topic type.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	List lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception;
+	List<String> lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception;
 
 	/**
 	 * Retrieve a TopicVersion object for a given topic version ID.
@@ -459,7 +462,7 @@ public interface DataHandler {
 	 * @return A List of user logins for all wiki users.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	List lookupWikiUsers(Pagination pagination) throws Exception;
+	List<String> lookupWikiUsers(Pagination pagination) throws Exception;
 
 	/**
 	 * Move a topic to a new name, creating a redirect topic in the old
@@ -584,7 +587,7 @@ public interface DataHandler {
 	 *  to be assigned to this group.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void writeRoleMapGroup(int groupId, List roles) throws Exception;
+	void writeRoleMapGroup(int groupId, List<String> roles) throws Exception;
 
 	/**
 	 * Add a set of user role mappings.  This method will first delete all
@@ -596,7 +599,7 @@ public interface DataHandler {
 	 *  to be assigned to this user.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void writeRoleMapUser(String username, List roles) throws Exception;
+	void writeRoleMapUser(String username, List<String> roles) throws Exception;
 
 	/**
 	 * Add or update a Topic object.  This method will add a new record if

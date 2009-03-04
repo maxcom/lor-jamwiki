@@ -55,7 +55,7 @@ public class CategoryServlet extends JAMWikiServlet {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		Collection categoryObjects = WikiBase.getDataHandler().getAllCategories(virtualWiki, pagination);
-		LinkedHashMap categories = new LinkedHashMap();
+		LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>();
 		for (Iterator iterator = categoryObjects.iterator(); iterator.hasNext();) {
 			Category category = (Category)iterator.next();
 			String key = category.getName();

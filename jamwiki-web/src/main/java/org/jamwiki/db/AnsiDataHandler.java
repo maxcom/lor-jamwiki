@@ -310,8 +310,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List getAllCategories(String virtualWiki, Pagination pagination) throws Exception {
-		List results = new Vector();
+	public List<Category> getAllCategories(String virtualWiki, Pagination pagination) throws Exception {
+		List<Category> results = new Vector<Category>();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = this.queryHandler().getCategories(virtualWikiId, pagination);
 		while (rs.next()) {
@@ -329,8 +329,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List getAllRoles() throws Exception {
-		List results = new Vector();
+	public List<Role> getAllRoles() throws Exception {
+		List<Role> results = new Vector<Role>();
 		WikiResultSet rs = this.queryHandler().getRoles();
 		while (rs.next()) {
 			results.add(this.initRole(rs));
@@ -341,8 +341,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List getAllTopicNames(String virtualWiki) throws Exception {
-		Vector all = new Vector();
+	public List<String> getAllTopicNames(String virtualWiki) throws Exception {
+		Vector<String> all = new Vector<String>();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = this.queryHandler().getAllTopicNames(virtualWikiId);
 		while (rs.next()) {
@@ -354,8 +354,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
-		Vector all = new Vector();
+	public List<WikiFileVersion> getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
+		Vector<WikiFileVersion> all = new Vector<WikiFileVersion>();
 		WikiFile wikiFile = lookupWikiFile(virtualWiki, topicName);
 		if (wikiFile == null) {
 			throw new Exception("No topic exists for " + virtualWiki + " / " + topicName);
@@ -370,8 +370,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception {
-		Vector all = new Vector();
+	public List<RecentChange> getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception {
+		Vector<RecentChange> all = new Vector<RecentChange>();
 		WikiResultSet rs = this.queryHandler().getRecentChanges(virtualWiki, pagination, descending);
 		while (rs.next()) {
 			RecentChange change = initRecentChange(rs);
@@ -383,8 +383,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception {
-		Vector all = new Vector();
+	public List<RecentChange> getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception {
+		Vector<RecentChange> all = new Vector<RecentChange>();
 		Topic topic = this.lookupTopic(virtualWiki, topicName, true, null);
 		if (topic == null) {
 			return all;
@@ -400,8 +400,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Collection getRoleMapByLogin(String loginFragment) throws Exception {
-		LinkedHashMap roleMaps = new LinkedHashMap();
+	public Collection<RoleMap> getRoleMapByLogin(String loginFragment) throws Exception {
+		LinkedHashMap<Integer, RoleMap> roleMaps = new LinkedHashMap<Integer, RoleMap>();
 		WikiResultSet rs = this.queryHandler().getRoleMapByLogin(loginFragment);
 		while (rs.next()) {
 			Integer userId = new Integer(rs.getInt(DATA_WIKI_USER_ID));
@@ -421,8 +421,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Collection getRoleMapByRole(String authority) throws Exception {
-		LinkedHashMap roleMaps = new LinkedHashMap();
+	public Collection<RoleMap> getRoleMapByRole(String authority) throws Exception {
+		LinkedHashMap<String, RoleMap> roleMaps = new LinkedHashMap<String, RoleMap>();
 		WikiResultSet rs = this.queryHandler().getRoleMapByRole(authority);
 		while (rs.next()) {
 			int userId = rs.getInt(DATA_WIKI_USER_ID);
@@ -451,20 +451,20 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public Role[] getRoleMapGroup(String groupName) throws Exception {
-		List results = new Vector();
+		List<Role> results = new Vector<Role>();
 		WikiResultSet rs = this.queryHandler().getRoleMapGroup(groupName);
 		while (rs.next()) {
 			Role role = this.initRole(rs);
 			results.add(role);
 		}
-		return (Role[])results.toArray(new Role[0]);
+		return results.toArray(new Role[0]);
 	}
 
 	/**
 	 *
 	 */
-	public Collection getRoleMapGroups() throws Exception {
-		LinkedHashMap roleMaps = new LinkedHashMap();
+	public Collection<RoleMap> getRoleMapGroups() throws Exception {
+		LinkedHashMap<Integer, RoleMap> roleMaps = new LinkedHashMap<Integer, RoleMap>();
 		WikiResultSet rs = this.queryHandler().getRoleMapGroups();
 		while (rs.next()) {
 			Integer groupId = new Integer(rs.getInt(DATA_GROUP_ID));
@@ -485,20 +485,20 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public Role[] getRoleMapUser(String login) throws Exception {
-		List results = new Vector();
+		List<Role> results = new Vector<Role>();
 		WikiResultSet rs = this.queryHandler().getRoleMapUser(login);
 		while (rs.next()) {
 			Role role = this.initRole(rs);
 			results.add(role);
 		}
-		return (Role[])results.toArray(new Role[0]);
+		return results.toArray(new Role[0]);
 	}
 
 	/**
 	 *
 	 */
-	public List getTopicsAdmin(String virtualWiki, Pagination pagination) throws Exception {
-		List all = new Vector();
+	public List<String> getTopicsAdmin(String virtualWiki, Pagination pagination) throws Exception {
+		List<String> all = new Vector<String>();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = this.queryHandler().getTopicsAdmin(virtualWikiId, pagination);
 		while (rs.next()) {
@@ -511,8 +511,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception {
-		List all = new Vector();
+	public List<RecentChange> getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception {
+		List<RecentChange> all = new Vector<RecentChange>();
 		WikiResultSet rs = this.queryHandler().getUserContributions(virtualWiki, userString, pagination, descending);
 		while (rs.next()) {
 			RecentChange change = initRecentChange(rs);
@@ -524,8 +524,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 * Return a List of all VirtualWiki objects that exist for the Wiki.
 	 */
-	public List getVirtualWikiList() throws Exception {
-		Vector results = new Vector();
+	public List<VirtualWiki> getVirtualWikiList() throws Exception {
+		Vector<VirtualWiki> results = new Vector<VirtualWiki>();
 		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
 			Connection conn = DatabaseConnection.getConnection();
@@ -551,7 +551,7 @@ public class AnsiDataHandler implements DataHandler {
 	 * watchlist.
 	 */
 	public Watchlist getWatchlist(String virtualWiki, int userId) throws Exception {
-		List all = new Vector();
+		List<String> all = new Vector<String>();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = this.queryHandler().getWatchlist(virtualWikiId, userId);
 		while (rs.next()) {
@@ -565,8 +565,8 @@ public class AnsiDataHandler implements DataHandler {
 	 * Retrieve a watchlist containing a List of RecentChanges objects
 	 * that can be used for display on the Special:Watchlist page.
 	 */
-	public List getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception {
-		List all = new Vector();
+	public List<RecentChange> getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception {
+		List<RecentChange> all = new Vector<RecentChange>();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = this.queryHandler().getWatchlist(virtualWikiId, userId, pagination);
 		while (rs.next()) {
@@ -804,8 +804,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List lookupCategoryTopics(String virtualWiki, String categoryName) throws Exception {
-		Vector results = new Vector();
+	public List<Category> lookupCategoryTopics(String virtualWiki, String categoryName) throws Exception {
+		Vector<Category> results = new Vector<Category>();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = this.queryHandler().lookupCategoryTopics(virtualWikiId, categoryName);
 		while (rs.next()) {
@@ -893,8 +893,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception {
-		Vector results = new Vector();
+	public List<String> lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception {
+		Vector<String> results = new Vector<String>();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = this.queryHandler().lookupTopicByType(virtualWikiId, topicType, pagination);
 		while (rs.next()) {
@@ -1074,8 +1074,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List lookupWikiUsers(Pagination pagination) throws Exception {
-		Vector results = new Vector();
+	public List<String> lookupWikiUsers(Pagination pagination) throws Exception {
+		Vector<String> results = new Vector<String>();
 		WikiResultSet rs = this.queryHandler().lookupWikiUsers(pagination);
 		while (rs.next()) {
 			results.add(rs.getString("login"));
@@ -1466,7 +1466,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeRoleMapGroup(int groupId, List roles) throws Exception {
+	public void writeRoleMapGroup(int groupId, List<String> roles) throws Exception {
 		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
 			Connection conn = DatabaseConnection.getConnection();
@@ -1493,7 +1493,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeRoleMapUser(String username, List roles) throws Exception {
+	public void writeRoleMapUser(String username, List<String> roles) throws Exception {
 		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
 			Connection conn = DatabaseConnection.getConnection();

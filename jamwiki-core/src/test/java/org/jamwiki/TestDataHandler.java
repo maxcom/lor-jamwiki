@@ -22,7 +22,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.model.Category;
+import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
+import org.jamwiki.model.RoleMap;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
@@ -65,56 +68,56 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List getAllCategories(String virtualWiki, Pagination pagination) throws Exception {
+	public List<Category> getAllCategories(String virtualWiki, Pagination pagination) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public List getAllRoles() throws Exception {
+	public List<Role> getAllRoles() throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public List getAllTopicNames(String virtualWiki) throws Exception {
+	public List<String> getAllTopicNames(String virtualWiki) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public List getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
+	public List<WikiFileVersion> getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public List getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception {
+	public List<RecentChange> getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public List getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception {
+	public List<RecentChange> getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public Collection getRoleMapByLogin(String loginFragment) throws Exception {
+	public Collection<RoleMap> getRoleMapByLogin(String loginFragment) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public Collection getRoleMapByRole(String roleName) throws Exception {
+	public Collection<RoleMap> getRoleMapByRole(String roleName) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -128,7 +131,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Collection getRoleMapGroups() throws Exception {
+	public Collection<RoleMap> getRoleMapGroups() throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -142,21 +145,21 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List getTopicsAdmin(String virtualWiki, Pagination pagination) throws Exception {
+	public List<String> getTopicsAdmin(String virtualWiki, Pagination pagination) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public List getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception {
+	public List<RecentChange> getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public List getVirtualWikiList() throws Exception {
+	public List<VirtualWiki> getVirtualWikiList() throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -170,14 +173,14 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception {
+	public List<RecentChange> getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public List lookupCategoryTopics(String virtualWiki, String categoryName) throws Exception {
+	public List<Category> lookupCategoryTopics(String virtualWiki, String categoryName) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -206,7 +209,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception {
+	public List<String> lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -290,7 +293,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List lookupWikiUsers(Pagination pagination) throws Exception {
+	public List<String> lookupWikiUsers(Pagination pagination) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -353,14 +356,14 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeRoleMapGroup(int groupId, List roles) throws Exception {
+	public void writeRoleMapGroup(int groupId, List<String> roles) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public void writeRoleMapUser(String username, List roles) throws Exception {
+	public void writeRoleMapUser(String username, List<String> roles) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 

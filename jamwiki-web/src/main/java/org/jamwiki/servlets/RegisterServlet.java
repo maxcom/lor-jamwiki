@@ -71,7 +71,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		if (StringUtils.isBlank(user.getDefaultLocale()) && request.getLocale() != null) {
 			user.setDefaultLocale(request.getLocale().toString());
 		}
-		TreeMap locales = new TreeMap();
+		TreeMap<String, String> locales = new TreeMap<String, String>();
 		Map translations = WikiConfiguration.getInstance().getTranslations();
 		Iterator iterator = translations.keySet().iterator();
 		while (iterator.hasNext()) {
@@ -184,7 +184,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	 *
 	 */
 	private Vector validate(HttpServletRequest request, WikiUser user) throws Exception {
-		Vector errors = new Vector();
+		Vector<WikiMessage> errors = new Vector<WikiMessage>();
 		try {
 			WikiUtil.validateUserName(user.getUsername());
 		} catch (WikiException e) {

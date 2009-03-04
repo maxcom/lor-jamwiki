@@ -27,7 +27,7 @@ import org.jamwiki.utils.WikiLogger;
 public class Watchlist {
 
 	private String virtualWiki = null;
-	private Collection topics = new Vector();
+	private Collection<String> topics = new Vector<String>();
 	private static final WikiLogger logger = WikiLogger.getLogger(Watchlist.class.getName());
 
 	/**
@@ -39,7 +39,7 @@ public class Watchlist {
 	/**
 	 *
 	 */
-	public Watchlist(String virtualWiki, Collection topics) {
+	public Watchlist(String virtualWiki, Collection<String> topics) {
 		this.virtualWiki = virtualWiki;
 		this.topics = topics;
 	}
@@ -63,14 +63,14 @@ public class Watchlist {
 	/**
 	 *
 	 */
-	public Collection getTopics() {
+	public Collection<String> getTopics() {
 		return this.topics;
 	}
 
 	/**
 	 *
 	 */
-	public void setTopics(Collection topics) {
+	public void setTopics(Collection<String> topics) {
 		this.topics = topics;
 	}
 

@@ -84,17 +84,18 @@ public class WikiReferenceTag {
 	 *
 	 */
 	private void processMetadata(ParserInput parserInput, WikiReference reference) {
-		Vector references = this.retrieveReferences(parserInput);
+		// FIXME - why is a local variable stored here but never used ???
+		Vector<WikiReference> references = this.retrieveReferences(parserInput);
 		references.add(reference);
 	}
 
 	/**
 	 *
 	 */
-	private Vector retrieveReferences(ParserInput parserInput) {
-		Vector references = (Vector)parserInput.getTempParams().get(WikiReferenceTag.REFERENCES_PARAM);
+	private Vector<WikiReference> retrieveReferences(ParserInput parserInput) {
+		Vector<WikiReference> references = (Vector<WikiReference>)parserInput.getTempParams().get(WikiReferenceTag.REFERENCES_PARAM);
 		if (references == null) {
-			references = new Vector();
+			references = new Vector<WikiReference>();
 			parserInput.getTempParams().put(WikiReferenceTag.REFERENCES_PARAM, references);
 		}
 		return references;
