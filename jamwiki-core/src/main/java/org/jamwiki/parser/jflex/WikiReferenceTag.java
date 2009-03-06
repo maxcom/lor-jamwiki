@@ -16,8 +16,8 @@
  */
 package org.jamwiki.parser.jflex;
 
-import java.util.Iterator;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import org.jamwiki.model.WikiReference;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.WikiLogger;
@@ -36,13 +36,12 @@ public class WikiReferenceTag {
 	private WikiReference buildReference(ParserInput parserInput, String raw) {
 		String name = buildReferenceName(raw);
 		String content = JFlexParserUtil.tagContent(raw);
-		Vector references = this.retrieveReferences(parserInput);
+		List<WikiReference> references = this.retrieveReferences(parserInput);
 		int count = 0;
 		int citation = 1;
-		for (Iterator iterator = references.iterator(); iterator.hasNext();) {
+		for (WikiReference temp : references) {
 			// loop through existing attributes to determine max citation number,
 			// or if a named reference the citation and count number
-			WikiReference temp = (WikiReference)iterator.next();
 			if (temp.getName() != null && name != null && name.equals(temp.getName())) {
 				count++;
 				citation = temp.getCitation();
@@ -85,17 +84,17 @@ public class WikiReferenceTag {
 	 */
 	private void processMetadata(ParserInput parserInput, WikiReference reference) {
 		// FIXME - why is a local variable stored here but never used ???
-		Vector<WikiReference> references = this.retrieveReferences(parserInput);
+		List<WikiReference> references = this.retrieveReferences(parserInput);
 		references.add(reference);
 	}
 
 	/**
 	 *
 	 */
-	private Vector<WikiReference> retrieveReferences(ParserInput parserInput) {
-		Vector<WikiReference> references = (Vector<WikiReference>)parserInput.getTempParams().get(WikiReferenceTag.REFERENCES_PARAM);
+	private List<WikiReference> retrieveReferences(ParserInput parserInput) {
+		List<WikiReference> references = (List<WikiReference>)parserInput.getTempParams().get(WikiReferenceTag.REFERENCES_PARAM);
 		if (references == null) {
-			references = new Vector<WikiReference>();
+			references = new ArrayList<WikiReference>();
 			parserInput.getTempParams().put(WikiReferenceTag.REFERENCES_PARAM, references);
 		}
 		return references;

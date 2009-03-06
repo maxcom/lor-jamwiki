@@ -16,14 +16,14 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.Collection;
-
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
@@ -57,7 +57,7 @@ public class LinkToServlet extends JAMWikiServlet {
 		WikiMessage pageTitle = new WikiMessage("linkto.title", topicName);
 		pageInfo.setPageTitle(pageTitle);
 		// grab search engine instance and find
-		Collection results = WikiBase.getSearchEngine().findLinkedTo(virtualWiki, topicName);
+		List<SearchResultEntry> results = WikiBase.getSearchEngine().findLinkedTo(virtualWiki, topicName);
 		next.addObject("results", results);
 		next.addObject("link", topicName);
 		pageInfo.setContentJsp(JSP_LINKTO);

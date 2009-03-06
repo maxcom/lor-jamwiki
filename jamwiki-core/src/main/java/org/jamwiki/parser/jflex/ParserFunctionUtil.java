@@ -18,7 +18,8 @@ package org.jamwiki.parser.jflex;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserInput;
@@ -42,7 +43,7 @@ public class ParserFunctionUtil {
 	private static final String PARSER_FUNCTION_UPPER_CASE = "uc:";
 	private static final String PARSER_FUNCTION_UPPER_CASE_FIRST = "ucfirst:";
 	private static final String PARSER_FUNCTION_URL_ENCODE = "urlencode:";
-	private static Vector<String> PARSER_FUNCTIONS = new Vector<String>();
+	private static List<String> PARSER_FUNCTIONS = new ArrayList<String>();
 
 	static {
 		// parser functions

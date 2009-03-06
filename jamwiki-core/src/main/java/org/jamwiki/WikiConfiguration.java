@@ -18,7 +18,6 @@ package org.jamwiki;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +98,7 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
-	public Collection<WikiConfigurationObject> getDataHandlers() {
+	public List<WikiConfigurationObject> getDataHandlers() {
 		return this.dataHandlers;
 	}
 
@@ -120,21 +119,21 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
-	public Collection<WikiConfigurationObject> getParsers() {
+	public List<WikiConfigurationObject> getParsers() {
 		return this.parsers;
 	}
 
 	/**
 	 *
 	 */
-	public Collection<String> getPseudotopics() {
+	public List<String> getPseudotopics() {
 		return this.pseudotopics;
 	}
 
 	/**
 	 *
 	 */
-	public Collection<WikiConfigurationObject> getSearchEngines() {
+	public List<WikiConfigurationObject> getSearchEngines() {
 		return this.searchEngines;
 	}
 

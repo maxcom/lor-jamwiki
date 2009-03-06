@@ -16,11 +16,9 @@
  */
 package org.jamwiki;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
@@ -110,14 +108,14 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Collection<RoleMap> getRoleMapByLogin(String loginFragment) throws Exception {
+	public List<RoleMap> getRoleMapByLogin(String loginFragment) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public Collection<RoleMap> getRoleMapByRole(String roleName) throws Exception {
+	public List<RoleMap> getRoleMapByRole(String roleName) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -131,7 +129,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Collection<RoleMap> getRoleMapGroups() throws Exception {
+	public List<RoleMap> getRoleMapGroups() throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -370,7 +368,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, Vector links, boolean userVisible) throws Exception {
+	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links, boolean userVisible) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 

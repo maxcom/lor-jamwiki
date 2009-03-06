@@ -24,7 +24,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.Vector;
+import java.util.List;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
@@ -57,14 +57,14 @@ public class TiddlyWikiParser {
 	 * @author Michael Greifeneder mikegr@gmx.net
 	 */
 	public interface WikiBaseFascade {
-		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, Vector links, boolean userVisible, Object transactionObject) throws Exception;
+		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, List<String> links, boolean userVisible, Object transactionObject) throws Exception;
 	}
 
 	/**
 	 * Defaul WikiBaseFascade for production.
 	 */
 	private WikiBaseFascade wikiBase = new WikiBaseFascade() {
-		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, Vector links, boolean userVisible, Object transactionObject) throws Exception {
+		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, List<String> links, boolean userVisible, Object transactionObject) throws Exception {
 			WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true);
 		}
 	};

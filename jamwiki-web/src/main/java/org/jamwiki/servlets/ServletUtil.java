@@ -17,13 +17,12 @@
 package org.jamwiki.servlets;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import net.sf.ehcache.Element;
@@ -403,7 +402,7 @@ public class ServletUtil {
 		String categoryName = topicName.substring(NamespaceHandler.NAMESPACE_CATEGORY.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
 		next.addObject("categoryName", categoryName);
 		List<Category> categoryTopics = WikiBase.getDataHandler().lookupCategoryTopics(virtualWiki, topicName);
-		List<Category> categoryImages = new Vector<Category>();
+		List<Category> categoryImages = new ArrayList<Category>();
 		LinkedHashMap<String, String> subCategories = new LinkedHashMap<String, String>();
 		int i = 0;
 		// loop through the results and split out images and sub-categories
@@ -548,11 +547,11 @@ public class ServletUtil {
 	 * have been specified properly.
 	 *
 	 * @param props The property object to validate against.
-	 * @return A Vector of WikiMessage objects containing any errors encountered,
-	 *  or an empty Vector if no errors are encountered.
+	 * @return A list of WikiMessage objects containing any errors encountered,
+	 *  or an empty list if no errors are encountered.
 	 */
-	protected static Vector<WikiMessage> validateSystemSettings(Properties props) {
-		Vector<WikiMessage> errors = new Vector<WikiMessage>();
+	protected static List<WikiMessage> validateSystemSettings(Properties props) {
+		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		// test directory permissions & existence
 		WikiMessage baseDirError = WikiUtil.validateDirectory(props.getProperty(Environment.PROP_BASE_FILE_DIR));
 		if (baseDirError != null) {
@@ -723,7 +722,7 @@ public class ServletUtil {
 			loadCategoryContent(next, virtualWiki, topic.getName());
 		}
 		if (topic.getTopicType() == Topic.TYPE_IMAGE || topic.getTopicType() == Topic.TYPE_FILE) {
-			Collection<WikiFileVersion> fileVersions = WikiBase.getDataHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
+			List<WikiFileVersion> fileVersions = WikiBase.getDataHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
 			for (WikiFileVersion fileVersion : fileVersions) {
 				// update version urls to include web root path
 				String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + fileVersion.getUrl());

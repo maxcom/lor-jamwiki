@@ -16,7 +16,7 @@
  */
 package org.jamwiki;
 
-import java.util.Collection;
+import java.util.List;
 import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.model.Topic;
 
@@ -32,10 +32,10 @@ public interface SearchEngine {
 	 * Add a topic to the search index.
 	 *
 	 * @param topic The Topic object that is to be added to the index.
-	 * @param links A collection containing the topic names for all topics that link
+	 * @param links A list containing the topic names for all topics that link
 	 *  to the current topic.
 	 */
-	void addToIndex(Topic topic, Collection links);
+	void addToIndex(Topic topic, List<String> links);
 
 	/**
 	 * Remove a topic from the search index.
@@ -49,20 +49,20 @@ public interface SearchEngine {
 	 *
 	 * @param virtualWiki The virtual wiki for the topic.
 	 * @param topicName The name of the topic.
-	 * @return A collection of SearchResultEntry objects for all documents that
+	 * @return A list of SearchResultEntry objects for all documents that
 	 *  link to the topic.
 	 */
-	Collection<SearchResultEntry> findLinkedTo(String virtualWiki, String topicName);
+	List<SearchResultEntry> findLinkedTo(String virtualWiki, String topicName);
 
 	/**
 	 * Find all documents that contain a specific search term, ordered by relevance.
 	 *
 	 * @param virtualWiki The virtual wiki for the topic.
 	 * @param text The search term being searched for.
-	 * @return A collection of SearchResultEntry objects for all documents that
+	 * @return A list of SearchResultEntry objects for all documents that
 	 *  contain the search term.
 	 */
-	Collection<SearchResultEntry> findResults(String virtualWiki, String text);
+	List<SearchResultEntry> findResults(String virtualWiki, String text);
 
 	/**
 	 * Refresh the current search index by re-visiting all topic pages.

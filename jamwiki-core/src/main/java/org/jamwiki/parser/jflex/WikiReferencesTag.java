@@ -16,7 +16,8 @@
  */
 package org.jamwiki.parser.jflex;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.model.WikiReference;
 import org.jamwiki.parser.ParserInput;
@@ -40,23 +41,23 @@ public class WikiReferencesTag {
 			// retrieve all references, then loop through in order, building an HTML
 			// reference list for display.  While looping, if there are multiple citations
 			// for the same reference then include those in the output as well.
-			Vector references = this.retrieveReferences(parserInput);
+			List<WikiReference> references = this.retrieveReferences(parserInput);
 			String html = (!references.isEmpty()) ? "<ol class=\"references\">" : "";
 			while (!references.isEmpty()) {
-				WikiReference reference = (WikiReference)references.elementAt(0);
-				references.removeElementAt(0);
+				WikiReference reference = references.get(0);
+				references.remove(0);
 				html += "<li id=\"" + reference.getNotationName() + "\">";
 				html += "<sup>";
 				int pos = 0;
-				Vector<WikiReference> citations = new Vector<WikiReference>();
+				List<WikiReference> citations = new ArrayList<WikiReference>();
 				while (pos < references.size()) {
-					WikiReference temp = (WikiReference)references.elementAt(pos);
+					WikiReference temp = references.get(pos);
 					if (temp.getName() != null && reference.getName() != null && reference.getName().equals(temp.getName())) {
 						citations.add(temp);
 						if (StringUtils.isBlank(reference.getContent()) && !StringUtils.isBlank(temp.getContent())) {
 							reference.setContent(temp.getContent());
 						}
-						references.removeElementAt(pos);
+						references.remove(pos);
 						continue;
 					}
 					pos++;
@@ -65,10 +66,10 @@ public class WikiReferencesTag {
 					html += "<a href=\"#" + reference.getReferenceName() + "\" title=\"\">";
 					html += reference.getCitation() + "." + reference.getCount() + "</a>&#160;";
 					while (!citations.isEmpty()) {
-						WikiReference citation = (WikiReference)citations.elementAt(0);
+						WikiReference citation = citations.get(0);
 						html += "&#160;<a href=\"#" + citation.getReferenceName() + "\" title=\"\">";
 						html += citation.getCitation() + "." + citation.getCount() + "</a>&#160;";
-						citations.removeElementAt(0);
+						citations.remove(0);
 					}
 				} else {
 					html += "<a href=\"#" + reference.getReferenceName() + "\" title=\"\">";
@@ -89,10 +90,10 @@ public class WikiReferencesTag {
 	/**
 	 *
 	 */
-	private Vector retrieveReferences(ParserInput parserInput) {
-		Vector references = (Vector)parserInput.getTempParams().get(WikiReferenceTag.REFERENCES_PARAM);
+	private List<WikiReference> retrieveReferences(ParserInput parserInput) {
+		List<WikiReference> references = (List<WikiReference>)parserInput.getTempParams().get(WikiReferenceTag.REFERENCES_PARAM);
 		if (references == null) {
-			references = new Vector();
+			references = new ArrayList<WikiReference>();
 			parserInput.getTempParams().put(WikiReferenceTag.REFERENCES_PARAM, references);
 		}
 		return references;

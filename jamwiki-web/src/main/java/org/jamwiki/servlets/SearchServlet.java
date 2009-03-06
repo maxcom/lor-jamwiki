@@ -16,12 +16,13 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.Collection;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.servlet.ModelAndView;
@@ -83,7 +84,7 @@ public class SearchServlet extends JAMWikiServlet {
 			return;
 		}
 		// grab search engine instance and find
-		Collection results = WikiBase.getSearchEngine().findResults(virtualWiki, searchField);
+		List<SearchResultEntry> results = WikiBase.getSearchEngine().findResults(virtualWiki, searchField);
 		next.addObject("searchField", searchField);
 		next.addObject("results", results);
 		pageInfo.setContentJsp(JSP_SEARCH_RESULTS);

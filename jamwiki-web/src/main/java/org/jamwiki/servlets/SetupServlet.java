@@ -16,8 +16,7 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.Collection;
-import java.util.Vector;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.context.SecurityContextHolder;
@@ -32,6 +31,7 @@ import org.jamwiki.WikiVersion;
 import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.db.WikiDatabase;
+import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
@@ -118,7 +118,7 @@ public class SetupServlet extends JAMWikiServlet {
 	private boolean initialize(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		setProperties(request, next);
 		WikiUser user = setAdminUser(request);
-		Vector errors = validate(request, user);
+		List<WikiMessage> errors = validate(request, user);
 		if (!errors.isEmpty()) {
 			this.view(request, next, pageInfo);
 			next.addObject("errors", errors);
@@ -205,8 +205,8 @@ public class SetupServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private Vector validate(HttpServletRequest request, WikiUser user) throws Exception {
-		Vector<WikiMessage> errors = ServletUtil.validateSystemSettings(Environment.getInstance());
+	private List<WikiMessage> validate(HttpServletRequest request, WikiUser user) throws Exception {
+		List<WikiMessage> errors = ServletUtil.validateSystemSettings(Environment.getInstance());
 		if (StringUtils.isBlank(user.getUsername())) {
 			errors.add(new WikiMessage("error.loginempty"));
 		}
@@ -231,7 +231,7 @@ public class SetupServlet extends JAMWikiServlet {
 		pageInfo.setContentJsp(JSP_SETUP);
 		pageInfo.setSpecial(true);
 		pageInfo.setPageTitle(new WikiMessage("setup.title", WikiVersion.CURRENT_WIKI_VERSION));
-		Collection dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
+		List<WikiConfigurationObject> dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
 		next.addObject("dataHandlers", dataHandlers);
 		WikiMessage logMessage = new WikiMessage("setup.help.logfile", WikiLogger.getDefaultLogFile(), WikiLogger.getLogConfigFile());
 		next.addObject("logMessage", logMessage);

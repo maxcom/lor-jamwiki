@@ -17,7 +17,7 @@
 package org.jamwiki.db;
 
 import java.sql.Connection;
-import java.util.Vector;
+import java.util.List;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
@@ -76,7 +76,7 @@ public class DatabaseUpgrades {
 	/**
 	 *
 	 */
-	public static Vector<String> upgrade060(Vector<String> messages) throws Exception {
+	public static List<String> upgrade060(List<String> messages) throws Exception {
 		TransactionStatus status = DatabaseConnection.startTransaction(getTransactionDefinition());
 		try {
 			Connection conn = DatabaseConnection.getConnection();
@@ -165,7 +165,7 @@ public class DatabaseUpgrades {
 	/**
 	 *
 	 */
-	public static Vector<String> upgrade061(Vector<String> messages) throws Exception {
+	public static List<String> upgrade061(List<String> messages) throws Exception {
 		TransactionStatus status = DatabaseConnection.startTransaction(getTransactionDefinition());
 		try {
 			String sql = null;
@@ -190,7 +190,7 @@ public class DatabaseUpgrades {
 	/**
 	 *
 	 */
-	public static Vector<String> upgrade063(Vector<String> messages) throws Exception {
+	public static List<String> upgrade063(List<String> messages) throws Exception {
 		TransactionStatus status = DatabaseConnection.startTransaction(getTransactionDefinition());
 		try {
 			String sql = null;
@@ -256,7 +256,7 @@ public class DatabaseUpgrades {
 	/**
 	 *
 	 */
-	public static Vector<String> upgrade070(Vector<String> messages) throws Exception {
+	public static List<String> upgrade070(List<String> messages) throws Exception {
 		TransactionStatus status = DatabaseConnection.startTransaction(getTransactionDefinition());
 		String dbType = Environment.getValue(Environment.PROP_DB_TYPE);
 		try {

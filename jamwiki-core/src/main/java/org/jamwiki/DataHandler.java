@@ -16,11 +16,9 @@
  */
 package org.jamwiki;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
@@ -178,26 +176,26 @@ public interface DataHandler {
 	 * @param loginFragment A value that must be contained with the user's
 	 *  login.  This method will return partial matches, so "name" will
 	 *  match "name", "firstname" and "namesake".
-	 * @return A Collection of RoleMap objects containing all roles for all
+	 * @return A list of RoleMap objects containing all roles for all
 	 *  users whose login contains the login fragment.  If no matches are
 	 *  found then this method returns an empty List.  This method will
 	 *  never return <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection<RoleMap> getRoleMapByLogin(String loginFragment) throws Exception;
+	List<RoleMap> getRoleMapByLogin(String loginFragment) throws Exception;
 
 	/**
-	 * Retrieve a Collection of RoleMap objects for all users and groups who
+	 * Retrieve a list of RoleMap objects for all users and groups who
 	 * have been assigned the specified role.
 	 *
 	 * @param roleName The name of the role being queried against.
-	 * @return A Collection of RoleMap objects containing all roles for all
+	 * @return A list of RoleMap objects containing all roles for all
 	 *  users and groups who have been assigned the specified role.  If no
 	 *  matches are found then this method returns an empty List.  This
 	 *  method will never return <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection<RoleMap> getRoleMapByRole(String roleName) throws Exception;
+	List<RoleMap> getRoleMapByRole(String roleName) throws Exception;
 
 	/**
 	 * Retrieve all roles assigned to a given group.
@@ -211,14 +209,14 @@ public interface DataHandler {
 	Role[] getRoleMapGroup(String groupName) throws Exception;
 
 	/**
-	 * Retrieve a Collection of RoleMap objects for all groups.
+	 * Retrieve a list of RoleMap objects for all groups.
 	 *
-	 * @return A Collection of RoleMap objects containing all roles for all
+	 * @return A list of RoleMap objects containing all roles for all
 	 *  groups.  If no matches are found then this method returns an empty
 	 *  List.  This method will never return <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection<RoleMap> getRoleMapGroups() throws Exception;
+	List<RoleMap> getRoleMapGroups() throws Exception;
 
 	/**
 	 * Retrieve all roles assigned to a given user.
@@ -622,7 +620,7 @@ public interface DataHandler {
 	 *  otherwise.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, Vector links, boolean userVisible) throws Exception;
+	void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links, boolean userVisible) throws Exception;
 
 	/**
 	 * Add or update a VirtualWiki object.  This method will add a new record

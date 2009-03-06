@@ -16,8 +16,8 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.Collection;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.context.SecurityContextHolder;
@@ -30,7 +30,6 @@ import org.jamwiki.WikiVersion;
 import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
 import org.jamwiki.db.DatabaseUpgrades;
 import org.jamwiki.model.VirtualWiki;
-import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
@@ -101,12 +100,12 @@ public class UpgradeServlet extends JAMWikiServlet {
 			}
 			WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 			if (oldVersion.before(0, 5, 0)) {
-				Vector<WikiMessage> errors = new Vector<WikiMessage>();
+				List<WikiMessage> errors = new ArrayList<WikiMessage>();
 				errors.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.5.0"));
 				next.addObject("errors", errors);
 				return;
 			}
-			Vector<String> messages = new Vector<String>();
+			List<String> messages = new ArrayList<String>();
 			boolean success = true;
 			// first perform database upgrades
 			this.upgradeDatabase(true, messages);
@@ -121,7 +120,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 				Environment.setValue(Environment.PROP_FILE_SERVER_URL, Utilities.getServerUrl(request));
 				Environment.setValue(Environment.PROP_SERVER_URL, Utilities.getServerUrl(request));
 			}
-			Vector<WikiMessage> errors = ServletUtil.validateSystemSettings(Environment.getInstance());
+			List<WikiMessage> errors = ServletUtil.validateSystemSettings(Environment.getInstance());
 			if (!errors.isEmpty()) {
 				next.addObject("errors", errors);
 				success = false;
@@ -162,7 +161,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private boolean upgradeDatabase(boolean performUpgrade, Vector<String> messages) throws Exception {
+	private boolean upgradeDatabase(boolean performUpgrade, List<String> messages) throws Exception {
 		boolean upgradeRequired = false;
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 		if (oldVersion.before(0, 6, 0)) {
@@ -195,9 +194,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private boolean upgradeStyleSheet(HttpServletRequest request, Vector<String> messages) throws Exception {
+	private boolean upgradeStyleSheet(HttpServletRequest request, List<String> messages) throws Exception {
 		try {
-			Collection<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
+			List<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
 			for (VirtualWiki virtualWiki : virtualWikis) {
 				WikiBase.getDataHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, ServletUtil.getIpAddress(request));
 				messages.add("Updated stylesheet for virtual wiki " + virtualWiki.getName());
@@ -250,11 +249,11 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 		if (oldVersion.before(0, 5, 0)) {
-			Vector<WikiMessage> errors = new Vector<WikiMessage>();
+			List<WikiMessage> errors = new ArrayList<WikiMessage>();
 			errors.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.5.0"));
 			next.addObject("errors", errors);
 		}
-		Vector<WikiMessage> upgradeDetails = new Vector<WikiMessage>();
+		List<WikiMessage> upgradeDetails = new ArrayList<WikiMessage>();
 		try {
 			if (this.upgradeDatabase(false, null)) {
 				upgradeDetails.add(new WikiMessage("upgrade.caption.database"));

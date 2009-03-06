@@ -17,8 +17,9 @@
 package org.jamwiki.parser;
 
 import java.io.Serializable;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * This class represents the output from the JAMWiki parser.  It holds parsed
@@ -28,10 +29,10 @@ public class ParserOutput implements Serializable {
 
 	private boolean cacheable = true;
 	private final LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>();
-	private final Vector<String> links = new Vector<String>();
+	private final List<String> links = new ArrayList<String>();
 	private String redirect = null;
 	private String sectionName = null;
-	private final Vector<String> templates = new Vector<String>();
+	private final List<String> templates = new ArrayList<String>();
 
 	/**
 	 *
@@ -136,13 +137,13 @@ public class ParserOutput implements Serializable {
 	}
 
 	/**
-	 * For the document being parsed, return the current collection of topic
+	 * For the document being parsed, return the current list of topic
 	 * names for all topics that are linked to from the current document.
 	 *
-	 * @return A collection of all topic names that are linked to from the
+	 * @return A list of all topic names that are linked to from the
 	 *  current document.
 	 */
-	public Vector<String> getLinks() {
+	public List<String> getLinks() {
 		return this.links;
 	}
 
@@ -173,14 +174,14 @@ public class ParserOutput implements Serializable {
 	}
 
 	/**
-	 * For the document being parsed, return the current collection of
+	 * For the document being parsed, return the current list of
 	 * templates names for all templates that are included in the current
 	 * document.
 	 *
-	 * @return A collection of all template names that are included in the
+	 * @return A list of all template names that are included in the
 	 *  current document.
 	 */
-	public Vector<String> getTemplates() {
+	public List<String> getTemplates() {
 		return this.templates;
 	}
 

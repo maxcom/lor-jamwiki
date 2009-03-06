@@ -17,12 +17,12 @@
 package org.jamwiki.servlets;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
@@ -128,7 +128,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void migrateDatabase(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		Vector<WikiMessage> errors = new Vector<WikiMessage>();
+		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		Properties props = new Properties();
 		try {
 			setProperty(props, request, Environment.PROP_BASE_PERSISTENCE_TYPE);
@@ -182,7 +182,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void password(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		Vector<WikiMessage> errors = new Vector<WikiMessage>();
+		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		String userLogin = request.getParameter("passwordLogin");
 		String newPassword = request.getParameter("passwordPassword");
 		String confirmPassword = request.getParameter("passwordPasswordConfirm");
@@ -275,7 +275,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_CACHE_TOTAL_SIZE);
 			setBooleanProperty(props, request, Environment.PROP_RSS_ALLOWED);
 			setProperty(props, request, Environment.PROP_RSS_TITLE);
-			Vector errors = ServletUtil.validateSystemSettings(props);
+			List errors = ServletUtil.validateSystemSettings(props);
 			if (!errors.isEmpty()) {
 				next.addObject("errors", errors);
 				next.addObject("message", new WikiMessage("admin.message.changesnotsaved"));
@@ -389,11 +389,11 @@ public class AdminServlet extends JAMWikiServlet {
 		pageInfo.setPageTitle(new WikiMessage("admin.title"));
 		Map editors = WikiConfiguration.getInstance().getEditors();
 		next.addObject("editors", editors);
-		Collection<WikiConfigurationObject> dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
+		List<WikiConfigurationObject> dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
 		next.addObject("dataHandlers", dataHandlers);
-		Collection<WikiConfigurationObject> searchEngines = WikiConfiguration.getInstance().getSearchEngines();
+		List<WikiConfigurationObject> searchEngines = WikiConfiguration.getInstance().getSearchEngines();
 		next.addObject("searchEngines", searchEngines);
-		Collection<WikiConfigurationObject> parsers = WikiConfiguration.getInstance().getParsers();
+		List<WikiConfigurationObject> parsers = WikiConfiguration.getInstance().getParsers();
 		next.addObject("parsers", parsers);
 		LinkedHashMap<Integer, String> poolExhaustedMap = new LinkedHashMap<Integer, String>();
 		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_FAIL), "admin.persistence.caption.whenexhaustedaction.fail");
@@ -421,11 +421,11 @@ public class AdminServlet extends JAMWikiServlet {
 		pageInfo.setContentJsp(JSP_ADMIN_SYSTEM);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("admin.maintenance.title"));
-		Collection virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList();
+		List<VirtualWiki> virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList();
 		next.addObject("wikis", virtualWikiList);
 		boolean allowExport = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals(WikiBase.PERSISTENCE_INTERNAL);
 		next.addObject("allowExport", new Boolean(allowExport));
-		Collection dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
+		List<WikiConfigurationObject> dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
 		next.addObject("dataHandlers", dataHandlers);
 	}
 

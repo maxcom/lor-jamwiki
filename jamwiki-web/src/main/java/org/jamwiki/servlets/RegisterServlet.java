@@ -16,10 +16,11 @@
  */
 package org.jamwiki.servlets;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.context.SecurityContextHolder;
@@ -109,7 +110,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		WikiUser user = this.setWikiUser(request);
 		boolean isUpdate = (user.getUserId() != -1);
 		next.addObject("newuser", user);
-		Vector errors = validate(request, user);
+		List<WikiMessage> errors = validate(request, user);
 		if (!errors.isEmpty()) {
 			next.addObject("errors", errors);
 			String oldPassword = request.getParameter("oldPassword");
@@ -180,8 +181,8 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private Vector validate(HttpServletRequest request, WikiUser user) throws Exception {
-		Vector<WikiMessage> errors = new Vector<WikiMessage>();
+	private List<WikiMessage> validate(HttpServletRequest request, WikiUser user) throws Exception {
+		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		try {
 			WikiUtil.validateUserName(user.getUsername());
 		} catch (WikiException e) {

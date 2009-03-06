@@ -21,8 +21,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -36,7 +37,7 @@ import org.jamwiki.utils.WikiLogger;
 public class WikiResultSet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiResultSet.class.getName());
-	private final Vector<LinkedHashMap<String, Object>> rows = new Vector<LinkedHashMap<String, Object>>();
+	private final List<LinkedHashMap<String, Object>> rows = new ArrayList<LinkedHashMap<String, Object>>();
 	private int rowPointer = -1;
 	private int totalRows = -1;
 	private LinkedHashMap<String, Object> currentRow = null;
@@ -166,7 +167,7 @@ public class WikiResultSet {
 		if (rs.rowPointer >= rs.totalRows) {
 			throw new IndexOutOfBoundsException("Attempt to access beyond final row of WikiResultSet");
 		}
-		this.rows.add(rs.rows.elementAt(rs.rowPointer));
+		this.rows.add(rs.rows.get(rs.rowPointer));
 		this.totalRows = this.rows.size();
 	}
 
@@ -396,7 +397,7 @@ public class WikiResultSet {
 		if (this.rowPointer >= this.totalRows) {
 			throw new SQLException("Attempt to access beyond last row of result set");
 		}
-		this.currentRow = this.rows.elementAt(this.rowPointer);
+		this.currentRow = this.rows.get(this.rowPointer);
 		if (columnName == null || !this.currentRow.containsKey(columnName)) {
 			throw new SQLException("Invalid column name " + columnName);
 		}

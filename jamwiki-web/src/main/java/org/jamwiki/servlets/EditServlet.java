@@ -16,7 +16,7 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.Vector;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
@@ -28,6 +28,7 @@ import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.Watchlist;
+import org.jamwiki.model.WikiDiff;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
@@ -145,7 +146,7 @@ public class EditServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void loadDiff(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String contents1, String contents2) throws Exception {
-		Vector diffs = DiffUtil.diff(contents1, contents2);
+		List<WikiDiff> diffs = DiffUtil.diff(contents1, contents2);
 		next.addObject("diffs", diffs);
 	}
 

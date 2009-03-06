@@ -16,9 +16,8 @@
  */
 package org.jamwiki.utils;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import org.apache.commons.lang.StringUtils;
 import org.incava.util.diff.Diff;
 import org.incava.util.diff.Difference;
@@ -27,7 +26,7 @@ import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiDiff;
 
 /**
- * Utility class for processing the difference between two topics and returing a Vector
+ * Utility class for processing the difference between two topics and returing a list
  * of WikiDiff objects that can be used to display the diff.
  */
 public class DiffUtil {
@@ -116,15 +115,15 @@ public class DiffUtil {
 	}
 
 	/**
-	 * Return a Vector of WikiDiff objects that can be used to create a display of the
+	 * Return a list of WikiDiff objects that can be used to create a display of the
 	 * diff content.
 	 *
 	 * @param newVersion The String that is to be compared to, ie the later version of a topic.
 	 * @param oldVersion The String that is to be considered as having changed, ie the earlier
 	 *  version of a topic.
-	 * @return Returns a Vector of WikiDiff objects that correspond to the changed text.
+	 * @return Returns a list of WikiDiff objects that correspond to the changed text.
 	 */
-	public static Vector diff(String newVersion, String oldVersion) {
+	public static List<WikiDiff> diff(String newVersion, String oldVersion) {
 		if (oldVersion == null) {
 			oldVersion = "";
 		}
@@ -136,13 +135,13 @@ public class DiffUtil {
 		oldVersion = StringUtils.remove(oldVersion, '\r');
 		newVersion = StringUtils.remove(newVersion, '\r');
 		if (newVersion.equals(oldVersion)) {
-			return new Vector();
+			return new ArrayList<WikiDiff>();
 		}
 		return DiffUtil.process(newVersion, oldVersion);
 	}
 
 	/**
-	 * Execute a diff between two versions of a topic, returning a collection
+	 * Execute a diff between two versions of a topic, returning a list
 	 * of WikiDiff objects indicating what has changed between the versions.
 	 *
 	 * @param topicName The name of the topic for which a diff is being
@@ -151,12 +150,12 @@ public class DiffUtil {
 	 *  compared against.
 	 * @param topicVersionId2 The version ID for the old version being
 	 *  compared to.
-	 * @return A collection of WikiDiff objects indicating what has changed
-	 *  between the versions.  An empty collection is returned if there are
+	 * @return A list of WikiDiff objects indicating what has changed
+	 *  between the versions.  An empty list is returned if there are
 	 *  no differences.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public static Collection diffTopicVersions(String topicName, int topicVersionId1, int topicVersionId2) throws Exception {
+	public static List<WikiDiff> diffTopicVersions(String topicName, int topicVersionId1, int topicVersionId2) throws Exception {
 		TopicVersion version1 = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId1);
 		TopicVersion version2 = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId2);
 		if (version1 == null && version2 == null) {
@@ -197,7 +196,7 @@ public class DiffUtil {
 	 * If possible, try to append a few lines of unchanged text to the diff output to
 	 * be used for context.
 	 */
-	private static void postBufferDifference(Difference currentDiff, Difference nextDiff, Vector<WikiDiff> wikiDiffs, String[] oldArray, String[] newArray) {
+	private static void postBufferDifference(Difference currentDiff, Difference nextDiff, List<WikiDiff> wikiDiffs, String[] oldArray, String[] newArray) {
 		if (DIFF_UNCHANGED_LINE_DISPLAY <= 0) {
 			return;
 		}
@@ -236,7 +235,7 @@ public class DiffUtil {
 	 * If possible, try to prepend a few lines of unchanged text to the diff output to
 	 * be used for context.
 	 */
-	private static void preBufferDifference(Difference currentDiff, Difference previousDiff, Vector<WikiDiff> wikiDiffs, String[] oldArray, String[] newArray) {
+	private static void preBufferDifference(Difference currentDiff, Difference previousDiff, List<WikiDiff> wikiDiffs, String[] oldArray, String[] newArray) {
 		if (DIFF_UNCHANGED_LINE_DISPLAY <= 0) {
 			return;
 		}
@@ -273,13 +272,13 @@ public class DiffUtil {
 	/**
 	 *
 	 */
-	private static Vector process(String newVersion, String oldVersion) {
+	private static List<WikiDiff> process(String newVersion, String oldVersion) {
 		logger.fine("Diffing: " + oldVersion + " against: " + newVersion);
 		String[] oldArray = buildArray(oldVersion);
 		String[] newArray = buildArray(newVersion);
 		Diff diffObject = new Diff(oldArray, newArray);
 		List<Difference> diffs = diffObject.diff();
-		Vector<WikiDiff> wikiDiffs = new Vector<WikiDiff>();
+		List<WikiDiff> wikiDiffs = new ArrayList<WikiDiff>();
 		Difference previousDiff = null;
 		Difference nextDiff = null;
 		int i = 0;
@@ -300,7 +299,7 @@ public class DiffUtil {
 	/**
 	 * Process the diff object and add it to the output.
 	 */
-	private static void processDifference(Difference currentDiff, Vector<WikiDiff> wikiDiffs, String[] oldArray, String[] newArray) {
+	private static void processDifference(Difference currentDiff, List<WikiDiff> wikiDiffs, String[] oldArray, String[] newArray) {
 		int deletedCurrent = currentDiff.getDeletedStart();
 		int addedCurrent = currentDiff.getAddedStart();
 		int count = 0;

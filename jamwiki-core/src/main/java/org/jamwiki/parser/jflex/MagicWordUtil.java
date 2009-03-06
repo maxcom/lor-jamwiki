@@ -18,9 +18,10 @@ package org.jamwiki.parser.jflex;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
-import java.util.Vector;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiVersion;
@@ -114,7 +115,7 @@ public class MagicWordUtil {
 	private static final String MAGIC_SERVER = "SERVER";
 	private static final String MAGIC_SCRIPT_PATH = "SCRIPTPATH";
 	private static final String MAGIC_SERVER_NAME = "SERVERNAME";
-	private static Vector<String> MAGIC_WORDS = new Vector<String>();
+	private static List<String> MAGIC_WORDS = new ArrayList<String>();
 
 	static {
 		// current date values

@@ -16,8 +16,9 @@
  */
 package org.jamwiki.parser.jflex;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
@@ -146,13 +147,13 @@ public class TemplateTag {
 	 * return the default value if it exists.
 	 */
 	private String parseParamDefaultValue(ParserInput parserInput, String raw) throws Exception {
-		Vector<String> tokens = this.tokenizeParams(raw);
+		List<String> tokens = this.tokenizeParams(raw);
 		if (tokens.size() < 2) {
 			return null;
 		}
 		// table elements mess up default processing, so just return anything after
 		// the first parameter to avoid having to implement special table logic
-		String param1 = tokens.elementAt(0);
+		String param1 = tokens.get(0);
 		String value = raw.substring(param1.length() + 1);
 		return JFlexParserUtil.parseFragment(parserInput, value, JFlexParser.MODE_PREPROCESS);
 	}
@@ -234,7 +235,7 @@ public class TemplateTag {
 	 * parse the parameter names and values.
 	 */
 	private void parseTemplateParameterValues(ParserInput parserInput, String templateContent) throws Exception {
-		Vector<String> tokens = this.tokenizeParams(templateContent);
+		List<String> tokens = this.tokenizeParams(templateContent);
 		if (tokens.isEmpty()) {
 			throw new Exception("No template name found in " + templateContent);
 		}
@@ -309,8 +310,8 @@ public class TemplateTag {
 	 * Parse a template string of the form "param1|param2|param3" into
 	 * tokens (param1, param2, and param3 in the example).
 	 */
-	private Vector<String> tokenizeParams(String content) {
-		Vector<String> tokens = new Vector<String>();
+	private List<String> tokenizeParams(String content) {
+		List<String> tokens = new ArrayList<String>();
 		int pos = 0;
 		int endPos = -1;
 		String substring = "";

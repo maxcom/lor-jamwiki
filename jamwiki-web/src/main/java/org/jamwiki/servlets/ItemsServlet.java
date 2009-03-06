@@ -16,13 +16,15 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
-import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.model.Topic;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
@@ -74,7 +76,7 @@ public class ItemsServlet extends JAMWikiServlet {
 	private void viewFiles(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		Collection items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_FILE, pagination);
+		List<String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_FILE, pagination);
 		next.addObject("itemCount", new Integer(items.size()));
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:Filelist");
@@ -89,8 +91,8 @@ public class ItemsServlet extends JAMWikiServlet {
 	private void viewOrphanedPages(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		Collection<String> allItems = new TreeSet<String>();
-		Collection<String> unlinkedTopics = WikiBase.getDataHandler().getAllTopicNames(virtualWiki);
+		Set<String> allItems = new TreeSet<String>();
+		List<String> unlinkedTopics = WikiBase.getDataHandler().getAllTopicNames(virtualWiki);
 		for (String topicName : unlinkedTopics) {
 			Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, new Object());
 			if (topic == null) {
@@ -101,7 +103,7 @@ public class ItemsServlet extends JAMWikiServlet {
 				continue;
 			}
 			// only mark them orphaned if there is neither category defined in it, nor a link to it!
-			Collection topicLinks = WikiBase.getSearchEngine().findLinkedTo(virtualWiki, topicName);
+			List<SearchResultEntry> topicLinks = WikiBase.getSearchEngine().findLinkedTo(virtualWiki, topicName);
 			if (topicLinks.size() != 0) {
 				continue;
 			}
@@ -120,7 +122,7 @@ public class ItemsServlet extends JAMWikiServlet {
 			}
 		}
 		// FIXME - this is a nasty hack until data can be retrieved properly for pagination
-		Collection<String> items = new TreeSet<String>();
+		Set<String> items = new TreeSet<String>();
 		int count = 0;
 		for (String topicName : allItems) {
 			count++;
@@ -145,8 +147,8 @@ public class ItemsServlet extends JAMWikiServlet {
 	 */
 	private void viewUsers(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		Collection<String> items = WikiBase.getDataHandler().lookupWikiUsers(pagination);
-		Vector<String> links = new Vector<String>();
+		List<String> items = WikiBase.getDataHandler().lookupWikiUsers(pagination);
+		List<String> links = new ArrayList<String>();
 		for (String link : items) {
 			links.add(NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + link);
 		}
@@ -164,7 +166,7 @@ public class ItemsServlet extends JAMWikiServlet {
 	private void viewImages(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		Collection items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_IMAGE, pagination);
+		List<String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_IMAGE, pagination);
 		next.addObject("itemCount", new Integer(items.size()));
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:Imagelist");
@@ -179,7 +181,7 @@ public class ItemsServlet extends JAMWikiServlet {
 	private void viewTopics(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		Collection items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_ARTICLE, pagination);
+		List<String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_ARTICLE, pagination);
 		next.addObject("itemCount", new Integer(items.size()));
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:Allpages");
@@ -194,7 +196,7 @@ public class ItemsServlet extends JAMWikiServlet {
 	private void viewTopicsAdmin(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		Collection items = WikiBase.getDataHandler().getTopicsAdmin(virtualWiki, pagination);
+		List<String> items = WikiBase.getDataHandler().getTopicsAdmin(virtualWiki, pagination);
 		next.addObject("itemCount", new Integer(items.size()));
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:TopicsAdmin");

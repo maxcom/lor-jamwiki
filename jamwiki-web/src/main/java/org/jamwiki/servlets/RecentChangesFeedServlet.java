@@ -19,7 +19,6 @@ package org.jamwiki.servlets;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -158,7 +157,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 	 * @throws Exception
 	 */
 	private SyndFeed getFeed(HttpServletRequest request) throws Exception {
-		Collection changes = getChanges(request);
+		List<RecentChange> changes = getChanges(request);
 		SyndFeed feed = new SyndFeedImpl();
 		feed.setEncoding(FEED_ENCODING);
 		feed.setTitle(Environment.getValue(Environment.PROP_RSS_TITLE));
@@ -176,7 +175,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 	/**
 	 *
 	 */
-	private List<SyndEntry> getFeedEntries(Collection<RecentChange> changes, boolean includeMinorEdits, boolean linkToVersion, String feedURL) {
+	private List<SyndEntry> getFeedEntries(List<RecentChange> changes, boolean includeMinorEdits, boolean linkToVersion, String feedURL) {
 		List<SyndEntry> entries = new ArrayList<SyndEntry>();
 		for (RecentChange change : changes) {
 			if (includeMinorEdits || (!change.getMinor())) {
@@ -234,7 +233,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 	/**
 	 *
 	 */
-	private Collection getChanges(HttpServletRequest request) throws Exception {
+	private List<RecentChange> getChanges(HttpServletRequest request) throws Exception {
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		Pagination pagination = WikiUtil.buildPagination(request);
 		return WikiBase.getDataHandler().getRecentChanges(virtualWiki, pagination, true);

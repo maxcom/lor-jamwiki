@@ -16,9 +16,9 @@
  */
 package org.jamwiki.model;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -31,7 +31,7 @@ public class RoleMap {
 	private static final WikiLogger logger = WikiLogger.getLogger(RoleMap.class.getName());
 	private Integer groupId = null;
 	private String groupName = null;
-	private Collection<String> roleNames = null;
+	private List<String> roleNames = null;
 	private Integer userId = null;
 	private String userLogin = null;
 
@@ -74,7 +74,7 @@ public class RoleMap {
 	 */
 	public void addRole(String roleName) {
 		if (this.roleNames == null) {
-			this.roleNames = new Vector<String>();
+			this.roleNames = new ArrayList<String>();
 		}
 		this.roleNames.add(roleName);
 	}
@@ -82,14 +82,14 @@ public class RoleMap {
 	/**
 	 *
 	 */
-	 public Collection<String> getRoleNames() {
+	 public List<String> getRoleNames() {
 		return this.roleNames;
 	}
 
 	/**
 	 *
 	 */
-	public void setRoleNames(Collection<String> roleNames) {
+	public void setRoleNames(List<String> roleNames) {
 		this.roleNames = roleNames;
 	}
 

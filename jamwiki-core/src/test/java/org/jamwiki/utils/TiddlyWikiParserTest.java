@@ -25,7 +25,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Vector;
+import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -64,7 +64,7 @@ public class TiddlyWikiParserTest extends TestCase {
 		public ArrayList<Topic> topics = new ArrayList<Topic>();
 		public ArrayList<TopicVersion> versions = new ArrayList<TopicVersion>();
 
-		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, Vector links, boolean userVisible, Object transactionObject) throws Exception {
+		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, List<String> links, boolean userVisible, Object transactionObject) throws Exception {
 			topics.add(topic);
 			versions.add(topicVersion);
 		}

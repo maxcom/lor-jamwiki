@@ -16,7 +16,6 @@
  */
 package org.jamwiki.utils;
 
-import java.io.File;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;

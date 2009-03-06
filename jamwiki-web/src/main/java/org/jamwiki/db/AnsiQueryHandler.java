@@ -22,7 +22,6 @@ import java.sql.Types;
 import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
