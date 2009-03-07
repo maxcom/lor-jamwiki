@@ -1,4 +1,13 @@
-﻿0.7.0
+﻿0.7.1
+=====
+
+Bugfixes:
+
+  * Search by login on the Special:Roles page returned no results for users
+    without at least one role.  Reported by tapaya and rebecca.
+
+
+0.7.0
 =====
 
 New Features:
