@@ -16,39 +16,45 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
-<c:if test="${!badinput}">
-	<c:if test="${empty diffs}"><div class="message"><fmt:message key="diff.nochange" /></div></c:if>
-	<c:if test="${!empty diffs}">
+<c:choose>
+	<c:when test="${!badinput}">
+		<c:choose>
+			<c:when test="${empty diffs}"><div class="message"><fmt:message key="diff.nochange" /></div></c:when>
+			<c:otherwise>
 <div id="diff">
-		<c:set var="previousLineNumber" value="-10" />
-		<c:forEach items="${diffs}" var="diff">
-			<c:if test="${diff.lineNumber > (previousLineNumber + 1)}">
-<div class="diff-line"><fmt:message key="diff.line" /> <c:out value="${diff.lineNumber}" />:</div>
-			</c:if>
+				<c:set var="previousPosition" value="-10" />
+				<c:forEach items="${diffs}" var="diff">
+					<c:if test="${diff.position > (previousPosition + 1)}">
+<div class="diff-line"><fmt:message key="diff.line" /> <c:out value="${diff.position + 1}" />:</div>
+					</c:if>
 <div class="diff-entry">
-			<c:if test="${!empty diff.oldLine && diff.change}">
+					<c:choose>
+						<c:when test="${!empty diff.oldText && diff.change}">
 	<div class="diff-indicator">-</div>
-	<div class="diff-delete"><c:out value="${diff.oldLine}" />&#160;</div>
-			</c:if>
-			<c:if test="${empty diff.oldLine || !diff.change}">
+	<div class="diff-delete"><c:out value="${diff.oldText}" />&#160;</div>
+						</c:when>
+						<c:otherwise>
 	<div class="diff-indicator">&#160;</div>
-	<div class="diff-unchanged"><c:out value="${diff.oldLine}" />&#160;</div>
-			</c:if>
-			<c:if test="${!empty diff.newLine && diff.change}">
+	<div class="diff-unchanged"><c:out value="${diff.oldText}" />&#160;</div>
+						</c:otherwise>
+					</c:choose>
+					<c:choose>
+						<c:when test="${!empty diff.newText && diff.change}">
 	<div class="diff-indicator">+</div>
-	<div class="diff-add"><c:out value="${diff.newLine}" />&#160;</div>
-			</c:if>
-			<c:if test="${empty diff.newLine || !diff.change}">
+	<div class="diff-add"><c:out value="${diff.newText}" />&#160;</div>
+						</c:when>
+						<c:otherwise>
 	<div class="diff-indicator">&#160;</div>
-	<div class="diff-unchanged"><c:out value="${diff.newLine}" />&#160;</div>
-			</c:if>
+	<div class="diff-unchanged"><c:out value="${diff.newText}" />&#160;</div>
+						</c:otherwise>
+					</c:choose>
 	<div class="clear"></div>
 </div>
-			<c:set var="previousLineNumber" value="${diff.lineNumber}" />
-		</c:forEach>
+					<c:set var="previousPosition" value="${diff.position}" />
+				</c:forEach>
 </div>
-	</c:if>
-</c:if>
-<c:if test="${badinput=='true'}">
-	<fmt:message key="diff.badinput" />
-</c:if>
+			</c:otherwise>
+		</c:choose>
+	</c:when>
+	<c:otherwise><fmt:message key="diff.badinput" /></c:otherwise>
+</c:choose>
