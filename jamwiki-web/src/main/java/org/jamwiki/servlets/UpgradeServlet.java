@@ -240,6 +240,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 		if (oldVersion.before(0, 7, 0)) {
 			return true;
 		}
+		if (oldVersion.before(0, 8, 0)) {
+			return true;
+		}
 		return false;
 	}
 

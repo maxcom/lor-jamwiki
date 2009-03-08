@@ -244,7 +244,7 @@ div.submenu {
 .diff-delete {
 	float: left;
 	position: relative;
-	background: #ee7777;
+	background: #eeee88;
 	font-weight: bold;
 	padding: 0.1em;
 	width: 48%;
@@ -253,7 +253,7 @@ div.submenu {
 .diff-add {
 	float: left;
 	position: relative;
-	background: #77ee77;
+	background: #88ee88;
 	font-weight: bold;
 	padding: 0.1em;
 	width: 48%;
@@ -284,6 +284,10 @@ div.submenu {
 	clear: both;
 	margin: 1px;
 	padding: 1px;
+}
+.diff-change {
+	font-weight: bold;
+	color: red;
 }
 
 /* topic elements */

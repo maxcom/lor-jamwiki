@@ -77,6 +77,10 @@ followed by 0.5.3.
 
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.8.0".
+  2. CSS styles have changed during this release.  An up-to-date version of
+     the default StyleSheet topic can be found in the
+     /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
+     can only be edited AFTER all other upgrade steps have been completed.
 
 
   JAMWiki 0.7.0

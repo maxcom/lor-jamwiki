@@ -16,6 +16,7 @@
  */
 package org.jamwiki.model;
 
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
 
@@ -32,6 +33,8 @@ public class WikiDiff {
 	private String oldText = null;
 	/** The zero-based position of the text that was changed. */
 	private int position = -1;
+	/** The diff may (optionally) contain a list of sub-diffs, such as when diffing two topics and then further showing what changed on a line. */
+	private List<WikiDiff> subDiffs = null;
 
 	/**
 	 *
@@ -95,5 +98,19 @@ public class WikiDiff {
 	 */
 	public void setPosition(int position) {
 		this.position = position;
+	}
+
+	/**
+	 *
+	 */
+	public List<WikiDiff> getSubDiffs() {
+		return this.subDiffs;
+	}
+
+	/**
+	 *
+	 */
+	public void setSubDiffs(List<WikiDiff> subDiffs) {
+		this.subDiffs = subDiffs;
 	}
 }
