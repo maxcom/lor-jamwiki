@@ -10,6 +10,7 @@ New Features:
     similar to Mediawiki.
   * Upgrade to JFlex 1.4.3.
   * Upgrade to JSTL standard taglib 1.1.2.
+  * Upgrade to Lucene Search 2.4.1.
 
 Translation Updates:
 
