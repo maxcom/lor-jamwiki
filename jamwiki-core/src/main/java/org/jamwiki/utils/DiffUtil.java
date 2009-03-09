@@ -103,7 +103,6 @@ public class DiffUtil {
 	 * @return Returns a list of WikiDiff objects that correspond to the changed text.
 	 */
 	public static List<WikiDiff> diff(String newVersion, String oldVersion) {
-		long start = System.currentTimeMillis();
 		if (oldVersion == null) {
 			oldVersion = "";
 		}
@@ -114,10 +113,7 @@ public class DiffUtil {
 		// cut & paste or other issues
 		oldVersion = StringUtils.remove(oldVersion, '\r');
 		newVersion = StringUtils.remove(newVersion, '\r');
-		List<WikiDiff> result = DiffUtil.process(newVersion, oldVersion);
-		long execution = System.currentTimeMillis() - start;
-		logger.info("DiffUtil.diff execution time: (" + (execution / 1000.000) + " s.)");
-		return result;
+		return DiffUtil.process(newVersion, oldVersion);
 	}
 
 	/**
@@ -162,30 +158,37 @@ public class DiffUtil {
 		List<WikiDiff> wikiDiffs = new ArrayList<WikiDiff>();
 		Difference previousDiff = null;
 		Difference nextDiff = null;
+		List<WikiDiff> changedLineWikiDiffs = null;
+		String[] oldLineArray = null;
+		String[] newLineArray = null;
+		List<Difference> changedLineDiffs = null;
+		List<WikiDiff> wikiSubDiffs = null;
+		Difference nextLineDiff = null;
 		int i = 0;
 		for (Difference currentDiff : diffs) {
 			i++;
 			wikiDiffs.addAll(DiffUtil.preBufferDifference(currentDiff, previousDiff, oldArray, newArray, DIFF_UNCHANGED_LINE_DISPLAY));
-			List<WikiDiff> changedLineWikiDiffs = DiffUtil.processDifference(currentDiff, oldArray, newArray);
+			changedLineWikiDiffs = DiffUtil.processDifference(currentDiff, oldArray, newArray);
 			// loop through the difference and diff the individual lines so that it is possible to highlight the exact
 			// text that was changed
 			for (WikiDiff changedLineWikiDiff : changedLineWikiDiffs) {
-				String[] oldLineArray = DiffUtil.stringToArray(changedLineWikiDiff.getOldText());
-				String[] newLineArray = DiffUtil.stringToArray(changedLineWikiDiff.getNewText());
-				Diff changedLineDiffObject = new Diff(oldLineArray, newLineArray);
-				List<Difference> changedLineDiffs = changedLineDiffObject.diff();
-				List<WikiDiff> wikiSubDiffs = new ArrayList<WikiDiff>();
-				Difference previousLineDiff = null;
-				Difference nextLineDiff = null;
+				oldLineArray = DiffUtil.stringToArray(changedLineWikiDiff.getOldText());
+				newLineArray = DiffUtil.stringToArray(changedLineWikiDiff.getNewText());
+				changedLineDiffs = new Diff(oldLineArray, newLineArray).diff();
+				wikiSubDiffs = new ArrayList<WikiDiff>();
+				nextLineDiff = null;
 				int j = 0;
 				for (Difference changedLineDiff : changedLineDiffs) {
 					// build sub-diff list
 					j++;
-					wikiSubDiffs.addAll(DiffUtil.preBufferDifference(changedLineDiff, previousLineDiff, oldLineArray, newLineArray, -1));
+					if (j == 1) {
+						// pre-buffering is only necessary for the first element as post-buffering
+						// will handled all further buffering when bufferAmount is -1.
+						wikiSubDiffs.addAll(DiffUtil.preBufferDifference(changedLineDiff, null, oldLineArray, newLineArray, -1));
+					}
 					wikiSubDiffs.addAll(DiffUtil.processDifference(changedLineDiff, oldLineArray, newLineArray));
 					nextLineDiff = (j < changedLineDiffs.size()) ? changedLineDiffs.get(j) : null;
 					wikiSubDiffs.addAll(DiffUtil.postBufferDifference(changedLineDiff, nextLineDiff, oldLineArray, newLineArray, -1));
-					previousLineDiff = changedLineDiff;
 				}
 				changedLineWikiDiff.setSubDiffs(wikiSubDiffs);
 			}
@@ -236,27 +239,25 @@ public class DiffUtil {
 			// buffer everything
 			numIterations = (nextDiff != null) ? Math.max(nextDiff.getAddedStart() - addedCurrent, nextDiff.getDeletedStart() - deletedCurrent) : Math.max(oldArray.length - deletedCurrent, newArray.length - addedCurrent);
 		}
+		String oldText = null;
+		String newText = null;
 		for (int i = 0; i < numIterations; i++) {
 			int position = (deletedCurrent < 0) ? 0 : deletedCurrent;
-			String oldText = null;
-			String newText = null;
-			boolean buffered = false;
+			oldText = null;
+			newText = null;
 			if (canPostBuffer(nextDiff, deletedCurrent, oldArray, false)) {
 				oldText = oldArray[deletedCurrent];
 				deletedCurrent++;
-				buffered = true;
 			}
 			if (canPostBuffer(nextDiff, addedCurrent, newArray, true)) {
 				newText = newArray[addedCurrent];
 				addedCurrent++;
-				buffered = true;
 			}
-			if (!buffered) {
+			if (oldText == null && newText == null) {
 				logger.info("Possible DIFF bug: no elements post-buffered.  position: " + position + " / deletedCurrent: " + deletedCurrent + " / addedCurrent " + addedCurrent + " / numIterations: " + numIterations);
 				break;
 			}
-			WikiDiff wikiDiff = new WikiDiff(oldText, newText, position);
-			wikiDiffs.add(wikiDiff);
+			wikiDiffs.add(new WikiDiff(oldText, newText, position));
 		}
 		return wikiDiffs;
 	}
@@ -295,28 +296,26 @@ public class DiffUtil {
 		}
 		// number of iterations is number of loops required to fully buffer the added and deleted diff
 		int numIterations = Math.max(currentDiff.getDeletedStart() - deletedCurrent, currentDiff.getAddedStart() - addedCurrent);
+		String oldText = null;
+		String newText = null;
 		for (int i = 0; i < numIterations; i++) {
 			int position = (deletedCurrent < 0) ? 0 : deletedCurrent;
-			String oldText = null;
-			String newText = null;
-			boolean buffered = false;
+			oldText = null;
+			newText = null;
 			// if diffs are close together, do not allow buffers to overlap
 			if (canPreBuffer(previousDiff, deletedCurrent, currentDiff.getDeletedStart(), oldArray, bufferAmount, false)) {
 				oldText = oldArray[deletedCurrent];
 				deletedCurrent++;
-				buffered = true;
 			}
 			if (canPreBuffer(previousDiff, addedCurrent, currentDiff.getAddedStart(), newArray, bufferAmount, true)) {
 				newText = newArray[addedCurrent];
 				addedCurrent++;
-				buffered = true;
 			}
-			if (!buffered) {
+			if (oldText == null && newText == null) {
 				logger.info("Possible DIFF bug: no elements pre-buffered.  position: " + position + " / deletedCurrent: " + deletedCurrent + " / addedCurrent " + addedCurrent + " / numIterations: " + numIterations);
 				break;
 			}
-			WikiDiff wikiDiff = new WikiDiff(oldText, newText, position);
-			wikiDiffs.add(wikiDiff);
+			wikiDiffs.add(new WikiDiff(oldText, newText, position));
 		}
 		return wikiDiffs;
 	}
@@ -379,14 +378,16 @@ public class DiffUtil {
 		int addedCurrent = currentDiff.getAddedStart();
 		// count is simply used to ensure that the loop is not infinite, which should never happen
 		int count = 0;
+		// the text of the element that changed
+		String oldText = null;
+		// the text of what the element was changed to
+		String newText = null;
 		while (hasMoreDiffInfo(addedCurrent, deletedCurrent, currentDiff)) {
 			// the position within the diff array (line number, character, etc) at which the change
 			// started (starting at 0)
 			int position = ((deletedCurrent < 0) ? 0 : deletedCurrent);
-			// the text of the element that changed
-			String oldText = null;
-			// the text of what the element was changed to
-			String newText = null;
+			oldText = null;
+			newText = null;
 			if (currentDiff.getDeletedEnd() >= 0 && currentDiff.getDeletedEnd() >= deletedCurrent) {
 				oldText = oldArray[deletedCurrent];
 				deletedCurrent++;
@@ -395,8 +396,7 @@ public class DiffUtil {
 				newText = newArray[addedCurrent];
 				addedCurrent++;
 			}
-			WikiDiff wikiDiff = new WikiDiff(oldText, newText, position);
-			wikiDiffs.add(wikiDiff);
+			wikiDiffs.add(new WikiDiff(oldText, newText, position));
 			// FIXME - this shouldn't be necessary
 			count++;
 			if (count > 5000) {
