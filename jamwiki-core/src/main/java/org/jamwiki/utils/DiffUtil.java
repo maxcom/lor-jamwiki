@@ -72,6 +72,10 @@ public class DiffUtil {
 			// if no previous diff, buffer away
 			return true;
 		}
+		if (bufferAmount == -1) {
+			// if everything is being buffered and there was a previous diff do not pre-buffer
+			return false;
+		}
 		int previousEnd = (adding) ? previousDiff.getAddedEnd() : previousDiff.getDeletedEnd();
 		if (previousEnd != -1) {
 			// if there was a previous diff but it was several lines previous, buffer away.
@@ -173,11 +177,10 @@ public class DiffUtil {
 				for (Difference changedLineDiff : changedLineDiffs) {
 					// build sub-diff list
 					j++;
-					// FIXME - hard coding 9999 is ugly and bad for performance
-					wikiSubDiffs.addAll(DiffUtil.preBufferDifference(changedLineDiff, previousLineDiff, oldLineArray, newLineArray, 9999));
+					wikiSubDiffs.addAll(DiffUtil.preBufferDifference(changedLineDiff, previousLineDiff, oldLineArray, newLineArray, -1));
 					wikiSubDiffs.addAll(DiffUtil.processDifference(changedLineDiff, oldLineArray, newLineArray));
 					nextLineDiff = (j < changedLineDiffs.size()) ? changedLineDiffs.get(j) : null;
-					wikiSubDiffs.addAll(DiffUtil.postBufferDifference(changedLineDiff, nextLineDiff, oldLineArray, newLineArray, 9999));
+					wikiSubDiffs.addAll(DiffUtil.postBufferDifference(changedLineDiff, nextLineDiff, oldLineArray, newLineArray, -1));
 					previousLineDiff = changedLineDiff;
 				}
 				changedLineWikiDiff.setSubDiffs(wikiSubDiffs);
@@ -213,17 +216,23 @@ public class DiffUtil {
 	 *  generate the diff.
 	 * @param newArray The original array of string objects that was compared to in order to
 	 *  generate the diff.
-	 * @param bufferAmount The number of unchanged elements to display after the diff.
+	 * @param bufferAmount The number of unchanged elements to display after the diff, or -1 if
+	 *  all unchanged lines should be displayed.
 	 */
 	private static List<WikiDiff> postBufferDifference(Difference currentDiff, Difference nextDiff, String[] oldArray, String[] newArray, int bufferAmount) {
 		List<WikiDiff> wikiDiffs = new ArrayList<WikiDiff>();
-		if (bufferAmount <= 0) {
+		if (bufferAmount == 0) {
+			// do not buffer
 			return wikiDiffs;
 		}
-		// FIXME - untangle this mess.  note that it currently loops more than it needs to.
 		int deletedCurrent = (currentDiff.getDeletedEnd() == -1) ? currentDiff.getDeletedStart() : (currentDiff.getDeletedEnd() + 1);
 		int addedCurrent = (currentDiff.getAddedEnd() == -1) ? currentDiff.getAddedStart() : (currentDiff.getAddedEnd() + 1);
-		for (int i = 0; i < bufferAmount; i++) {
+		int numIterations = bufferAmount;
+		if (bufferAmount == -1) {
+			// buffer everything
+			numIterations = (nextDiff != null) ? Math.max(nextDiff.getAddedStart() - addedCurrent, nextDiff.getDeletedStart() - deletedCurrent) : Math.max(oldArray.length - deletedCurrent, newArray.length - addedCurrent);
+		}
+		for (int i = 0; i < numIterations; i++) {
 			int position = (deletedCurrent < 0) ? 0 : deletedCurrent;
 			String oldText = null;
 			String newText = null;
@@ -239,7 +248,8 @@ public class DiffUtil {
 				buffered = true;
 			}
 			if (!buffered) {
-				continue;
+				logger.info("Possible DIFF bug: no elements post-buffered.  position: " + position + " / deletedCurrent: " + deletedCurrent + " / addedCurrent " + addedCurrent + " / numIterations: " + numIterations);
+				break;
 			}
 			WikiDiff wikiDiff = new WikiDiff(oldText, newText, position);
 			wikiDiffs.add(wikiDiff);
@@ -257,17 +267,23 @@ public class DiffUtil {
 	 *  generate the diff.
 	 * @param newArray The original array of string objects that was compared to in order to
 	 *  generate the diff.
-	 * @param bufferAmount The number of unchanged elements to display after the diff.
+	 * @param bufferAmount The number of unchanged elements to display after the diff, or -1 if
+	 *  all unchanged lines should be displayed.
 	 */
 	private static List<WikiDiff> preBufferDifference(Difference currentDiff, Difference previousDiff, String[] oldArray, String[] newArray, int bufferAmount) {
 		List<WikiDiff> wikiDiffs = new ArrayList<WikiDiff>();
-		if (bufferAmount <= 0) {
+		if (bufferAmount == 0) {
+			return wikiDiffs;
+		}
+		if (bufferAmount == -1 && previousDiff != null) {
+			// when buffering everything, only pre-buffer for the first element as the post-buffer code
+			// will handle everything else.
 			return wikiDiffs;
 		}
 		// deletedCurrent is the current position in oldArray to start buffering from
-		int deletedCurrent = (bufferAmount > currentDiff.getDeletedStart()) ? 0 : (currentDiff.getDeletedStart() - bufferAmount);
+		int deletedCurrent = (bufferAmount == -1 || bufferAmount > currentDiff.getDeletedStart()) ? 0 : (currentDiff.getDeletedStart() - bufferAmount);
 		// addedCurrent is the current position in newArray to start buffering from
-		int addedCurrent = (bufferAmount > currentDiff.getAddedStart()) ? 0 : (currentDiff.getAddedStart() - bufferAmount);
+		int addedCurrent = (bufferAmount == -1 || bufferAmount > currentDiff.getAddedStart()) ? 0 : (currentDiff.getAddedStart() - bufferAmount);
 		if (previousDiff != null) {
 			// if there was a previous diff make sure that it is not being overlapped
 			deletedCurrent = Math.max(previousDiff.getDeletedEnd() + 1, deletedCurrent);
@@ -292,7 +308,8 @@ public class DiffUtil {
 				buffered = true;
 			}
 			if (!buffered) {
-				continue;
+				logger.info("Possible DIFF bug: no elements pre-buffered.  position: " + position + " / deletedCurrent: " + deletedCurrent + " / addedCurrent " + addedCurrent + " / numIterations: " + numIterations);
+				break;
 			}
 			WikiDiff wikiDiff = new WikiDiff(oldText, newText, position);
 			wikiDiffs.add(wikiDiff);
