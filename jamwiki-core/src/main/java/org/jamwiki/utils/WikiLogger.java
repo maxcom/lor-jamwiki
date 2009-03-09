@@ -288,6 +288,41 @@ public class WikiLogger {
 	}
 
 	/**
+	 * Return <code>true</code> if a log message of level CONFIG can be logged.
+	 */
+	public boolean isConfigEnabled() {
+		return this.logger.isLoggable(Level.CONFIG);
+	}
+
+	/**
+	 * Return <code>true</code> if a log message of level FINE can be logged.
+	 */
+	public boolean isFineEnabled() {
+		return this.logger.isLoggable(Level.FINE);
+	}
+
+	/**
+	 * Return <code>true</code> if a log message of level FINER can be logged.
+	 */
+	public boolean isFinerEnabled() {
+		return this.logger.isLoggable(Level.FINER);
+	}
+
+	/**
+	 * Return <code>true</code> if a log message of level FINEST can be logged.
+	 */
+	public boolean isFinestEnabled() {
+		return this.logger.isLoggable(Level.FINEST);
+	}
+
+	/**
+	 * Return <code>true</code> if a log message of level INFO can be logged.
+	 */
+	public boolean isInfoEnabled() {
+		return this.logger.isLoggable(Level.INFO);
+	}
+
+	/**
 	 * Log a message at the {@link java.util.logging.Level#SEVERE} level,
 	 * provided that the current log level is {@link java.util.logging.Level#SEVERE}
 	 * or greater.

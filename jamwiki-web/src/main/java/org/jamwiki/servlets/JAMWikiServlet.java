@@ -252,7 +252,10 @@ public abstract class JAMWikiServlet extends AbstractController {
 		if (execution > JAMWikiServlet.SLOW_PAGE_LIMIT) {
 			logger.warning("Slow page loading time: " + request.getRequestURI() + " (" + (execution / 1000.000) + " s.)");
 		}
-		logger.info("Loaded page " + request.getRequestURI() + " (" + (execution / 1000.000) + " s.)");
+		if (logger.isInfoEnabled()) {
+			String url = request.getRequestURI() + (!StringUtils.isEmpty(request.getQueryString()) ? "?" + request.getQueryString() : "");
+			logger.info("Loaded page " + url + " (" + (execution / 1000.000) + " s.)");
+		}
 		return next;
 	}
 
