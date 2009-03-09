@@ -86,7 +86,7 @@ public class DiffUtil {
 		}
 		// the previous diff did not specify an end, and the current diff will not overlap
 		// with buffering from its start, buffer away.  otherwise the default is not to buffer.
-		return (current >= 0 && currentStart > current);
+		return (currentStart > current);
 	}
 
 	/**
@@ -173,7 +173,7 @@ public class DiffUtil {
 				for (Difference changedLineDiff : changedLineDiffs) {
 					// build sub-diff list
 					j++;
-					// FIXME - harding coding 9999 is ugly and bad for performance
+					// FIXME - hard coding 9999 is ugly and bad for performance
 					wikiSubDiffs.addAll(DiffUtil.preBufferDifference(changedLineDiff, previousLineDiff, oldLineArray, newLineArray, 9999));
 					wikiSubDiffs.addAll(DiffUtil.processDifference(changedLineDiff, oldLineArray, newLineArray));
 					nextLineDiff = (j < changedLineDiffs.size()) ? changedLineDiffs.get(j) : null;
@@ -221,17 +221,10 @@ public class DiffUtil {
 			return wikiDiffs;
 		}
 		// FIXME - untangle this mess.  note that it currently loops more than it needs to.
-		int deletedCurrent = (currentDiff.getDeletedEnd() + 1);
-		int addedCurrent = (currentDiff.getAddedEnd() + 1);
-		if (currentDiff.getDeletedEnd() == -1) {
-			deletedCurrent = (currentDiff.getDeletedStart());
-		}
-		if (currentDiff.getAddedEnd() == -1) {
-			addedCurrent = (currentDiff.getAddedStart());
-		}
-		int numIterations = bufferAmount;
-		for (int i = 0; i < numIterations; i++) {
-			int position = ((deletedCurrent < 0) ? 0 : deletedCurrent);
+		int deletedCurrent = (currentDiff.getDeletedEnd() == -1) ? currentDiff.getDeletedStart() : (currentDiff.getDeletedEnd() + 1);
+		int addedCurrent = (currentDiff.getAddedEnd() == -1) ? currentDiff.getAddedStart() : (currentDiff.getAddedEnd() + 1);
+		for (int i = 0; i < bufferAmount; i++) {
+			int position = (deletedCurrent < 0) ? 0 : deletedCurrent;
 			String oldText = null;
 			String newText = null;
 			boolean buffered = false;
@@ -271,22 +264,19 @@ public class DiffUtil {
 		if (bufferAmount <= 0) {
 			return wikiDiffs;
 		}
-		// FIXME - untangle this mess
-		int deletedCurrent = currentDiff.getDeletedStart() - bufferAmount;
-		int addedCurrent = currentDiff.getAddedStart() - bufferAmount;
-		int numIterations = bufferAmount;
+		// deletedCurrent is the current position in oldArray to start buffering from
+		int deletedCurrent = (bufferAmount > currentDiff.getDeletedStart()) ? 0 : (currentDiff.getDeletedStart() - bufferAmount);
+		// addedCurrent is the current position in newArray to start buffering from
+		int addedCurrent = (bufferAmount > currentDiff.getAddedStart()) ? 0 : (currentDiff.getAddedStart() - bufferAmount);
 		if (previousDiff != null) {
+			// if there was a previous diff make sure that it is not being overlapped
 			deletedCurrent = Math.max(previousDiff.getDeletedEnd() + 1, deletedCurrent);
 			addedCurrent = Math.max(previousDiff.getAddedEnd() + 1, addedCurrent);
-		} else if (deletedCurrent < 0 && addedCurrent < 0) {
-			// first diff, make sure it is properly buffered
-			int modifier = Math.max(deletedCurrent, addedCurrent);
-			numIterations += modifier;
-			deletedCurrent -= modifier;
-			addedCurrent -= modifier;
 		}
+		// number of iterations is number of loops required to fully buffer the added and deleted diff
+		int numIterations = Math.max(currentDiff.getDeletedStart() - deletedCurrent, currentDiff.getAddedStart() - addedCurrent);
 		for (int i = 0; i < numIterations; i++) {
-			int position = ((deletedCurrent < 0) ? 0 : deletedCurrent);
+			int position = (deletedCurrent < 0) ? 0 : deletedCurrent;
 			String oldText = null;
 			String newText = null;
 			boolean buffered = false;
