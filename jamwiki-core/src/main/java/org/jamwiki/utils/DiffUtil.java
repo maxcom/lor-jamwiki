@@ -103,6 +103,7 @@ public class DiffUtil {
 	 * @return Returns a list of WikiDiff objects that correspond to the changed text.
 	 */
 	public static List<WikiDiff> diff(String newVersion, String oldVersion) {
+		long start = System.currentTimeMillis();
 		if (oldVersion == null) {
 			oldVersion = "";
 		}
@@ -113,7 +114,10 @@ public class DiffUtil {
 		// cut & paste or other issues
 		oldVersion = StringUtils.remove(oldVersion, '\r');
 		newVersion = StringUtils.remove(newVersion, '\r');
-		return DiffUtil.process(newVersion, oldVersion);
+		List<WikiDiff> result = DiffUtil.process(newVersion, oldVersion);
+		long execution = System.currentTimeMillis() - start;
+		logger.info("DiffUtil.diff execution time: (" + (execution / 1000.000) + " s.)");
+		return result;
 	}
 
 	/**
@@ -158,7 +162,7 @@ public class DiffUtil {
 		List<WikiDiff> wikiDiffs = new ArrayList<WikiDiff>();
 		Difference previousDiff = null;
 		Difference nextDiff = null;
-		int i = 1;
+		int i = 0;
 		for (Difference currentDiff : diffs) {
 			i++;
 			wikiDiffs.addAll(DiffUtil.preBufferDifference(currentDiff, previousDiff, oldArray, newArray, DIFF_UNCHANGED_LINE_DISPLAY));
