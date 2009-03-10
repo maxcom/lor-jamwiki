@@ -12,6 +12,7 @@ New Features:
   * Upgrade to JFlex 1.4.3.
   * Upgrade to JSTL standard taglib 1.1.2.
   * Upgrade to Lucene Search 2.4.1.
+  * Upgrade to ehcache 1.6.0-beta3.
 
 Bugfixes:
 
