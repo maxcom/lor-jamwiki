@@ -21,8 +21,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.incava.util.diff.Diff;
 import org.incava.util.diff.Difference;
-import org.jamwiki.WikiBase;
-import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiDiff;
 
 /**
@@ -117,39 +115,6 @@ public class DiffUtil {
 	}
 
 	/**
-	 * Execute a diff between two versions of a topic, returning a list
-	 * of WikiDiff objects indicating what has changed between the versions.
-	 *
-	 * @param topicName The name of the topic for which a diff is being
-	 *  performed.
-	 * @param topicVersionId1 The version ID for the old version being
-	 *  compared against.
-	 * @param topicVersionId2 The version ID for the old version being
-	 *  compared to.
-	 * @return A list of WikiDiff objects indicating what has changed
-	 *  between the versions.  An empty list is returned if there are
-	 *  no differences.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	public static List<WikiDiff> diffTopicVersions(String topicName, int topicVersionId1, int topicVersionId2) throws Exception {
-		TopicVersion version1 = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId1);
-		TopicVersion version2 = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId2);
-		if (version1 == null && version2 == null) {
-			String msg = "Versions " + topicVersionId1 + " and " + topicVersionId2 + " not found for " + topicName;
-			logger.severe(msg);
-			throw new Exception(msg);
-		}
-		String contents1 = (version1 != null) ? version1.getVersionContent() : null;
-		String contents2 = (version2 != null) ? version2.getVersionContent() : null;
-		if (contents1 == null && contents2 == null) {
-			String msg = "No versions found for " + topicVersionId1 + " against " + topicVersionId2;
-			logger.severe(msg);
-			throw new Exception(msg);
-		}
-		return DiffUtil.diff(contents1, contents2);
-	}
-
-	/**
 	 * Format the list of Difference objects into a list of WikiDiff objects, which will
 	 * include information about what values are different and also include some unchanged
 	 * values surrounded the changed values, thus giving some context.
@@ -179,11 +144,12 @@ public class DiffUtil {
 				nextLineDiff = null;
 				int j = 0;
 				for (Difference changedLineDiff : changedLineDiffs) {
-					// build sub-diff list
+					// build sub-diff list, which is the difference for the individual
+					// line item
 					j++;
 					if (j == 1) {
 						// pre-buffering is only necessary for the first element as post-buffering
-						// will handled all further buffering when bufferAmount is -1.
+						// will handle all further buffering when bufferAmount is -1.
 						wikiSubDiffs.addAll(DiffUtil.preBufferDifference(changedLineDiff, null, oldLineArray, newLineArray, -1));
 					}
 					wikiSubDiffs.addAll(DiffUtil.processDifference(changedLineDiff, oldLineArray, newLineArray));
@@ -254,7 +220,7 @@ public class DiffUtil {
 				addedCurrent++;
 			}
 			if (oldText == null && newText == null) {
-				logger.info("Possible DIFF bug: no elements post-buffered.  position: " + position + " / deletedCurrent: " + deletedCurrent + " / addedCurrent " + addedCurrent + " / numIterations: " + numIterations);
+				logger.fine("Possible DIFF bug: no elements post-buffered.  position: " + position + " / deletedCurrent: " + deletedCurrent + " / addedCurrent " + addedCurrent + " / numIterations: " + numIterations);
 				break;
 			}
 			wikiDiffs.add(new WikiDiff(oldText, newText, position));
@@ -312,7 +278,7 @@ public class DiffUtil {
 				addedCurrent++;
 			}
 			if (oldText == null && newText == null) {
-				logger.info("Possible DIFF bug: no elements pre-buffered.  position: " + position + " / deletedCurrent: " + deletedCurrent + " / addedCurrent " + addedCurrent + " / numIterations: " + numIterations);
+				logger.fine("Possible DIFF bug: no elements pre-buffered.  position: " + position + " / deletedCurrent: " + deletedCurrent + " / addedCurrent " + addedCurrent + " / numIterations: " + numIterations);
 				break;
 			}
 			wikiDiffs.add(new WikiDiff(oldText, newText, position));
