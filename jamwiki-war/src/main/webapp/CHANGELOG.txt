@@ -13,6 +13,17 @@ New Features:
   * Upgrade to JSTL standard taglib 1.1.2.
   * Upgrade to Lucene Search 2.4.1.
 
+
+0.7.1
+=====
+
+Bugfixes:
+
+  * Search by login on the Special:Roles page returned no results for users
+    without at least one role.  Reported by tapaya and rebecca.
+  * Fix incorrect LDAP sample configuration.  Reported with a fix by Tobias
+    Kalbitz.
+
 Translation Updates:
 
   * Updated German translations (axelclk).
