@@ -18,6 +18,7 @@ package org.jamwiki.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.sf.ehcache.Element;
 import org.apache.commons.lang.StringUtils;
 import org.incava.util.diff.Diff;
 import org.incava.util.diff.Difference;
@@ -33,11 +34,21 @@ public class DiffUtil {
 	/** The number of lines of unchanged text to display before and after each diff. */
 	// FIXME - make this a property value
 	private static final int DIFF_UNCHANGED_LINE_DISPLAY = 2;
+	/** Cache name for the cache of diff information. */
+	private static final String CACHE_DIFF_INFORMATION = "org.jamwiki.utils.DiffUtil.CACHE_DIFF_INFORMATION";
 
 	/**
 	 *
 	 */
 	private DiffUtil() {
+	}
+
+	/**
+	 *
+	 */
+	private static void addToCache(String newVersion, String oldVersion, List<WikiDiff> results) {
+		String key = generateCacheKey(newVersion, oldVersion);
+		WikiCache.addToCache(CACHE_DIFF_INFORMATION, key, results);
 	}
 
 	/**
@@ -101,17 +112,38 @@ public class DiffUtil {
 	 * @return Returns a list of WikiDiff objects that correspond to the changed text.
 	 */
 	public static List<WikiDiff> diff(String newVersion, String oldVersion) {
-		if (oldVersion == null) {
-			oldVersion = "";
+		List<WikiDiff> result = DiffUtil.retrieveFromCache(newVersion, oldVersion);
+		if (result != null) {
+			return result;
 		}
-		if (newVersion == null) {
-			newVersion = "";
+		String version1 = newVersion;
+		String version2 = oldVersion;
+		if (version2 == null) {
+			version2 = "";
+		}
+		if (version1 == null) {
+			version1 = "";
 		}
 		// remove line-feeds to avoid unnecessary noise in the diff due to
 		// cut & paste or other issues
-		oldVersion = StringUtils.remove(oldVersion, '\r');
-		newVersion = StringUtils.remove(newVersion, '\r');
-		return DiffUtil.process(newVersion, oldVersion);
+		version2 = StringUtils.remove(version2, '\r');
+		version1 = StringUtils.remove(version1, '\r');
+		result = DiffUtil.process(version1, version2);
+		DiffUtil.addToCache(newVersion, oldVersion, result);
+		return result;
+	}
+
+	/**
+	 * Generate a mostly-unique key to use for the cache.  This key uses the first ten characters
+	 * of the string and a hash of the full string, which is not guaranteed to be unique but should
+	 * be unique enough.
+	 */
+	private static String generateCacheKey(String newVersion, String oldVersion) {
+		String result = "";
+		result += (newVersion == null) ? "-1" : ((newVersion.length() <= 10) ? newVersion : newVersion.substring(0, 10) + newVersion.hashCode());
+		result += "-";
+		result += (oldVersion == null) ? "-1" : ((oldVersion.length() <= 10) ? oldVersion : oldVersion.substring(0, 10) + oldVersion.hashCode());
+		return result;
 	}
 
 	/**
@@ -303,34 +335,6 @@ public class DiffUtil {
 	}
 
 	/**
-	 * Split up a String into an array of values using the specified string pattern.
-	 *
-	 * @param original The value that is being split.
-	 */
-	private static String[] split(String original) {
-		if (original == null) {
-			return new String[0];
-		}
-		return original.split("\n");
-	}
-
-	/**
-	 * Convert a string to a string array of characters.
-	 *
-	 * @param original The value that is being split.
-	 */
-	private static String[] stringToArray(String original) {
-		if (original == null) {
-			return new String[0];
-		}
-		String[] result = new String[original.length()];
-		for (int i = 0; i < result.length; i++) {
-			result[i] = String.valueOf(original.charAt(i));
-		}
-		return result;
-	}
-
-	/**
 	 * Process the diff object and add it to the output.  Text will either have been
 	 * deleted or added (it cannot have remained the same, since a diff object represents
 	 * a change).  This method steps through the diff result and converts it into an
@@ -371,5 +375,43 @@ public class DiffUtil {
 			}
 		}
 		return wikiDiffs;
+	}
+
+	/**
+	 * Determine if diff information is available in the cache.  If so return it,
+	 * otherwise return <code>null</code>.
+	 */
+	private static List<WikiDiff> retrieveFromCache(String newVersion, String oldVersion) {
+		String key = generateCacheKey(newVersion, oldVersion);
+		Element cachedDiffInformation = WikiCache.retrieveFromCache(CACHE_DIFF_INFORMATION, key);
+		return (cachedDiffInformation != null) ? (List<WikiDiff>)cachedDiffInformation.getObjectValue() : null;
+	}
+
+	/**
+	 * Split up a String into an array of values using the specified string pattern.
+	 *
+	 * @param original The value that is being split.
+	 */
+	private static String[] split(String original) {
+		if (original == null) {
+			return new String[0];
+		}
+		return original.split("\n");
+	}
+
+	/**
+	 * Convert a string to a string array of characters.
+	 *
+	 * @param original The value that is being split.
+	 */
+	private static String[] stringToArray(String original) {
+		if (original == null) {
+			return new String[0];
+		}
+		String[] result = new String[original.length()];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = String.valueOf(original.charAt(i));
+		}
+		return result;
 	}
 }
