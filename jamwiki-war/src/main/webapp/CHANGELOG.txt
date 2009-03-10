@@ -17,6 +17,7 @@ Bugfixes:
 
   * Update Spring Security configuration to remove reliance on the deprecated
     FilterInvocationDefinitionSourceEditor class.
+  * Fix the Bliki local Maven repository metadata to resolve build warnings.
 
 
 0.7.1
