@@ -44,8 +44,6 @@ public class WikiBase {
 
 	/** Cache name for the cache of parsed topic content. */
 	public static final String CACHE_PARSED_TOPIC_CONTENT = "org.jamwiki.WikiBase.CACHE_PARSED_TOPIC_CONTENT";
-	/** Cache name for the cache of image dimensions. */
-	public static final String CACHE_IMAGE_DIMENSIONS = "org.jamwiki.WikiBase.CACHE_IMAGE_DIMENSIONS";
 	/** Ansi data handler class */
 	public static final String DATA_HANDLER_ANSI = "org.jamwiki.db.AnsiDataHandler";
 	/** DB2 data handler class */

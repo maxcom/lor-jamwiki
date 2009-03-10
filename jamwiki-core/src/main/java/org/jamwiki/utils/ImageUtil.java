@@ -26,7 +26,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import net.sf.ehcache.Element;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiImage;
 import org.jamwiki.model.WikiFile;
 
@@ -38,6 +37,8 @@ import org.jamwiki.model.WikiFile;
 public class ImageUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(ImageUtil.class.getName());
+	/** Cache name for the cache of image dimensions. */
+	private static final String CACHE_IMAGE_DIMENSIONS = "org.jamwiki.utils.ImageUtil.CACHE_IMAGE_DIMENSIONS";
 
 	/**
 	 *
@@ -51,7 +52,7 @@ public class ImageUtil {
 	private static void addToCache(File file, int width, int height) {
 		ImageDimensions dimensions = new ImageDimensions(width, height);
 		String key = file.getPath();
-		WikiCache.addToCache(WikiBase.CACHE_IMAGE_DIMENSIONS, key, dimensions);
+		WikiCache.addToCache(CACHE_IMAGE_DIMENSIONS, key, dimensions);
 	}
 
 	/**
@@ -223,7 +224,7 @@ public class ImageUtil {
 	 */
 	private static ImageDimensions retrieveFromCache(File file) {
 		String key = file.getPath();
-		Element cachedDimensions = WikiCache.retrieveFromCache(WikiBase.CACHE_IMAGE_DIMENSIONS, key);
+		Element cachedDimensions = WikiCache.retrieveFromCache(CACHE_IMAGE_DIMENSIONS, key);
 		return (cachedDimensions != null) ? (ImageDimensions)cachedDimensions.getObjectValue() : null;
 	}
 
