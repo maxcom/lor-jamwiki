@@ -13,6 +13,11 @@ New Features:
   * Upgrade to JSTL standard taglib 1.1.2.
   * Upgrade to Lucene Search 2.4.1.
 
+Bugfixes:
+
+  * Update Spring Security configuration to remove reliance on the deprecated
+    FilterInvocationDefinitionSourceEditor class.
+
 
 0.7.1
 =====
