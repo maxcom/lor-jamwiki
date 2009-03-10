@@ -63,6 +63,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("upgrade.error.notrequired"));
 		}
 		String function = request.getParameter("function");
+		pageInfo.setPageTitle(new WikiMessage("upgrade.title", Environment.getValue(Environment.PROP_BASE_WIKI_VERSION), WikiVersion.CURRENT_WIKI_VERSION));
 		if (!StringUtils.isBlank(function) && function.equals("upgrade")) {
 			upgrade(request, next, pageInfo);
 		} else {
@@ -271,6 +272,5 @@ public class UpgradeServlet extends JAMWikiServlet {
 		next.addObject("upgradeDetails", upgradeDetails);
 		pageInfo.setContentJsp(JSP_UPGRADE);
 		pageInfo.setSpecial(true);
-		pageInfo.setPageTitle(new WikiMessage("upgrade.title", Environment.getValue(Environment.PROP_BASE_WIKI_VERSION), WikiVersion.CURRENT_WIKI_VERSION));
 	}
 }

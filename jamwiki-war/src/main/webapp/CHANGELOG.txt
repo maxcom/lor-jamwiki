@@ -8,6 +8,10 @@ Bugfixes:
   * Fix incorrect LDAP sample configuration.  Reported with a fix by Tobias
     Kalbitz.
 
+Translation Updates:
+
+  * Updated German translations (axelclk).
+
 
 0.7.0
 =====
