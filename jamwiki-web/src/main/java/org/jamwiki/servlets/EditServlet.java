@@ -82,7 +82,7 @@ public class EditServlet extends JAMWikiServlet {
 		if (isPreview(request)) {
 			preview(request, next, pageInfo);
 		} else if (isShowChanges(request)) {
-			showChanges(request, next, pageInfo, lastTopicVersionId);
+			showChanges(request, next, pageInfo, virtualWiki, topicName, lastTopicVersionId);
 		} else if (!StringUtils.isBlank(request.getParameter("topicVersionId"))) {
 			// editing an older version
 			Integer topicVersionId = new Integer(request.getParameter("topicVersionId"));
@@ -349,10 +349,15 @@ public class EditServlet extends JAMWikiServlet {
 	/**
 	 * Functionality to handle the "Show Changes" button being clicked.
 	 */
-	private void showChanges(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, Integer lastTopicVersionId) throws Exception {
+	private void showChanges(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String virtualWiki, String topicName, Integer lastTopicVersionId) throws Exception {
 		String contents1 = request.getParameter("contents");
 		String contents2 = "";
-		if (lastTopicVersionId != null) {
+		if (!StringUtils.isBlank(request.getParameter("section"))) {
+			// editing a section of a topic
+			int section = (new Integer(request.getParameter("section"))).intValue();
+			contents2 = ParserUtil.parseSlice(request.getContextPath(), request.getLocale(), virtualWiki, topicName, section);
+		} else if (lastTopicVersionId != null) {
+			// get the full topic version
 			TopicVersion lastTopicVersion = WikiBase.getDataHandler().lookupTopicVersion(lastTopicVersionId.intValue());
 			contents2 = lastTopicVersion.getVersionContent();
 		}
