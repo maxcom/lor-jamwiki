@@ -61,6 +61,7 @@ import org.springframework.transaction.TransactionStatus;
 public class AnsiDataHandler implements DataHandler {
 
 	private static final String CACHE_TOPICS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS";
+	private static final String CACHE_TOPIC_VERSIONS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPIC_VERSIONS";
 	private static final String CACHE_VIRTUAL_WIKI = "org.jamwiki.db.AnsiDataHandler.CACHE_VIRTUAL_WIKI";
 	private static final WikiLogger logger = WikiLogger.getLogger(AnsiDataHandler.class.getName());
 
@@ -905,6 +906,10 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public TopicVersion lookupTopicVersion(int topicVersionId) throws Exception {
+		Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPIC_VERSIONS, topicVersionId);
+		if (cacheElement != null) {
+			return (TopicVersion)cacheElement.getObjectValue();
+		}
 		TopicVersion result = null;
 		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
@@ -919,6 +924,7 @@ public class AnsiDataHandler implements DataHandler {
 			throw err;
 		}
 		DatabaseConnection.commit(status);
+		WikiCache.addToCache(CACHE_TOPIC_VERSIONS, topicVersionId, result);
 		return result;
 	}
 

@@ -8,7 +8,7 @@ New Features:
     view of the current edit.
   * Add diff highlighting for the portion of the line that changed (if any),
     similar to Mediawiki.
-  * Implement caching to speed up diff rendering.
+  * Implement caching for diffs and topic versions to speed up page rendering.
   * Upgrade to JFlex 1.4.3.
   * Upgrade to JSTL standard taglib 1.1.2.
   * Upgrade to Lucene Search 2.4.1.

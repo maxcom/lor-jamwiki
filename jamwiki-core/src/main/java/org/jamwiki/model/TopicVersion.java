@@ -16,13 +16,14 @@
  */
 package org.jamwiki.model;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import org.jamwiki.utils.WikiLogger;
 
 /**
  * Provides an object representing a version of a Wiki topic.
  */
-public class TopicVersion {
+public class TopicVersion implements Serializable {
 
 	public static final int EDIT_NORMAL = 1;
 	public static final int EDIT_MINOR = 2;

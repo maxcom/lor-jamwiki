@@ -135,16 +135,15 @@ public class WikiCache {
 	}
 
 	/**
-	 * Given a virtual wiki name and a topic name, generate a unique key value
-	 * that can be used to store and retrieve cache objects.
+	 * Given two string values, generate a unique key value that can be used to
+	 * store and retrieve cache objects.
 	 *
-	 * @param virtualWiki The virtual wiki name for the key value being
-	 *  created.
-	 * @param topicName The name of the topic for the key value being created.
+	 * @param value1 The first value to use in the key name.
+	 * @param value2 The second value to use in the key name.
 	 * @return The generated key value.
 	 */
-	public static String key(String virtualWiki, String topicName) {
-		return virtualWiki + "/" + topicName;
+	public static String key(String value1, String value2) {
+		return value1 + "/" + value2;
 	}
 
 	/**
