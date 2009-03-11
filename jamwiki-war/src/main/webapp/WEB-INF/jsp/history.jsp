@@ -64,7 +64,7 @@
 	(<jamwiki:link value="User comments:${change.authorName}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${change.authorName}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
 	<c:if test="${!empty change.changeTypeNotification}">&#160;<b><c:out value="${change.changeTypeNotification}" /></b></c:if>
 	<c:if test="${!empty change.editComment}">
-	<label for="<c:out value="diff:${change.topicVersionId}" />">&#160;(<i><c:out value="${change.editComment}" /></i>)</label>
+	<label for="<c:out value="diff:${change.topicVersionId}" />">&#160;(<span class="edit-comment"><jamwiki:editComment comment="${change.editComment}" topic="${change.topicName}" /></span>)</label>
 	</c:if>
 </li>
 </c:forEach>

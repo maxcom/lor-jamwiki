@@ -379,6 +379,15 @@ li.movechange {
 li.undeletechange {
 	color: #007777;
 }
+span.edit-comment {
+	text-decoration: italic;
+}
+span.section-link {
+	color: #999;
+}
+span.section-link a {
+	color: #333;
+}
 
 /* topic pages */
 

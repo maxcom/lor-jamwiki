@@ -97,7 +97,11 @@ public class EditServlet extends JAMWikiServlet {
 		} else if (!StringUtils.isBlank(request.getParameter("section"))) {
 			// editing a section of a topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
-			contents = ParserUtil.parseSlice(request.getContextPath(), request.getLocale(), virtualWiki, topicName, section);
+			String[] sliceResults = ParserUtil.parseSlice(request.getContextPath(), request.getLocale(), virtualWiki, topicName, section);
+			contents = sliceResults[1];
+			String sectionName = sliceResults[0];
+			String editComment = "/* " + sectionName + " */ ";
+			next.addObject("editComment", editComment);
 		} else {
 			// editing a full new or existing topic
 			contents = (topic == null) ? "" : topic.getTopicContent();
@@ -283,7 +287,8 @@ public class EditServlet extends JAMWikiServlet {
 			// load section of topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
 			ParserOutput parserOutput = new ParserOutput();
-			contents = ParserUtil.parseSplice(parserOutput, request.getContextPath(), request.getLocale(), virtualWiki, topicName, section, contents);
+			String[] spliceResult = ParserUtil.parseSplice(parserOutput, request.getContextPath(), request.getLocale(), virtualWiki, topicName, section, contents);
+			contents = spliceResult[1];
 			sectionName = parserOutput.getSectionName();
 		}
 		if (contents == null) {
@@ -355,7 +360,8 @@ public class EditServlet extends JAMWikiServlet {
 		if (!StringUtils.isBlank(request.getParameter("section"))) {
 			// editing a section of a topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
-			contents2 = ParserUtil.parseSlice(request.getContextPath(), request.getLocale(), virtualWiki, topicName, section);
+			String[] sliceResults = ParserUtil.parseSlice(request.getContextPath(), request.getLocale(), virtualWiki, topicName, section);
+			contents2 = sliceResults[1];
 		} else if (lastTopicVersionId != null) {
 			// get the full topic version
 			TopicVersion lastTopicVersion = WikiBase.getDataHandler().lookupTopicVersion(lastTopicVersionId.intValue());

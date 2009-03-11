@@ -48,7 +48,7 @@
 	<c:if test="${change.delete}"><c:out value="${change.topicName}" /></c:if>
 	</jamwiki:watchlist>
 	<c:if test="${!empty change.changeTypeNotification}">&#160;<b><c:out value="${change.changeTypeNotification}" /></b></c:if>
-	<c:if test="${!empty change.editComment}">&#160;(<i><c:out value="${change.editComment}" /></i>)</c:if>
+	<c:if test="${!empty change.editComment}">&#160;(<span class="edit-comment"><jamwiki:editComment comment="${change.editComment}" topic="${change.topicName}" /></span>)</c:if>
 </li>
 </c:forEach>
 </ul>

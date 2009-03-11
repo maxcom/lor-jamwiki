@@ -10,6 +10,8 @@ New Features:
     similar to Mediawiki.
   * Allow an alternate file name to be specified as the "Destination Filename"
     when uploading, similar to Mediawiki.
+  * Add links to the edited section in edit summaries on recent changes,
+    history, etc, similar to Mediawiki.
   * Implement caching for diffs and topic versions to speed up page rendering.
   * Upgrade to JFlex 1.4.3.
   * Upgrade to JSTL standard taglib 1.1.2.
