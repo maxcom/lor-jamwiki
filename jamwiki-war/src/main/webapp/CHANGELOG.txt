@@ -12,6 +12,7 @@ New Features:
     when uploading, similar to Mediawiki.
   * Add links to the edited section in edit summaries on recent changes,
     history, etc, similar to Mediawiki.
+  * Remove ability to automatically upgrade from versions prior to 0.6.0.
   * Implement caching for diffs and topic versions to speed up page rendering.
   * Upgrade to JFlex 1.4.3.
   * Upgrade to JSTL standard taglib 1.1.2.
