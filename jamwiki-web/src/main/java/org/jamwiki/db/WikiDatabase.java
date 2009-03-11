@@ -526,7 +526,7 @@ public class WikiDatabase {
 	 */
 	public static void setupDefaultDatabase(Properties props) {
 		props.setProperty(Environment.PROP_DB_DRIVER, "org.hsqldb.jdbcDriver");
-		props.setProperty(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_HSQL);
+		props.setProperty(Environment.PROP_DB_TYPE, DataHandler.DATA_HANDLER_HSQL);
 		props.setProperty(Environment.PROP_DB_USERNAME, "sa");
 		props.setProperty(Environment.PROP_DB_PASSWORD, "");
 		File file = new File(props.getProperty(Environment.PROP_BASE_FILE_DIR), "database");

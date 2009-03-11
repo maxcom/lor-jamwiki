@@ -44,6 +44,25 @@ import org.jamwiki.utils.Pagination;
  */
 public interface DataHandler {
 
+	/** Ansi data handler class */
+	public static final String DATA_HANDLER_ANSI = "org.jamwiki.db.AnsiDataHandler";
+	/** DB2 data handler class */
+	public static final String DATA_HANDLER_DB2 = "org.jamwiki.db.DB2DataHandler";
+	/** DB2/400 data handler class */
+	public static final String DATA_HANDLER_DB2400 = "org.jamwiki.db.DB2400DataHandler";
+	/** HSql data handler class */
+	public static final String DATA_HANDLER_HSQL = "org.jamwiki.db.HSqlDataHandler";
+	/** MSSql data handler class */
+	public static final String DATA_HANDLER_MSSQL = "org.jamwiki.db.MSSqlDataHandler";
+	/** MySql data handler class */
+	public static final String DATA_HANDLER_MYSQL = "org.jamwiki.db.MySqlDataHandler";
+	/** Oracle data handler class */
+	public static final String DATA_HANDLER_ORACLE = "org.jamwiki.db.OracleDataHandler";
+	/** Postgres data handler class */
+	public static final String DATA_HANDLER_POSTGRES = "org.jamwiki.db.PostgresDataHandler";
+	/** Sybase ASA data handler class */
+	public static final String DATA_HANDLER_ASA = "org.jamwiki.db.SybaseASADataHandler";
+
 	/**
 	 * Determine if a value matching the given username and password exists in
 	 * the data store.

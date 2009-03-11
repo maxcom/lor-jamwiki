@@ -28,6 +28,9 @@ import org.jamwiki.model.Topic;
  */
 public interface SearchEngine {
 
+	/** Lucene search engine class */
+	public static final String SEARCH_ENGINE_LUCENE = "org.jamwiki.search.LuceneSearchEngine";
+
 	/**
 	 * Add a topic to the search index.
 	 *

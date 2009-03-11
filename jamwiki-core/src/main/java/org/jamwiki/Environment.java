@@ -156,7 +156,7 @@ public class Environment {
 		defaults.setProperty(PROP_BASE_LOGO_IMAGE, "logo_oliver.gif");
 		defaults.setProperty(PROP_BASE_META_DESCRIPTION, "");
 		defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, WikiBase.PERSISTENCE_INTERNAL);
-		defaults.setProperty(PROP_BASE_SEARCH_ENGINE, WikiBase.SEARCH_ENGINE_LUCENE);
+		defaults.setProperty(PROP_BASE_SEARCH_ENGINE, SearchEngine.SEARCH_ENGINE_LUCENE);
 		defaults.setProperty(PROP_BASE_WIKI_VERSION, "0.0.0");
 		defaults.setProperty(PROP_CACHE_INDIVIDUAL_SIZE, "500");
 		defaults.setProperty(PROP_CACHE_MAX_AGE, "300");
@@ -164,7 +164,7 @@ public class Environment {
 		defaults.setProperty(PROP_CACHE_TOTAL_SIZE, "1000");
 		defaults.setProperty(PROP_DB_DRIVER, "org.postgresql.Driver");
 		defaults.setProperty(PROP_DB_PASSWORD, "");
-		defaults.setProperty(PROP_DB_TYPE, WikiBase.DATA_HANDLER_ANSI);
+		defaults.setProperty(PROP_DB_TYPE, DataHandler.DATA_HANDLER_ANSI);
 		defaults.setProperty(PROP_DB_URL, "jdbc:postgresql://localhost:5432/database");
 		defaults.setProperty(PROP_DB_USERNAME, "");
 		defaults.setProperty(PROP_DBCP_MAX_ACTIVE, "10");

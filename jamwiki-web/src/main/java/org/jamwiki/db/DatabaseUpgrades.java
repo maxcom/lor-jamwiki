@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.util.List;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataHandler;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiVersion;
@@ -197,7 +198,7 @@ public class DatabaseUpgrades {
 			Connection conn = DatabaseConnection.getConnection();
 			// increase the size of ip address columns
 			String dbType = Environment.getValue(Environment.PROP_DB_TYPE);
-			if (dbType.equals(WikiBase.DATA_HANDLER_DB2) || dbType.equals(WikiBase.DATA_HANDLER_DB2400)) {
+			if (dbType.equals(DataHandler.DATA_HANDLER_DB2) || dbType.equals(DataHandler.DATA_HANDLER_DB2400)) {
 				sql = "alter table jam_topic_version alter column wiki_user_ip_address set data type varchar(39) ";
 				DatabaseConnection.executeUpdate(sql, conn);
 				sql = "alter table jam_file_version alter column wiki_user_ip_address set data type varchar(39) ";
@@ -206,7 +207,7 @@ public class DatabaseUpgrades {
 				DatabaseConnection.executeUpdate(sql, conn);
 				sql = "alter table jam_wiki_user alter column last_login_ip_address set data type varchar(39) ";
 				DatabaseConnection.executeUpdate(sql, conn);
-			} else if (dbType.equals(WikiBase.DATA_HANDLER_MYSQL) || dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
+			} else if (dbType.equals(DataHandler.DATA_HANDLER_MYSQL) || dbType.equals(DataHandler.DATA_HANDLER_ORACLE)) {
 				sql = "alter table jam_topic_version modify wiki_user_ip_address varchar(39) not null ";
 				DatabaseConnection.executeUpdate(sql, conn);
 				sql = "alter table jam_file_version modify wiki_user_ip_address varchar(39) not null ";
@@ -215,7 +216,7 @@ public class DatabaseUpgrades {
 				DatabaseConnection.executeUpdate(sql, conn);
 				sql = "alter table jam_wiki_user modify last_login_ip_address varchar(39) not null ";
 				DatabaseConnection.executeUpdate(sql, conn);
-			} else if (dbType.equals(WikiBase.DATA_HANDLER_POSTGRES)) {
+			} else if (dbType.equals(DataHandler.DATA_HANDLER_POSTGRES)) {
 				sql = "alter table jam_topic_version alter column wiki_user_ip_address type varchar(39) ";
 				DatabaseConnection.executeUpdate(sql, conn);
 				sql = "alter table jam_file_version alter column wiki_user_ip_address type varchar(39) ";
@@ -263,7 +264,7 @@ public class DatabaseUpgrades {
 			String sql = null;
 			Connection conn = DatabaseConnection.getConnection();
 			// add characters_changed column to jam_topic_version
-			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
+			if (dbType.equals(DataHandler.DATA_HANDLER_ORACLE)) {
 				sql = "alter table jam_topic_version add (characters_changed INTEGER) ";
 			} else {
 				sql = "alter table jam_topic_version add column characters_changed INTEGER ";
@@ -271,7 +272,7 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added characters_changed column to jam_topic_version");
 			// add characters_changed column to jam_recent_change
-			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
+			if (dbType.equals(DataHandler.DATA_HANDLER_ORACLE)) {
 				sql = "alter table jam_recent_change add (characters_changed INTEGER) ";
 			} else {
 				sql = "alter table jam_recent_change add column characters_changed INTEGER ";
@@ -279,7 +280,7 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added characters_changed column to jam_recent_change");
 			// copy columns from jam_wiki_user_info into jam_wiki_user
-			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
+			if (dbType.equals(DataHandler.DATA_HANDLER_ORACLE)) {
 				sql = "alter table jam_wiki_user add (email VARCHAR(100)) ";
 			} else {
 				sql = "alter table jam_wiki_user add column email VARCHAR(100) ";
@@ -293,20 +294,20 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added email column to jam_wiki_user");
 			// add new columns to jam_wiki_user
-			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
+			if (dbType.equals(DataHandler.DATA_HANDLER_ORACLE)) {
 				sql = "alter table jam_wiki_user add (editor VARCHAR(50)) ";
 			} else {
 				sql = "alter table jam_wiki_user add column editor VARCHAR(50) ";
 			}
 			DatabaseConnection.executeUpdate(sql, conn);
-			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
+			if (dbType.equals(DataHandler.DATA_HANDLER_ORACLE)) {
 				sql = "alter table jam_wiki_user add (signature VARCHAR(255)) ";
 			} else {
 				sql = "alter table jam_wiki_user add column signature VARCHAR(255) ";
 			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added editor and signature columns to jam_wiki_user");
-			if (dbType.equals(WikiBase.DATA_HANDLER_HSQL)) {
+			if (dbType.equals(DataHandler.DATA_HANDLER_HSQL)) {
 				DatabaseConnection.executeUpdate(HSqlQueryHandler.STATEMENT_CREATE_USERS_TABLE, conn);
 			} else {
 				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_USERS_TABLE, conn);
@@ -321,9 +322,9 @@ public class DatabaseUpgrades {
 			sql = "alter table jam_wiki_user drop column remember_key";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Dropped the remember_key column from jam_wiki_user");
-			if (dbType.equals(WikiBase.DATA_HANDLER_HSQL)) {
+			if (dbType.equals(DataHandler.DATA_HANDLER_HSQL)) {
 				DatabaseConnection.executeUpdate(HSqlQueryHandler.STATEMENT_CREATE_AUTHORITIES_TABLE, conn);
-			} else if (dbType.equals(WikiBase.DATA_HANDLER_MYSQL)) {
+			} else if (dbType.equals(DataHandler.DATA_HANDLER_MYSQL)) {
 				DatabaseConnection.executeUpdate(MySqlQueryHandler.STATEMENT_CREATE_AUTHORITIES_TABLE, conn);
 			} else {
 				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_AUTHORITIES_TABLE, conn);
@@ -336,9 +337,9 @@ public class DatabaseUpgrades {
 				+ "where jam_wiki_user.wiki_user_id = jam_role_map.wiki_user_id ";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added jam_authorities table");
-			if (dbType.equals(WikiBase.DATA_HANDLER_HSQL)) {
+			if (dbType.equals(DataHandler.DATA_HANDLER_HSQL)) {
 				DatabaseConnection.executeUpdate(HSqlQueryHandler.STATEMENT_CREATE_GROUP_AUTHORITIES_TABLE, conn);
-			} else if (dbType.equals(WikiBase.DATA_HANDLER_MYSQL)) {
+			} else if (dbType.equals(DataHandler.DATA_HANDLER_MYSQL)) {
 				DatabaseConnection.executeUpdate(MySqlQueryHandler.STATEMENT_CREATE_GROUP_AUTHORITIES_TABLE, conn);
 			} else {
 				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_GROUP_AUTHORITIES_TABLE, conn);
@@ -354,7 +355,7 @@ public class DatabaseUpgrades {
 			sql = "drop table jam_role_map ";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Dropped the jam_role_map table");
-			if (dbType.equals(WikiBase.DATA_HANDLER_HSQL)) {
+			if (dbType.equals(DataHandler.DATA_HANDLER_HSQL)) {
 				DatabaseConnection.executeUpdate(MySqlQueryHandler.STATEMENT_CREATE_GROUP_MEMBERS_TABLE, conn);
 			} else {
 				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_GROUP_MEMBERS_TABLE, conn);
@@ -403,7 +404,7 @@ public class DatabaseUpgrades {
 		status = DatabaseConnection.startTransaction(getTransactionDefinition());
 		try {
 			String sql = null;
-			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
+			if (dbType.equals(DataHandler.DATA_HANDLER_ORACLE)) {
 				sql = "update jam_topic_version set characters_changed = ( "
 			           +   "select (dbms_lob.getlength(current_version.version_content) - dbms_lob.getlength(previous_version.version_content)) "
 			           +   "from jam_topic_version current_version "

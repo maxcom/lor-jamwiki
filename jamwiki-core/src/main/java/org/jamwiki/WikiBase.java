@@ -44,24 +44,6 @@ public class WikiBase {
 
 	/** Cache name for the cache of parsed topic content. */
 	public static final String CACHE_PARSED_TOPIC_CONTENT = "org.jamwiki.WikiBase.CACHE_PARSED_TOPIC_CONTENT";
-	/** Ansi data handler class */
-	public static final String DATA_HANDLER_ANSI = "org.jamwiki.db.AnsiDataHandler";
-	/** DB2 data handler class */
-	public static final String DATA_HANDLER_DB2 = "org.jamwiki.db.DB2DataHandler";
-	/** DB2/400 data handler class */
-	public static final String DATA_HANDLER_DB2400 = "org.jamwiki.db.DB2400DataHandler";
-	/** HSql data handler class */
-	public static final String DATA_HANDLER_HSQL = "org.jamwiki.db.HSqlDataHandler";
-	/** MSSql data handler class */
-	public static final String DATA_HANDLER_MSSQL = "org.jamwiki.db.MSSqlDataHandler";
-	/** MySql data handler class */
-	public static final String DATA_HANDLER_MYSQL = "org.jamwiki.db.MySqlDataHandler";
-	/** Oracle data handler class */
-	public static final String DATA_HANDLER_ORACLE = "org.jamwiki.db.OracleDataHandler";
-	/** Postgres data handler class */
-	public static final String DATA_HANDLER_POSTGRES = "org.jamwiki.db.PostgresDataHandler";
-	/** Sybase ASA data handler class */
-	public static final String DATA_HANDLER_ASA = "org.jamwiki.db.SybaseASADataHandler";
 	/** Name of the default wiki */
 	// FIXME - make this configurable
 	public static final String DEFAULT_VWIKI = "en";
@@ -71,8 +53,6 @@ public class WikiBase {
 	public static final String PERSISTENCE_EXTERNAL = "DATABASE";
 	/** Data stored using an internal copy of the HSQL database */
 	public static final String PERSISTENCE_INTERNAL = "INTERNAL";
-	/** Lucene search engine class */
-	public static final String SEARCH_ENGINE_LUCENE = "org.jamwiki.search.LuceneSearchEngine";
 	/** Root directory within the WAR distribution that contains the default topic pages. */
 	public static final String SPECIAL_PAGE_DIR = "pages";
 	/** Name of the default starting points topic. */
