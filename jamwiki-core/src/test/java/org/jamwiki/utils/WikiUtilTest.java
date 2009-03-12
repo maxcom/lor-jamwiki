@@ -20,16 +20,18 @@ package org.jamwiki.utils;
 
 import java.io.FileNotFoundException;
 import java.util.Locale;
-import junit.framework.TestCase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class WikiUtilTest extends TestCase {
+public class WikiUtilTest {
 
 	/**
 	 *
 	 */
+	@Test
 	public void testEncodeForFilename() throws Throwable {
 		//TODO
 		String result = WikiUtil.encodeForFilename("testUtilitiesName");
@@ -39,39 +41,23 @@ public class WikiUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test(expected=IllegalArgumentException.class)
 	public void testEncodeForFilename2() throws Throwable {
-		try {
-			String result = WikiUtil.encodeForFilename(null);
-			fail("Expected IllegalArgumentException to be thrown");
-		} catch (IllegalArgumentException ex) {
-			// exception thrown as expected
-		}
+		String result = WikiUtil.encodeForFilename(null);
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=IllegalArgumentException.class)
 	public void testEncodeForFilename3() throws Throwable {
-		try {
-			String result = WikiUtil.encodeForFilename(" ");
-			fail("Expected IllegalArgumentException to be thrown");
-		} catch (IllegalArgumentException ex) {
-			// exception thrown as expected
-		}
+		String result = WikiUtil.encodeForFilename(" ");
 	}
 
 	/**
 	 *
 	 */
-	public void testExtractCommentsLink() throws Throwable {
-		// FIXME
-//		String result = WikiUtil.extractCommentsLink("testWikiUtilName");
-//		assertEquals("result", "null:testWikiUtilName", result);
-	}
-
-	/**
-	 *
-	 */
+	@Test
 	public void testExtractTopicLink() throws Throwable {
 		//TODO
 		String result = WikiUtil.extractTopicLink("testWikiUtilName");
@@ -81,19 +67,7 @@ public class WikiUtilTest extends TestCase {
 	/**
 	 *
 	 */
-	/* FIXME - re-enable
-	public void testFindRedirectedTopic() throws Throwable {
-		Topic parent = new Topic();
-		parent.setRedirectTo("testWikiUtilRedirectTo");
-		parent.setTopicType(2);
-		Topic result = WikiUtil.findRedirectedTopic(parent, 8);
-		assertSame("result", parent, result);
-	}
-	*/
-
-	/**
-	 *
-	 */
+	@Test
 	public void testFindRedirectedTopic1() throws Throwable {
 		Topic parent = new Topic();
 		parent.setTopicType(2);
@@ -104,6 +78,7 @@ public class WikiUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testValidateDirectory1() throws Throwable {
 		WikiMessage result = WikiUtil.validateDirectory("testUtilitiesName");
 		assertEquals("result.getKey()", "error.directoryinvalid", result.getKey());
@@ -112,115 +87,68 @@ public class WikiUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test(expected=IllegalArgumentException.class)
 	public void testExtractCommentsLinkThrowsException() throws Throwable {
-		try {
-			WikiUtil.extractCommentsLink("");
-			fail("Expected IllegalArgumentException to be thrown");
-		} catch (IllegalArgumentException ex) {
-			assertEquals("ex.getMessage()", "Topic name must not be empty in extractCommentsLink", ex.getMessage());
-		}
+		WikiUtil.extractCommentsLink("");
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=IllegalArgumentException.class)
 	public void testExtractTopicLinkThrowsException() throws Throwable {
-		try {
-			WikiUtil.extractTopicLink("");
-			fail("Expected IllegalArgumentException to be thrown");
-		} catch (IllegalArgumentException ex) {
-			assertEquals("ex.getMessage()", "Topic name must not be empty in extractTopicLink", ex.getMessage());
-		}
+		WikiUtil.extractTopicLink("");
 	}
 
 	/**
 	 *
 	 */
-	/* FIXME - re-enable
-	public void testFindRedirectedTopicThrowsClassNotFoundException() throws Throwable {
-		Topic parent = new Topic();
-		parent.setRedirectTo("testWikiUtilRedirectTo");
-		parent.setTopicType(2);
-		parent.setVirtualWiki("testWikiUtilVirtualWiki");
-		try {
-			WikiUtil.findRedirectedTopic(parent, 8);
-			fail("Expected ClassNotFoundException to be thrown");
-		} catch (ClassNotFoundException ex) {
-			assertTrue("Test completed without Exception", true);
-			// dependencies on static and environment state led to removal of 3 assertion(s)
-		}
-	}
-	*/
-
-	/**
-	 *
-	 */
+	@Test(expected=FileNotFoundException.class)
 	public void testReadSpecialPageThrowsFileNotFoundException() throws Throwable {
-		try {
-			WikiUtil.readSpecialPage(null, "testWikiUtilPageName");
-			fail("Expected FileNotFoundException to be thrown");
-		} catch (FileNotFoundException ex) {
-			assertEquals("ex.getClass()", FileNotFoundException.class, ex.getClass());
-		}
+		WikiUtil.readSpecialPage(null, "testWikiUtilPageName");
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=FileNotFoundException.class)
 	public void testReadSpecialPageThrowsFileNotFoundException1() throws Throwable {
-		try {
-			WikiUtil.readSpecialPage(Locale.GERMAN, "testWikiUtilPageName");
-			fail("Expected FileNotFoundException to be thrown");
-		} catch (FileNotFoundException ex) {
-			assertEquals("ex.getClass()", FileNotFoundException.class, ex.getClass());
-		}
+		WikiUtil.readSpecialPage(Locale.GERMAN, "testWikiUtilPageName");
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=FileNotFoundException.class)
 	public void testReadSpecialPageThrowsFileNotFoundException2() throws Throwable {
-		try {
-			WikiUtil.readSpecialPage(Locale.SIMPLIFIED_CHINESE, "testWikiUtilPageName");
-			fail("Expected FileNotFoundException to be thrown");
-		} catch (FileNotFoundException ex) {
-			assertEquals("ex.getClass()", FileNotFoundException.class, ex.getClass());
-		}
+		WikiUtil.readSpecialPage(Locale.SIMPLIFIED_CHINESE, "testWikiUtilPageName");
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testValidateDirectoryThrowsNullPointerException() throws Throwable {
-		try {
-			WikiUtil.validateDirectory(null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		WikiUtil.validateDirectory(null);
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=WikiException.class)
 	public void testValidateTopicNameThrowsNullPointerException() throws Throwable {
-		try {
-			WikiUtil.validateTopicName(null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (WikiException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		WikiUtil.validateTopicName(null);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testValidateTopicNameThrowsWikiException() throws Throwable {
 		try {
 			WikiUtil.validateTopicName("");
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
 			assertEquals("ex.getWikiMessage().getKey()", "common.exception.notopic", ex.getWikiMessage().getKey());
 		}
 	}
@@ -228,27 +156,12 @@ public class WikiUtilTest extends TestCase {
 	/**
 	 *
 	 */
-	/*
-	public void testValidateTopicNameThrowsWikiException1() throws Throwable {
-		try {
-			WikiUtil.validateTopicName("testWikiUtil\rName");
-			fail("Expected WikiException to be thrown");
-		} catch (WikiException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-			assertEquals("ex.getWikiMessage().getKey()", "common.exception.name", ex.getWikiMessage().getKey());
-		}
-	}
-	*/
-
-	/**
-	 *
-	 */
+	@Test
 	public void testValidateUserNameThrowsWikiException() throws Throwable {
 		try {
 			WikiUtil.validateUserName("testWikiUtil\rName");
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
 			assertEquals("ex.getWikiMessage().getKey()", "common.exception.name", ex.getWikiMessage().getKey());
 		}
 	}
@@ -256,12 +169,12 @@ public class WikiUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testValidateUserNameThrowsWikiException1() throws Throwable {
 		try {
 			WikiUtil.validateUserName("");
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
 			assertEquals("ex.getWikiMessage().getKey()", "error.loginempty", ex.getWikiMessage().getKey());
 		}
 	}

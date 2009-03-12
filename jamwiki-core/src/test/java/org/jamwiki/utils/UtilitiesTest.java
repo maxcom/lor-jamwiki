@@ -19,195 +19,221 @@
 package org.jamwiki.utils;
 
 import java.io.FileNotFoundException;
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class UtilitiesTest extends TestCase {
+public class UtilitiesTest {
 
+	/**
+	 *
+	 */
+	@Test
 	public void testConvertEncoding1() throws Throwable {
 		String expected="ça va là?";
 		String utf8 = "Ã§a va lÃ ?";
 		/* data utf8 opened as Latin1*/
 		String result = Utilities.convertEncoding(utf8, "ISO-8859-1", "UTF-8");
-		assertEquals(expected, result);
-
+		assertEquals("Failure during encoding conversion", expected, result);
 		/* data Latin1 opened as Latin1 */
 		result = Utilities.convertEncoding(expected, "ISO-8859-1", "ISO-8859-1");
-		assertEquals(expected, result);
+		assertEquals("Failure during encoding conversion", expected, result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testdecodeTopicName() throws Throwable {
 		String result = Utilities.decodeTopicName("Page_requested", true);
-		assertEquals("Page requested", result);
+		assertEquals("Failure decoding topic name", "Page requested", result);
 		result = Utilities.decodeTopicName("Page_requested", false);
-		assertEquals("Page_requested", result);
+		assertEquals("Failure decoding topic name", "Page_requested", result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testdecodeAndEscapeTopicName() throws Throwable {
 		String result = Utilities.decodeAndEscapeTopicName("\u1342%20", true);
-		assertEquals("\u1342 ", result);
+		assertEquals("Failure decoding and escaping topic name", "\u1342 ", result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testdecodeAndEscapeTopicName2() throws Throwable {
 		String result = Utilities.decodeAndEscapeTopicName(null, true);
-		assertNull(result);
+		assertNull("Expected null topic name", result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testdecodeAndEscapeTopicName3() throws Throwable {
 		String result = Utilities.decodeAndEscapeTopicName(" ", true);
-		assertEquals(" ", result);
+		assertEquals("Expected empty topic name", " ", result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testEncodeAndEscapeTopicName() throws Throwable {
 		String result = Utilities.encodeAndEscapeTopicName(null);
-		assertNull(result);
+		assertNull("Expected null topic name", result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testFindMatchingEndTag() throws Throwable {
 		int result = Utilities.findMatchingEndTag("01<b>567</b>23", 0, "<b>", "</b>");
-		assertEquals("result", 12, result);
+		assertEquals("Incorrect end tag position found", 12, result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testFindMatchingEndTag1() throws Throwable {
 		int result = Utilities.findMatchingEndTag("01234567</b>23", 0, "<b>", "</b>");
-		assertEquals("result", -1, result);
+		assertEquals("Incorrect end tag position found", -1, result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testFindMatchingEndTag2() throws Throwable {
 		int result = Utilities.findMatchingEndTag("01<b>567890123", 0, "<b>", "</b>");
-		assertEquals("result", -1, result);
+		assertEquals("Incorrect end tag position found", -1, result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testFindMatchingEndTag3() throws Throwable {
 		int result = Utilities.findMatchingEndTag("01<b>5<b>9</b>4</b>9", 0, "<b>", "</b>");
-		assertEquals("result", 19, result);
+		assertEquals("Incorrect end tag position found", 19, result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testFindMatchingEndTag4() throws Throwable {
 		int result = Utilities.findMatchingEndTag("01<b>5<b>901234</b>9", 0, "<b>", "</b>");
-		assertEquals("result", -1, result);
+		assertEquals("Incorrect end tag position found", -1, result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testFindMatchingEndTag5() throws Throwable {
 		int result = Utilities.findMatchingEndTag("01<b>5<b>9</b>4</b>9", 5, "<b>", "</b>");
-		assertEquals("result", 14, result);
+		assertEquals("Incorrect end tag position found", 14, result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testFindMatchingEndTag6() throws Throwable {
 		int result = Utilities.findMatchingEndTag("01<b>5<b>9</b>4</b>9", -1, "<b>", "</b>");
-		assertEquals("result", -1, result);
+		assertEquals("Incorrect end tag position found", -1, result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testFindMatchingEndTag7() throws Throwable {
 		int result = Utilities.findMatchingEndTag("01<b>5<b>9</b>4</b>9", 20, "<b>", "</b>");
-		assertEquals("result", -1, result);
+		assertEquals("Incorrect end tag position found", -1, result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testFindMatchingStartTag() throws Throwable {
 		int result = Utilities.findMatchingStartTag("01<b>567</b>23", 13, "<b>", "</b>");
-		assertEquals("result", 1, result);
+		assertEquals("Incorrect start tag position found", 1, result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testFindMatchingStartTag1() throws Throwable {
 		int result = Utilities.findMatchingStartTag("01234567</b>23", 13, "<b>", "</b>");
-		assertEquals("result", -1, result);
+		assertEquals("Incorrect start tag position found", -1, result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testFindMatchingStartTag2() throws Throwable {
 		int result = Utilities.findMatchingStartTag("01<b>567890123", 13, "<b>", "</b>");
-		assertEquals("result", -1, result);
+		assertEquals("Incorrect start tag position found", -1, result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testFindMatchingStartTag3() throws Throwable {
 		int result = Utilities.findMatchingStartTag("01<b>5<b>9</b>4</b>9", 19, "<b>", "</b>");
-		assertEquals("result", 1, result);
+		assertEquals("Incorrect start tag position found", 1, result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testFindMatchingStartTag4() throws Throwable {
 		int result = Utilities.findMatchingStartTag("01<b>5</b>901234</b>9", 19, "<b>", "</b>");
-		assertEquals("result", -1, result);
+		assertEquals("Incorrect start tag position found", -1, result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testFindMatchingStartTag5() throws Throwable {
 		int result = Utilities.findMatchingStartTag("01<b>5<b>9</b>4</b>9", 14, "<b>", "</b>");
-		assertEquals("result", 5, result);
+		assertEquals("Incorrect start tag position found", 5, result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testFindMatchingStartTag6() throws Throwable {
 		int result = Utilities.findMatchingStartTag("01<b>5<b>9</b>4</b>9", -1, "<b>", "</b>");
-		assertEquals("result", -1, result);
+		assertEquals("Incorrect start tag position found", -1, result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testFindMatchingStartTag7() throws Throwable {
 		int result = Utilities.findMatchingStartTag("01<b>5<b>9</b>4</b>9", 20, "<b>", "</b>");
-		assertEquals("result", -1, result);
+		assertEquals("Incorrect start tag position found", -1, result);
 	}
 
 	/**
 	 *
 	 */
+	@Test
 	public void testIsIpAddress() throws Throwable {
 		//test ipv4 addresses
 		assertTrue("0.0.0.0", Utilities.isIpAddress("0.0.0.0"));
@@ -240,74 +266,49 @@ public class UtilitiesTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testFormatMessageThrowsNullPointerException() throws Throwable {
-		try {
-			Utilities.formatMessage("testUtilitiesKey", null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		Utilities.formatMessage("testUtilitiesKey", null);
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testFormatMessageThrowsNullPointerException1() throws Throwable {
 		Object[] objects = new Object[2];
-		try {
-			Utilities.formatMessage("testUtilitiesKey", null, objects);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		Utilities.formatMessage("testUtilitiesKey", null, objects);
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=Exception.class)
 	public void testGetClassLoaderFileThrowsException() throws Throwable {
-		try {
-			Utilities.getClassLoaderFile("testUtilitiesFilename");
-			fail("Expected Exception to be thrown");
-		} catch (Exception ex) {
-			assertEquals("ex.getMessage()", "Unable to find testUtilitiesFilename", ex.getMessage());
-		}
+		Utilities.getClassLoaderFile("testUtilitiesFilename");
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=FileNotFoundException.class)
 	public void testReadFileThrowsFileNotFoundException() throws Throwable {
-		try {
-			Utilities.readFile("fakeFileName");
-			fail("Expected FileNotFoundException to be thrown");
-		} catch (FileNotFoundException ex) {
-			assertTrue("Test completed without Exception", true);
-			// dependencies on static and environment state led to removal of 2 assertion(s)
-		}
+		Utilities.readFile("fakeFileName");
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=FileNotFoundException.class)
 	public void testReadFileThrowsFileNotFoundException1() throws Throwable {
-		try {
-			Utilities.readFile("testUtilitiesFilename");
-			fail("Expected FileNotFoundException to be thrown");
-		} catch (FileNotFoundException ex) {
-			assertEquals("ex.getClass()", FileNotFoundException.class, ex.getClass());
-		}
+		Utilities.readFile("testUtilitiesFilename");
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testReadFileThrowsNullPointerException() throws Throwable {
-		try {
-			Utilities.readFile(null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		Utilities.readFile(null);
 	}
 }

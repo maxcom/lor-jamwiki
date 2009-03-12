@@ -20,16 +20,18 @@ package org.jamwiki.utils;
 
 import java.io.File;
 import java.sql.Timestamp;
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  */
-public class XMLUtilTest extends TestCase {
+public class XMLUtilTest {
 
 	/**
 	 *
 	 */
+	@Test
 	public void testBuildTag() throws Throwable {
 		String result = XMLUtil.buildTag("testXMLUtilTagName", 100L);
 		assertEquals("result", "<testXMLUtilTagName>100</testXMLUtilTagName>", result);
@@ -38,6 +40,7 @@ public class XMLUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testBuildTag1() throws Throwable {
 		String result = XMLUtil.buildTag("testXMLUtilTagName", true);
 		assertEquals("result", "<testXMLUtilTagName>true</testXMLUtilTagName>", result);
@@ -46,6 +49,7 @@ public class XMLUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testBuildTag2() throws Throwable {
 		String result = XMLUtil.buildTag("testXMLUtilTagName", 0);
 		assertEquals("result", "<testXMLUtilTagName>0</testXMLUtilTagName>", result);
@@ -54,15 +58,7 @@ public class XMLUtilTest extends TestCase {
 	/**
 	 *
 	 */
-	public void testBuildTag3() throws Throwable {
-		String result = XMLUtil.buildTag("testXMLUtilTagName", new Timestamp(0));
-		// FIXME
-//		assertEquals("result", "<testXMLUtilTagName>1970-01-01 00:00:00.1</testXMLUtilTagName>", result);
-	}
-
-	/**
-	 *
-	 */
+	@Test
 	public void testBuildTag4() throws Throwable {
 		String result = XMLUtil.buildTag("testXMLUtilTagName", (Timestamp) null);
 		assertEquals("result", "", result);
@@ -71,6 +67,7 @@ public class XMLUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testBuildTag5() throws Throwable {
 		String result = XMLUtil.buildTag("testXMLUtilTagName", 100);
 		assertEquals("result", "<testXMLUtilTagName>100</testXMLUtilTagName>", result);
@@ -79,6 +76,7 @@ public class XMLUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testBuildTag6() throws Throwable {
 		String result = XMLUtil.buildTag("testXMLUtilTagName", "testXMLUtilTagValue", true);
 		assertEquals("result", "<testXMLUtilTagName>testXMLUtilTagValue</testXMLUtilTagName>", result);
@@ -87,6 +85,7 @@ public class XMLUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testBuildTag7() throws Throwable {
 		String result = XMLUtil.buildTag("testXMLUtilTagName", "testXMLUtilTagValue", false);
 		assertEquals("result", "<testXMLUtilTagName>testXMLUtilTagValue</testXMLUtilTagName>", result);
@@ -95,6 +94,7 @@ public class XMLUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testBuildTag8() throws Throwable {
 		String result = XMLUtil.buildTag("testXMLUtilTagName", null, true);
 		assertEquals("result", "", result);
@@ -103,33 +103,17 @@ public class XMLUtilTest extends TestCase {
 	/**
 	 *
 	 */
-	public void testGetTextContent() throws Throwable {
-		// FIXME - implement this
-	}
-
-	/**
-	 *
-	 */
+	@Test(expected=NullPointerException.class)
 	public void testGetTextContentThrowsNullPointerException() throws Throwable {
-		try {
-			XMLUtil.getTextContent(null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		XMLUtil.getTextContent(null);
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testParseXMLThrowsNullPointerException() throws Throwable {
-		try {
-			XMLUtil.parseXML((File) null, true);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-			assertNotNull("XMLUtil.logger", XMLUtil.logger);
-		}
+		XMLUtil.parseXML((File) null, true);
 	}
 }
 

@@ -19,14 +19,16 @@
 package org.jamwiki.servlets;
 
 import java.util.Properties;
-import junit.framework.TestCase;
 import org.jamwiki.utils.SortedProperties;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class ServletUtilTest extends TestCase {
+public class ServletUtilTest {
 
 	/**
 	 *
 	 */
+	@Test
 	public void testValidateSystemSettings1() throws Throwable {
 		Properties props = new Properties(new SortedProperties());
 		props.put("file-dir-full-path", ")%2F");
@@ -41,6 +43,7 @@ public class ServletUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testValidateSystemSettings2() throws Throwable {
 		Properties props = new Properties();
 		props.put("file-dir-full-path", "testString");
@@ -54,12 +57,8 @@ public class ServletUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testValidateSystemSettingsThrowsNullPointerException1() throws Throwable {
-		try {
-			ServletUtil.validateSystemSettings(new Properties());
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		ServletUtil.validateSystemSettings(new Properties());
 	}
 }

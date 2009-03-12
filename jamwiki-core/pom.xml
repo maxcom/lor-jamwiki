@@ -70,6 +70,11 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<redirectTestOutputToFile>true</redirectTestOutputToFile>
+					<excludes>
+						<!-- these two files are utility classes used for testing and do not contain any unit tests -->
+						<exclude>**/TestFileUtil.java</exclude>
+						<exclude>**/TestDataHandler.java</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>

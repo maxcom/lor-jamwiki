@@ -18,16 +18,18 @@
  */
 package org.jamwiki.utils;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  */
-public class PaginationTest extends TestCase {
+public class PaginationTest {
 
 	/**
 	 *
 	 */
+	@Test
 	public void testConstructor() throws Throwable {
 		Pagination pagination = new Pagination(100, 1000);
 		assertEquals("pagination.getNumResults()", 100, pagination.getNumResults());
@@ -37,6 +39,7 @@ public class PaginationTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testGetEnd() throws Throwable {
 		int result = new Pagination(0, 0).getEnd();
 		assertEquals("result", 0, result);
@@ -45,6 +48,7 @@ public class PaginationTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testGetEnd1() throws Throwable {
 		int result = new Pagination(100, 1000).getEnd();
 		assertEquals("result", 1100, result);
@@ -53,6 +57,7 @@ public class PaginationTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testGetNumResults() throws Throwable {
 		int result = new Pagination(0, 100).getNumResults();
 		assertEquals("result", 0, result);
@@ -61,6 +66,7 @@ public class PaginationTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testGetNumResults1() throws Throwable {
 		int result = new Pagination(100, 1000).getNumResults();
 		assertEquals("result", 100, result);
@@ -69,6 +75,7 @@ public class PaginationTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testGetOffset() throws Throwable {
 		int result = new Pagination(100, 0).getOffset();
 		assertEquals("result", 0, result);
@@ -77,6 +84,7 @@ public class PaginationTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testGetOffset1() throws Throwable {
 		int result = new Pagination(100, 1000).getOffset();
 		assertEquals("result", 1000, result);
@@ -85,6 +93,7 @@ public class PaginationTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testGetStart() throws Throwable {
 		int result = new Pagination(100, 1000).getStart();
 		assertEquals("result", 1000, result);
@@ -93,6 +102,7 @@ public class PaginationTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testGetStart1() throws Throwable {
 		int result = new Pagination(100, 0).getStart();
 		assertEquals("result", 0, result);

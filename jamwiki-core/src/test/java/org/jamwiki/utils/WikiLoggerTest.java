@@ -18,26 +18,21 @@
  */
 package org.jamwiki.utils;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  */
-public class WikiLoggerTest extends TestCase {
+public class WikiLoggerTest {
 
 	/**
 	 *
 	 */
+	@Test
 	public void testGetLogger() throws Throwable {
 		WikiLogger result = WikiLogger.getLogger("testWikiLoggerName");
 		assertNotNull("result", result);
-	}
-
-	/**
-	 *
-	 */
-	public void testGetLoggerThrowsNullPointerException() throws Throwable {
-		// FIXME - implement this
 	}
 }
 

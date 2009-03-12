@@ -18,35 +18,28 @@
  */
 package org.jamwiki.utils;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  */
-public class ImageUtilTest extends TestCase {
+public class ImageUtilTest {
 
 	/**
 	 *
 	 */
+	@Test(expected=IllegalArgumentException.class)
 	public void testInitializeImageThrowsNullPointerException() throws Throwable {
-		try {
-			ImageUtil.initializeImage(null, 0);
-			fail("Expected IllegalArgumentException to be thrown");
-		} catch (IllegalArgumentException ex) {
-			assertNotNull(ex.getMessage());
-		}
+		ImageUtil.initializeImage(null, 0);
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testIsImageThrowsNullPointerException() throws Throwable {
-		try {
-			ImageUtil.isImage(null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		ImageUtil.isImage(null);
 	}
 }
 

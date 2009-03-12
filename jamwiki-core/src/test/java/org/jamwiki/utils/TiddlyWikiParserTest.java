@@ -29,16 +29,21 @@ import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import junit.framework.TestCase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class TiddlyWikiParserTest extends TestCase {
+public class TiddlyWikiParserTest {
 
 	private static final String NAME = "MyTopic";
 	private static final String DATUM  = "200701020304";
 	private static final String CONTENT  = "Content"; 
 
+	/**
+	 *
+	 */
+	@Test
 	public void testParse() throws Exception {
 		Handler[] h = Logger.getLogger("").getHandlers();
 		for (int i = 0; i < h.length; i++) {

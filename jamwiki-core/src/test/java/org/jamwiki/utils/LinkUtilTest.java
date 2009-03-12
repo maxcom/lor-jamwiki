@@ -18,16 +18,18 @@
  */
 package org.jamwiki.utils;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  */
-public class LinkUtilTest extends TestCase {
+public class LinkUtilTest {
 
 	/**
 	 *
 	 */
+	@Test
 	public void testAppendQueryParam() throws Throwable {
 		String result = LinkUtil.appendQueryParam("", " ", "testLinkUtilValue");
 		assertSame("result", "", result);
@@ -36,6 +38,7 @@ public class LinkUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testAppendQueryParam1() throws Throwable {
 		String result = LinkUtil.appendQueryParam("testLinkUtilQuery", "testLinkUtilParam", "");
 		assertEquals("result", "?testLinkUtilQuery&amp;testLinkUtilParam=", result);
@@ -44,6 +47,7 @@ public class LinkUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testAppendQueryParam2() throws Throwable {
 		String result = LinkUtil.appendQueryParam("", "testLinkUtilParam", "testLinkUtilValue");
 		assertEquals("result", "?testLinkUtilParam=testLinkUtilValue", result);
@@ -52,6 +56,7 @@ public class LinkUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testAppendQueryParam3() throws Throwable {
 		String result = LinkUtil.appendQueryParam("testLinkUtilQuery", "", "testLinkUtilValue");
 		assertEquals("result", "?testLinkUtilQuery", result);
@@ -60,6 +65,7 @@ public class LinkUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testAppendQueryParam4() throws Throwable {
 		String result = LinkUtil.appendQueryParam("?", "testLinkUtilParam", "testLinkUtilValue");
 		assertEquals("result", "?&amp;testLinkUtilParam=testLinkUtilValue", result);
@@ -68,6 +74,7 @@ public class LinkUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testAppendQueryParam5() throws Throwable {
 		String result = LinkUtil.appendQueryParam("testLinkUtilQuery", "testLinkUtilParam", "testLinkUtilValue");
 		assertEquals("result", "?testLinkUtilQuery&amp;testLinkUtilParam=testLinkUtilValue", result);
@@ -76,6 +83,7 @@ public class LinkUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testAppendQueryParam6() throws Throwable {
 		String result = LinkUtil.appendQueryParam("", "testLinkUtilParam", " ");
 		assertEquals("result", "?testLinkUtilParam=", result);
@@ -84,6 +92,7 @@ public class LinkUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testAppendQueryParam7() throws Throwable {
 		String result = LinkUtil.appendQueryParam(null, "", "testLinkUtilValue");
 		assertNull("result", result);
@@ -92,6 +101,7 @@ public class LinkUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testbuildTopicUrl() throws Throwable {
 		String result = LinkUtil.buildTopicUrl("testLinkUtilContext", "testLinkUtilVirtualWiki", "", true);
 		assertNull("result", result);
@@ -100,6 +110,7 @@ public class LinkUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testParseWikiLink() throws Throwable {
 		WikiLink result = LinkUtil.parseWikiLink("testLinkUtilRaw");
 		assertEquals("result.getArticle()", "testLinkUtilRaw", result.getArticle());
@@ -108,6 +119,7 @@ public class LinkUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testParseWikiLink1() throws Throwable {
 		WikiLink result = LinkUtil.parseWikiLink("");
 		assertNull("result.getArticle()", result.getArticle());
@@ -116,28 +128,20 @@ public class LinkUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testInterWikiThrowsNullPointerException() throws Throwable {
-		try {
-			LinkUtil.interWiki(null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		LinkUtil.interWiki(null);
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=StringIndexOutOfBoundsException.class)
 	public void testInterWikiThrowsStringIndexOutOfBoundsException() throws Throwable {
 		WikiLink wikiLink = new WikiLink();
 		wikiLink.setNamespace("testLinkUtilNamespace");
 		wikiLink.setDestination("");
-		try {
-			LinkUtil.interWiki(wikiLink);
-			fail("Expected StringIndexOutOfBoundsException to be thrown");
-		} catch (StringIndexOutOfBoundsException ex) {
-			assertEquals("ex.getMessage()", "String index out of range: -22", ex.getMessage());
-		}
+		LinkUtil.interWiki(wikiLink);
 	}
 }
 

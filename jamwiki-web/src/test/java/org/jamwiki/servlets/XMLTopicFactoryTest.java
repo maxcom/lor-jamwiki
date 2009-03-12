@@ -18,45 +18,19 @@
  */
 package org.jamwiki.servlets;
 
-import junit.framework.TestCase;
 import org.jamwiki.model.WikiUser;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  */
-public class XMLTopicFactoryTest extends TestCase {
+public class XMLTopicFactoryTest {
 
 	/**
 	 *
 	 */
-	public void testConstructor() throws Throwable {
-		// FIXME - implement this
-	}
-
-	/**
-	 *
-	 */
-	public void testCharacters() throws Throwable {
-		// FIXME - implement this
-	}
-
-	/**
-	 *
-	 */
-	public void testEndDocument() throws Throwable {
-		// FIXME - implement this
-	}
-
-	/**
-	 *
-	 */
-	public void testEndElement() throws Throwable {
-		// FIXME - implement this
-	}
-
-	/**
-	 *
-	 */
+	@Test
 	public void testPreprocessText() throws Throwable {
 		String result = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(""), "testXMLTopicFactoryAuthorIpAddress").preprocessText("testXMLTopicFactoryText");
 		assertEquals("result", "testXMLTopicFactoryText", result);
@@ -65,6 +39,7 @@ public class XMLTopicFactoryTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testPreprocessText1() throws Throwable {
 		String result = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(""), "testXMLTopicFactoryAuthorIpAddress").preprocessText(null);
 		assertNull("result", result);
@@ -73,156 +48,85 @@ public class XMLTopicFactoryTest extends TestCase {
 	/**
 	 *
 	 */
-	public void testStartDocument() throws Throwable {
-		// FIXME - implement this
-	}
-
-	/**
-	 *
-	 */
-	public void testStartElement() throws Throwable {
-		// FIXME - implement this
-	}
-
-	/**
-	 *
-	 */
-	public void testCharactersThrowsArrayIndexOutOfBoundsException() throws Throwable {
-		// FIXME - implement this
-	}
-
-	/**
-	 *
-	 */
+	@Test(expected=NullPointerException.class)
 	public void testCharactersThrowsNullPointerException() throws Throwable {
 		char[] buf = new char[1];
 		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(), "testXMLTopicFactoryAuthorIpAddress");
-		try {
-			xMLTopicFactory.characters(buf, 100, 1000);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		xMLTopicFactory.characters(buf, 100, 1000);
 	}
 
 	/**
 	 *
 	 */
-	public void testEndElementThrowsNullPointerException() throws Throwable {
-		// FIXME - implement this
-	}
-
-	/**
-	 *
-	 */
+	@Test(expected=NullPointerException.class)
 	public void testEndElementThrowsNullPointerException1() throws Throwable {
 		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(), "testXMLTopicFactoryAuthorIpAddress");
-		try {
-			xMLTopicFactory.endElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactorySName", "title");
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		xMLTopicFactory.endElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactorySName", "title");
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testEndElementThrowsNullPointerException2() throws Throwable {
 		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(""), "testXMLTopicFactoryAuthorIpAddress");
-		try {
-			xMLTopicFactory.endElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactorySName", "page");
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		xMLTopicFactory.endElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactorySName", "page");
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testEndElementThrowsNullPointerException3() throws Throwable {
 		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(""), "testXMLTopicFactoryAuthorIpAddress");
-		try {
-			xMLTopicFactory.endElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactorySName", "text");
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		xMLTopicFactory.endElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactorySName", "text");
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testEndElementThrowsNullPointerException4() throws Throwable {
 		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(""), "testXMLTopicFactoryAuthorIpAddress");
-		try {
-			xMLTopicFactory.endElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactorySName", "namespace");
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		xMLTopicFactory.endElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactorySName", "namespace");
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testStartElementThrowsNullPointerException() throws Throwable {
 		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(""), "testXMLTopicFactoryAuthorIpAddress");
-		try {
-			xMLTopicFactory.startElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactoryLName", "testXMLTopicFactoryQName", null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		xMLTopicFactory.startElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactoryLName", "testXMLTopicFactoryQName", null);
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testStartElementThrowsNullPointerException1() throws Throwable {
 		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(""), "testXMLTopicFactoryAuthorIpAddress");
 		xMLTopicFactory.endElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactorySName", "testXMLTopicFactoryQName");
-		try {
-			xMLTopicFactory.startElement("testXMLTopicFactoryNamespaceURI", "", "testXMLTopicFactoryQName", null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		xMLTopicFactory.startElement("testXMLTopicFactoryNamespaceURI", "", "testXMLTopicFactoryQName", null);
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testStartElementThrowsNullPointerException2() throws Throwable {
 		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(), "testXMLTopicFactoryAuthorIpAddress");
-		try {
-			xMLTopicFactory.startElement("testXMLTopicFactoryNamespaceURI", "", "testXMLTopicFactoryQName", null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		xMLTopicFactory.startElement("testXMLTopicFactoryNamespaceURI", "", "testXMLTopicFactoryQName", null);
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testStartElementThrowsNullPointerException3() throws Throwable {
 		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(""), "testXMLTopicFactoryAuthorIpAddress");
 		xMLTopicFactory.endElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactorySName", "testXMLTopicFactoryQName");
-		try {
-			xMLTopicFactory.startElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactoryLName", "testXMLTopicFactoryQName", null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void testStartElementThrowsNumberFormatException() throws Throwable {
-		// FIXME - implement this
+		xMLTopicFactory.startElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactoryLName", "testXMLTopicFactoryQName", null);
 	}
 }
 

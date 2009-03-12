@@ -18,13 +18,15 @@
  */
 package org.jamwiki;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class WikiVersionTest extends TestCase {
+public class WikiVersionTest {
 
 	/**
 	 *
 	 */
+	@Test
 	public void testConstructor() throws Throwable {
 		WikiVersion wikiVersion = new WikiVersion("0.5.1");
 		assertFalse("Constructor failed to properly set up version", wikiVersion.before(0, 5, 1));
@@ -35,6 +37,7 @@ public class WikiVersionTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testBefore() throws Throwable {
 		WikiVersion version = new WikiVersion("0.5.1");
 		boolean result = version.before(version);
@@ -44,6 +47,7 @@ public class WikiVersionTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testBefore1() throws Throwable {
 		boolean result = new WikiVersion("0.5.1").before(100, 1000, 0);
 		assertTrue("result", result);
@@ -52,6 +56,7 @@ public class WikiVersionTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testBefore2() throws Throwable {
 		boolean result = new WikiVersion("0.5.1").before(0, 100, 1000);
 		assertTrue("result", result);
@@ -60,6 +65,7 @@ public class WikiVersionTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testBefore3() throws Throwable {
 		boolean result = new WikiVersion("0.5.1").before(0, 5, 100);
 		assertTrue("result", result);
@@ -68,6 +74,7 @@ public class WikiVersionTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testBefore4() throws Throwable {
 		boolean result = new WikiVersion("0.5.1").before(0, -1, 100);
 		assertFalse("result", result);
@@ -76,84 +83,56 @@ public class WikiVersionTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test(expected=Exception.class)
 	public void testConstructorThrowsException() throws Throwable {
-		try {
-			new WikiVersion(".LLx]FUAw,.4LvE$e$XNmc 0<P.SL;nQfRQO.4UXw");
-			fail("Expected Exception to be thrown");
-		} catch (Exception ex) {
-			assertNotNull("Invalid exception message", ex.getMessage());
-		}
+		new WikiVersion(".LLx]FUAw,.4LvE$e$XNmc 0<P.SL;nQfRQO.4UXw");
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=Exception.class)
 	public void testConstructorThrowsException1() throws Throwable {
-		try {
-			new WikiVersion("0.5.u1");
-			fail("Expected Exception to be thrown");
-		} catch (Exception ex) {
-			assertNotNull("Invalid exception message", ex.getMessage());
-		}
+		new WikiVersion("0.5.u1");
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=Exception.class)
 	public void testConstructorThrowsException2() throws Throwable {
-		try {
-			new WikiVersion("X\u0006Fl\\s\u000E6T\u000Ec>\fiS.\u00049gk\u00050'n$<y%](o\u0000!@2\u001A\u0016P%");
-			fail("Expected Exception to be thrown");
-		} catch (Exception ex) {
-			assertNotNull("Invalid exception message", ex.getMessage());
-		}
+		new WikiVersion("X\u0006Fl\\s\u000E6T\u000Ec>\fiS.\u00049gk\u00050'n$<y%](o\u0000!@2\u001A\u0016P%");
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=Exception.class)
 	public void testConstructorThrowsException3() throws Throwable {
-		try {
-			new WikiVersion("");
-			fail("Expected Exception to be thrown");
-		} catch (Exception ex) {
-			assertNotNull("Invalid exception message", ex.getMessage());
-		}
+		new WikiVersion("");
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=NumberFormatException.class)
 	public void testConstructorThrowsNumberFormatException() throws Throwable {
-		try {
-			new WikiVersion("')_.g|R.?'bx$||7,v`FvmpuUBNy,$C,/mvi^M[}@");
-			fail("Expected NumberFormatException to be thrown");
-		} catch (NumberFormatException ex) {
-			assertNotNull("Invalid exception message", ex.getMessage());
-		}
+		new WikiVersion("')_.g|R.?'bx$||7,v`FvmpuUBNy,$C,/mvi^M[}@");
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=NumberFormatException.class)
 	public void testConstructorThrowsNumberFormatException1() throws Throwable {
-		try {
-			new WikiVersion("0.B5.1");
-			fail("Expected NumberFormatException to be thrown");
-		} catch (NumberFormatException ex) {
-			assertNotNull("Invalid exception message", ex.getMessage());
-		}
+		new WikiVersion("0.B5.1");
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testBeforeThrowsNullPointerException() throws Throwable {
-		try {
-			new WikiVersion("0.5.1").before(null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			// FIXME - do something here
-		}
+		new WikiVersion("0.5.1").before(null);
 	}
 }
