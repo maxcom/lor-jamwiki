@@ -47,9 +47,9 @@ public class WikiVersion {
 		if (tokens.length != 3) {
 			throw new IllegalArgumentException("Invalid Wiki version: " + version);
 		}
-		this.major = new Integer(tokens[0]).intValue();
-		this.minor = new Integer(tokens[1]).intValue();
-		this.patch = new Integer(tokens[2]).intValue();
+		this.major = Integer.valueOf(tokens[0]);
+		this.minor = Integer.valueOf(tokens[1]);
+		this.patch = Integer.valueOf(tokens[2]);
 	}
 
 	/**

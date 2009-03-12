@@ -396,20 +396,20 @@ public class AdminServlet extends JAMWikiServlet {
 		List<WikiConfigurationObject> parsers = WikiConfiguration.getInstance().getParsers();
 		next.addObject("parsers", parsers);
 		LinkedHashMap<Integer, String> poolExhaustedMap = new LinkedHashMap<Integer, String>();
-		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_FAIL), "admin.persistence.caption.whenexhaustedaction.fail");
-		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_BLOCK), "admin.persistence.caption.whenexhaustedaction.block");
-		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_GROW), "admin.persistence.caption.whenexhaustedaction.grow");
+		poolExhaustedMap.put(Integer.valueOf(GenericObjectPool.WHEN_EXHAUSTED_FAIL), "admin.persistence.caption.whenexhaustedaction.fail");
+		poolExhaustedMap.put(Integer.valueOf(GenericObjectPool.WHEN_EXHAUSTED_BLOCK), "admin.persistence.caption.whenexhaustedaction.block");
+		poolExhaustedMap.put(Integer.valueOf(GenericObjectPool.WHEN_EXHAUSTED_GROW), "admin.persistence.caption.whenexhaustedaction.grow");
 		next.addObject("poolExhaustedMap", poolExhaustedMap);
 		LinkedHashMap<Integer, String> blacklistTypesMap = new LinkedHashMap<Integer, String>();
-		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_ALL), "admin.upload.caption.allowall");
-		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_NONE), "admin.upload.caption.allownone");
-		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_BLACKLIST), "admin.upload.caption.useblacklist");
-		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_WHITELIST), "admin.upload.caption.usewhitelist");
+		blacklistTypesMap.put(Integer.valueOf(WikiBase.UPLOAD_ALL), "admin.upload.caption.allowall");
+		blacklistTypesMap.put(Integer.valueOf(WikiBase.UPLOAD_NONE), "admin.upload.caption.allownone");
+		blacklistTypesMap.put(Integer.valueOf(WikiBase.UPLOAD_BLACKLIST), "admin.upload.caption.useblacklist");
+		blacklistTypesMap.put(Integer.valueOf(WikiBase.UPLOAD_WHITELIST), "admin.upload.caption.usewhitelist");
 		next.addObject("blacklistTypes", blacklistTypesMap);
 		if (props == null) {
 			props = Environment.getInstance();
 		}
-		Integer maximumFileSize = new Integer(new Integer(props.getProperty(Environment.PROP_FILE_MAX_FILE_SIZE)).intValue()/1000);
+		int maximumFileSize = Integer.valueOf(props.getProperty(Environment.PROP_FILE_MAX_FILE_SIZE))/1000;
 		next.addObject("maximumFileSize", maximumFileSize);
 		next.addObject("props", props);
 	}
@@ -424,7 +424,7 @@ public class AdminServlet extends JAMWikiServlet {
 		List<VirtualWiki> virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList();
 		next.addObject("wikis", virtualWikiList);
 		boolean allowExport = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals(WikiBase.PERSISTENCE_INTERNAL);
-		next.addObject("allowExport", new Boolean(allowExport));
+		next.addObject("allowExport", allowExport);
 		List<WikiConfigurationObject> dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
 		next.addObject("dataHandlers", dataHandlers);
 	}
@@ -437,7 +437,7 @@ public class AdminServlet extends JAMWikiServlet {
 		try {
 			VirtualWiki virtualWiki = new VirtualWiki();
 			if (!StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
-				virtualWiki.setVirtualWikiId(new Integer(request.getParameter("virtualWikiId")).intValue());
+				virtualWiki.setVirtualWikiId(Integer.valueOf(request.getParameter("virtualWikiId")));
 			}
 			virtualWiki.setName(request.getParameter("name"));
 			virtualWiki.setDefaultTopicName(Utilities.decodeTopicName(request.getParameter("defaultTopicName"), true));

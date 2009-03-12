@@ -69,7 +69,7 @@ public class SetupServlet extends JAMWikiServlet {
 		}
 		try {
 			if (!SystemUtils.isJavaVersionAtLeast(MINIMUM_JDK_VERSION)) {
-				throw new WikiException(new WikiMessage("setup.error.jdk", new Integer(MINIMUM_JDK_VERSION).toString(), System.getProperty("java.version")));
+				throw new WikiException(new WikiMessage("setup.error.jdk", Integer.valueOf(MINIMUM_JDK_VERSION).toString(), System.getProperty("java.version")));
 			}
 			if (!StringUtils.isBlank(function) && initialize(request, next, pageInfo)) {
 				ServletUtil.redirect(next, WikiBase.DEFAULT_VWIKI, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));

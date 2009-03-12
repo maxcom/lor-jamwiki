@@ -147,7 +147,7 @@ public class WikiLinkTag {
 				} else {
 					Matcher m = IMAGE_SIZE_PATTERN.matcher(token);
 					if (m.find()) {
-						maxDimension = new Integer(m.group(1)).intValue();
+						maxDimension = Integer.valueOf(m.group(1));
 					} else {
 						// FIXME - this is a hack.  images may contain piped links, so if
 						// there was previous caption info append the new info.

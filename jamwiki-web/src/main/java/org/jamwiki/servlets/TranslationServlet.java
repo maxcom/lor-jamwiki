@@ -169,7 +169,7 @@ public class TranslationServlet extends JAMWikiServlet {
 				Map tmp = Utilities.intersect(translations, Environment.loadProperties("ApplicationResources.properties"));
 				translations = new SortedProperties();
 				translations.putAll(tmp);
-				next.addObject("hideTranslated", new Boolean(true));
+				next.addObject("hideTranslated", true);
 			}
 		}
 		pageInfo.setContentJsp(JSP_ADMIN_TRANSLATION);

@@ -51,7 +51,7 @@ public class RecentChangesServlet extends JAMWikiServlet {
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		List<RecentChange> changes = WikiBase.getDataHandler().getRecentChanges(virtualWiki, pagination, true);
 		next.addObject("changes", changes);
-		next.addObject("numChanges", new Integer(changes.size()));
+		next.addObject("numChanges", changes.size());
 		pageInfo.setPageTitle(new WikiMessage("recentchanges.title"));
 		pageInfo.setContentJsp(JSP_RECENT_CHANGES);
 		pageInfo.setSpecial(true);

@@ -68,7 +68,7 @@ public class HistoryServlet extends JAMWikiServlet {
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		List<RecentChange> changes = WikiBase.getDataHandler().getRecentChanges(virtualWiki, topicName, pagination, true);
 		next.addObject("changes", changes);
-		next.addObject("numChanges", new Integer(changes.size()));
+		next.addObject("numChanges", changes.size());
 	}
 
 	/**

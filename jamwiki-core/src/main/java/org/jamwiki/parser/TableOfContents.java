@@ -181,7 +181,7 @@ public class TableOfContents {
 			this.tocPrefixes[i] = 0;
 		}
 		// generate next prefix of the form 1.1.1
-		String prefix = new Integer(this.tocPrefixes[0]).toString();
+		String prefix = Integer.valueOf(this.tocPrefixes[0]).toString();
 		for (int i = 1; i <= depth; i++) {
 			prefix += "." + this.tocPrefixes[i];
 		}

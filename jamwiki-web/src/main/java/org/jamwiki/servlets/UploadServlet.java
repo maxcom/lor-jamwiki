@@ -262,7 +262,7 @@ public class UploadServlet extends JAMWikiServlet {
 		WikiUser user = ServletUtil.currentWikiUser();
 		Integer authorId = null;
 		if (user.getUserId() > 0) {
-			authorId = new Integer(user.getUserId());
+			authorId = user.getUserId();
 		}
 		wikiFileVersion.setAuthorId(authorId);
 		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), contents, topic.getTopicContent(), charactersChanged);

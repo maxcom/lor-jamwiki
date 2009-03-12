@@ -81,8 +81,7 @@ public abstract class JFlexLexer {
 	 */
 	protected void beginState(int state) {
 		// store current state
-		Integer current = new Integer(yystate());
-		states.push(current);
+		states.push(yystate());
 		// switch to new state
 		yybegin(state);
 	}

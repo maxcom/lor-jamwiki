@@ -92,7 +92,7 @@ public class WatchlistServlet extends JAMWikiServlet {
 		}
 		WikiUser user = ServletUtil.currentWikiUser();
 		List<RecentChange> changes = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId(), pagination);
-		next.addObject("numChanges", new Integer(changes.size()));
+		next.addObject("numChanges", changes.size());
 		next.addObject("changes", changes);
 		pageInfo.setPageTitle(new WikiMessage("watchlist.title"));
 		pageInfo.setContentJsp(JSP_WATCHLIST);

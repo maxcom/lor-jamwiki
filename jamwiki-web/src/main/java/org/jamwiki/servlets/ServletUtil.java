@@ -422,11 +422,11 @@ public class ServletUtil {
 			i++;
 		}
 		next.addObject("categoryTopics", categoryTopics);
-		next.addObject("numCategoryTopics", new Integer(categoryTopics.size()));
+		next.addObject("numCategoryTopics", categoryTopics.size());
 		next.addObject("categoryImages", categoryImages);
-		next.addObject("numCategoryImages", new Integer(categoryImages.size()));
+		next.addObject("numCategoryImages", categoryImages.size());
 		next.addObject("subCategories", subCategories);
-		next.addObject("numSubCategories", new Integer(subCategories.size()));
+		next.addObject("numSubCategories", subCategories.size());
 	}
 
 	/**
@@ -444,8 +444,8 @@ public class ServletUtil {
 			throw new IllegalArgumentException("A non-null ModelAndView object must be specified when loading pagination values");
 		}
 		Pagination pagination = WikiUtil.buildPagination(request);
-		next.addObject("num", new Integer(pagination.getNumResults()));
-		next.addObject("offset", new Integer(pagination.getOffset()));
+		next.addObject("num", pagination.getNumResults());
+		next.addObject("offset", pagination.getOffset());
 		return pagination;
 	}
 
@@ -731,9 +731,9 @@ public class ServletUtil {
 			}
 			next.addObject("fileVersions", fileVersions);
 			if (topic.getTopicType() == Topic.TYPE_IMAGE) {
-				next.addObject("topicImage", new Boolean(true));
+				next.addObject("topicImage", true);
 			} else {
-				next.addObject("topicFile", new Boolean(true));
+				next.addObject("topicFile", true);
 			}
 		}
 		pageInfo.setSpecial(false);

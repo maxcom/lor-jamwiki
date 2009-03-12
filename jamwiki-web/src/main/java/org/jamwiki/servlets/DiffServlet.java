@@ -53,11 +53,11 @@ public class DiffServlet extends JAMWikiServlet {
 		String topicName = WikiUtil.getTopicFromRequest(request);
 		int topicVersionId1 = 0;
 		if (!StringUtils.isBlank(request.getParameter("version1"))) {
-			topicVersionId1 = new Integer(request.getParameter("version1")).intValue();
+			topicVersionId1 = Integer.valueOf(request.getParameter("version1"));
 		}
 		int topicVersionId2 = 0;
 		if (!StringUtils.isBlank(request.getParameter("version2"))) {
-			topicVersionId2 = new Integer(request.getParameter("version2")).intValue();
+			topicVersionId2 = Integer.valueOf(request.getParameter("version2"));
 		}
 		TopicVersion version1 = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId1);
 		TopicVersion version2 = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId2);

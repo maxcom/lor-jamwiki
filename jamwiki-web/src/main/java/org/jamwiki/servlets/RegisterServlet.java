@@ -162,7 +162,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		WikiUser user = new WikiUser(username);
 		String userIdString = request.getParameter("userId");
 		if (!StringUtils.isBlank(userIdString)) {
-			int userId = new Integer(userIdString).intValue();
+			int userId = Integer.valueOf(userIdString);
 			if (userId > 0) {
 				user = WikiBase.getDataHandler().lookupWikiUser(userId);
 			}

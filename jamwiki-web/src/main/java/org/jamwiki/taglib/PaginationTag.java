@@ -108,7 +108,7 @@ public class PaginationTag extends BodyTagSupport {
 		StringBuffer output = new StringBuffer();
 		try {
 			Object[] objects = new Object[1];
-			objects[0] = new Integer(pagination.getNumResults());
+			objects[0] = pagination.getNumResults();
 			if (pagination.getOffset() == 0 && previous) {
 				output.append(Utilities.formatMessage("common.pagination.previous", request.getLocale(), objects));
 				return output;

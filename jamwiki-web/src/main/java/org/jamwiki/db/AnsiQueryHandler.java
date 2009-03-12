@@ -654,7 +654,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		if (change.getPreviousTopicVersionId() == null) {
 			stmt.setNull(2, Types.INTEGER);
 		} else {
-			stmt.setInt(2, change.getPreviousTopicVersionId().intValue());
+			stmt.setInt(2, change.getPreviousTopicVersionId());
 		}
 		stmt.setInt(3, change.getTopicId());
 		stmt.setString(4, change.getTopicName());
@@ -663,7 +663,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		if (change.getAuthorId() == null) {
 			stmt.setNull(7, Types.INTEGER);
 		} else {
-			stmt.setInt(7, change.getAuthorId().intValue());
+			stmt.setInt(7, change.getAuthorId());
 		}
 		stmt.setString(8, change.getAuthorName());
 		stmt.setInt(9, change.getEditType());
@@ -696,7 +696,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		if (topic.getCurrentVersionId() == null) {
 			stmt.setNull(6, Types.INTEGER);
 		} else {
-			stmt.setInt(6, topic.getCurrentVersionId().intValue());
+			stmt.setInt(6, topic.getCurrentVersionId());
 		}
 		stmt.setTimestamp(7, topic.getDeleteDate());
 		stmt.setInt(8, (topic.getAdminOnly() ? 1 : 0));
@@ -716,7 +716,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		if (topicVersion.getAuthorId() == null) {
 			stmt.setNull(5, Types.INTEGER);
 		} else {
-			stmt.setInt(5, topicVersion.getAuthorId().intValue());
+			stmt.setInt(5, topicVersion.getAuthorId());
 		}
 		stmt.setInt(6, topicVersion.getEditType());
 		stmt.setString(7, topicVersion.getAuthorIpAddress());
@@ -724,7 +724,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		if (topicVersion.getPreviousTopicVersionId() == null) {
 			stmt.setNull(9, Types.INTEGER);
 		} else {
-			stmt.setInt(9, topicVersion.getPreviousTopicVersionId().intValue());
+			stmt.setInt(9, topicVersion.getPreviousTopicVersionId());
 		}
 		stmt.setInt(10, topicVersion.getCharactersChanged());
 		stmt.executeUpdate(conn);
@@ -806,7 +806,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		if (wikiFileVersion.getAuthorId() == null) {
 			stmt.setNull(5, Types.INTEGER);
 		} else {
-			stmt.setInt(5, wikiFileVersion.getAuthorId().intValue());
+			stmt.setInt(5, wikiFileVersion.getAuthorId());
 		}
 		stmt.setString(6, wikiFileVersion.getAuthorIpAddress());
 		stmt.setTimestamp(7, wikiFileVersion.getUploadDate());
@@ -1117,7 +1117,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		if (topic.getCurrentVersionId() == null) {
 			stmt.setNull(5, Types.INTEGER);
 		} else {
-			stmt.setInt(5, topic.getCurrentVersionId().intValue());
+			stmt.setInt(5, topic.getCurrentVersionId());
 		}
 		stmt.setTimestamp(6, topic.getDeleteDate());
 		stmt.setInt(7, (topic.getAdminOnly() ? 1 : 0));

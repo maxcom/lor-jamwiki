@@ -53,7 +53,7 @@ public class ContributionsServlet extends JAMWikiServlet {
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		List<RecentChange> contributions = WikiBase.getDataHandler().getUserContributions(virtualWiki, userString, pagination, true);
 		next.addObject("contributions", contributions);
-		next.addObject("numContributions", new Integer(contributions.size()));
+		next.addObject("numContributions", contributions.size());
 		next.addObject("contributor", userString);
 		pageInfo.setPageTitle(new WikiMessage("contributions.title", userString));
 		pageInfo.setContentJsp(JSP_CONTRIBUTIONS);

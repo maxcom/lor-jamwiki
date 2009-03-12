@@ -124,9 +124,9 @@ public class WikiLogger {
 			Properties properties = new Properties();
 			properties.load(stream);
 			String pattern = properties.getProperty("org.jamwiki.pattern");
-			int limit = new Integer(properties.getProperty("org.jamwiki.limit")).intValue();
-			int count = new Integer(properties.getProperty("org.jamwiki.count")).intValue();
-			boolean append = Boolean.valueOf(properties.getProperty("org.jamwiki.append")).booleanValue();
+			int limit = Integer.valueOf(properties.getProperty("org.jamwiki.limit"));
+			int count = Integer.valueOf(properties.getProperty("org.jamwiki.count"));
+			boolean append = Boolean.valueOf(properties.getProperty("org.jamwiki.append"));
 			String datePattern = properties.getProperty("org.jamwiki.timestamp");
 			DEFAULT_LOG_LEVEL = Level.parse(properties.getProperty("org.jamwiki.level"));
 			WikiLogger.DEFAULT_LOG_HANDLER = new FileHandler(pattern, limit, count, append);

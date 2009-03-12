@@ -216,7 +216,7 @@ public class RolesServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		List<Role> roles = WikiBase.getDataHandler().getAllRoles();
 		next.addObject("roles", roles);
-		next.addObject("roleCount", new Integer(roles.size()));
+		next.addObject("roleCount", roles.size());
 		List<RoleMap> roleMapGroups = WikiBase.getDataHandler().getRoleMapGroups();
 		next.addObject("roleMapGroups", roleMapGroups);
 		pageInfo.setAdmin(true);

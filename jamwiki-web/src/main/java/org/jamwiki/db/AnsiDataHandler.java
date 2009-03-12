@@ -255,7 +255,7 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	private static void checkLength(String value, int maxLength) throws WikiException {
 		if (value != null && value.length() > maxLength) {
-			throw new WikiException(new WikiMessage("error.fieldlength", value, new Integer(maxLength).toString()));
+			throw new WikiException(new WikiMessage("error.fieldlength", value, Integer.valueOf(maxLength).toString()));
 		}
 	}
 
@@ -403,7 +403,7 @@ public class AnsiDataHandler implements DataHandler {
 		LinkedHashMap<Integer, RoleMap> roleMaps = new LinkedHashMap<Integer, RoleMap>();
 		WikiResultSet rs = this.queryHandler().getRoleMapByLogin(loginFragment);
 		while (rs.next()) {
-			Integer userId = new Integer(rs.getInt(DATA_WIKI_USER_ID));
+			Integer userId = rs.getInt(DATA_WIKI_USER_ID);
 			RoleMap roleMap = new RoleMap();
 			if (roleMaps.containsKey(userId)) {
 				roleMap = roleMaps.get(userId);
@@ -432,11 +432,11 @@ public class AnsiDataHandler implements DataHandler {
 				roleMap = roleMaps.get(key);
 			} else {
 				if (userId > 0) {
-					roleMap.setUserId(new Integer(userId));
+					roleMap.setUserId(userId);
 					roleMap.setUserLogin(rs.getString("username"));
 				}
 				if (groupId > 0) {
-					roleMap.setGroupId(new Integer(groupId));
+					roleMap.setGroupId(groupId);
 					roleMap.setGroupName(rs.getString("group_name"));
 				}
 			}
@@ -466,7 +466,7 @@ public class AnsiDataHandler implements DataHandler {
 		LinkedHashMap<Integer, RoleMap> roleMaps = new LinkedHashMap<Integer, RoleMap>();
 		WikiResultSet rs = this.queryHandler().getRoleMapGroups();
 		while (rs.next()) {
-			Integer groupId = new Integer(rs.getInt(DATA_GROUP_ID));
+			Integer groupId = rs.getInt(DATA_GROUP_ID);
 			RoleMap roleMap = new RoleMap();
 			if (roleMaps.containsKey(groupId)) {
 				roleMap = roleMaps.get(groupId);
@@ -584,7 +584,7 @@ public class AnsiDataHandler implements DataHandler {
 			change.setTopicVersionId(rs.getInt("topic_version_id"));
 			int previousTopicVersionId = rs.getInt("previous_topic_version_id");
 			if (previousTopicVersionId > 0) {
-				change.setPreviousTopicVersionId(new Integer(previousTopicVersionId));
+				change.setPreviousTopicVersionId(previousTopicVersionId);
 			}
 			change.setTopicId(rs.getInt(DATA_TOPIC_ID));
 			change.setTopicName(rs.getString(DATA_TOPIC_NAME));
@@ -593,7 +593,7 @@ public class AnsiDataHandler implements DataHandler {
 			change.setEditComment(rs.getString("edit_comment"));
 			int userId = rs.getInt(DATA_WIKI_USER_ID);
 			if (userId > 0) {
-				change.setAuthorId(new Integer(userId));
+				change.setAuthorId(userId);
 			}
 			change.setAuthorName(rs.getString("display_name"));
 			change.setEditType(rs.getInt("edit_type"));
@@ -640,7 +640,7 @@ public class AnsiDataHandler implements DataHandler {
 			topic.setVirtualWiki(virtualWiki);
 			int currentVersionId = rs.getInt("current_version_id");
 			if (currentVersionId > 0) {
-				topic.setCurrentVersionId(new Integer(currentVersionId));
+				topic.setCurrentVersionId(currentVersionId);
 			}
 			topic.setTopicContent(rs.getString("version_content"));
 			// FIXME - Oracle cannot store an empty string - it converts them
@@ -677,11 +677,11 @@ public class AnsiDataHandler implements DataHandler {
 			}
 			int previousTopicVersionId = rs.getInt("previous_topic_version_id");
 			if (previousTopicVersionId > 0) {
-				topicVersion.setPreviousTopicVersionId(new Integer(previousTopicVersionId));
+				topicVersion.setPreviousTopicVersionId(previousTopicVersionId);
 			}
 			int userId = rs.getInt(DATA_WIKI_USER_ID);
 			if (userId > 0) {
-				topicVersion.setAuthorId(new Integer(userId));
+				topicVersion.setAuthorId(userId);
 			}
 			topicVersion.setCharactersChanged(rs.getInt("characters_changed"));
 			topicVersion.setEditDate(rs.getTimestamp("edit_date"));
@@ -747,7 +747,7 @@ public class AnsiDataHandler implements DataHandler {
 			wikiFileVersion.setUrl(rs.getString("file_url"));
 			int userId = rs.getInt(DATA_WIKI_USER_ID);
 			if (userId > 0) {
-				wikiFileVersion.setAuthorId(new Integer(userId));
+				wikiFileVersion.setAuthorId(userId);
 			}
 			wikiFileVersion.setUploadDate(rs.getTimestamp("upload_date"));
 			wikiFileVersion.setMimeType(rs.getString("mime_type"));
@@ -1554,7 +1554,7 @@ public class AnsiDataHandler implements DataHandler {
 				String authorName = topicVersion.getAuthorIpAddress();
 				Integer authorId = topicVersion.getAuthorId();
 				if (authorId != null) {
-					WikiUser user = this.lookupWikiUser(topicVersion.getAuthorId().intValue());
+					WikiUser user = this.lookupWikiUser(topicVersion.getAuthorId());
 					authorName = user.getUsername();
 				}
 				RecentChange change = new RecentChange(topic, topicVersion, authorName);

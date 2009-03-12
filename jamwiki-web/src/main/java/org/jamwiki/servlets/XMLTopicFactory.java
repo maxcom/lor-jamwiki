@@ -150,7 +150,7 @@ public class XMLTopicFactory extends DefaultHandler {
 		}
 		emit(">");
 		if ("namespace".equals(eName)) { // mapping of namespaces from imported file
-			nsKey = new Integer(attrs.getValue("key"));
+			nsKey = Integer.valueOf(attrs.getValue("key"));
 		}
 		if ("page".equals(eName)) {
 			pageName = "";
@@ -171,7 +171,7 @@ public class XMLTopicFactory extends DefaultHandler {
 		if ("namespace".equals(qName)) { // mapping of namespaces from imported file
 			namespaces.put(lastStr.toString().trim(), nsKey);
 			//Prepare locale namespaces
-			//WikiArticle.addNamespace(nsKey.intValue(), lastStr.trim());
+			//WikiArticle.addNamespace(nsKey, lastStr.trim());
 			if (nsKey.intValue() == 14) {
 				ns14 = lastStr.toString().trim();
 			}
@@ -194,7 +194,7 @@ public class XMLTopicFactory extends DefaultHandler {
 			if (pos > -1) {
 				sNamespace = pageName.substring(0, pos);
 				if (namespaces.containsKey(sNamespace)) {
-					namespace = ((Integer)namespaces.get(sNamespace)).intValue();
+					namespace = ((Integer)namespaces.get(sNamespace));
 				} else { // unknown namespace
 					namespace = -1;
 				}
@@ -298,7 +298,7 @@ public class XMLTopicFactory extends DefaultHandler {
 		if (pos > -1) {
 			sNamespace = pageName.substring(0, pos);
 			if (namespaces.containsKey(sNamespace)) {
-				int namespace = ((Integer)namespaces.get(sNamespace)).intValue();
+				int namespace = ((Integer)namespaces.get(sNamespace));
 				sTitle = pageName.substring(pos+1);
 				sJAMNamespace = getJAMWikiNamespaceById(convertNamespaceFromMediaWikiToJAMWiki(namespace));
 				if (sJAMNamespace.length() > 0) {

@@ -85,8 +85,8 @@ public class EditServlet extends JAMWikiServlet {
 			showChanges(request, next, pageInfo, virtualWiki, topicName, lastTopicVersionId);
 		} else if (!StringUtils.isBlank(request.getParameter("topicVersionId"))) {
 			// editing an older version
-			Integer topicVersionId = new Integer(request.getParameter("topicVersionId"));
-			TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId.intValue());
+			Integer topicVersionId = Integer.valueOf(request.getParameter("topicVersionId"));
+			TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId);
 			if (topicVersion == null) {
 				throw new WikiException(new WikiMessage("common.exception.notopic"));
 			}
@@ -96,7 +96,7 @@ public class EditServlet extends JAMWikiServlet {
 			}
 		} else if (!StringUtils.isBlank(request.getParameter("section"))) {
 			// editing a section of a topic
-			int section = (new Integer(request.getParameter("section"))).intValue();
+			int section = Integer.valueOf(request.getParameter("section"));
 			String[] sliceResults = ParserUtil.parseSlice(request.getContextPath(), request.getLocale(), virtualWiki, topicName, section);
 			contents = sliceResults[1];
 			String sectionName = sliceResults[0];
@@ -171,10 +171,10 @@ public class EditServlet extends JAMWikiServlet {
 		if (useSection && request.getParameter("section") != null) {
 			next.addObject("section", request.getParameter("section"));
 		}
-		next.addObject("minorEdit", new Boolean(request.getParameter("minorEdit") != null));
+		next.addObject("minorEdit", (request.getParameter("minorEdit") != null));
 		Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
 		if (request.getParameter("watchTopic") != null || (watchlist.containsTopic(topicName) && !isPreview(request))) {
-			next.addObject("watchTopic", new Boolean(true));
+			next.addObject("watchTopic", true);
 		}
 		pageInfo.setContentJsp(JSP_EDIT);
 		WikiUser user = ServletUtil.currentWikiUser();
@@ -265,7 +265,7 @@ public class EditServlet extends JAMWikiServlet {
 	 *
 	 */
 	private Integer retrieveLastTopicVersionId(HttpServletRequest request, Topic topic) throws Exception {
-		return (!StringUtils.isBlank(request.getParameter("lastTopicVersionId"))) ? new Integer(request.getParameter("lastTopicVersionId")) : topic.getCurrentVersionId();
+		return (!StringUtils.isBlank(request.getParameter("lastTopicVersionId"))) ? Integer.valueOf(request.getParameter("lastTopicVersionId")) : topic.getCurrentVersionId();
 	}
 
 	/**
@@ -285,7 +285,7 @@ public class EditServlet extends JAMWikiServlet {
 		String sectionName = "";
 		if (!StringUtils.isBlank(request.getParameter("section"))) {
 			// load section of topic
-			int section = (new Integer(request.getParameter("section"))).intValue();
+			int section = Integer.valueOf(request.getParameter("section"));
 			ParserOutput parserOutput = new ParserOutput();
 			String[] spliceResult = ParserUtil.parseSplice(parserOutput, request.getContextPath(), request.getLocale(), virtualWiki, topicName, section, contents);
 			contents = spliceResult[1];
@@ -359,12 +359,12 @@ public class EditServlet extends JAMWikiServlet {
 		String contents2 = "";
 		if (!StringUtils.isBlank(request.getParameter("section"))) {
 			// editing a section of a topic
-			int section = (new Integer(request.getParameter("section"))).intValue();
+			int section = Integer.valueOf(request.getParameter("section"));
 			String[] sliceResults = ParserUtil.parseSlice(request.getContextPath(), request.getLocale(), virtualWiki, topicName, section);
 			contents2 = sliceResults[1];
 		} else if (lastTopicVersionId != null) {
 			// get the full topic version
-			TopicVersion lastTopicVersion = WikiBase.getDataHandler().lookupTopicVersion(lastTopicVersionId.intValue());
+			TopicVersion lastTopicVersion = WikiBase.getDataHandler().lookupTopicVersion(lastTopicVersionId);
 			contents2 = lastTopicVersion.getVersionContent();
 		}
 		this.loadDiff(request, next, pageInfo, contents1, contents2);

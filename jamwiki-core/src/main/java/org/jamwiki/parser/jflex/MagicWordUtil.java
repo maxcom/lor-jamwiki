@@ -443,7 +443,7 @@ public class MagicWordUtil {
 		Date revision = null;
 		// null check needed for the test data handler, which does not implement topic versions
 		if (topic != null && topic.getCurrentVersionId() != null) {
-			topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId().intValue());
+			topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId());
 			revision = topicVersion.getEditDate();
 		}
 		formatter.setTimeZone(utc);

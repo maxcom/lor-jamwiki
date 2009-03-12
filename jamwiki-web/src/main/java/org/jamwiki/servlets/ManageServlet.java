@@ -145,10 +145,10 @@ public class ManageServlet extends JAMWikiServlet {
 			logger.warning("Attempt to undelete a topic that is not deleted: " + virtualWiki + " / " + topicName);
 			return;
 		}
-		TopicVersion previousVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId().intValue());
+		TopicVersion previousVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId());
 		while (previousVersion != null && previousVersion.getPreviousTopicVersionId() != null && previousVersion.getEditType() == TopicVersion.EDIT_DELETE) {
 			// loop back to find the last non-delete edit
-			previousVersion = WikiBase.getDataHandler().lookupTopicVersion(previousVersion.getPreviousTopicVersionId().intValue());
+			previousVersion = WikiBase.getDataHandler().lookupTopicVersion(previousVersion.getPreviousTopicVersionId());
 		}
 		String contents = previousVersion.getVersionContent();
 		topic.setTopicContent(contents);
@@ -177,9 +177,9 @@ public class ManageServlet extends JAMWikiServlet {
 				next.addObject("manageCommentsPage", commentsPage);
 			}
 		}
-		next.addObject("readOnly", new Boolean(topic.getReadOnly()));
-		next.addObject("adminOnly", new Boolean(topic.getAdminOnly()));
-		next.addObject("deleted", new Boolean(topic.getDeleteDate() != null));
+		next.addObject("readOnly", topic.getReadOnly());
+		next.addObject("adminOnly", topic.getAdminOnly());
+		next.addObject("deleted", (topic.getDeleteDate() != null));
 		pageInfo.setTopicName(topicName);
 		pageInfo.setContentJsp(JSP_ADMIN_MANAGE);
 		pageInfo.setPageTitle(new WikiMessage("manage.title", topicName));

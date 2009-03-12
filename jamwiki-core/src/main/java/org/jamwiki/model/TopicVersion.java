@@ -55,7 +55,7 @@ public class TopicVersion implements Serializable {
 	 */
 	public TopicVersion(WikiUser user, String authorIpAddress, String editComment, String versionContent, int charactersChanged) {
 		if (user != null && user.getUserId() > 0) {
-			this.authorId = new Integer(user.getUserId());
+			this.authorId = user.getUserId();
 		}
 		this.authorIpAddress = authorIpAddress;
 		this.editComment = editComment;

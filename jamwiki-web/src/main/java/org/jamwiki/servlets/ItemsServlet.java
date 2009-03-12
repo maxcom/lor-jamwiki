@@ -77,7 +77,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		List<String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_FILE, pagination);
-		next.addObject("itemCount", new Integer(items.size()));
+		next.addObject("itemCount", items.size());
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:Filelist");
 		pageInfo.setPageTitle(new WikiMessage("allfiles.title"));
@@ -134,7 +134,7 @@ public class ItemsServlet extends JAMWikiServlet {
 			}
 			items.add(topicName);
 		}
-		next.addObject("itemCount", new Integer(items.size()));
+		next.addObject("itemCount", items.size());
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:OrphanedPages");
 		pageInfo.setPageTitle(new WikiMessage("orphaned.title"));
@@ -152,7 +152,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		for (String link : items) {
 			links.add(NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + link);
 		}
-		next.addObject("itemCount", new Integer(items.size()));
+		next.addObject("itemCount", items.size());
 		next.addObject("items", links);
 		next.addObject("rootUrl", "Special:Listusers");
 		pageInfo.setPageTitle(new WikiMessage("allusers.title"));
@@ -167,7 +167,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		List<String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_IMAGE, pagination);
-		next.addObject("itemCount", new Integer(items.size()));
+		next.addObject("itemCount", items.size());
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:Imagelist");
 		pageInfo.setPageTitle(new WikiMessage("allimages.title"));
@@ -182,7 +182,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		List<String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_ARTICLE, pagination);
-		next.addObject("itemCount", new Integer(items.size()));
+		next.addObject("itemCount", items.size());
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:Allpages");
 		pageInfo.setPageTitle(new WikiMessage("alltopics.title"));
@@ -197,7 +197,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		List<String> items = WikiBase.getDataHandler().getTopicsAdmin(virtualWiki, pagination);
-		next.addObject("itemCount", new Integer(items.size()));
+		next.addObject("itemCount", items.size());
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:TopicsAdmin");
 		pageInfo.setPageTitle(new WikiMessage("topicsadmin.title"));

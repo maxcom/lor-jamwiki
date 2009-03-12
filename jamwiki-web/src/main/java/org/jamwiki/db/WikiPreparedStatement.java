@@ -133,10 +133,10 @@ public class WikiPreparedStatement {
 			if (params[i] == null) {
 				this.statement.setNull(i+1, paramTypes[i]);
 			} else if (paramTypes[i] == Types.CHAR) {
-				char value = ((Character)params[i]).charValue();
+				char value = ((Character)params[i]);
 				this.statement.setString(i+1, Character.toString(value));
 			} else if (paramTypes[i] == Types.INTEGER) {
-				int value = ((Integer)params[i]).intValue();
+				int value = ((Integer)params[i]);
 				this.statement.setInt(i+1, value);
 			} else if (paramTypes[i] == Types.TIMESTAMP) {
 				Timestamp value = (Timestamp)params[i];
@@ -173,7 +173,7 @@ public class WikiPreparedStatement {
 	public void setInt(int parameterIndex, int x) {
 		this.verifyParams(parameterIndex);
 		this.paramTypes[parameterIndex - 1] = Types.INTEGER;
-		this.params[parameterIndex - 1] = new Integer(x);
+		this.params[parameterIndex - 1] = x;
 	}
 
 	/**
@@ -188,7 +188,7 @@ public class WikiPreparedStatement {
 		// this is a bit kludgy - cast the long to an int.  problem for very big values.
 		this.verifyParams(parameterIndex);
 		this.paramTypes[parameterIndex - 1] = Types.INTEGER;
-		this.params[parameterIndex - 1] = new Integer((int)x);
+		this.params[parameterIndex - 1] = (int)x;
 	}
 
 	/**

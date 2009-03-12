@@ -47,7 +47,7 @@ public class XMLUtilTest extends TestCase {
 	 *
 	 */
 	public void testBuildTag2() throws Throwable {
-		String result = XMLUtil.buildTag("testXMLUtilTagName", new Integer(0));
+		String result = XMLUtil.buildTag("testXMLUtilTagName", 0);
 		assertEquals("result", "<testXMLUtilTagName>0</testXMLUtilTagName>", result);
 	}
 

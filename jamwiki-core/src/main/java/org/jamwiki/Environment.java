@@ -224,7 +224,7 @@ public class Environment {
 	 * @return The value of the property.
 	 */
 	public static boolean getBooleanValue(String name) {
-		return Boolean.valueOf(getValue(name)).booleanValue();
+		return Boolean.valueOf(getValue(name));
 	}
 
 	/**

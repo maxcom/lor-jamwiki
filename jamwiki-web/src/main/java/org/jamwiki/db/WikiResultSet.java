@@ -76,11 +76,11 @@ public class WikiResultSet {
 				case java.sql.Types.SMALLINT:
 				case java.sql.Types.TINYINT:
 					int integer = rs.getInt(columnName);
-					column.put(columnName.toLowerCase(), new Integer(integer));
+					column.put(columnName.toLowerCase(), integer);
 					break;
 				case java.sql.Types.BIGINT:
 					long longint = rs.getLong(columnName);
-					column.put(columnName.toLowerCase(), new Long(longint));
+					column.put(columnName.toLowerCase(), longint);
 					break;
 				case java.sql.Types.DATE:
 					Date date = rs.getDate(columnName);
@@ -234,7 +234,7 @@ public class WikiResultSet {
 		} catch (NullPointerException e) {
 			// ignore, probably null
 		}
-		return (value == null) ? '0' : value.charValue();
+		return (value == null) ? '0' : value;
 	}
 
 	/**
@@ -259,10 +259,10 @@ public class WikiResultSet {
 		} catch (Exception e) {
 			// is it a long?
 			try {
-				value = new Integer(((Long)this.currentRow.get(columnName.toLowerCase())).intValue());
+				value = ((Long)this.currentRow.get(columnName.toLowerCase())).intValue();
 			} catch (Exception ex) {}
 		}
-		return (value == null) ? 0 : value.intValue();
+		return (value == null) ? 0 : value;
 	}
 
 	/**
@@ -282,7 +282,7 @@ public class WikiResultSet {
 	public long getLong(String columnName) throws SQLException {
 		this.verifyColumn(columnName);
 		Long value = (Long)this.currentRow.get(columnName.toLowerCase());
-		return (value == null) ? 0 : value.longValue();
+		return (value == null) ? 0 : value;
 	}
 
 	/**

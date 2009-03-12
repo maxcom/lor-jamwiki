@@ -58,7 +58,7 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	 */
 	private static String formatStatement(String sql, Pagination pagination) {
 		try {
-			Object[] objects = {new Integer(pagination.getEnd()), new Integer(pagination.getNumResults())};
+			Object[] objects = {pagination.getEnd(), pagination.getNumResults()};
 			return MessageFormat.format(sql, objects);
 		} catch (Exception e) {
 			logger.warning("Unable to format " + sql + " with values " + pagination.getEnd() + " / " + pagination.getNumResults(), e);
