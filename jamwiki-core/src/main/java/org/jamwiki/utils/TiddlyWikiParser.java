@@ -160,7 +160,7 @@ public class TiddlyWikiParser {
 		try {
 			lastMod = formater.parse(findName(content, MODIFIED));
 		} catch (Exception e) {
-			messages.append("WARNING: corrupt line: " + content);
+			messages.append("WARNING: corrupt line: ").append(content);
 		}
 		if (lastMod == null) {
 			return;
@@ -171,10 +171,10 @@ public class TiddlyWikiParser {
 			return;
 		}
 		*/
-		int idx = content.indexOf(">");
+		int idx = content.indexOf('>');
 		if (idx == -1) {
 			logger.warning("No closing of tag");
-			messages.append("WARNING: corrupt line: " + content);
+			messages.append("WARNING: corrupt line: ").append(content);
 			return;
 		}
 		String wikicode = content.substring(idx +1);
@@ -204,8 +204,8 @@ public class TiddlyWikiParser {
 			logger.warning("no tiddler name found");
 			return null;
 		}
-		startIdx = content.indexOf("\"", startIdx);
-		int endIdx = content.indexOf("\"", startIdx+1);
+		startIdx = content.indexOf('\"', startIdx);
+		int endIdx = content.indexOf('\"', startIdx+1);
 		String value = content.substring(startIdx+1, endIdx);
 		logger.fine(name + ":" + value);
 		return value;

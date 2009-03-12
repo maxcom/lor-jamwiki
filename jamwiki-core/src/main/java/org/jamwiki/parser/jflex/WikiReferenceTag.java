@@ -113,7 +113,7 @@ public class WikiReferenceTag {
 		if (pos == -1) {
 			return null;
 		}
-		int start = raw.indexOf("\"", pos);
+		int start = raw.indexOf('\"', pos);
 		if (start == -1 || (start + 1) >= raw.length()) {
 			return null;
 		}

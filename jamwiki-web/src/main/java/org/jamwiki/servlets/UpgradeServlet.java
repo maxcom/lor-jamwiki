@@ -110,10 +110,8 @@ public class UpgradeServlet extends JAMWikiServlet {
 			// first perform database upgrades
 			this.upgradeDatabase(true, messages);
 			// upgrade stylesheet
-			if (this.upgradeStyleSheetRequired()) {
-				if (!upgradeStyleSheet(request, messages)) {
-					success = false;
-				}
+			if (this.upgradeStyleSheetRequired() && !upgradeStyleSheet(request, messages)) {
+				success = false;
 			}
 			// perform any additional upgrades required
 			if (oldVersion.before(0, 7, 0)) {

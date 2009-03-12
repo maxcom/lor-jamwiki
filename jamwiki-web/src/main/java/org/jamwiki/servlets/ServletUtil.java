@@ -109,7 +109,7 @@ public class ServletUtil {
 		Element cacheElement = WikiCache.retrieveFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key);
 		if (cacheElement != null) {
 			content = (String)cacheElement.getObjectValue();
-			return (content == null) ? null : new String(content);
+			return (content == null) ? null : content;
 		}
 		try {
 			Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
@@ -255,7 +255,7 @@ public class ServletUtil {
 			throw new IllegalArgumentException("Request object cannot be null");
 		}
 		String ipAddress = request.getRemoteAddr();
-		int pos = ipAddress.indexOf("%");
+		int pos = ipAddress.indexOf('%');
 		if (pos != -1) {
 			ipAddress = ipAddress.substring(0, pos);
 		}

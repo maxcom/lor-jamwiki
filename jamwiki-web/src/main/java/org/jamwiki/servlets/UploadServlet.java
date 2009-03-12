@@ -221,11 +221,9 @@ public class UploadServlet extends JAMWikiServlet {
 		}
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		String topicName = NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR;
-		if (!StringUtils.isEmpty(destinationFilename)) {
-			if (!StringUtils.isBlank(FilenameUtils.getExtension(filename)) && StringUtils.isBlank(FilenameUtils.getExtension(destinationFilename))) {
-				// if original has an extension, the renamed version must as well
-				destinationFilename += (!destinationFilename.endsWith(".") ? "." : "") + FilenameUtils.getExtension(filename);
-			}
+		if (!StringUtils.isEmpty(destinationFilename) && !StringUtils.isBlank(FilenameUtils.getExtension(filename)) && StringUtils.isBlank(FilenameUtils.getExtension(destinationFilename))) {
+			// if original has an extension, the renamed version must as well
+			destinationFilename += (!destinationFilename.endsWith(".") ? "." : "") + FilenameUtils.getExtension(filename);
 		}
 		topicName += Utilities.decodeAndEscapeTopicName((!StringUtils.isEmpty(destinationFilename) ? destinationFilename : filename), true);
 		if (this.handleSpam(request, next, pageInfo, topicName, contents)) {

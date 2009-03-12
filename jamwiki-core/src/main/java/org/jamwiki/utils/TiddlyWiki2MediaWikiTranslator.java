@@ -82,7 +82,7 @@ public class TiddlyWiki2MediaWikiTranslator {
 	private String translateTableLine(String line) {
 		String[] tokens = line.split("\\|");
 		StringBuffer output = new StringBuffer();
-		output.append("|");
+		output.append('|');
 		for (int i = 0; i < tokens.length; i++) {
 			String token = tokens[i];
 			if (i > 0) {

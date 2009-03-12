@@ -216,11 +216,9 @@ public class WikiUtil {
 		}
 		String virtualWiki = parent.getVirtualWiki();
 		WikiLink wikiLink = LinkUtil.parseWikiLink(target);
-		if (!StringUtils.isBlank(wikiLink.getNamespace())) {
-			if (WikiBase.getDataHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
-				virtualWiki = wikiLink.getNamespace();
-				wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
-			}
+		if (!StringUtils.isBlank(wikiLink.getNamespace()) && WikiBase.getDataHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
+			virtualWiki = wikiLink.getNamespace();
+			wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
 		}
 		// get the topic that is being redirected to
 		Topic child = WikiBase.getDataHandler().lookupTopic(virtualWiki, wikiLink.getDestination(), false, null);

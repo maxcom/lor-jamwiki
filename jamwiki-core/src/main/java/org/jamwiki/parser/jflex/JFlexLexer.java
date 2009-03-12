@@ -368,7 +368,7 @@ public abstract class JFlexLexer {
 		int pos = StringUtils.indexOfAnyBut(text, markup);
 		if (pos != -1) {
 			text = text.substring(pos);
-			pos = text.indexOf("|");
+			pos = text.indexOf('|');
 			if (pos != -1) {
 				text = text.substring(0, pos);
 			}
@@ -449,7 +449,7 @@ public abstract class JFlexLexer {
 		}
 		// push back everything except for any opening newline that was matched
 		int pushback = raw.length();
-		int pos = raw.indexOf("\n");
+		int pos = raw.indexOf('\n');
 		if (pos != -1 && pos < raw.length()) {
 			pushback = raw.substring(pos + 1).length();
 		}

@@ -65,7 +65,7 @@ public class ParserFunctionUtil {
 	 * function then return the parser function name and argument.
 	 */
 	protected static String[] parseParserFunctionInfo(String name) {
-		int pos = name.indexOf(":");
+		int pos = name.indexOf(':');
 		if (pos == -1 || (pos + 2) > name.length()) {
 			return null;
 		}

@@ -227,12 +227,12 @@ public class WikiDatabase {
 					logger.info(select);
 					rs = stmt.executeQuery(select);
 					md = rs.getMetaData();
-					insert.append("INSERT INTO ").append(JAMWIKI_DB_TABLE_INFO[i][0]).append("(");
+					insert.append("INSERT INTO ").append(JAMWIKI_DB_TABLE_INFO[i][0]).append('(');
 					values = new StringBuffer();
 					for (int k = 1; k <= md.getColumnCount(); k++) {
 						if (k > 1) {
-							insert.append(",");
-							values.append(",");
+							insert.append(',');
+							values.append(',');
 						}
 						columnName = md.getColumnLabel(k);
 						if (isTopicTable) {
@@ -247,9 +247,9 @@ public class WikiDatabase {
 							columnName = "\"" + columnName + "\"";
 						}
 						insert.append(columnName);
-						values.append("?");
+						values.append('?');
 					}
-					insert.append(") VALUES (").append(values).append(")");
+					insert.append(") VALUES (").append(values).append(')');
 					logger.info(insert.toString());
 					PreparedStatement insertStmt = conn.prepareStatement(insert.toString());
 					while (rs.next()) {

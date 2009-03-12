@@ -333,7 +333,7 @@ public class TemplateTag {
 				endPos = Utilities.findMatchingEndTag(content, pos, "{|", "|}");
 			} else if (content.charAt(pos) == '|') {
 				// new token
-				tokens.add(new String(value));
+				tokens.add(value);
 				value = "";
 				pos++;
 				continue;
@@ -347,7 +347,7 @@ public class TemplateTag {
 			}
 		}
 		// add the last one
-		tokens.add(new String(value));
+		tokens.add(value);
 		return tokens;
 	}
 }

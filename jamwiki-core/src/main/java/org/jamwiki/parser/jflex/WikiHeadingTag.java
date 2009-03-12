@@ -99,7 +99,7 @@ public class WikiHeadingTag {
 			output += this.buildSectionEditLink(parserInput, nextSection);
 			output += "<span>" + JFlexParserUtil.parseFragment(parserInput, tagText, mode) + "</span>";
 			output += "</h" + level + ">";
-			return output.toString();
+			return output;
 		} catch (Throwable t) {
 			logger.info("Unable to parse " + raw, t);
 			return raw;
