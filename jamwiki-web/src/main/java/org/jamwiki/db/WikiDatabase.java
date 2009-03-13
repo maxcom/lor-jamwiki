@@ -208,7 +208,7 @@ public class WikiDatabase {
 				StringBuffer insert;
 				ResultSetMetaData md;
 				StringBuffer values;
-				String select;
+				StringBuffer select;
 				String columnName;
 				Integer topicId;
 				Integer currentVersionId;
@@ -216,16 +216,16 @@ public class WikiDatabase {
 				// cycle through at most RECORDS_PER_CYCLE records at a time to avoid blowing up the system
 				int RECORDS_PER_CYCLE = 25;
 				for (int j = 0; j <= maxIndex; j += RECORDS_PER_CYCLE) {
-					select = "SELECT * FROM " + JAMWIKI_DB_TABLE_INFO[i][0];
+					select = new StringBuffer("SELECT * FROM ").append(JAMWIKI_DB_TABLE_INFO[i][0]);
 					if (!StringUtils.isBlank(JAMWIKI_DB_TABLE_INFO[i][1])) {
-						select += " WHERE " + JAMWIKI_DB_TABLE_INFO[i][1] + " > " + j;
-						select += " AND " + JAMWIKI_DB_TABLE_INFO[i][1] + " <= " + (j + RECORDS_PER_CYCLE);
-						select += " ORDER BY " + JAMWIKI_DB_TABLE_INFO[i][1];
+						select.append(" WHERE ").append(JAMWIKI_DB_TABLE_INFO[i][1]).append(" > ").append(j);
+						select.append(" AND ").append(JAMWIKI_DB_TABLE_INFO[i][1]).append(" <= ").append(j + RECORDS_PER_CYCLE);
+						select.append(" ORDER BY ").append(JAMWIKI_DB_TABLE_INFO[i][1]);
 					}
 					insert = new StringBuffer();
 					stmt = from.createStatement();
-					logger.info(select);
-					rs = stmt.executeQuery(select);
+					logger.info(select.toString());
+					rs = stmt.executeQuery(select.toString());
 					md = rs.getMetaData();
 					insert.append("INSERT INTO ").append(JAMWIKI_DB_TABLE_INFO[i][0]).append('(');
 					values = new StringBuffer();

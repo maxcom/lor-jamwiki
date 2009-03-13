@@ -102,14 +102,14 @@ public class EditCommentTag extends TagSupport {
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
 		WikiLink wikiLink = LinkUtil.parseWikiLink(this.topic + "#" + sectionName);
-		String result = "";
-		result += "<span class=\"" + CSS_SECTION_COMMENT + "\">";
-		result += LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, wikiLink, "&rarr;", null, null, false);
-		result += StringEscapeUtils.escapeXml(sectionName) + (!StringUtils.isBlank(additionalComment) ? " -" : "");
-		result += "</span>";
+		StringBuffer result = new StringBuffer();
+		result.append("<span class=\"").append(CSS_SECTION_COMMENT).append("\">");
+		result.append(LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, wikiLink, "&rarr;", null, null, false));
+		result.append(StringEscapeUtils.escapeXml(sectionName) + (!StringUtils.isBlank(additionalComment) ? " -" : ""));
+		result.append("</span>");
 		if (!StringUtils.isBlank(additionalComment)) {
-			result += " " + StringEscapeUtils.escapeXml(additionalComment);
+			result.append(' ').append(StringEscapeUtils.escapeXml(additionalComment));
 		}
-		return result;
+		return result.toString();
 	}
 }

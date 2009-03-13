@@ -167,77 +167,77 @@ public class LinkUtil {
 		}
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
-		String html = "";
+		StringBuffer html = new StringBuffer();
 		if (topic.getTopicType() == Topic.TYPE_FILE) {
 			// file, not an image
 			if (StringUtils.isBlank(caption)) {
 				caption = topicName.substring(NamespaceHandler.NAMESPACE_IMAGE.length() + 1);
 			}
-			html += "<a href=\"" + url + "\">";
+			html.append("<a href=\"").append(url).append("\">");
 			if (escapeHtml) {
-				html += StringEscapeUtils.escapeHtml(caption);
+				html.append(StringEscapeUtils.escapeHtml(caption));
 			} else {
-				html += caption;
+				html.append(caption);
 			}
-			html += "</a>";
-			return html;
+			html.append("</a>");
+			return html.toString();
 		}
 		WikiImage wikiImage = ImageUtil.initializeImage(wikiFile, maxDimension);
 		if (caption == null) {
 			caption = "";
 		}
 		if (frame || thumb || !StringUtils.isBlank(align)) {
-			html += "<div class=\"";
+			html.append("<div class=\"");
 			if (thumb || frame) {
-				html += "imgthumb ";
+				html.append("imgthumb ");
 			}
 			if (align != null && align.equalsIgnoreCase("left")) {
-				html += "imgleft ";
+				html.append("imgleft ");
 			} else if (align != null && align.equalsIgnoreCase("center")) {
-				html += "imgcenter ";
+				html.append("imgcenter ");
 			} else if ((align != null && align.equalsIgnoreCase("right")) || thumb || frame) {
-				html += "imgright ";
+				html.append("imgright ");
 			} else {
 				// default alignment
-				html += "image "; 
+				html.append("image ");
 			}
-			html = html.trim() + "\">";
+			html = new StringBuffer(html.toString().trim()).append("\">");
 		}
 		if (wikiImage.getWidth() > 0) {
-			html += "<div style=\"width:" + (wikiImage.getWidth() + 2) + "px;\">";
+			html.append("<div style=\"width:").append((wikiImage.getWidth() + 2)).append("px;\">");
 		}
 		if (!suppressLink) {
-			html += "<a class=\"wikiimg\" href=\"" + LinkUtil.buildTopicUrl(context, virtualWiki, topicName, true) + "\">";
+			html.append("<a class=\"wikiimg\" href=\"").append(LinkUtil.buildTopicUrl(context, virtualWiki, topicName, true)).append("\">");
 		}
 		if (StringUtils.isBlank(style)) {
 			style = "wikiimg";
 		}
-		html += "<img class=\"" + style + "\" src=\"";
-		html += url;
-		html += "\"";
-		html += " width=\"" + wikiImage.getWidth() + "\"";
-		html += " height=\"" + wikiImage.getHeight() + "\"";
-		html += " alt=\"" + StringEscapeUtils.escapeHtml(caption) + "\"";
-		html += " />";
+		html.append("<img class=\"").append(style).append("\" src=\"");
+		html.append(url);
+		html.append("\"");
+		html.append(" width=\"").append(wikiImage.getWidth()).append('\"');
+		html.append(" height=\"").append(wikiImage.getHeight()).append('\"');
+		html.append(" alt=\"").append(StringEscapeUtils.escapeHtml(caption)).append('\"');
+		html.append(" />");
 		if (!suppressLink) {
-			html += "</a>";
+			html.append("</a>");
 		}
 		if (!StringUtils.isBlank(caption)) {
-			html += "<div class=\"imgcaption\">";
+			html.append("<div class=\"imgcaption\">");
 			if (escapeHtml) {
-				html += StringEscapeUtils.escapeHtml(caption);
+				html.append(StringEscapeUtils.escapeHtml(caption));
 			} else {
-				html += caption;
+				html.append(caption);
 			}
-			html += "</div>";
+			html.append("</div>");
 		}
 		if (wikiImage.getWidth() > 0) {
-			html += "</div>";
+			html.append("</div>");
 		}
 		if (frame || thumb || !StringUtils.isBlank(align)) {
-			html += "</div>";
+			html.append("</div>");
 		}
-		return html;
+		return html.toString();
 	}
 
 	/**
@@ -286,14 +286,16 @@ public class LinkUtil {
 		if (StringUtils.isBlank(topic) && !StringUtils.isBlank(wikiLink.getSection())) {
 			topic = wikiLink.getSection();
 		}
-		String html = "<a href=\"" + url + "\"" + style + " title=\"" + StringEscapeUtils.escapeHtml(topic) + "\"" + target + ">";
+		StringBuffer html = new StringBuffer();
+		html.append("<a href=\"").append(url).append('\"').append(style);
+		html.append(" title=\"").append(StringEscapeUtils.escapeHtml(topic)).append('\"').append(target).append('>');
 		if (escapeHtml) {
-			html += StringEscapeUtils.escapeHtml(text);
+			html.append(StringEscapeUtils.escapeHtml(text));
 		} else {
-			html += text;
+			html.append(text);
 		}
-		html += "</a>";
-		return html;
+		html.append("</a>");
+		return html.toString();
 	}
 
 	/**
@@ -366,29 +368,29 @@ public class LinkUtil {
 		if (StringUtils.isBlank(topicName) && !StringUtils.isBlank(section)) {
 			return "#" + Utilities.encodeAndEscapeTopicName(section);
 		}
-		String url = "";
+		StringBuffer url = new StringBuffer();
 		if (context != null) {
-			url += context;
+			url.append(context);
 		}
 		// context never ends with a "/" per servlet specification
-		url += "/";
+		url.append('/');
 		// get the virtual wiki, which should have been set by the parent servlet
-		url += Utilities.encodeAndEscapeTopicName(virtualWiki);
-		url += "/";
-		url += Utilities.encodeAndEscapeTopicName(topicName);
+		url.append(Utilities.encodeAndEscapeTopicName(virtualWiki));
+		url.append('/');
+		url.append(Utilities.encodeAndEscapeTopicName(topicName));
 		if (!StringUtils.isBlank(queryString)) {
 			if (!queryString.startsWith("?")) {
-				url += "?";
+				url.append('?');
 			}
-			url += queryString;
+			url.append(queryString);
 		}
 		if (!StringUtils.isBlank(section)) {
 			if (!section.startsWith("#")) {
-				url += "#";
+				url.append('#');
 			}
-			url += Utilities.encodeAndEscapeTopicName(section);
+			url.append(Utilities.encodeAndEscapeTopicName(section));
 		}
-		return url;
+		return url.toString();
 	}
 
 	/**

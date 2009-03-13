@@ -27,6 +27,8 @@
 	<rule ref="/rulesets/design.xml">
 		<!-- "if (x != y) ... else ..." isn't worth warning about -->
 		<exclude name="ConfusingTernary" />
+		<!-- putting literals first is good for avoiding nulls, but it's better to first validate against nulls -->
+		<exclude name="PositionLiteralsFirstInComparisons" />
 		<!-- re-visit this issue later, but for now a Locale seems like overkill -->
 		<exclude name="SimpleDateFormatNeedsLocale" />
 		<!-- not having a default on a switch statement is not worth generating warnings -->

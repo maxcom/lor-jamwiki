@@ -139,11 +139,23 @@ public class DiffUtil {
 	 * be unique enough.
 	 */
 	private static String generateCacheKey(String newVersion, String oldVersion) {
-		String result = "";
-		result += (newVersion == null) ? "-1" : ((newVersion.length() <= 10) ? newVersion : newVersion.substring(0, 10) + newVersion.hashCode());
-		result += "-";
-		result += (oldVersion == null) ? "-1" : ((oldVersion.length() <= 10) ? oldVersion : oldVersion.substring(0, 10) + oldVersion.hashCode());
-		return result;
+		StringBuffer result = new StringBuffer();
+		if (newVersion == null) {
+			result.append(-1);
+		} else if (newVersion.length() <= 10) {
+			result.append(newVersion);
+		} else {
+			result.append(newVersion.substring(0, 10)).append(newVersion.hashCode());
+		}
+		result.append("-");
+		if (oldVersion == null) {
+			result.append(-1);
+		} else if (oldVersion.length() <= 10) {
+			result.append(oldVersion);
+		} else {
+			result.append(oldVersion.substring(0, 10)).append(oldVersion.hashCode());
+		}
+		return result.toString();
 	}
 
 	/**

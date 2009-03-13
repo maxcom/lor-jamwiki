@@ -142,18 +142,18 @@ public class RoleMap {
 	 * user and group id values for use with JSTL.
 	 */
 	public String getUserGroup() {
-		String result = "";
+		StringBuffer result = new StringBuffer();
 		if (this.userId != null) {
-			result += this.userId;
+			result.append(this.userId);
 		} else {
-			result += "0";
+			result.append(0);
 		}
-		result += "|";
+		result.append('|');
 		if (this.groupId != null) {
-			result += this.groupId;
+			result.append(this.groupId);
 		} else {
-			result += "0";
+			result.append(0);
 		}
-		return result;
+		return result.toString();
 	}
 }

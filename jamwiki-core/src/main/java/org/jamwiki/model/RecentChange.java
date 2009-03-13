@@ -92,20 +92,20 @@ public class RecentChange {
 	 *
 	 */
 	public String getChangeTypeNotification() {
-		String changeTypeNotification = "";
+		StringBuffer changeTypeNotification = new StringBuffer();
 		if (this.previousTopicVersionId == null) {
-			changeTypeNotification += "n";
+			changeTypeNotification.append('n');
 		}
 		if (this.editType == TopicVersion.EDIT_MINOR) {
-			changeTypeNotification += "m";
+			changeTypeNotification.append('m');
 		}
 		if (this.editType == TopicVersion.EDIT_DELETE) {
-			changeTypeNotification += "d";
+			changeTypeNotification.append('d');
 		}
 		if (this.editType == TopicVersion.EDIT_UNDELETE) {
-			changeTypeNotification += "u";
+			changeTypeNotification.append('u');
 		}
-		return changeTypeNotification;
+		return changeTypeNotification.toString();
 	}
 
 	/**

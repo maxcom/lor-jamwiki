@@ -39,7 +39,7 @@ public class TextTag extends TagSupport {
 	 *
 	 */
 	public int doEndTag() throws JspException {
-		String output = "";
+		StringBuffer output = new StringBuffer();
 		String tagId = null;
 		int tagMaxlength = 0;
 		String tagName = null;
@@ -49,33 +49,33 @@ public class TextTag extends TagSupport {
 		// Resin throws ClassCastException with evaluateString for values like "1", so use tmp variable
 		Object tmp = null;
 		try {
-			output += "<input type=\"text\"";
+			output.append("<input type=\"text\"");
 			tmp = ExpressionEvaluationUtils.evaluate("name", this.name, pageContext);
 			if (tmp != null) {
 				tagName = tmp.toString();
 			}
-			output += " name=\"" + tagName + "\"";
+			output.append(" name=\"").append(tagName).append('\"');
 			if (!StringUtils.isBlank(this.id)) {
 				tmp = ExpressionEvaluationUtils.evaluate("id", this.id, pageContext);
 				if (tmp != null) {
 					tagId = tmp.toString();
 				}
-				output += " id=\"" + tagId + "\"";
+				output.append(" id=\"").append(tagId).append('\"');
 			}
 			if (!StringUtils.isBlank(this.maxlength)) {
 				tagMaxlength = ExpressionEvaluationUtils.evaluateInteger("maxlength", this.maxlength, pageContext);
-				output += " maxlength=\"" + tagMaxlength + "\"";
+				output.append(" maxlength=\"").append(tagMaxlength).append('\"');
 			}
 			if (!StringUtils.isBlank(this.size)) {
 				tagSize = ExpressionEvaluationUtils.evaluateInteger("size", this.size, pageContext);
-				output += " size=\"" + tagSize + "\"";
+				output.append(" size=\"").append(tagSize).append('\"');
 			}
 			if (!StringUtils.isBlank(this.style)) {
 				tmp = ExpressionEvaluationUtils.evaluate("style", this.style, pageContext);
 				if (tmp != null) {
 					tagStyle = tmp.toString();
 				}
-				output += " style=\"" + tagStyle + "\"";
+				output.append(" style=\"").append(tagStyle).append('\"');
 			}
 			if (!StringUtils.isBlank(this.value)) {
 				tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
@@ -83,9 +83,9 @@ public class TextTag extends TagSupport {
 					tagValue = tmp.toString();
 				}
 			}
-			output += " value=\"" + tagValue + "\"";
-			output += " />";
-			this.pageContext.getOut().print(output);
+			output.append(" value=\"").append(tagValue).append('\"');
+			output.append(" />");
+			this.pageContext.getOut().print(output.toString());
 		} catch (Exception e) {
 			logger.severe("Failure in checkbox tag for " + this.id + " / " + this.name + " / " + this.style + " / " + this.value, e);
 			throw new JspException(e);

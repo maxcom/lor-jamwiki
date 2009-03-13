@@ -262,19 +262,19 @@ public class JFlexParserUtil {
 		String tagKeyword = tagInfo[0];
 		String attributes = tagInfo[1];
 		String tagClose = tagInfo[3];
-		String result = "<";
+		StringBuffer result = new StringBuffer('<');
 		if (tagOpen.indexOf('/') != -1) {
-			result += "/";
+			result.append('/');
 		}
-		result += tagKeyword;
+		result.append(tagKeyword);
 		if (!StringUtils.isBlank(attributes)) {
-			result += " " + attributes;
+			result.append(' ').append(attributes);
 		}
 		if (tagClose.indexOf('/') != -1) {
 			tagClose = " />";
 		}
-		result += tagClose.trim();
-		return result;
+		result.append(tagClose.trim());
+		return result.toString();
 	}
 
 	/**

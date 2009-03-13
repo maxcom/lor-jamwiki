@@ -51,7 +51,7 @@ public abstract class AbstractButtonTag extends TagSupport {
 	 * Generate the tag HTML output.
 	 */
 	public int doEndTag() throws JspException {
-		String output = "";
+		StringBuffer output = new StringBuffer();
 		String tagChecked = null;
 		String tagId = null;
 		String tagName = null;
@@ -60,36 +60,36 @@ public abstract class AbstractButtonTag extends TagSupport {
 		// Resin throws ClassCastException with evaluateString for values like "1", so use tmp variable
 		Object tmp = null;
 		try {
-			output += "<input type=\""+getButtonType()+"\"";
+			output.append("<input type=\"").append(this.getButtonType()).append('\"');
 			tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
 			if (tmp != null) {
 				tagValue = tmp.toString();
 			}
-			output += " value=\"" + tagValue + "\"";
+			output.append(" value=\"").append(tagValue).append('\"');
 			tmp = ExpressionEvaluationUtils.evaluate("name", this.name, pageContext);
 			if (tmp != null) {
 				tagName = tmp.toString();
 			}
-			output += " name=\"" + tagName + "\"";
+			output.append(" name=\"").append(tagName).append('\"');
 			if (!StringUtils.isBlank(this.id)) {
 				tmp = ExpressionEvaluationUtils.evaluate("id", this.id, pageContext);
 				if (tmp != null) {
 					tagId = tmp.toString();
 				}
-				output += " id=\"" + tagId + "\"";
+				output.append(" id=\"").append(tagId).append('\"');
 			}
 			if (!StringUtils.isBlank(this.style)) {
 				tmp = ExpressionEvaluationUtils.evaluate("style", this.style, pageContext);
 				if (tmp != null) {
 					tagStyle = tmp.toString();
 				}
-				output += " style=\"" + tagStyle + "\"";
+				output.append(" style=\"").append(tagStyle).append('\"');
 			}
 			if (!StringUtils.isBlank(this.onchange)) {
-				output += " onchange=\"" + this.onchange + "\"";
+				output.append(" onchange=\"").append(this.onchange).append('\"');
 			}
 			if (!StringUtils.isBlank(this.onclick)) {
-				output += " onclick=\"" + this.onclick + "\"";
+				output.append(" onclick=\"").append(this.onclick).append('\"');
 			}
 			if (!StringUtils.isBlank(this.checked)) {
 				tmp = ExpressionEvaluationUtils.evaluate("checked", this.checked, pageContext);
@@ -97,11 +97,11 @@ public abstract class AbstractButtonTag extends TagSupport {
 					tagChecked = tmp.toString();
 				}
 				if (tagChecked.equals(tagValue)) {
-					output += " checked=\"checked\"";
+					output.append(" checked=\"checked\"");
 				}
 			}
-			output += " />";
-			this.pageContext.getOut().print(output);
+			output.append(" />");
+			this.pageContext.getOut().print(output.toString());
 		} catch (Exception e) {
 			logger.severe("Failure in "+getButtonType()+" tag for " + this.id + " / " + this.name + " / " + this.style + " / " + this.value, e);
 			throw new JspException(e);

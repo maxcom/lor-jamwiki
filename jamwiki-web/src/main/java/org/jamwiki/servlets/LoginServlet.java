@@ -64,13 +64,13 @@ public class LoginServlet extends JAMWikiServlet {
 			// this should never happen
 			throw new IllegalStateException("Unsupporting encoding UTF-8");
 		}
-		String springSecurityLogoutUrl = request.getContextPath();
-		if (StringUtils.equals(request.getContextPath(), "/")) {
-			springSecurityLogoutUrl = "";
+		StringBuffer springSecurityLogoutUrl = new StringBuffer();
+		if (!StringUtils.equals(request.getContextPath(), "/")) {
+			springSecurityLogoutUrl.append(request.getContextPath());
 		}
-		springSecurityLogoutUrl += JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGOUT_URL;
-		springSecurityLogoutUrl += "?" + JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGOUT_REDIRECT_QUERY_PARAM;
-		springSecurityLogoutUrl += "=" + logoutSuccessUrl;
-		response.sendRedirect(response.encodeRedirectURL(springSecurityLogoutUrl));
+		springSecurityLogoutUrl.append(JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGOUT_URL);
+		springSecurityLogoutUrl.append('?').append(JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGOUT_REDIRECT_QUERY_PARAM);
+		springSecurityLogoutUrl.append('=').append(logoutSuccessUrl);
+		response.sendRedirect(response.encodeRedirectURL(springSecurityLogoutUrl.toString()));
 	}
 }

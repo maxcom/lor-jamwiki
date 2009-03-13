@@ -57,15 +57,15 @@ public class AuthMsgTag extends TagSupport {
 		if (message == null) {
 			return null;
 		}
-		String output = "<div";
+		StringBuffer output = new StringBuffer("<div");
 		Object tmp = ExpressionEvaluationUtils.evaluate("css", this.css, pageContext);
 		if (tmp != null) {
-			output += " class=\"" + tmp.toString() + "\"";
+			output.append(" class=\"").append(tmp.toString()).append("\"");
 		}
-		output += ">";
-		output += message;
-		output += "</div>";
-		return output;
+		output.append(">");
+		output.append(message);
+		output.append("</div>");
+		return output.toString();
 	}
 
 	/**
