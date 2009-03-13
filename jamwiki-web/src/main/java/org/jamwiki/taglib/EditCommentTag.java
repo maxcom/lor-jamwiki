@@ -35,7 +35,7 @@ import org.jamwiki.utils.WikiUtil;
 public class EditCommentTag extends TagSupport {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(EditCommentTag.class.getName());
-	private static final Pattern SECTION_NAME_PATTERN = Pattern.compile("(/\\*([^(/\\*)]+)\\*/)(.*)");
+	private static final Pattern SECTION_NAME_PATTERN = Pattern.compile("(/\\*(.+?)\\*/)(.*)");
 	private static final String CSS_SECTION_COMMENT = "section-link";
 	private String comment = null;
 	private String topic = null;
