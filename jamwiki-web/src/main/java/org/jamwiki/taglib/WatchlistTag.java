@@ -23,7 +23,6 @@ import org.jamwiki.model.Watchlist;
 import org.jamwiki.servlets.ServletUtil;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
  * JSP tag used to highlight the tag content if the specified topic is in the
@@ -39,11 +38,10 @@ public class WatchlistTag extends BodyTagSupport {
 	 */
 	public int doStartTag() throws JspException {
 		try {
-			String tagValue = evaluateTag();
 			HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 			String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
 			Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
-			if (watchlist.containsTopic(tagValue)) {
+			if (watchlist.containsTopic(this.topic)) {
 				this.pageContext.getOut().print("<strong>");
 			}
 		} catch (Exception e) {
@@ -58,11 +56,10 @@ public class WatchlistTag extends BodyTagSupport {
 	 */
 	public int doEndTag() throws JspException {
 		try {
-			String tagValue = evaluateTag();
 			HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 			String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
 			Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
-			if (watchlist.containsTopic(tagValue)) {
+			if (watchlist.containsTopic(this.topic)) {
 				this.pageContext.getOut().print("</strong>");
 			}
 		} catch (Exception e) {
@@ -70,24 +67,6 @@ public class WatchlistTag extends BodyTagSupport {
 			throw new JspException(e);
 		}
 		return EVAL_PAGE;
-	}
-
-	/**
-	 *
-	 */
-	private String evaluateTag() throws JspException {
-		String tagValue = null;
-		try {
-			// Resin 3.0, 3.1 throws ClassCastException with evaluateString for values like "1".
-			Object tmp = ExpressionEvaluationUtils.evaluate("topic", this.topic, pageContext);
-			if (tmp != null) {
-				tagValue = tmp.toString();
-			}
-		} catch (JspException e) {
-			logger.severe("Failure in watchlist tag for " + this.topic, e);
-			throw e;
-		}
-		return tagValue;
 	}
 
 	/**

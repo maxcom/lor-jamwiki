@@ -25,7 +25,6 @@ import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
  * JSP tag used to generate a pagination object.
@@ -41,17 +40,8 @@ public class PaginationTag extends BodyTagSupport {
 	 *
 	 */
 	public int doEndTag() throws JspException {
-		String baseUrl = null;
-		int count = 0;
-		// Resin throws ClassCastException with evaluateString for values like "1", so use tmp variable
-		Object tmp = null;
 		try {
-			tmp = ExpressionEvaluationUtils.evaluate("rootUrl", this.rootUrl, pageContext);
-			if (tmp != null) {
-				baseUrl = tmp.toString();
-			}
-			count = ExpressionEvaluationUtils.evaluateInteger("total", this.total, pageContext);
-			this.pageContext.getOut().print(pagination(baseUrl, count));
+			this.pageContext.getOut().print(pagination(this.rootUrl, Integer.valueOf(this.total)));
 		} catch (Exception e) {
 			logger.severe("Failure while building pagination object", e);
 			throw new JspException(e);

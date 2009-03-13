@@ -20,7 +20,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
  * Utility tag for alternating between two values.  This tag takes as
@@ -41,37 +40,20 @@ public class AlternateTag extends TagSupport {
 	 */
 	public int doEndTag() throws JspException {
 		String tagAttributeName = "default";
-		String tagValue1 = null;
-		String tagValue2 = null;
-		// Resin throws ClassCastException with evaluateString for values like "1", so use tmp variable
-		Object tmp = null;
 		try {
-			tmp = ExpressionEvaluationUtils.evaluate("value1", this.value1, pageContext);
-			if (tmp == null) {
-				throw new IllegalArgumentException("value1 '" + ((this.value1 == null) ? "null" : this.value1) + "' evaluated to null in AlternateTag");
-			}
-			tagValue1 = tmp.toString();
-			tmp = ExpressionEvaluationUtils.evaluate("value2", this.value2, pageContext);
-			if (tmp == null) {
-				throw new IllegalArgumentException("value2 '" + ((this.value2 == null) ? "null" : this.value2) + "' evaluated to null in AlternateTag");
-			}
-			tagValue2 = tmp.toString();
 			if (!StringUtils.isBlank(this.attributeName)) {
-				tmp = ExpressionEvaluationUtils.evaluate("attributeName", this.attributeName, pageContext);
-				if (tmp != null) {
-					tagAttributeName = tmp.toString();
-				}
+				tagAttributeName = this.attributeName;
 			}
 			tagAttributeName = ATTRIBUTE_ROOT_NAME + "." + tagAttributeName;
 			// check the request for a value.
 			String previousValue = (String)this.pageContext.getRequest().getAttribute(tagAttributeName);
 			String output = "";
-			if (previousValue == null || previousValue.equals(tagValue2)) {
-				output = tagValue1;
-				this.pageContext.getRequest().setAttribute(tagAttributeName, tagValue1);
+			if (previousValue == null || previousValue.equals(this.value2)) {
+				output = this.value1;
+				this.pageContext.getRequest().setAttribute(tagAttributeName, this.value1);
 			} else {
-				output = tagValue2;
-				this.pageContext.getRequest().setAttribute(tagAttributeName, tagValue2);
+				output = this.value2;
+				this.pageContext.getRequest().setAttribute(tagAttributeName, this.value2);
 			}
 			this.pageContext.getOut().print(output);
 		} catch (Exception e) {

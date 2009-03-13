@@ -20,7 +20,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
  * This abstract class implements functionality for both the "radio" tag and
@@ -52,38 +51,15 @@ public abstract class AbstractButtonTag extends TagSupport {
 	 */
 	public int doEndTag() throws JspException {
 		StringBuffer output = new StringBuffer();
-		String tagChecked = null;
-		String tagId = null;
-		String tagName = null;
-		String tagStyle = null;
-		String tagValue = null;
-		// Resin throws ClassCastException with evaluateString for values like "1", so use tmp variable
-		Object tmp = null;
 		try {
 			output.append("<input type=\"").append(this.getButtonType()).append('\"');
-			tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
-			if (tmp != null) {
-				tagValue = tmp.toString();
-			}
-			output.append(" value=\"").append(tagValue).append('\"');
-			tmp = ExpressionEvaluationUtils.evaluate("name", this.name, pageContext);
-			if (tmp != null) {
-				tagName = tmp.toString();
-			}
-			output.append(" name=\"").append(tagName).append('\"');
+			output.append(" value=\"").append(this.value).append('\"');
+			output.append(" name=\"").append(this.name).append('\"');
 			if (!StringUtils.isBlank(this.id)) {
-				tmp = ExpressionEvaluationUtils.evaluate("id", this.id, pageContext);
-				if (tmp != null) {
-					tagId = tmp.toString();
-				}
-				output.append(" id=\"").append(tagId).append('\"');
+				output.append(" id=\"").append(this.id).append('\"');
 			}
 			if (!StringUtils.isBlank(this.style)) {
-				tmp = ExpressionEvaluationUtils.evaluate("style", this.style, pageContext);
-				if (tmp != null) {
-					tagStyle = tmp.toString();
-				}
-				output.append(" style=\"").append(tagStyle).append('\"');
+				output.append(" style=\"").append(this.style).append('\"');
 			}
 			if (!StringUtils.isBlank(this.onchange)) {
 				output.append(" onchange=\"").append(this.onchange).append('\"');
@@ -91,19 +67,13 @@ public abstract class AbstractButtonTag extends TagSupport {
 			if (!StringUtils.isBlank(this.onclick)) {
 				output.append(" onclick=\"").append(this.onclick).append('\"');
 			}
-			if (!StringUtils.isBlank(this.checked)) {
-				tmp = ExpressionEvaluationUtils.evaluate("checked", this.checked, pageContext);
-				if (tmp != null) {
-					tagChecked = tmp.toString();
-				}
-				if (tagChecked.equals(tagValue)) {
-					output.append(" checked=\"checked\"");
-				}
+			if (!StringUtils.isBlank(this.checked) && this.checked.equals(this.value)) {
+				output.append(" checked=\"checked\"");
 			}
 			output.append(" />");
 			this.pageContext.getOut().print(output.toString());
 		} catch (Exception e) {
-			logger.severe("Failure in "+getButtonType()+" tag for " + this.id + " / " + this.name + " / " + this.style + " / " + this.value, e);
+			logger.severe("Failure in " + getButtonType() + " tag for " + this.id + " / " + this.name + " / " + this.style + " / " + this.value, e);
 			throw new JspException(e);
 		}
 		return EVAL_PAGE;

@@ -24,7 +24,6 @@ import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
  * JSP tag that creates an HTML link to a Wiki topic, generating the servlet
@@ -44,26 +43,11 @@ public class LinkTag extends BodyTagSupport {
 	 *
 	 */
 	public int doEndTag() throws JspException {
-		String tagValue = null;
 		String tagTarget = null;
-		// Resin 3.0, 3.1 throws ClassCastException with evaluateString for values like "1", so use tmp variable
-		Object tmp = null;
-		try {
-			tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
-			if (tmp != null) {
-				tagValue = tmp.toString();
-			}
-			if (!StringUtils.isBlank(this.target)) {
-				tmp = ExpressionEvaluationUtils.evaluate("target", this.target, pageContext);
-				if (tmp != null) {
-					tagTarget = tmp.toString();
-				}
-			}
-		} catch (JspException e) {
-			logger.severe("Failure in link tag for " + this.value + " / " + this.text, e);
-			throw e;
+		if (!StringUtils.isBlank(this.target)) {
+			tagTarget = this.target;
 		}
-		WikiLink wikiLink = LinkUtil.parseWikiLink(tagValue);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(this.value);
 		String tagText = buildLinkText();
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		String url = null;
@@ -114,10 +98,7 @@ public class LinkTag extends BodyTagSupport {
 			throw new JspException("Attribute 'text' and body content may not both be specified for link tag");
 		}
 		if (!StringUtils.isBlank(this.text)) {
-			tmp = ExpressionEvaluationUtils.evaluate("text", this.text, pageContext);
-			if (tmp != null) {
-				tagText = tmp.toString();
-			}
+			tagText = this.text;
 		} else if (!StringUtils.isBlank(body)) {
 			tagText = body;
 		}

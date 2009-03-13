@@ -20,7 +20,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
  * Utility tag for creating HTML text inputs.
@@ -40,49 +39,22 @@ public class TextTag extends TagSupport {
 	 */
 	public int doEndTag() throws JspException {
 		StringBuffer output = new StringBuffer();
-		String tagId = null;
-		int tagMaxlength = 0;
-		String tagName = null;
-		int tagSize = 0;
-		String tagStyle = null;
-		String tagValue = "";
-		// Resin throws ClassCastException with evaluateString for values like "1", so use tmp variable
-		Object tmp = null;
 		try {
 			output.append("<input type=\"text\"");
-			tmp = ExpressionEvaluationUtils.evaluate("name", this.name, pageContext);
-			if (tmp != null) {
-				tagName = tmp.toString();
-			}
-			output.append(" name=\"").append(tagName).append('\"');
+			output.append(" name=\"").append(this.name).append('\"');
 			if (!StringUtils.isBlank(this.id)) {
-				tmp = ExpressionEvaluationUtils.evaluate("id", this.id, pageContext);
-				if (tmp != null) {
-					tagId = tmp.toString();
-				}
-				output.append(" id=\"").append(tagId).append('\"');
+				output.append(" id=\"").append(this.id).append('\"');
 			}
 			if (!StringUtils.isBlank(this.maxlength)) {
-				tagMaxlength = ExpressionEvaluationUtils.evaluateInteger("maxlength", this.maxlength, pageContext);
-				output.append(" maxlength=\"").append(tagMaxlength).append('\"');
+				output.append(" maxlength=\"").append(this.maxlength).append('\"');
 			}
 			if (!StringUtils.isBlank(this.size)) {
-				tagSize = ExpressionEvaluationUtils.evaluateInteger("size", this.size, pageContext);
-				output.append(" size=\"").append(tagSize).append('\"');
+				output.append(" size=\"").append(this.size).append('\"');
 			}
 			if (!StringUtils.isBlank(this.style)) {
-				tmp = ExpressionEvaluationUtils.evaluate("style", this.style, pageContext);
-				if (tmp != null) {
-					tagStyle = tmp.toString();
-				}
-				output.append(" style=\"").append(tagStyle).append('\"');
+				output.append(" style=\"").append(this.style).append('\"');
 			}
-			if (!StringUtils.isBlank(this.value)) {
-				tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
-				if (tmp != null) {
-					tagValue = tmp.toString();
-				}
-			}
+			String tagValue = (StringUtils.isBlank(this.value) ? "" : this.value);
 			output.append(" value=\"").append(tagValue).append('\"');
 			output.append(" />");
 			this.pageContext.getOut().print(output.toString());

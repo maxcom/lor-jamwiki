@@ -19,12 +19,12 @@ package org.jamwiki.taglib;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.JAMWikiAuthenticationConstants;
 import org.jamwiki.servlets.ServletUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
  * Utility tag for creating HTML checkboxes.
@@ -58,9 +58,8 @@ public class AuthMsgTag extends TagSupport {
 			return null;
 		}
 		StringBuffer output = new StringBuffer("<div");
-		Object tmp = ExpressionEvaluationUtils.evaluate("css", this.css, pageContext);
-		if (tmp != null) {
-			output.append(" class=\"").append(tmp.toString()).append("\"");
+		if (!StringUtils.isBlank(this.css)) {
+			output.append(" class=\"").append(this.css).append("\"");
 		}
 		output.append(">");
 		output.append(message);

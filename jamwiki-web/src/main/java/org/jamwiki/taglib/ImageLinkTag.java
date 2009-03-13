@@ -22,7 +22,6 @@ import javax.servlet.jsp.tagext.TagSupport;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
  * JSP tag used to build an HTML image link for a specified topic that
@@ -39,32 +38,15 @@ public class ImageLinkTag extends TagSupport {
 	 *
 	 */
 	public int doEndTag() throws JspException {
-		String linkValue = null;
-		// Resin throws ClassCastException with evaluateString for values like "1", so use tmp variable
-		Object tmp = null;
-		try {
-			tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
-			if (tmp != null) {
-				linkValue = tmp.toString();
-			}
-		} catch (JspException e) {
-			logger.severe("Image link tag evaluated empty for value " + this.value, e);
-			throw e;
-		}
 		int linkDimension = -1;
 		if (this.maxDimension != null) {
-			try {
-				linkDimension = ExpressionEvaluationUtils.evaluateInteger("maxDimension", this.maxDimension, pageContext);
-			} catch (JspException e) {
-				logger.severe("Image link tag evaluated empty for maxDimension " + this.maxDimension, e);
-				throw e;
-			}
+			linkDimension = Integer.valueOf(this.maxDimension);
 		}
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		String virtualWiki = retrieveVirtualWiki(request);
 		String html = null;
 		try {
-			html = LinkUtil.buildImageLinkHtml(request.getContextPath(), virtualWiki, linkValue, false, false, null, null, linkDimension, true, this.style, true);
+			html = LinkUtil.buildImageLinkHtml(request.getContextPath(), virtualWiki, this.value, false, false, null, null, linkDimension, true, this.style, true);
 			if (html != null) {
 				this.pageContext.getOut().print(html);
 			}
