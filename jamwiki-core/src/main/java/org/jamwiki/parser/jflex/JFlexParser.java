@@ -182,7 +182,7 @@ public class JFlexParser extends AbstractParser {
 	 * This method provides a way to parse content and set all output metadata,
 	 * such as link values used by the search engine.
 	 *
-	 * @return A ParserOutput object containing results of the parsing process.
+	 * @param parserOutput A ParserOutput object containing results of the parsing process.
 	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 */
 	public void parseMetadata(ParserOutput parserOutput, String raw) throws Exception {
