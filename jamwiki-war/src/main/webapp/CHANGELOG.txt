@@ -29,6 +29,10 @@ Bugfixes:
     automatically encrypt it to allow for changing database passwords, etc.
     Reported by rebecca and an anonymous user.
 
+Translation Updates:
+
+  * Updated German translations (axelclk).
+
 
 0.7.1
 =====
