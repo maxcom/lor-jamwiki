@@ -25,6 +25,9 @@ Bugfixes:
   * Update Spring Security configuration to remove reliance on the deprecated
     FilterInvocationDefinitionSourceEditor class.
   * Fix the Bliki local Maven repository metadata to resolve build warnings.
+  * When a password or other value is found un-encrypted in a properties file
+    automatically encrypt it to allow for changing database passwords, etc.
+    Reported by rebecca and an anonymous user.
 
 
 0.7.1
