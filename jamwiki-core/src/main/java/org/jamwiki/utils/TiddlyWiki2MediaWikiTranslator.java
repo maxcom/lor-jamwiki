@@ -47,7 +47,7 @@ public class TiddlyWiki2MediaWikiTranslator {
 		String line = reader.readLine();
 		while (line != null) {
 			if (inTable) {
-				if (line.startsWith("|")) {
+				if (line.charAt(0) == '|') {
 					output.append("|-"); //new row
 					output.append(newline);
 					output.append(translateTableLine(line));
@@ -58,7 +58,7 @@ public class TiddlyWiki2MediaWikiTranslator {
 					inTable = false;
 				}
 			} else {
-				if (line.startsWith("|")) {
+				if (line.charAt(0) == '|') {
 					output.append("{|");
 					output.append(newline);
 					inTable = true;
@@ -88,11 +88,11 @@ public class TiddlyWiki2MediaWikiTranslator {
 			if (i > 0) {
 				output.append("||");
 			}
-			if (token.startsWith("!")) { //headers bold
+			if (token.charAt(0) == '!') { //headers bold
 				output.append("'''");
 			}
 			output.append(token);
-			if (token.startsWith("!")) {
+			if (token.charAt(0) == '!') {
 				output.append("'''");
 			}
 		}

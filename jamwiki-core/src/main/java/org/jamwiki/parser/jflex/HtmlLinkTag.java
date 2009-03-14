@@ -174,7 +174,7 @@ public class HtmlLinkTag {
 			return raw;
 		}
 		try {
-			if (raw.startsWith("[") && raw.endsWith("]")) {
+			if (raw.charAt(0) == '[' && raw.endsWith("]")) {
 				return this.buildHtmlLink(parserInput, mode, raw);
 			}
 			return this.buildHtmlLinkRaw(parserInput, mode, raw);

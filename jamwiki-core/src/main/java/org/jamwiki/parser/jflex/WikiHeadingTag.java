@@ -75,7 +75,7 @@ public class WikiHeadingTag {
 				level = 3;
 			} else if (raw.startsWith("==") && raw.endsWith("==")) {
 				level = 2;
-			} else if (raw.startsWith("=") && raw.endsWith("=")) {
+			} else if (raw.charAt(0) == '=' && raw.endsWith("=")) {
 				level = 1;
 			} else {
 				return raw;

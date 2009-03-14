@@ -147,7 +147,7 @@ public class DiffUtil {
 		} else {
 			result.append(newVersion.substring(0, 10)).append(newVersion.hashCode());
 		}
-		result.append("-");
+		result.append('-');
 		if (oldVersion == null) {
 			result.append(-1);
 		} else if (oldVersion.length() <= 10) {
@@ -185,7 +185,6 @@ public class DiffUtil {
 				newLineArray = DiffUtil.stringToArray(changedLineWikiDiff.getNewText());
 				changedLineDiffs = new Diff(oldLineArray, newLineArray).diff();
 				wikiSubDiffs = new ArrayList<WikiDiff>();
-				nextLineDiff = null;
 				int j = 0;
 				for (Difference changedLineDiff : changedLineDiffs) {
 					// build sub-diff list, which is the difference for the individual

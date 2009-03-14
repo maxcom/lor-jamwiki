@@ -57,7 +57,7 @@ public class LinkUtil {
 	public static String appendQueryParam(String query, String param, String value) {
 		String url = "";
 		if (!StringUtils.isBlank(query)) {
-			if (!query.startsWith("?")) {
+			if (query.charAt(0) != '?') {
 				query = "?" + query;
 			}
 			url = query + "&amp;";
@@ -214,7 +214,7 @@ public class LinkUtil {
 		}
 		html.append("<img class=\"").append(style).append("\" src=\"");
 		html.append(url);
-		html.append("\"");
+		html.append('\"');
 		html.append(" width=\"").append(wikiImage.getWidth()).append('\"');
 		html.append(" height=\"").append(wikiImage.getHeight()).append('\"');
 		html.append(" alt=\"").append(StringEscapeUtils.escapeHtml(caption)).append('\"');
@@ -379,13 +379,13 @@ public class LinkUtil {
 		url.append('/');
 		url.append(Utilities.encodeAndEscapeTopicName(topicName));
 		if (!StringUtils.isBlank(queryString)) {
-			if (!queryString.startsWith("?")) {
+			if (queryString.charAt(0) != '?') {
 				url.append('?');
 			}
 			url.append(queryString);
 		}
 		if (!StringUtils.isBlank(section)) {
-			if (!section.startsWith("#")) {
+			if (section.charAt(0) != '#') {
 				url.append('#');
 			}
 			url.append(Utilities.encodeAndEscapeTopicName(section));

@@ -59,9 +59,9 @@ public class AuthMsgTag extends TagSupport {
 		}
 		StringBuffer output = new StringBuffer("<div");
 		if (!StringUtils.isBlank(this.css)) {
-			output.append(" class=\"").append(this.css).append("\"");
+			output.append(" class=\"").append(this.css).append('\"');
 		}
-		output.append(">");
+		output.append('>');
 		output.append(message);
 		output.append("</div>");
 		return output.toString();

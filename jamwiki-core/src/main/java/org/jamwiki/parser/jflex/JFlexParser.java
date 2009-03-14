@@ -250,7 +250,7 @@ public class JFlexParser extends AbstractParser {
 		// if the topic is a redirect store the redirect target
 		String redirect = this.isRedirect(parserInput, raw, mode);
 		if (!StringUtils.isBlank(redirect)) {
-			boolean colon = (redirect.length() > 1 && redirect.startsWith(":"));
+			boolean colon = (redirect.length() > 1 && redirect.charAt(0) == ':');
 			if (colon) {
 				redirect = redirect.substring(1);
 			}
