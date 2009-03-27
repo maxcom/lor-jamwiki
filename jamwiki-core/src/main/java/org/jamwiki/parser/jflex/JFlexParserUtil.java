@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
+import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.LinkUtil;
@@ -32,41 +33,24 @@ import org.jamwiki.utils.WikiLogger;
 public class JFlexParserUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexParserUtil.class.getName());
-	private static Pattern EMPTY_BODY_TAG_PATTERN = null;
-	private static Pattern JAVASCRIPT_PATTERN1 = null;
-	private static Pattern JAVASCRIPT_PATTERN2 = null;
-	private static Pattern NON_NESTING_TAG_PATTERN = null;
-	private static Pattern NON_TEXT_BODY_TAG_PATTERN = null;
-	private static Pattern NON_INLINE_TAG_PATTERN = null;
-	private static Pattern NON_INLINE_TAG_START_PATTERN = null;
-	private static Pattern NON_INLINE_TAG_END_PATTERN = null;
-	private static Pattern TAG_PATTERN = null;
-	private static Pattern WIKI_LINK_PATTERN = null;
 	private static final String emptyBodyTagPattern = "(br|div|hr|td|th)";
 	private static final String nonNestingTagPattern = "(dd|dl|dt|hr|li|ol|table|tbody|td|tfoot|th|thead|tr|ul)";
 	private static final String nonTextBodyTagPattern = "(dl|ol|table|tr|ul)";
 	private static final String nonInlineTagPattern = "(caption|dd|div|dl|dt|hr|li|ol|p|table|td|th|tr|ul)";
 	private static final String nonInlineTagStartPattern = "<" + nonInlineTagPattern + ">.*";
 	private static final String nonInlineTagEndPattern = ".*</" + nonInlineTagPattern + ">";
-
-	static {
-		try {
-			EMPTY_BODY_TAG_PATTERN = Pattern.compile(emptyBodyTagPattern, Pattern.CASE_INSENSITIVE);
-			// catch script insertions of the form "onsubmit="
-			JAVASCRIPT_PATTERN1 = Pattern.compile("( on[^=]{3,}=)+", Pattern.CASE_INSENSITIVE);
-			// catch script insertions that use a javascript url
-			JAVASCRIPT_PATTERN2 = Pattern.compile("(javascript[ ]*\\:)+", Pattern.CASE_INSENSITIVE);
-			NON_NESTING_TAG_PATTERN = Pattern.compile(nonNestingTagPattern, Pattern.CASE_INSENSITIVE);
-			NON_TEXT_BODY_TAG_PATTERN = Pattern.compile(nonTextBodyTagPattern, Pattern.CASE_INSENSITIVE);
-			NON_INLINE_TAG_PATTERN = Pattern.compile(nonInlineTagPattern, Pattern.CASE_INSENSITIVE);
-			NON_INLINE_TAG_START_PATTERN = Pattern.compile(nonInlineTagStartPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-			NON_INLINE_TAG_END_PATTERN = Pattern.compile(nonInlineTagEndPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-			TAG_PATTERN = Pattern.compile("(<[ ]*[/]?[ ]*)([^\\ />]+)([ ]*(.*?))([/]?[ ]*>)");
-			WIKI_LINK_PATTERN = Pattern.compile("\\[\\[[ ]*(\\:[ ]*)?[ ]*([^\\n\\r\\|]+)([ ]*\\|[ ]*([^\\n\\r]+))?[ ]*\\]\\]([a-z]*)");
-		} catch (Exception e) {
-			logger.severe("Unable to compile pattern", e);
-		}
-	}
+	private static final Pattern EMPTY_BODY_TAG_PATTERN = Pattern.compile(emptyBodyTagPattern, Pattern.CASE_INSENSITIVE);
+	/** Pattern to catch script insertions of the form "onsubmit=". */
+	private static final Pattern JAVASCRIPT_PATTERN1 = Pattern.compile("( on[^=]{3,}=)+", Pattern.CASE_INSENSITIVE);
+	/** Pattern to catch script insertions that use a javascript url. */
+	private static final Pattern JAVASCRIPT_PATTERN2 = Pattern.compile("(javascript[ ]*\\:)+", Pattern.CASE_INSENSITIVE);
+	private static final Pattern NON_NESTING_TAG_PATTERN = Pattern.compile(nonNestingTagPattern, Pattern.CASE_INSENSITIVE);
+	private static final Pattern NON_TEXT_BODY_TAG_PATTERN = Pattern.compile(nonTextBodyTagPattern, Pattern.CASE_INSENSITIVE);
+	private static final Pattern NON_INLINE_TAG_PATTERN = Pattern.compile(nonInlineTagPattern, Pattern.CASE_INSENSITIVE);
+	private static final Pattern NON_INLINE_TAG_START_PATTERN = Pattern.compile(nonInlineTagStartPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+	private static final Pattern NON_INLINE_TAG_END_PATTERN = Pattern.compile(nonInlineTagEndPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+	private static final Pattern TAG_PATTERN = Pattern.compile("(<[ ]*[/]?[ ]*)([^\\ />]+)([ ]*(.*?))([/]?[ ]*>)");
+	private static final Pattern WIKI_LINK_PATTERN = Pattern.compile("\\[\\[[ ]*(\\:[ ]*)?[ ]*([^\\n\\r\\|]+)([ ]*\\|[ ]*([^\\n\\r]+))?[ ]*\\]\\]([a-z]*)");
 
 	/**
 	 *
@@ -148,7 +132,7 @@ public class JFlexParserUtil {
 	 * as an image caption.  This method should be used sparingly since it is
 	 * not very efficient.
 	 */
-	protected static String parseFragment(ParserInput parserInput, String raw, int mode) throws Exception {
+	protected static String parseFragment(ParserInput parserInput, String raw, int mode) throws ParserException {
 		if (StringUtils.isBlank(raw)) {
 			return raw;
 		}

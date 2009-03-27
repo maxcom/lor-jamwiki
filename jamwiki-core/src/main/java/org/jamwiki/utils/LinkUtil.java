@@ -16,9 +16,11 @@
  */
 package org.jamwiki.utils;
 
+import java.io.IOException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
@@ -90,9 +92,9 @@ public class LinkUtil {
 	 * @return A url that links to the edit page for the specified topic.
 	 *  Note that this method returns only the URL, not a fully-formed HTML
 	 *  anchor tag.
-	 * @throws Exception Thrown if any error occurs while builing the link URL.
+	 * @throws DataAccessException Thrown if any error occurs while builing the link URL.
 	 */
-	public static String buildEditLinkUrl(String context, String virtualWiki, String topic, String query, int section) throws Exception {
+	public static String buildEditLinkUrl(String context, String virtualWiki, String topic, String query, int section) throws DataAccessException {
 		query = LinkUtil.appendQueryParam(query, "topic", topic);
 		if (section > 0) {
 			query += "&amp;section=" + section;
@@ -114,9 +116,9 @@ public class LinkUtil {
 	 * @param topicName The name of the image for which a link is being created.
 	 * @return The URL to an image file (not the image topic) or <code>null</code>
 	 *  if the file does not exist.
-	 * @throws Exception Thrown if any error occurs while builing the image URL.
+	 * @throws DataAccessException Thrown if any error occurs while retrieving file info.
 	 */
-	public static String buildImageFileUrl(String context, String virtualWiki, String topicName) throws Exception {
+	public static String buildImageFileUrl(String context, String virtualWiki, String topicName) throws DataAccessException {
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
 		if (wikiFile == null) {
 			return null;
@@ -156,10 +158,11 @@ public class LinkUtil {
 	 *  malicious HTML code.
 	 * @return The full HTML required to display an image enclosed within an
 	 *  HTML anchor tag that links to the image topic page.
-	 * @throws Exception Thrown if any error occurs while builing the image
-	 *  HTML.
+	 * @throws DataAccessException Thrown if any error occurs while retrieving image
+	 *  information.
+	 * @throws IOException Thrown if any error occurs while reading image information.
 	 */
-	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, int maxDimension, boolean suppressLink, String style, boolean escapeHtml) throws Exception {
+	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, int maxDimension, boolean suppressLink, String style, boolean escapeHtml) throws DataAccessException, IOException {
 		String url = LinkUtil.buildImageFileUrl(context, virtualWiki, topicName);
 		if (url == null) {
 			WikiLink uploadLink = LinkUtil.parseWikiLink("Special:Upload");
@@ -257,10 +260,10 @@ public class LinkUtil {
 	 *  where the caption is not guaranteed to be free from potentially
 	 *  malicious HTML code.
 	 * @return An HTML anchor link that matches the given input parameters.
-	 * @throws Exception Thrown if any error occurs while builing the link
-	 *  HTML.
+	 * @throws DataAccessException Thrown if any error occurs while retrieving
+	 *  topic information.
 	 */
-	public static String buildInternalLinkHtml(String context, String virtualWiki, WikiLink wikiLink, String text, String style, String target, boolean escapeHtml) throws Exception {
+	public static String buildInternalLinkHtml(String context, String virtualWiki, WikiLink wikiLink, String text, String style, String target, boolean escapeHtml) throws DataAccessException {
 		String url = LinkUtil.buildTopicUrl(context, virtualWiki, wikiLink);
 		String topic = wikiLink.getDestination();
 		if (StringUtils.isBlank(text)) {
@@ -309,9 +312,10 @@ public class LinkUtil {
 	 * @param validateTopic Set to <code>true</code> if the topic must exist and
 	 *  must not be a "Special:" page.  If the topic does not exist then a link to
 	 *  an edit page will be returned.
-	 * @throws Exception Thrown if any error occurs while builing the link URL.
+	 * @throws DataAccessException Thrown if any error occurs while retrieving topic
+	 *  information.
 	 */
-	public static String buildTopicUrl(String context, String virtualWiki, String topic, boolean validateTopic) throws Exception {
+	public static String buildTopicUrl(String context, String virtualWiki, String topic, boolean validateTopic) throws DataAccessException {
 		if (StringUtils.isBlank(topic)) {
 			return null;
 		}
@@ -332,9 +336,10 @@ public class LinkUtil {
 	 * @param virtualWiki The virtual wiki for the link that is being created.
 	 * @param wikiLink The WikiLink object containing all relevant information
 	 *  about the link being generated.
-	 * @throws Exception Thrown if any error occurs while builing the link URL.
+	 * @throws DataAccessException Thrown if any error occurs while retrieving topic
+	 *  information.
 	 */
-	public static String buildTopicUrl(String context, String virtualWiki, WikiLink wikiLink) throws Exception {
+	public static String buildTopicUrl(String context, String virtualWiki, WikiLink wikiLink) throws DataAccessException {
 		String topic = wikiLink.getDestination();
 		String section = wikiLink.getSection();
 		String query = wikiLink.getQuery();
@@ -364,7 +369,7 @@ public class LinkUtil {
 	 * @param queryString Query string parameters to append to the link.
 	 * @throws Exception Thrown if any error occurs while builing the link URL.
 	 */
-	private static String buildTopicUrlNoEdit(String context, String virtualWiki, String topicName, String section, String queryString) throws Exception {
+	private static String buildTopicUrlNoEdit(String context, String virtualWiki, String topicName, String section, String queryString) {
 		if (StringUtils.isBlank(topicName) && !StringUtils.isBlank(section)) {
 			return "#" + Utilities.encodeAndEscapeTopicName(section);
 		}
@@ -421,9 +426,9 @@ public class LinkUtil {
 	 * @param articleName The name of the article that is being checked.
 	 * @return <code>true</code> if there is an article that exists for the given
 	 *  name and virtual wiki.
-	 * @throws Exception Thrown if any error occurs during lookup.
+	 * @throws DataAccessException Thrown if an error occurs during lookup.
 	 */
-	public static boolean isExistingArticle(String virtualWiki, String articleName) throws Exception {
+	public static boolean isExistingArticle(String virtualWiki, String articleName) throws DataAccessException {
 		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(articleName)) {
 			return false;
 		}
@@ -437,8 +442,7 @@ public class LinkUtil {
 			// not initialized yet
 			return false;
 		}
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, articleName, false, null);
-		return (topic != null);
+		return (WikiBase.getDataHandler().lookupTopic(virtualWiki, articleName, false, null) != null);
 	}
 
 	/**

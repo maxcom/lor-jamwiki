@@ -1,6 +1,7 @@
 package org.jamwiki.parser.bliki;
 
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.jflex.JFlexParser;
@@ -22,10 +23,10 @@ public class BlikiParser extends JFlexParser {
 	 * @param raw
 	 *          The raw Wiki syntax to be converted into HTML.
 	 * @return The parsed content.
-	 * @throws Exception
+	 * @throws ParserException
 	 *           Thrown if any error occurs during parsing.
 	 */
-	public String parseMinimal(String raw) throws Exception {
+	public String parseMinimal(String raw) throws ParserException {
 		long start = System.currentTimeMillis();
 		String output = raw;
 		ParserOutput parserOutput = new ParserOutput();
@@ -46,10 +47,10 @@ public class BlikiParser extends JFlexParser {
 	 * @param raw
 	 *          The raw Wiki syntax to be converted into HTML.
 	 * @return The parsed content.
-	 * @throws Exception
+	 * @throws ParserException
 	 *           Thrown if any error occurs during parsing.
 	 */
-	public String parseHTML(ParserOutput parserOutput, String raw) throws Exception {
+	public String parseHTML(ParserOutput parserOutput, String raw) throws ParserException {
 		long start = System.currentTimeMillis();
 		String output = null;
 		if (!StringUtils.isBlank(this.isRedirect(parserInput, raw, JFlexParser.MODE_LAYOUT))) {

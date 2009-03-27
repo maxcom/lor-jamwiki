@@ -17,6 +17,7 @@
 package org.jamwiki.db;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,9 +33,11 @@ import java.util.Map;
 import java.util.Properties;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.DataHandler;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
@@ -426,13 +429,13 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	protected static QueryHandler queryHandler() throws Exception {
+	protected static QueryHandler queryHandler() throws DataAccessException {
 		// FIXME - this is ugly
 		if (WikiBase.getDataHandler() instanceof AnsiDataHandler) {
 			AnsiDataHandler dataHandler = (AnsiDataHandler)WikiBase.getDataHandler();
 			return dataHandler.queryHandler();
 		}
-		throw new Exception("Unable to determine query handler");
+		throw new DataAccessException("Unable to determine query handler");
 	}
 
 	/**
@@ -476,9 +479,10 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	protected static void setup(Locale locale, WikiUser user, String username, String encryptedPassword) throws Exception {
-		TransactionStatus status = DatabaseConnection.startTransaction();
+	protected static void setup(Locale locale, WikiUser user, String username, String encryptedPassword) throws DataAccessException, WikiException {
+		TransactionStatus status = null;
 		try {
+			status = DatabaseConnection.startTransaction();
 			Connection conn = DatabaseConnection.getConnection();
 			// set up tables
 			WikiDatabase.queryHandler().createTables(conn);
@@ -487,7 +491,16 @@ public class WikiDatabase {
 			WikiDatabase.setupGroups();
 			WikiDatabase.setupAdminUser(user, username, encryptedPassword);
 			WikiDatabase.setupSpecialPages(locale, user);
-		} catch (Exception e) {
+		} catch (SQLException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			logger.severe("Unable to set up database tables", e);
+			// clean up anything that might have been created
+			try {
+				Connection conn = DatabaseConnection.getConnection();
+				WikiDatabase.queryHandler().dropTables(conn);
+			} catch (Exception e2) {}
+			throw new DataAccessException(e);
+		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			logger.severe("Unable to set up database tables", e);
 			// clean up anything that might have been created
@@ -496,9 +509,15 @@ public class WikiDatabase {
 				WikiDatabase.queryHandler().dropTables(conn);
 			} catch (Exception e2) {}
 			throw e;
-		} catch (Error err) {
-			DatabaseConnection.rollbackOnException(status, err);
-			throw err;
+		} catch (WikiException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			logger.severe("Unable to set up database tables", e);
+			// clean up anything that might have been created
+			try {
+				Connection conn = DatabaseConnection.getConnection();
+				WikiDatabase.queryHandler().dropTables(conn);
+			} catch (Exception e2) {}
+			throw e;
 		}
 		DatabaseConnection.commit(status);
 	}
@@ -506,7 +525,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	private static void setupAdminUser(WikiUser user, String username, String encryptedPassword) throws Exception {
+	private static void setupAdminUser(WikiUser user, String username, String encryptedPassword) throws DataAccessException, WikiException {
 		if (user == null) {
 			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 		}
@@ -540,7 +559,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	private static void setupDefaultVirtualWiki() throws Exception {
+	private static void setupDefaultVirtualWiki() throws DataAccessException, WikiException {
 		VirtualWiki virtualWiki = new VirtualWiki();
 		virtualWiki.setName(WikiBase.DEFAULT_VWIKI);
 		virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
@@ -550,7 +569,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	protected static void setupGroups() throws Exception {
+	protected static void setupGroups() throws DataAccessException, WikiException {
 		WikiGroup group = new WikiGroup();
 		group.setName(WikiGroup.GROUP_ANONYMOUS);
 		// FIXME - use message key
@@ -579,7 +598,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	protected static void setupRoles() throws Exception {
+	protected static void setupRoles() throws DataAccessException, WikiException {
 		Role role = Role.ROLE_ADMIN;
 		// FIXME - use message key
 		role.setDescription("Provides the ability to perform wiki maintenance tasks not available to normal users.");
@@ -617,12 +636,17 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	protected static void setupSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, boolean adminOnly) throws Exception {
+	protected static void setupSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, boolean adminOnly) throws DataAccessException, WikiException {
 		logger.info("Setting up special page " + virtualWiki + " / " + topicName);
 		if (user == null) {
 			throw new IllegalArgumentException("Cannot pass null WikiUser object to setupSpecialPage");
 		}
-		String contents = WikiUtil.readSpecialPage(locale, topicName);
+		String contents = null;
+		try {
+			contents = WikiUtil.readSpecialPage(locale, topicName);
+		} catch (IOException e) {
+			throw new DataAccessException(e);
+		}
 		Topic topic = new Topic();
 		topic.setName(topicName);
 		topic.setVirtualWiki(virtualWiki);
@@ -640,7 +664,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	private static void setupSpecialPages(Locale locale, WikiUser user) throws Exception {
+	private static void setupSpecialPages(Locale locale, WikiUser user) throws DataAccessException, WikiException {
 		List<VirtualWiki> all = WikiBase.getDataHandler().getVirtualWikiList();
 		for (VirtualWiki virtualWiki : all) {
 			// create the default topics

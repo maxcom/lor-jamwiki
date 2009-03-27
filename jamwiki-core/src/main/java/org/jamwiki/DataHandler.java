@@ -71,10 +71,10 @@ public interface DataHandler {
 	 * @param password The password that is being validated against.
 	 * @return <code>true</code> if the username / password combination matches
 	 *  an existing record in the data store, <code>false</code> otherwise.
-	 * @throws Exception Thrown if an error occurs while accessing the data
+	 * @throws DataAccessException Thrown if an error occurs while accessing the data
 	 *  store.
 	 */
-	boolean authenticate(String username, String password) throws Exception;
+	boolean authenticate(String username, String password) throws DataAccessException;
 
 	/**
 	 * Determine if a topic can be moved to a new location.  If the
@@ -86,9 +86,9 @@ public interface DataHandler {
 	 * @param destination The new name for the topic.
 	 * @return <code>true</code> if the topic can be moved to the destination,
 	 *  <code>false</code> otherwise.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	boolean canMoveTopic(Topic fromTopic, String destination) throws Exception;
+	boolean canMoveTopic(Topic fromTopic, String destination) throws DataAccessException;
 
 	/**
 	 * Mark a topic deleted by setting its delete date to a non-null value.
@@ -103,9 +103,10 @@ public interface DataHandler {
 	 * @param userVisible Set to <code>true</code> if a recent change should
 	 *  should be created indicating that the topic was deleted,
 	 *  <code>false</code> otherwise.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the topic information is invalid.
 	 */
-	void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws Exception;
+	void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws DataAccessException, WikiException;
 
 	/**
 	 * Return a List of all Category objects for a given virtual wiki.
@@ -115,17 +116,17 @@ public interface DataHandler {
 	 * @param pagination A Pagination object indicating the total number of
 	 *  results and offset for the results to be retrieved.
 	 * @return A List of all Category objects for a given virutal wiki.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<Category> getAllCategories(String virtualWiki, Pagination pagination) throws Exception;
+	List<Category> getAllCategories(String virtualWiki, Pagination pagination) throws DataAccessException;
 
 	/**
 	 * Return a List of all Role objects for the wiki.
 	 *
 	 * @return A List of all Role objects for the wiki.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<Role> getAllRoles() throws Exception;
+	List<Role> getAllRoles() throws DataAccessException;
 
 	/**
 	 * Return a List of all topic names for all non-deleted topics that
@@ -135,9 +136,9 @@ public interface DataHandler {
 	 *  retrieved.
 	 * @return A List of all topic names for all non-deleted topics that
 	 *  exist for the virtual wiki.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<String> getAllTopicNames(String virtualWiki) throws Exception;
+	List<String> getAllTopicNames(String virtualWiki) throws DataAccessException;
 
 	/**
 	 * Retrieve a List of all TopicVersions for a given topic, sorted
@@ -150,9 +151,9 @@ public interface DataHandler {
 	 *  results should be sorted with the oldest versions first.
 	 * @return A List of all TopicVersion objects for the given topic.
 	 *  If no matching topic exists then an exception is thrown.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<WikiFileVersion> getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception;
+	List<WikiFileVersion> getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws DataAccessException;
 
 	/**
 	 * Retrieve a List of all RecentChange objects for a given virtual
@@ -167,9 +168,9 @@ public interface DataHandler {
 	 *  results should be sorted with the oldest changes first.
 	 * @return A List of all RecentChange objects for a given virtual
 	 *  wiki, sorted chronologically.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<RecentChange> getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception;
+	List<RecentChange> getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws DataAccessException;
 
 	/**
 	 * Retrieve a List of all RecentChange objects for a given topic,
@@ -184,9 +185,9 @@ public interface DataHandler {
 	 *  results should be sorted with the oldest changes first.
 	 * @return A List of all RecentChange objects for a given topic,
 	 *  sorted chronologically.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<RecentChange> getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception;
+	List<RecentChange> getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws DataAccessException;
 
 	/**
 	 * Retrieve a List of RoleMap objects for all users whose login
@@ -199,9 +200,9 @@ public interface DataHandler {
 	 *  users whose login contains the login fragment.  If no matches are
 	 *  found then this method returns an empty List.  This method will
 	 *  never return <code>null</code>.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<RoleMap> getRoleMapByLogin(String loginFragment) throws Exception;
+	List<RoleMap> getRoleMapByLogin(String loginFragment) throws DataAccessException;
 
 	/**
 	 * Retrieve a list of RoleMap objects for all users and groups who
@@ -212,9 +213,9 @@ public interface DataHandler {
 	 *  users and groups who have been assigned the specified role.  If no
 	 *  matches are found then this method returns an empty List.  This
 	 *  method will never return <code>null</code>.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<RoleMap> getRoleMapByRole(String roleName) throws Exception;
+	List<RoleMap> getRoleMapByRole(String roleName) throws DataAccessException;
 
 	/**
 	 * Retrieve all roles assigned to a given group.
@@ -223,9 +224,9 @@ public interface DataHandler {
 	 * @return An array of Role objects for the given group, or an empty
 	 *  array if no roles are assigned to the group.  This method will
 	 *  never return <code>null</code>.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	Role[] getRoleMapGroup(String groupName) throws Exception;
+	Role[] getRoleMapGroup(String groupName) throws DataAccessException;
 
 	/**
 	 * Retrieve a list of RoleMap objects for all groups.
@@ -233,9 +234,9 @@ public interface DataHandler {
 	 * @return A list of RoleMap objects containing all roles for all
 	 *  groups.  If no matches are found then this method returns an empty
 	 *  List.  This method will never return <code>null</code>.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<RoleMap> getRoleMapGroups() throws Exception;
+	List<RoleMap> getRoleMapGroups() throws DataAccessException;
 
 	/**
 	 * Retrieve all roles assigned to a given user.
@@ -244,9 +245,9 @@ public interface DataHandler {
 	 * @return An array of Role objects for the given user, or an empty
 	 *  array if no roles are assigned to the user.  This method will
 	 *  never return <code>null</code>.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	Role[] getRoleMapUser(String login) throws Exception;
+	Role[] getRoleMapUser(String login) throws DataAccessException;
 
 	/**
 	 * Retrieve a List of topic names for all admin-only topics, sorted
@@ -258,9 +259,9 @@ public interface DataHandler {
 	 *  results and offset for the results to be retrieved.
 	 * @return A List of topic names for all admin-only topics, sorted
 	 *  alphabetically.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<String> getTopicsAdmin(String virtualWiki, Pagination pagination) throws Exception;
+	List<String> getTopicsAdmin(String virtualWiki, Pagination pagination) throws DataAccessException;
 
 	/**
 	 * Retrieve a List of RecentChange objects corresponding to all
@@ -278,18 +279,18 @@ public interface DataHandler {
 	 *  results should be sorted with the oldest changes first.
 	 * @return A List of RecentChange objects corresponding to all
 	 *  changes made by a particular user.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<RecentChange> getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception;
+	List<RecentChange> getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws DataAccessException;
 
 	/**
 	 * Return a List of all VirtualWiki objects that exist for the wiki.
 	 *
 	 * @return A List of all VirtualWiki objects that exist for the
 	 *  wiki.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<VirtualWiki> getVirtualWikiList() throws Exception;
+	List<VirtualWiki> getVirtualWikiList() throws DataAccessException;
 
 	/**
 	 * Retrieve a user's watchlist.
@@ -298,9 +299,9 @@ public interface DataHandler {
 	 *  retrieved.
 	 * @param userId The ID of the user whose watchlist is being retrieved.
 	 * @return The Watchlist object for the user.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	Watchlist getWatchlist(String virtualWiki, int userId) throws Exception;
+	Watchlist getWatchlist(String virtualWiki, int userId) throws DataAccessException;
 
 	/**
 	 * Retrieve a List of RecentChange objects corresponding to a user's
@@ -314,9 +315,9 @@ public interface DataHandler {
 	 *  results and offset for the results to be retrieved.
 	 * @return A List of RecentChange objects corresponding to a user's
 	 *  watchlist.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<RecentChange> getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception;
+	List<RecentChange> getWatchlist(String virtualWiki, int userId, Pagination pagination) throws DataAccessException;
 
 	/**
 	 * Retrieve a List of Category objects corresponding to all topics
@@ -328,9 +329,9 @@ public interface DataHandler {
 	 * @return A List of all Category objects corresponding to all
 	 *  topics that belong to the category, sorted by either the topic name,
 	 *  or category sort key (if specified).
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<Category> lookupCategoryTopics(String virtualWiki, String categoryName) throws Exception;
+	List<Category> lookupCategoryTopics(String virtualWiki, String categoryName) throws DataAccessException;
 
 	/**
 	 * Retrieve a Topic object that matches the given virtual wiki and topic
@@ -346,9 +347,9 @@ public interface DataHandler {
 	 *  transaction then this value should be <code>null</code>.
 	 * @return A Topic object that matches the given virtual wiki and topic
 	 *  name, or <code>null</code> if no matching topic exists.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object transactionObject) throws Exception;
+	Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object transactionObject) throws DataAccessException;
 
 	/**
 	 * Return a count of all topics, including redirects, comments pages and
@@ -360,9 +361,9 @@ public interface DataHandler {
 	 * @return A count of all topics, including redirects, comments pages and
 	 *  templates, for the given virtual wiki.  Deleted topics are not included
 	 *  in the count.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	int lookupTopicCount(String virtualWiki) throws Exception;
+	int lookupTopicCount(String virtualWiki) throws DataAccessException;
 
 	/**
 	 * Return a List of topic names for all non-deleted topics in the
@@ -374,9 +375,9 @@ public interface DataHandler {
 	 *  results and offset for the results to be retrieved.
 	 * @return A List of topic names for all non-deleted topics in the
 	 *  virtual wiki that match a specific topic type.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<String> lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception;
+	List<String> lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws DataAccessException;
 
 	/**
 	 * Retrieve a TopicVersion object for a given topic version ID.
@@ -384,9 +385,9 @@ public interface DataHandler {
 	 * @param topicVersionId The ID of the topic version being retrieved.
 	 * @return A TopicVersion object matching the given topic version ID,
 	 *  or <code>null</code> if no matching topic version is found.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	TopicVersion lookupTopicVersion(int topicVersionId) throws Exception;
+	TopicVersion lookupTopicVersion(int topicVersionId) throws DataAccessException;
 
 	/**
 	 * Given a virtual wiki name, return the corresponding VirtualWiki object.
@@ -396,9 +397,9 @@ public interface DataHandler {
 	 * @return The VirtualWiki object that corresponds to the virtual wiki
 	 *  name being queried, or <code>null</code> if no matching VirtualWiki
 	 *  can be found.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	VirtualWiki lookupVirtualWiki(String virtualWikiName) throws Exception;
+	VirtualWiki lookupVirtualWiki(String virtualWikiName) throws DataAccessException;
 
 	/**
 	 * Retrieve a WikiFile object for a given virtual wiki and topic name.
@@ -407,9 +408,9 @@ public interface DataHandler {
 	 * @param topicName The topic name for the file being queried.
 	 * @return The WikiFile object for the given virtual wiki and topic name,
 	 *  or <code>null</code> if no matching WikiFile exists.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	WikiFile lookupWikiFile(String virtualWiki, String topicName) throws Exception;
+	WikiFile lookupWikiFile(String virtualWiki, String topicName) throws DataAccessException;
 
 	/**
 	 * Return a count of all wiki files for the given virtual wiki.  Deleted
@@ -419,9 +420,9 @@ public interface DataHandler {
 	 *  being returned.
 	 * @return A count of all wiki files for the given virtual wiki.  Deleted
 	 *  files are not included in the count.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	int lookupWikiFileCount(String virtualWiki) throws Exception;
+	int lookupWikiFileCount(String virtualWiki) throws DataAccessException;
 
 	/**
 	 * Retrieve a WikiGroup object for a given group name.
@@ -429,9 +430,9 @@ public interface DataHandler {
 	 * @param groupName The group name for the group being queried.
 	 * @return The WikiGroup object for the given group name, or
 	 *  <code>null</code> if no matching group exists.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	WikiGroup lookupWikiGroup(String groupName) throws Exception;
+	WikiGroup lookupWikiGroup(String groupName) throws DataAccessException;
 
 	/**
 	 * Retrieve a WikiUser object matching a given user ID.
@@ -439,9 +440,9 @@ public interface DataHandler {
 	 * @param userId The ID of the WikiUser being retrieved.
 	 * @return The WikiUser object matching the given user ID, or
 	 *  <code>null</code> if no matching WikiUser exists.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	WikiUser lookupWikiUser(int userId) throws Exception;
+	WikiUser lookupWikiUser(int userId) throws DataAccessException;
 
 	/**
 	 * Retrieve a WikiUser object matching a given username.
@@ -449,17 +450,17 @@ public interface DataHandler {
 	 * @param username The username of the WikiUser being retrieved.
 	 * @return The WikiUser object matching the given username, or
 	 *  <code>null</code> if no matching WikiUser exists.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	WikiUser lookupWikiUser(String username) throws Exception;
+	WikiUser lookupWikiUser(String username) throws DataAccessException;
 
 	/**
 	 * Return a count of all wiki users.
 	 *
 	 * @return A count of all wiki users.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	int lookupWikiUserCount() throws Exception;
+	int lookupWikiUserCount() throws DataAccessException;
 
 	/**
 	 * Retrieve a WikiUser object matching a given username.
@@ -467,9 +468,9 @@ public interface DataHandler {
 	 * @param username The username of the WikiUser being retrieved.
 	 * @return The encrypted password for the given user name, or
 	 *  <code>null</code> if no matching WikiUser exists.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	String lookupWikiUserEncryptedPassword(String username) throws Exception;
+	String lookupWikiUserEncryptedPassword(String username) throws DataAccessException;
 
 	/**
 	 * Return a List of user logins for all wiki users.
@@ -477,9 +478,9 @@ public interface DataHandler {
 	 * @param pagination A Pagination object indicating the total number of
 	 *  results and offset for the results to be retrieved.
 	 * @return A List of user logins for all wiki users.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<String> lookupWikiUsers(Pagination pagination) throws Exception;
+	List<String> lookupWikiUsers(Pagination pagination) throws DataAccessException;
 
 	/**
 	 * Move a topic to a new name, creating a redirect topic in the old
@@ -490,17 +491,18 @@ public interface DataHandler {
 	 * @param fromVersion A TopicVersion object that indicates the move
 	 *  date, author, and other parameters for the topic.
 	 * @param destination The new name for the topic.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the topic information is invalid.
 	 */
-	void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination) throws Exception;
+	void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination) throws DataAccessException, WikiException;
 
 	/**
 	 * Delete all existing recent changes and reload the recent changes based
 	 * on the most recent topic versions.
 	 *
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	void reloadRecentChanges() throws Exception;
+	void reloadRecentChanges() throws DataAccessException;
 
 	/**
 	 * Perform any required setup steps for the DataHandler instance.
@@ -513,9 +515,10 @@ public interface DataHandler {
 	 * @param username The admin user's username (login).
 	 * @param encryptedPassword The admin user's encrypted password.  This value
 	 *  is only required when creating a new admin user.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if a setup failure occurs.
 	 */
-	void setup(Locale locale, WikiUser user, String username, String encryptedPassword) throws Exception;
+	void setup(Locale locale, WikiUser user, String username, String encryptedPassword) throws DataAccessException, WikiException;
 
 	/**
 	 * Create the special pages used on the wiki, such as the left menu and
@@ -527,10 +530,11 @@ public interface DataHandler {
 	 * @param user The admin user to use when creating the special pages.
 	 * @param virtualWiki The VirtualWiki for which special pages are being
 	 *  created.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if a setup failure occurs.
 	 */
 	// FIXME - move this to another location
-	void setupSpecialPages(Locale locale, WikiUser user, VirtualWiki virtualWiki) throws Exception;
+	void setupSpecialPages(Locale locale, WikiUser user, VirtualWiki virtualWiki) throws DataAccessException, WikiException;
 
 	/**
 	 * Undelete a previously deleted topic by setting its delete date to a
@@ -544,9 +548,10 @@ public interface DataHandler {
 	 * @param userVisible Set to <code>true</code> if a recent change should
 	 *  should be created indicating that the topic was undeleted,
 	 *  <code>false</code> otherwise.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the topic information is invalid.
 	 */
-	void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws Exception;
+	void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws DataAccessException, WikiException;
 
 	/**
 	 * Update a special page used on the wiki, such as the left menu or
@@ -560,10 +565,11 @@ public interface DataHandler {
 	 * @param topicName The name of the special page topic that is being
 	 *  updated.
 	 * @param ipAddress The IP address of the user updating special pages.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the topic information is invalid.
 	 */
 	// FIXME - move this to another location
-	void updateSpecialPage(Locale locale, String virtualWiki, String topicName, String ipAddress) throws Exception;
+	void updateSpecialPage(Locale locale, String virtualWiki, String topicName, String ipAddress) throws DataAccessException, WikiException;
 
 	/**
 	 * Add or update a WikiFile object.  This method will add a new record if
@@ -576,9 +582,10 @@ public interface DataHandler {
 	 *  performed.
 	 * @param wikiFileVersion A WikiFileVersion containing the author, date, and
 	 *  other information about the version being added.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the file information is invalid.
 	 */
-	void writeFile(WikiFile wikiFile, WikiFileVersion wikiFileVersion) throws Exception;
+	void writeFile(WikiFile wikiFile, WikiFileVersion wikiFileVersion) throws DataAccessException, WikiException;
 
 	/**
 	 * Add or update a Role object.  This method will add a new record if
@@ -589,10 +596,11 @@ public interface DataHandler {
 	 *  performed.
 	 * @param update A boolean value indicating whether this transaction is
 	 *  updating an existing role or not.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the role information is invalid.
 	 */
 	// FIXME - the update flag should not be necessary
-	void writeRole(Role role, boolean update) throws Exception;
+	void writeRole(Role role, boolean update) throws DataAccessException, WikiException;
 
 	/**
 	 * Add a set of group role mappings.  This method will first delete all
@@ -602,9 +610,10 @@ public interface DataHandler {
 	 * @param groupId The group id for whom role mappings are being modified.
 	 * @param roles A List of String role names for all roles that are
 	 *  to be assigned to this group.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the role information is invalid.
 	 */
-	void writeRoleMapGroup(int groupId, List<String> roles) throws Exception;
+	void writeRoleMapGroup(int groupId, List<String> roles) throws DataAccessException, WikiException;
 
 	/**
 	 * Add a set of user role mappings.  This method will first delete all
@@ -614,9 +623,10 @@ public interface DataHandler {
 	 * @param username The username for whom role mappings are being modified.
 	 * @param roles A List of String role names for all roles that are
 	 *  to be assigned to this user.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the role information is invalid.
 	 */
-	void writeRoleMapUser(String username, List<String> roles) throws Exception;
+	void writeRoleMapUser(String username, List<String> roles) throws DataAccessException, WikiException;
 
 	/**
 	 * Add or update a Topic object.  This method will add a new record if
@@ -637,9 +647,10 @@ public interface DataHandler {
 	 * @param userVisible Set to <code>false</code> if no recent change record
 	 *  should be created for the topic add/update, <code>true</code>
 	 *  otherwise.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the topic information is invalid.
 	 */
-	void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links, boolean userVisible) throws Exception;
+	void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links, boolean userVisible) throws DataAccessException, WikiException;
 
 	/**
 	 * Add or update a VirtualWiki object.  This method will add a new record
@@ -649,9 +660,10 @@ public interface DataHandler {
 	 * @param virtualWiki The VirtualWiki to add or update.  If the
 	 *  VirtualWiki does not have a virtual wiki ID then a new record is
 	 *  created, otherwise an update is performed.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the virtual wiki information is invalid.
 	 */
-	void writeVirtualWiki(VirtualWiki virtualWiki) throws Exception;
+	void writeVirtualWiki(VirtualWiki virtualWiki) throws DataAccessException, WikiException;
 
 	/**
 	 * Add or delete an item from a user's watchlist.  If the topic is
@@ -663,9 +675,10 @@ public interface DataHandler {
 	 * @param topicName The name of the topic being added or removed from
 	 *  the watchlist.
 	 * @param userId The ID of the user whose watchlist is being updated.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the watchlist information is invalid.
 	 */
-	void writeWatchlistEntry(Watchlist watchlist, String virtualWiki, String topicName, int userId) throws Exception;
+	void writeWatchlistEntry(Watchlist watchlist, String virtualWiki, String topicName, int userId) throws DataAccessException, WikiException;
 
 	/**
 	 * Add or update a WikiGroup object.  This method will add a new record if
@@ -674,9 +687,10 @@ public interface DataHandler {
 	 * @param group The WikiGroup to add or update.  If the group does not have
 	 *  a group ID then a new record is created, otherwise an update is
 	 *  performed.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the group information is invalid.
 	 */
-	void writeWikiGroup(WikiGroup group) throws Exception;
+	void writeWikiGroup(WikiGroup group) throws DataAccessException, WikiException;
 
 	/**
 	 * Add or update a WikiUser object.  This method will add a new record
@@ -689,7 +703,8 @@ public interface DataHandler {
 	 * @param username The user's username (login).
 	 * @param encryptedPassword The user's encrypted password.  Required only when the
 	 *  password is being updated.
-	 * @throws Exception Thrown if any error occurs during method execution.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the user information is invalid.
 	 */
-	void writeWikiUser(WikiUser user, String username, String encryptedPassword) throws Exception;
+	void writeWikiUser(WikiUser user, String username, String encryptedPassword) throws DataAccessException, WikiException;
 }

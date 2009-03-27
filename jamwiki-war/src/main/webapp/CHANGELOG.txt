@@ -14,6 +14,8 @@ New Features:
     history, etc, similar to Mediawiki.
   * Remove ability to automatically upgrade from versions prior to 0.6.0.
   * Implement caching for diffs and topic versions to speed up page rendering.
+  * Refactor exception handling to throw and catch exceptions at a more
+    granular level.
   * Upgrade to JFlex 1.4.3.
   * Upgrade to JUnit 4.5.
   * Upgrade to JSTL standard taglib 1.1.2.
