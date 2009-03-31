@@ -254,7 +254,7 @@ public class JAMWikiModel extends AbstractWikiModel {
 		}
 		StringBuilder buf = new StringBuilder(rawWikiText.length() + rawWikiText.length() / 10);
 		try {
-			TemplateParser.parse(rawWikiText, this, buf, parseOnlySignature);
+			TemplateParser.parse(rawWikiText, this, buf, parseOnlySignature, true);
 		} catch (Exception ioe) {
 			ioe.printStackTrace();
 			buf.append("<span class=\"error\">TemplateParser exception: " + ioe.getClass().getSimpleName() + "</span>");
