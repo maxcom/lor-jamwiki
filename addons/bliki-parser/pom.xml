@@ -14,16 +14,14 @@
 	<name>Bliki Parser</name>
 	<repositories>
 		<repository>
-			<id>org.jamwiki</id>
-			<name>Maven Repository for Jamwiki</name>
-			<layout>default</layout>
-			<url>file://${basedir}/../../repository</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
+			<id>info-bliki-repository</id>
+			<url>http://gwtwiki.googlecode.com/svn/maven-repository/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
 	<dependencies>
@@ -31,10 +29,10 @@
 		This package is in /repository
 		-->
 		<dependency>
-			<groupId>bliki</groupId>
-			<artifactId>bliki</artifactId>
-			<version>3.0-SNAPSHOT</version>
-		</dependency>
+		    <groupId>info.bliki.wiki</groupId>
+			<artifactId>bliki-core</artifactId>
+			<version>3.0.11</version>
+	    </dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>

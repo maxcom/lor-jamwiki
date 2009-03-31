@@ -1,18 +1,19 @@
 package org.jamwiki.parser.bliki;
 
+import info.bliki.htmlcleaner.ContentToken;
+import info.bliki.htmlcleaner.TagNode;
 import info.bliki.wiki.filter.TemplateParser;
 import info.bliki.wiki.filter.WikipediaParser;
 import info.bliki.wiki.model.AbstractWikiModel;
 import info.bliki.wiki.model.Configuration;
 import info.bliki.wiki.model.ImageFormat;
+import info.bliki.wiki.tags.WPATag;
 import info.bliki.wiki.tags.util.TagStack;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import org.htmlcleaner.ContentToken;
-import org.htmlcleaner.TagNode;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.parser.ParserInput;
@@ -23,8 +24,8 @@ import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
-import org.jamwiki.utils.WikiUtil;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 
 /**
  * An IWikiModel model implementation for JAMWiki
@@ -57,15 +58,15 @@ public class JAMWikiModel extends AbstractWikiModel {
 		// routine!!!
 		ImageFormat imageFormat = ImageFormat.getImageFormat(name, imageNamespace);
 
-		int pxSize = imageFormat.getSize();
+		int pxWidth = imageFormat.getWidth();
 		String caption = imageFormat.getCaption();
 		TagNode divTagNode = new TagNode("div");
 		divTagNode.addAttribute("id", "image", false);
 		// divTagNode.addAttribute("href", hrefImageLink, false);
 		// divTagNode.addAttribute("src", srcImageLink, false);
 		divTagNode.addObjectAttribute("wikiobject", imageFormat);
-		if (pxSize != -1) {
-			divTagNode.addAttribute("style", "width:" + pxSize + "px", false);
+		if (pxWidth != -1) {
+			divTagNode.addAttribute("style", "width:" + pxWidth + "px", false);
 		}
 		pushNode(divTagNode);
 
@@ -110,22 +111,36 @@ public class JAMWikiModel extends AbstractWikiModel {
 		}
 	}
 
-	public void appendInternalLink(String topic, String hashSection, String linkText, String cssStyle) {
-		String encodedtopic = WikiUtil.encodeForFilename(topic);
-		String topicURL = fBaseURL + encodedtopic;
+	public void appendInternalLink(String topic, String hashSection, String topicDescription, String cssClass, boolean parseRecursive) {
+		String encodedTopic = WikiUtil.encodeForFilename(topic);
+		String href = fBaseURL + encodedTopic;
 		String style = null;
 		try {
 			if (InterWikiHandler.isInterWiki(fParserInput.getVirtualWiki())) {
 				style = "interwiki";
 			} else if (!LinkUtil.isExistingArticle(fParserInput.getVirtualWiki(), topic)) {
 				style = "edit";
-				topicURL = fBaseURL + "Special:Edit?topic=" + encodedtopic;
+				href = fBaseURL + "Special:Edit?topic=" + encodedTopic;
 			}
 		} catch (Exception e) {
-
+			style = "";
 		}
 
-		super.appendInternalLink(topicURL, hashSection, linkText, style);
+		WPATag aTagNode = new WPATag();
+		if (hashSection != null) {
+			href = href + '#' + encodeTitleDotUrl(hashSection, true);
+		}
+		aTagNode.addAttribute("href", href, true);
+	  aTagNode.addAttribute("class", style, true);
+		aTagNode.addObjectAttribute("wikilink", topic);
+
+		pushNode(aTagNode);
+		if (parseRecursive) {
+			WikipediaParser.parseRecursive(topicDescription.trim(), this, false, true);
+		} else {
+			aTagNode.addChild(new ContentToken(topicDescription));
+		}
+		popNode();
 	}
 
 	public void addCategory(String categoryName, String sortKey) {
