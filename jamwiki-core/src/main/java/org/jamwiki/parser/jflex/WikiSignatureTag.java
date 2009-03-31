@@ -37,7 +37,8 @@ public class WikiSignatureTag {
 	/**
 	 *
 	 */
-	private String buildWikiSignature(ParserInput parserInput, ParserOutput parserOutput, int mode, boolean includeUser, boolean includeDate) {
+	private String buildWikiSignature(ParserInput parserInput, ParserOutput parserOutput, int mode, boolean includeUser,
+			boolean includeDate) {
 		try {
 			String signature = "";
 			if (includeUser) {
@@ -81,7 +82,7 @@ public class WikiSignatureTag {
 		}
 		return raw;
 	}
-	
+
 	/**
 	 *
 	 */
@@ -100,7 +101,7 @@ public class WikiSignatureTag {
 			email = user.getEmail();
 			userId = Integer.toString(user.getUserId());
 		}
-		if (login == null || email == null || displayName == null) {
+		if (login == null || displayName == null) {
 			logger.info("Signature tagged parsed without user information available, returning empty");
 			return "";
 		}
@@ -112,7 +113,7 @@ public class WikiSignatureTag {
 		params[2] = NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + login;
 		params[3] = login;
 		params[4] = displayName;
-		params[5] = email;
+		params[5] = email!=null ? email : "";
 		params[6] = userId;
 		return formatter.format(params);
 	}
