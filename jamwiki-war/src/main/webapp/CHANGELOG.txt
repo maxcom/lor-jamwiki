@@ -33,7 +33,9 @@ Bugfixes:
 
 Translation Updates:
 
+  * Added Russian translations (shar).
   * Updated German translations (axelclk).
+  * Updated Portugese (Brazilian) translations (leandes).
 
 
 0.7.1
