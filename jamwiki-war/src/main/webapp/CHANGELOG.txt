@@ -11,6 +11,7 @@ Bugfixes:
     without at least one role.  Reported by tapaya and rebecca.
   * Fix incorrect LDAP sample configuration.  Reported with a fix by Tobias
     Kalbitz.
+  * Display signatures even if there is no email addresss specified (axelclk).
 
 Translation Updates:
 
