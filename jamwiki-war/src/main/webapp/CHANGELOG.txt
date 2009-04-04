@@ -1,6 +1,10 @@
 ﻿0.7.1
 =====
 
+New Features:
+
+  * Upgrade to Lucene Search 2.4.1.
+
 Bugfixes:
 
   * Search by login on the Special:Roles page returned no results for users
@@ -10,7 +14,9 @@ Bugfixes:
 
 Translation Updates:
 
+  * Added Russian translations (shar).
   * Updated German translations (axelclk).
+  * Updated Portugese (Brazilian) translations (leandes).
 
 
 0.7.0

@@ -17,6 +17,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.jflex.JFlexParser;
 import org.jamwiki.parser.jflex.WikiHeadingTag;
 import org.jamwiki.parser.jflex.WikiSignatureTag;
 import org.jamwiki.utils.InterWikiHandler;
@@ -31,6 +32,9 @@ import org.jamwiki.utils.WikiLogger;
  * 
  */
 public class JAMWikiModel extends AbstractWikiModel {
+	// see: JFlexParser.MODE_MINIMAL
+	protected static final int MODE_MINIMAL = 3;
+	
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiHeadingTag.class.getName());
 
 	protected String fBaseURL;
@@ -97,15 +101,15 @@ public class JAMWikiModel extends AbstractWikiModel {
 		switch (numberOfTildes) {
 		case 3:
 			parserTag = new WikiSignatureTag();
-			writer.append(parserTag.parse(fParserInput, fDocument, 3, "~~~"));
+			writer.append(parserTag.parse(fParserInput, fDocument, MODE_MINIMAL, "~~~"));
 			break;
 		case 4:
 			parserTag = new WikiSignatureTag();
-			writer.append(parserTag.parse(fParserInput, fDocument, 3, "~~~~"));
+			writer.append(parserTag.parse(fParserInput, fDocument, MODE_MINIMAL, "~~~~"));
 			break;
 		case 5:
 			parserTag = new WikiSignatureTag();
-			writer.append(parserTag.parse(fParserInput, fDocument, 3, "~~~~~"));
+			writer.append(parserTag.parse(fParserInput, fDocument, MODE_MINIMAL, "~~~~~"));
 			break;
 		}
 	}
