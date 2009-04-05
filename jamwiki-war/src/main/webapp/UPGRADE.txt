@@ -83,6 +83,13 @@ followed by 0.6.3.
      can only be edited AFTER all other upgrade steps have been completed.
 
 
+  JAMWiki 0.7.1
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.7.1".
+
+
   JAMWiki 0.7.0
   =============
 
