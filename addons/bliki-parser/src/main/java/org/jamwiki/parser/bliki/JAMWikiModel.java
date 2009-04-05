@@ -22,6 +22,7 @@ import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.jflex.WikiHeadingTag;
 import org.jamwiki.parser.jflex.WikiSignatureTag;
+import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
@@ -283,9 +284,25 @@ public class JAMWikiModel extends AbstractWikiModel {
 		return null;
 	}
 
-	public void appendInterWikiLink(String namespace, String title, String linkText) {
-		// no interwiki link parsing
-		return;
+	public void appendInterWikiLink(String namespace, String title, String topicDescription) {
+		String hrefLink = getInterwikiMap().get(namespace.toLowerCase());
+		if (hrefLink != null) {
+			WikiLink wikiLink = LinkUtil.parseWikiLink(namespace + NamespaceHandler.NAMESPACE_SEPARATOR + title + "|" + topicDescription);
+			String destination = wikiLink.getDestination();
+			destination = destination.substring(wikiLink.getNamespace().length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
+			hrefLink = hrefLink.replace("${title}", Utilities.encodeAndEscapeTopicName(title));
+			TagNode aTagNode = new TagNode("a");
+			aTagNode.addAttribute("href", hrefLink, true);
+			aTagNode.addAttribute("class", "interwiki", false);
+			aTagNode.addAttribute("rel", "nofollow", false);
+
+			pushNode(aTagNode);
+			WikipediaParser.parseRecursive(topicDescription.trim(), this, false, true);
+			popNode();
+
+		} else {
+			append(new ContentToken(topicDescription));
+		}
 	}
 
 	public boolean isTemplateTopic() {
