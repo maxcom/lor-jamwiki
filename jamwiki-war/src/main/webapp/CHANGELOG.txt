@@ -29,6 +29,7 @@ Bugfixes:
   * When a password or other value is found un-encrypted in a properties file
     automatically encrypt it to allow for changing database passwords, etc.
     Reported by rebecca and an anonymous user.
+  * Fix MS SQL error when searching for user contributions (hanspeterklapf).
 
 Translation Updates:
 
