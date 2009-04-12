@@ -8,6 +8,10 @@ Bugfixes:
   * Fix "array index '1' is invalid" error during setup with Resin 3.2.1.
     Reported by James.
 
+Translation Updates:
+
+  * Updated Russian translations (shar).
+
 
 0.7.1
 =====
