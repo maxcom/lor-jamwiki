@@ -65,7 +65,10 @@ public class TopicServlet extends JAMWikiServlet {
 		Topic topic = ServletUtil.initializeTopic(virtualWiki, topicName);
 		if (topic.getTopicId() <= 0) {
 			// topic does not exist, display empty page
-			next.addObject("notopic", new WikiMessage("topic.notcreated", topicName));
+			WikiMessage wikiMessage = new WikiMessage("topic.notcreated");
+			// topic name is escaped from WikiUtil.getTopicFromURI, so do not double-escape
+			wikiMessage.setParamsWithoutEscaping(new String[]{topicName});
+			next.addObject("notopic", wikiMessage);
 		}
 		WikiMessage pageTitle = new WikiMessage("topic.title", topicName);
 		ServletUtil.viewTopic(request, next, pageInfo, pageTitle, topic, true);

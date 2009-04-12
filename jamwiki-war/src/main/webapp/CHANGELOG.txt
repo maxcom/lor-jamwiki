@@ -8,6 +8,8 @@ Bugfixes:
   * Fix "array index '1' is invalid" error during setup with Resin 3.2.1.
     Reported by James.
   * Fix TOC rendering issue when depth exceeds the configured max depth.
+  * Fix double-escaping of non-existent topic names when using URLs such as
+    http://jamwiki.org/wiki/en/TestÜmlaut.  Reported by hanspeterklapf.
 
 Translation Updates:
 
