@@ -30,8 +30,8 @@ Bugfixes:
     automatically encrypt it to allow for changing database passwords, etc.
     Reported by rebecca and an anonymous user.
   * Fix MS SQL error when searching for user contributions (hanspeterklapf).
-  * Fix "array index '1' is invalid" error during Resin 3.2.1 setup.  Reported
-    by James.
+  * Fix "array index '1' is invalid" error during setup with Resin 3.2.1.
+    Reported by James.
 
 Translation Updates:
 
