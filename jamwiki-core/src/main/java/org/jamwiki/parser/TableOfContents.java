@@ -260,8 +260,8 @@ public class TableOfContents {
 				text.append("<a href=\"#").append(Utilities.encodeAndEscapeTopicName(entry.name)).append("\">");
 				text.append("<span class=\"tocnumber\">").append(this.nextTocPrefix(adjustedLevel - 1)).append("</span> ");
 				text.append("<span class=\"toctext\">").append(entry.text).append("</span></a>");
+				previousLevel = adjustedLevel;
 			}
-			previousLevel = adjustedLevel;
 		}
 		closeList(0, text, previousLevel);
 		text.append("\n</td>\n</tr>\n</table>\n");

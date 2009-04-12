@@ -72,6 +72,7 @@ otherwise noted.  For example, if upgrading from version 0.6.0 to version
 0.6.3, you should apply the upgrade steps for 0.6.1, followed by 0.6.2,
 followed by 0.6.3.
 
+
   JAMWiki 0.8.0
   =============
 
@@ -81,6 +82,13 @@ followed by 0.6.3.
      the default StyleSheet topic can be found in the
      /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
      can only be edited AFTER all other upgrade steps have been completed.
+
+
+  JAMWiki 0.7.2
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.7.2".
 
 
   JAMWiki 0.7.1

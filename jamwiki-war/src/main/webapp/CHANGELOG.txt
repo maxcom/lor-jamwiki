@@ -30,12 +30,6 @@ Bugfixes:
     automatically encrypt it to allow for changing database passwords, etc.
     Reported by rebecca and an anonymous user.
 
-Translation Updates:
-
-  * Added Russian translations (shar).
-  * Updated German translations (axelclk).
-  * Updated Portugese (Brazilian) translations (leandes).
-
 
 0.7.2
 =====
@@ -46,6 +40,13 @@ Bugfixes:
   * Fix MS SQL error when searching for user contributions (hanspeterklapf).
   * Fix "array index '1' is invalid" error during setup with Resin 3.2.1.
     Reported by James.
+  * Fix TOC rendering issue when depth exceeds the configured max depth.
+  * Fix double-escaping of non-existent topic names when using URLs such as
+    http://jamwiki.org/wiki/en/TestÜmlaut.  Reported by hanspeterklapf.
+
+Translation Updates:
+
+  * Updated Russian translations (shar).
 
 
 0.7.1
