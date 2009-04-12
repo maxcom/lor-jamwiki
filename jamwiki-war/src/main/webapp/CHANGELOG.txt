@@ -4,6 +4,9 @@
 Bugfixes:
 
   * Fix missing edit toolbar during preview.  Reported by hanspeterklapf.
+  * Fix MS SQL error when searching for user contributions (hanspeterklapf).
+  * Fix "array index '1' is invalid" error during setup with Resin 3.2.1.
+    Reported by James.
 
 
 0.7.1
