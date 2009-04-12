@@ -81,6 +81,9 @@ public class EditServlet extends JAMWikiServlet {
 		String contents = null;
 		if (isPreview(request)) {
 			preview(request, next, pageInfo);
+			WikiUser user = ServletUtil.currentWikiUser();
+			String editor = user.getEditor();
+			next.addObject("editor", editor);
 			return;
 		}
 		pageInfo.setContentJsp(JSP_EDIT);

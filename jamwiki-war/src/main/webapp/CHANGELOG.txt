@@ -1,4 +1,12 @@
-﻿0.7.1
+﻿0.7.2
+=====
+
+Bugfixes:
+
+  * Fix missing edit toolbar during preview.  Reported by hanspeterklapf.
+
+
+0.7.1
 =====
 
 New Features:
