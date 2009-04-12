@@ -7,6 +7,7 @@ Bugfixes:
   * Fix MS SQL error when searching for user contributions (hanspeterklapf).
   * Fix "array index '1' is invalid" error during setup with Resin 3.2.1.
     Reported by James.
+  * Fix TOC rendering issue when depth exceeds the configured max depth.
 
 Translation Updates:
 
