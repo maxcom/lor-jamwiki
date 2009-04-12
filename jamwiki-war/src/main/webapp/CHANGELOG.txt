@@ -29,15 +29,23 @@ Bugfixes:
   * When a password or other value is found un-encrypted in a properties file
     automatically encrypt it to allow for changing database passwords, etc.
     Reported by rebecca and an anonymous user.
-  * Fix MS SQL error when searching for user contributions (hanspeterklapf).
-  * Fix "array index '1' is invalid" error during setup with Resin 3.2.1.
-    Reported by James.
 
 Translation Updates:
 
   * Added Russian translations (shar).
   * Updated German translations (axelclk).
   * Updated Portugese (Brazilian) translations (leandes).
+
+
+0.7.2
+=====
+
+Bugfixes:
+
+  * Fix missing edit toolbar during preview.  Reported by hanspeterklapf.
+  * Fix MS SQL error when searching for user contributions (hanspeterklapf).
+  * Fix "array index '1' is invalid" error during setup with Resin 3.2.1.
+    Reported by James.
 
 
 0.7.1
