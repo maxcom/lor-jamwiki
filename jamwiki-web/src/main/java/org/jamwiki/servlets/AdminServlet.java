@@ -148,27 +148,7 @@ public class AdminServlet extends JAMWikiServlet {
 			// Will return errors if the new database cannot be connected to,
 			// if it is already populated, or an error occurs copying the contents
 			WikiDatabase.migrateDatabase(props, errors);
-			if (!errors.isEmpty()) {
-				next.addObject("errors", errors);
-				next.addObject("message", new WikiMessage("admin.message.changesnotsaved"));
-			} else {
-				// all is well, save the properties
-				Iterator iterator = props.keySet().iterator();
-				while (iterator.hasNext()) {
-					String key = (String)iterator.next();
-					String value = props.getProperty(key);
-					Environment.setValue(key, value);
-				}
-				Environment.saveProperties();
-				// re-initialize to reset database settings (if needed)
-				WikiUserDetails userDetails = ServletUtil.currentUserDetails();
-				if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
-					throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
-				}
-				WikiUser user = ServletUtil.currentWikiUser();
-				WikiBase.reset(request.getLocale(), user, user.getUsername(), null);
-				JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
-				JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
+			if (this.saveProperties(request, next, pageInfo, props, errors)) {
 				next.addObject("message", new WikiMessage("admin.message.migratedatabase", Environment.getValue(Environment.PROP_DB_URL)));
 			}
 		} catch (Exception e) {
@@ -275,28 +255,8 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_CACHE_TOTAL_SIZE);
 			setBooleanProperty(props, request, Environment.PROP_RSS_ALLOWED);
 			setProperty(props, request, Environment.PROP_RSS_TITLE);
-			List errors = ServletUtil.validateSystemSettings(props);
-			if (!errors.isEmpty()) {
-				next.addObject("errors", errors);
-				next.addObject("message", new WikiMessage("admin.message.changesnotsaved"));
-			} else {
-				// all is well, save the properties
-				Iterator iterator = props.keySet().iterator();
-				while (iterator.hasNext()) {
-					String key = (String)iterator.next();
-					String value = props.getProperty(key);
-					Environment.setValue(key, value);
-				}
-				Environment.saveProperties();
-				// re-initialize to reset database settings (if needed)
-				WikiUserDetails userDetails = ServletUtil.currentUserDetails();
-				if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
-					throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
-				}
-				WikiUser user = ServletUtil.currentWikiUser();
-				WikiBase.reset(request.getLocale(), user, user.getUsername(), null);
-				JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
-				JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
+			List<WikiMessage> errors = ServletUtil.validateSystemSettings(props);
+			if (this.saveProperties(request, next, pageInfo, props, errors)) {
 				next.addObject("message", new WikiMessage("admin.message.changessaved"));
 			}
 		} catch (Exception e) {
@@ -332,6 +292,35 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.message.searchrefresh", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo);
+	}
+
+	/**
+	 *
+	 */
+	private boolean saveProperties(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, Properties props, List<WikiMessage> errors) throws Exception {
+		if (!errors.isEmpty()) {
+			next.addObject("errors", errors);
+			next.addObject("message", new WikiMessage("admin.message.changesnotsaved"));
+			return false;
+		}
+		// all is well, save the properties
+		Iterator iterator = props.keySet().iterator();
+		while (iterator.hasNext()) {
+			String key = (String)iterator.next();
+			String value = props.getProperty(key);
+			Environment.setValue(key, value);
+		}
+		Environment.saveProperties();
+		// re-initialize to reset database settings (if needed)
+		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
+			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
+		}
+		WikiUser user = ServletUtil.currentWikiUser();
+		WikiBase.reset(request.getLocale(), user, user.getUsername(), null);
+		JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
+		JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
+		return true;
 	}
 
 	/**

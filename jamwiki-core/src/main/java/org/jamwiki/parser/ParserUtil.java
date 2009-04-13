@@ -168,25 +168,8 @@ public class ParserUtil {
 	 * @throws ParserException Thrown if a parser error occurs.
 	 */
 	public static String[] parseSlice(String context, Locale locale, String virtualWiki, String topicName, int section) throws ParserException {
-		Topic topic = null;
-		try {
-			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
-		} catch (DataAccessException e) {
-			throw new ParserException(e);
-		}
-		if (topic == null || topic.getTopicContent() == null) {
-			return null;
-		}
-		ParserInput parserInput = new ParserInput();
-		parserInput.setContext(context);
-		parserInput.setLocale(locale);
-		parserInput.setTopicName(topicName);
-		parserInput.setVirtualWiki(virtualWiki);
-		AbstractParser parser = ParserUtil.parserInstance(parserInput);
 		ParserOutput parserOutput = new ParserOutput();
-		String content = parser.parseSlice(parserOutput, topic.getTopicContent(), section);
-		String sectionName = parserOutput.getSectionName();
-		return new String[]{sectionName, content};
+		return ParserUtil.executeSliceOrSplice(parserOutput, context, locale, virtualWiki, topicName, section, null, true);
 	}
 
 	/**
@@ -207,6 +190,14 @@ public class ParserUtil {
 	 * @throws ParserException Thrown if a parser error occurs.
 	 */
 	public static String[] parseSplice(ParserOutput parserOutput, String context, Locale locale, String virtualWiki, String topicName, int targetSection, String replacementText) throws ParserException {
+		return ParserUtil.executeSliceOrSplice(parserOutput, context, locale, virtualWiki, topicName, targetSection, replacementText, false);
+	}
+
+	/**
+	 * The slice and splice parser code is very similar, so this method simply consolidates
+	 * that code to avoid duplication.
+	 */
+	private static String[] executeSliceOrSplice(ParserOutput parserOutput, String context, Locale locale, String virtualWiki, String topicName, int targetSection, String replacementText, boolean isSlice) throws ParserException {
 		Topic topic = null;
 		try {
 			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
@@ -222,7 +213,12 @@ public class ParserUtil {
 		parserInput.setTopicName(topicName);
 		parserInput.setVirtualWiki(virtualWiki);
 		AbstractParser parser = ParserUtil.parserInstance(parserInput);
-		String content = parser.parseSplice(parserOutput, topic.getTopicContent(), targetSection, replacementText);
+		String content = null;
+		if (isSlice) {
+			content = parser.parseSlice(parserOutput, topic.getTopicContent(), targetSection);
+		} else {
+			content = parser.parseSplice(parserOutput, topic.getTopicContent(), targetSection, replacementText);
+		}
 		String sectionName = parserOutput.getSectionName();
 		return new String[]{sectionName, content};
 	}
