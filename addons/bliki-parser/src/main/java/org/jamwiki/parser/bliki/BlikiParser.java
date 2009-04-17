@@ -5,7 +5,6 @@ import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.jflex.JFlexParser;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 public class BlikiParser extends JFlexParser {
@@ -26,6 +25,7 @@ public class BlikiParser extends JFlexParser {
 	 * @throws ParserException
 	 *           Thrown if any error occurs during parsing.
 	 */
+	@Override
 	public String parseMinimal(String raw) throws ParserException {
 		long start = System.currentTimeMillis();
 		String output = raw;
@@ -50,6 +50,7 @@ public class BlikiParser extends JFlexParser {
 	 * @throws ParserException
 	 *           Thrown if any error occurs during parsing.
 	 */
+	@Override
 	public String parseHTML(ParserOutput parserOutput, String raw) throws ParserException {
 		long start = System.currentTimeMillis();
 		String output = null;

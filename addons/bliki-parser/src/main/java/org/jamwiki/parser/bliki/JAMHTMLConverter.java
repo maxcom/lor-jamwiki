@@ -23,6 +23,7 @@ public class JAMHTMLConverter extends HTMLConverter {
 		fParserInput = parserInput;
 	}
 
+	@Override
 	public void imageNodeToText(TagNode imageTagNode, ImageFormat imageFormat, Appendable resultBuffer, IWikiModel model)
 			throws IOException {
 		String imageName = imageFormat.getFilename();
