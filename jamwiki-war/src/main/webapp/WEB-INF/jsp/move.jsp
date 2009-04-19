@@ -30,7 +30,7 @@
 <div class="message"><fmt:message key="move.overview" /></div>
 
 <%-- FIXME: change from table to divs --%>
-<form name="delete" method="get" action="<jamwiki:link value="Special:Move" />">
+<form name="delete" method="post" action="<jamwiki:link value="Special:Move" />">
 <input type="hidden" name="<%= WikiUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 <div class="formentry">
 	<span class="formcaption-medium" nowrap><label for="moveDestination"><fmt:message key="move.destination" /></label>: </span>
