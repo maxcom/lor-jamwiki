@@ -10,6 +10,8 @@ Bugfixes:
   * Fix TOC rendering issue when depth exceeds the configured max depth.
   * Fix double-escaping of non-existent topic names when using URLs such as
     http://jamwiki.org/wiki/en/TestÜmlaut.  Reported by hanspeterklapf.
+  * Display any editable category topic text above the list of category items.
+    Reported by axcelclk.
 
 Translation Updates:
 
