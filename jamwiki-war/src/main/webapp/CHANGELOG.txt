@@ -17,6 +17,7 @@ Bugfixes:
 
 Translation Updates:
 
+  * Updated Chinese translations (hfl).
   * Updated Russian translations (shar).
 
 
