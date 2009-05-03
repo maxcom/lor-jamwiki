@@ -134,7 +134,8 @@ public class JAMWikiModel extends AbstractWikiModel {
 			if (StringUtils.isBlank(topic) && !StringUtils.isBlank(section)) {
 				// do not check existence for section links
 			} else {
-				if (!LinkUtil.isExistingArticle(virtualWiki, topic)) {
+				String articleName = topic.replace('_', ' ');
+				if (!LinkUtil.isExistingArticle(virtualWiki, articleName)) {
 					style = "edit";
 					href = LinkUtil.buildEditLinkUrl(fContextPath, virtualWiki, topic, query, -1);
 				}
