@@ -14,6 +14,8 @@ Bugfixes:
     "TestÜmlaut".  Reported by hanspeterklapf.
   * Display any editable category topic text above the list of category items.
     Reported by axcelclk.
+  * Fix failures when upgrading from versions earlier than 0.6.0.  Reported by
+    Eric.
 
 Translation Updates:
 
