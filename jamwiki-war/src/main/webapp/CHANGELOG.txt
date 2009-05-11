@@ -16,6 +16,8 @@ Bugfixes:
     Reported by axcelclk.
   * Fix failures when upgrading from versions earlier than 0.6.0.  Reported by
     Eric.
+  * Groups were not being displayed on the Special:Roles page when no roles were
+    assigned to the group.  Reported by hanspeterklapf.
 
 Translation Updates:
 
