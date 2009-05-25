@@ -29,6 +29,7 @@ import java.util.regex.PatternSyntaxException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.DataHandler;
 import org.jamwiki.Environment;
 import org.jamwiki.SearchEngine;
@@ -97,7 +98,7 @@ public class WikiUtil {
 	 * Utility method to retrieve an instance of the current data handler.
 	 *
 	 * @return An instance of the current data handler.
-	 * @throws Exception Thrown if a data handler instance can not be
+	 * @throws IOException Thrown if a data handler instance can not be
 	 *  instantiated.
 	 */
 	public static DataHandler dataHandlerInstance() throws IOException {
@@ -199,9 +200,17 @@ public class WikiUtil {
 	}
 
 	/**
+	 * Given a topic, if that topic is a redirect find the target topic of the redirection.
 	 *
+	 * @param parent The topic being queried.  If this topic is a redirect then the redirect
+	 *  target will be returned, otherwise the topic itself is returned.
+	 * @param attempts The maximum number of child topics to follow.  This parameter prevents
+	 *  infinite loops if topics redirect back to one another.
+	 * @return If the parent topic is a redirect then this method returns the target topic that
+	 *  is being redirected to, otherwise the parent topic is returned.
+	 * @throws DataAccessException Thrown if any error occurs while retrieving data.
 	 */
-	public static Topic findRedirectedTopic(Topic parent, int attempts) throws Exception {
+	public static Topic findRedirectedTopic(Topic parent, int attempts) throws DataAccessException {
 		int count = attempts;
 		String target = parent.getRedirectTo();
 		if (parent.getTopicType() != Topic.TYPE_REDIRECT || StringUtils.isBlank(target)) {
