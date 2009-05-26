@@ -326,6 +326,8 @@ public class DatabaseUpgrades {
 			// add characters_changed column to jam_topic_version
 			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
 				sql = "alter table jam_topic_version add (characters_changed INTEGER) ";
+			} else if (dbType.equals(WikiBase.DATA_HANDLER_MSSQL)) {
+				sql = "alter table jam_recent_change add [characters_changed] int ";
 			} else {
 				sql = "alter table jam_topic_version add column characters_changed INTEGER ";
 			}
@@ -334,6 +336,8 @@ public class DatabaseUpgrades {
 			// add characters_changed column to jam_recent_change
 			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
 				sql = "alter table jam_recent_change add (characters_changed INTEGER) ";
+			} else if (dbType.equals(WikiBase.DATA_HANDLER_MSSQL)) {
+				sql = "alter table jam_topic_version add [characters_changed] int ";
 			} else {
 				sql = "alter table jam_recent_change add column characters_changed INTEGER ";
 			}
@@ -342,6 +346,8 @@ public class DatabaseUpgrades {
 			// copy columns from jam_wiki_user_info into jam_wiki_user
 			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
 				sql = "alter table jam_wiki_user add (email VARCHAR(100)) ";
+			} else if (dbType.equals(WikiBase.DATA_HANDLER_MSSQL)) {
+				sql = "alter table jam_wiki_user add email VARCHAR(100) ";
 			} else {
 				sql = "alter table jam_wiki_user add column email VARCHAR(100) ";
 			}
@@ -356,12 +362,16 @@ public class DatabaseUpgrades {
 			// add new columns to jam_wiki_user
 			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
 				sql = "alter table jam_wiki_user add (editor VARCHAR(50)) ";
+			} else if (dbType.equals(WikiBase.DATA_HANDLER_MSSQL)) {
+				sql = "alter table jam_wiki_user add editor VARCHAR(50) ";
 			} else {
 				sql = "alter table jam_wiki_user add column editor VARCHAR(50) ";
 			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
 				sql = "alter table jam_wiki_user add (signature VARCHAR(255)) ";
+			} else if (dbType.equals(WikiBase.DATA_HANDLER_MSSQL)) {
+				sql = "alter table jam_wiki_user add signature VARCHAR(255) ";
 			} else {
 				sql = "alter table jam_wiki_user add column signature VARCHAR(255) ";
 			}
