@@ -1,6 +1,10 @@
 ﻿0.7.2
 =====
 
+New Features:
+
+  * Updated spam filter patterns.
+
 Bugfixes:
 
   * Fix missing edit toolbar during preview.  Reported by hanspeterklapf.
