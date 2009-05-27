@@ -27,6 +27,7 @@ Bugfixes:
 Translation Updates:
 
   * Updated Chinese translations (hfl).
+  * Updated French translations (Guillaume_FRANCOIS55).
   * Updated Russian translations (shar).
 
 
