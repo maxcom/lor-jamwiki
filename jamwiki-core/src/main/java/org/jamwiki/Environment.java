@@ -102,7 +102,9 @@ public class Environment {
 	public static final String PROP_TOPIC_SPAM_FILTER = "use-spam-filter";
 	public static final String PROP_TOPIC_USE_PREVIEW = "use-preview";
 	public static final String PROP_TOPIC_USE_SHOW_CHANGES = "use-show-changes";
-	private static final String PROPERTY_FILE_NAME = "jamwiki.properties";
+	/* Lookup properties file location from system properties first. */
+	private static final String PROPERTY_FILE_NAME =
+			System.getProperty("jamwiki.property.file", "jamwiki.properties");
 
 	private static Properties defaults = null;
 	private static Environment instance = null; // NOPMD instanciated and used
