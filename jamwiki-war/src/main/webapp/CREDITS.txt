@@ -24,6 +24,7 @@ JAMWiki Contributors
      Danish:                Anders Monrad (g9adm)
      Dutch:                 Tarik Menbhi & Wim Borghs (Angel)
      French:                Henri Gomez (hgomez)
+                            Guillaume FRANCOIS 55
      Galician:              Manuel Meixide - bagonix.net (mmeixide)
      German:                Axel Kramer (axelclk)
                             Frank Reifenstahl (frareinif)
