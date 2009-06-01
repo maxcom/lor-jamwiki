@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Properties;
 import org.apache.commons.lang.math.NumberUtils;
 // FIXME - remove this import
@@ -102,7 +103,8 @@ public class Environment {
 	public static final String PROP_TOPIC_SPAM_FILTER = "use-spam-filter";
 	public static final String PROP_TOPIC_USE_PREVIEW = "use-preview";
 	public static final String PROP_TOPIC_USE_SHOW_CHANGES = "use-show-changes";
-	private static final String PROPERTY_FILE_NAME = "jamwiki.properties";
+	/* Lookup properties file location from system properties first. */
+	private static final String PROPERTY_FILE_NAME = System.getProperty("jamwiki.property.file", "jamwiki.properties");
 
 	private static Properties defaults = null;
 	private static Environment instance = null; // NOPMD instanciated and used
@@ -120,7 +122,29 @@ public class Environment {
 		initDefaultProperties();
 		logger.fine("Default properties initialized: " + defaults.toString());
 		props = loadProperties(PROPERTY_FILE_NAME, defaults);
+		if ("true".equals(System.getProperty("jamwiki.override.file.properties"))) {
+			overrideFromSystemProperties();
+		}
 		logger.fine("JAMWiki properties initialized: " + props.toString());
+	}
+
+	/**
+	* Overrides file properties from system properties. Iterates over all properties
+	* and checks if application server has defined overriding property. System wide
+	* properties are prefixed with "jamwiki". These properties may be used to define
+	* dynamic runtime properties (eg. upload path depends on environment).
+	*/
+	private void overrideFromSystemProperties() {
+		logger.info("Overriding file properties with system properties.");
+		Enumeration properties = props.propertyNames();
+		while (properties.hasMoreElements()) {
+			String property = String.valueOf(properties.nextElement());
+			String value = System.getProperty("jamwiki." + property);
+			if (value != null) {
+				props.setProperty(property, value);
+				logger.info("Replaced property " + property + " with value: " + value);
+			}
+		}
 	}
 
 	/**

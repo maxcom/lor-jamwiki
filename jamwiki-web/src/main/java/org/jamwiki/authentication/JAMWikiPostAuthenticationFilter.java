@@ -120,21 +120,31 @@ public class JAMWikiPostAuthenticationFilter implements Filter {
 	 */
 	private void handleRegisteredUser(Authentication auth) throws ServletException {
 		Object principal = auth.getPrincipal();
-		if (!(principal instanceof UserDetails)) {
-			logger.warning("Unknown principal type: " + principal);
-			return;
-		}
+		// Check if Authentication returns a known principal
 		if (principal instanceof WikiUserDetails) {
 			// user has gone through the normal authentication path, no need to process further
 			return;
 		}
-		String username = ((UserDetails)principal).getUsername();
+		// find out authenticated username
+		String username;
+		if (principal instanceof UserDetails) {
+			// using custom authentication with Spring Security UserDetail service
+			username = ((UserDetails)principal).getUsername();
+		} else if (principal instanceof String) {
+			// external authentication returns only username
+			username = String.valueOf(principal);
+		} else {
+			// no known principal was found
+			logger.warning("Unknown principal type: " + principal);
+			username = null;
+			return;
+		}
 		if (StringUtils.isBlank(username)) {
 			logger.warning("Null or empty username found for authenticated principal");
 			return;
 		}
 		// for LDAP and other authentication methods, verify that JAMWiki database records exist
-		try {
+		try {   
 			if (WikiBase.getDataHandler().lookupWikiUser(username) == null) {
 				// if there is a valid security credential & no JAMWiki record for the user, create one
 				WikiUser user = new WikiUser(username);

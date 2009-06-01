@@ -16,6 +16,10 @@ New Features:
   * Implement caching for diffs and topic versions to speed up page rendering.
   * Refactor exception handling to throw and catch exceptions at a more
     granular level.
+  * Allow JAMWiki properties to be read from outside of the WAR file or from
+    system properties (urpi).
+  * Allow authentication with pluggable Spring authentication modules that
+    do not implement UserDetailService such as existing JAAS modules (urpi).
   * Upgrade to JFlex 1.4.3.
   * Upgrade to JUnit 4.5.
   * Upgrade to JSTL standard taglib 1.1.2.
