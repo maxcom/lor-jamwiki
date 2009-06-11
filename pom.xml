@@ -167,7 +167,7 @@
 			<dependency>
 				<groupId>info.bliki.wiki</groupId>
 				<artifactId>bliki-core</artifactId>
-				<version>3.0.12-SNAPSHOT</version>
+				<version>3.0.12</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
@@ -301,7 +301,7 @@
 		</developer>
 		<developer>
 			<id>decamps</id>
-			<name>Régis Décamps</name>
+			<name>Rï¿½gis Dï¿½camps</name>
 			<email>decamps@users.sf.net</email>
 			<roles>
 				<role>developer</role>
@@ -311,7 +311,7 @@
 	</developers>
 	<contributors>
 		<contributor><name>Fernando Fernandes</name><email>leandes</email><roles><role>translator (Portugese - Brazilian)</role></roles></contributor>
-		<contributor><name>Martin Östmark</name><email>martin</email><roles><role>translator (Swedish)</role></roles></contributor>
+		<contributor><name>Martin ï¿½stmark</name><email>martin</email><roles><role>translator (Swedish)</role></roles></contributor>
 		<contributor><name>Jiading</name><email>ewen0930</email><roles><role>translator (Chinese)</role></roles></contributor>
 		<contributor><name>Feilong Huang</name><email>hfl</email><roles><role>translator (Chinese)</role></roles></contributor>
 		<contributor><name>Marija Susovic</name><roles><role>translator (Croatian)</role></roles></contributor>
@@ -328,11 +328,11 @@
 		<contributor><name>Natto Lover (nattolover)</name><roles><role>translator (Japanese)</role></roles></contributor>
 		<contributor><name>Robert Matyja</name><email>dlpa@users.sf.net</email><roles><role>translator (Polish)</role></roles></contributor>
 		<contributor><name>Matus Majchrak (aryan)</name><roles><role>translator (Slovak)</role></roles></contributor>
-		<contributor><name>Angel Luis Pinazo Perpiñán</name><roles><role>translator (Spanish)</role></roles></contributor>
+		<contributor><name>Angel Luis Pinazo Perpiï¿½ï¿½n</name><roles><role>translator (Spanish)</role></roles></contributor>
 		<contributor><name>Volodymyr Vlad</name><email>gutsul</email><roles><role>translator (Ukranian)</role></roles></contributor>
 		<!-- TODO indicate roles -->
 		<contributor><name>AleXey "lexis" Rumyantsev</name><email>lexis@mail.ru</email><roles><role>graphics designer</role></roles></contributor>
-		<contributor><name>Luzius Thöny</name><email>luzi</email></contributor>
+		<contributor><name>Luzius Thï¿½ny</name><email>luzi</email></contributor>
 		<contributor><name>Oliver</name><email>okohll</email><roles><role>graphics designer</role></roles></contributor>
 		<contributor><name>Carsten Seiffert</name><email>carsten</email><roles><role>bugfixer</role></roles></contributor>
 		<contributor><name>Hanspeter Klapf</name><email>hanspeterklapf</email></contributor>
