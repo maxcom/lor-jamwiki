@@ -37,6 +37,7 @@ Bugfixes:
 Translation Updates:
 
   * Updated French translations (Guillaume_FRANCOIS55).
+  * Updated German translations (axelclk).
   * Updated Polish translations (dlpa).
 
 
