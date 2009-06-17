@@ -17,10 +17,13 @@
 package org.jamwiki.utils;
 
 import java.io.File;
+import java.util.regex.PatternSyntaxException;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 
 /**
@@ -52,10 +55,10 @@ public class SpamFilter {
 	 *  those found in the spam blacklist.
 	 * @return If any matches are found this method returns the matched text,
 	 *  otherwise <code>null</code> is returned.
-	 * @throws Exception Thrown if any error occurs while reading, compiling,
+	 * @throws DataAccessException Thrown if any error occurs while reading, compiling,
 	 *  or matching against the spam filter regular expressions.
 	 */
-	public static String containsSpam(String content) throws Exception {
+	public static String containsSpam(String content) throws DataAccessException {
 		if (!Environment.getBooleanValue(Environment.PROP_TOPIC_SPAM_FILTER)) {
 			return null;
 		}
@@ -76,38 +79,47 @@ public class SpamFilter {
 	/**
 	 *
 	 */
-	private static void initialize() throws Exception {
+	private static void initialize() throws DataAccessException {
+		File file = null;
 		try {
-			File file = Utilities.getClassLoaderFile(SPAM_BLACKLIST_FILE);
-			String regex = "";
-			String regexText = FileUtils.readFileToString(file, "UTF-8").trim();
-			String[] tokens = regexText.split("\n");
-			for (int i = 0; i < tokens.length; i++) {
-				String token = tokens[i];
-				if (StringUtils.isBlank(token)) {
-					continue;
-				}
-				if (i > 0) {
-					regex += "|";
-				}
-				regex += token.trim();
-			}
-			spamRegexPattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-			logger.info("Loading spam filter regular expression:" + regex);
-		} catch (Exception e) {
-			logger.severe("Unable to initialize spam blacklist", e);
-			throw e;
+			file = Utilities.getClassLoaderFile(SPAM_BLACKLIST_FILE);
+		} catch (IOException e) {
+			throw new DataAccessException("I/O exception while initlaizing spam blacklist", e);
 		}
+		String regex = "";
+		String regexText = null;
+		try {
+			regexText = FileUtils.readFileToString(file, "UTF-8").trim();
+		} catch (IOException e) {
+			throw new DataAccessException("I/O exception while initlaizing spam blacklist", e);
+		}
+		String[] tokens = regexText.split("\n");
+		for (int i = 0; i < tokens.length; i++) {
+			String token = tokens[i];
+			if (StringUtils.isBlank(token)) {
+				continue;
+			}
+			if (i > 0) {
+				regex += "|";
+			}
+			regex += token.trim();
+		}
+		try {
+			spamRegexPattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+		} catch (PatternSyntaxException e) {
+			throw new DataAccessException("Failure while parsing spam regular expression list", e);
+		}
+		logger.info("Loading spam filter regular expression:" + regex);
 	}
 
 	/**
 	 * Reload the spam-blacklist.txt file, updating the current spam regular
 	 * expression patterns.
 	 *
-	 * @throws Exception Thrown if any error occurs while reading or compiling
+	 * @throws DataAccessException Thrown if any error occurs while reading or compiling
 	 *  the spam filter regular expressions.
 	 */
-	public static void reload() throws Exception {
+	public static void reload() throws DataAccessException {
 		SpamFilter.initialize();
 	}
 }

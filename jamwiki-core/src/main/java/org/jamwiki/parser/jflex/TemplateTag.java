@@ -39,17 +39,9 @@ public class TemplateTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(TemplateTag.class.getName());
 	protected static final String TEMPLATE_INCLUSION = "template-inclusion";
-	private static Pattern PARAM_NAME_VALUE_PATTERN = null;
+	private static Pattern PARAM_NAME_VALUE_PATTERN = Pattern.compile("[\\s]*([A-Za-z0-9_\\ \\-]+)[\\s]*\\=([\\s\\S]*)");
 
 	private final HashMap<String, String> parameterValues = new HashMap<String, String>();
-
-	static {
-		try {
-			PARAM_NAME_VALUE_PATTERN = Pattern.compile("[\\s]*([A-Za-z0-9_\\ \\-]+)[\\s]*\\=([\\s\\S]*)");
-		} catch (Exception e) {
-			logger.severe("Unable to compile pattern", e);
-		}
-	}
 
 	/**
 	 * Once the template call has been parsed and the template values have been

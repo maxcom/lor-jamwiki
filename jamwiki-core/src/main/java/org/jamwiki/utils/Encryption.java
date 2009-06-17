@@ -84,12 +84,12 @@ public class Encryption {
 			} catch (NoSuchAlgorithmException e) {
 				throw new UnsupportedOperationException("JDK does not support the SHA-1 or SHA-512 encryption algorithms");
 			}
+			// save the algorithm so that if the user upgrades the JDK they can
+			// still use passwords encrypted with the weaker algorithm
+			Environment.setValue(Environment.PROP_ENCRYPTION_ALGORITHM, "SHA-1");
 			try {
-				// save the algorithm so that if the user upgrades the JDK they can
-				// still use passwords encrypted with the weaker algorithm
-				Environment.setValue(Environment.PROP_ENCRYPTION_ALGORITHM, "SHA-1");
 				Environment.saveProperties();
-			} catch (Exception e) {
+			} catch (IOException e) {
 				logger.info("Failure while saving encryption algorithm property", e);
 			}
 		}

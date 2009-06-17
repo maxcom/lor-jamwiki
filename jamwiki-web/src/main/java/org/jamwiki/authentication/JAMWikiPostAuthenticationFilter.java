@@ -25,7 +25,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.security.Authentication;
@@ -152,7 +154,10 @@ public class JAMWikiPostAuthenticationFilter implements Filter {
 				String encryptedPassword = "";
 				WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword);
 			}
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
+			logger.severe("Failure while processing user credentials for " + username, e);
+			throw new ServletException(e);
+		} catch (WikiException e) {
 			logger.severe("Failure while processing user credentials for " + username, e);
 			throw new ServletException(e);
 		}

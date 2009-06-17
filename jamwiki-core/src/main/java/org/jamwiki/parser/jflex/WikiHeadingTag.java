@@ -16,6 +16,7 @@
  */
 package org.jamwiki.parser.jflex;
 
+import org.jamwiki.DataAccessException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.TableOfContents;
@@ -51,7 +52,7 @@ public class WikiHeadingTag {
 		String url = "";
 		try {
 			url = LinkUtil.buildEditLinkUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserInput.getTopicName(), null, section);
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			logger.severe("Failure while building link for topic " + parserInput.getVirtualWiki() + " / " + parserInput.getTopicName(), e);
 		}
 		StringBuffer output = new StringBuffer("<span class=\"editsection\">[<a href=\"").append(url).append("\">");

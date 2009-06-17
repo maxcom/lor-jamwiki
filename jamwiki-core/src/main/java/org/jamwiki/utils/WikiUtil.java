@@ -193,7 +193,7 @@ public class WikiUtil {
 		try {
 			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
 			target = virtualWiki.getDefaultTopicName();
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			logger.warning("Unable to retrieve default topic for virtual wiki", e);
 		}
 		return "/" + virtualWikiName + "/" + target;
