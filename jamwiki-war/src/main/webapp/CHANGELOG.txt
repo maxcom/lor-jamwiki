@@ -23,7 +23,7 @@ New Features:
   * Upgrade to JFlex 1.4.3.
   * Upgrade to JUnit 4.5.
   * Upgrade to JSTL standard taglib 1.1.2.
-  * Upgrade to ehcache 1.6.0-beta3.
+  * Upgrade to ehcache 1.6.0.
 
 Bugfixes:
 
