@@ -16,6 +16,7 @@
  */
 package org.jamwiki.taglib;
 
+import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.jamwiki.utils.WikiLogger;
@@ -35,7 +36,7 @@ public class WikiVersionTag extends TagSupport {
 	public int doEndTag() throws JspException {
 		try {
 			this.pageContext.getOut().print(WikiVersion.CURRENT_WIKI_VERSION);
-		} catch (Exception e) {
+		} catch (IOException e) {
 			logger.severe("Failure while retrieving Wiki version", e);
 			throw new JspException(e);
 		}

@@ -16,6 +16,7 @@
  */
 package org.jamwiki.taglib;
 
+import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.commons.lang.StringUtils;
@@ -39,26 +40,26 @@ public class TextTag extends TagSupport {
 	 */
 	public int doEndTag() throws JspException {
 		StringBuffer output = new StringBuffer();
+		output.append("<input type=\"text\"");
+		output.append(" name=\"").append(this.name).append('\"');
+		if (!StringUtils.isBlank(this.id)) {
+			output.append(" id=\"").append(this.id).append('\"');
+		}
+		if (!StringUtils.isBlank(this.maxlength)) {
+			output.append(" maxlength=\"").append(this.maxlength).append('\"');
+		}
+		if (!StringUtils.isBlank(this.size)) {
+			output.append(" size=\"").append(this.size).append('\"');
+		}
+		if (!StringUtils.isBlank(this.style)) {
+			output.append(" style=\"").append(this.style).append('\"');
+		}
+		String tagValue = (StringUtils.isBlank(this.value) ? "" : this.value);
+		output.append(" value=\"").append(tagValue).append('\"');
+		output.append(" />");
 		try {
-			output.append("<input type=\"text\"");
-			output.append(" name=\"").append(this.name).append('\"');
-			if (!StringUtils.isBlank(this.id)) {
-				output.append(" id=\"").append(this.id).append('\"');
-			}
-			if (!StringUtils.isBlank(this.maxlength)) {
-				output.append(" maxlength=\"").append(this.maxlength).append('\"');
-			}
-			if (!StringUtils.isBlank(this.size)) {
-				output.append(" size=\"").append(this.size).append('\"');
-			}
-			if (!StringUtils.isBlank(this.style)) {
-				output.append(" style=\"").append(this.style).append('\"');
-			}
-			String tagValue = (StringUtils.isBlank(this.value) ? "" : this.value);
-			output.append(" value=\"").append(tagValue).append('\"');
-			output.append(" />");
 			this.pageContext.getOut().print(output.toString());
-		} catch (Exception e) {
+		} catch (IOException e) {
 			logger.severe("Failure in checkbox tag for " + this.id + " / " + this.name + " / " + this.style + " / " + this.value, e);
 			throw new JspException(e);
 		}

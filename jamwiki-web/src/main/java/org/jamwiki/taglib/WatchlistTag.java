@@ -16,9 +16,11 @@
  */
 package org.jamwiki.taglib;
 
+import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
+import org.jamwiki.WikiException;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.servlets.ServletUtil;
 import org.jamwiki.utils.WikiLogger;
@@ -37,16 +39,13 @@ public class WatchlistTag extends BodyTagSupport {
 	 *
 	 */
 	public int doStartTag() throws JspException {
-		try {
-			HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
-			String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
-			Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
-			if (watchlist.containsTopic(this.topic)) {
+		if (this.isWatchedTopic()) {
+			try {
 				this.pageContext.getOut().print("<strong>");
+			} catch (IOException e) {
+				logger.severe("Failure processing watchlist item " + this.topic, e);
+				throw new JspException(e);
 			}
-		} catch (Exception e) {
-			logger.severe("Failure processing watchlist item " + this.topic, e);
-			throw new JspException(e);
 		}
 		return EVAL_BODY_INCLUDE;
 	}
@@ -55,18 +54,30 @@ public class WatchlistTag extends BodyTagSupport {
 	 *
 	 */
 	public int doEndTag() throws JspException {
-		try {
-			HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
-			String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
-			Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
-			if (watchlist.containsTopic(this.topic)) {
+		if (this.isWatchedTopic()) {
+			try {
 				this.pageContext.getOut().print("</strong>");
+			} catch (IOException e) {
+				logger.severe("Failure processing watchlist item " + this.topic, e);
+				throw new JspException(e);
 			}
-		} catch (Exception e) {
+		}
+		return EVAL_PAGE;
+	}
+
+	/**
+	 *
+	 */
+	private boolean isWatchedTopic() throws JspException {
+		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
+		String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
+		try {
+			Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
+			return (watchlist.containsTopic(this.topic));
+		} catch (WikiException e) {
 			logger.severe("Failure processing watchlist item " + this.topic, e);
 			throw new JspException(e);
 		}
-		return EVAL_PAGE;
 	}
 
 	/**

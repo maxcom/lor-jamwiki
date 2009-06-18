@@ -17,6 +17,8 @@
 package org.jamwiki.servlets;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -198,15 +200,16 @@ public class ServletUtil {
 			try {
 				// FIXME - do not lookup the user every time this method is called, that will kill performance
 				user = WikiBase.getDataHandler().lookupWikiUser(username);
-				if (user == null) {
-					// invalid user.  someone has either spoofed a cookie or the user account is no longer in
-					// the database.
-					logger.warning("No user exists for principal found in security context authentication: " + username);
-					SecurityContextHolder.clearContext();
-					throw new AuthenticationCredentialsNotFoundException("Invalid user credentials found - username " + username + " does not exist in this wiki installation");
-				}
-			} catch (Exception e) {
+			} catch (DataAccessException e) {
 				logger.severe("Failure while retrieving user from database with login: " + username, e);
+				return user;
+			}
+			if (user == null) {
+				// invalid user.  someone has either spoofed a cookie or the user account is no longer in
+				// the database.
+				logger.warning("No user exists for principal found in security context authentication: " + username);
+				SecurityContextHolder.clearContext();
+				throw new AuthenticationCredentialsNotFoundException("Invalid user credentials found - username " + username + " does not exist in this wiki installation");
 			}
 		}
 		return user;
@@ -400,15 +403,13 @@ public class ServletUtil {
 	 *  page name, <code>false</code> otherwise.
 	 */
 	protected static boolean isTopic(HttpServletRequest request, String value) {
-		try {
-			String topic = WikiUtil.getTopicFromURI(request);
-			if (StringUtils.isBlank(topic)) {
-				return false;
-			}
-			if (value != null &&  topic.equals(value)) {
-				return true;
-			}
-		} catch (Exception e) {}
+		String topic = WikiUtil.getTopicFromURI(request);
+		if (StringUtils.isBlank(topic)) {
+			return false;
+		}
+		if (value != null &&  topic.equals(value)) {
+			return true;
+		}
 		return false;
 	}
 
@@ -572,7 +573,7 @@ public class ServletUtil {
 		if (Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
 			try {
 				virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
-			} catch (Exception e) {}
+			} catch (DataAccessException e) {}
 		}
 		if (virtualWiki == null) {
 			logger.severe("No virtual wiki found for " + virtualWikiName);
@@ -609,7 +610,7 @@ public class ServletUtil {
 			if (classesDirError != null) {
 				errors.add(classesDirError);
 			}
-		} catch (Exception e) {
+		} catch (FileNotFoundException e) {
 			errors.add(new WikiMessage("error.directorywrite", classesDir, e.getMessage()));
 		}
 		// test database
@@ -619,25 +620,27 @@ public class ServletUtil {
 		String password = Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD, props);
 		try {
 			DatabaseConnection.testDatabase(driver, url, userName, password, false);
-		} catch (Exception e) {
+		} catch (ClassNotFoundException e) {
+			logger.severe("Invalid database settings", e);
+			errors.add(new WikiMessage("error.databaseconnection", e.getMessage()));
+		} catch (SQLException e) {
 			logger.severe("Invalid database settings", e);
 			errors.add(new WikiMessage("error.databaseconnection", e.getMessage()));
 		}
 		// verify valid parser class
-		boolean validParser = true;
 		String parserClass = props.getProperty(Environment.PROP_PARSER_CLASS);
 		String abstractParserClass = "org.jamwiki.parser.AbstractParser";
-		if (parserClass == null || parserClass.equals(abstractParserClass)) {
-			validParser = false;
-		}
-		try {
-			Class parent = ClassUtils.getClass(parserClass);
-			Class child = ClassUtils.getClass(abstractParserClass);
-			if (!child.isAssignableFrom(parent)) {
+		boolean validParser = (parserClass != null && !parserClass.equals(abstractParserClass));
+		if (validParser) {
+			try {
+				Class parent = ClassUtils.getClass(parserClass);
+				Class child = ClassUtils.getClass(abstractParserClass);
+				if (!child.isAssignableFrom(parent)) {
+					validParser = false;
+				}
+			} catch (ClassNotFoundException e) {
 				validParser = false;
 			}
-		} catch (Exception e) {
-			validParser = false;
 		}
 		if (!validParser) {
 			errors.add(new WikiMessage("error.parserclass", parserClass));

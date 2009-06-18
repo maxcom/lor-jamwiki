@@ -16,6 +16,7 @@
  */
 package org.jamwiki.taglib;
 
+import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.commons.lang.StringUtils;
@@ -40,23 +41,23 @@ public class AlternateTag extends TagSupport {
 	 */
 	public int doEndTag() throws JspException {
 		String tagAttributeName = "default";
+		if (!StringUtils.isBlank(this.attributeName)) {
+			tagAttributeName = this.attributeName;
+		}
+		tagAttributeName = ATTRIBUTE_ROOT_NAME + "." + tagAttributeName;
+		// check the request for a value.
+		String previousValue = (String)this.pageContext.getRequest().getAttribute(tagAttributeName);
+		String output = "";
+		if (previousValue == null || previousValue.equals(this.value2)) {
+			output = this.value1;
+			this.pageContext.getRequest().setAttribute(tagAttributeName, this.value1);
+		} else {
+			output = this.value2;
+			this.pageContext.getRequest().setAttribute(tagAttributeName, this.value2);
+		}
 		try {
-			if (!StringUtils.isBlank(this.attributeName)) {
-				tagAttributeName = this.attributeName;
-			}
-			tagAttributeName = ATTRIBUTE_ROOT_NAME + "." + tagAttributeName;
-			// check the request for a value.
-			String previousValue = (String)this.pageContext.getRequest().getAttribute(tagAttributeName);
-			String output = "";
-			if (previousValue == null || previousValue.equals(this.value2)) {
-				output = this.value1;
-				this.pageContext.getRequest().setAttribute(tagAttributeName, this.value1);
-			} else {
-				output = this.value2;
-				this.pageContext.getRequest().setAttribute(tagAttributeName, this.value2);
-			}
 			this.pageContext.getOut().print(output);
-		} catch (Exception e) {
+		} catch (IOException e) {
 			logger.severe("Failure in alternate tag for " + this.value1 + " / " + this.value2 + " / " + this.attributeName, e);
 			throw new JspException(e);
 		}

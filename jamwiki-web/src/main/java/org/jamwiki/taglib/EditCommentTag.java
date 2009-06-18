@@ -16,6 +16,7 @@
  */
 package org.jamwiki.taglib;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -44,10 +46,10 @@ public class EditCommentTag extends TagSupport {
 	 * Generate the tag HTML output.
 	 */
 	public int doEndTag() throws JspException {
+		String result = this.parseComment();
 		try {
-			String result = this.parseComment();
 			this.pageContext.getOut().print(result);
-		} catch (Exception e) {
+		} catch (IOException e) {
 			logger.severe("Failure while building edit comment for comment " + this.comment, e);
 			throw new JspException(e);
 		}
@@ -85,7 +87,7 @@ public class EditCommentTag extends TagSupport {
 	/**
 	 * Process the edit comment and return a parsed output string.
 	 */
-	private String parseComment() throws Exception {
+	private String parseComment() throws JspException {
 		if (StringUtils.isBlank(this.getComment())) {
 			return this.getComment();
 		}
@@ -104,7 +106,12 @@ public class EditCommentTag extends TagSupport {
 		WikiLink wikiLink = LinkUtil.parseWikiLink(this.topic + "#" + sectionName);
 		StringBuffer result = new StringBuffer();
 		result.append("<span class=\"").append(CSS_SECTION_COMMENT).append("\">");
-		result.append(LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, wikiLink, "&rarr;", null, null, false));
+		try {
+			result.append(LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, wikiLink, "&rarr;", null, null, false));
+		} catch (DataAccessException e) {
+			logger.severe("Failure while building edit comment for comment " + this.comment, e);
+			throw new JspException(e);
+		}
 		result.append(StringEscapeUtils.escapeXml(sectionName) + (!StringUtils.isBlank(additionalComment) ? " -" : ""));
 		result.append("</span>");
 		if (!StringUtils.isBlank(additionalComment)) {

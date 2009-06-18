@@ -16,6 +16,7 @@
  */
 package org.jamwiki.taglib;
 
+import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.commons.lang.StringUtils;
@@ -51,28 +52,28 @@ public abstract class AbstractButtonTag extends TagSupport {
 	 */
 	public int doEndTag() throws JspException {
 		StringBuffer output = new StringBuffer();
+		output.append("<input type=\"").append(this.getButtonType()).append('\"');
+		output.append(" value=\"").append(this.value).append('\"');
+		output.append(" name=\"").append(this.name).append('\"');
+		if (!StringUtils.isBlank(this.id)) {
+			output.append(" id=\"").append(this.id).append('\"');
+		}
+		if (!StringUtils.isBlank(this.style)) {
+			output.append(" style=\"").append(this.style).append('\"');
+		}
+		if (!StringUtils.isBlank(this.onchange)) {
+			output.append(" onchange=\"").append(this.onchange).append('\"');
+		}
+		if (!StringUtils.isBlank(this.onclick)) {
+			output.append(" onclick=\"").append(this.onclick).append('\"');
+		}
+		if (!StringUtils.isBlank(this.checked) && this.checked.equals(this.value)) {
+			output.append(" checked=\"checked\"");
+		}
+		output.append(" />");
 		try {
-			output.append("<input type=\"").append(this.getButtonType()).append('\"');
-			output.append(" value=\"").append(this.value).append('\"');
-			output.append(" name=\"").append(this.name).append('\"');
-			if (!StringUtils.isBlank(this.id)) {
-				output.append(" id=\"").append(this.id).append('\"');
-			}
-			if (!StringUtils.isBlank(this.style)) {
-				output.append(" style=\"").append(this.style).append('\"');
-			}
-			if (!StringUtils.isBlank(this.onchange)) {
-				output.append(" onchange=\"").append(this.onchange).append('\"');
-			}
-			if (!StringUtils.isBlank(this.onclick)) {
-				output.append(" onclick=\"").append(this.onclick).append('\"');
-			}
-			if (!StringUtils.isBlank(this.checked) && this.checked.equals(this.value)) {
-				output.append(" checked=\"checked\"");
-			}
-			output.append(" />");
 			this.pageContext.getOut().print(output.toString());
-		} catch (Exception e) {
+		} catch (IOException e) {
 			logger.severe("Failure in " + getButtonType() + " tag for " + this.id + " / " + this.name + " / " + this.style + " / " + this.value, e);
 			throw new JspException(e);
 		}

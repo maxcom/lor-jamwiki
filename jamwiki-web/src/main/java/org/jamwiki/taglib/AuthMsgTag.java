@@ -16,6 +16,7 @@
  */
 package org.jamwiki.taglib;
 
+import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -38,14 +39,14 @@ public class AuthMsgTag extends TagSupport {
 	 *
 	 */
 	public int doEndTag() throws JspException {
-		try {
-			String output = this.processSpringSecurityException();
-			if (output != null) {
+		String output = this.processSpringSecurityException();
+		if (output != null) {
+			try {
 				this.pageContext.getOut().print(output);
+			} catch (IOException e) {
+				logger.severe("Failure in authmsg tag", e);
+				throw new JspException(e);
 			}
-		} catch (Exception e) {
-			logger.severe("Failure in authmsg tag", e);
-			throw new JspException(e);
 		}
 		return EVAL_PAGE;
 	}

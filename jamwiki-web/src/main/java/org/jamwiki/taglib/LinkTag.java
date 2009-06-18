@@ -16,10 +16,12 @@
  */
 package org.jamwiki.taglib;
 
+import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -64,7 +66,10 @@ public class LinkTag extends BodyTagSupport {
 				url = LinkUtil.buildTopicUrl(request.getContextPath(), virtualWiki, wikiLink);
 			}
 			this.pageContext.getOut().print(url);
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
+			logger.severe("Failure while building url " + url + " with value " + this.value + " and text " + this.text, e);
+			throw new JspException(e);
+		} catch (IOException e) {
 			logger.severe("Failure while building url " + url + " with value " + this.value + " and text " + this.text, e);
 			throw new JspException(e);
 		} finally {

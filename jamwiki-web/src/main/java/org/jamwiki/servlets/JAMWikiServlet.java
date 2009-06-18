@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
@@ -85,7 +86,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		int cssRevision = 0;
 		try {
 			cssRevision = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, false, null).getCurrentVersionId();
-		} catch (Exception e) {}
+		} catch (DataAccessException e) {}
 		next.addObject("cssRevision", cssRevision);
 	}
 
@@ -98,24 +99,24 @@ public abstract class JAMWikiServlet extends AbstractController {
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
 		String pageName = pageInfo.getTopicName();
 		String virtualWiki = pageInfo.getVirtualWikiName();
-		try {
-			if (pageInfo.getAdmin()) {
-				if (userDetails.hasRole(Role.ROLE_SYSADMIN)) {
-					links.put("Special:Admin", new WikiMessage("tab.admin.configuration"));
-					links.put("Special:Maintenance", new WikiMessage("tab.admin.maintenance"));
-					links.put("Special:Roles", new WikiMessage("tab.admin.roles"));
-				}
-				if (userDetails.hasRole(Role.ROLE_TRANSLATE)) {
-					links.put("Special:Translation", new WikiMessage("tab.admin.translations"));
-				}
-			} else if (pageInfo.getSpecial()) {
-				// append query params for pages such as Special:Contributions that need it
-				String specialUrl = pageName;
-				if (!StringUtils.isBlank(request.getQueryString())) {
-					specialUrl = pageName + "?" + request.getQueryString();
-				}
-				links.put(specialUrl, new WikiMessage("tab.common.special"));
-			} else {
+		if (pageInfo.getAdmin()) {
+			if (userDetails.hasRole(Role.ROLE_SYSADMIN)) {
+				links.put("Special:Admin", new WikiMessage("tab.admin.configuration"));
+				links.put("Special:Maintenance", new WikiMessage("tab.admin.maintenance"));
+				links.put("Special:Roles", new WikiMessage("tab.admin.roles"));
+			}
+			if (userDetails.hasRole(Role.ROLE_TRANSLATE)) {
+				links.put("Special:Translation", new WikiMessage("tab.admin.translations"));
+			}
+		} else if (pageInfo.getSpecial()) {
+			// append query params for pages such as Special:Contributions that need it
+			String specialUrl = pageName;
+			if (!StringUtils.isBlank(request.getQueryString())) {
+				specialUrl = pageName + "?" + request.getQueryString();
+			}
+			links.put(specialUrl, new WikiMessage("tab.common.special"));
+		} else {
+			try {
 				String article = WikiUtil.extractTopicLink(pageName);
 				String comments = WikiUtil.extractCommentsLink(pageName);
 				links.put(article, new WikiMessage("tab.common.article"));
@@ -153,9 +154,9 @@ public abstract class JAMWikiServlet extends AbstractController {
 				}
 				String printLink = "Special:Print?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 				links.put(printLink, new WikiMessage("tab.common.print"));
+			} catch (WikiException e) {
+				logger.severe("Unable to build tabbed menu links", e);
 			}
-		} catch (Exception e) {
-			logger.severe("Unable to build tabbed menu links", e);
 		}
 		return links;
 	}

@@ -34,16 +34,20 @@ public class EnabledTag extends BodyTagSupport {
 	 *
 	 */
 	public int doStartTag() throws JspException {
+		String propertyName = null;
 		try {
-			String propertyName = (String)Environment.class.getField(this.property).get(null);
-			if (Environment.getBooleanValue(propertyName)) {
-				return EVAL_BODY_INCLUDE;
-			}
-			return SKIP_BODY;
-		} catch (Exception e) {
+			propertyName = (String)Environment.class.getField(this.property).get(null);
+		} catch (NoSuchFieldException e) {
+			logger.severe("Failure in enabled tag for " + this.property, e);
+			throw new JspException(e);
+		} catch (IllegalAccessException e) {
 			logger.severe("Failure in enabled tag for " + this.property, e);
 			throw new JspException(e);
 		}
+		if (Environment.getBooleanValue(propertyName)) {
+			return EVAL_BODY_INCLUDE;
+		}
+		return SKIP_BODY;
 	}
 
 	/**

@@ -16,9 +16,11 @@
  */
 package org.jamwiki.taglib;
 
+import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiUtil;
@@ -46,11 +48,16 @@ public class ImageLinkTag extends TagSupport {
 		String virtualWiki = retrieveVirtualWiki(request);
 		String html = null;
 		try {
-			html = LinkUtil.buildImageLinkHtml(request.getContextPath(), virtualWiki, this.value, false, false, null, null, linkDimension, true, this.style, true);
+			try {
+				html = LinkUtil.buildImageLinkHtml(request.getContextPath(), virtualWiki, this.value, false, false, null, null, linkDimension, true, this.style, true);
+			} catch (DataAccessException e) {
+				logger.severe("Failure while building url " + html + " with value " + this.value, e);
+				throw new JspException(e);
+			}
 			if (html != null) {
 				this.pageContext.getOut().print(html);
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			logger.severe("Failure while building url " + html + " with value " + this.value, e);
 			throw new JspException(e);
 		}
