@@ -100,7 +100,7 @@ public class WikiLinkTag {
 	 */
 	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
 		try {
-			raw = this.processLinkMetadata(parserOutput, mode, raw);
+			raw = this.processLinkMetadata(parserInput, parserOutput, mode, raw);
 			if (mode <= JFlexParser.MODE_PREPROCESS) {
 				// do not parse to HTML when in preprocess mode
 				return raw;
@@ -185,14 +185,18 @@ public class WikiLinkTag {
 	/**
 	 *
 	 */
-	private String processLinkMetadata(ParserOutput parserOutput, int mode, String raw) {
+	private String processLinkMetadata(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws ParserException {
 		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(raw);
 		if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
 			return raw;
 		}
 		String result = raw;
 		if (!wikiLink.getColon() && StringUtils.equals(wikiLink.getNamespace(), NamespaceHandler.NAMESPACE_CATEGORY)) {
-			parserOutput.addCategory(wikiLink.getDestination(), wikiLink.getText());
+			String sortKey = wikiLink.getText();
+			if (!StringUtils.isBlank(sortKey)) {
+				sortKey = JFlexParserUtil.parseFragment(parserInput, sortKey, JFlexParser.MODE_PREPROCESS);
+			}
+			parserOutput.addCategory(wikiLink.getDestination(), sortKey);
 			if (mode > JFlexParser.MODE_MINIMAL) {
 				// keep the category around in minimal parsing mode, otherwise suppress it from the output
 				result = "";
