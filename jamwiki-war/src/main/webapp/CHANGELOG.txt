@@ -20,6 +20,9 @@ New Features:
     system properties (urpi).
   * Allow authentication with pluggable Spring authentication modules that
     do not implement UserDetailService such as existing JAAS modules (urpi).
+  * When a password or other value is found un-encrypted in a properties file
+    automatically encrypt it to allow for changing database passwords, etc.
+    Reported by rebecca and an anonymous user.
   * Upgrade to javadiff 1.1.0.
   * Upgrade to JFlex 1.4.3.
   * Upgrade to JUnit 4.5.
@@ -31,9 +34,8 @@ Bugfixes:
   * Update Spring Security configuration to remove reliance on the deprecated
     FilterInvocationDefinitionSourceEditor class.
   * Fix the Bliki local Maven repository metadata to resolve build warnings.
-  * When a password or other value is found un-encrypted in a properties file
-    automatically encrypt it to allow for changing database passwords, etc.
-    Reported by rebecca and an anonymous user.
+  * Do not use the category sort key for display purposes, only for sorting,
+    which is consistent with Mediawiki.  Reported by hanspeterklapf.
 
 Translation Updates:
 

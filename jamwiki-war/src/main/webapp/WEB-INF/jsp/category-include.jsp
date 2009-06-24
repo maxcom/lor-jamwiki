@@ -63,7 +63,7 @@
 <ul>
 		<c:set var="columnCount" value="1" />
 		<c:forEach items="${categoryTopics}" var="subtopic" varStatus="status">
-<li><jamwiki:link value="${subtopic.childTopicName}" text="${subtopic.sortKey}" /></li>
+<li><jamwiki:link value="${subtopic.childTopicName}" text="${subtopic.childTopicName}" /></li>
 			<%-- FIXME - do not hard code min num topics and num columns --%>
 			<c:if test="${(numCategoryTopics > 9) && (columnCount < 3) && ((status.count * 3) >= (numCategoryTopics * columnCount))}">
 				<c:set var="columnCount" value="${columnCount + 1}" />
