@@ -36,7 +36,10 @@ Bugfixes:
   * Fix the Bliki local Maven repository metadata to resolve build warnings.
   * Do not use the category sort key for display purposes, only for sorting,
     which is consistent with Mediawiki.  Reported by hanspeterklapf.
-  * Allow use of magic words and templates in category sort keys.
+  * Allow use of magic words and templates in category sort keys, such as
+    [[Category:Test|{{PAGENAME}}]].
+  * Throw an error when trying to rename images or categories with topic names
+    that do not contain the "Image:" or "Category:" namespace.
 
 Translation Updates:
 
