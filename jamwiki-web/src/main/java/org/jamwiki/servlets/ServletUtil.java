@@ -307,15 +307,7 @@ public class ServletUtil {
 		topic = new Topic();
 		topic.setName(topicName);
 		topic.setVirtualWiki(virtualWiki);
-		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-		String namespace = wikiLink.getNamespace();
-		if (namespace != null) {
-			if (namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
-				topic.setTopicType(Topic.TYPE_CATEGORY);
-			} else if (namespace.equals(NamespaceHandler.NAMESPACE_TEMPLATE)) {
-				topic.setTopicType(Topic.TYPE_TEMPLATE);
-			}
-		}
+		topic.setTopicType(WikiUtil.findTopicType(topicName));
 		return topic;
 	}
 
@@ -719,15 +711,18 @@ public class ServletUtil {
 	 * @param topic The Topic object for the topic being displayed.
 	 * @param sectionEdit Set to <code>true</code> if edit links should be displayed
 	 *  for each section of the topic.
+	 * @param allowRedirect Setting this parameter to <code>true</code> will force the
+	 *  redirection target to be displayed (rather than a redirect page) if the topic is a
+	 *  redirect.
 	 * @throws WikiException Thrown if any error occurs while retrieving or parsing the topic.
 	 */
-	protected static void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, WikiMessage pageTitle, Topic topic, boolean sectionEdit) throws WikiException {
+	protected static void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, WikiMessage pageTitle, Topic topic, boolean sectionEdit, boolean allowRedirect) throws WikiException {
 		// FIXME - what should the default be for topics that don't exist?
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		WikiUtil.validateTopicName(topic.getName());
-		if (topic.getTopicType() == Topic.TYPE_REDIRECT && (request.getParameter("redirect") == null || !request.getParameter("redirect").equalsIgnoreCase("no"))) {
+		if (allowRedirect && topic.getTopicType() == Topic.TYPE_REDIRECT && (request.getParameter("redirect") == null || !request.getParameter("redirect").equalsIgnoreCase("no"))) {
 			Topic child = null;
 			try {
 				child = WikiUtil.findRedirectedTopic(topic, 0);

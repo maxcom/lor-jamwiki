@@ -40,6 +40,8 @@ Bugfixes:
     [[Category:Test|{{PAGENAME}}]].
   * Throw an error when trying to rename images or categories with topic names
     that do not contain the "Image:" or "Category:" namespace.
+  * Viewing a topic that is currently a redirect from its history page should
+    not redirect.
 
 Translation Updates:
 

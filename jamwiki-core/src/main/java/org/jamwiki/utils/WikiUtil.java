@@ -244,6 +244,33 @@ public class WikiUtil {
 	}
 
 	/**
+	 * Given a topic name, determine the topic type.
+	 *
+	 * @param topicName The name of the topic being examined.
+	 * @return The topic type that matches the topic name.
+	 */
+	public static int findTopicType(String topicName) {
+		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
+		String namespace = wikiLink.getNamespace();
+		if (namespace != null) {
+			if (namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
+				return Topic.TYPE_CATEGORY;
+			}
+			if (namespace.equals(NamespaceHandler.NAMESPACE_TEMPLATE)) {
+				return Topic.TYPE_TEMPLATE;
+			}
+			if (namespace.equals(NamespaceHandler.NAMESPACE_JAMWIKI)) {
+				return Topic.TYPE_SYSTEM_FILE;
+			}
+			if (namespace.equals(NamespaceHandler.NAMESPACE_IMAGE)) {
+				// FIXME - handle TYPE_FILE
+				return Topic.TYPE_IMAGE;
+			}
+		}
+		return Topic.TYPE_ARTICLE;
+	}
+
+	/**
 	 * Retrieve a parameter from the servlet request.  This method works around
 	 * some issues encountered when retrieving non-ASCII values from URL
 	 * parameters.
