@@ -22,7 +22,7 @@
 
 <%@ include file="page-init.jsp" %>
 
-<c:if test="${!empty uploadSpam}">
+<c:if test="${!empty hasSpam}">
 <div class="message red"><fmt:message key="${spam.key}"><fmt:param value="${spam.params[0]}" /></fmt:message></div>
 </c:if>
 

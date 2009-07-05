@@ -261,6 +261,27 @@ public abstract class JAMWikiServlet extends AbstractController {
 	}
 
 	/**
+	 * Determine if a topic contains a spam pattern, and if so set the appropriate page parameters
+	 * including a "hasSpam" flag in the ModelAndView object.
+	 *
+	 * @param request The servlet request object.
+	 * @param next The current ModelAndView object.
+	 * @param topicName The name of the topic being examined for spam.
+	 * @param contents The contents of the topic being examined for spam.
+	 * @return <code>true</code> if the topic in question matches any spam pattern.
+	 */
+	protected boolean handleSpam(HttpServletRequest request, ModelAndView next, String topicName, String contents) throws Exception {
+		String result = ServletUtil.checkForSpam(request, topicName, contents);
+		if (result == null) {
+			return false;
+		}
+		WikiMessage spam = new WikiMessage("edit.exception.spam", result);
+		next.addObject("spam", spam);
+		next.addObject("hasSpam", "true");
+		return true;
+	}
+
+	/**
 	 * If any special servlet initialization needs to be performed it can be done
 	 * by overriding this method.  In particular, this method can be used to
 	 * override the defaults for the <code>layout</code> member variable, which

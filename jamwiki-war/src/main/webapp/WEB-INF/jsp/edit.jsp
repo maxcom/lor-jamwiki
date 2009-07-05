@@ -28,7 +28,7 @@
 
 <c:if test="${!empty topicVersionId}"><div class="message red"><fmt:message key="edit.warning.oldversion" /></div></c:if>
 
-<c:if test="${!empty editSpam}">
+<c:if test="${!empty hasSpam}">
 <div class="message red"><fmt:message key="${spam.key}"><fmt:param value="${spam.params[0]}" /></fmt:message></div>
 </c:if>
 <jamwiki:enabled property="PROP_TOPIC_USE_PREVIEW">

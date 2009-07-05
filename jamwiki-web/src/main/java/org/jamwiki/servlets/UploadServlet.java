@@ -118,21 +118,6 @@ public class UploadServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private boolean handleSpam(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName, String contents) throws Exception {
-		String result = ServletUtil.checkForSpam(request, topicName, contents);
-		if (result == null) {
-			return false;
-		}
-		WikiMessage spam = new WikiMessage("edit.exception.spam", result);
-		next.addObject("spam", spam);
-		next.addObject("contents", contents);
-		next.addObject("uploadSpam", "true");
-		return true;
-	}
-
-	/**
-	 *
-	 */
 	private boolean isFileTypeAllowed(String extension) {
 		int blacklistType = Environment.getIntValue(Environment.PROP_FILE_BLACKLIST_TYPE);
 		if (blacklistType == WikiBase.UPLOAD_ALL) {
@@ -226,10 +211,11 @@ public class UploadServlet extends JAMWikiServlet {
 			destinationFilename += (!destinationFilename.endsWith(".") ? "." : "") + FilenameUtils.getExtension(filename);
 		}
 		topicName += Utilities.decodeAndEscapeTopicName((!StringUtils.isEmpty(destinationFilename) ? destinationFilename : filename), true);
-		if (this.handleSpam(request, next, pageInfo, topicName, contents)) {
+		if (this.handleSpam(request, next, topicName, contents)) {
 			// delete the spam file
 			uploadedFile.delete();
 			this.view(request, next, pageInfo);
+			next.addObject("contents", contents);
 			return;
 		}
 		if (!StringUtils.isEmpty(destinationFilename)) {

@@ -112,22 +112,6 @@ public class EditServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private boolean handleSpam(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName, String contents) throws Exception {
-		String result = ServletUtil.checkForSpam(request, topicName, contents);
-		if (result == null) {
-			return false;
-		}
-		WikiMessage spam = new WikiMessage("edit.exception.spam", result);
-		next.addObject("spam", spam);
-		String virtualWiki = pageInfo.getVirtualWikiName();
-		this.loadEdit(request, next, pageInfo, contents, virtualWiki, topicName, false);
-		next.addObject("editSpam", "true");
-		return true;
-	}
-
-	/**
-	 *
-	 */
 	private boolean isPreview(HttpServletRequest request) {
 		return !StringUtils.isBlank(request.getParameter("preview"));
 	}
@@ -303,7 +287,8 @@ public class EditServlet extends JAMWikiServlet {
 			ServletUtil.redirect(next, virtualWiki, topic.getName());
 			return;
 		}
-		if (handleSpam(request, next, pageInfo, topicName, contents)) {
+		if (handleSpam(request, next, topicName, contents)) {
+			this.loadEdit(request, next, pageInfo, contents, virtualWiki, topicName, false);
 			return;
 		}
 		// parse for signatures and other syntax that should not be saved in raw form
