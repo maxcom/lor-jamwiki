@@ -16,7 +16,6 @@
  */
 package org.jamwiki.parser.jflex;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.jamwiki.model.WikiReference;
 import org.jamwiki.parser.ParserInput;
@@ -36,7 +35,7 @@ public class WikiReferenceTag {
 	private WikiReference buildReference(ParserInput parserInput, String raw) {
 		String name = buildReferenceName(raw);
 		String content = JFlexParserUtil.tagContent(raw);
-		List<WikiReference> references = this.retrieveReferences(parserInput);
+		List<WikiReference> references = JFlexParserUtil.retrieveReferences(parserInput);
 		int count = 0;
 		int citation = 1;
 		for (WikiReference temp : references) {
@@ -84,20 +83,8 @@ public class WikiReferenceTag {
 	 */
 	private void processMetadata(ParserInput parserInput, WikiReference reference) {
 		// FIXME - why is a local variable stored here but never used ???
-		List<WikiReference> references = this.retrieveReferences(parserInput);
+		List<WikiReference> references = JFlexParserUtil.retrieveReferences(parserInput);
 		references.add(reference);
-	}
-
-	/**
-	 *
-	 */
-	private List<WikiReference> retrieveReferences(ParserInput parserInput) {
-		List<WikiReference> references = (List<WikiReference>)parserInput.getTempParams().get(WikiReferenceTag.REFERENCES_PARAM);
-		if (references == null) {
-			references = new ArrayList<WikiReference>();
-			parserInput.getTempParams().put(WikiReferenceTag.REFERENCES_PARAM, references);
-		}
-		return references;
 	}
 
 	/**

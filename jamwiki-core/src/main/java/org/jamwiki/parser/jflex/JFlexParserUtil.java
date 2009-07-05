@@ -16,10 +16,13 @@
  */
 package org.jamwiki.parser.jflex;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
+import org.jamwiki.model.WikiReference;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
@@ -234,6 +237,23 @@ public class JFlexParserUtil {
 		result[2] = tagOpen;
 		result[3] = tagClose;
 		return result;
+	}
+
+	/**
+	 * During parsing the reference objects will be stored as a temporary array.  This method
+	 * parses that array and returns the reference objects.
+	 *
+	 * @param parserInput The current ParserInput object for the topic that is being parsed.
+	 * @return A list of reference objects (never <code>null</code>) for the current topic that
+	 *  is being parsed.
+	 */
+	protected static List<WikiReference> retrieveReferences(ParserInput parserInput) {
+		List<WikiReference> references = (List<WikiReference>)parserInput.getTempParams().get(WikiReferenceTag.REFERENCES_PARAM);
+		if (references == null) {
+			references = new ArrayList<WikiReference>();
+			parserInput.getTempParams().put(WikiReferenceTag.REFERENCES_PARAM, references);
+		}
+		return references;
 	}
 
 	/**

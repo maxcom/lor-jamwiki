@@ -41,7 +41,7 @@ public class WikiReferencesTag {
 			// retrieve all references, then loop through in order, building an HTML
 			// reference list for display.  While looping, if there are multiple citations
 			// for the same reference then include those in the output as well.
-			List<WikiReference> references = this.retrieveReferences(parserInput);
+			List<WikiReference> references = JFlexParserUtil.retrieveReferences(parserInput);
 			StringBuffer html = new StringBuffer();
 			if (!references.isEmpty()) {
 				html.append("<ol class=\"references\">");
@@ -90,17 +90,5 @@ public class WikiReferencesTag {
 			logger.info("Unable to parse " + raw, t);
 			return raw;
 		}
-	}
-
-	/**
-	 *
-	 */
-	private List<WikiReference> retrieveReferences(ParserInput parserInput) {
-		List<WikiReference> references = (List<WikiReference>)parserInput.getTempParams().get(WikiReferenceTag.REFERENCES_PARAM);
-		if (references == null) {
-			references = new ArrayList<WikiReference>();
-			parserInput.getTempParams().put(WikiReferenceTag.REFERENCES_PARAM, references);
-		}
-		return references;
 	}
 }
