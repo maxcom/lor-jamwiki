@@ -137,7 +137,7 @@ public class RolesServlet extends JAMWikiServlet {
 			logger.severe("Failure while adding role", e);
 			errors.add(new WikiMessage("roles.message.rolefail", e.getMessage()));
 		}
-		if (errors.size() > 0) {
+		if (!errors.isEmpty()) {
 			next.addObject("errors", errors);
 		}
 		this.view(request, next, pageInfo);

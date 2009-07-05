@@ -136,7 +136,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 				}
 				if (!userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 					Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
-					boolean watched = (watchlist.containsTopic(pageName));
+					boolean watched = watchlist.containsTopic(pageName);
 					String watchlistLabel = (watched) ? "tab.common.unwatch" : "tab.common.watch";
 					String watchlistLink = "Special:Watchlist?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 					links.put(watchlistLink, new WikiMessage(watchlistLabel));
@@ -270,7 +270,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * @param contents The contents of the topic being examined for spam.
 	 * @return <code>true</code> if the topic in question matches any spam pattern.
 	 */
-	protected boolean handleSpam(HttpServletRequest request, ModelAndView next, String topicName, String contents) throws Exception {
+	protected boolean handleSpam(HttpServletRequest request, ModelAndView next, String topicName, String contents) throws DataAccessException {
 		String result = ServletUtil.checkForSpam(request, topicName, contents);
 		if (result == null) {
 			return false;

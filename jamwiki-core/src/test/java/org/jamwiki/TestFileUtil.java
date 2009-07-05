@@ -69,7 +69,6 @@ public class TestFileUtil {
 	private static File retrieveFile(String directory, String fileName) {
 		fileName = encodeTopicName(fileName);
 		String fullName = directory + fileName;
-		File file = null;
 		try {
 			return Utilities.getClassLoaderFile(fullName);
 		} catch (Exception e) { }

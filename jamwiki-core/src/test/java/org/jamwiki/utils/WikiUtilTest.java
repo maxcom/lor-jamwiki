@@ -43,7 +43,7 @@ public class WikiUtilTest {
 	 */
 	@Test(expected=IllegalArgumentException.class)
 	public void testEncodeForFilename2() throws Throwable {
-		String result = WikiUtil.encodeForFilename(null);
+		WikiUtil.encodeForFilename(null);
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class WikiUtilTest {
 	 */
 	@Test(expected=IllegalArgumentException.class)
 	public void testEncodeForFilename3() throws Throwable {
-		String result = WikiUtil.encodeForFilename(" ");
+		WikiUtil.encodeForFilename(" ");
 	}
 
 	/**

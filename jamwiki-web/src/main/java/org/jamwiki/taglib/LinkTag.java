@@ -94,8 +94,6 @@ public class LinkTag extends BodyTagSupport {
 	private String buildLinkText() throws JspException {
 		String body = null;
 		String tagText = null;
-		// Resin 3.0, 3.1 throws ClassCastException with evaluateString for values like "1", so use tmp variable
-		Object tmp = null;
 		if (this.getBodyContent() != null) {
 			body = this.getBodyContent().getString();
 		}

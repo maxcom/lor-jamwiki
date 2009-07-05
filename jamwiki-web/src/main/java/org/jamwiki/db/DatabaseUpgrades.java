@@ -24,7 +24,6 @@ import org.jamwiki.DataHandler;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiVersion;
-import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;

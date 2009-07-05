@@ -93,8 +93,12 @@ public class ItemsServlet extends JAMWikiServlet {
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		Set<String> allItems = new TreeSet<String>();
 		List<String> unlinkedTopics = WikiBase.getDataHandler().getAllTopicNames(virtualWiki);
+		Topic topic;
+		List<SearchResultEntry> topicLinks;
+		ParserInput parserInput;
+		ParserOutput parserOutput;
 		for (String topicName : unlinkedTopics) {
-			Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, new Object());
+			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, new Object());
 			if (topic == null) {
 				logger.warning("No topic found: " + virtualWiki + " / " + topicName);
 				continue;
@@ -103,11 +107,11 @@ public class ItemsServlet extends JAMWikiServlet {
 				continue;
 			}
 			// only mark them orphaned if there is neither category defined in it, nor a link to it!
-			List<SearchResultEntry> topicLinks = WikiBase.getSearchEngine().findLinkedTo(virtualWiki, topicName);
-			if (topicLinks.size() != 0) {
+			topicLinks = WikiBase.getSearchEngine().findLinkedTo(virtualWiki, topicName);
+			if (!topicLinks.isEmpty()) {
 				continue;
 			}
-			ParserInput parserInput = new ParserInput();
+			parserInput = new ParserInput();
 			parserInput.setContext(request.getContextPath());
 			parserInput.setLocale(request.getLocale());
 			parserInput.setWikiUser(ServletUtil.currentWikiUser());
@@ -115,7 +119,7 @@ public class ItemsServlet extends JAMWikiServlet {
 			parserInput.setUserIpAddress(ServletUtil.getIpAddress(request));
 			parserInput.setVirtualWiki(virtualWiki);
 			parserInput.setAllowSectionEdit(false);
-			ParserOutput parserOutput = new ParserOutput();
+			parserOutput = new ParserOutput();
 			ParserUtil.parse(parserInput, parserOutput, topic.getTopicContent());
 			if (parserOutput.getCategories().size() == 0) {
 				allItems.add(topic.getName());

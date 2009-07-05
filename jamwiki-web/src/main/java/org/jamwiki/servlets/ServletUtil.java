@@ -61,7 +61,6 @@ import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.SpamFilter;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiCache;
-import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.security.Authentication;
@@ -148,7 +147,7 @@ public class ServletUtil {
 	 * @return <code>null</code> if nothing in the topic content matches a current
 	 *  spam pattern, or the text that matches a spam pattern if one is found.
 	 */
-	protected static String checkForSpam(HttpServletRequest request, String topicName, String contents) throws Exception {
+	protected static String checkForSpam(HttpServletRequest request, String topicName, String contents) throws DataAccessException {
 		String result = SpamFilter.containsSpam(contents);
 		if (StringUtils.isBlank(result)) {
 			return null;

@@ -24,7 +24,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.AccessDeniedException;
 import org.springframework.security.AuthenticationException;
 import org.springframework.beans.factory.InitializingBean;
@@ -89,7 +88,6 @@ public class JAMWikiExceptionTranslationFilter implements Filter, InitializingBe
 	 */
 	private void handleException(ServletRequest servletRequest, ServletResponse servletResponse, SpringSecurityException exception) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest)servletRequest;
-		HttpServletResponse response = (HttpServletResponse)servletResponse;
 		if (exception instanceof AccessDeniedException) {
 			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_ACCESS_DENIED_ERROR_KEY, this.getErrorMessageProvider().getErrorMessageKey(request));
 			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_ACCESS_DENIED_URI_KEY, WikiUtil.getTopicFromURI(request));
