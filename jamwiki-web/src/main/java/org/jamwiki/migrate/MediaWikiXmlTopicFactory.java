@@ -14,8 +14,7 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-// FIXME - moved to the org.jamwiki.servlets package temporarily until a better home is found
-package org.jamwiki.servlets;
+package org.jamwiki.migrate;
 
 import java.io.File;
 import java.util.Hashtable;
@@ -30,6 +29,7 @@ import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -37,31 +37,26 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * The purpose of this class is to load MediaWiki XML-file to the JAMWiki.
  */
-public class XMLTopicFactory extends DefaultHandler {
+public class MediaWikiXmlTopicFactory extends DefaultHandler {
 
-	/** Amount to indent */
-	private static final String XML_INDENT = "    ";
-
+	private static final WikiLogger logger = WikiLogger.getLogger(MediaWikiXmlTopicFactory.class.getName());
 	private final WikiUser user;
 	private final String authorIpAddress;
-	private int indentLevel = 0;
-	String virtualWiki = "en";
-	Hashtable<String, Object> namespaces = new Hashtable<String, Object>();
-	String ns14 = "Category";
-	String ns6 = "Image";
-	Integer nsKey = null;
-	String nsVal = null;
-	StringBuffer lastStr = null;
-	String pageName = null;
-	String pageText = null;
+	private String virtualWiki = "en";
+	private final Hashtable<String, Object> namespaces = new Hashtable<String, Object>();
+	private String mediawikiCategoryNamespace = "Category";
+	private String mediawikiImageNamespace = "Image";
+	private Integer nsKey = null;
+	private StringBuffer lastStr = null;
+	private String pageName = null;
+	private String pageText = null;
 	private String processedTopicName = null;
-	private static String lineEnd = System.getProperty("line.separator");
-	private static final WikiLogger logger = WikiLogger.getLogger(XMLTopicFactory.class.getName());
 
 	/**
 	 *
 	 */
-	public XMLTopicFactory(String virtualWiki, WikiUser user, String authorIpAddress) {
+	public MediaWikiXmlTopicFactory(String virtualWiki, WikiUser user, String authorIpAddress) {
+		super();
 		this.virtualWiki = virtualWiki;
 		this.authorIpAddress = authorIpAddress;
 		this.user = user;
@@ -71,9 +66,6 @@ public class XMLTopicFactory extends DefaultHandler {
 	 *
 	 */
 	public String importWikiXml(File file) throws Exception{
-		//read ini params from file
-		// TODO read all params from JAMWiki properties
-		//importProps = Environment.loadProperties(PROPERTY_FILE_NAME);
 		//For big file parsing
 		System.setProperty("entityExpansionLimit", "1000000");
 		// Use an instance of ourselves as the SAX event handler
@@ -85,7 +77,7 @@ public class XMLTopicFactory extends DefaultHandler {
 			SAXParser saxParser = factory.newSAXParser();
 			saxParser.parse(file, this);
 		} catch (Throwable t) {
-			logger.severe("Error by importing "+((XMLTopicFactory)this).pageName, t);
+			logger.severe("Error by importing "+((MediaWikiXmlTopicFactory)this).pageName, t);
 			throw new Exception("Error by import: "+t.getMessage(), t);
 		}
 		return this.processedTopicName;
@@ -96,40 +88,16 @@ public class XMLTopicFactory extends DefaultHandler {
 	//===========================================================
 
 	/**
-	 *
-	 */
-	public void startDocument() throws SAXException {
-		nl();
-		nl();
-		emit("START DOCUMENT");
-		nl();
-		emit("<?xml version='1.0' encoding='UTF-8'?>");
-	}
-
-	/**
-	 *
-	 */
-	public void endDocument() throws SAXException {
-		nl();
-		emit("END DOCUMENT");
-		nl();
-	}
-
-	/**
 	 * start of xml-tag
 	 *
 	 * @param lName Local name.
 	 * @param qName Qualified name.
 	 */
 	public void startElement(String namespaceURI, String lName, String qName, Attributes attrs) throws SAXException {
-		indentLevel++;
-		nl();
-		emit("ELEMENT: ");
 		String eName = lName;
 		if ("".equals(eName)) {
 			eName = qName;
 		}
-		emit("<"+eName);
 		lastStr = new StringBuffer();
 		if (attrs != null) {
 			for (int i = 0; i < attrs.getLength(); i++) {
@@ -137,20 +105,11 @@ public class XMLTopicFactory extends DefaultHandler {
 				if ("".equals(aName)) {
 					aName = attrs.getQName(i);
 				}
-				nl();
-				emit("   ATTR: ");
-				emit(aName);
-				emit("\t\"");
-				emit(attrs.getValue(i));
-				emit("\"");
 			}
-		}
-		if (attrs.getLength() > 0) {
-			nl();
-		}
-		emit(">");
-		if ("namespace".equals(eName)) { // mapping of namespaces from imported file
-			nsKey = Integer.valueOf(attrs.getValue("key"));
+			if ("namespace".equals(eName)) {
+				// mapping of namespaces from imported file
+				nsKey = Integer.valueOf(attrs.getValue("key"));
+			}
 		}
 		if ("page".equals(eName)) {
 			pageName = "";
@@ -165,18 +124,15 @@ public class XMLTopicFactory extends DefaultHandler {
 	 * @param qName Qualified name.
 	 */
 	public void endElement(String namespaceURI, String sName, String qName) throws SAXException {
-		nl();
-		emit("END_ELM: ");
-		emit("</"+sName+">");
-		if ("namespace".equals(qName)) { // mapping of namespaces from imported file
+		if ("namespace".equals(qName)) {
+			// mapping of namespaces from imported file
 			namespaces.put(lastStr.toString().trim(), nsKey);
 			//Prepare locale namespaces
-			//WikiArticle.addNamespace(nsKey, lastStr.trim());
 			if (nsKey.intValue() == 14) {
-				ns14 = lastStr.toString().trim();
+				mediawikiCategoryNamespace = lastStr.toString().trim();
 			}
 			if (nsKey.intValue() == 6) {
-				ns6 = lastStr.toString().trim();
+				mediawikiImageNamespace = lastStr.toString().trim();
 			}
 		}
 		if ("title".equals(qName)) {
@@ -220,7 +176,6 @@ public class XMLTopicFactory extends DefaultHandler {
 				throw new SAXException(e);
 			}
 		}
-		indentLevel--;
 	}
 
 	/**
@@ -231,23 +186,6 @@ public class XMLTopicFactory extends DefaultHandler {
 	}
 
 	/**
-	 * Wrap I/O exceptions in SAX exceptions, to suit handler signature requirements.
-	 */
-	private void emit(String s) throws SAXException {
-		logger.fine(s);
-	}
-
-	/**
-	 * Start a new line and indent the next line appropriately.
-	 */
-	private void nl() throws SAXException {
-		logger.fine(lineEnd);
-		for (int i = 0; i < indentLevel; i++) {
-			logger.fine(XML_INDENT);
-		}
-	}
-
-	/**
 	 * convert MediaWiki namespace-id to JAMWiki namespace-id
 	 * @param mediaWikiNamespaceId
 	 * @return
@@ -255,33 +193,18 @@ public class XMLTopicFactory extends DefaultHandler {
 	private int convertNamespaceFromMediaWikiToJAMWiki(int mediaWikiNamespaceId) {
 		int ret = -1;
 		switch(mediaWikiNamespaceId) {
-		case 0:
-			ret = Topic.TYPE_ARTICLE; break;
-		//case 0: ret = Topic.TYPE_REDIRECT; break; //special hendling for redirects
-		case 6:
-			ret = Topic.TYPE_IMAGE; break;
-		case 14:
-			ret = Topic.TYPE_CATEGORY; break;
-		//case 0: ret = Topic.TYPE_FILE; break;
-		//case 0: ret = Topic.TYPE_SYSTEM_FILE; break;
-		case 10:
-			ret = Topic.TYPE_TEMPLATE; break;
-		}
-		return ret;
-	}
-
-	/**
-	 *
-	 */
-	private String getJAMWikiNamespaceById(int jamWikiNamespaceId) {
-		String ret = "";
-		switch(jamWikiNamespaceId) {
-		case Topic.TYPE_IMAGE:
-			ret = NamespaceHandler.NAMESPACE_IMAGE; break;
-		case Topic.TYPE_CATEGORY:
-			ret = NamespaceHandler.NAMESPACE_CATEGORY; break;
-		case Topic.TYPE_TEMPLATE:
-			ret = NamespaceHandler.NAMESPACE_TEMPLATE; break;
+			case 0:
+				ret = Topic.TYPE_ARTICLE;
+				break;
+			case 6:
+				ret = Topic.TYPE_IMAGE;
+				break;
+			case 14:
+				ret = Topic.TYPE_CATEGORY;
+				break;
+			case 10:
+				ret = Topic.TYPE_TEMPLATE;
+				break;
 		}
 		return ret;
 	}
@@ -300,10 +223,11 @@ public class XMLTopicFactory extends DefaultHandler {
 			if (namespaces.containsKey(sNamespace)) {
 				int namespace = ((Integer)namespaces.get(sNamespace));
 				sTitle = pageName.substring(pos+1);
-				sJAMNamespace = getJAMWikiNamespaceById(convertNamespaceFromMediaWikiToJAMWiki(namespace));
+				sJAMNamespace = WikiUtil.findNamespaceForTopicType(convertNamespaceFromMediaWikiToJAMWiki(namespace));
 				if (sJAMNamespace.length() > 0) {
 					ret = sJAMNamespace + ":" + sTitle;
-				} else {//equivalent namespace in JAMWiki not found. Use original name
+				} else {
+					//equivalent namespace in JAMWiki not found. Use original name
 					ret = sNamespace + ":" + sTitle;
 				}
 			} else { //namespace not found
@@ -316,23 +240,22 @@ public class XMLTopicFactory extends DefaultHandler {
 	}
 
 	/**
-	 * preprocess the text of topic
-	 * convert all namespaces names from MediaWiki to JAMWiki local representation
-	 * and so on...
+	 * Preprocess the text of topic, converting all namespaces names from MediaWiki to JAMWiki
+	 * local representation.
 	 */
-	public String preprocessText(String text) {
+	private String preprocessText(String text) {
 		String ret = text;
 		// convert all namespaces names from MediaWiki to JAMWiki local representation
-		ret = StringUtils.replace(ret, "[[category:", "[["+NamespaceHandler.NAMESPACE_CATEGORY+":");
+		ret = StringUtils.replace(ret, "[[category:", "[[" + NamespaceHandler.NAMESPACE_CATEGORY + ":");
 		if (!"Category".equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
 			ret = StringUtils.replace(ret, "[[Category:", "[["+NamespaceHandler.NAMESPACE_CATEGORY+":");
 		}
-		ret = StringUtils.replace(ret, "[["+ns14+":", "[["+NamespaceHandler.NAMESPACE_CATEGORY+":");
-		ret = StringUtils.replace(ret, "[[image:", "[["+NamespaceHandler.NAMESPACE_IMAGE+":");
+		ret = StringUtils.replace(ret, "[[" + mediawikiCategoryNamespace + ":", "[[" + NamespaceHandler.NAMESPACE_CATEGORY + ":");
+		ret = StringUtils.replace(ret, "[[image:", "[[" + NamespaceHandler.NAMESPACE_IMAGE + ":");
 		if (!"Image".equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
-			ret = StringUtils.replace(ret, "[[Image:", "[["+NamespaceHandler.NAMESPACE_IMAGE+":");
+			ret = StringUtils.replace(ret, "[[Image:", "[[" + NamespaceHandler.NAMESPACE_IMAGE + ":");
 		}
-		ret = StringUtils.replace(ret, "[["+ns6+":", "[["+NamespaceHandler.NAMESPACE_IMAGE+":");
+		ret = StringUtils.replace(ret, "[[" + mediawikiImageNamespace + ":", "[["+NamespaceHandler.NAMESPACE_IMAGE+":");
 
 		return ret;
 	}

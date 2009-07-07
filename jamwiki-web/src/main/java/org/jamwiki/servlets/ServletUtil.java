@@ -61,6 +61,7 @@ import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.SpamFilter;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiCache;
+import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.security.Authentication;
@@ -306,7 +307,9 @@ public class ServletUtil {
 		topic = new Topic();
 		topic.setName(topicName);
 		topic.setVirtualWiki(virtualWiki);
-		topic.setTopicType(WikiUtil.findTopicType(topicName));
+		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
+		String namespace = wikiLink.getNamespace();
+		topic.setTopicType(WikiUtil.findTopicTypeForNamespace(namespace));
 		return topic;
 	}
 

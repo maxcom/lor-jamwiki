@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.migrate.MediaWikiXmlTopicFactory;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiException;
@@ -63,7 +64,7 @@ public class ImportServlet extends JAMWikiServlet {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Iterator iterator = ServletUtil.processMultipartRequest(request, Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
 		WikiUser user = ServletUtil.currentWikiUser();
-		XMLTopicFactory importer = new XMLTopicFactory(virtualWiki, user, ServletUtil.getIpAddress(request));
+		MediaWikiXmlTopicFactory importer = new MediaWikiXmlTopicFactory(virtualWiki, user, ServletUtil.getIpAddress(request));
 		String topicName = null;
 		while (iterator.hasNext()) {
 			FileItem item = (FileItem)iterator.next();

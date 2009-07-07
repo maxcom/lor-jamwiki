@@ -200,6 +200,28 @@ public class WikiUtil {
 	}
 
 	/**
+	 * Given a topic type, determine the namespace name.
+	 *
+	 * @param topicType The topic type.
+	 * @return The namespace that matches the topic type.
+	 */
+	public static String findNamespaceForTopicType(int topicType) {
+		switch (topicType) {
+			case Topic.TYPE_IMAGE:
+			case Topic.TYPE_FILE:
+				return NamespaceHandler.NAMESPACE_IMAGE;
+			case Topic.TYPE_CATEGORY:
+				return NamespaceHandler.NAMESPACE_CATEGORY;
+			case Topic.TYPE_SYSTEM_FILE:
+				return NamespaceHandler.NAMESPACE_JAMWIKI;
+			case Topic.TYPE_TEMPLATE:
+				return NamespaceHandler.NAMESPACE_TEMPLATE;
+			default:
+				return "";
+		}
+	}
+
+	/**
 	 * Given a topic, if that topic is a redirect find the target topic of the redirection.
 	 *
 	 * @param parent The topic being queried.  If this topic is a redirect then the redirect
@@ -244,14 +266,12 @@ public class WikiUtil {
 	}
 
 	/**
-	 * Given a topic name, determine the topic type.
+	 * Given a namespace name, determine the topic type.
 	 *
-	 * @param topicName The name of the topic being examined.
-	 * @return The topic type that matches the topic name.
+	 * @param namespace The namespace name.
+	 * @return The topic type that matches the namespace.
 	 */
-	public static int findTopicType(String topicName) {
-		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-		String namespace = wikiLink.getNamespace();
+	public static int findTopicTypeForNamespace(String namespace) {
 		if (namespace != null) {
 			if (namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
 				return Topic.TYPE_CATEGORY;
