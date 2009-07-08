@@ -28,14 +28,10 @@
 <div class="message red"><fmt:message key="${error.key}"><fmt:param value="${error.params[0]}" /></fmt:message></div>
 </c:if>
 
+<fieldset>
+<legend><fmt:message key="import.caption.source" /></legend>
 <form name="form1" method="post" action="<jamwiki:link value="Special:Import" />" enctype="multipart/form-data">
-<table border="0">
-<tr>
-	<td><label for="importFile"><fmt:message key="import.caption.source" /></label>:</td>
-	<td><input type="file" name="contents" size="50" id="importFile" /></td>
-</tr>
-<tr>
-	<td colspan="2" align="center"><input type="submit" name="save" value="<fmt:message key="import.button.import" />" /></td>
-</tr>
-</table>
+<input type="file" name="contents" size="50" id="importFile" />
+<input type="submit" name="save" value="<fmt:message key="import.button.import" />" />
 </form>
+</fieldset>
