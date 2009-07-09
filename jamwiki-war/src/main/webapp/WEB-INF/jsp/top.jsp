@@ -47,4 +47,13 @@
 	<link href="<jamwiki:link value="jamwiki.css?${cssRevision}" />" type="text/css" rel="stylesheet" />
 	<script type="text/javascript" src="<c:url value="/js/jamwiki.js?${jsRevision}" />"></script>
 </head>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='t
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-2184304-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
 <body>
