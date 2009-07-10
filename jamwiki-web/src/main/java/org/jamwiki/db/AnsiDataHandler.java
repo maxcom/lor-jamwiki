@@ -1785,6 +1785,7 @@ public class AnsiDataHandler implements DataHandler {
 				topicVersion.setTopicId(topic.getTopicId());
 				// write version
 				addTopicVersion(topicVersion, conn);
+				topic.setCurrentVersionId(topicVersion.getTopicVersionId());
 				String authorName = topicVersion.getAuthorIpAddress();
 				Integer authorId = topicVersion.getAuthorId();
 				if (authorId != null) {

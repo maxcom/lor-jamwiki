@@ -4,6 +4,8 @@
 New Features:
 
   * Drop support for JDK 1.4.  Java 5 or later is now required to run JAMWiki.
+  * Special:Import can now import Mediawiki files with full history, edit
+    dates, and edit comments.
   * Add an optional "Show Changes" button during editing to display a diff
     view of the current edit.
   * Add diff highlighting for the portion of the line that changed (if any),
