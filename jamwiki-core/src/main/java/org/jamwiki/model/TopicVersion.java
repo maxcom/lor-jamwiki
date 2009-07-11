@@ -32,6 +32,7 @@ public class TopicVersion implements Serializable {
 	public static final int EDIT_DELETE = 5;
 	public static final int EDIT_PERMISSION = 6;
 	public static final int EDIT_UNDELETE = 7;
+	public static final int EDIT_IMPORT = 8;
 	private Integer authorId = null;
 	private String authorDisplay = null;
 	private int charactersChanged = 0;

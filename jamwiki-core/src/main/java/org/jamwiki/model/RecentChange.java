@@ -105,6 +105,9 @@ public class RecentChange {
 		if (this.editType == TopicVersion.EDIT_UNDELETE) {
 			changeTypeNotification.append('u');
 		}
+		if (this.editType == TopicVersion.EDIT_IMPORT) {
+			changeTypeNotification.append('i');
+		}
 		return changeTypeNotification.toString();
 	}
 
@@ -169,6 +172,13 @@ public class RecentChange {
 	 */
 	public void setEditType(int editType) {
 		this.editType = editType;
+	}
+
+	/**
+	 *
+	 */
+	public boolean getImport() {
+		return this.editType == TopicVersion.EDIT_IMPORT;
 	}
 
 	/**

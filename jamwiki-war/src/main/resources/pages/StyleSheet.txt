@@ -373,6 +373,9 @@ li.standardchange {
 li.deletechange {
 	color: #770000;
 }
+li.importchange {
+	color: #007777;
+}
 li.movechange {
 	color: #777777;
 }

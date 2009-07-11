@@ -76,8 +76,8 @@ public class ImportServlet extends JAMWikiServlet {
 	private void importFile(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Iterator iterator = ServletUtil.processMultipartRequest(request, Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
+		Migrator migrator = new MediaWikiXmlTopicFactory();
 		WikiUser user = ServletUtil.currentWikiUser();
-		Migrator migrator = new MediaWikiXmlTopicFactory(user, ServletUtil.getIpAddress(request));
 		ParserOutput parserOutput = null;
 		List<TopicVersion> topicVersions;
 		List<WikiMessage> errors = new ArrayList<WikiMessage>();
@@ -112,6 +112,7 @@ public class ImportServlet extends JAMWikiServlet {
 					// create a dummy version to indicate that the topic was imported
 					String editComment = Utilities.formatMessage("import.message.importedby", request.getLocale(), new Object[]{user.getUsername()});
 					TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), editComment, topic.getTopicContent(), 0);
+					topicVersion.setEditType(TopicVersion.EDIT_IMPORT);
 					WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true);
 					successfulImports.add(topic.getName());
 				}

@@ -35,7 +35,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
-import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.WikiLink;
@@ -62,6 +61,8 @@ public class MediaWikiXmlTopicFactory extends DefaultHandler implements Migrator
 	private static final String MEDIAWIKI_ELEMENT_TOPIC_VERSION = "revision";
 	private static final String MEDIAWIKI_ELEMENT_TOPIC_VERSION_COMMENT = "comment";
 	private static final String MEDIAWIKI_ELEMENT_TOPIC_VERSION_EDIT_DATE = "timestamp";
+	private static final String MEDIAWIKI_ELEMENT_TOPIC_VERSION_IP = "ip";
+	private static final String MEDIAWIKI_ELEMENT_TOPIC_VERSION_USERNAME = "username";
 	// the Mediawiki XML file uses ISO 8601 format for dates
 	private static final String ISO_8601_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
@@ -72,8 +73,6 @@ public class MediaWikiXmlTopicFactory extends DefaultHandler implements Migrator
 	private Topic currentTopic = new Topic();
 	private TopicVersion currentTopicVersion = new TopicVersion();
 	private Map<Date, TopicVersion> currentTopicVersions = new TreeMap<Date, TopicVersion>();
-	private final WikiUser user;
-	private final String authorDisplay;
 	private final Map<Integer, String> namespaces = new HashMap<Integer, String>();
 	private Map<Topic, List<TopicVersion>> parsedTopics = new HashMap<Topic, List<TopicVersion>>();
 	private int previousTopicContentLength = 0;
@@ -81,10 +80,8 @@ public class MediaWikiXmlTopicFactory extends DefaultHandler implements Migrator
 	/**
 	 *
 	 */
-	public MediaWikiXmlTopicFactory(WikiUser user, String authorDisplay) {
+	public MediaWikiXmlTopicFactory() {
 		super();
-		this.authorDisplay = authorDisplay;
-		this.user = user;
 	}
 
 	/**
@@ -211,10 +208,7 @@ public class MediaWikiXmlTopicFactory extends DefaultHandler implements Migrator
 		}
 		if (MEDIAWIKI_ELEMENT_TOPIC_VERSION.equals(qName)) {
 			this.currentTopicVersion = new TopicVersion();
-			this.currentTopicVersion.setAuthorDisplay(this.authorDisplay);
-			if (this.user != null) {
-				this.currentTopicVersion.setAuthorId(this.user.getUserId());
-			}
+			this.currentTopicVersion.setEditType(TopicVersion.EDIT_IMPORT);
 		} else if (MEDIAWIKI_ELEMENT_TOPIC.equals(qName)) {
 			this.currentTopic = new Topic();
 			this.currentTopicVersions = new TreeMap<Date, TopicVersion>();
@@ -250,6 +244,8 @@ public class MediaWikiXmlTopicFactory extends DefaultHandler implements Migrator
 			this.currentTopicVersion.setEditComment(currentElementBuffer.toString().trim());
 		} else if (MEDIAWIKI_ELEMENT_TOPIC_VERSION_EDIT_DATE.equals(qName)) {
 			this.currentTopicVersion.setEditDate(this.parseEditTimestamp(currentElementBuffer.toString().trim()));
+		} else if (MEDIAWIKI_ELEMENT_TOPIC_VERSION_IP.equals(qName) || MEDIAWIKI_ELEMENT_TOPIC_VERSION_USERNAME.equals(qName)) {
+			this.currentTopicVersion.setAuthorDisplay(currentElementBuffer.toString().trim());
 		} else if (MEDIAWIKI_ELEMENT_TOPIC_VERSION.equals(qName)) {
 			this.currentTopicVersions.put(currentTopicVersion.getEditDate(), currentTopicVersion);
 		} else if (MEDIAWIKI_ELEMENT_TOPIC.equals(qName)) {
