@@ -91,9 +91,9 @@ public class WikiSignatureTag {
 		if (user != null && !StringUtils.isBlank(user.getSignature())) {
 			return user.getSignature();
 		}
-		String login = parserInput.getUserIpAddress();
-		String email = parserInput.getUserIpAddress();
-		String displayName = parserInput.getUserIpAddress();
+		String login = parserInput.getUserDisplay();
+		String email = parserInput.getUserDisplay();
+		String displayName = parserInput.getUserDisplay();
 		String userId = "-1";
 		if (user != null && !StringUtils.isBlank(user.getUsername())) {
 			login = user.getUsername();

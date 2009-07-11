@@ -82,6 +82,26 @@ followed by 0.6.3.
      the default StyleSheet topic can be found in the
      /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
      can only be edited AFTER all other upgrade steps have been completed.
+  3. Update the database schema by executing the following SQL statements:
+       a) Add the wiki_user_display column to the jam_topic_version,
+          jam_recent_change and jam_file_version tables.
+            Oracle:
+              alter table jam_topic_version add (wiki_user_display VARCHAR(100));
+              alter table jam_file_version add (wiki_user_display VARCHAR(100));
+            MS SQL:
+              alter table jam_topic_version add wiki_user_display VARCHAR(100);
+              alter table jam_file_version add wiki_user_display VARCHAR(100);
+            Other Databases:
+              alter table jam_topic_version add column wiki_user_display VARCHAR(100);
+              alter table jam_file_version add column wiki_user_display VARCHAR(100);
+       b) Populate the new wiki_user_display columns in the jam_topic_version,
+          jam_recent_change and jam_file_version tables.
+              update jam_topic_version set wiki_user_display = wiki_user_ip_address;
+              update jam_file_version set wiki_user_display = wiki_user_ip_address;
+       c) Drop the unused wiki_user_ip_address column from the jam_topic_version,
+          jam_recent_change and jam_file_version tables.
+              alter table jam_topic_version drop column wiki_user_ip_address;
+              alter table jam_file_version drop column wiki_user_ip_address;
 
 
   JAMWiki 0.7.2

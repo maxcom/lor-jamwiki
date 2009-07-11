@@ -109,37 +109,21 @@ public class DatabaseUpgrades {
 			// increase the size of ip address columns
 			String dbType = Environment.getValue(Environment.PROP_DB_TYPE);
 			if (dbType.equals(DataHandler.DATA_HANDLER_DB2) || dbType.equals(DataHandler.DATA_HANDLER_DB2400)) {
-				sql = "alter table jam_topic_version alter column wiki_user_ip_address set data type varchar(39) ";
-				DatabaseConnection.executeUpdate(sql, conn);
-				sql = "alter table jam_file_version alter column wiki_user_ip_address set data type varchar(39) ";
-				DatabaseConnection.executeUpdate(sql, conn);
 				sql = "alter table jam_wiki_user alter column create_ip_address set data type varchar(39) ";
 				DatabaseConnection.executeUpdate(sql, conn);
 				sql = "alter table jam_wiki_user alter column last_login_ip_address set data type varchar(39) ";
 				DatabaseConnection.executeUpdate(sql, conn);
 			} else if (dbType.equals(DataHandler.DATA_HANDLER_MYSQL) || dbType.equals(DataHandler.DATA_HANDLER_ORACLE)) {
-				sql = "alter table jam_topic_version modify wiki_user_ip_address varchar(39) not null ";
-				DatabaseConnection.executeUpdate(sql, conn);
-				sql = "alter table jam_file_version modify wiki_user_ip_address varchar(39) not null ";
-				DatabaseConnection.executeUpdate(sql, conn);
 				sql = "alter table jam_wiki_user modify create_ip_address varchar(39) not null ";
 				DatabaseConnection.executeUpdate(sql, conn);
 				sql = "alter table jam_wiki_user modify last_login_ip_address varchar(39) not null ";
 				DatabaseConnection.executeUpdate(sql, conn);
 			} else if (dbType.equals(DataHandler.DATA_HANDLER_POSTGRES)) {
-				sql = "alter table jam_topic_version alter column wiki_user_ip_address type varchar(39) ";
-				DatabaseConnection.executeUpdate(sql, conn);
-				sql = "alter table jam_file_version alter column wiki_user_ip_address type varchar(39) ";
-				DatabaseConnection.executeUpdate(sql, conn);
 				sql = "alter table jam_wiki_user alter column create_ip_address type varchar(39) ";
 				DatabaseConnection.executeUpdate(sql, conn);
 				sql = "alter table jam_wiki_user alter column last_login_ip_address type varchar(39) ";
 				DatabaseConnection.executeUpdate(sql, conn);
 			} else {
-				sql = "alter table jam_topic_version alter column wiki_user_ip_address varchar(39) not null ";
-				DatabaseConnection.executeUpdate(sql, conn);
-				sql = "alter table jam_file_version alter column wiki_user_ip_address varchar(39) not null ";
-				DatabaseConnection.executeUpdate(sql, conn);
 				sql = "alter table jam_wiki_user alter column create_ip_address varchar(39) not null ";
 				DatabaseConnection.executeUpdate(sql, conn);
 				sql = "alter table jam_wiki_user alter column last_login_ip_address varchar(39) not null ";
@@ -177,7 +161,7 @@ public class DatabaseUpgrades {
 			if (dbType.equals(DataHandler.DATA_HANDLER_ORACLE)) {
 				sql = "alter table jam_topic_version add (characters_changed INTEGER) ";
 			} else if (dbType.equals(DataHandler.DATA_HANDLER_MSSQL)) {
-				sql = "alter table jam_recent_change add [characters_changed] int ";
+				sql = "alter table jam_topic_version add [characters_changed] int ";
 			} else {
 				sql = "alter table jam_topic_version add column characters_changed INTEGER ";
 			}
@@ -187,7 +171,7 @@ public class DatabaseUpgrades {
 			if (dbType.equals(DataHandler.DATA_HANDLER_ORACLE)) {
 				sql = "alter table jam_recent_change add (characters_changed INTEGER) ";
 			} else if (dbType.equals(DataHandler.DATA_HANDLER_MSSQL)) {
-				sql = "alter table jam_topic_version add [characters_changed] int ";
+				sql = "alter table jam_recent_change add [characters_changed] int ";
 			} else {
 				sql = "alter table jam_recent_change add column characters_changed INTEGER ";
 			}
@@ -361,6 +345,54 @@ public class DatabaseUpgrades {
 		}
 		WikiBase.getDataHandler().reloadRecentChanges();
 		messages.add("Populated characters_changed column in jam_recent_change");
+		return messages;
+	}
+
+	/**
+	 *
+	 */
+	public static List<String> upgrade080(List<String> messages) throws Exception {
+		TransactionStatus status = DatabaseConnection.startTransaction(getTransactionDefinition());
+		String dbType = Environment.getValue(Environment.PROP_DB_TYPE);
+		try {
+			String sql = null;
+			Connection conn = DatabaseConnection.getConnection();
+			// add wiki_user_display column to jam_topic_version
+			if (dbType.equals(DataHandler.DATA_HANDLER_ORACLE)) {
+				sql = "alter table jam_topic_version add (wiki_user_display VARCHAR(100)) ";
+			} else if (dbType.equals(DataHandler.DATA_HANDLER_MSSQL)) {
+				sql = "alter table jam_topic_version add wiki_user_display VARCHAR(100) ";
+			} else {
+				sql = "alter table jam_topic_version add column wiki_user_display VARCHAR(100) ";
+			}
+			DatabaseConnection.executeUpdate(sql, conn);
+			sql = "update jam_topic_version set wiki_user_display = wiki_user_ip_address ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			sql = "alter table jam_topic_version drop column wiki_user_ip_address ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Added wiki_user_display column to jam_topic_version");
+			// add wiki_user_display column to jam_file_version
+			if (dbType.equals(DataHandler.DATA_HANDLER_ORACLE)) {
+				sql = "alter table jam_file_version add (wiki_user_display VARCHAR(100)) ";
+			} else if (dbType.equals(DataHandler.DATA_HANDLER_MSSQL)) {
+				sql = "alter table jam_file_version add wiki_user_display VARCHAR(100) ";
+			} else {
+				sql = "alter table jam_file_version add column wiki_user_display VARCHAR(100) ";
+			}
+			DatabaseConnection.executeUpdate(sql, conn);
+			sql = "update jam_file_version set wiki_user_display = wiki_user_ip_address ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			sql = "alter table jam_file_version drop column wiki_user_ip_address ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Added wiki_user_display column to jam_file_version");
+		} catch (Exception e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			throw e;
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
+		}
+		DatabaseConnection.commit(status);
 		return messages;
 	}
 }

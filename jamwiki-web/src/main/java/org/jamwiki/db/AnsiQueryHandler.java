@@ -445,15 +445,23 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws SQLException {
-		WikiPreparedStatement stmt = null;
-		if (Utilities.isIpAddress(userString)) {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
-		} else {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN);
-		}
+	public WikiResultSet getUserContributionsByLogin(String virtualWiki, String login, Pagination pagination, boolean descending) throws SQLException {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN);
 		stmt.setString(1, virtualWiki);
-		stmt.setString(2, userString);
+		stmt.setString(2, login);
+		stmt.setInt(3, pagination.getNumResults());
+		stmt.setInt(4, pagination.getOffset());
+		// FIXME - sort order ignored
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet getUserContributionsByUserDisplay(String virtualWiki, String userDisplay, Pagination pagination, boolean descending) throws SQLException {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
+		stmt.setString(1, virtualWiki);
+		stmt.setString(2, userDisplay);
 		stmt.setInt(3, pagination.getNumResults());
 		stmt.setInt(4, pagination.getOffset());
 		// FIXME - sort order ignored
@@ -719,7 +727,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(5, topicVersion.getAuthorId());
 		}
 		stmt.setInt(6, topicVersion.getEditType());
-		stmt.setString(7, topicVersion.getAuthorIpAddress());
+		stmt.setString(7, topicVersion.getAuthorDisplay());
 		stmt.setTimestamp(8, topicVersion.getEditDate());
 		if (topicVersion.getPreviousTopicVersionId() == null) {
 			stmt.setNull(9, Types.INTEGER);
@@ -808,7 +816,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		} else {
 			stmt.setInt(5, wikiFileVersion.getAuthorId());
 		}
-		stmt.setString(6, wikiFileVersion.getAuthorIpAddress());
+		stmt.setString(6, wikiFileVersion.getAuthorDisplay());
 		stmt.setTimestamp(7, wikiFileVersion.getUploadDate());
 		stmt.setString(8, wikiFileVersion.getMimeType());
 		stmt.setInt(9, wikiFileVersion.getFileSize());

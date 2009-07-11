@@ -298,7 +298,7 @@ public class EditServlet extends JAMWikiServlet {
 		parserInput.setLocale(request.getLocale());
 		parserInput.setWikiUser(user);
 		parserInput.setTopicName(topicName);
-		parserInput.setUserIpAddress(ServletUtil.getIpAddress(request));
+		parserInput.setUserDisplay(ServletUtil.getIpAddress(request));
 		parserInput.setVirtualWiki(virtualWiki);
 		ParserOutput parserOutput = ParserUtil.parseMetadata(parserInput, contents);
 		// parse signatures and other values that need to be updated prior to saving

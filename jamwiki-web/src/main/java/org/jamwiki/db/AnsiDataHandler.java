@@ -633,7 +633,11 @@ public class AnsiDataHandler implements DataHandler {
 		List<RecentChange> all = new ArrayList<RecentChange>();
 		WikiResultSet rs = null;
 		try {
-			rs = this.queryHandler().getUserContributions(virtualWiki, userString, pagination, descending);
+			if (this.lookupWikiUser(userString) != null) {
+				rs = this.queryHandler().getUserContributionsByLogin(virtualWiki, userString, pagination, descending);
+			} else {
+				rs = this.queryHandler().getUserContributionsByUserDisplay(virtualWiki, userString, pagination, descending);
+			}
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
@@ -820,7 +824,7 @@ public class AnsiDataHandler implements DataHandler {
 			topicVersion.setCharactersChanged(rs.getInt("characters_changed"));
 			topicVersion.setEditDate(rs.getTimestamp("edit_date"));
 			topicVersion.setEditType(rs.getInt("edit_type"));
-			topicVersion.setAuthorIpAddress(rs.getString("wiki_user_ip_address"));
+			topicVersion.setAuthorDisplay(rs.getString("wiki_user_display"));
 			return topicVersion;
 		} catch (SQLException e) {
 			logger.severe("Failure while initializing topic version", e);
@@ -885,7 +889,7 @@ public class AnsiDataHandler implements DataHandler {
 			}
 			wikiFileVersion.setUploadDate(rs.getTimestamp("upload_date"));
 			wikiFileVersion.setMimeType(rs.getString("mime_type"));
-			wikiFileVersion.setAuthorIpAddress(rs.getString("wiki_user_ip_address"));
+			wikiFileVersion.setAuthorDisplay(rs.getString("wiki_user_display"));
 			wikiFileVersion.setFileSize(rs.getInt("file_size"));
 			return wikiFileVersion;
 		} catch (SQLException e) {
@@ -1417,7 +1421,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void updateSpecialPage(Locale locale, String virtualWiki, String topicName, String ipAddress) throws DataAccessException, WikiException {
+	public void updateSpecialPage(Locale locale, String virtualWiki, String topicName, String userDisplay) throws DataAccessException, WikiException {
 		logger.info("Updating special page " + virtualWiki + " / " + topicName);
 		TransactionStatus status = null;
 		try {
@@ -1428,7 +1432,7 @@ public class AnsiDataHandler implements DataHandler {
 			int charactersChanged = StringUtils.length(contents) - StringUtils.length(topic.getTopicContent());
 			topic.setTopicContent(contents);
 			// FIXME - hard coding
-			TopicVersion topicVersion = new TopicVersion(null, ipAddress, "Automatically updated by system upgrade", contents, charactersChanged);
+			TopicVersion topicVersion = new TopicVersion(null, userDisplay, "Automatically updated by system upgrade", contents, charactersChanged);
 			ParserOutput parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki, topicName);
 			writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true);
 		} catch (DataAccessException e) {
@@ -1569,7 +1573,7 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	protected void validateTopicVersion(TopicVersion topicVersion) throws WikiException {
-		checkLength(topicVersion.getAuthorIpAddress(), 39);
+		checkLength(topicVersion.getAuthorDisplay(), 100);
 		topicVersion.setEditComment(StringUtils.substring(topicVersion.getEditComment(), 0, 200));
 	}
 
@@ -1614,7 +1618,7 @@ public class AnsiDataHandler implements DataHandler {
 	protected void validateWikiFileVersion(WikiFileVersion wikiFileVersion) throws WikiException {
 		checkLength(wikiFileVersion.getUrl(), 200);
 		checkLength(wikiFileVersion.getMimeType(), 100);
-		checkLength(wikiFileVersion.getAuthorIpAddress(), 39);
+		checkLength(wikiFileVersion.getAuthorDisplay(), 100);
 		wikiFileVersion.setUploadComment(StringUtils.substring(wikiFileVersion.getUploadComment(), 0, 200));
 	}
 
@@ -1786,7 +1790,7 @@ public class AnsiDataHandler implements DataHandler {
 				// write version
 				addTopicVersion(topicVersion, conn);
 				topic.setCurrentVersionId(topicVersion.getTopicVersionId());
-				String authorName = topicVersion.getAuthorIpAddress();
+				String authorName = topicVersion.getAuthorDisplay();
 				Integer authorId = topicVersion.getAuthorId();
 				if (authorId != null) {
 					WikiUser user = this.lookupWikiUser(topicVersion.getAuthorId());

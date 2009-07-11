@@ -344,7 +344,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void updateSpecialPage(Locale locale, String virtualWiki, String topicName, String ipAddress) throws DataAccessException, WikiException {
+	public void updateSpecialPage(Locale locale, String virtualWiki, String topicName, String userDisplay) throws DataAccessException, WikiException {
 		throw new UnsupportedOperationException();
 	}
 

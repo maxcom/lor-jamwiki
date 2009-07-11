@@ -311,8 +311,7 @@ public interface QueryHandler {
 	 *
 	 * @param virtualWiki The name of the virtual wiki for which user contributions
 	 *  are being retrieved.
-	 * @param userString The login of the user for whom changes are being retrieved; or
-	 *  for anonymous users, the IP address of the user.
+	 * @param login The login of the user for whom changes are being retrieved.
 	 * @param pagination A Pagination object that specifies the number of results
 	 *  and starting result offset for the result set to be retrieved.
 	 * @param descending If <code>true</code> then results are sorted newest to
@@ -320,7 +319,25 @@ public interface QueryHandler {
 	 * @return A WikiResultSet containing all recent changes made by a particular user.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	WikiResultSet getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws SQLException;
+	WikiResultSet getUserContributionsByLogin(String virtualWiki, String login, Pagination pagination, boolean descending) throws SQLException;
+
+	/**
+	 * Retrieve a WikiResultSet containing all recent changes made to the wiki by
+	 * searching for matches against the user display field.  This method is
+	 * typically used to retrieve contributions made by anonymous users.
+	 *
+	 * @param virtualWiki The name of the virtual wiki for which user contributions
+	 *  are being retrieved.
+	 * @param userDisplay The display name of the user, typically the IP address,
+	 *  for whom changes are being retrieved.
+	 * @param pagination A Pagination object that specifies the number of results
+	 *  and starting result offset for the result set to be retrieved.
+	 * @param descending If <code>true</code> then results are sorted newest to
+	 *  oldest.
+	 * @return A WikiResultSet containing all recent changes made by a particular user.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	WikiResultSet getUserContributionsByUserDisplay(String virtualWiki, String userDisplay, Pagination pagination, boolean descending) throws SQLException;
 
 	/**
 	 * Retrieve a WikiResultSet containing all virtual wiki information for all

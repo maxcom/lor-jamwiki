@@ -51,7 +51,7 @@ public class ParserTest extends TestCase {
 		parserInput.setLocale(LocaleUtils.toLocale("en_US"));
 		parserInput.setWikiUser(null);
 		parserInput.setTopicName(topicName);
-		parserInput.setUserIpAddress("0.0.0.0");
+		parserInput.setUserDisplay("0.0.0.0");
 		parserInput.setVirtualWiki("en");
 		parserInput.setAllowSectionEdit(true);
 		ParserOutput parserOutput = new ParserOutput();

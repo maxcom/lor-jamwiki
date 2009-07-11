@@ -73,7 +73,7 @@ public class MediaWikiXmlTopicFactory extends DefaultHandler implements Migrator
 	private TopicVersion currentTopicVersion = new TopicVersion();
 	private Map<Date, TopicVersion> currentTopicVersions = new TreeMap<Date, TopicVersion>();
 	private final WikiUser user;
-	private final String authorIpAddress;
+	private final String authorDisplay;
 	private final Map<Integer, String> namespaces = new HashMap<Integer, String>();
 	private Map<Topic, List<TopicVersion>> parsedTopics = new HashMap<Topic, List<TopicVersion>>();
 	private int previousTopicContentLength = 0;
@@ -81,9 +81,9 @@ public class MediaWikiXmlTopicFactory extends DefaultHandler implements Migrator
 	/**
 	 *
 	 */
-	public MediaWikiXmlTopicFactory(WikiUser user, String authorIpAddress) {
+	public MediaWikiXmlTopicFactory(WikiUser user, String authorDisplay) {
 		super();
-		this.authorIpAddress = authorIpAddress;
+		this.authorDisplay = authorDisplay;
 		this.user = user;
 	}
 
@@ -211,7 +211,7 @@ public class MediaWikiXmlTopicFactory extends DefaultHandler implements Migrator
 		}
 		if (MEDIAWIKI_ELEMENT_TOPIC_VERSION.equals(qName)) {
 			this.currentTopicVersion = new TopicVersion();
-			this.currentTopicVersion.setAuthorIpAddress(this.authorIpAddress);
+			this.currentTopicVersion.setAuthorDisplay(this.authorDisplay);
 			if (this.user != null) {
 				this.currentTopicVersion.setAuthorId(this.user.getUserId());
 			}

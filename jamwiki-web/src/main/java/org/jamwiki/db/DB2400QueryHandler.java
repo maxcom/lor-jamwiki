@@ -111,16 +111,23 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws SQLException {
-		String sql = null;
-		if (Utilities.isIpAddress(userString)) {
-			sql = formatStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS, pagination);
-		} else {
-			sql = formatStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN, pagination);
-		}
+	public WikiResultSet getUserContributionsByLogin(String virtualWiki, String login, Pagination pagination, boolean descending) throws SQLException {
+		String sql = formatStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN, pagination);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setString(1, virtualWiki);
-		stmt.setString(2, userString);
+		stmt.setString(2, login);
+		// FIXME - sort order ignored
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet getUserContributionsByUserDisplay(String virtualWiki, String userDisplay, Pagination pagination, boolean descending) throws SQLException {
+		String sql = formatStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS, pagination);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
+		stmt.setString(1, virtualWiki);
+		stmt.setString(2, userDisplay);
 		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}

@@ -33,7 +33,7 @@ public class TopicVersion implements Serializable {
 	public static final int EDIT_PERMISSION = 6;
 	public static final int EDIT_UNDELETE = 7;
 	private Integer authorId = null;
-	private String authorIpAddress = null;
+	private String authorDisplay = null;
 	private int charactersChanged = 0;
 	private String editComment = null;
 	private Timestamp editDate = new Timestamp(System.currentTimeMillis());
@@ -53,11 +53,11 @@ public class TopicVersion implements Serializable {
 	/**
 	 *
 	 */
-	public TopicVersion(WikiUser user, String authorIpAddress, String editComment, String versionContent, int charactersChanged) {
+	public TopicVersion(WikiUser user, String authorDisplay, String editComment, String versionContent, int charactersChanged) {
 		if (user != null && user.getUserId() > 0) {
 			this.authorId = user.getUserId();
 		}
-		this.authorIpAddress = authorIpAddress;
+		this.authorDisplay = authorDisplay;
 		this.editComment = editComment;
 		this.versionContent = versionContent;
 		this.charactersChanged = charactersChanged;
@@ -80,15 +80,15 @@ public class TopicVersion implements Serializable {
 	/**
 	 *
 	 */
-	public String getAuthorIpAddress() {
-		return this.authorIpAddress;
+	public String getAuthorDisplay() {
+		return this.authorDisplay;
 	}
 
 	/**
 	 *
 	 */
-	public void setAuthorIpAddress(String authorIpAddress) {
-		this.authorIpAddress = authorIpAddress;
+	public void setAuthorDisplay(String authorDisplay) {
+		this.authorDisplay = authorDisplay;
 	}
 
 	/**

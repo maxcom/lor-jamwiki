@@ -116,7 +116,7 @@ public class ItemsServlet extends JAMWikiServlet {
 			parserInput.setLocale(request.getLocale());
 			parserInput.setWikiUser(ServletUtil.currentWikiUser());
 			parserInput.setTopicName(topicName);
-			parserInput.setUserIpAddress(ServletUtil.getIpAddress(request));
+			parserInput.setUserDisplay(ServletUtil.getIpAddress(request));
 			parserInput.setVirtualWiki(virtualWiki);
 			parserInput.setAllowSectionEdit(false);
 			parserOutput = new ParserOutput();

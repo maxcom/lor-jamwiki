@@ -26,7 +26,7 @@ import org.jamwiki.utils.WikiLogger;
 public class WikiFileVersion {
 
 	private Integer authorId = null;
-	private String authorIpAddress = null;
+	private String authorDisplay = null;
 	private int fileId = -1;
 	private long fileSize = -1;
 	private int fileVersionId = -1;
@@ -59,15 +59,15 @@ public class WikiFileVersion {
 	/**
 	 *
 	 */
-	public String getAuthorIpAddress() {
-		return this.authorIpAddress;
+	public String getAuthorDisplay() {
+		return this.authorDisplay;
 	}
 
 	/**
 	 *
 	 */
-	public void setAuthorIpAddress(String authorIpAddress) {
-		this.authorIpAddress = authorIpAddress;
+	public void setAuthorDisplay(String authorDisplay) {
+		this.authorDisplay = authorDisplay;
 	}
 
 	/**

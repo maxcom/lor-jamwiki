@@ -93,15 +93,23 @@ public class OracleQueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws SQLException {
-		WikiPreparedStatement stmt = null;
-		if (Utilities.isIpAddress(userString)) {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
-		} else {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN);
-		}
+	public WikiResultSet getUserContributionsByLogin(String virtualWiki, String login, Pagination pagination, boolean descending) throws SQLException {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN);
 		stmt.setString(1, virtualWiki);
-		stmt.setString(2, userString);
+		stmt.setString(2, login);
+		stmt.setInt(3, pagination.getEnd());
+		stmt.setInt(4, pagination.getStart());
+		// FIXME - sort order ignored
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet getUserContributionsByUserDisplay(String virtualWiki, String userDisplay, Pagination pagination, boolean descending) throws SQLException {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
+		stmt.setString(1, virtualWiki);
+		stmt.setString(2, userDisplay);
 		stmt.setInt(3, pagination.getEnd());
 		stmt.setInt(4, pagination.getStart());
 		// FIXME - sort order ignored

@@ -760,7 +760,7 @@ public class ServletUtil {
 		parserInput.setLocale(request.getLocale());
 		parserInput.setWikiUser(user);
 		parserInput.setTopicName(topicName);
-		parserInput.setUserIpAddress(ServletUtil.getIpAddress(request));
+		parserInput.setUserDisplay(ServletUtil.getIpAddress(request));
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setAllowSectionEdit(sectionEdit);
 		ParserOutput parserOutput = new ParserOutput();

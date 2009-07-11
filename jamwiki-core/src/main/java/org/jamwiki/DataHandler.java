@@ -269,9 +269,9 @@ public interface DataHandler {
 	 *
 	 * @param virtualWiki The virtual wiki for which changes are being
 	 *  retrieved.
-	 * @param userString Either an IP address (for anonymous users) or the
-	 *  user login corresponding to the user for whom contributions are
-	 *  being retrieved.
+	 * @param userString Either a user display, which is typically an IP
+	 *  address (for anonymous users) or the user login corresponding to
+	 *  the user for whom contributions are being retrieved.
 	 * @param pagination A Pagination object indicating the total number of
 	 *  results and offset for the results to be retrieved.
 	 * @param descending Set to <code>true</code> if the results should be
@@ -564,12 +564,13 @@ public interface DataHandler {
 	 *  updated.
 	 * @param topicName The name of the special page topic that is being
 	 *  updated.
-	 * @param ipAddress The IP address of the user updating special pages.
+	 * @param userDisplay A display name for the user updating special pages,
+	 *  typically the IP address.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 * @throws WikiException Thrown if the topic information is invalid.
 	 */
 	// FIXME - move this to another location
-	void updateSpecialPage(Locale locale, String virtualWiki, String topicName, String ipAddress) throws DataAccessException, WikiException;
+	void updateSpecialPage(Locale locale, String virtualWiki, String topicName, String userDisplay) throws DataAccessException, WikiException;
 
 	/**
 	 * Add or update a WikiFile object.  This method will add a new record if

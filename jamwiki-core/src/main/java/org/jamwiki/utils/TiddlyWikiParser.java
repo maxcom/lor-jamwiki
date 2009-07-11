@@ -50,7 +50,7 @@ public class TiddlyWikiParser {
 	private StringBuffer messages = new StringBuffer();
 	private String virtualWiki;
 	private WikiUser user;
-	private String authorIpAddress;
+	private String authorDisplay;
 
 	/**
 	 * Facade for WikiBase. Used for enable unit testing.
@@ -75,23 +75,23 @@ public class TiddlyWikiParser {
 	 * Main constructor
 	 * @param virtualWiki virtualWiki
 	 * @param user user who is currently logged in
-	 * @param authorIpAddress IP address of uploading user
+	 * @param authorDisplay A display value for the importing user, typically the IP address.
 	 */
-	public TiddlyWikiParser(String virtualWiki, WikiUser user, String authorIpAddress) {
+	public TiddlyWikiParser(String virtualWiki, WikiUser user, String authorDisplay) {
 		this.virtualWiki = virtualWiki;
 		this.user = user;
-		this.authorIpAddress = authorIpAddress;
+		this.authorDisplay = authorDisplay;
 	}
 
 	/**
 	 * Use this contructor for test cases
 	 * @param virtualWiki Name of VirtualWiki
 	 * @param user User who is logged in.
-	 * @param authorIpAddress IP address of uploading user.
+	 * @param authorDisplay A display value for the importing user, typically the IP address.
 	 * @param wikiBase Overwrites default WikiBaseFascade
 	 */
-	public TiddlyWikiParser(String virtualWiki, WikiUser user, String authorIpAddress, WikiBaseFascade wikiBase) {
-		this(virtualWiki, user, authorIpAddress);
+	public TiddlyWikiParser(String virtualWiki, WikiUser user, String authorDisplay, WikiBaseFascade wikiBase) {
+		this(virtualWiki, user, authorDisplay);
 		this.wikiBase = wikiBase;
 	}
 
@@ -190,7 +190,7 @@ public class TiddlyWikiParser {
 		topic.setVirtualWiki(virtualWiki);
 		topic.setTopicContent(content);
 		int charactersChanged = StringUtils.length(content);
-		TopicVersion topicVersion = new TopicVersion(user, authorIpAddress, "imported", content, charactersChanged);
+		TopicVersion topicVersion = new TopicVersion(user, authorDisplay, "imported", content, charactersChanged);
 		topicVersion.setEditDate(new Timestamp(lastMod.getTime()));
 		// manage mapping bitween MediaWiki and JAMWiki namespaces
 		topic.setTopicType(Topic.TYPE_ARTICLE);
