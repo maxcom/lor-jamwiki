@@ -22,11 +22,21 @@
 
 <%@ include file="page-init.jsp" %>
 
-<div style="margin:10px 30px 10px 30px;padding:10px;color:red;text-align:center;border:1px dashed red;"><fmt:message key="common.warning.experimental" /></div>
-
-<c:if test="${!empty error}">
-<div class="message red"><fmt:message key="${error.key}"><fmt:param value="${error.params[0]}" /></fmt:message></div>
+<c:if test="${!empty errors}">
+<div class="message red">
+	<c:forEach items="${errors}" var="error"><fmt:message key="${error.key}"><fmt:param value="${error.params[0]}" /></fmt:message><br /></c:forEach>
+</div>
 </c:if>
+<c:if test="${!empty successfulImports}">
+<div class="message">
+	<fmt:message key="import.message.success" />
+	<ul>
+	<c:forEach items="${successfulImports}" var="successfulImport"><li><jamwiki:link value="${successfulImport}" text="${successfulImport}" /></li></c:forEach>
+	</ul>
+</div>
+</c:if>
+
+<p><fmt:message key="import.caption.overview" /></p>
 
 <fieldset>
 <legend><fmt:message key="import.caption.source" /></legend>
