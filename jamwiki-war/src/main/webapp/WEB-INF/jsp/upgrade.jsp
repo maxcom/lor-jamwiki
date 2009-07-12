@@ -66,17 +66,16 @@ body, input, select {
 <form name="adminUpgrade" method="post">
 <input type="hidden" name="function" value="upgrade" />
 <table id="upgrade-table">
-<c:if test="${!empty successMessage || !empty error || !empty errors || !empty messages}">
+<c:if test="${!empty successMessage || !empty errors || !empty messages}">
 	<tr>
 		<td colspan="2">
 			<div id="upgrade-messages">
 				<c:if test="${!empty successMessage}"><h4><fmt:message key="${successMessage.key}"><fmt:param value="${successMessage.params[0]}" /></fmt:message></h4></c:if>
-				<c:if test="${!empty error}"><div class="red"><fmt:message key="${error.key}"><fmt:param value="${error.params[0]}" /></fmt:message></div></c:if>
 				<c:if test="${!empty errors}">
 					<c:forEach items="${errors}" var="message"><div class="red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /><fmt:param value="${message.params[1]}" /></fmt:message></div></c:forEach>
 				</c:if>
 				<c:if test="${!empty messages}">
-					<c:forEach items="${messages}" var="message"><div class="green"><c:out value="${message}" /></div></c:forEach>
+					<c:forEach items="${messages}" var="message"><div class="green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /><fmt:param value="${message.params[1]}" /></fmt:message></div></c:forEach>
 				</c:if>
 			</div>
 		</td>
