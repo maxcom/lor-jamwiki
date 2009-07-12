@@ -367,6 +367,10 @@ public class DatabaseConnection {
 	 */
 	protected static void rollbackOnException(TransactionStatus status, Throwable ex) throws TransactionException {
 		logger.fine("Initiating transaction rollback on application exception", ex);
+		if (status == null) {
+			logger.info("TransactionStatus is null, unable to rollback");
+			return;
+		}
 		try {
 			transactionManager.rollback(status);
 		} catch (TransactionSystemException ex2) {
@@ -390,6 +394,10 @@ public class DatabaseConnection {
 	 * @param status TransactionStatus representing the status of the transaction
 	 */
 	protected static void commit(TransactionStatus status) {
+		if (status == null) {
+			logger.info("TransactionStatus is null, unable to commit");
+			return;
+		}
 		transactionManager.commit(status);
 	}
 }
