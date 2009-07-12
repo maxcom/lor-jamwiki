@@ -29,6 +29,7 @@
 		-->
 		<intercept-url pattern="/**/Special:Admin" access="ROLE_SYSADMIN" />
 		<intercept-url pattern="/**/Special:Edit" access="ROLE_EDIT_EXISTING,ROLE_EDIT_NEW" />
+		<intercept-url pattern="/**/Special:Import" access="ROLE_IMPORT" />
 		<intercept-url pattern="/**/Special:Login" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<intercept-url pattern="/**/Special:Maintenance" access="ROLE_SYSADMIN" />
 		<intercept-url pattern="/**/Special:Manage" access="ROLE_ADMIN" />

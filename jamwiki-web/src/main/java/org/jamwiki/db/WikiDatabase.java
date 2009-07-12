@@ -535,6 +535,7 @@ public class WikiDatabase {
 		WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword);
 		List<String> roles = new ArrayList<String>();
 		roles.add(Role.ROLE_ADMIN.getAuthority());
+		roles.add(Role.ROLE_IMPORT.getAuthority());
 		roles.add(Role.ROLE_SYSADMIN.getAuthority());
 		roles.add(Role.ROLE_TRANSLATE.getAuthority());
 		WikiBase.getDataHandler().writeRoleMapUser(user.getUsername(), roles);
@@ -610,6 +611,10 @@ public class WikiDatabase {
 		role = Role.ROLE_EDIT_NEW;
 		// FIXME - use message key
 		role.setDescription("Allows a user to create a new topic.");
+		WikiBase.getDataHandler().writeRole(role, false);
+		role = Role.ROLE_IMPORT;
+		// FIXME - use message key
+		role.setDescription("Allows a user to import data from a file.");
 		WikiBase.getDataHandler().writeRole(role, false);
 		role = Role.ROLE_MOVE;
 		// FIXME - use message key

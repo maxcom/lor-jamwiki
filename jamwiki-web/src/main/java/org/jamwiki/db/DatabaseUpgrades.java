@@ -412,6 +412,34 @@ public class DatabaseUpgrades {
 			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
 		}
 		DatabaseConnection.commit(status);
+		try {
+			// perform a second transaction to assign ROLE_IMPORT.  this code is in its own
+			// transaction since if it fails the upgrade can still be considered successful.
+			status = DatabaseConnection.startTransaction(getTransactionDefinition());
+			Connection conn = DatabaseConnection.getConnection();
+			String sql = "INSERT into jam_role (role_name) values ('ROLE_IMPORT') ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_role"));
+			sql = "INSERT into jam_authorities (authority, username) "
+			    + "select 'ROLE_IMPORT', username "
+			    + "from jam_authorities where authority = 'ROLE_ADMIN' ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_authorities"));
+		} catch (SQLException e) {
+			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
+			// do not throw this error and halt the upgrade process - populating the field
+			// is not required for existing systems.
+			logger.warning("Failure while populating characters_changed colum in jam_topic_version.  See UPGRADE.txt for instructions on how to manually complete this optional step.", e);
+			try {
+				DatabaseConnection.rollbackOnException(status, e);
+			} catch (Exception ex) {
+				// ignore
+			}
+			status = null; // so we do not try to commit
+		}
+		if (status != null) {
+			DatabaseConnection.commit(status);
+		}
 		return messages;
 	}
 }
