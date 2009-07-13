@@ -47,9 +47,9 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * The purpose of this class is to import a MediaWiki XML file into JAMWiki.
  */
-public class MediaWikiXmlTopicFactory extends DefaultHandler implements Migrator {
+public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 
-	private static final WikiLogger logger = WikiLogger.getLogger(MediaWikiXmlTopicFactory.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(MediaWikiXmlMigrator.class.getName());
 	private static final int MEDIAWIKI_MAIN_NAMESPACE_ID = 0;
 	private static final int MEDIAWIKI_FILE_NAMESPACE_ID = 6;
 	private static final int MEDIAWIKI_TEMPLATE_NAMESPACE_ID = 10;
@@ -80,7 +80,7 @@ public class MediaWikiXmlTopicFactory extends DefaultHandler implements Migrator
 	/**
 	 *
 	 */
-	public MediaWikiXmlTopicFactory() {
+	protected MediaWikiXmlMigrator() {
 		super();
 	}
 
