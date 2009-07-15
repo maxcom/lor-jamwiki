@@ -354,7 +354,15 @@ public class Utilities {
 		}
 		file = FileUtils.toFile(url);
 		if (file == null || !file.exists()) {
-			throw new FileNotFoundException("Found invalid root class loader for file " + filename);
+			try {
+				// url exists but file cannot be read, so perhaps it's not a "file:" url (an example
+				// would be a "jar:" url).  as a workaround, copy the file to a temp file and return
+				// the temp file.
+				file = File.createTempFile(filename, null);
+				FileUtils.copyURLToFile(url, file);
+			} catch (IOException e) {
+				throw new FileNotFoundException("Unable to load file with URL " + url);
+			}
 		}
 		return file;
 	}
