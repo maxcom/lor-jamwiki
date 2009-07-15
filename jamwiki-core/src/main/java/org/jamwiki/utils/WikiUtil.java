@@ -333,6 +333,19 @@ public class WikiUtil {
 	}
 
 	/**
+	 * Retrieve a file that represents a "tmp" directory within the wiki system directory.
+	 * The caller should test directory.exists() to verify that the directory is available.
+	 */
+	public static File getTempDirectory() {
+		String subdirectory = "tmp";
+		File directory = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), subdirectory);
+		if (!directory.exists()) {
+			directory.mkdirs();
+		}
+		return directory;
+	}
+
+	/**
 	 * Retrieve a topic name from the servlet request.  This method will
 	 * retrieve a request parameter matching the PARAMETER_TOPIC value,
 	 * and will decode it appropriately.

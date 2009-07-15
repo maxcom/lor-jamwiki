@@ -40,6 +40,15 @@ public class ImageUtil {
 	/** Cache name for the cache of image dimensions. */
 	private static final String CACHE_IMAGE_DIMENSIONS = "org.jamwiki.utils.ImageUtil.CACHE_IMAGE_DIMENSIONS";
 
+	static {
+		// manually set the ImageIO temp directory so that systems with incorrect defaults won't fail
+		// when processing images.
+		File directory = WikiUtil.getTempDirectory();
+		if (directory.exists()) {
+			ImageIO.setCacheDirectory(directory);
+		}
+	}
+
 	/**
 	 *
 	 */
