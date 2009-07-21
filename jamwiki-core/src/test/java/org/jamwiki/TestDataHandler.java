@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
@@ -42,6 +43,8 @@ import org.jamwiki.utils.WikiLogger;
 public class TestDataHandler implements DataHandler {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(TestDataHandler.class.getName());
+	/** Keep a map of topic name and topic object in memory to support the writeTopic method. */
+	private Map<String, Topic> topics = new LinkedHashMap<String, Topic>();
 
 	/**
 	 *
@@ -188,6 +191,10 @@ public class TestDataHandler implements DataHandler {
 	 */
 	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object transactionObject) throws DataAccessException {
 		String content = null;
+		if (topics.get(topicName) != null) {
+			// first check the memory store created by writeTopic
+			return topics.get(topicName);
+		}
 		try {
 			content = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_TOPICS_DIR, topicName);
 		} catch (IOException e) {
@@ -380,7 +387,8 @@ public class TestDataHandler implements DataHandler {
 	 *
 	 */
 	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links, boolean userVisible) throws DataAccessException, WikiException {
-		throw new UnsupportedOperationException();
+		// store topics in a local map.  not very sophisticated, but enough to support testing.
+		this.topics.put(topic.getName(), topic);
 	}
 
 	/**
