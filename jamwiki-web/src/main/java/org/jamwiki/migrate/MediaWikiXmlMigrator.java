@@ -51,9 +51,15 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(MediaWikiXmlMigrator.class.getName());
 	private static final int MEDIAWIKI_MAIN_NAMESPACE_ID = 0;
+	private static final int MEDIAWIKI_TALK_NAMESPACE_ID = 1;
+	private static final int MEDIAWIKI_USER_NAMESPACE_ID = 2;
+	private static final int MEDIAWIKI_USER_TALK_NAMESPACE_ID = 3;
 	private static final int MEDIAWIKI_FILE_NAMESPACE_ID = 6;
+	private static final int MEDIAWIKI_FILE_TALK_NAMESPACE_ID = 7;
 	private static final int MEDIAWIKI_TEMPLATE_NAMESPACE_ID = 10;
+	private static final int MEDIAWIKI_TEMPLATE_TALK_NAMESPACE_ID = 11;
 	private static final int MEDIAWIKI_CATEGORY_NAMESPACE_ID = 14;
+	private static final int MEDIAWIKI_CATEGORY_TALK_NAMESPACE_ID = 15;
 	private static final String MEDIAWIKI_ELEMENT_NAMESPACE = "namespace";
 	private static final String MEDIAWIKI_ELEMENT_TOPIC = "page";
 	private static final String MEDIAWIKI_ELEMENT_TOPIC_CONTENT = "text";
@@ -65,6 +71,18 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 	private static final String MEDIAWIKI_ELEMENT_TOPIC_VERSION_USERNAME = "username";
 	// the Mediawiki XML file uses ISO 8601 format for dates
 	private static final String ISO_8601_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+	private static Map<Integer, String> NAMESPACE_CONVERSION_MAP = new HashMap<Integer, String>();
+	static {
+		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_TALK_NAMESPACE_ID, NamespaceHandler.NAMESPACE_COMMENTS);
+		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_USER_NAMESPACE_ID, NamespaceHandler.NAMESPACE_USER);
+		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_USER_TALK_NAMESPACE_ID, NamespaceHandler.NAMESPACE_USER_COMMENTS);
+		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_FILE_NAMESPACE_ID, NamespaceHandler.NAMESPACE_IMAGE);
+		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_FILE_NAMESPACE_ID, NamespaceHandler.NAMESPACE_IMAGE_COMMENTS);
+		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_TEMPLATE_NAMESPACE_ID, NamespaceHandler.NAMESPACE_TEMPLATE);
+		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_TEMPLATE_TALK_NAMESPACE_ID, NamespaceHandler.NAMESPACE_TEMPLATE_COMMENTS);
+		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_CATEGORY_NAMESPACE_ID, NamespaceHandler.NAMESPACE_CATEGORY);
+		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_CATEGORY_TALK_NAMESPACE_ID, NamespaceHandler.NAMESPACE_CATEGORY_COMMENTS);
+	}
 
 	/** This map holds the current tag's attribute names and values.  It is cleared after an end-element is called and thus fails for nested elements. */
 	private Map<String, String> currentAttributeMap = new HashMap<String, String>();
@@ -73,7 +91,7 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 	private Topic currentTopic = new Topic();
 	private TopicVersion currentTopicVersion = new TopicVersion();
 	private Map<Date, TopicVersion> currentTopicVersions = new TreeMap<Date, TopicVersion>();
-	private final Map<Integer, String> namespaces = new HashMap<Integer, String>();
+	private final Map<String, String> mediawikiNamespaceMap = new HashMap<String, String>();
 	private Map<Topic, List<TopicVersion>> parsedTopics = new HashMap<Topic, List<TopicVersion>>();
 	private int previousTopicContentLength = 0;
 
@@ -119,24 +137,6 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 	}
 
 	/**
-	 * Convert MediaWiki namespace to JAMWiki namespace
-	 *
-	 * @param mediaWikiNamespaceId
-	 * @return
-	 */
-	private String findJamwikiNamespace(String mediaWikiNamespace) {
-		String ret = "";
-		if (StringUtils.equals(namespaces.get(MEDIAWIKI_FILE_NAMESPACE_ID), mediaWikiNamespace)) {
-			ret = NamespaceHandler.NAMESPACE_IMAGE;
-		} else if (StringUtils.equals(namespaces.get(MEDIAWIKI_CATEGORY_NAMESPACE_ID), mediaWikiNamespace)) {
-			ret = NamespaceHandler.NAMESPACE_CATEGORY;
-		} else if (StringUtils.equals(namespaces.get(MEDIAWIKI_TEMPLATE_NAMESPACE_ID), mediaWikiNamespace)) {
-			ret = NamespaceHandler.NAMESPACE_TEMPLATE;
-		}
-		return ret;
-	}
-
-	/**
 	 * Convert the Wikipedia article namespace (if any) to a JAMWiki article namespace.
 	 */
 	private String convertArticleNameFromWikipediaToJAMWiki(String fullName) {
@@ -145,8 +145,8 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 		if (pos > 0) {
 			String namespace = fullName.substring(0, pos);
 			String title = fullName.substring(pos+1);
-			String jamwikiNamespace = findJamwikiNamespace(namespace);
-			if (jamwikiNamespace.length() > 0) {
+			String jamwikiNamespace = mediawikiNamespaceMap.get(namespace);
+			if (!StringUtils.isBlank(jamwikiNamespace)) {
 				// matching JAMWiki namespace found
 				ret = jamwikiNamespace + ":" + title;
 			}
@@ -160,8 +160,11 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 	private String convertNamespaces(String text) {
 		String ret = text;
 		// convert all namespaces names from MediaWiki to JAMWiki local representation
-		ret = Pattern.compile("\\[\\[" + namespaces.get(MEDIAWIKI_CATEGORY_NAMESPACE_ID) + "\\:", Pattern.CASE_INSENSITIVE).matcher(ret).replaceAll("[[" + NamespaceHandler.NAMESPACE_CATEGORY + ":");
-		ret = Pattern.compile("\\[\\[" + namespaces.get(MEDIAWIKI_FILE_NAMESPACE_ID) + "\\:", Pattern.CASE_INSENSITIVE).matcher(ret).replaceAll("[[" + NamespaceHandler.NAMESPACE_IMAGE + ":");
+		String jamwikiNamespace;
+		for (String mediawikiNamespace : mediawikiNamespaceMap.keySet()) {
+			jamwikiNamespace = mediawikiNamespaceMap.get(mediawikiNamespace);
+			ret = Pattern.compile("\\[\\[" + mediawikiNamespace + "\\:", Pattern.CASE_INSENSITIVE).matcher(ret).replaceAll("[[" + jamwikiNamespace + ":");
+		}
 		return ret;
 	}
 
@@ -226,7 +229,12 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 	 */
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (StringUtils.equals(MEDIAWIKI_ELEMENT_NAMESPACE, qName)) {
-			namespaces.put(NumberUtils.toInt(this.currentAttributeMap.get("key")), currentElementBuffer.toString().trim());
+			int key = NumberUtils.toInt(this.currentAttributeMap.get("key"));
+			String jamwikiNamespace = NAMESPACE_CONVERSION_MAP.get(key);
+			if (!StringUtils.isBlank(jamwikiNamespace)) {
+				String mediawikiNamespace = currentElementBuffer.toString().trim();
+				mediawikiNamespaceMap.put(mediawikiNamespace, jamwikiNamespace);
+			}
 		} else if (MEDIAWIKI_ELEMENT_TOPIC_NAME.equals(qName)) {
 			String topicName = currentElementBuffer.toString().trim();
 			topicName = convertArticleNameFromWikipediaToJAMWiki(topicName);

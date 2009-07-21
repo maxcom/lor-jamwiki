@@ -91,7 +91,8 @@ public class MigrationUtil {
 					WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true);
 				}
 				// create a dummy version to indicate that the topic was imported
-				String editComment = Utilities.formatMessage("import.message.importedby", locale, new Object[]{user.getUsername()});
+				String importedBy = (user != null && user.getUserId() > 0) ? user.getUsername() : authorDisplay;
+				String editComment = Utilities.formatMessage("import.message.importedby", locale, new Object[]{importedBy});
 				TopicVersion topicVersion = new TopicVersion(user, authorDisplay, editComment, topic.getTopicContent(), 0);
 				topicVersion.setEditType(TopicVersion.EDIT_IMPORT);
 				WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true);
