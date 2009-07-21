@@ -58,6 +58,13 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jamwiki</groupId>
+				<artifactId>jamwiki-core</artifactId>
+				<scope>test</scope>
+				<classifier>tests</classifier>
+				<version>${jamwiki.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jamwiki</groupId>
 				<artifactId>jamwiki-web</artifactId>
 				<version>${jamwiki.version}</version>
 			</dependency>

@@ -65,6 +65,18 @@
 					<compilerArgument>-Xlint:unchecked</compilerArgument>
 				</configuration>
 			</plugin>
+			<!-- create a test jar so that core test files can be shared -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
