@@ -244,7 +244,6 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 		} else if (MEDIAWIKI_ELEMENT_TOPIC_CONTENT.equals(qName)) {
 			String topicContent = currentElementBuffer.toString().trim();
 			topicContent = convertNamespaces(topicContent);
-			currentTopic.setTopicContent(topicContent);
 			currentTopicVersion.setVersionContent(topicContent);
 			currentTopicVersion.setCharactersChanged(StringUtils.length(topicContent) - previousTopicContentLength);
 			previousTopicContentLength = StringUtils.length(topicContent);
@@ -257,11 +256,17 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 		} else if (MEDIAWIKI_ELEMENT_TOPIC_VERSION.equals(qName)) {
 			this.currentTopicVersions.put(currentTopicVersion.getEditDate(), currentTopicVersion);
 		} else if (MEDIAWIKI_ELEMENT_TOPIC.equals(qName)) {
+			if (this.currentTopicVersions.isEmpty()) {
+				throw new SAXException("No topic versions found for " + currentTopic.getName());
+			}
 			List<TopicVersion> currentTopicVersionList = new ArrayList<TopicVersion>();
 			// topic versions are stored in a tree map to allow sorting... convert to a list
+			TopicVersion lastTopicVersion = null;
 			for (TopicVersion topicVersion : this.currentTopicVersions.values()) {
 				currentTopicVersionList.add(topicVersion);
+				lastTopicVersion = topicVersion;
 			}
+			currentTopic.setTopicContent(lastTopicVersion.getVersionContent());
 			this.parsedTopics.put(currentTopic, currentTopicVersionList);
 		}
 	}
