@@ -83,6 +83,12 @@ function onRSS() {
 	<div class="formhelp"><fmt:message key="admin.help.serverurl" /></div>
 </div>
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
+	<span class="formcaption"><label for="<%= Environment.PROP_SITE_NAME %>"><fmt:message key="admin.caption.sitename" /></label></span>
+	<c:set var="PROP_SITE_NAME"><%= Environment.PROP_SITE_NAME %></c:set>
+	<span class="formelement"><jamwiki:text name="${PROP_SITE_NAME}" value="${props[PROP_SITE_NAME]}" size="50" id="${PROP_SITE_NAME}" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.sitename" /></div>
+</div>
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
 	<span class="formcaption"><label for="<%= Environment.PROP_BASE_DEFAULT_TOPIC %>"><fmt:message key="admin.caption.defaulttopic" /></label></span>
 	<c:set var="PROP_BASE_DEFAULT_TOPIC"><%= Environment.PROP_BASE_DEFAULT_TOPIC %></c:set>
 	<span class="formelement"><jamwiki:text name="${PROP_BASE_DEFAULT_TOPIC}" value="${props[PROP_BASE_DEFAULT_TOPIC]}" size="30" id="${PROP_BASE_DEFAULT_TOPIC}" /></span>

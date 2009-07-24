@@ -95,6 +95,7 @@ public class Environment {
 	public static final String PROP_RSS_ALLOWED = "rss-allowed";
 	public static final String PROP_RSS_TITLE = "rss-title";
 	public static final String PROP_SERVER_URL = "server-url";
+	public static final String PROP_SITE_NAME = "site-name";
 	public static final String PROP_TOPIC_EDITOR = "default-editor";
 	// FIXME - this property can be removed once the abilitity to upgrade to 0.6.0 is removed
 	public static final String PROP_TOPIC_FORCE_USERNAME = "force-username";
@@ -231,6 +232,7 @@ public class Environment {
 		defaults.setProperty(PROP_RSS_ALLOWED, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_RSS_TITLE, "Wiki Recent Changes");
 		defaults.setProperty(PROP_SERVER_URL, "");
+		defaults.setProperty(PROP_SITE_NAME, "JAMWiki");
 		// FIXME - hard coding
 		defaults.setProperty(PROP_TOPIC_EDITOR, "toolbar");
 		defaults.setProperty(PROP_TOPIC_SPAM_FILTER, Boolean.TRUE.toString());

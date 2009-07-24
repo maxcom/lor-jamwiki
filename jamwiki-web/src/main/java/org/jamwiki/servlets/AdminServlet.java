@@ -195,6 +195,7 @@ public class AdminServlet extends JAMWikiServlet {
 		Properties props = new Properties();
 		try {
 			setProperty(props, request, Environment.PROP_SERVER_URL);
+			setProperty(props, request, Environment.PROP_SITE_NAME);
 			setProperty(props, request, Environment.PROP_BASE_DEFAULT_TOPIC);
 			setProperty(props, request, Environment.PROP_BASE_LOGO_IMAGE);
 			setProperty(props, request, Environment.PROP_BASE_META_DESCRIPTION);
