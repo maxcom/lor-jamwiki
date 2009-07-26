@@ -194,15 +194,16 @@ public class AdminServlet extends JAMWikiServlet {
 	private void properties(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		Properties props = new Properties();
 		try {
+			List<WikiMessage> errors = new ArrayList<WikiMessage>();
 			setProperty(props, request, Environment.PROP_SERVER_URL);
 			setProperty(props, request, Environment.PROP_SITE_NAME);
 			setProperty(props, request, Environment.PROP_BASE_DEFAULT_TOPIC);
 			setProperty(props, request, Environment.PROP_BASE_LOGO_IMAGE);
 			setProperty(props, request, Environment.PROP_BASE_META_DESCRIPTION);
 			setProperty(props, request, Environment.PROP_TOPIC_EDITOR);
-			setProperty(props, request, Environment.PROP_IMAGE_RESIZE_INCREMENT);
-			setProperty(props, request, Environment.PROP_MAX_TOPIC_VERSION_EXPORT);
-			setProperty(props, request, Environment.PROP_RECENT_CHANGES_NUM);
+			setNumericProperty(props, request, Environment.PROP_IMAGE_RESIZE_INCREMENT, errors);
+			setNumericProperty(props, request, Environment.PROP_MAX_TOPIC_VERSION_EXPORT, errors);
+			setNumericProperty(props, request, Environment.PROP_RECENT_CHANGES_NUM, errors);
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_SPAM_FILTER);
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_USE_PREVIEW);
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_USE_SHOW_CHANGES);
@@ -211,7 +212,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_BASE_SEARCH_ENGINE);
 			setProperty(props, request, Environment.PROP_PARSER_CLASS);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_TOC);
-			setProperty(props, request, Environment.PROP_PARSER_TOC_DEPTH);
+			setNumericProperty(props, request, Environment.PROP_PARSER_TOC_DEPTH, errors);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_HTML);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_JAVASCRIPT);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_TEMPLATES);
@@ -228,17 +229,22 @@ public class AdminServlet extends JAMWikiServlet {
 			} else {
 				WikiDatabase.setupDefaultDatabase(props);
 			}
-			setProperty(props, request, Environment.PROP_DBCP_MAX_ACTIVE);
-			setProperty(props, request, Environment.PROP_DBCP_MAX_IDLE);
+			setNumericProperty(props, request, Environment.PROP_DBCP_MAX_ACTIVE, errors);
+			setNumericProperty(props, request, Environment.PROP_DBCP_MAX_IDLE, errors);
 			setBooleanProperty(props, request, Environment.PROP_DBCP_TEST_ON_BORROW);
 			setBooleanProperty(props, request, Environment.PROP_DBCP_TEST_ON_RETURN);
 			setBooleanProperty(props, request, Environment.PROP_DBCP_TEST_WHILE_IDLE);
-			setProperty(props, request, Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME);
-			setProperty(props, request, Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS);
-			setProperty(props, request, Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN);
+			setNumericProperty(props, request, Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME, errors);
+			setNumericProperty(props, request, Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS, errors);
+			setNumericProperty(props, request, Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN, errors);
 			setProperty(props, request, Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION);
-			int maxFileSizeInKB = Integer.parseInt(request.getParameter(Environment.PROP_FILE_MAX_FILE_SIZE));
-			props.setProperty(Environment.PROP_FILE_MAX_FILE_SIZE, Integer.toString(maxFileSizeInKB * 1000));
+			String maxFileSizeString = request.getParameter(Environment.PROP_FILE_MAX_FILE_SIZE);
+			if (StringUtils.isBlank(maxFileSizeString) || !StringUtils.isNumeric(maxFileSizeString)) {
+				errors.add(new WikiMessage("admin.message.nonnumeric", Environment.PROP_FILE_MAX_FILE_SIZE, maxFileSizeString));
+			} else {
+				int maxFileSizeInKB = Integer.parseInt(maxFileSizeString);
+				props.setProperty(Environment.PROP_FILE_MAX_FILE_SIZE, Integer.toString(maxFileSizeInKB * 1000));
+			}
 			setProperty(props, request, Environment.PROP_FILE_DIR_FULL_PATH);
 			setProperty(props, request, Environment.PROP_FILE_DIR_RELATIVE_PATH);
 			setProperty(props, request, Environment.PROP_FILE_SERVER_URL);
@@ -251,13 +257,13 @@ public class AdminServlet extends JAMWikiServlet {
 			setPassword(props, request, next, Environment.PROP_EMAIL_SMTP_PASSWORD, "smtpPassword");
 			setProperty(props, request, Environment.PROP_EMAIL_REPLY_ADDRESS);
 			*/
-			setProperty(props, request, Environment.PROP_CACHE_INDIVIDUAL_SIZE);
-			setProperty(props, request, Environment.PROP_CACHE_MAX_AGE);
-			setProperty(props, request, Environment.PROP_CACHE_MAX_IDLE_AGE);
-			setProperty(props, request, Environment.PROP_CACHE_TOTAL_SIZE);
+			setNumericProperty(props, request, Environment.PROP_CACHE_INDIVIDUAL_SIZE, errors);
+			setNumericProperty(props, request, Environment.PROP_CACHE_MAX_AGE, errors);
+			setNumericProperty(props, request, Environment.PROP_CACHE_MAX_IDLE_AGE, errors);
+			setNumericProperty(props, request, Environment.PROP_CACHE_TOTAL_SIZE, errors);
 			setBooleanProperty(props, request, Environment.PROP_RSS_ALLOWED);
 			setProperty(props, request, Environment.PROP_RSS_TITLE);
-			List<WikiMessage> errors = ServletUtil.validateSystemSettings(props);
+			errors.addAll(ServletUtil.validateSystemSettings(props));
 			if (this.saveProperties(request, next, pageInfo, props, errors)) {
 				next.addObject("message", new WikiMessage("admin.message.changessaved"));
 			}
@@ -344,6 +350,17 @@ public class AdminServlet extends JAMWikiServlet {
 		} else {
 			props.setProperty(parameter, Environment.getValue(parameter));
 		}
+	}
+
+	/**
+	 *
+	 */
+	private static void setNumericProperty(Properties props, HttpServletRequest request, String parameter, List<WikiMessage> errors) {
+		String value = request.getParameter(parameter);
+		if (StringUtils.isBlank(value) || !StringUtils.isNumeric(value)) {
+			errors.add(new WikiMessage("admin.message.nonnumeric", parameter, value));
+		}
+		props.setProperty(parameter, value);
 	}
 
 	/**
