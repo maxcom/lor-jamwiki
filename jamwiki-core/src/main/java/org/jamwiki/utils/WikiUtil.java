@@ -49,6 +49,8 @@ public class WikiUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiUtil.class.getName());
 
+	/** webapp context path, initialized from JAMWikiFilter. */
+	public static String WEBAPP_CONTEXT_PATH = null;
 	private static Pattern INVALID_ROLE_NAME_PATTERN = null;
 	private static Pattern INVALID_TOPIC_NAME_PATTERN = null;
 	private static Pattern VALID_USER_LOGIN_PATTERN = null;
@@ -288,6 +290,17 @@ public class WikiUtil {
 			}
 		}
 		return Topic.TYPE_ARTICLE;
+	}
+
+	/**
+	 * Return the URL of the index page for the wiki.
+	 *
+	 * @throws DataAccessException Thrown if any error occurs while retrieving data.
+	 */
+	public static String getBaseUrl() throws DataAccessException {
+		String url = Environment.getValue(Environment.PROP_SERVER_URL);
+		url += LinkUtil.buildTopicUrl(WEBAPP_CONTEXT_PATH, WikiBase.DEFAULT_VWIKI, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC), true);
+		return url;
 	}
 
 	/**

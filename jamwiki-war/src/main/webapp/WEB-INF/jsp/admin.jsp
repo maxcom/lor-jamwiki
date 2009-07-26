@@ -168,6 +168,12 @@ function onRSS() {
 		</select>
 	</span>
 </div>
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
+	<span class="formcaption"><label for="<%= Environment.PROP_MAX_TOPIC_VERSION_EXPORT %>"><fmt:message key="admin.caption.maxversionexport" /></label></span>
+	<c:set var="PROP_MAX_TOPIC_VERSION_EXPORT"><%= Environment.PROP_MAX_TOPIC_VERSION_EXPORT %></c:set>
+	<span class="formelement"><jamwiki:text name="${PROP_MAX_TOPIC_VERSION_EXPORT}" size="5" maxlength="4" value="${props[PROP_MAX_TOPIC_VERSION_EXPORT]}" id="${PROP_IMAGE_RESIZE_INCREMENT}" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.maxversionexport" /></div>
+</div>
 </fieldset>
 <!-- END GENERAL SETTINGS -->
 

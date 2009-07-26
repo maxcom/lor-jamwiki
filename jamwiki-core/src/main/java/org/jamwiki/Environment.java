@@ -79,6 +79,7 @@ public class Environment {
 	public static final String PROP_FILE_SERVER_URL = "file-server-url";
 	public static final String PROP_FILE_WHITELIST = "file-whitelist";
 	public static final String PROP_IMAGE_RESIZE_INCREMENT = "image-resize-increment";
+	public static final String PROP_MAX_TOPIC_VERSION_EXPORT = "max-topic-version-export";
 	public static final String PROP_PARSER_ALLOW_HTML = "allowHTML";
 	public static final String PROP_PARSER_ALLOW_JAVASCRIPT = "allow-javascript";
 	public static final String PROP_PARSER_ALLOW_TEMPLATES = "allow-templates";
@@ -216,6 +217,7 @@ public class Environment {
 		defaults.setProperty(PROP_FILE_SERVER_URL, "");
 		defaults.setProperty(PROP_FILE_WHITELIST, "bmp,gif,jpeg,jpg,pdf,png,properties,svg,txt,zip");
 		defaults.setProperty(PROP_IMAGE_RESIZE_INCREMENT, "100");
+		defaults.setProperty(PROP_MAX_TOPIC_VERSION_EXPORT, "200");
 		defaults.setProperty(PROP_PARSER_ALLOW_HTML, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_PARSER_ALLOW_JAVASCRIPT, Boolean.FALSE.toString());
 		defaults.setProperty(PROP_PARSER_ALLOW_TEMPLATES, Boolean.TRUE.toString());

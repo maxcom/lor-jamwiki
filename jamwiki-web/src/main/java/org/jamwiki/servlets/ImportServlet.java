@@ -35,8 +35,7 @@ import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * Used to import an XML file (in MediaWiki format), creating or updating a
- * topic as a result.
+ * Used to import an XML file creating a topic as a result.
  */
 public class ImportServlet extends JAMWikiServlet {
 

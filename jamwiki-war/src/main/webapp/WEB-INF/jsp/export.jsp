@@ -22,26 +22,23 @@
 
 <%@ include file="page-init.jsp" %>
 
-<p><fmt:message key="import.caption.overview" /></p>
+<p><fmt:message key="export.caption.overview" /></p>
 
 <c:if test="${!empty errors}">
 <div class="message red">
 	<c:forEach items="${errors}" var="error"><fmt:message key="${error.key}"><fmt:param value="${error.params[0]}" /></fmt:message><br /></c:forEach>
 </div>
 </c:if>
-<c:if test="${!empty successfulImports}">
-<div class="message">
-	<fmt:message key="import.message.success" />
-	<ul>
-	<c:forEach items="${successfulImports}" var="successfulImport"><li><jamwiki:link value="${successfulImport}" text="${successfulImport}" /></li></c:forEach>
-	</ul>
-</div>
-</c:if>
 
 <fieldset>
-<legend><fmt:message key="import.caption.source" /></legend>
-<form name="form1" method="post" action="<jamwiki:link value="Special:Import" />" enctype="multipart/form-data">
-<input type="file" name="contents" size="50" id="importFile" />
-<input type="submit" name="save" value="<fmt:message key="import.button.import" />" />
+<legend><fmt:message key="export.caption.topics" /></legend>
+<form name="form1" method="post" action="<jamwiki:link value="Special:Export" />">
+<textarea rows="10" cols="40" name="topics" id="exportTopics">${topicNames}</textarea>
+<br />
+<input type="checkbox" name="history" id="exporthistory" value="1"<c:if test="${excludeHistory}"> checked="checked"</c:if> /><label for="exporthistory"><fmt:message key="export.caption.history" /></label>
+<br />
+<input type="checkbox" name="download" id="exportdownload" value="1"<c:if test="${download}"> checked="checked"</c:if> /><label for="exportdownload"><fmt:message key="export.caption.download" /></label>
+<br />
+<input type="submit" name="export" value="<fmt:message key="export.button.export" />" />
 </form>
 </fieldset>

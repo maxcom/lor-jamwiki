@@ -18,8 +18,10 @@ package org.jamwiki.migrate;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.FileWriter;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,13 +35,20 @@ import javax.xml.parsers.SAXParser;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.jamwiki.DataAccessException;
+import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
+import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
+import org.jamwiki.utils.XMLUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -50,14 +59,20 @@ import org.xml.sax.helpers.DefaultHandler;
 public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(MediaWikiXmlMigrator.class.getName());
+	private static final int MEDIAWIKI_MEDIA_NAMESPACE_ID = -2;
+	private static final int MEDIAWIKI_SPECIAL_NAMESPACE_ID = -1;
 	private static final int MEDIAWIKI_MAIN_NAMESPACE_ID = 0;
 	private static final int MEDIAWIKI_TALK_NAMESPACE_ID = 1;
 	private static final int MEDIAWIKI_USER_NAMESPACE_ID = 2;
 	private static final int MEDIAWIKI_USER_TALK_NAMESPACE_ID = 3;
 	private static final int MEDIAWIKI_FILE_NAMESPACE_ID = 6;
 	private static final int MEDIAWIKI_FILE_TALK_NAMESPACE_ID = 7;
+	private static final int MEDIAWIKI_MEDIAWIKI_NAMESPACE_ID = 8;
+	private static final int MEDIAWIKI_MEDIAWIKI_TALK_NAMESPACE_ID = 9;
 	private static final int MEDIAWIKI_TEMPLATE_NAMESPACE_ID = 10;
 	private static final int MEDIAWIKI_TEMPLATE_TALK_NAMESPACE_ID = 11;
+	private static final int MEDIAWIKI_HELP_NAMESPACE_ID = 12;
+	private static final int MEDIAWIKI_HELP_TALK_NAMESPACE_ID = 13;
 	private static final int MEDIAWIKI_CATEGORY_NAMESPACE_ID = 14;
 	private static final int MEDIAWIKI_CATEGORY_TALK_NAMESPACE_ID = 15;
 	private static final String MEDIAWIKI_ELEMENT_NAMESPACE = "namespace";
@@ -83,6 +98,25 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_CATEGORY_NAMESPACE_ID, NamespaceHandler.NAMESPACE_CATEGORY);
 		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_CATEGORY_TALK_NAMESPACE_ID, NamespaceHandler.NAMESPACE_CATEGORY_COMMENTS);
 	}
+	private static Map<Integer, String> MEDIAWIKI_NAMESPACE_MAP = new TreeMap<Integer, String>();
+	static {
+		MEDIAWIKI_NAMESPACE_MAP.put(MEDIAWIKI_MEDIA_NAMESPACE_ID, "Media");
+		MEDIAWIKI_NAMESPACE_MAP.put(MEDIAWIKI_SPECIAL_NAMESPACE_ID, "Special");
+		MEDIAWIKI_NAMESPACE_MAP.put(MEDIAWIKI_MAIN_NAMESPACE_ID, "");
+		MEDIAWIKI_NAMESPACE_MAP.put(MEDIAWIKI_TALK_NAMESPACE_ID, "Talk");
+		MEDIAWIKI_NAMESPACE_MAP.put(MEDIAWIKI_USER_NAMESPACE_ID, "User");
+		MEDIAWIKI_NAMESPACE_MAP.put(MEDIAWIKI_USER_TALK_NAMESPACE_ID, "User talk");
+		MEDIAWIKI_NAMESPACE_MAP.put(MEDIAWIKI_FILE_NAMESPACE_ID, "File");
+		MEDIAWIKI_NAMESPACE_MAP.put(MEDIAWIKI_FILE_TALK_NAMESPACE_ID, "File talk");
+		MEDIAWIKI_NAMESPACE_MAP.put(MEDIAWIKI_MEDIAWIKI_NAMESPACE_ID, "Mediawiki");
+		MEDIAWIKI_NAMESPACE_MAP.put(MEDIAWIKI_MEDIAWIKI_TALK_NAMESPACE_ID, "Mediawiki talk");
+		MEDIAWIKI_NAMESPACE_MAP.put(MEDIAWIKI_TEMPLATE_NAMESPACE_ID, "Template");
+		MEDIAWIKI_NAMESPACE_MAP.put(MEDIAWIKI_TEMPLATE_TALK_NAMESPACE_ID, "Template talk");
+		MEDIAWIKI_NAMESPACE_MAP.put(MEDIAWIKI_HELP_NAMESPACE_ID, "Help");
+		MEDIAWIKI_NAMESPACE_MAP.put(MEDIAWIKI_HELP_TALK_NAMESPACE_ID, "Help talk");
+		MEDIAWIKI_NAMESPACE_MAP.put(MEDIAWIKI_CATEGORY_NAMESPACE_ID, "Category");
+		MEDIAWIKI_NAMESPACE_MAP.put(MEDIAWIKI_CATEGORY_TALK_NAMESPACE_ID, "Category talk");
+	}
 
 	/** This map holds the current tag's attribute names and values.  It is cleared after an end-element is called and thus fails for nested elements. */
 	private Map<String, String> currentAttributeMap = new HashMap<String, String>();
@@ -102,19 +136,16 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 		super();
 	}
 
+	//===========================================================
+	// Import methods
+	//===========================================================
+
 	/**
 	 *
 	 */
 	public Map<Topic, List<TopicVersion>> importFromFile(File file) throws MigrationException {
 		this.importWikiXml(file);
 		return this.parsedTopics;
-	}
-
-	/**
-	 *
-	 */
-	public void exportToFile(File file, Map<Topic, List<TopicVersion>> data) throws MigrationException {
-		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -171,7 +202,7 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 	/**
 	 *
 	 */
-	private Timestamp parseEditTimestamp(String timestamp) {
+	private Timestamp parseMediaWikiTimestamp(String timestamp) {
 		try {
 			Date date = DateUtils.parseDate(timestamp, new String[]{ISO_8601_DATE_FORMAT});
 			return new Timestamp(date.getTime());
@@ -250,7 +281,7 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 		} else if (MEDIAWIKI_ELEMENT_TOPIC_VERSION_COMMENT.equals(qName)) {
 			this.currentTopicVersion.setEditComment(currentElementBuffer.toString().trim());
 		} else if (MEDIAWIKI_ELEMENT_TOPIC_VERSION_EDIT_DATE.equals(qName)) {
-			this.currentTopicVersion.setEditDate(this.parseEditTimestamp(currentElementBuffer.toString().trim()));
+			this.currentTopicVersion.setEditDate(this.parseMediaWikiTimestamp(currentElementBuffer.toString().trim()));
 		} else if (MEDIAWIKI_ELEMENT_TOPIC_VERSION_IP.equals(qName) || MEDIAWIKI_ELEMENT_TOPIC_VERSION_USERNAME.equals(qName)) {
 			this.currentTopicVersion.setAuthorDisplay(currentElementBuffer.toString().trim());
 		} else if (MEDIAWIKI_ELEMENT_TOPIC_VERSION.equals(qName)) {
@@ -277,5 +308,108 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 	 */
 	public void characters(char buf[], int offset, int len) throws SAXException {
 		currentElementBuffer.append(buf, offset, len);
+	}
+
+	//===========================================================
+	// Export methods
+	//===========================================================
+
+	/**
+	 *
+	 */
+	public void exportToFile(File file, Map<Topic, List<TopicVersion>> data) throws MigrationException {
+		FileWriter writer = null;
+		try {
+			writer = new FileWriter(file);
+			writer.write("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
+			this.writeSiteInfo(writer);
+			this.writePages(writer, data);
+			writer.write("\n</mediawiki>");
+		} catch (DataAccessException e) {
+			throw new MigrationException(e);
+		} catch (IOException e) {
+			throw new MigrationException(e);
+		} finally {
+			if (writer != null) {
+				try {
+					writer.close();
+				} catch (IOException ignore) {}
+			}
+		}
+	}
+
+	/**
+	 *
+	 */
+	private void writeSiteInfo(FileWriter writer) throws DataAccessException, IOException {
+		writer.write("\n<siteinfo>");
+		String sitename = Environment.getValue(Environment.PROP_SITE_NAME);
+		writer.write('\n' + XMLUtil.buildTag("sitename", sitename, true));
+		String base = WikiUtil.getBaseUrl();
+		writer.write('\n' + XMLUtil.buildTag("base", base, true));
+		String generator = "JAMWiki " + WikiVersion.CURRENT_WIKI_VERSION;
+		writer.write('\n' + XMLUtil.buildTag("generator", generator, true));
+		/*
+		Cannot have two titles differing only by case of first letter.  Default behavior through 1.5, $wgCapitalLinks = true
+			<enumeration value="first-letter" />
+		Complete title is case-sensitive. Behavior when $wgCapitalLinks = false
+			<enumeration value="case-sensitive" />
+		Cannot have two titles differing only by case. Not yet implemented as of MediaWiki 1.5
+			<enumeration value="case-insensitive" />
+		*/
+		writer.write('\n' + XMLUtil.buildTag("case", "first-letter", true));
+		writer.write("\n<namespaces>");
+		Map<String, String> attributes = new HashMap<String, String>();
+		String namespace = null;
+		for (Integer key : MEDIAWIKI_NAMESPACE_MAP.keySet()) {
+			namespace = MEDIAWIKI_NAMESPACE_MAP.get(key);
+			attributes.put("key", key.toString());
+			writer.write('\n' + XMLUtil.buildTag("namespace", namespace, attributes, true));
+		}
+		writer.write("\n</namespaces>");
+		writer.write("\n</siteinfo>");
+	}
+
+	/**
+	 *
+	 */
+	private void writePages(FileWriter writer, Map<Topic, List<TopicVersion>> data) throws DataAccessException, IOException {
+		List<TopicVersion> topicVersions = null;
+		Map<String, String> textAttributes = new HashMap<String, String>();
+		textAttributes.put("xml:space", "preserve");
+		for (Topic topic : data.keySet()) {
+			writer.write("\n<page>");
+			writer.write('\n' + XMLUtil.buildTag("title", topic.getName(), true));
+			writer.write('\n' + XMLUtil.buildTag("id", topic.getTopicId()));
+			topicVersions = data.get(topic);
+			for (TopicVersion topicVersion : topicVersions) {
+				writer.write("\n<revision>");
+				writer.write('\n' + XMLUtil.buildTag("id", topicVersion.getTopicVersionId()));
+				writer.write('\n' + XMLUtil.buildTag("timestamp", this.parseJAMWikiTimestamp(topicVersion.getEditDate()), true));
+				writer.write("\n<contributor>");
+				WikiUser user = (topicVersion.getAuthorId() != null) ? WikiBase.getDataHandler().lookupWikiUser(topicVersion.getAuthorId()) : null;
+				if (user != null) {
+					writer.write('\n' + XMLUtil.buildTag("username", user.getUsername(), true));
+					writer.write('\n' + XMLUtil.buildTag("id", user.getUserId()));
+				} else if (Utilities.isIpAddress(topicVersion.getAuthorDisplay())) {
+					writer.write('\n' + XMLUtil.buildTag("ip", topicVersion.getAuthorDisplay(), true));
+				} else {
+					writer.write('\n' + XMLUtil.buildTag("username", topicVersion.getAuthorDisplay(), true));
+				}
+				writer.write("\n</contributor>");
+				writer.write('\n' + XMLUtil.buildTag("comment", topicVersion.getEditComment(), true));
+				writer.write('\n' + XMLUtil.buildTag("text", topicVersion.getVersionContent(), textAttributes, true));
+				writer.write("\n</revision>");
+			}
+			writer.write("\n</page>");
+		}
+	}
+
+	/**
+	 *
+	 */
+	private String parseJAMWikiTimestamp(Timestamp timestamp) {
+		SimpleDateFormat sdf = new SimpleDateFormat(ISO_8601_DATE_FORMAT);
+		return sdf.format(timestamp);
 	}
 }

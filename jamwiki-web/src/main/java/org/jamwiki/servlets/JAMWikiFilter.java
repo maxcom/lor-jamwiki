@@ -25,6 +25,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -53,6 +54,9 @@ public class JAMWikiFilter implements Filter {
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		request.setCharacterEncoding("UTF-8");
+		if (WikiUtil.WEBAPP_CONTEXT_PATH == null && request instanceof HttpServletRequest) {
+			WikiUtil.WEBAPP_CONTEXT_PATH = ((HttpServletRequest)request).getContextPath();
+		}
 		if (redirectNeeded(request, response)) {
 			return;
 		}

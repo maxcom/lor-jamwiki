@@ -24,6 +24,8 @@
 
 <div id="special">
 
+<p><fmt:message key="specialpages.caption.overview" /></p>
+
 <h3><fmt:message key="specialpages.heading.allusers" /></h3>
 
 <ul>
@@ -36,10 +38,22 @@
 <li><jamwiki:link value="Special:OrphanedPages"><fmt:message key="specialpages.caption.orphanedpages" /></jamwiki:link></li>
 <li><jamwiki:link value="Special:RecentChanges"><fmt:message key="specialpages.caption.recentchanges" /></jamwiki:link></li>
 <li><jamwiki:link value="Special:Search"><fmt:message key="specialpages.caption.search" /></jamwiki:link></li>
-<li><jamwiki:link value="Special:Upload"><fmt:message key="specialpages.caption.upload" /></jamwiki:link></li>
+</ul>
+
+<h3><fmt:message key="specialpages.heading.usertools" /></h3>
+
+<ul>
+<li><jamwiki:link value="Special:Account"><fmt:message key="specialpages.caption.account" /></jamwiki:link></li>
 <li><jamwiki:link value="Special:Login"><fmt:message key="specialpages.caption.login" /></jamwiki:link></li>
 <li><jamwiki:link value="Special:Logout"><fmt:message key="specialpages.caption.logout" /></jamwiki:link></li>
-<li><jamwiki:link value="Special:Account"><fmt:message key="specialpages.caption.account" /></jamwiki:link></li>
+</ul>
+
+<h3><fmt:message key="specialpages.heading.loadingtools" /></h3>
+
+<ul>
+<li><jamwiki:link value="Special:Export"><fmt:message key="specialpages.caption.export" /></jamwiki:link></li>
+<li><jamwiki:link value="Special:Import"><fmt:message key="specialpages.caption.import" /></jamwiki:link></li>
+<li><jamwiki:link value="Special:Upload"><fmt:message key="specialpages.caption.upload" /></jamwiki:link></li>
 </ul>
 
 <h3><fmt:message key="specialpages.heading.administrative" /></h3>
