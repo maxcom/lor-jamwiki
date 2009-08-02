@@ -96,8 +96,7 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	private void addGroupMember(String username, int groupId, Connection conn) throws DataAccessException {
 		try {
-			int groupMemberId = this.queryHandler().nextGroupMemberId(conn);
-			this.queryHandler().insertGroupMember(groupMemberId, username, groupId, conn);
+			this.queryHandler().insertGroupMember(username, groupId, conn);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
@@ -122,10 +121,6 @@ public class AnsiDataHandler implements DataHandler {
 	private void addTopic(Topic topic, Connection conn) throws DataAccessException, WikiException {
 		int virtualWikiId = this.lookupVirtualWikiId(topic.getVirtualWiki());
 		try {
-			if (topic.getTopicId() < 1) {
-				int topicId = this.queryHandler().nextTopicId(conn);
-				topic.setTopicId(topicId);
-			}
 			this.validateTopic(topic);
 			this.queryHandler().insertTopic(topic, virtualWikiId, conn);
 		} catch (SQLException e) {
@@ -138,14 +133,6 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	private void addTopicVersion(TopicVersion topicVersion, Connection conn) throws DataAccessException, WikiException {
 		try {
-			if (topicVersion.getTopicVersionId() < 1) {
-				int topicVersionId = this.queryHandler().nextTopicVersionId(conn);
-				topicVersion.setTopicVersionId(topicVersionId);
-			}
-			if (topicVersion.getEditDate() == null) {
-				Timestamp editDate = new Timestamp(System.currentTimeMillis());
-				topicVersion.setEditDate(editDate);
-			}
 			this.validateTopicVersion(topicVersion);
 			this.queryHandler().insertTopicVersion(topicVersion, conn);
 		} catch (SQLException e) {
@@ -170,10 +157,6 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	private void addVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws DataAccessException, WikiException {
 		try {
-			if (virtualWiki.getVirtualWikiId() < 1) {
-				int virtualWikiId = this.queryHandler().nextVirtualWikiId(conn);
-				virtualWiki.setVirtualWikiId(virtualWikiId);
-			}
 			this.validateVirtualWiki(virtualWiki);
 			this.queryHandler().insertVirtualWiki(virtualWiki, conn);
 		} catch (SQLException e) {
@@ -198,10 +181,6 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	private void addWikiFile(WikiFile wikiFile, Connection conn) throws DataAccessException, WikiException {
 		try {
-			if (wikiFile.getFileId() < 1) {
-				int fileId = this.queryHandler().nextWikiFileId(conn);
-				wikiFile.setFileId(fileId);
-			}
 			int virtualWikiId = this.lookupVirtualWikiId(wikiFile.getVirtualWiki());
 			this.validateWikiFile(wikiFile);
 			this.queryHandler().insertWikiFile(wikiFile, virtualWikiId, conn);
@@ -215,14 +194,6 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	private void addWikiFileVersion(WikiFileVersion wikiFileVersion, Connection conn) throws DataAccessException, WikiException {
 		try {
-			if (wikiFileVersion.getFileVersionId() < 1) {
-				int fileVersionId = this.queryHandler().nextWikiFileVersionId(conn);
-				wikiFileVersion.setFileVersionId(fileVersionId);
-			}
-			if (wikiFileVersion.getUploadDate() == null) {
-				Timestamp uploadDate = new Timestamp(System.currentTimeMillis());
-				wikiFileVersion.setUploadDate(uploadDate);
-			}
 			this.validateWikiFileVersion(wikiFileVersion);
 			this.queryHandler().insertWikiFileVersion(wikiFileVersion, conn);
 		} catch (SQLException e) {
@@ -235,10 +206,6 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	private void addWikiGroup(WikiGroup group, Connection conn) throws DataAccessException, WikiException {
 		try {
-			if (group.getGroupId() < 1) {
-				int groupId = this.queryHandler().nextWikiGroupId(conn);
-				group.setGroupId(groupId);
-			}
 			this.validateWikiGroup(group);
 			this.queryHandler().insertWikiGroup(group, conn);
 		} catch (SQLException e) {
@@ -251,10 +218,6 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	private void addWikiUser(WikiUser user, Connection conn) throws DataAccessException, WikiException {
 		try {
-			if (user.getUserId() < 1) {
-				int nextUserId = this.queryHandler().nextWikiUserId(conn);
-				user.setUserId(nextUserId);
-			}
 			this.validateWikiUser(user);
 			this.queryHandler().insertWikiUser(user, conn);
 		} catch (SQLException e) {

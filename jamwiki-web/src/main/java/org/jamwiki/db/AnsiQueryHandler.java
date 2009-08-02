@@ -18,6 +18,7 @@ package org.jamwiki.db;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
@@ -645,7 +646,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertGroupMember(int groupMemberId, String username, int groupId, Connection conn) throws SQLException {
+	public void insertGroupMember(String username, int groupId, Connection conn) throws SQLException {
+		int groupMemberId = this.nextGroupMemberId(conn);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_GROUP_MEMBER);
 		stmt.setInt(1, groupMemberId);
 		stmt.setString(2, username);
@@ -695,6 +697,10 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertTopic(Topic topic, int virtualWikiId, Connection conn) throws SQLException {
+		if (topic.getTopicId() < 1) {
+			int topicId = this.nextTopicId(conn);
+			topic.setTopicId(topicId);
+		}
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_TOPIC);
 		stmt.setInt(1, topic.getTopicId());
 		stmt.setInt(2, virtualWikiId);
@@ -716,6 +722,14 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertTopicVersion(TopicVersion topicVersion, Connection conn) throws SQLException {
+		if (topicVersion.getTopicVersionId() < 1) {
+			int topicVersionId = this.nextTopicVersionId(conn);
+			topicVersion.setTopicVersionId(topicVersionId);
+		}
+		if (topicVersion.getEditDate() == null) {
+			Timestamp editDate = new Timestamp(System.currentTimeMillis());
+			topicVersion.setEditDate(editDate);
+		}
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_TOPIC_VERSION);
 		stmt.setInt(1, topicVersion.getTopicVersionId());
 		stmt.setInt(2, topicVersion.getTopicId());
@@ -766,6 +780,10 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws SQLException {
+		if (virtualWiki.getVirtualWikiId() < 1) {
+			int virtualWikiId = this.nextVirtualWikiId(conn);
+			virtualWiki.setVirtualWikiId(virtualWikiId);
+		}
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_VIRTUAL_WIKI);
 		stmt.setInt(1, virtualWiki.getVirtualWikiId());
 		stmt.setString(2, virtualWiki.getName());
@@ -788,6 +806,10 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertWikiFile(WikiFile wikiFile, int virtualWikiId, Connection conn) throws SQLException {
+		if (wikiFile.getFileId() < 1) {
+			int fileId = this.nextWikiFileId(conn);
+			wikiFile.setFileId(fileId);
+		}
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_FILE);
 		stmt.setInt(1, wikiFile.getFileId());
 		stmt.setInt(2, virtualWikiId);
@@ -806,6 +828,14 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertWikiFileVersion(WikiFileVersion wikiFileVersion, Connection conn) throws SQLException {
+		if (wikiFileVersion.getFileVersionId() < 1) {
+			int fileVersionId = this.nextWikiFileVersionId(conn);
+			wikiFileVersion.setFileVersionId(fileVersionId);
+		}
+		if (wikiFileVersion.getUploadDate() == null) {
+			Timestamp uploadDate = new Timestamp(System.currentTimeMillis());
+			wikiFileVersion.setUploadDate(uploadDate);
+		}
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_FILE_VERSION);
 		stmt.setInt(1, wikiFileVersion.getFileVersionId());
 		stmt.setInt(2, wikiFileVersion.getFileId());
@@ -827,6 +857,10 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertWikiGroup(WikiGroup group, Connection conn) throws SQLException {
+		if (group.getGroupId() < 1) {
+			int groupId = this.nextWikiGroupId(conn);
+			group.setGroupId(groupId);
+		}
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_GROUP);
 		stmt.setInt(1, group.getGroupId());
 		stmt.setString(2, group.getName());
@@ -838,6 +872,10 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertWikiUser(WikiUser user, Connection conn) throws SQLException {
+		if (user.getUserId() < 1) {
+			int nextUserId = this.nextWikiUserId(conn);
+			user.setUserId(nextUserId);
+		}
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER);
 		stmt.setInt(1, user.getUserId());
 		stmt.setString(2, user.getUsername());
@@ -992,9 +1030,14 @@ public class AnsiQueryHandler implements QueryHandler {
 	}
 
 	/**
+	 * Retrieve the next available group member id from the group members table.
 	 *
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @return The next available group member id from the group members table.
+	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	public int nextGroupMemberId(Connection conn) throws SQLException {
+	private int nextGroupMemberId(Connection conn) throws SQLException {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_GROUP_MEMBERS_SEQUENCE, conn);
 		int nextId = 0;
 		if (rs.size() > 0) {
@@ -1005,9 +1048,14 @@ public class AnsiQueryHandler implements QueryHandler {
 	}
 
 	/**
+	 * Retrieve the next available topic id from the topic table.
 	 *
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @return The next available topic id from the topic table.
+	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	public int nextTopicId(Connection conn) throws SQLException {
+	private int nextTopicId(Connection conn) throws SQLException {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_SEQUENCE, conn);
 		int nextId = 0;
 		if (rs.size() > 0) {
@@ -1018,9 +1066,14 @@ public class AnsiQueryHandler implements QueryHandler {
 	}
 
 	/**
+	 * Retrieve the next available topic version id from the topic version table.
 	 *
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @return The next available topic version id from the topic version table.
+	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	public int nextTopicVersionId(Connection conn) throws SQLException {
+	private int nextTopicVersionId(Connection conn) throws SQLException {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE, conn);
 		int nextId = 0;
 		if (rs.size() > 0) {
@@ -1031,9 +1084,14 @@ public class AnsiQueryHandler implements QueryHandler {
 	}
 
 	/**
+	 * Retrieve the next available virtual wiki id from the virtual wiki table.
 	 *
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @return The next available virtual wiki id from the virtual wiki table.
+	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	public int nextVirtualWikiId(Connection conn) throws SQLException {
+	private int nextVirtualWikiId(Connection conn) throws SQLException {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE, conn);
 		int nextId = 0;
 		if (rs.size() > 0) {
@@ -1044,9 +1102,14 @@ public class AnsiQueryHandler implements QueryHandler {
 	}
 
 	/**
+	 * Retrieve the next available wiki file id from the wiki file table.
 	 *
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @return The next available wiki file id from the wiki file table.
+	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	public int nextWikiFileId(Connection conn) throws SQLException {
+	private int nextWikiFileId(Connection conn) throws SQLException {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_FILE_SEQUENCE, conn);
 		int nextId = 0;
 		if (rs.size() > 0) {
@@ -1057,9 +1120,16 @@ public class AnsiQueryHandler implements QueryHandler {
 	}
 
 	/**
+	 * Retrieve the next available wiki file version id from the wiki file
+	 * version table.
 	 *
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @return The next available wiki file version id from the wiki file
+	 *  version table.
+	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	public int nextWikiFileVersionId(Connection conn) throws SQLException {
+	private int nextWikiFileVersionId(Connection conn) throws SQLException {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE, conn);
 		int nextId = 0;
 		if (rs.size() > 0) {
@@ -1070,9 +1140,14 @@ public class AnsiQueryHandler implements QueryHandler {
 	}
 
 	/**
+	 * Retrieve the next available wiki group id from the wiki group table.
 	 *
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @return The next available wiki group id from the wiki group table.
+	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	public int nextWikiGroupId(Connection conn) throws SQLException {
+	private int nextWikiGroupId(Connection conn) throws SQLException {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_GROUP_SEQUENCE, conn);
 		int nextId = 0;
 		if (rs.size() > 0) {
@@ -1083,9 +1158,14 @@ public class AnsiQueryHandler implements QueryHandler {
 	}
 
 	/**
+	 * Retrieve the next available wiki user id from the wiki user table.
 	 *
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @return The next available wiki user id from the wiki user table.
+	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	public int nextWikiUserId(Connection conn) throws SQLException {
+	private int nextWikiUserId(Connection conn) throws SQLException {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_SEQUENCE, conn);
 		int nextId = 0;
 		if (rs.size() > 0) {

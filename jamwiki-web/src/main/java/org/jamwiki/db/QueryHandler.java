@@ -407,14 +407,13 @@ public interface QueryHandler {
 	/**
 	 * Add a user to a group.
 	 *
-	 * @param groupMemberId A unique ID for the group membership record.
 	 * @param username The username for the user being added to the group.
 	 * @param groupId The group ID for the group.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	void insertGroupMember(int groupMemberId, String username, int groupId, Connection conn) throws SQLException;
+	void insertGroupMember(String username, int groupId, Connection conn) throws SQLException;
 
 	/**
 	 * Add a new recent change record to the database.
@@ -707,88 +706,6 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	WikiResultSet lookupWikiUsers(Pagination pagination) throws SQLException;
-
-	/**
-	 * Retrieve the next available group member id from the group members table.
-	 *
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @return The next available group member id from the group members table.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	int nextGroupMemberId(Connection conn) throws SQLException;
-
-	/**
-	 * Retrieve the next available topic id from the topic table.
-	 *
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @return The next available topic id from the topic table.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	int nextTopicId(Connection conn) throws SQLException;
-
-	/**
-	 * Retrieve the next available topic version id from the topic version table.
-	 *
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @return The next available topic version id from the topic version table.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	int nextTopicVersionId(Connection conn) throws SQLException;
-
-	/**
-	 * Retrieve the next available virtual wiki id from the virtual wiki table.
-	 *
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @return The next available virtual wiki id from the virtual wiki table.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	int nextVirtualWikiId(Connection conn) throws SQLException;
-
-	/**
-	 * Retrieve the next available wiki file id from the wiki file table.
-	 *
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @return The next available wiki file id from the wiki file table.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	int nextWikiFileId(Connection conn) throws SQLException;
-
-	/**
-	 * Retrieve the next available wiki file version id from the wiki file
-	 * version table.
-	 *
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @return The next available wiki file version id from the wiki file
-	 *  version table.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	int nextWikiFileVersionId(Connection conn) throws SQLException;
-
-	/**
-	 * Retrieve the next available wiki group id from the wiki group table.
-	 *
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @return The next available wiki group id from the wiki group table.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	int nextWikiGroupId(Connection conn) throws SQLException;
-
-	/**
-	 * Retrieve the next available wiki user id from the wiki user table.
-	 *
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @return The next available wiki user id from the wiki user table.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	int nextWikiUserId(Connection conn) throws SQLException;
 
 	/**
 	 * Refresh the recent changes content by reloading the recent changes table.
