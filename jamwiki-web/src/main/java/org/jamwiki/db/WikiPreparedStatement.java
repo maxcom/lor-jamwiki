@@ -79,7 +79,9 @@ public class WikiPreparedStatement {
 			if (execution > DatabaseConnection.SLOW_QUERY_LIMIT) {
 				logger.warning("Slow query: " + sql + " (" + (execution / 1000.000) + " s.)");
 			}
-			logger.fine("Executed " + this.sql + " (" + (execution / 1000.000) + " s.)");
+			if (logger.isFineEnabled()) {
+				logger.fine("Executed " + this.sql + " (" + (execution / 1000.000) + " s.)");
+			}
 			return new WikiResultSet(rs);
 		} catch (SQLException e) {
 			logger.severe("Failure while executing " + this.sql, e);
@@ -115,7 +117,9 @@ public class WikiPreparedStatement {
 			if (execution > DatabaseConnection.SLOW_QUERY_LIMIT) {
 				logger.warning("Slow query: " + sql + " (" + (execution / 1000.000) + " s.)");
 			}
-			logger.fine("Executed " + this.sql + " (" + (execution / 1000.000) + " s.)");
+			if (logger.isFineEnabled()) {
+				logger.fine("Executed " + this.sql + " (" + (execution / 1000.000) + " s.)");
+			}
 			return result;
 		} catch (SQLException e) {
 			logger.severe("Failure while executing " + this.sql, e);
@@ -144,6 +148,9 @@ public class WikiPreparedStatement {
 			} else if (paramTypes[i] == Types.VARCHAR) {
 				String value = (String)params[i];
 				this.statement.setString(i+1, value);
+			}
+			if (logger.isFinerEnabled()) {
+				logger.finer("PreparedStatement index: " + i + " / type: " + this.paramTypes[i] + " / value: " + this.params[i]);
 			}
 		}
 	}
