@@ -313,6 +313,18 @@ public class AnsiQueryHandler implements QueryHandler {
 	}
 
 	/**
+	 *
+	 */
+	public void executeUpgradeUpdate(String prop, Connection conn) throws SQLException {
+		String sql = this.props.getProperty(prop);
+		if (sql == null) {
+			throw new SQLException("No property found for " + prop);
+		}
+		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
+		stmt.executeUpdate(conn);
+	}
+
+	/**
 	 * Return a simple query, that if successfully run indicates that JAMWiki
 	 * tables have been initialized in the database.
 	 *

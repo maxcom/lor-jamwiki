@@ -16,6 +16,8 @@
  */
 package org.jamwiki;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -107,6 +109,16 @@ public interface DataHandler {
 	 * @throws WikiException Thrown if the topic information is invalid.
 	 */
 	void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws DataAccessException, WikiException;
+
+	/**
+	 * This method should be called only during upgrades and provides the capability
+	 * to execute update SQL from a QueryHandler-specific property file.
+	 *
+	 * @param prop The name of the SQL property file value to execute.
+	 * @param conn The SQL connection to use when executing the SQL.
+	 * @throws SQLException Thrown if any error occurs during execution.
+	 */
+	void executeUpgradeUpdate(String prop, Connection conn) throws SQLException;
 
 	/**
 	 * Return a List of all Category objects for a given virtual wiki.

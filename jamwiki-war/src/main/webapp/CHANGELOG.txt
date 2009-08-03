@@ -29,6 +29,7 @@ New Features:
   * When a password or other value is found un-encrypted in a properties file
     automatically encrypt it to allow for changing database passwords, etc.
     Reported by rebecca and an anonymous user.
+  * Move upgrade SQL to property files rather than hard-coding in Java code.
   * Make the site name a configurable property rather than a message key.
   * Upgrade to javadiff 1.1.0.
   * Upgrade to JFlex 1.4.3.

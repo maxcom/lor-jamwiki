@@ -142,6 +142,16 @@ public interface QueryHandler {
 	void dropTables(Connection conn);
 
 	/**
+	 * This method should be called only during upgrades and provides the capability
+	 * to execute update SQL from a QueryHandler-specific property file.
+	 *
+	 * @param prop The name of the SQL property file value to execute.
+	 * @param conn The SQL connection to use when executing the SQL.
+	 * @throws SQLException Thrown if any error occurs during execution.
+	 */
+	void executeUpgradeUpdate(String prop, Connection conn) throws SQLException;
+
+	/**
 	 * Return a simple query, that if successfully run indicates that JAMWiki
 	 * tables have been initialized in the database.
 	 *

@@ -17,6 +17,8 @@
 package org.jamwiki;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -64,6 +66,13 @@ public class TestDataHandler implements DataHandler {
 	 *
 	 */
 	public void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws DataAccessException, WikiException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
+	public void executeUpgradeUpdate(String prop, Connection conn) throws SQLException {
 		throw new UnsupportedOperationException();
 	}
 

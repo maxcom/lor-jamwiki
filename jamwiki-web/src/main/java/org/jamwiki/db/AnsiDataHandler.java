@@ -338,6 +338,13 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public void executeUpgradeUpdate(String prop, Connection conn) throws SQLException {
+		this.queryHandler().executeUpgradeUpdate(prop, conn);
+	}
+
+	/**
+	 *
+	 */
 	public List<Category> getAllCategories(String virtualWiki, Pagination pagination) throws DataAccessException {
 		List<Category> results = new ArrayList<Category>();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
