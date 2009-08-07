@@ -425,15 +425,15 @@ public class Utilities {
 			Object[] initArgs = new Object[0];
 			return constructor.newInstance(initArgs);
 		} catch (ClassNotFoundException e) {
-			throw new IllegalStateException("Invalid class name specified: " + className);
+			throw new IllegalStateException("Invalid class name specified: " + className, e);
 		} catch (NoSuchMethodException e) {
-			throw new IllegalStateException("Specified class does not have a valid constructor: " + className);
+			throw new IllegalStateException("Specified class does not have a valid constructor: " + className, e);
 		} catch (IllegalAccessException e) {
-			throw new IllegalStateException("Specified class does not have a valid constructor: " + className);
+			throw new IllegalStateException("Specified class does not have a valid constructor: " + className, e);
 		} catch (InvocationTargetException e) {
-			throw new IllegalStateException("Specified class does not have a valid constructor: " + className);
+			throw new IllegalStateException("Specified class does not have a valid constructor: " + className, e);
 		} catch (InstantiationException e) {
-			throw new IllegalStateException("Specified class could not be instantiated: " + className);
+			throw new IllegalStateException("Specified class could not be instantiated: " + className, e);
 		}
 	}
 
