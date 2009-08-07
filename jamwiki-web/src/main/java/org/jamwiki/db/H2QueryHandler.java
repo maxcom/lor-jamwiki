@@ -29,15 +29,13 @@ public class H2QueryHandler extends AnsiQueryHandler {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(H2QueryHandler.class.getName());
 	private static final String SQL_PROPERTY_FILE_NAME = "sql.h2.properties";
-	private static Properties props = null;
-	private static Properties defaults = null;
 
 	/**
 	 *
 	 */
 	protected H2QueryHandler() {
-		defaults = Environment.loadProperties(AnsiQueryHandler.SQL_PROPERTY_FILE_NAME);
-		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
+		Properties defaults = Environment.loadProperties(AnsiQueryHandler.SQL_PROPERTY_FILE_NAME);
+		Properties props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
 		super.init(props);
 	}
 }

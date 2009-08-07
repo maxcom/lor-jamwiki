@@ -32,15 +32,13 @@ public class OracleQueryHandler extends AnsiQueryHandler {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(OracleQueryHandler.class.getName());
 	private static final String SQL_PROPERTY_FILE_NAME = "sql.oracle.properties";
-	private static Properties props = null;
-	private static Properties defaults = null;
 
 	/**
 	 *
 	 */
 	protected OracleQueryHandler() {
-		defaults = Environment.loadProperties(AnsiQueryHandler.SQL_PROPERTY_FILE_NAME);
-		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
+		Properties defaults = Environment.loadProperties(AnsiQueryHandler.SQL_PROPERTY_FILE_NAME);
+		Properties props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
 		super.init(props);
 	}
 
