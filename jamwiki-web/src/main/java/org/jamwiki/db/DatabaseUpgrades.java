@@ -142,7 +142,6 @@ public class DatabaseUpgrades {
 	 */
 	public static List<WikiMessage> upgrade070(List<WikiMessage> messages) throws WikiException {
 		TransactionStatus status = null;
-		String dbType = Environment.getValue(Environment.PROP_DB_TYPE);
 		try {
 			status = DatabaseConnection.startTransaction(getTransactionDefinition());
 			Connection conn = DatabaseConnection.getConnection();
@@ -248,6 +247,40 @@ public class DatabaseUpgrades {
 		try {
 			status = DatabaseConnection.startTransaction(getTransactionDefinition());
 			Connection conn = DatabaseConnection.getConnection();
+			if (StringUtils.equals(dbType, DataHandler.DATA_HANDLER_POSTGRES)) {
+				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_SEQUENCE_GROUP_ID", conn);
+				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_GROUP_ID", conn);
+				WikiBase.getDataHandler().executeUpgradeQuery("UPGRADE_080_SET_SEQUENCE_GROUP_ID", conn);
+				messages.add(new WikiMessage("upgrade.message.db.column.modified", "group_id", "jam_group"));
+				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_SEQUENCE_GROUP_MEMBERS_ID", conn);
+				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_GROUP_MEMBERS_ID", conn);
+				WikiBase.getDataHandler().executeUpgradeQuery("UPGRADE_080_SET_SEQUENCE_GROUP_MEMBERS_ID", conn);
+				messages.add(new WikiMessage("upgrade.message.db.column.modified", "id", "jam_group_members"));
+				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_SEQUENCE_TOPIC_ID", conn);
+				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_TOPIC_ID", conn);
+				WikiBase.getDataHandler().executeUpgradeQuery("UPGRADE_080_SET_SEQUENCE_TOPIC_ID", conn);
+				messages.add(new WikiMessage("upgrade.message.db.column.modified", "topic_id", "jam_topic"));
+				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_SEQUENCE_TOPIC_VERSION_ID", conn);
+				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_TOPIC_VERSION_ID", conn);
+				WikiBase.getDataHandler().executeUpgradeQuery("UPGRADE_080_SET_SEQUENCE_TOPIC_VERSION_ID", conn);
+				messages.add(new WikiMessage("upgrade.message.db.column.modified", "topic_version_id", "jam_topic_version"));
+				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_SEQUENCE_VIRTUAL_WIKI_ID", conn);
+				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_VIRTUAL_WIKI_ID", conn);
+				WikiBase.getDataHandler().executeUpgradeQuery("UPGRADE_080_SET_SEQUENCE_VIRTUAL_WIKI_ID", conn);
+				messages.add(new WikiMessage("upgrade.message.db.column.modified", "virtual_wiki_id", "jam_virtual_wiki"));
+				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_SEQUENCE_WIKI_FILE_ID", conn);
+				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_WIKI_FILE_ID", conn);
+				WikiBase.getDataHandler().executeUpgradeQuery("UPGRADE_080_SET_SEQUENCE_WIKI_FILE_ID", conn);
+				messages.add(new WikiMessage("upgrade.message.db.column.modified", "file_id", "jam_file"));
+				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_SEQUENCE_WIKI_FILE_VERSION_ID", conn);
+				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_WIKI_FILE_VERSION_ID", conn);
+				WikiBase.getDataHandler().executeUpgradeQuery("UPGRADE_080_SET_SEQUENCE_WIKI_FILE_VERSION_ID", conn);
+				messages.add(new WikiMessage("upgrade.message.db.column.modified", "file_version_id", "jam_file_version"));
+				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_SEQUENCE_WIKI_USER_ID", conn);
+				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_WIKI_USER_ID", conn);
+				WikiBase.getDataHandler().executeUpgradeQuery("UPGRADE_080_SET_SEQUENCE_WIKI_USER_ID", conn);
+				messages.add(new WikiMessage("upgrade.message.db.column.modified", "wiki_user_id", "jam_wiki_user"));
+			}
 			// add wiki_user_display column to jam_topic_version
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_TOPIC_VERSION_USER_DISPLAY", conn);
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_UPDATE_TOPIC_VERSION_USER_DISPLAY", conn);

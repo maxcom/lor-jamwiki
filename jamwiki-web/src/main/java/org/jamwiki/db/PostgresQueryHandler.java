@@ -38,4 +38,11 @@ public class PostgresQueryHandler extends AnsiQueryHandler {
 		Properties props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
 		super.init(props);
 	}
+
+	/**
+	 *
+	 */
+	public boolean autoIncrementPrimaryKeys() {
+		return true;
+	}
 }

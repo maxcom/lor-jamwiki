@@ -72,6 +72,13 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public void executeUpgradeQuery(String prop, Connection conn) throws SQLException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
 	public void executeUpgradeUpdate(String prop, Connection conn) throws SQLException {
 		throw new UnsupportedOperationException();
 	}

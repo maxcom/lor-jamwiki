@@ -112,6 +112,16 @@ public interface DataHandler {
 
 	/**
 	 * This method should be called only during upgrades and provides the capability
+	 * to execute a SQL query from a QueryHandler-specific property file.
+	 *
+	 * @param prop The name of the SQL property file value to execute.
+	 * @param conn The SQL connection to use when executing the SQL.
+	 * @throws SQLException Thrown if any error occurs during execution.
+	 */
+	void executeUpgradeQuery(String prop, Connection conn) throws SQLException;
+
+	/**
+	 * This method should be called only during upgrades and provides the capability
 	 * to execute update SQL from a QueryHandler-specific property file.
 	 *
 	 * @param prop The name of the SQL property file value to execute.

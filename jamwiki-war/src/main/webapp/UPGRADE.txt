@@ -83,7 +83,33 @@ followed by 0.6.3.
      /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
      can only be edited AFTER all other upgrade steps have been completed.
   3. Update the database schema by executing the following SQL statements:
-       a) Add the wiki_user_display column to the jam_topic_version,
+       a) Update primary keys to auto increment.
+            Postgres:
+              create sequence jam_group_pk_seq owned by jam_group.group_id;
+              alter table jam_group alter column group_id set default nextval('jam_group_pk_seq');
+              select setval('jam_group_pk_seq', max(group_id)) from jam_group;
+              create sequence jam_gmemb_pk_seq owned by jam_group_members.id;
+              alter table jam_group_members alter column id set default nextval('jam_gmemb_pk_seq');
+              select setval('jam_gmemb_pk_seq', max(id)) from jam_group_members;
+              create sequence jam_topic_pk_seq owned by jam_topic.topic_id;
+              alter table jam_topic alter column topic_id set default nextval('jam_topic_pk_seq');
+              select setval('jam_topic_pk_seq', max(topic_id)) from jam_topic;
+              create sequence jam_topic_ver_pk_seq owned by jam_topic_version.topic_version_id;
+              alter table jam_topic_version alter column topic_version_id set default nextval('jam_topic_ver_pk_seq'); 
+              select setval('jam_topic_ver_pk_seq', max(topic_version_id)) from jam_topic_version;
+              create sequence jam_vwiki_pk_seq owned by jam_virtual_wiki.virtual_wiki_id;
+              alter table jam_virtual_wiki alter column virtual_wiki_id set default nextval('jam_vwiki_pk_seq'); 
+              select setval('jam_vwiki_pk_seq', max(virtual_wiki_id)) from jam_virtual_wiki;
+              create sequence jam_file_pk_seq owned by jam_file.file_id;
+              alter table jam_file alter column file_id set default nextval('jam_file_pk_seq'); 
+              select setval('jam_file_pk_seq', max(file_id)) from jam_file;
+              create sequence jam_filev_pk_seq owned by jam_file_version.file_version_id;
+              alter table jam_file_version alter column file_version_id set default nextval('jam_filev_pk_seq'); 
+              select setval('jam_filev_pk_seq', max(file_version_id)) from jam_file_version;
+              create sequence jam_wuser_pk_seq owned by jam_wiki_user.wiki_user_id;
+              alter table jam_wiki_user alter column wiki_user_id set default nextval('jam_wuser_pk_seq'); 
+              select setval('jam_wuser_pk_seq', max(wiki_user_id)) from jam_wiki_user;
+       b) Add the wiki_user_display column to the jam_topic_version,
           jam_recent_change and jam_file_version tables.
             Oracle:
               alter table jam_topic_version add (wiki_user_display VARCHAR(100));
@@ -94,17 +120,17 @@ followed by 0.6.3.
             Other Databases:
               alter table jam_topic_version add column wiki_user_display VARCHAR(100);
               alter table jam_file_version add column wiki_user_display VARCHAR(100);
-       b) Populate the new wiki_user_display columns in the jam_topic_version,
+       c) Populate the new wiki_user_display columns in the jam_topic_version,
           jam_recent_change and jam_file_version tables.
               update jam_topic_version set wiki_user_display = wiki_user_ip_address;
               update jam_file_version set wiki_user_display = wiki_user_ip_address;
-       c) Drop the unused wiki_user_ip_address column from the jam_topic_version,
+       d) Drop the unused wiki_user_ip_address column from the jam_topic_version,
           jam_recent_change and jam_file_version tables.
               alter table jam_topic_version drop column wiki_user_ip_address;
               alter table jam_file_version drop column wiki_user_ip_address;
-       d) Add the new ROLE_IMPORT:
+       e) Add the new ROLE_IMPORT:
               INSERT into jam_role (role_name) values ('ROLE_IMPORT');
-       e) Assign ROLE_IMPORT to all users with ROLE_ADMIN:
+       f) Assign ROLE_IMPORT to all users with ROLE_ADMIN:
               INSERT into jam_authorities (authority, username)
                    select 'ROLE_IMPORT', username
                    from jam_authorities where authority = 'ROLE_ADMIN';

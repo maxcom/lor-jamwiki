@@ -19,6 +19,8 @@ New Features:
   * Localize several messages in the upgrade process that were previously
     hard-coded in English.
   * Remove ability to automatically upgrade from versions prior to 0.6.0.
+  * For databases that support it use auto incrementing primary keys during
+    inserts to improve performance.  Suggested by Daniel Fisla (dfisla).
   * Implement caching for diffs and topic versions to speed up page rendering.
   * Refactor exception handling to throw and catch exceptions at a more
     granular level.

@@ -338,6 +338,13 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public void executeUpgradeQuery(String prop, Connection conn) throws SQLException {
+		this.queryHandler().executeUpgradeQuery(prop, conn);
+	}
+
+	/**
+	 *
+	 */
 	public void executeUpgradeUpdate(String prop, Connection conn) throws SQLException {
 		this.queryHandler().executeUpgradeUpdate(prop, conn);
 	}

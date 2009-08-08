@@ -17,7 +17,10 @@
 package org.jamwiki.db;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Properties;
@@ -92,19 +95,27 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_INSERT_AUTHORITY = null;
 	protected static String STATEMENT_INSERT_CATEGORY = null;
 	protected static String STATEMENT_INSERT_GROUP = null;
+	protected static String STATEMENT_INSERT_GROUP_AUTO_INCREMENT = null;
 	protected static String STATEMENT_INSERT_GROUP_AUTHORITY = null;
 	protected static String STATEMENT_INSERT_GROUP_MEMBER = null;
+	protected static String STATEMENT_INSERT_GROUP_MEMBER_AUTO_INCREMENT = null;
 	protected static String STATEMENT_INSERT_RECENT_CHANGE = null;
 	protected static String STATEMENT_INSERT_RECENT_CHANGES = null;
 	protected static String STATEMENT_INSERT_ROLE = null;
 	protected static String STATEMENT_INSERT_TOPIC = null;
+	protected static String STATEMENT_INSERT_TOPIC_AUTO_INCREMENT = null;
 	protected static String STATEMENT_INSERT_TOPIC_VERSION = null;
+	protected static String STATEMENT_INSERT_TOPIC_VERSION_AUTO_INCREMENT = null;
 	protected static String STATEMENT_INSERT_USER = null;
 	protected static String STATEMENT_INSERT_VIRTUAL_WIKI = null;
+	protected static String STATEMENT_INSERT_VIRTUAL_WIKI_AUTO_INCREMENT = null;
 	protected static String STATEMENT_INSERT_WATCHLIST_ENTRY = null;
 	protected static String STATEMENT_INSERT_WIKI_FILE = null;
+	protected static String STATEMENT_INSERT_WIKI_FILE_AUTO_INCREMENT = null;
 	protected static String STATEMENT_INSERT_WIKI_FILE_VERSION = null;
+	protected static String STATEMENT_INSERT_WIKI_FILE_VERSION_AUTO_INCREMENT = null;
 	protected static String STATEMENT_INSERT_WIKI_USER = null;
+	protected static String STATEMENT_INSERT_WIKI_USER_AUTO_INCREMENT = null;
 	protected static String STATEMENT_SELECT_AUTHORITIES_AUTHORITY = null;
 	protected static String STATEMENT_SELECT_AUTHORITIES_LOGIN = null;
 	protected static String STATEMENT_SELECT_AUTHORITIES_USER = null;
@@ -171,6 +182,13 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setString(1, username);
 		stmt.setString(2, encryptedPassword);
 		return (stmt.executeQuery(conn).size() != 0);
+	}
+
+	/**
+	 *
+	 */
+	public boolean autoIncrementPrimaryKeys() {
+		return false;
 	}
 
 	/**
@@ -309,6 +327,18 @@ public class AnsiQueryHandler implements QueryHandler {
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_VIRTUAL_WIKI_TABLE, conn);
 		} catch (SQLException e) { logger.severe(e.getMessage()); }
+	}
+
+	/**
+	 *
+	 */
+	public void executeUpgradeQuery(String prop, Connection conn) throws SQLException {
+		String sql = this.props.getProperty(prop);
+		if (sql == null) {
+			throw new SQLException("No property found for " + prop);
+		}
+		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
+		stmt.executeQuery(conn);
 	}
 
 	/**
@@ -558,19 +588,27 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_INSERT_AUTHORITY               = props.getProperty("STATEMENT_INSERT_AUTHORITY");
 		STATEMENT_INSERT_CATEGORY                = props.getProperty("STATEMENT_INSERT_CATEGORY");
 		STATEMENT_INSERT_GROUP                   = props.getProperty("STATEMENT_INSERT_GROUP");
+		STATEMENT_INSERT_GROUP_AUTO_INCREMENT    = props.getProperty("STATEMENT_INSERT_GROUP_AUTO_INCREMENT");
 		STATEMENT_INSERT_GROUP_AUTHORITY         = props.getProperty("STATEMENT_INSERT_GROUP_AUTHORITY");
 		STATEMENT_INSERT_GROUP_MEMBER            = props.getProperty("STATEMENT_INSERT_GROUP_MEMBER");
+		STATEMENT_INSERT_GROUP_MEMBER_AUTO_INCREMENT = props.getProperty("STATEMENT_INSERT_GROUP_MEMBER_AUTO_INCREMENT");
 		STATEMENT_INSERT_RECENT_CHANGE           = props.getProperty("STATEMENT_INSERT_RECENT_CHANGE");
 		STATEMENT_INSERT_RECENT_CHANGES          = props.getProperty("STATEMENT_INSERT_RECENT_CHANGES");
 		STATEMENT_INSERT_ROLE                    = props.getProperty("STATEMENT_INSERT_ROLE");
 		STATEMENT_INSERT_TOPIC                   = props.getProperty("STATEMENT_INSERT_TOPIC");
+		STATEMENT_INSERT_TOPIC_AUTO_INCREMENT    = props.getProperty("STATEMENT_INSERT_TOPIC_AUTO_INCREMENT");
 		STATEMENT_INSERT_TOPIC_VERSION           = props.getProperty("STATEMENT_INSERT_TOPIC_VERSION");
+		STATEMENT_INSERT_TOPIC_VERSION_AUTO_INCREMENT = props.getProperty("STATEMENT_INSERT_TOPIC_VERSION_AUTO_INCREMENT");
 		STATEMENT_INSERT_USER                    = props.getProperty("STATEMENT_INSERT_USER");
 		STATEMENT_INSERT_VIRTUAL_WIKI            = props.getProperty("STATEMENT_INSERT_VIRTUAL_WIKI");
+		STATEMENT_INSERT_VIRTUAL_WIKI_AUTO_INCREMENT = props.getProperty("STATEMENT_INSERT_VIRTUAL_WIKI_AUTO_INCREMENT");
 		STATEMENT_INSERT_WATCHLIST_ENTRY         = props.getProperty("STATEMENT_INSERT_WATCHLIST_ENTRY");
 		STATEMENT_INSERT_WIKI_FILE               = props.getProperty("STATEMENT_INSERT_WIKI_FILE");
+		STATEMENT_INSERT_WIKI_FILE_AUTO_INCREMENT = props.getProperty("STATEMENT_INSERT_WIKI_FILE_AUTO_INCREMENT");
 		STATEMENT_INSERT_WIKI_FILE_VERSION       = props.getProperty("STATEMENT_INSERT_WIKI_FILE_VERSION");
+		STATEMENT_INSERT_WIKI_FILE_VERSION_AUTO_INCREMENT = props.getProperty("STATEMENT_INSERT_WIKI_FILE_VERSION_AUTO_INCREMENT");
 		STATEMENT_INSERT_WIKI_USER               = props.getProperty("STATEMENT_INSERT_WIKI_USER");
+		STATEMENT_INSERT_WIKI_USER_AUTO_INCREMENT = props.getProperty("STATEMENT_INSERT_WIKI_USER_AUTO_INCREMENT");
 		STATEMENT_SELECT_AUTHORITIES_AUTHORITY   = props.getProperty("STATEMENT_SELECT_AUTHORITIES_AUTHORITY");
 		STATEMENT_SELECT_AUTHORITIES_LOGIN       = props.getProperty("STATEMENT_SELECT_AUTHORITIES_LOGIN");
 		STATEMENT_SELECT_AUTHORITIES_USER        = props.getProperty("STATEMENT_SELECT_AUTHORITIES_USER");
@@ -658,12 +696,24 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertGroupMember(String username, int groupId, Connection conn) throws SQLException {
-		int groupMemberId = this.nextGroupMemberId(conn);
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_GROUP_MEMBER);
-		stmt.setInt(1, groupMemberId);
-		stmt.setString(2, username);
-		stmt.setInt(3, groupId);
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			int index = 1;
+			if (!this.autoIncrementPrimaryKeys()) {
+				stmt = conn.prepareStatement(STATEMENT_INSERT_GROUP_MEMBER);
+				int groupMemberId = this.nextGroupMemberId(conn);
+				stmt.setInt(index++, groupMemberId);
+			} else {
+				stmt = conn.prepareStatement(STATEMENT_INSERT_GROUP_MEMBER_AUTO_INCREMENT);
+			}
+			stmt.setString(index++, username);
+			stmt.setInt(index++, groupId);
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
@@ -708,63 +758,100 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertTopic(Topic topic, int virtualWikiId, Connection conn) throws SQLException {
-		if (topic.getTopicId() < 1) {
-			int topicId = this.nextTopicId(conn);
-			topic.setTopicId(topicId);
+		long start = System.currentTimeMillis();
+		PreparedStatement stmt = null;
+		try {
+			int index = 1;
+			if (!this.autoIncrementPrimaryKeys()) {
+				stmt = conn.prepareStatement(STATEMENT_INSERT_TOPIC);
+				int topicId = this.nextTopicId(conn);
+				topic.setTopicId(topicId);
+				stmt.setInt(index++, topic.getTopicId());
+			} else {
+				stmt = conn.prepareStatement(STATEMENT_INSERT_TOPIC_AUTO_INCREMENT, Statement.RETURN_GENERATED_KEYS);
+			}
+			stmt.setInt(index++, virtualWikiId);
+			stmt.setString(index++, topic.getName());
+			stmt.setInt(index++, topic.getTopicType());
+			stmt.setInt(index++, (topic.getReadOnly() ? 1 : 0));
+			if (topic.getCurrentVersionId() == null) {
+				stmt.setNull(index++, Types.INTEGER);
+			} else {
+				stmt.setInt(index++, topic.getCurrentVersionId());
+			}
+			stmt.setTimestamp(index++, topic.getDeleteDate());
+			stmt.setInt(index++, (topic.getAdminOnly() ? 1 : 0));
+			stmt.setString(index++, topic.getRedirectTo());
+			stmt.executeUpdate();
+			if (this.autoIncrementPrimaryKeys()) {
+				ResultSet rs = stmt.getGeneratedKeys();
+				if (!rs.next()) {
+					throw new SQLException("Unable to determine auto-generated ID for database record");
+				}
+				topic.setTopicId(rs.getInt("topic_id"));
+			}
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
 		}
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_TOPIC);
-		stmt.setInt(1, topic.getTopicId());
-		stmt.setInt(2, virtualWikiId);
-		stmt.setString(3, topic.getName());
-		stmt.setInt(4, topic.getTopicType());
-		stmt.setInt(5, (topic.getReadOnly() ? 1 : 0));
-		if (topic.getCurrentVersionId() == null) {
-			stmt.setNull(6, Types.INTEGER);
-		} else {
-			stmt.setInt(6, topic.getCurrentVersionId());
-		}
-		stmt.setTimestamp(7, topic.getDeleteDate());
-		stmt.setInt(8, (topic.getAdminOnly() ? 1 : 0));
-		stmt.setString(9, topic.getRedirectTo());
-		stmt.executeUpdate(conn);
+		long execution = System.currentTimeMillis() - start;
+		logger.info("Insert topic time: (" + (execution / 1000.000) + " s.)");
 	}
 
 	/**
 	 *
 	 */
 	public void insertTopicVersion(TopicVersion topicVersion, Connection conn) throws SQLException {
-		if (topicVersion.getTopicVersionId() < 1) {
-			int topicVersionId = this.nextTopicVersionId(conn);
-			topicVersion.setTopicVersionId(topicVersionId);
+		PreparedStatement stmt = null;
+		try {
+			int index = 1;
+			if (!this.autoIncrementPrimaryKeys()) {
+				stmt = conn.prepareStatement(STATEMENT_INSERT_TOPIC_VERSION);
+				int topicVersionId = this.nextTopicVersionId(conn);
+				topicVersion.setTopicVersionId(topicVersionId);
+				stmt.setInt(index++, topicVersion.getTopicVersionId());
+			} else {
+				stmt = conn.prepareStatement(STATEMENT_INSERT_TOPIC_VERSION_AUTO_INCREMENT, Statement.RETURN_GENERATED_KEYS);
+			}
+			if (topicVersion.getEditDate() == null) {
+				Timestamp editDate = new Timestamp(System.currentTimeMillis());
+				topicVersion.setEditDate(editDate);
+			}
+			stmt.setInt(index++, topicVersion.getTopicId());
+			stmt.setString(index++, topicVersion.getEditComment());
+			stmt.setString(index++, topicVersion.getVersionContent());
+			if (topicVersion.getAuthorId() == null) {
+				stmt.setNull(index++, Types.INTEGER);
+			} else {
+				stmt.setInt(index++, topicVersion.getAuthorId());
+			}
+			stmt.setInt(index++, topicVersion.getEditType());
+			stmt.setString(index++, topicVersion.getAuthorDisplay());
+			stmt.setTimestamp(index++, topicVersion.getEditDate());
+			if (topicVersion.getPreviousTopicVersionId() == null) {
+				stmt.setNull(index++, Types.INTEGER);
+			} else {
+				stmt.setInt(index++, topicVersion.getPreviousTopicVersionId());
+			}
+			stmt.setInt(index++, topicVersion.getCharactersChanged());
+			stmt.executeUpdate();
+			if (this.autoIncrementPrimaryKeys()) {
+				ResultSet rs = stmt.getGeneratedKeys();
+				if (!rs.next()) {
+					throw new SQLException("Unable to determine auto-generated ID for database record");
+				}
+				topicVersion.setTopicVersionId(rs.getInt("topic_version_id"));
+			}
+			stmt = conn.prepareStatement(STATEMENT_UPDATE_TOPIC_CURRENT_VERSION);
+			stmt.setInt(1, topicVersion.getTopicVersionId());
+			stmt.setInt(2, topicVersion.getTopicId());
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
 		}
-		if (topicVersion.getEditDate() == null) {
-			Timestamp editDate = new Timestamp(System.currentTimeMillis());
-			topicVersion.setEditDate(editDate);
-		}
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_TOPIC_VERSION);
-		stmt.setInt(1, topicVersion.getTopicVersionId());
-		stmt.setInt(2, topicVersion.getTopicId());
-		stmt.setString(3, topicVersion.getEditComment());
-		stmt.setString(4, topicVersion.getVersionContent());
-		if (topicVersion.getAuthorId() == null) {
-			stmt.setNull(5, Types.INTEGER);
-		} else {
-			stmt.setInt(5, topicVersion.getAuthorId());
-		}
-		stmt.setInt(6, topicVersion.getEditType());
-		stmt.setString(7, topicVersion.getAuthorDisplay());
-		stmt.setTimestamp(8, topicVersion.getEditDate());
-		if (topicVersion.getPreviousTopicVersionId() == null) {
-			stmt.setNull(9, Types.INTEGER);
-		} else {
-			stmt.setInt(9, topicVersion.getPreviousTopicVersionId());
-		}
-		stmt.setInt(10, topicVersion.getCharactersChanged());
-		stmt.executeUpdate(conn);
-		stmt = new WikiPreparedStatement(STATEMENT_UPDATE_TOPIC_CURRENT_VERSION);
-		stmt.setInt(1, topicVersion.getTopicVersionId());
-		stmt.setInt(2, topicVersion.getTopicId());
-		stmt.executeUpdate(conn);
 	}
 
 	/**
@@ -791,15 +878,32 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws SQLException {
-		if (virtualWiki.getVirtualWikiId() < 1) {
-			int virtualWikiId = this.nextVirtualWikiId(conn);
-			virtualWiki.setVirtualWikiId(virtualWikiId);
+		PreparedStatement stmt = null;
+		try {
+			int index = 1;
+			if (!this.autoIncrementPrimaryKeys()) {
+				stmt = conn.prepareStatement(STATEMENT_INSERT_VIRTUAL_WIKI);
+				int virtualWikiId = this.nextVirtualWikiId(conn);
+				virtualWiki.setVirtualWikiId(virtualWikiId);
+				stmt.setInt(index++, virtualWiki.getVirtualWikiId());
+			} else {
+				stmt = conn.prepareStatement(STATEMENT_INSERT_VIRTUAL_WIKI_AUTO_INCREMENT, Statement.RETURN_GENERATED_KEYS);
+			}
+			stmt.setString(index++, virtualWiki.getName());
+			stmt.setString(index++, virtualWiki.getDefaultTopicName());
+			stmt.executeUpdate();
+			if (this.autoIncrementPrimaryKeys()) {
+				ResultSet rs = stmt.getGeneratedKeys();
+				if (!rs.next()) {
+					throw new SQLException("Unable to determine auto-generated ID for database record");
+				}
+				virtualWiki.setVirtualWikiId(rs.getInt("virtual_wiki_id"));
+			}
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
 		}
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_VIRTUAL_WIKI);
-		stmt.setInt(1, virtualWiki.getVirtualWikiId());
-		stmt.setString(2, virtualWiki.getName());
-		stmt.setString(3, virtualWiki.getDefaultTopicName());
-		stmt.executeUpdate(conn);
 	}
 
 	/**
@@ -817,89 +921,157 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertWikiFile(WikiFile wikiFile, int virtualWikiId, Connection conn) throws SQLException {
-		if (wikiFile.getFileId() < 1) {
-			int fileId = this.nextWikiFileId(conn);
-			wikiFile.setFileId(fileId);
+		PreparedStatement stmt = null;
+		try {
+			int index = 1;
+			if (!this.autoIncrementPrimaryKeys()) {
+				stmt = conn.prepareStatement(STATEMENT_INSERT_WIKI_FILE);
+				int fileId = this.nextWikiFileId(conn);
+				wikiFile.setFileId(fileId);
+				stmt.setInt(index++, wikiFile.getFileId());
+			} else {
+				stmt = conn.prepareStatement(STATEMENT_INSERT_WIKI_FILE_AUTO_INCREMENT, Statement.RETURN_GENERATED_KEYS);
+			}
+			stmt.setInt(index++, virtualWikiId);
+			stmt.setString(index++, wikiFile.getFileName());
+			stmt.setString(index++, wikiFile.getUrl());
+			stmt.setString(index++, wikiFile.getMimeType());
+			stmt.setInt(index++, wikiFile.getTopicId());
+			stmt.setTimestamp(index++, wikiFile.getDeleteDate());
+			stmt.setInt(index++, (wikiFile.getReadOnly() ? 1 : 0));
+			stmt.setInt(index++, (wikiFile.getAdminOnly() ? 1 : 0));
+			stmt.setLong(index++, wikiFile.getFileSize());
+			stmt.executeUpdate();
+			if (this.autoIncrementPrimaryKeys()) {
+				ResultSet rs = stmt.getGeneratedKeys();
+				if (!rs.next()) {
+					throw new SQLException("Unable to determine auto-generated ID for database record");
+				}
+				wikiFile.setFileId(rs.getInt("file_id"));
+			}
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
 		}
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_FILE);
-		stmt.setInt(1, wikiFile.getFileId());
-		stmt.setInt(2, virtualWikiId);
-		stmt.setString(3, wikiFile.getFileName());
-		stmt.setString(4, wikiFile.getUrl());
-		stmt.setString(5, wikiFile.getMimeType());
-		stmt.setInt(6, wikiFile.getTopicId());
-		stmt.setTimestamp(7, wikiFile.getDeleteDate());
-		stmt.setInt(8, (wikiFile.getReadOnly() ? 1 : 0));
-		stmt.setInt(9, (wikiFile.getAdminOnly() ? 1 : 0));
-		stmt.setInt(10, wikiFile.getFileSize());
-		stmt.executeUpdate(conn);
 	}
 
 	/**
 	 *
 	 */
 	public void insertWikiFileVersion(WikiFileVersion wikiFileVersion, Connection conn) throws SQLException {
-		if (wikiFileVersion.getFileVersionId() < 1) {
-			int fileVersionId = this.nextWikiFileVersionId(conn);
-			wikiFileVersion.setFileVersionId(fileVersionId);
+		PreparedStatement stmt = null;
+		try {
+			int index = 1;
+			if (!this.autoIncrementPrimaryKeys()) {
+				stmt = conn.prepareStatement(STATEMENT_INSERT_WIKI_FILE_VERSION);
+				int fileVersionId = this.nextWikiFileVersionId(conn);
+				wikiFileVersion.setFileVersionId(fileVersionId);
+				stmt.setInt(index++, wikiFileVersion.getFileVersionId());
+			} else {
+				stmt = conn.prepareStatement(STATEMENT_INSERT_WIKI_FILE_VERSION_AUTO_INCREMENT, Statement.RETURN_GENERATED_KEYS);
+			}
+			if (wikiFileVersion.getUploadDate() == null) {
+				Timestamp uploadDate = new Timestamp(System.currentTimeMillis());
+				wikiFileVersion.setUploadDate(uploadDate);
+			}
+			stmt.setInt(index++, wikiFileVersion.getFileId());
+			stmt.setString(index++, wikiFileVersion.getUploadComment());
+			stmt.setString(index++, wikiFileVersion.getUrl());
+			if (wikiFileVersion.getAuthorId() == null) {
+				stmt.setNull(index++, Types.INTEGER);
+			} else {
+				stmt.setInt(index++, wikiFileVersion.getAuthorId());
+			}
+			stmt.setString(index++, wikiFileVersion.getAuthorDisplay());
+			stmt.setTimestamp(index++, wikiFileVersion.getUploadDate());
+			stmt.setString(index++, wikiFileVersion.getMimeType());
+			stmt.setLong(index++, wikiFileVersion.getFileSize());
+			stmt.executeUpdate();
+			if (this.autoIncrementPrimaryKeys()) {
+				ResultSet rs = stmt.getGeneratedKeys();
+				if (!rs.next()) {
+					throw new SQLException("Unable to determine auto-generated ID for database record");
+				}
+				wikiFileVersion.setFileVersionId(rs.getInt("file_version_id"));
+			}
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
 		}
-		if (wikiFileVersion.getUploadDate() == null) {
-			Timestamp uploadDate = new Timestamp(System.currentTimeMillis());
-			wikiFileVersion.setUploadDate(uploadDate);
-		}
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_FILE_VERSION);
-		stmt.setInt(1, wikiFileVersion.getFileVersionId());
-		stmt.setInt(2, wikiFileVersion.getFileId());
-		stmt.setString(3, wikiFileVersion.getUploadComment());
-		stmt.setString(4, wikiFileVersion.getUrl());
-		if (wikiFileVersion.getAuthorId() == null) {
-			stmt.setNull(5, Types.INTEGER);
-		} else {
-			stmt.setInt(5, wikiFileVersion.getAuthorId());
-		}
-		stmt.setString(6, wikiFileVersion.getAuthorDisplay());
-		stmt.setTimestamp(7, wikiFileVersion.getUploadDate());
-		stmt.setString(8, wikiFileVersion.getMimeType());
-		stmt.setInt(9, wikiFileVersion.getFileSize());
-		stmt.executeUpdate(conn);
 	}
 
 	/**
 	 *
 	 */
 	public void insertWikiGroup(WikiGroup group, Connection conn) throws SQLException {
-		if (group.getGroupId() < 1) {
-			int groupId = this.nextWikiGroupId(conn);
-			group.setGroupId(groupId);
+		PreparedStatement stmt = null;
+		try {
+			int index = 1;
+			if (!this.autoIncrementPrimaryKeys()) {
+				stmt = conn.prepareStatement(STATEMENT_INSERT_GROUP);
+				int groupId = this.nextWikiGroupId(conn);
+				group.setGroupId(groupId);
+				stmt.setInt(index++, group.getGroupId());
+			} else {
+				stmt = conn.prepareStatement(STATEMENT_INSERT_GROUP_AUTO_INCREMENT, Statement.RETURN_GENERATED_KEYS);
+			}
+			stmt.setString(index++, group.getName());
+			stmt.setString(index++, group.getDescription());
+			stmt.executeUpdate();
+			if (this.autoIncrementPrimaryKeys()) {
+				ResultSet rs = stmt.getGeneratedKeys();
+				if (!rs.next()) {
+					throw new SQLException("Unable to determine auto-generated ID for database record");
+				}
+				group.setGroupId(rs.getInt("group_id"));
+			}
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
 		}
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_GROUP);
-		stmt.setInt(1, group.getGroupId());
-		stmt.setString(2, group.getName());
-		stmt.setString(3, group.getDescription());
-		stmt.executeUpdate(conn);
 	}
 
 	/**
 	 *
 	 */
 	public void insertWikiUser(WikiUser user, Connection conn) throws SQLException {
-		if (user.getUserId() < 1) {
-			int nextUserId = this.nextWikiUserId(conn);
-			user.setUserId(nextUserId);
+		PreparedStatement stmt = null;
+		try {
+			int index = 1;
+			if (!this.autoIncrementPrimaryKeys()) {
+				stmt = conn.prepareStatement(STATEMENT_INSERT_WIKI_USER);
+				int nextUserId = this.nextWikiUserId(conn);
+				user.setUserId(nextUserId);
+				stmt.setInt(index++, user.getUserId());
+			} else {
+				stmt = conn.prepareStatement(STATEMENT_INSERT_WIKI_USER_AUTO_INCREMENT, Statement.RETURN_GENERATED_KEYS);
+			}
+			stmt.setString(index++, user.getUsername());
+			stmt.setString(index++, user.getDisplayName());
+			stmt.setTimestamp(index++, user.getCreateDate());
+			stmt.setTimestamp(index++, user.getLastLoginDate());
+			stmt.setString(index++, user.getCreateIpAddress());
+			stmt.setString(index++, user.getLastLoginIpAddress());
+			stmt.setString(index++, user.getDefaultLocale());
+			stmt.setString(index++, user.getEmail());
+			stmt.setString(index++, user.getEditor());
+			stmt.setString(index++, user.getSignature());
+			stmt.executeUpdate();
+			if (this.autoIncrementPrimaryKeys()) {
+				ResultSet rs = stmt.getGeneratedKeys();
+				if (!rs.next()) {
+					throw new SQLException("Unable to determine auto-generated ID for database record");
+				}
+				user.setUserId(rs.getInt("wiki_user_id"));
+			}
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
 		}
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER);
-		stmt.setInt(1, user.getUserId());
-		stmt.setString(2, user.getUsername());
-		stmt.setString(3, user.getDisplayName());
-		stmt.setTimestamp(4, user.getCreateDate());
-		stmt.setTimestamp(5, user.getLastLoginDate());
-		stmt.setString(6, user.getCreateIpAddress());
-		stmt.setString(7, user.getLastLoginIpAddress());
-		stmt.setString(8, user.getDefaultLocale());
-		stmt.setString(9, user.getEmail());
-		stmt.setString(10, user.getEditor());
-		stmt.setString(11, user.getSignature());
-		stmt.executeUpdate(conn);
 	}
 
 	/**

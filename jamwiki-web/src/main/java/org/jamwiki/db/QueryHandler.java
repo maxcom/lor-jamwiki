@@ -52,6 +52,15 @@ public interface QueryHandler {
 	boolean authenticateUser(String login, String encryptedPassword, Connection conn) throws SQLException;
 
 	/**
+	 * Some databases support automatically incrementing primary key values without the
+	 * need to explicitly specify a value, thus improving performance.  This method provides
+	 * a way for the a query handler to specify whether or not auto-incrementing is supported.
+	 *
+	 * @return <code>true</code> if the query handler supports auto-incrementing primary keys.
+	 */
+	boolean autoIncrementPrimaryKeys();
+
+	/**
 	 * Returns the simplest possible query that can be used to validate
 	 * whether or not a database connection is valid.  Note that the query
 	 * returned MUST NOT query any JAMWiki tables since it will be used prior
@@ -140,6 +149,16 @@ public interface QueryHandler {
 	 *  from this method.
 	 */
 	void dropTables(Connection conn);
+
+	/**
+	 * This method should be called only during upgrades and provides the capability
+	 * to execute a SQL query from a QueryHandler-specific property file.
+	 *
+	 * @param prop The name of the SQL property file value to execute.
+	 * @param conn The SQL connection to use when executing the SQL.
+	 * @throws SQLException Thrown if any error occurs during execution.
+	 */
+	void executeUpgradeQuery(String prop, Connection conn) throws SQLException;
 
 	/**
 	 * This method should be called only during upgrades and provides the capability
