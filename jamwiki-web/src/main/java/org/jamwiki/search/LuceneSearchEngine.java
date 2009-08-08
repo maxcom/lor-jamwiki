@@ -239,7 +239,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	public List<SearchResultEntry> findResults(String virtualWiki, String text) {
 		StandardAnalyzer analyzer = new StandardAnalyzer();
 		List<SearchResultEntry> results = new ArrayList<SearchResultEntry>();
-		logger.fine("search text: " + text);
+		logger.finer("search text: " + text);
 		IndexSearcher searcher = null;
 		try {
 			BooleanQuery query = new BooleanQuery();

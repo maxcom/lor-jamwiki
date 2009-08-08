@@ -334,7 +334,7 @@ public class DiffUtil {
 	 * @param oldVersion The String that is being compared against.
 	 */
 	private static List<WikiDiff> process(String newVersion, String oldVersion) {
-		logger.fine("Diffing: " + oldVersion + " against: " + newVersion);
+		logger.finer("Diffing: " + oldVersion + " against: " + newVersion);
 		if (newVersion.equals(oldVersion)) {
 			return new ArrayList<WikiDiff>();
 		}
