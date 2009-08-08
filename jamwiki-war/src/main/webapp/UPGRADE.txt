@@ -84,6 +84,15 @@ followed by 0.6.3.
      can only be edited AFTER all other upgrade steps have been completed.
   3. Update the database schema by executing the following SQL statements:
        a) Update primary keys to auto increment.
+            MySql:
+              alter table jam_group modify column group_id INTEGER AUTO_INCREMENT;
+              alter table jam_group_members modify column id INTEGER AUTO_INCREMENT;
+              alter table jam_topic modify column topic_id INTEGER AUTO_INCREMENT;
+              alter table jam_topic_version modify column topic_version_id INTEGER AUTO_INCREMENT;
+              alter table jam_virtual_wiki modify column virtual_wiki_id INTEGER AUTO_INCREMENT;
+              alter table jam_file modify column file_id INTEGER AUTO_INCREMENT;
+              alter table jam_file_version modify column file_version_id INTEGER AUTO_INCREMENT;
+              alter table jam_wiki_user modify column wiki_user_id INTEGER AUTO_INCREMENT;
             Postgres:
               create sequence jam_group_pk_seq owned by jam_group.group_id;
               alter table jam_group alter column group_id set default nextval('jam_group_pk_seq');

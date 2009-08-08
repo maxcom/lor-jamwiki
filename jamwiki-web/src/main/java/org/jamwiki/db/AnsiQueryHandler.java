@@ -788,7 +788,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				if (!rs.next()) {
 					throw new SQLException("Unable to determine auto-generated ID for database record");
 				}
-				topic.setTopicId(rs.getInt("topic_id"));
+				topic.setTopicId(rs.getInt(1));
 			}
 		} finally {
 			if (stmt != null) {
@@ -841,7 +841,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				if (!rs.next()) {
 					throw new SQLException("Unable to determine auto-generated ID for database record");
 				}
-				topicVersion.setTopicVersionId(rs.getInt("topic_version_id"));
+				topicVersion.setTopicVersionId(rs.getInt(1));
 			}
 			stmt = conn.prepareStatement(STATEMENT_UPDATE_TOPIC_CURRENT_VERSION);
 			stmt.setInt(1, topicVersion.getTopicVersionId());
@@ -897,7 +897,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				if (!rs.next()) {
 					throw new SQLException("Unable to determine auto-generated ID for database record");
 				}
-				virtualWiki.setVirtualWikiId(rs.getInt("virtual_wiki_id"));
+				virtualWiki.setVirtualWikiId(rs.getInt(1));
 			}
 		} finally {
 			if (stmt != null) {
@@ -947,7 +947,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				if (!rs.next()) {
 					throw new SQLException("Unable to determine auto-generated ID for database record");
 				}
-				wikiFile.setFileId(rs.getInt("file_id"));
+				wikiFile.setFileId(rs.getInt(1));
 			}
 		} finally {
 			if (stmt != null) {
@@ -993,7 +993,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				if (!rs.next()) {
 					throw new SQLException("Unable to determine auto-generated ID for database record");
 				}
-				wikiFileVersion.setFileVersionId(rs.getInt("file_version_id"));
+				wikiFileVersion.setFileVersionId(rs.getInt(1));
 			}
 		} finally {
 			if (stmt != null) {
@@ -1025,7 +1025,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				if (!rs.next()) {
 					throw new SQLException("Unable to determine auto-generated ID for database record");
 				}
-				group.setGroupId(rs.getInt("group_id"));
+				group.setGroupId(rs.getInt(1));
 			}
 		} finally {
 			if (stmt != null) {
@@ -1065,7 +1065,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				if (!rs.next()) {
 					throw new SQLException("Unable to determine auto-generated ID for database record");
 				}
-				user.setUserId(rs.getInt("wiki_user_id"));
+				user.setUserId(rs.getInt(1));
 			}
 		} finally {
 			if (stmt != null) {
