@@ -60,6 +60,7 @@ Translation Updates:
   * Updated Chinese translations (hfl).
   * Updated French translations (Guillaume_FRANCOIS55).
   * Updated German translations (axelclk).
+  * Updated Japanese translations (nattolover).
   * Updated Polish translations (dlpa).
   * Updated Russian translations (shar).
 
