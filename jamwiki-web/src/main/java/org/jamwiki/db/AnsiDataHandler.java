@@ -66,6 +66,8 @@ public class AnsiDataHandler implements DataHandler {
 
 	private static final String CACHE_TOPICS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS";
 	private static final String CACHE_TOPIC_VERSIONS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPIC_VERSIONS";
+	private static final String CACHE_USER_BY_USER_ID = "org.jamwiki.db.AnsiDataHandler.CACHE_USER_BY_USER_ID";
+	private static final String CACHE_USER_BY_USER_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_USER_BY_USER_NAME";
 	private static final String CACHE_VIRTUAL_WIKI = "org.jamwiki.db.AnsiDataHandler.CACHE_VIRTUAL_WIKI";
 	private static final WikiLogger logger = WikiLogger.getLogger(AnsiDataHandler.class.getName());
 
@@ -1156,6 +1158,10 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public WikiUser lookupWikiUser(int userId) throws DataAccessException {
+		Element cacheElement = WikiCache.retrieveFromCache(CACHE_USER_BY_USER_ID, userId);
+		if (cacheElement != null) {
+			return (WikiUser)cacheElement.getObjectValue();
+		}
 		WikiUser result = null;
 		TransactionStatus status = null;
 		try {
@@ -1171,6 +1177,7 @@ public class AnsiDataHandler implements DataHandler {
 			throw new DataAccessException(e);
 		}
 		DatabaseConnection.commit(status);
+		WikiCache.addToCache(CACHE_USER_BY_USER_ID, userId, result);
 		return result;
 	}
 
@@ -1178,6 +1185,10 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public WikiUser lookupWikiUser(String username) throws DataAccessException {
+		Element cacheElement = WikiCache.retrieveFromCache(CACHE_USER_BY_USER_NAME, username);
+		if (cacheElement != null) {
+			return (WikiUser)cacheElement.getObjectValue();
+		}
 		WikiUser result = null;
 		TransactionStatus status = null;
 		try {
@@ -1198,6 +1209,7 @@ public class AnsiDataHandler implements DataHandler {
 			throw new DataAccessException(e);
 		}
 		DatabaseConnection.commit(status);
+		WikiCache.addToCache(CACHE_USER_BY_USER_NAME, username, result);
 		return result;
 	}
 
@@ -1933,5 +1945,10 @@ public class AnsiDataHandler implements DataHandler {
 			throw e;
 		}
 		DatabaseConnection.commit(status);
+		// update the cache AFTER the commit
+		WikiCache.removeFromCache(CACHE_USER_BY_USER_ID, user.getUserId());
+		WikiCache.removeFromCache(CACHE_USER_BY_USER_NAME, user.getUsername());
+		WikiCache.addToCache(CACHE_USER_BY_USER_ID, user.getUserId(), user);
+		WikiCache.addToCache(CACHE_USER_BY_USER_NAME, user.getUsername(), user);
 	}
 }

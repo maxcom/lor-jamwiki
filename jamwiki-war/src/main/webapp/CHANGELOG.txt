@@ -21,7 +21,8 @@ New Features:
   * Remove ability to automatically upgrade from versions prior to 0.6.0.
   * For databases that support it use auto incrementing primary keys during
     inserts to improve performance.  Suggested by Daniel Fisla (dfisla).
-  * Implement caching for diffs and topic versions to speed up page rendering.
+  * Implement caching for diffs, user information and topic versions to speed
+    up page rendering.
   * Refactor exception handling to throw and catch exceptions at a more
     granular level.
   * Allow JAMWiki properties to be read from outside of the WAR file or from
