@@ -34,6 +34,7 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
 import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Category;
+import org.jamwiki.model.LogItem;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.RoleMap;
@@ -99,6 +100,19 @@ public class AnsiDataHandler implements DataHandler {
 	private void addGroupMember(String username, int groupId, Connection conn) throws DataAccessException {
 		try {
 			this.queryHandler().insertGroupMember(username, groupId, conn);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		}
+	}
+
+	/**
+	 *
+	 */
+	private void addLogItem(LogItem logItem, Connection conn) throws DataAccessException, WikiException {
+		int virtualWikiId = this.lookupVirtualWikiId(logItem.getVirtualWiki());
+		this.validateLogItem(logItem);
+		try {
+			this.queryHandler().insertLogItem(logItem, virtualWikiId, conn);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
@@ -247,6 +261,17 @@ public class AnsiDataHandler implements DataHandler {
 		}
 		DatabaseConnection.commit(status);
 		return result;
+	}
+
+	/**
+	 * Utility method for retrieving a user display name.
+	 */
+	private String authorName(Integer authorId, String authorName) throws DataAccessException {
+		if (authorId != null) {
+			WikiUser user = this.lookupWikiUser(authorId);
+			authorName = user.getUsername();
+		}
+		return authorName;
 	}
 
 	/**
@@ -1535,6 +1560,15 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	protected void validateLogItem(LogItem logItem) throws WikiException {
+		checkLength(logItem.getUserDisplayName(), 200);
+		checkLength(logItem.getLogParamString(), 500);
+		logItem.setLogComment(StringUtils.substring(logItem.getLogComment(), 0, 200));
+	}
+
+	/**
+	 *
+	 */
 	protected void validateRecentChange(RecentChange change) throws WikiException {
 		checkLength(change.getTopicName(), 200);
 		checkLength(change.getAuthorName(), 200);
@@ -1650,6 +1684,9 @@ public class AnsiDataHandler implements DataHandler {
 			wikiFileVersion.setFileId(wikiFile.getFileId());
 			// write version
 			addWikiFileVersion(wikiFileVersion, conn);
+			String authorName = this.authorName(wikiFileVersion.getAuthorId(), wikiFileVersion.getAuthorDisplay());
+			LogItem logItem = LogItem.initLogItem(wikiFile, wikiFileVersion, authorName);
+			this.addLogItem(logItem, conn);
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
@@ -1779,14 +1816,13 @@ public class AnsiDataHandler implements DataHandler {
 				// write version
 				addTopicVersion(topicVersion, conn);
 				topic.setCurrentVersionId(topicVersion.getTopicVersionId());
-				String authorName = topicVersion.getAuthorDisplay();
-				Integer authorId = topicVersion.getAuthorId();
-				if (authorId != null) {
-					WikiUser user = this.lookupWikiUser(topicVersion.getAuthorId());
-					authorName = user.getUsername();
-				}
-				RecentChange change = new RecentChange(topic, topicVersion, authorName);
+				String authorName = this.authorName(topicVersion.getAuthorId(), topicVersion.getAuthorDisplay());
+				RecentChange change = RecentChange.initRecentChange(topic, topicVersion, authorName);
 				this.addRecentChange(change, conn);
+				LogItem logItem = LogItem.initLogItem(topic, topicVersion, authorName);
+				if (logItem != null) {
+					this.addLogItem(logItem, conn);
+				}
 			}
 			if (categories != null) {
 				// add / remove categories associated with the topic
@@ -1927,6 +1963,12 @@ public class AnsiDataHandler implements DataHandler {
 				this.addWikiUser(user, conn);
 				// add all users to the registered user group
 				this.addGroupMember(user.getUsername(), WikiBase.getGroupRegisteredUser().getGroupId(), conn);
+				// FIXME - reconsider this approach of separate entries for every virtual wiki
+				List<VirtualWiki> virtualWikis = this.getVirtualWikiList();
+				for (VirtualWiki virtualWiki : virtualWikis) {
+					LogItem logItem = LogItem.initLogItem(user, virtualWiki.getName());
+					this.addLogItem(logItem, conn);
+				}
 			} else {
 				if (!StringUtils.isBlank(encryptedPassword)) {
 					WikiUserDetails userDetails = new WikiUserDetails(username, encryptedPassword, true, true, true, true, JAMWikiAuthenticationConfiguration.getDefaultGroupRoles());

@@ -118,7 +118,56 @@ followed by 0.6.3.
               create sequence jam_wuser_pk_seq owned by jam_wiki_user.wiki_user_id;
               alter table jam_wiki_user alter column wiki_user_id set default nextval('jam_wuser_pk_seq'); 
               select setval('jam_wuser_pk_seq', max(wiki_user_id)) from jam_wiki_user;
-       b) Add the wiki_user_display column to the jam_topic_version,
+       b) Create the jam_log table.
+            Asa:
+              CREATE TABLE jam_log ( 
+                log_date TIMESTAMP NOT NULL DEFAULT CURRENT TIMESTAMP, 
+                virtual_wiki_id INTEGER NOT NULL, 
+                wiki_user_id INTEGER NULL, 
+                display_name VARCHAR(200) NOT NULL, 
+                log_type INTEGER NOT NULL, 
+                log_comment VARCHAR(200) NULL, 
+                log_params VARCHAR(500) NULL, 
+                CONSTRAINT jam_f_log_wuser FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), 
+                CONSTRAINT jam_f_log_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id) 
+              )
+            MS SQL:
+              CREATE TABLE jam_log ( 
+                log_date DATETIME DEFAULT GETDATE() NOT NULL, 
+                virtual_wiki_id INTEGER NOT NULL, 
+                wiki_user_id INTEGER, 
+                display_name VARCHAR(200) NOT NULL, 
+                log_type INTEGER NOT NULL, 
+                log_comment VARCHAR(200), 
+                log_params VARCHAR(500), 
+                CONSTRAINT jam_f_log_wuser FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), 
+                CONSTRAINT jam_f_log_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id) 
+              )
+            Oracle:
+              CREATE TABLE jam_log ( 
+                log_date TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL, 
+                virtual_wiki_id INTEGER NOT NULL, 
+                wiki_user_id INTEGER, 
+                display_name VARCHAR(200) NOT NULL, 
+                log_type INTEGER NOT NULL, 
+                log_comment VARCHAR(200), 
+                log_params VARCHAR(500), 
+                CONSTRAINT jam_f_log_wuser FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), 
+                CONSTRAINT jam_f_log_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id) 
+              )
+            Other Databases:
+              CREATE TABLE jam_log ( 
+                log_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, 
+                virtual_wiki_id INTEGER NOT NULL, 
+                wiki_user_id INTEGER, 
+                display_name VARCHAR(200) NOT NULL, 
+                log_type INTEGER NOT NULL, 
+                log_comment VARCHAR(200), 
+                log_params VARCHAR(500), 
+                CONSTRAINT jam_f_log_wuser FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), 
+                CONSTRAINT jam_f_log_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id) 
+              )
+       c) Add the wiki_user_display column to the jam_topic_version,
           jam_recent_change and jam_file_version tables.
             Oracle:
               alter table jam_topic_version add (wiki_user_display VARCHAR(100));
@@ -129,17 +178,17 @@ followed by 0.6.3.
             Other Databases:
               alter table jam_topic_version add column wiki_user_display VARCHAR(100);
               alter table jam_file_version add column wiki_user_display VARCHAR(100);
-       c) Populate the new wiki_user_display columns in the jam_topic_version,
+       d) Populate the new wiki_user_display columns in the jam_topic_version,
           jam_recent_change and jam_file_version tables.
               update jam_topic_version set wiki_user_display = wiki_user_ip_address;
               update jam_file_version set wiki_user_display = wiki_user_ip_address;
-       d) Drop the unused wiki_user_ip_address column from the jam_topic_version,
+       e) Drop the unused wiki_user_ip_address column from the jam_topic_version,
           jam_recent_change and jam_file_version tables.
               alter table jam_topic_version drop column wiki_user_ip_address;
               alter table jam_file_version drop column wiki_user_ip_address;
-       e) Add the new ROLE_IMPORT:
+       f) Add the new ROLE_IMPORT:
               INSERT into jam_role (role_name) values ('ROLE_IMPORT');
-       f) Assign ROLE_IMPORT to all users with ROLE_ADMIN:
+       g) Assign ROLE_IMPORT to all users with ROLE_ADMIN:
               INSERT into jam_authorities (authority, username)
                    select 'ROLE_IMPORT', username
                    from jam_authorities where authority = 'ROLE_ADMIN';

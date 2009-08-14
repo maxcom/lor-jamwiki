@@ -298,6 +298,9 @@ public class DatabaseUpgrades {
 				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_WIKI_USER_ID", conn);
 				messages.add(new WikiMessage("upgrade.message.db.column.modified", "wiki_user_id", "jam_wiki_user"));
 			}
+			// add jam_log table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_LOG_TABLE", conn);
+			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_log"));
 			// add wiki_user_display column to jam_topic_version
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_TOPIC_VERSION_USER_DISPLAY", conn);
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_UPDATE_TOPIC_VERSION_USER_DISPLAY", conn);

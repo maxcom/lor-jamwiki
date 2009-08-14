@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Category;
+import org.jamwiki.model.LogItem;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
@@ -443,6 +444,17 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	void insertGroupMember(String username, int groupId, Connection conn) throws SQLException;
+
+	/**
+	 * Add a new log item record to the database.
+	 *
+	 * @param logItem The LogItem record that is to be added to the database.
+	 * @param virtualWikiId The virtual wiki id for the record that is being added.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	void insertLogItem(LogItem logItem, int virtualWikiId, Connection conn) throws SQLException;
 
 	/**
 	 * Add a new recent change record to the database.

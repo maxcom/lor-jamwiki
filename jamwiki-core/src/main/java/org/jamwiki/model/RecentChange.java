@@ -46,18 +46,20 @@ public class RecentChange {
 	/**
 	 *
 	 */
-	public RecentChange(Topic topic, TopicVersion topicVersion, String authorName) {
-		this.topicId = topic.getTopicId();
-		this.topicName = topic.getName();
-		this.topicVersionId = topicVersion.getTopicVersionId();
-		this.previousTopicVersionId = topicVersion.getPreviousTopicVersionId();
-		this.authorId = topicVersion.getAuthorId();
-		this.authorName = authorName;
-		this.charactersChanged = topicVersion.getCharactersChanged();
-		this.editComment = topicVersion.getEditComment();
-		this.editDate = topicVersion.getEditDate();
-		this.editType = topicVersion.getEditType();
-		this.virtualWiki = topic.getVirtualWiki();
+	public static RecentChange initRecentChange(Topic topic, TopicVersion topicVersion, String authorName) {
+		RecentChange recentChange = new RecentChange();
+		recentChange.setTopicId(topic.getTopicId());
+		recentChange.setTopicName(topic.getName());
+		recentChange.setTopicVersionId(topicVersion.getTopicVersionId());
+		recentChange.setPreviousTopicVersionId(topicVersion.getPreviousTopicVersionId());
+		recentChange.setAuthorId(topicVersion.getAuthorId());
+		recentChange.setAuthorName(authorName);
+		recentChange.setCharactersChanged(topicVersion.getCharactersChanged());
+		recentChange.setEditComment(topicVersion.getEditComment());
+		recentChange.setEditDate(topicVersion.getEditDate());
+		recentChange.setEditType(topicVersion.getEditType());
+		recentChange.setVirtualWiki(topic.getVirtualWiki());
+		return recentChange;
 	}
 
 	/**
