@@ -77,6 +77,26 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet getLogItems(int virtualWikiId, int logType, Pagination pagination, boolean descending) throws SQLException {
+		String sql = null;
+		WikiPreparedStatement stmt = null;
+		int index = 1;
+		if (logType == -1) {
+			sql = formatStatement(STATEMENT_SELECT_LOG_ITEMS, pagination);
+			stmt = new WikiPreparedStatement(sql);
+		} else {
+			sql = formatStatement(STATEMENT_SELECT_LOG_ITEMS_BY_TYPE, pagination);
+			stmt = new WikiPreparedStatement(sql);
+			stmt.setInt(index++, logType);
+		}
+		stmt.setInt(index++, virtualWikiId);
+		// FIXME - sort order ignored
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
 	public WikiResultSet getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws SQLException {
 		String sql = formatStatement(STATEMENT_SELECT_RECENT_CHANGES, pagination);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);

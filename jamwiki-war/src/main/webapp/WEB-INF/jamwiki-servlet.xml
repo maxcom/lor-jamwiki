@@ -28,6 +28,8 @@
 				<prop key="/**/Special:Listusers">Items</prop>
 				<prop key="/**/Special:Login">Login</prop>
 				<prop key="/**/Special:Logout">Login</prop>
+				<prop key="/**/Special:Log">Log</prop>
+				<prop key="/**/Special:Logs">Log</prop>
 				<prop key="/**/Special:Maintenance">Admin</prop>
 				<prop key="/**/Special:Manage">Manage</prop>
 				<prop key="/**/Special:Move">Move</prop>
@@ -63,6 +65,7 @@
 	<bean id="Items" class="org.jamwiki.servlets.ItemsServlet" />
 	<bean id="LinkTo" class="org.jamwiki.servlets.LinkToServlet" />
 	<bean id="Login" class="org.jamwiki.servlets.LoginServlet" />
+	<bean id="Log" class="org.jamwiki.servlets.LogServlet" />
 	<bean id="Manage" class="org.jamwiki.servlets.ManageServlet" />
 	<bean id="Move" class="org.jamwiki.servlets.MoveServlet" />
 	<bean id="Printable" class="org.jamwiki.servlets.PrintableServlet" />

@@ -223,6 +223,22 @@ public interface QueryHandler {
 	WikiResultSet getCategories(int virtualWikiId, Pagination pagination) throws SQLException;
 
 	/**
+	 * Retrieve a WikiResultSet containing all recent log items for a specific virtual wiki.
+	 *
+	 * @param virtualWikiId The id of the virtual wiki for which log items
+	 *  are being retrieved.
+	 * @param logType Set to <code>-1</code> if all log items should be returned,
+	 *  otherwise set the log type for items to retrieve.
+	 * @param pagination A Pagination object that specifies the number of results
+	 *  and starting result offset for the result set to be retrieved.
+	 * @param descending If <code>true</code> then results are sorted newest to
+	 *  oldest.
+	 * @return A WikiResultSet containing log items for a particular virtual wiki.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	public WikiResultSet getLogItems(int virtualWikiId, int logType, Pagination pagination, boolean descending) throws SQLException;
+
+	/**
 	 * Retrieve a WikiResultSet containing all recent changes made to the wiki for a
 	 * specific virtual wiki.
 	 *
@@ -747,6 +763,18 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	WikiResultSet lookupWikiUsers(Pagination pagination) throws SQLException;
+
+	/**
+	 * Refresh the log entries by rebuilding the data based on topic versions,
+	 * file uploads, and user information.
+	 *
+	 * @param virtualWikiId The virtual wiki id for which log items are being
+	 *  reloaded.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	void reloadLogItems(int virtualWikiId, Connection conn) throws SQLException;
 
 	/**
 	 * Refresh the recent changes content by reloading the recent changes table.

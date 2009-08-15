@@ -73,6 +73,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_CREATE_WIKI_USER_LOGIN_INDEX = null;
 	protected static String STATEMENT_DELETE_AUTHORITIES = null;
 	protected static String STATEMENT_DELETE_GROUP_AUTHORITIES = null;
+	protected static String STATEMENT_DELETE_LOG_ITEMS = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES_TOPIC = null;
 	protected static String STATEMENT_DELETE_TOPIC_CATEGORIES = null;
@@ -103,6 +104,12 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_INSERT_GROUP_MEMBER = null;
 	protected static String STATEMENT_INSERT_GROUP_MEMBER_AUTO_INCREMENT = null;
 	protected static String STATEMENT_INSERT_LOG_ITEM = null;
+	protected static String STATEMENT_INSERT_LOG_ITEMS_DELETE = null;
+	protected static String STATEMENT_INSERT_LOG_ITEMS_IMPORT = null;
+	protected static String STATEMENT_INSERT_LOG_ITEMS_MOVE = null;
+	protected static String STATEMENT_INSERT_LOG_ITEMS_PERMISSION = null;
+	protected static String STATEMENT_INSERT_LOG_ITEMS_UPLOAD = null;
+	protected static String STATEMENT_INSERT_LOG_ITEMS_USER = null;
 	protected static String STATEMENT_INSERT_RECENT_CHANGE = null;
 	protected static String STATEMENT_INSERT_RECENT_CHANGES = null;
 	protected static String STATEMENT_INSERT_ROLE = null;
@@ -130,6 +137,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_GROUPS_AUTHORITIES = null;
 	protected static String STATEMENT_SELECT_GROUP_MEMBERS_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_GROUP_SEQUENCE = null;
+	protected static String STATEMENT_SELECT_LOG_ITEMS = null;
+	protected static String STATEMENT_SELECT_LOG_ITEMS_BY_TYPE = null;
 	protected static String STATEMENT_SELECT_RECENT_CHANGES = null;
 	protected static String STATEMENT_SELECT_RECENT_CHANGES_TOPIC = null;
 	protected static String STATEMENT_SELECT_ROLES = null;
@@ -405,6 +414,25 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet getLogItems(int virtualWikiId, int logType, Pagination pagination, boolean descending) throws SQLException {
+		WikiPreparedStatement stmt = null;
+		int index = 1;
+		if (logType == -1) {
+			stmt = new WikiPreparedStatement(STATEMENT_SELECT_LOG_ITEMS);
+		} else {
+			stmt = new WikiPreparedStatement(STATEMENT_SELECT_LOG_ITEMS_BY_TYPE);
+			stmt.setInt(index++, logType);
+		}
+		stmt.setInt(index++, virtualWikiId);
+		stmt.setInt(index++, pagination.getNumResults());
+		stmt.setInt(index++, pagination.getOffset());
+		// FIXME - sort order ignored
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
 	public WikiResultSet getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws SQLException {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES);
 		stmt.setString(1, virtualWiki);
@@ -573,6 +601,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_CREATE_WATCHLIST_TABLE         = props.getProperty("STATEMENT_CREATE_WATCHLIST_TABLE");
 		STATEMENT_DELETE_AUTHORITIES             = props.getProperty("STATEMENT_DELETE_AUTHORITIES");
 		STATEMENT_DELETE_GROUP_AUTHORITIES       = props.getProperty("STATEMENT_DELETE_GROUP_AUTHORITIES");
+		STATEMENT_DELETE_LOG_ITEMS               = props.getProperty("STATEMENT_DELETE_LOG_ITEMS");
 		STATEMENT_DELETE_RECENT_CHANGES          = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES");
 		STATEMENT_DELETE_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES_TOPIC");
 		STATEMENT_DELETE_TOPIC_CATEGORIES        = props.getProperty("STATEMENT_DELETE_TOPIC_CATEGORIES");
@@ -603,6 +632,12 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_INSERT_GROUP_MEMBER            = props.getProperty("STATEMENT_INSERT_GROUP_MEMBER");
 		STATEMENT_INSERT_GROUP_MEMBER_AUTO_INCREMENT = props.getProperty("STATEMENT_INSERT_GROUP_MEMBER_AUTO_INCREMENT");
 		STATEMENT_INSERT_LOG_ITEM                = props.getProperty("STATEMENT_INSERT_LOG_ITEM");
+		STATEMENT_INSERT_LOG_ITEMS_DELETE        = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_DELETE");
+		STATEMENT_INSERT_LOG_ITEMS_IMPORT        = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_IMPORT");
+		STATEMENT_INSERT_LOG_ITEMS_MOVE          = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_MOVE");
+		STATEMENT_INSERT_LOG_ITEMS_PERMISSION    = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_PERMISSION");
+		STATEMENT_INSERT_LOG_ITEMS_UPLOAD        = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_UPLOAD");
+		STATEMENT_INSERT_LOG_ITEMS_USER          = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_USER");
 		STATEMENT_INSERT_RECENT_CHANGE           = props.getProperty("STATEMENT_INSERT_RECENT_CHANGE");
 		STATEMENT_INSERT_RECENT_CHANGES          = props.getProperty("STATEMENT_INSERT_RECENT_CHANGES");
 		STATEMENT_INSERT_ROLE                    = props.getProperty("STATEMENT_INSERT_ROLE");
@@ -630,6 +665,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_GROUPS_AUTHORITIES      = props.getProperty("STATEMENT_SELECT_GROUPS_AUTHORITIES");
 		STATEMENT_SELECT_GROUP_MEMBERS_SEQUENCE  = props.getProperty("STATEMENT_SELECT_GROUP_MEMBERS_SEQUENCE");
 		STATEMENT_SELECT_GROUP_SEQUENCE          = props.getProperty("STATEMENT_SELECT_GROUP_SEQUENCE");
+		STATEMENT_SELECT_LOG_ITEMS               = props.getProperty("STATEMENT_SELECT_LOG_ITEMS");
+		STATEMENT_SELECT_LOG_ITEMS_BY_TYPE       = props.getProperty("STATEMENT_SELECT_LOG_ITEMS_BY_TYPE");
 		STATEMENT_SELECT_RECENT_CHANGES          = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES");
 		STATEMENT_SELECT_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES_TOPIC");
 		STATEMENT_SELECT_ROLES                   = props.getProperty("STATEMENT_SELECT_ROLES");
@@ -1383,6 +1420,34 @@ public class AnsiQueryHandler implements QueryHandler {
 		}
 		// note - this returns the last id in the system, so add one
 		return nextId + 1;
+	}
+
+	/**
+	 *
+	 */
+	public void reloadLogItems(int virtualWikiId, Connection conn) throws SQLException {
+		WikiPreparedStatement stmt = null;
+		stmt = new WikiPreparedStatement(STATEMENT_DELETE_LOG_ITEMS);
+		stmt.setInt(1, virtualWikiId);
+		stmt.executeUpdate(conn);
+		stmt = new WikiPreparedStatement(STATEMENT_INSERT_LOG_ITEMS_DELETE);
+		stmt.setInt(1, virtualWikiId);
+		stmt.executeUpdate(conn);
+		stmt = new WikiPreparedStatement(STATEMENT_INSERT_LOG_ITEMS_IMPORT);
+		stmt.setInt(1, virtualWikiId);
+		stmt.executeUpdate(conn);
+		stmt = new WikiPreparedStatement(STATEMENT_INSERT_LOG_ITEMS_MOVE);
+		stmt.setInt(1, virtualWikiId);
+		stmt.executeUpdate(conn);
+		stmt = new WikiPreparedStatement(STATEMENT_INSERT_LOG_ITEMS_PERMISSION);
+		stmt.setInt(1, virtualWikiId);
+		stmt.executeUpdate(conn);
+		stmt = new WikiPreparedStatement(STATEMENT_INSERT_LOG_ITEMS_UPLOAD);
+		stmt.setInt(1, virtualWikiId);
+		stmt.executeUpdate(conn);
+		stmt = new WikiPreparedStatement(STATEMENT_INSERT_LOG_ITEMS_USER);
+		stmt.setInt(1, virtualWikiId);
+		stmt.executeUpdate(conn);
 	}
 
 	/**

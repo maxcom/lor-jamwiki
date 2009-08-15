@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import org.jamwiki.model.Category;
+import org.jamwiki.model.LogItem;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.RoleMap;
@@ -176,6 +177,25 @@ public interface DataHandler {
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
 	List<WikiFileVersion> getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws DataAccessException;
+
+	/**
+	 * Retrieve a List of all LogItem objects for a given virtual wiki, sorted
+	 * chronologically.
+	 *
+	 * @param virtualWiki The virtual wiki for which log items are being
+	 *  retrieved.
+	 * @param logType Set to <code>-1</code> if all log items should be returned,
+	 *  otherwise set the log type for items to retrieve.
+	 * @param pagination A Pagination object indicating the total number of
+	 *  results and offset for the results to be retrieved.
+	 * @param descending Set to <code>true</code> if the results should be
+	 *  sorted with the most recent log items first, <code>false</code> if the
+	 *  results should be sorted with the oldest items first.
+	 * @return A List of LogItem objects for a given virtual wiki, sorted
+	 *  chronologically.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	public List<LogItem> getLogItems(String virtualWiki, int logType, Pagination pagination, boolean descending) throws DataAccessException;
 
 	/**
 	 * Retrieve a List of all RecentChange objects for a given virtual
@@ -517,6 +537,14 @@ public interface DataHandler {
 	 * @throws WikiException Thrown if the topic information is invalid.
 	 */
 	void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination) throws DataAccessException, WikiException;
+
+	/**
+	 * Delete all existing log entries and reload the log item table based
+	 * on the most recent topic versions, uploads, and user signups.
+	 *
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	void reloadLogItems() throws DataAccessException;
 
 	/**
 	 * Delete all existing recent changes and reload the recent changes based

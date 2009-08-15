@@ -264,6 +264,12 @@
 		<name>Special:Logout</name>
 	</pseudotopic>
 	<pseudotopic>
+		<name>Special:Log</name>
+	</pseudotopic>
+	<pseudotopic>
+		<name>Special:Logs</name>
+	</pseudotopic>
+	<pseudotopic>
 		<name>Special:Maintenance</name>
 	</pseudotopic>
 	<pseudotopic>

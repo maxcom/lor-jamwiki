@@ -81,6 +81,8 @@ public class AdminServlet extends JAMWikiServlet {
 			properties(request, next, pageInfo);
 		} else if (function.equals("virtualwiki")) {
 			virtualWiki(request, next, pageInfo);
+		} else if (function.equals("logitems")) {
+			logItems(request, next, pageInfo);
 		} else if (function.equals("recentchanges")) {
 			recentChanges(request, next, pageInfo);
 		} else if (function.equals("spam")) {
@@ -120,6 +122,20 @@ public class AdminServlet extends JAMWikiServlet {
 		} catch (Exception e) {
 			logger.severe("Failure while exporting database data to CSV file", e);
 			next.addObject("message", new WikiMessage("admin.message.exportcsvfail", e.getMessage()));
+		}
+		viewAdminSystem(request, next, pageInfo);
+	}
+
+	/**
+	 *
+	 */
+	private void logItems(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		try {
+			WikiBase.getDataHandler().reloadLogItems();
+			next.addObject("message", new WikiMessage("admin.message.logitems"));
+		} catch (Exception e) {
+			logger.severe("Failure while loading log items", e);
+			next.addObject("message", new WikiMessage("admin.message.logitemsfail", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo);
 	}

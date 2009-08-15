@@ -17,9 +17,11 @@
 package org.jamwiki.model;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -29,19 +31,21 @@ public class LogItem {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(LogItem.class.getName());
 	public static final int LOG_TYPE_ALL = -1;
-	public static final int LOG_TYPE_DELETION = 1;
+	public static final int LOG_TYPE_DELETE = 1;
 	public static final int LOG_TYPE_IMPORT = 2;
 	public static final int LOG_TYPE_MOVE = 3;
-	public static final int LOG_TYPE_UPLOAD = 4;
-	public static final int LOG_TYPE_USER_CREATION = 5;
+	public static final int LOG_TYPE_PERMISSION = 4;
+	public static final int LOG_TYPE_UPLOAD = 6;
+	public static final int LOG_TYPE_USER_CREATION = 7;
 	public static Map<Integer, String> LOG_TYPES = new LinkedHashMap<Integer, String>();
 	static {
-		LOG_TYPES.put(LOG_TYPE_ALL, "logs.caption.logs.all");
-		LOG_TYPES.put(LOG_TYPE_DELETION, "logs.caption.logs.deletion");
-		LOG_TYPES.put(LOG_TYPE_IMPORT, "logs.caption.logs.import");
-		LOG_TYPES.put(LOG_TYPE_MOVE, "logs.caption.logs.move");
-		LOG_TYPES.put(LOG_TYPE_UPLOAD, "logs.caption.logs.upload");
-		LOG_TYPES.put(LOG_TYPE_USER_CREATION, "logs.caption.logs.user");
+		LOG_TYPES.put(LOG_TYPE_ALL, "log.caption.log.all");
+		LOG_TYPES.put(LOG_TYPE_DELETE, "log.caption.log.deletion");
+		LOG_TYPES.put(LOG_TYPE_IMPORT, "log.caption.log.import");
+		LOG_TYPES.put(LOG_TYPE_MOVE, "log.caption.log.move");
+		LOG_TYPES.put(LOG_TYPE_PERMISSION, "log.caption.log.permission");
+		LOG_TYPES.put(LOG_TYPE_UPLOAD, "log.caption.log.upload");
+		LOG_TYPES.put(LOG_TYPE_USER_CREATION, "log.caption.log.user");
 	}
 
 	private String logComment = null;
@@ -65,20 +69,40 @@ public class LogItem {
 	public static LogItem initLogItem(Topic topic, TopicVersion topicVersion, String authorName) {
 		LogItem logItem = new LogItem();
 		switch (topicVersion.getEditType()) {
-			case TopicVersion.EDIT_MOVE:
-				logItem.setLogType(LOG_TYPE_MOVE);
-				break;
 			case TopicVersion.EDIT_DELETE:
 			case TopicVersion.EDIT_UNDELETE:
-				logItem.setLogType(LOG_TYPE_DELETION);
+				logItem.setLogType(LOG_TYPE_DELETE);
+				// format for delete log is "Topic {0} deleted"
+				logItem.addLogParam(topic.getName());
+				break;
+			case TopicVersion.EDIT_MOVE:
+				if (StringUtils.isBlank(topic.getRedirectTo())) {
+					// moves create two versions, one for the old topic name and one for the new
+					// topic name.  only the first needs a log item.
+					return null;
+				}
+				logItem.setLogType(LOG_TYPE_MOVE);
+				// format for move log is "Topic {0} renamed to {1}"
+				logItem.addLogParam(topic.getName());
+				logItem.addLogParam(topic.getRedirectTo());
 				break;
 			case TopicVersion.EDIT_PERMISSION:
-				// FIXME - implement
+				logItem.setLogType(LOG_TYPE_PERMISSION);
+				// format for permission log is "Permissions updated for topic {0}"
+				logItem.addLogParam(topic.getName());
 				break;
 			case TopicVersion.EDIT_IMPORT:
 				logItem.setLogType(LOG_TYPE_IMPORT);
+				// format for import log is "Topic {0} imported"
+				logItem.addLogParam(topic.getName());
 				break;
 			default:
+				if (topic.getTopicType() == Topic.TYPE_FILE || topic.getTopicType() == Topic.TYPE_IMAGE) {
+					logItem.setLogType(LOG_TYPE_UPLOAD);
+					// format user log is "File {0} uploaded"
+					logItem.addLogParam(topic.getName());
+					break;
+				}
 				// not valid for logging
 				return null;
 		}
@@ -87,20 +111,6 @@ public class LogItem {
 		logItem.setUserDisplayName(authorName);
 		logItem.setUserId(topicVersion.getAuthorId());
 		logItem.setVirtualWiki(topic.getVirtualWiki());
-		return logItem;
-	}
-
-	/**
-	 * Create a log item from a file, file version and author name.
-	 */
-	public static LogItem initLogItem(WikiFile wikiFile, WikiFileVersion wikiFileVersion, String authorName) {
-		LogItem logItem = new LogItem();
-		logItem.setLogType(LOG_TYPE_UPLOAD);
-		logItem.setLogComment(wikiFileVersion.getUploadComment());
-		logItem.setLogDate(wikiFileVersion.getUploadDate());
-		logItem.setUserDisplayName(authorName);
-		logItem.setUserId(wikiFileVersion.getAuthorId());
-		logItem.setVirtualWiki(wikiFile.getVirtualWiki());
 		return logItem;
 	}
 
@@ -114,6 +124,7 @@ public class LogItem {
 		logItem.setUserDisplayName(wikiUser.getUsername());
 		logItem.setUserId(wikiUser.getUserId());
 		logItem.setVirtualWiki(virtualWiki);
+		// format user log is "New user account created" (no params needed)
 		return logItem;
 	}
 
@@ -143,6 +154,16 @@ public class LogItem {
 	 */
 	public void setLogDate(Timestamp logDate) {
 		this.logDate = logDate;
+	}
+
+	/**
+	 * Utility method for adding a log param.
+	 */
+	private void addLogParam(String param) {
+		if (this.logParams == null) {
+			this.logParams = new ArrayList<String>();
+		}
+		this.logParams.add(param);
 	}
 
 	/**
@@ -230,5 +251,47 @@ public class LogItem {
 	 */
 	public void setVirtualWiki(String virtualWiki) {
 		this.virtualWiki = virtualWiki;
+	}
+
+	/**
+	 *
+	 */
+	public boolean isDelete() {
+		return this.logType == LOG_TYPE_DELETE;
+	}
+
+	/**
+	 *
+	 */
+	public boolean isImport() {
+		return this.logType == LOG_TYPE_IMPORT;
+	}
+
+	/**
+	 *
+	 */
+	public boolean isMove() {
+		return this.logType == LOG_TYPE_MOVE;
+	}
+
+	/**
+	 *
+	 */
+	public boolean isPermission() {
+		return this.logType == LOG_TYPE_PERMISSION;
+	}
+
+	/**
+	 *
+	 */
+	public boolean isUpload() {
+		return this.logType == LOG_TYPE_UPLOAD;
+	}
+
+	/**
+	 *
+	 */
+	public boolean isUser() {
+		return this.logType == LOG_TYPE_USER_CREATION;
 	}
 }

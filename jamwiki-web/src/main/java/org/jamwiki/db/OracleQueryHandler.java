@@ -56,6 +56,25 @@ public class OracleQueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet getLogItems(int virtualWikiId, int logType, Pagination pagination, boolean descending) throws SQLException {
+		WikiPreparedStatement stmt = null;
+		int index = 1;
+		if (logType == -1) {
+			stmt = new WikiPreparedStatement(STATEMENT_SELECT_LOG_ITEMS);
+		} else {
+			stmt = new WikiPreparedStatement(STATEMENT_SELECT_LOG_ITEMS_BY_TYPE);
+			stmt.setInt(index++, logType);
+		}
+		stmt.setInt(index++, virtualWikiId);
+		stmt.setInt(index++, pagination.getEnd());
+		stmt.setInt(index++, pagination.getStart());
+		// FIXME - sort order ignored
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
 	public WikiResultSet getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws SQLException {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES);
 		stmt.setString(1, virtualWiki);

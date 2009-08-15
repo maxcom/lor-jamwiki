@@ -24,7 +24,7 @@
 <%@ include file="page-init.jsp" %>
 
 <div class="submenu">
-<a href="#virtualwiki"><fmt:message key="admin.title.virtualwiki" /></a> | <a href="#search"><fmt:message key="admin.title.refresh" /></a> | <a href="#recentchanges"><fmt:message key="admin.title.recentchanges" /></a> | <a href="#cache"><fmt:message key="admin.title.cache" /></a><br />
+<a href="#virtualwiki"><fmt:message key="admin.title.virtualwiki" /></a> | <a href="#search"><fmt:message key="admin.title.refresh" /></a> | <a href="#recentchanges"><fmt:message key="admin.title.recentchanges" /></a> | <a href="#logitems"><fmt:message key="admin.title.logitems" /></a> | <a href="#cache"><fmt:message key="admin.title.cache" /></a><br />
 <jamwiki:enabled property="PROP_TOPIC_SPAM_FILTER"><a href="#spam"><fmt:message key="admin.title.spamfilter" /></a> | </jamwiki:enabled><a href="#password"><fmt:message key="admin.title.password" /></a> | <c:if test="${allowExport}"><a href="#export"><fmt:message key="admin.title.exportcsv" /></a> | </c:if><a href="#migrate"><fmt:message key="admin.title.migratedatabase" /></a>
 </div>
 
@@ -112,6 +112,28 @@
 	<div class="formhelp"><fmt:message key="admin.help.reloadrecentchanges" /></div>
 </div>
 <input type="hidden" name="function" value="recentchanges" />
+</form>
+</fieldset>
+
+<!-- Log Items -->
+<a name="logitems"></a>
+
+<c:if test="${!empty message && function == 'logitems'}">
+<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+</c:if>
+<c:if test="${!empty errors && function == 'logitems'}">
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+</c:if>
+
+<fieldset>
+<legend><fmt:message key="admin.title.logitems" /></legend>
+<form action="<jamwiki:link value="Special:Maintenance" />#logitems" method="post">
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="logitems" />">
+	<span class="formcaption"><fmt:message key="admin.caption.logitems" /></span>
+	<span class="formelement"><input type="submit" value="<fmt:message key="admin.caption.reset" />" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.reloadlogitems" /></div>
+</div>
+<input type="hidden" name="function" value="logitems" />
 </form>
 </fieldset>
 

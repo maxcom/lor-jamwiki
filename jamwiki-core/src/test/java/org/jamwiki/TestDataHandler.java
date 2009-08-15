@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.model.Category;
+import org.jamwiki.model.LogItem;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.RoleMap;
@@ -108,6 +109,13 @@ public class TestDataHandler implements DataHandler {
 	 *
 	 */
 	public List<WikiFileVersion> getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws DataAccessException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
+	public List<LogItem> getLogItems(String virtualWiki, int logType, Pagination pagination, boolean descending) throws DataAccessException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -333,6 +341,13 @@ public class TestDataHandler implements DataHandler {
 	 *
 	 */
 	public void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination) throws DataAccessException, WikiException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
+	public void reloadLogItems() throws DataAccessException {
 		throw new UnsupportedOperationException();
 	}
 

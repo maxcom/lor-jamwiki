@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -456,6 +457,25 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public List<LogItem> getLogItems(String virtualWiki, int logType, Pagination pagination, boolean descending) throws DataAccessException {
+		List<LogItem> all = new ArrayList<LogItem>();
+		WikiResultSet rs = null;
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		try {
+			rs = this.queryHandler().getLogItems(virtualWikiId, logType, pagination, descending);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		}
+		while (rs.next()) {
+			LogItem logItem = initLogItem(rs);
+			all.add(logItem);
+		}
+		return all;
+	}
+
+	/**
+	 *
+	 */
 	public List<RecentChange> getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws DataAccessException {
 		List<RecentChange> all = new ArrayList<RecentChange>();
 		WikiResultSet rs = null;
@@ -715,6 +735,34 @@ public class AnsiDataHandler implements DataHandler {
 			all.add(change);
 		}
 		return all;
+	}
+
+	/**
+	 *
+	 */
+	private LogItem initLogItem(WikiResultSet rs) throws DataAccessException {
+		try {
+			LogItem logItem = new LogItem();
+			int userId = rs.getInt("wiki_user_id");
+			if (userId > 0) {
+				logItem.setUserId(userId);
+			}
+			logItem.setUserDisplayName(rs.getString("display_name"));
+			logItem.setLogDate(rs.getTimestamp("log_date"));
+			logItem.setLogComment(rs.getString("log_comment"));
+			String logParamsString = rs.getString("log_params");
+			if (!StringUtils.isBlank(logParamsString)) {
+				List<String> logParams = Arrays.asList(logParamsString.split("\\|"));
+				logItem.setLogParams(logParams);
+			}
+			logItem.setLogType(rs.getInt("log_type"));
+			String virtualWiki = this.lookupVirtualWikiName(rs.getInt("virtual_wiki_id"));
+			logItem.setVirtualWiki(virtualWiki);
+			return logItem;
+		} catch (SQLException e) {
+			logger.severe("Failure while initializing log item", e);
+			throw new DataAccessException(e);
+		}
 	}
 
 	/**
@@ -1350,6 +1398,25 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public void reloadLogItems() throws DataAccessException {
+		TransactionStatus status = null;
+		try {
+			status = DatabaseConnection.startTransaction();
+			Connection conn = DatabaseConnection.getConnection();
+			List<VirtualWiki> virtualWikis = this.getVirtualWikiList();
+			for (VirtualWiki virtualWiki : virtualWikis) {
+				this.queryHandler().reloadLogItems(virtualWiki.getVirtualWikiId(), conn);
+			}
+		} catch (SQLException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			throw new DataAccessException(e);
+		}
+		DatabaseConnection.commit(status);
+	}
+
+	/**
+	 *
+	 */
 	public void reloadRecentChanges() throws DataAccessException {
 		TransactionStatus status = null;
 		try {
@@ -1684,9 +1751,6 @@ public class AnsiDataHandler implements DataHandler {
 			wikiFileVersion.setFileId(wikiFile.getFileId());
 			// write version
 			addWikiFileVersion(wikiFileVersion, conn);
-			String authorName = this.authorName(wikiFileVersion.getAuthorId(), wikiFileVersion.getAuthorDisplay());
-			LogItem logItem = LogItem.initLogItem(wikiFile, wikiFileVersion, authorName);
-			this.addLogItem(logItem, conn);
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
