@@ -70,6 +70,7 @@
 		<c:when test="${logItem.delete}"><fmt:message key="log.message.deletion"><fmt:param><jamwiki:link value="${logItem.logParams[0]}" text="${logItem.logParams[0]}" /></fmt:param></fmt:message></c:when> 
 		<c:when test="${logItem.import}"><fmt:message key="log.message.import"><fmt:param><jamwiki:link value="${logItem.logParams[0]}" text="${logItem.logParams[0]}" /></fmt:param></fmt:message></c:when> 
 		<c:when test="${logItem.move}"><fmt:message key="log.message.move"><fmt:param><jamwiki:link value="${logItem.logParams[0]}" text="${logItem.logParams[0]}" /></fmt:param><fmt:param><jamwiki:link value="${logItem.logParams[1]}" text="${logItem.logParams[1]}" /></fmt:param></fmt:message></c:when>
+		<c:when test="${logItem.permission}"><fmt:message key="log.message.permission"><fmt:param><jamwiki:link value="${logItem.logParams[0]}" text="${logItem.logParams[0]}" /></fmt:param></fmt:message></c:when> 
 		<c:when test="${logItem.upload}"><fmt:message key="log.message.upload"><fmt:param><jamwiki:link value="${logItem.logParams[0]}" text="${logItem.logParams[0]}" /></fmt:param></fmt:message></c:when> 
 		<c:when test="${logItem.user}"><fmt:message key="log.message.user" /></c:when> 
 	</c:choose>

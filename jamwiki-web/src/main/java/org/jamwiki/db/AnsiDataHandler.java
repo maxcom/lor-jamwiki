@@ -779,10 +779,7 @@ public class AnsiDataHandler implements DataHandler {
 				change.setTopicId(topicId);
 			}
 			change.setTopicName(rs.getString(DATA_TOPIC_NAME));
-			int charactersChanged = rs.getInt("characters_changed");
-			if (charactersChanged > 0) {
-				change.setCharactersChanged(charactersChanged);
-			}
+			change.setCharactersChanged(rs.getInt("characters_changed"));
 			change.setChangeDate(rs.getTimestamp("change_date"));
 			change.setChangeComment(rs.getString("change_comment"));
 			int userId = rs.getInt(DATA_WIKI_USER_ID);

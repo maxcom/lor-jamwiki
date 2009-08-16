@@ -35,11 +35,11 @@
 <form name="num-changes" method="get" action="<jamwiki:link value="Special:Watchlist" />">
 
 <%-- FIXME: do not hardcode date pattern --%>
-<c:set var="previousDate"><fmt:formatDate value="${changes[0].editDate}" type="both" pattern="dd MMMM yyyy" /></c:set>
+<c:set var="previousDate"><fmt:formatDate value="${changes[0].changeDate}" type="both" pattern="dd MMMM yyyy" /></c:set>
 <h4><c:out value="${previousDate}" /></h4>
 <ul>
 <c:forEach items="${changes}" var="change">
-<c:set var="currentDate"><fmt:formatDate value="${change.editDate}" type="both" pattern="dd MMMM yyyy" /></c:set>
+<c:set var="currentDate"><fmt:formatDate value="${change.changeDate}" type="both" pattern="dd MMMM yyyy" /></c:set>
 <c:if test="${currentDate != previousDate}">
 </ul>
 <h4><c:out value="${currentDate}" /></h4>
@@ -50,7 +50,7 @@
 	&#160;
 	(<jamwiki:link value="Special:History"><jamwiki:linkParam key="topic" value="${change.topicName}" /><fmt:message key="common.caption.history" /></jamwiki:link>)
 	&#160;
-	<fmt:formatDate value="${change.editDate}" type="both" pattern="HH:mm" />
+	<fmt:formatDate value="${change.changeDate}" type="both" pattern="HH:mm" />
 	&#160;
 	<c:if test="${!change.delete}"><jamwiki:link value="${change.topicName}" text="${change.topicName}" /></c:if>
 	<c:if test="${change.delete}"><c:out value="${change.topicName}" /></c:if>
@@ -61,7 +61,7 @@
 	<jamwiki:link value="User:${change.authorName}" text="${change.authorName}" />
 	(<jamwiki:link value="User comments:${change.authorName}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${change.authorName}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
 	<c:if test="${!empty change.changeTypeNotification}">&#160;<b><c:out value="${change.changeTypeNotification}" /></b></c:if>
-	<c:if test="${!empty change.editComment}">&#160;(<span class="edit-comment"><jamwiki:editComment comment="${change.editComment}" topic="${change.topicName}" /></span>)</c:if>
+	<c:if test="${!empty change.changeComment}">&#160;(<span class="edit-comment"><jamwiki:editComment comment="${change.changeComment}" topic="${change.topicName}" /></span>)</c:if>
 </li>
 <c:set var="previousDate" value="${currentDate}" />
 </c:forEach>

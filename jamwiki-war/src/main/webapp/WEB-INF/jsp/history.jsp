@@ -55,7 +55,7 @@
 	</c:if>
 	&#160;
 	<%-- FIXME: do not hardcode date pattern --%>
-	<jamwiki:link value="Special:History"><jamwiki:linkParam key="topicVersionId" value="${change.topicVersionId}" /><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><fmt:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></jamwiki:link>
+	<jamwiki:link value="Special:History"><jamwiki:linkParam key="topicVersionId" value="${change.topicVersionId}" /><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><fmt:formatDate value="${change.changeDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></jamwiki:link>
 	&#160;.&#160;.&#160;
 	<%-- the "+" symbol could be added using a pattern attribute, but there does not seem to be a way to avoid having "+0" show up when that approach is used. --%>
 	(<c:if test="${change.charactersChanged > 0}">+</c:if><fmt:formatNumber value="${change.charactersChanged}" />)
@@ -63,8 +63,8 @@
 	<jamwiki:link value="User:${change.authorName}" text="${change.authorName}" />
 	(<jamwiki:link value="User comments:${change.authorName}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${change.authorName}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
 	<c:if test="${!empty change.changeTypeNotification}">&#160;<b><c:out value="${change.changeTypeNotification}" /></b></c:if>
-	<c:if test="${!empty change.editComment}">
-	<label for="<c:out value="diff:${change.topicVersionId}" />">&#160;(<span class="edit-comment"><jamwiki:editComment comment="${change.editComment}" topic="${change.topicName}" /></span>)</label>
+	<c:if test="${!empty change.changeComment}">
+	<label for="<c:out value="diff:${change.topicVersionId}" />">&#160;(<span class="edit-comment"><jamwiki:editComment comment="${change.changeComment}" topic="${change.topicName}" /></span>)</label>
 	</c:if>
 </li>
 </c:forEach>
