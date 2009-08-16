@@ -788,26 +788,48 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public void insertRecentChange(RecentChange change, int virtualWikiId, Connection conn) throws SQLException {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_RECENT_CHANGE);
-		stmt.setInt(1, change.getTopicVersionId());
+		if (change.getTopicVersionId() == null) {
+			stmt.setInt(1, Types.INTEGER);
+		} else {
+			stmt.setInt(1, change.getTopicVersionId());
+		}
 		if (change.getPreviousTopicVersionId() == null) {
 			stmt.setNull(2, Types.INTEGER);
 		} else {
 			stmt.setInt(2, change.getPreviousTopicVersionId());
 		}
-		stmt.setInt(3, change.getTopicId());
+		if (change.getTopicId() == null) {
+			stmt.setInt(3, Types.INTEGER);
+		} else {
+			stmt.setInt(3, change.getTopicId());
+		}
 		stmt.setString(4, change.getTopicName());
-		stmt.setTimestamp(5, change.getEditDate());
-		stmt.setString(6, change.getEditComment());
+		stmt.setTimestamp(5, change.getChangeDate());
+		stmt.setString(6, change.getChangeComment());
 		if (change.getAuthorId() == null) {
 			stmt.setNull(7, Types.INTEGER);
 		} else {
 			stmt.setInt(7, change.getAuthorId());
 		}
 		stmt.setString(8, change.getAuthorName());
-		stmt.setInt(9, change.getEditType());
+		if (change.getEditType() == null) {
+			stmt.setNull(9, Types.INTEGER);
+		} else {
+			stmt.setInt(9, change.getEditType());
+		}
 		stmt.setInt(10, virtualWikiId);
 		stmt.setString(11, change.getVirtualWiki());
-		stmt.setInt(12, change.getCharactersChanged());
+		if (change.getCharactersChanged() == null) {
+			stmt.setNull(12, Types.INTEGER);
+		} else {
+			stmt.setInt(12, change.getCharactersChanged());
+		}
+		if (change.getLogType() == null) {
+			stmt.setNull(13, Types.INTEGER);
+		} else {
+			stmt.setInt(13, change.getLogType());
+		}
+		stmt.setString(14, change.getLogParamString());
 		stmt.executeUpdate(conn);
 	}
 

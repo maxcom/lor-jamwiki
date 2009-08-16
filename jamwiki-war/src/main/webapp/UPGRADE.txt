@@ -192,6 +192,53 @@ followed by 0.6.3.
               INSERT into jam_authorities (authority, username)
                    select 'ROLE_IMPORT', username
                    from jam_authorities where authority = 'ROLE_ADMIN';
+       h) Drop the jam_recent_change table:
+              DROP TABLE jam_recent_change
+       i) Re-add the jam_recent_change table with the new schema:
+            Asa:
+              CREATE TABLE jam_recent_change ( 
+                topic_version_id INTEGER NULL, 
+                previous_topic_version_id INTEGER NULL, 
+                topic_id INTEGER NULL, 
+                topic_name VARCHAR(200) NULL, 
+                change_date TIMESTAMP NOT NULL DEFAULT CURRENT TIMESTAMP, 
+                change_comment VARCHAR(200) NULL, 
+                wiki_user_id INTEGER NULL, 
+                display_name VARCHAR(200) NOT NULL, 
+                edit_type INTEGER NULL, 
+                log_type INTEGER NULL, 
+                log_params VARCHAR(500) NULL, 
+                virtual_wiki_id INTEGER NOT NULL, 
+                virtual_wiki_name VARCHAR(100) NOT NULL, 
+                characters_changed INTEGER NULL, 
+                CONSTRAINT jam_f_rc_topic_ver FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version(topic_version_id), 
+                CONSTRAINT jam_f_rc_p_topic_v FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id), 
+                CONSTRAINT jam_f_rc_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id), 
+                CONSTRAINT jam_f_rc_wuser FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), 
+                CONSTRAINT jam_f_rc_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id) 
+              )
+            Other Databases:
+              CREATE TABLE jam_recent_change ( 
+                topic_version_id INTEGER, 
+                previous_topic_version_id INTEGER, 
+                topic_id INTEGER, 
+                topic_name VARCHAR(200), 
+                change_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, 
+                change_comment VARCHAR(200), 
+                wiki_user_id INTEGER, 
+                display_name VARCHAR(200) NOT NULL, 
+                edit_type INTEGER, 
+                log_type INTEGER, 
+                log_params VARCHAR(500), 
+                virtual_wiki_id INTEGER NOT NULL, 
+                virtual_wiki_name VARCHAR(100) NOT NULL, 
+                characters_changed INTEGER, 
+                CONSTRAINT jam_f_rc_topic_ver FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version(topic_version_id), 
+                CONSTRAINT jam_f_rc_p_topic_v FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id), 
+                CONSTRAINT jam_f_rc_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id), 
+                CONSTRAINT jam_f_rc_wuser FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), 
+                CONSTRAINT jam_f_rc_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id) 
+              )
 
 
   JAMWiki 0.7.2

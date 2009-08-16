@@ -17,6 +17,7 @@
 package org.jamwiki.model;
 
 import java.sql.Timestamp;
+import java.util.List;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -27,14 +28,15 @@ public class RecentChange {
 	private static final WikiLogger logger = WikiLogger.getLogger(RecentChange.class.getName());
 	private Integer authorId = null;
 	private String authorName = null;
-	private int charactersChanged = 0;
-	private String editComment = null;
-	private Timestamp editDate = null;
-	private int editType = -1;
+	private Integer charactersChanged = null;
+	private String changeComment = null;
+	private Timestamp changeDate = null;
+	private Integer editType = null;
+	private LogItem logItem = null;
 	private Integer previousTopicVersionId = null;
-	private int topicId = -1;
+	private Integer topicId = null;
 	private String topicName = null;
-	private int topicVersionId = -1;
+	private Integer topicVersionId = null;
 	private String virtualWiki = null;
 
 	/**
@@ -55,11 +57,39 @@ public class RecentChange {
 		recentChange.setAuthorId(topicVersion.getAuthorId());
 		recentChange.setAuthorName(authorName);
 		recentChange.setCharactersChanged(topicVersion.getCharactersChanged());
-		recentChange.setEditComment(topicVersion.getEditComment());
-		recentChange.setEditDate(topicVersion.getEditDate());
+		recentChange.setChangeComment(topicVersion.getEditComment());
+		recentChange.setChangeDate(topicVersion.getEditDate());
 		recentChange.setEditType(topicVersion.getEditType());
 		recentChange.setVirtualWiki(topic.getVirtualWiki());
 		return recentChange;
+	}
+
+	/**
+	 *
+	 */
+	public static RecentChange initRecentChange(LogItem logItem) {
+		RecentChange recentChange = new RecentChange();
+		recentChange.setAuthorId(logItem.getUserId());
+		recentChange.setAuthorName(logItem.getUserDisplayName());
+		recentChange.setChangeComment(logItem.getLogComment());
+		recentChange.setChangeDate(logItem.getLogDate());
+		recentChange.setLogItem(logItem);
+		recentChange.setVirtualWiki(logItem.getVirtualWiki());
+		return recentChange;
+	}
+
+	/**
+	 * Utility method for initializing the LogItem field of this object.
+	 */
+	public void initLogItem(int logType, String logParamString) {
+		this.logItem = new LogItem();
+		this.logItem.setLogComment(this.changeComment);
+		this.logItem.setLogDate(this.changeDate);
+		this.logItem.setLogParamString(logParamString);
+		this.logItem.setLogType(logType);
+		this.logItem.setUserDisplayName(this.authorName);
+		this.logItem.setUserId(this.authorId);
+		this.logItem.setVirtualWiki(this.virtualWiki);
 	}
 
 	/**
@@ -93,10 +123,41 @@ public class RecentChange {
 	/**
 	 *
 	 */
+	public String getChangeComment() {
+		return this.changeComment;
+	}
+
+	/**
+	 *
+	 */
+	public void setChangeComment(String changeComment) {
+		this.changeComment = changeComment;
+	}
+
+	/**
+	 *
+	 */
+	public Timestamp getChangeDate() {
+		return this.changeDate;
+	}
+
+	/**
+	 *
+	 */
+	public void setChangeDate(Timestamp changeDate) {
+		this.changeDate = changeDate;
+	}
+
+	/**
+	 *
+	 */
 	public String getChangeTypeNotification() {
 		StringBuffer changeTypeNotification = new StringBuffer();
 		if (this.previousTopicVersionId == null) {
 			changeTypeNotification.append('n');
+		}
+		if (this.editType == null) {
+			return "";
 		}
 		if (this.editType == TopicVersion.EDIT_MINOR) {
 			changeTypeNotification.append('m');
@@ -116,14 +177,14 @@ public class RecentChange {
 	/**
 	 *
 	 */
-	public int getCharactersChanged() {
+	public Integer getCharactersChanged() {
 		return this.charactersChanged;
 	}
 
 	/**
 	 *
 	 */
-	public void setCharactersChanged(int charactersChanged) {
+	public void setCharactersChanged(Integer charactersChanged) {
 		this.charactersChanged = charactersChanged;
 	}
 
@@ -131,48 +192,20 @@ public class RecentChange {
 	 *
 	 */
 	public boolean getDelete() {
-		return this.editType == TopicVersion.EDIT_DELETE;
+		return (this.editType != null && this.editType == TopicVersion.EDIT_DELETE);
 	}
 
 	/**
 	 *
 	 */
-	public String getEditComment() {
-		return this.editComment;
-	}
-
-	/**
-	 *
-	 */
-	public void setEditComment(String editComment) {
-		this.editComment = editComment;
-	}
-
-	/**
-	 *
-	 */
-	public Timestamp getEditDate() {
-		return this.editDate;
-	}
-
-	/**
-	 *
-	 */
-	public void setEditDate(Timestamp editDate) {
-		this.editDate = editDate;
-	}
-
-	/**
-	 *
-	 */
-	public int getEditType() {
+	public Integer getEditType() {
 		return this.editType;
 	}
 
 	/**
 	 *
 	 */
-	public void setEditType(int editType) {
+	public void setEditType(Integer editType) {
 		this.editType = editType;
 	}
 
@@ -180,28 +213,63 @@ public class RecentChange {
 	 *
 	 */
 	public boolean getImport() {
-		return this.editType == TopicVersion.EDIT_IMPORT;
+		return (this.editType != null && this.editType == TopicVersion.EDIT_IMPORT);
+	}
+
+	/**
+	 *
+	 */
+	public LogItem getLogItem() {
+		return this.logItem;
+	}
+
+	/**
+	 *
+	 */
+	public void setLogItem(LogItem logItem) {
+		this.logItem = logItem;
+	}
+
+	/**
+	 *
+	 */
+	public List<String> getLogParams() {
+		return (this.logItem == null) ? null : this.logItem.getLogParams();
+	}
+
+	/**
+	 * Utility method for converting the log params to a pipe-delimited string.
+	 */
+	public String getLogParamString() {
+		return (this.logItem == null) ? null : this.logItem.getLogParamString();
+	}
+
+	/**
+	 *
+	 */
+	public Integer getLogType() {
+		return (this.logItem == null) ? null : this.logItem.getLogType();
 	}
 
 	/**
 	 *
 	 */
 	public boolean getMinor() {
-		return this.editType == TopicVersion.EDIT_MINOR;
+		return (this.editType != null && this.editType == TopicVersion.EDIT_MINOR);
 	}
 
 	/**
 	 *
 	 */
 	public boolean getMove() {
-		return this.editType == TopicVersion.EDIT_MOVE;
+		return (this.editType != null && this.editType == TopicVersion.EDIT_MOVE);
 	}
 
 	/**
 	 *
 	 */
 	public boolean getNormal() {
-		return this.editType == TopicVersion.EDIT_NORMAL;
+		return (this.editType != null && this.editType == TopicVersion.EDIT_NORMAL);
 	}
 
 	/**
@@ -221,14 +289,14 @@ public class RecentChange {
 	/**
 	 *
 	 */
-	public int getTopicId() {
+	public Integer getTopicId() {
 		return this.topicId;
 	}
 
 	/**
 	 *
 	 */
-	public void setTopicId(int topicId) {
+	public void setTopicId(Integer topicId) {
 		this.topicId = topicId;
 	}
 
@@ -249,14 +317,14 @@ public class RecentChange {
 	/**
 	 *
 	 */
-	public int getTopicVersionId() {
+	public Integer getTopicVersionId() {
 		return this.topicVersionId;
 	}
 
 	/**
 	 *
 	 */
-	public void setTopicVersionId(int topicVersionId) {
+	public void setTopicVersionId(Integer topicVersionId) {
 		this.topicVersionId = topicVersionId;
 	}
 
@@ -264,7 +332,7 @@ public class RecentChange {
 	 *
 	 */
 	public boolean getUndelete() {
-		return this.editType == TopicVersion.EDIT_UNDELETE;
+		return (this.editType != null && this.editType == TopicVersion.EDIT_UNDELETE);
 	}
 
 	/**

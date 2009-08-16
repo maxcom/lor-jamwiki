@@ -21,7 +21,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -750,11 +749,7 @@ public class AnsiDataHandler implements DataHandler {
 			logItem.setUserDisplayName(rs.getString("display_name"));
 			logItem.setLogDate(rs.getTimestamp("log_date"));
 			logItem.setLogComment(rs.getString("log_comment"));
-			String logParamsString = rs.getString("log_params");
-			if (!StringUtils.isBlank(logParamsString)) {
-				List<String> logParams = Arrays.asList(logParamsString.split("\\|"));
-				logItem.setLogParams(logParams);
-			}
+			logItem.setLogParamString(rs.getString("log_params"));
 			logItem.setLogType(rs.getInt("log_type"));
 			String virtualWiki = this.lookupVirtualWikiName(rs.getInt("virtual_wiki_id"));
 			logItem.setVirtualWiki(virtualWiki);
@@ -771,22 +766,38 @@ public class AnsiDataHandler implements DataHandler {
 	private RecentChange initRecentChange(WikiResultSet rs) throws DataAccessException {
 		try {
 			RecentChange change = new RecentChange();
-			change.setTopicVersionId(rs.getInt("topic_version_id"));
+			int topicVersionId = rs.getInt("topic_version_id");
+			if (topicVersionId > 0) {
+				change.setTopicVersionId(topicVersionId);
+			}
 			int previousTopicVersionId = rs.getInt("previous_topic_version_id");
 			if (previousTopicVersionId > 0) {
 				change.setPreviousTopicVersionId(previousTopicVersionId);
 			}
-			change.setTopicId(rs.getInt(DATA_TOPIC_ID));
+			int topicId = rs.getInt(DATA_TOPIC_ID);
+			if (topicId > 0) {
+				change.setTopicId(topicId);
+			}
 			change.setTopicName(rs.getString(DATA_TOPIC_NAME));
-			change.setCharactersChanged(rs.getInt("characters_changed"));
-			change.setEditDate(rs.getTimestamp("edit_date"));
-			change.setEditComment(rs.getString("edit_comment"));
+			int charactersChanged = rs.getInt("characters_changed");
+			if (charactersChanged > 0) {
+				change.setCharactersChanged(charactersChanged);
+			}
+			change.setChangeDate(rs.getTimestamp("change_date"));
+			change.setChangeComment(rs.getString("change_comment"));
 			int userId = rs.getInt(DATA_WIKI_USER_ID);
 			if (userId > 0) {
 				change.setAuthorId(userId);
 			}
 			change.setAuthorName(rs.getString("display_name"));
-			change.setEditType(rs.getInt("edit_type"));
+			int editType = rs.getInt("edit_type");
+			if (editType > 0) {
+				change.setEditType(editType);
+			}
+			int logType = rs.getInt("log_type");
+			if (logType > 0) {
+				change.initLogItem(logType, rs.getString("log_params"));
+			}
 			change.setVirtualWiki(rs.getString("virtual_wiki_name"));
 			return change;
 		} catch (SQLException e) {
@@ -1640,7 +1651,8 @@ public class AnsiDataHandler implements DataHandler {
 		checkLength(change.getTopicName(), 200);
 		checkLength(change.getAuthorName(), 200);
 		checkLength(change.getVirtualWiki(), 100);
-		change.setEditComment(StringUtils.substring(change.getEditComment(), 0, 200));
+		change.setChangeComment(StringUtils.substring(change.getChangeComment(), 0, 200));
+		checkLength(change.getLogParamString(), 500);
 	}
 
 	/**
@@ -1881,12 +1893,15 @@ public class AnsiDataHandler implements DataHandler {
 				addTopicVersion(topicVersion, conn);
 				topic.setCurrentVersionId(topicVersion.getTopicVersionId());
 				String authorName = this.authorName(topicVersion.getAuthorId(), topicVersion.getAuthorDisplay());
-				RecentChange change = RecentChange.initRecentChange(topic, topicVersion, authorName);
-				this.addRecentChange(change, conn);
 				LogItem logItem = LogItem.initLogItem(topic, topicVersion, authorName);
+				RecentChange change = null;
 				if (logItem != null) {
 					this.addLogItem(logItem, conn);
+					change = RecentChange.initRecentChange(logItem);
+				} else {
+					change = RecentChange.initRecentChange(topic, topicVersion, authorName);
 				}
+				this.addRecentChange(change, conn);
 			}
 			if (categories != null) {
 				// add / remove categories associated with the topic
@@ -2032,6 +2047,8 @@ public class AnsiDataHandler implements DataHandler {
 				for (VirtualWiki virtualWiki : virtualWikis) {
 					LogItem logItem = LogItem.initLogItem(user, virtualWiki.getName());
 					this.addLogItem(logItem, conn);
+					RecentChange change = RecentChange.initRecentChange(logItem);
+					this.addRecentChange(change, conn);
 				}
 			} else {
 				if (!StringUtils.isBlank(encryptedPassword)) {

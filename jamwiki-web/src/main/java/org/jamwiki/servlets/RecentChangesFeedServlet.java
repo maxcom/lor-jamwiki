@@ -178,7 +178,8 @@ public class RecentChangesFeedServlet extends AbstractController {
 	private List<SyndEntry> getFeedEntries(List<RecentChange> changes, boolean includeMinorEdits, boolean linkToVersion, String feedURL) {
 		List<SyndEntry> entries = new ArrayList<SyndEntry>();
 		for (RecentChange change : changes) {
-			if (includeMinorEdits || (!change.getMinor())) {
+			// FIXME - add support for log item changes
+			if (!StringUtils.isBlank(change.getTopicName()) && (includeMinorEdits || !change.getMinor())) {
 				entries.add(getFeedEntry(change, linkToVersion, feedURL));
 			}
 		}
@@ -193,12 +194,12 @@ public class RecentChangesFeedServlet extends AbstractController {
 		SyndEntry entry = new SyndEntryImpl();
 		entry.setTitle(change.getTopicName());
 		entry.setAuthor(change.getAuthorName());
-		entry.setPublishedDate(change.getEditDate());
+		entry.setPublishedDate(change.getChangeDate());
 		description = new SyndContentImpl();
 		description.setType("text/plain");
 		StringBuffer descr = new StringBuffer();
-		if (!StringUtils.isBlank(change.getEditComment())) {
-			descr.append(change.getEditComment());
+		if (!StringUtils.isBlank(change.getChangeComment())) {
+			descr.append(change.getChangeComment());
 		}
 		if (change.getDelete()) {
 			descr.append(" (deleted)");

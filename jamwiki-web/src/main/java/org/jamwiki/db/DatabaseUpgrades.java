@@ -313,6 +313,11 @@ public class DatabaseUpgrades {
 			messages.add(new WikiMessage("upgrade.message.db.column.added", "wiki_user_display", "jam_file_version"));
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_DROP_FILE_VERSION_IP_ADDRESS", conn);
 			messages.add(new WikiMessage("upgrade.message.db.column.dropped", "wiki_user_ip_address", "jam_file_version"));
+			// drop and restore the jam_recent_change table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_DROP_RECENT_CHANGE_TABLE", conn);
+			messages.add(new WikiMessage("upgrade.message.db.table.dropped", "jam_recent_change"));
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_RECENT_CHANGE_TABLE", conn);
+			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_recent_change"));
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			logger.severe("Database failure during upgrade", e);

@@ -18,6 +18,7 @@ package org.jamwiki.model;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -195,6 +196,16 @@ public class LogItem {
 			result += logParam;
 		}
 		return result;
+	}
+
+	/**
+	 * Utility method for converting a log params pipe-delimited string to a list.
+	 */
+	public void setLogParamString(String logParamsString) {
+		if (!StringUtils.isBlank(logParamsString)) {
+			List<String> logParams = Arrays.asList(logParamsString.split("\\|"));
+			this.setLogParams(logParams);
+		}
 	}
 
 	/**

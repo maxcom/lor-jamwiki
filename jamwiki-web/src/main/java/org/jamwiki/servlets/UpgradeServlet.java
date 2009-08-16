@@ -105,27 +105,30 @@ public class UpgradeServlet extends JAMWikiServlet {
 			}
 			// first perform database upgrades
 			this.upgradeDatabase(true, messages);
-			// upgrade stylesheet
-			if (this.upgradeStyleSheetRequired()) {
-				this.upgradeStyleSheet(request, messages);
-			}
 			// perform any additional upgrades required
 			if (oldVersion.before(0, 7, 0)) {
 				Environment.setValue(Environment.PROP_FILE_SERVER_URL, Utilities.getServerUrl(request));
 				Environment.setValue(Environment.PROP_SERVER_URL, Utilities.getServerUrl(request));
+			}
+			if (oldVersion.before(0, 8, 0)) {
+				try {
+					WikiBase.getDataHandler().reloadLogItems();
+				} catch (DataAccessException e) {
+					logger.warning("Failure during upgrade while reloading log items.  Please use the Special:Maintenance page to complete this step.", e);
+					messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
+				}
+			}
+			if (oldVersion.before(0, 7, 0)) {
 				try {
 					WikiBase.getDataHandler().reloadRecentChanges();
 				} catch (DataAccessException e) {
 					logger.warning("Failure during upgrade while reloading recent changes.  Please use the Special:Maintenance page to complete this step.", e);
 					messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 				}
-			} else if (oldVersion.before(0, 8, 0)) {
-				try {
-					WikiBase.getDataHandler().reloadLogItems();
-				} catch (DataAccessException e) {
-					logger.warning("Failure during upgrade while loading log items.  Please use the Special:Maintenance page to complete this step.", e);
-					messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
-				}
+			}
+			// upgrade stylesheet
+			if (this.upgradeStyleSheetRequired()) {
+				this.upgradeStyleSheet(request, messages);
 			}
 			errors = ServletUtil.validateSystemSettings(Environment.getInstance());
 			try {
