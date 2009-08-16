@@ -93,6 +93,10 @@ public class LogItem {
 				logItem.addLogParam(topic.getName());
 				break;
 			case TopicVersion.EDIT_IMPORT:
+				if (topic.getCurrentVersionId() != topicVersion.getTopicVersionId()) {
+					// only log the current version as an import item
+					return null;
+				}
 				logItem.setLogType(LOG_TYPE_IMPORT);
 				// format for import log is "Topic {0} imported"
 				logItem.addLogParam(topic.getName());
