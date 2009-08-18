@@ -140,11 +140,11 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_LOG_ITEMS = null;
 	protected static String STATEMENT_SELECT_LOG_ITEMS_BY_TYPE = null;
 	protected static String STATEMENT_SELECT_RECENT_CHANGES = null;
-	protected static String STATEMENT_SELECT_RECENT_CHANGES_TOPIC = null;
 	protected static String STATEMENT_SELECT_ROLES = null;
 	protected static String STATEMENT_SELECT_TOPIC_BY_TYPE = null;
 	protected static String STATEMENT_SELECT_TOPIC_COUNT = null;
 	protected static String STATEMENT_SELECT_TOPIC = null;
+	protected static String STATEMENT_SELECT_TOPIC_HISTORY = null;
 	protected static String STATEMENT_SELECT_TOPIC_LOWER = null;
 	protected static String STATEMENT_SELECT_TOPICS = null;
 	protected static String STATEMENT_SELECT_TOPICS_ADMIN = null;
@@ -445,18 +445,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES_TOPIC);
-		stmt.setInt(1, topicId);
-		stmt.setInt(2, pagination.getNumResults());
-		stmt.setInt(3, pagination.getOffset());
-		// FIXME - sort order ignored
-		return stmt.executeQuery();
-	}
-
-	/**
-	 *
-	 */
 	public WikiResultSet getRoleMapByLogin(String loginFragment) throws SQLException {
 		if (StringUtils.isBlank(loginFragment)) {
 			return new WikiResultSet();
@@ -507,6 +495,18 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public WikiResultSet getRoles() throws SQLException {
 		return DatabaseConnection.executeQuery(STATEMENT_SELECT_ROLES);
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet getTopicHistory(int topicId, Pagination pagination, boolean descending) throws SQLException {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_HISTORY);
+		stmt.setInt(1, topicId);
+		stmt.setInt(2, pagination.getNumResults());
+		stmt.setInt(3, pagination.getOffset());
+		// FIXME - sort order ignored
+		return stmt.executeQuery();
 	}
 
 	/**
@@ -668,11 +668,11 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_LOG_ITEMS               = props.getProperty("STATEMENT_SELECT_LOG_ITEMS");
 		STATEMENT_SELECT_LOG_ITEMS_BY_TYPE       = props.getProperty("STATEMENT_SELECT_LOG_ITEMS_BY_TYPE");
 		STATEMENT_SELECT_RECENT_CHANGES          = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES");
-		STATEMENT_SELECT_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES_TOPIC");
 		STATEMENT_SELECT_ROLES                   = props.getProperty("STATEMENT_SELECT_ROLES");
 		STATEMENT_SELECT_TOPIC_BY_TYPE           = props.getProperty("STATEMENT_SELECT_TOPIC_BY_TYPE");
 		STATEMENT_SELECT_TOPIC_COUNT             = props.getProperty("STATEMENT_SELECT_TOPIC_COUNT");
 		STATEMENT_SELECT_TOPIC                   = props.getProperty("STATEMENT_SELECT_TOPIC");
+		STATEMENT_SELECT_TOPIC_HISTORY           = props.getProperty("STATEMENT_SELECT_TOPIC_HISTORY");
 		STATEMENT_SELECT_TOPIC_LOWER             = props.getProperty("STATEMENT_SELECT_TOPIC_LOWER");
 		STATEMENT_SELECT_TOPICS                  = props.getProperty("STATEMENT_SELECT_TOPICS");
 		STATEMENT_SELECT_TOPICS_ADMIN            = props.getProperty("STATEMENT_SELECT_TOPICS_ADMIN");

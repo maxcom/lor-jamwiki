@@ -108,8 +108,8 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws SQLException {
-		String sql = formatStatement(STATEMENT_SELECT_RECENT_CHANGES_TOPIC, pagination);
+	public WikiResultSet getTopicHistory(int topicId, Pagination pagination, boolean descending) throws SQLException {
+		String sql = formatStatement(STATEMENT_SELECT_TOPIC_HISTORY, pagination);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setInt(1, topicId);
 		// FIXME - sort order ignored

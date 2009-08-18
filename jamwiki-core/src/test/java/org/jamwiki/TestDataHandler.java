@@ -129,13 +129,6 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List<RecentChange> getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws DataAccessException {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 *
-	 */
 	public List<RoleMap> getRoleMapByLogin(String loginFragment) throws DataAccessException {
 		throw new UnsupportedOperationException();
 	}
@@ -165,6 +158,13 @@ public class TestDataHandler implements DataHandler {
 	 *
 	 */
 	public Role[] getRoleMapUser(String login) throws DataAccessException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
+	public List<RecentChange> getTopicHistory(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws DataAccessException {
 		throw new UnsupportedOperationException();
 	}
 

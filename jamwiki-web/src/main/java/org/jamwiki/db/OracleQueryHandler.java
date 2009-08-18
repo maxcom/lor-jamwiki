@@ -87,8 +87,8 @@ public class OracleQueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES_TOPIC);
+	public WikiResultSet getTopicHistory(int topicId, Pagination pagination, boolean descending) throws SQLException {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_HISTORY);
 		stmt.setInt(1, topicId);
 		stmt.setInt(2, pagination.getEnd());
 		stmt.setInt(3, pagination.getStart());

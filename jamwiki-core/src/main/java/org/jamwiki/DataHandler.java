@@ -215,23 +215,6 @@ public interface DataHandler {
 	List<RecentChange> getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws DataAccessException;
 
 	/**
-	 * Retrieve a List of all RecentChange objects for a given topic,
-	 * sorted chronologically.
-	 *
-	 * @param virtualWiki The virtual wiki for the topic being queried.
-	 * @param topicName The name of the topic being queried.
-	 * @param pagination A Pagination object indicating the total number of
-	 *  results and offset for the results to be retrieved.
-	 * @param descending Set to <code>true</code> if the results should be
-	 *  sorted with the most recent changes first, <code>false</code> if the
-	 *  results should be sorted with the oldest changes first.
-	 * @return A List of all RecentChange objects for a given topic,
-	 *  sorted chronologically.
-	 * @throws DataAccessException Thrown if any error occurs during method execution.
-	 */
-	List<RecentChange> getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws DataAccessException;
-
-	/**
 	 * Retrieve a List of RoleMap objects for all users whose login
 	 * contains the given login fragment.
 	 *
@@ -290,6 +273,23 @@ public interface DataHandler {
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
 	Role[] getRoleMapUser(String login) throws DataAccessException;
+
+	/**
+	 * Retrieve a List of RecentChange objects representing a topic's history,
+	 * sorted chronologically.
+	 *
+	 * @param virtualWiki The virtual wiki for the topic being queried.
+	 * @param topicName The name of the topic being queried.
+	 * @param pagination A Pagination object indicating the total number of
+	 *  results and offset for the results to be retrieved.
+	 * @param descending Set to <code>true</code> if the results should be
+	 *  sorted with the most recent changes first, <code>false</code> if the
+	 *  results should be sorted with the oldest changes first.
+	 * @return A List of all RecentChange objects representing a topic's history,
+	 *  sorted chronologically.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	List<RecentChange> getTopicHistory(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws DataAccessException;
 
 	/**
 	 * Retrieve a List of topic names for all admin-only topics, sorted

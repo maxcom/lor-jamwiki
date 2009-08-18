@@ -493,28 +493,6 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List<RecentChange> getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws DataAccessException {
-		List<RecentChange> all = new ArrayList<RecentChange>();
-		Topic topic = this.lookupTopic(virtualWiki, topicName, true, null);
-		if (topic == null) {
-			return all;
-		}
-		WikiResultSet rs = null;
-		try {
-			rs = this.queryHandler().getRecentChanges(topic.getTopicId(), pagination, descending);
-		} catch (SQLException e) {
-			throw new DataAccessException(e);
-		}
-		while (rs.next()) {
-			RecentChange change = initRecentChange(rs);
-			all.add(change);
-		}
-		return all;
-	}
-
-	/**
-	 *
-	 */
 	public List<RoleMap> getRoleMapByLogin(String loginFragment) throws DataAccessException {
 		LinkedHashMap<Integer, RoleMap> roleMaps = new LinkedHashMap<Integer, RoleMap>();
 		try {
@@ -629,6 +607,28 @@ public class AnsiDataHandler implements DataHandler {
 			results.add(role);
 		}
 		return results.toArray(new Role[0]);
+	}
+
+	/**
+	 *
+	 */
+	public List<RecentChange> getTopicHistory(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws DataAccessException {
+		List<RecentChange> all = new ArrayList<RecentChange>();
+		Topic topic = this.lookupTopic(virtualWiki, topicName, true, null);
+		if (topic == null) {
+			return all;
+		}
+		WikiResultSet rs = null;
+		try {
+			rs = this.queryHandler().getTopicHistory(topic.getTopicId(), pagination, descending);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		}
+		while (rs.next()) {
+			RecentChange change = initRecentChange(rs);
+			all.add(change);
+		}
+		return all;
 	}
 
 	/**

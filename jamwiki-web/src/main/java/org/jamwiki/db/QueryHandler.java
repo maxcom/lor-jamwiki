@@ -255,22 +255,6 @@ public interface QueryHandler {
 	WikiResultSet getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet containing all recent changes made to the wiki for a
-	 * specific topic.
-	 *
-	 * @param topicId The id of the topic for which recent changes are being
-	 *  retrieved.
-	 * @param pagination A Pagination object that specifies the number of results
-	 *  and starting result offset for the result set to be retrieved.
-	 * @param descending If <code>true</code> then results are sorted newest to
-	 *  oldest.
-	 * @return A WikiResultSet containing all recent changes for a particular virtual
-	 *  wiki.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws SQLException;
-
-	/**
 	 * Retrieve a WikiResultSet of user ids, group ids and role names for all
 	 * users whose login contains the given login fragment.
 	 *
@@ -336,6 +320,20 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	WikiResultSet getRoles() throws SQLException;
+
+	/**
+	 * Retrieve a WikiResultSet containing all history for a specific topic.
+	 *
+	 * @param topicId The id of the topic for which recent changes are being
+	 *  retrieved.
+	 * @param pagination A Pagination object that specifies the number of results
+	 *  and starting result offset for the result set to be retrieved.
+	 * @param descending If <code>true</code> then results are sorted newest to
+	 *  oldest.
+	 * @return A WikiResultSet containing all history for a particular topic.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	WikiResultSet getTopicHistory(int topicId, Pagination pagination, boolean descending) throws SQLException;
 
 	/**
 	 * Retrieve a WikiResultSet containing the topic names of all admin-only
