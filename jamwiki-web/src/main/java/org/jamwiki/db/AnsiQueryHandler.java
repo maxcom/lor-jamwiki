@@ -780,6 +780,16 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setInt(5, logItem.getLogType());
 		stmt.setString(6, logItem.getLogComment());
 		stmt.setString(7, logItem.getLogParamString());
+		if (logItem.getTopicId() == null) {
+			stmt.setNull(8, Types.INTEGER);
+		} else {
+			stmt.setInt(8, logItem.getTopicId());
+		}
+		if (logItem.getTopicVersionId() == null) {
+			stmt.setNull(9, Types.INTEGER);
+		} else {
+			stmt.setInt(9, logItem.getTopicVersionId());
+		}
 		stmt.executeUpdate(conn);
 	}
 

@@ -53,6 +53,8 @@ public class LogItem {
 	private Timestamp logDate = null;
 	private List<String> logParams = null;
 	private int logType = -1;
+	private Integer topicId = null;
+	private Integer topicVersionId = null;
 	private String userDisplayName = null;
 	private Integer userId = null;
 	private String virtualWiki = null;
@@ -113,6 +115,8 @@ public class LogItem {
 		}
 		logItem.setLogComment(topicVersion.getEditComment());
 		logItem.setLogDate(topicVersion.getEditDate());
+		logItem.setTopicId(topic.getTopicId());
+		logItem.setTopicVersionId(topicVersion.getTopicVersionId());
 		logItem.setUserDisplayName(authorName);
 		logItem.setUserId(topicVersion.getAuthorId());
 		logItem.setVirtualWiki(topic.getVirtualWiki());
@@ -224,6 +228,34 @@ public class LogItem {
 	 */
 	public void setLogType(int logType) {
 		this.logType = logType;
+	}
+
+	/**
+	 *
+	 */
+	public Integer getTopicId() {
+		return this.topicId;
+	}
+
+	/**
+	 *
+	 */
+	public void setTopicId(Integer topicId) {
+		this.topicId = topicId;
+	}
+
+	/**
+	 *
+	 */
+	public Integer getTopicVersionId() {
+		return this.topicVersionId;
+	}
+
+	/**
+	 *
+	 */
+	public void setTopicVersionId(Integer topicVersionId) {
+		this.topicVersionId = topicVersionId;
 	}
 
 	/**

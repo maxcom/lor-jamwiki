@@ -747,6 +747,14 @@ public class AnsiDataHandler implements DataHandler {
 				logItem.setUserId(userId);
 			}
 			logItem.setUserDisplayName(rs.getString("display_name"));
+			int topicId = rs.getInt("topic_id");
+			if (topicId > 0) {
+				logItem.setTopicId(topicId);
+			}
+			int topicVersionId = rs.getInt("topic_version_id");
+			if (topicVersionId > 0) {
+				logItem.setTopicVersionId(topicVersionId);
+			}
 			logItem.setLogDate(rs.getTimestamp("log_date"));
 			logItem.setLogComment(rs.getString("log_comment"));
 			logItem.setLogParamString(rs.getString("log_params"));
