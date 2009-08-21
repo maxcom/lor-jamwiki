@@ -47,7 +47,7 @@
 	<properties>
 		<jamwiki.version>0.8.0-SNAPSHOT</jamwiki.version>
 		<dependency.spring.version>2.5.6</dependency.spring.version>
-		<dependency.spring.security.version>2.0.4</dependency.spring.security.version>
+		<dependency.spring.security.version>2.0.5.RELEASE</dependency.spring.security.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>

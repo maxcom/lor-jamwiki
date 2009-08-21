@@ -34,6 +34,7 @@ New Features:
     Reported by rebecca and an anonymous user.
   * Move upgrade SQL to property files rather than hard-coding in Java code.
   * Make the site name a configurable property rather than a message key.
+  * Upgrade to Spring Security 2.0.5.
   * Upgrade to javadiff 1.1.0.
   * Upgrade to JFlex 1.4.3.
   * Upgrade to JUnit 4.5.
