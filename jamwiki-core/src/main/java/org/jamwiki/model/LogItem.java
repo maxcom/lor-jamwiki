@@ -71,6 +71,9 @@ public class LogItem {
 	 */
 	public static LogItem initLogItem(Topic topic, TopicVersion topicVersion, String authorName) {
 		LogItem logItem = new LogItem();
+		if (!topicVersion.isLoggable() || !topicVersion.isRecentChangeAllowed()) {
+			return null;
+		}
 		switch (topicVersion.getEditType()) {
 			case TopicVersion.EDIT_DELETE:
 			case TopicVersion.EDIT_UNDELETE:
@@ -80,8 +83,7 @@ public class LogItem {
 				break;
 			case TopicVersion.EDIT_MOVE:
 				if (StringUtils.isBlank(topic.getRedirectTo())) {
-					// moves create two versions, one for the old topic name and one for the new
-					// topic name.  only the first needs a log item.
+					// add an additional check to ensure that reloading values does not create a bogus entry
 					return null;
 				}
 				logItem.setLogType(LOG_TYPE_MOVE);

@@ -1363,6 +1363,9 @@ public class AnsiDataHandler implements DataHandler {
 			// first rename the source topic with the new destination name
 			String fromTopicName = fromTopic.getName();
 			fromTopic.setName(destination);
+			// only one version needs to create a recent change entry, so do not create a log entry
+			// for the "from" version
+			fromVersion.setRecentChangeAllowed(false);
 			ParserOutput fromParserOutput = ParserUtil.parserOutput(fromTopic.getTopicContent(), fromTopic.getVirtualWiki(), fromTopic.getName());
 			writeTopic(fromTopic, fromVersion, fromParserOutput.getCategories(), fromParserOutput.getLinks(), true);
 			// now either create a new topic that is a redirect with the
@@ -1386,6 +1389,7 @@ public class AnsiDataHandler implements DataHandler {
 			TopicVersion toVersion = fromVersion;
 			toVersion.setTopicVersionId(-1);
 			toVersion.setVersionContent(content);
+			toVersion.setRecentChangeAllowed(true);
 			ParserOutput toParserOutput = ParserUtil.parserOutput(toTopic.getTopicContent(), toTopic.getVirtualWiki(), toTopic.getName());
 			writeTopic(toTopic, toVersion, toParserOutput.getCategories(), toParserOutput.getLinks(), true);
 		} catch (DataAccessException e) {
@@ -1906,7 +1910,9 @@ public class AnsiDataHandler implements DataHandler {
 				} else {
 					change = RecentChange.initRecentChange(topic, topicVersion, authorName);
 				}
-				this.addRecentChange(change, conn);
+				if (topicVersion.isRecentChangeAllowed()) {
+					this.addRecentChange(change, conn);
+				}
 			}
 			if (categories != null) {
 				// add / remove categories associated with the topic

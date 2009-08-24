@@ -117,8 +117,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 					logger.warning("Failure during upgrade while reloading log items.  Please use the Special:Maintenance page to complete this step.", e);
 					messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 				}
-			}
-			if (oldVersion.before(0, 7, 0)) {
 				try {
 					WikiBase.getDataHandler().reloadRecentChanges();
 				} catch (DataAccessException e) {

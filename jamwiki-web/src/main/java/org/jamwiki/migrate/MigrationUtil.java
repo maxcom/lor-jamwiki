@@ -146,6 +146,8 @@ public class MigrationUtil {
 					} catch (ParserException e) {
 						throw new MigrationException("Failure while parsing topic version of topic: " + topic.getName(), e);
 					}
+					// only the final import version is logged
+					topicVersion.setLoggable(false);
 					WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true);
 				}
 				// create a dummy version to indicate that the topic was imported

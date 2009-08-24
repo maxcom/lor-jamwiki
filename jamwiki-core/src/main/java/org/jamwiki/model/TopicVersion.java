@@ -39,7 +39,11 @@ public class TopicVersion implements Serializable {
 	private String editComment = null;
 	private Timestamp editDate = new Timestamp(System.currentTimeMillis());
 	private int editType = EDIT_NORMAL;
+	/** This field is not persisted and is simply used when writing versions to indicate whether the version can be logged. */
+	private boolean loggable = true;
 	private Integer previousTopicVersionId = null;
+	/** Some versions should be created without creating a recent change entry.  This field is not persisted. */
+	private boolean recentChangeAllowed = true;
 	private int topicId = -1;
 	private int topicVersionId = -1;
 	private String versionContent = null;
@@ -151,6 +155,20 @@ public class TopicVersion implements Serializable {
 	/**
 	 *
 	 */
+	public boolean isLoggable() {
+		return this.loggable;
+	}
+
+	/**
+	 *
+	 */
+	public void setLoggable(boolean loggable) {
+		this.loggable = loggable;
+	}
+
+	/**
+	 *
+	 */
 	public Integer getPreviousTopicVersionId() {
 		return this.previousTopicVersionId;
 	}
@@ -160,6 +178,20 @@ public class TopicVersion implements Serializable {
 	 */
 	public void setPreviousTopicVersionId(Integer previousTopicVersionId) {
 		this.previousTopicVersionId = previousTopicVersionId;
+	}
+
+	/**
+	 *
+	 */
+	public boolean isRecentChangeAllowed() {
+		return this.recentChangeAllowed;
+	}
+
+	/**
+	 *
+	 */
+	public void setRecentChangeAllowed(boolean recentChangeAllowed) {
+		this.recentChangeAllowed = recentChangeAllowed;
 	}
 
 	/**
