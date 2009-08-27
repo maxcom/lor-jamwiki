@@ -716,7 +716,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		int topicId = -1;
 		while (rs.next()) {
 			if (rs.getTimestamp("delete_date") == null) {
-				topicId = rs.getInt(AnsiDataHandler.DATA_TOPIC_ID);
+				topicId = rs.getInt("topic_id");
 				break;
 			}
 		}
@@ -724,7 +724,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			throw new SQLException("Unable to find child topic " + category.getChildTopicName() + " for category " + category.getName());
 		}
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_CATEGORY);
-		stmt.setInt(1, rs.getInt(AnsiDataHandler.DATA_TOPIC_ID));
+		stmt.setInt(1, rs.getInt("topic_id"));
 		stmt.setString(2, category.getName());
 		stmt.setString(3, category.getSortKey());
 		stmt.executeUpdate(conn);
@@ -1338,7 +1338,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_SEQUENCE, conn);
 		int nextId = 0;
 		if (rs.size() > 0) {
-			nextId = rs.getInt(AnsiDataHandler.DATA_TOPIC_ID);
+			nextId = rs.getInt("topic_id");
 		}
 		// note - this returns the last id in the system, so add one
 		return nextId + 1;
@@ -1430,7 +1430,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_GROUP_SEQUENCE, conn);
 		int nextId = 0;
 		if (rs.size() > 0) {
-			nextId = rs.getInt(AnsiDataHandler.DATA_GROUP_ID);
+			nextId = rs.getInt("group_id");
 		}
 		// note - this returns the last id in the system, so add one
 		return nextId + 1;
@@ -1448,7 +1448,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_SEQUENCE, conn);
 		int nextId = 0;
 		if (rs.size() > 0) {
-			nextId = rs.getInt(AnsiDataHandler.DATA_WIKI_USER_ID);
+			nextId = rs.getInt("wiki_user_id");
 		}
 		// note - this returns the last id in the system, so add one
 		return nextId + 1;
