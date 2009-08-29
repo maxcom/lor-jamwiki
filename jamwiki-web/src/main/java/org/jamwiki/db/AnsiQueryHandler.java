@@ -239,47 +239,82 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void deleteGroupAuthorities(int groupId, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_GROUP_AUTHORITIES);
-		stmt.setInt(1, groupId);
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_DELETE_GROUP_AUTHORITIES);
+			stmt.setInt(1, groupId);
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
 	 *
 	 */
 	public void deleteRecentChanges(int topicId, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_RECENT_CHANGES_TOPIC);
-		stmt.setInt(1, topicId);
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_DELETE_RECENT_CHANGES_TOPIC);
+			stmt.setInt(1, topicId);
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
 	 *
 	 */
 	public void deleteTopicCategories(int childTopicId, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_TOPIC_CATEGORIES);
-		stmt.setInt(1, childTopicId);
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_DELETE_TOPIC_CATEGORIES);
+			stmt.setInt(1, childTopicId);
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
 	 *
 	 */
 	public void deleteUserAuthorities(String username, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_AUTHORITIES);
-		stmt.setString(1, username);
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_DELETE_AUTHORITIES);
+			stmt.setString(1, username);
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
 	 *
 	 */
 	public void deleteWatchlistEntry(int virtualWikiId, String topicName, int userId, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_WATCHLIST_ENTRY);
-		stmt.setInt(1, virtualWikiId);
-		stmt.setString(2, topicName);
-		stmt.setInt(3, userId);
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_DELETE_WATCHLIST_ENTRY);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setString(2, topicName);
+			stmt.setInt(3, userId);
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
@@ -734,10 +769,17 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertGroupAuthority(int groupId, String authority, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_GROUP_AUTHORITY);
-		stmt.setInt(1, groupId);
-		stmt.setString(2, authority);
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_INSERT_GROUP_AUTHORITY);
+			stmt.setInt(1, groupId);
+			stmt.setString(2, authority);
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
@@ -768,89 +810,110 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertLogItem(LogItem logItem, int virtualWikiId, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_LOG_ITEM);
-		stmt.setTimestamp(1, logItem.getLogDate());
-		stmt.setInt(2, virtualWikiId);
-		if (logItem.getUserId() == null) {
-			stmt.setNull(3, Types.INTEGER);
-		} else {
-			stmt.setInt(3, logItem.getUserId());
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_INSERT_LOG_ITEM);
+			stmt.setTimestamp(1, logItem.getLogDate());
+			stmt.setInt(2, virtualWikiId);
+			if (logItem.getUserId() == null) {
+				stmt.setNull(3, Types.INTEGER);
+			} else {
+				stmt.setInt(3, logItem.getUserId());
+			}
+			stmt.setString(4, logItem.getUserDisplayName());
+			stmt.setInt(5, logItem.getLogType());
+			stmt.setString(6, logItem.getLogComment());
+			stmt.setString(7, logItem.getLogParamString());
+			if (logItem.getTopicId() == null) {
+				stmt.setNull(8, Types.INTEGER);
+			} else {
+				stmt.setInt(8, logItem.getTopicId());
+			}
+			if (logItem.getTopicVersionId() == null) {
+				stmt.setNull(9, Types.INTEGER);
+			} else {
+				stmt.setInt(9, logItem.getTopicVersionId());
+			}
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
 		}
-		stmt.setString(4, logItem.getUserDisplayName());
-		stmt.setInt(5, logItem.getLogType());
-		stmt.setString(6, logItem.getLogComment());
-		stmt.setString(7, logItem.getLogParamString());
-		if (logItem.getTopicId() == null) {
-			stmt.setNull(8, Types.INTEGER);
-		} else {
-			stmt.setInt(8, logItem.getTopicId());
-		}
-		if (logItem.getTopicVersionId() == null) {
-			stmt.setNull(9, Types.INTEGER);
-		} else {
-			stmt.setInt(9, logItem.getTopicVersionId());
-		}
-		stmt.executeUpdate(conn);
 	}
 
 	/**
 	 *
 	 */
 	public void insertRecentChange(RecentChange change, int virtualWikiId, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_RECENT_CHANGE);
-		if (change.getTopicVersionId() == null) {
-			stmt.setInt(1, Types.INTEGER);
-		} else {
-			stmt.setInt(1, change.getTopicVersionId());
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_INSERT_RECENT_CHANGE);
+			if (change.getTopicVersionId() == null) {
+				stmt.setInt(1, Types.INTEGER);
+			} else {
+				stmt.setInt(1, change.getTopicVersionId());
+			}
+			if (change.getPreviousTopicVersionId() == null) {
+				stmt.setNull(2, Types.INTEGER);
+			} else {
+				stmt.setInt(2, change.getPreviousTopicVersionId());
+			}
+			if (change.getTopicId() == null) {
+				stmt.setInt(3, Types.INTEGER);
+			} else {
+				stmt.setInt(3, change.getTopicId());
+			}
+			stmt.setString(4, change.getTopicName());
+			stmt.setTimestamp(5, change.getChangeDate());
+			stmt.setString(6, change.getChangeComment());
+			if (change.getAuthorId() == null) {
+				stmt.setNull(7, Types.INTEGER);
+			} else {
+				stmt.setInt(7, change.getAuthorId());
+			}
+			stmt.setString(8, change.getAuthorName());
+			if (change.getEditType() == null) {
+				stmt.setNull(9, Types.INTEGER);
+			} else {
+				stmt.setInt(9, change.getEditType());
+			}
+			stmt.setInt(10, virtualWikiId);
+			stmt.setString(11, change.getVirtualWiki());
+			if (change.getCharactersChanged() == null) {
+				stmt.setNull(12, Types.INTEGER);
+			} else {
+				stmt.setInt(12, change.getCharactersChanged());
+			}
+			if (change.getLogType() == null) {
+				stmt.setNull(13, Types.INTEGER);
+			} else {
+				stmt.setInt(13, change.getLogType());
+			}
+			stmt.setString(14, change.getLogParamString());
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
 		}
-		if (change.getPreviousTopicVersionId() == null) {
-			stmt.setNull(2, Types.INTEGER);
-		} else {
-			stmt.setInt(2, change.getPreviousTopicVersionId());
-		}
-		if (change.getTopicId() == null) {
-			stmt.setInt(3, Types.INTEGER);
-		} else {
-			stmt.setInt(3, change.getTopicId());
-		}
-		stmt.setString(4, change.getTopicName());
-		stmt.setTimestamp(5, change.getChangeDate());
-		stmt.setString(6, change.getChangeComment());
-		if (change.getAuthorId() == null) {
-			stmt.setNull(7, Types.INTEGER);
-		} else {
-			stmt.setInt(7, change.getAuthorId());
-		}
-		stmt.setString(8, change.getAuthorName());
-		if (change.getEditType() == null) {
-			stmt.setNull(9, Types.INTEGER);
-		} else {
-			stmt.setInt(9, change.getEditType());
-		}
-		stmt.setInt(10, virtualWikiId);
-		stmt.setString(11, change.getVirtualWiki());
-		if (change.getCharactersChanged() == null) {
-			stmt.setNull(12, Types.INTEGER);
-		} else {
-			stmt.setInt(12, change.getCharactersChanged());
-		}
-		if (change.getLogType() == null) {
-			stmt.setNull(13, Types.INTEGER);
-		} else {
-			stmt.setInt(13, change.getLogType());
-		}
-		stmt.setString(14, change.getLogParamString());
-		stmt.executeUpdate(conn);
 	}
 
 	/**
 	 *
 	 */
 	public void insertRole(Role role, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_ROLE);
-		stmt.setString(1, role.getAuthority());
-		stmt.setString(2, role.getDescription());
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_INSERT_ROLE);
+			stmt.setString(1, role.getAuthority());
+			stmt.setString(2, role.getDescription());
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
@@ -954,20 +1017,34 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertUserDetails(WikiUserDetails userDetails, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_USER);
-		stmt.setString(1, userDetails.getUsername());
-		stmt.setString(2, userDetails.getPassword());
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_INSERT_USER);
+			stmt.setString(1, userDetails.getUsername());
+			stmt.setString(2, userDetails.getPassword());
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
 	 *
 	 */
 	public void insertUserAuthority(String username, String authority, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_AUTHORITY);
-		stmt.setString(1, username);
-		stmt.setString(2, authority);
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_INSERT_AUTHORITY);
+			stmt.setString(1, username);
+			stmt.setString(2, authority);
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
@@ -1006,11 +1083,18 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertWatchlistEntry(int virtualWikiId, String topicName, int userId, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WATCHLIST_ENTRY);
-		stmt.setInt(1, virtualWikiId);
-		stmt.setString(2, topicName);
-		stmt.setInt(3, userId);
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_INSERT_WATCHLIST_ENTRY);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setString(2, topicName);
+			stmt.setInt(3, userId);
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
