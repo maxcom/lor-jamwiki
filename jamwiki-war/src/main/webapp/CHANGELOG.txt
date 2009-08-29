@@ -54,6 +54,9 @@ Bugfixes:
     that do not contain the "Image:" or "Category:" namespace.
   * Viewing a topic that is currently a redirect from its history page should
     not redirect.
+  * Templates containing signature were displaying the signature for the user
+    viewing the page, rather than the user who saved the page.  Example:
+    {{template-name|~~~~}}
   * Use the wiki system directory for temp file storage in ImageIO processing
     to prevent errors on misconfigured systems.  Reported by jfbraz.
   * Validate that properties which must be numeric are set as numbers from
