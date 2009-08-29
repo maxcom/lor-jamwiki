@@ -89,8 +89,10 @@ public class TemplateTag {
 				throw new Exception ("Invalid template text: " + raw);
 			}
 			String templateContent = raw.substring("{{".length(), raw.length() - "}}".length());
-			// parse for nested templates
+			// parse for nested templates, signatures, etc.
 			templateContent = JFlexParserUtil.parseFragment(parserInput, templateContent, mode);
+			// update the raw value to handle cases such as a signature in the template content
+			raw = "{{" + templateContent + "}}";
 			// check for magic word or parser function
 			String[] parserFunctionInfo = ParserFunctionUtil.parseParserFunctionInfo(templateContent);
 			if (MagicWordUtil.isMagicWord(templateContent) || parserFunctionInfo != null) {
