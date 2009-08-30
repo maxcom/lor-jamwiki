@@ -315,7 +315,6 @@
 			</roles>
 			<timezone>+1</timezone>
 		</developer>
-	</developers>
 		<developer>
 			<id>dfisla</id>
 			<name>Daniel Fisla</name>
@@ -323,6 +322,7 @@
 				<role>developer</role>
 			</roles>
 		</developer>
+	</developers>
 	<contributors>
 		<contributor><name>Fernando Fernandes</name><email>leandes</email><roles><role>translator (Portugese - Brazilian)</role></roles></contributor>
 		<contributor><name>Martin Östmark</name><email>martin</email><roles><role>translator (Swedish)</role></roles></contributor>
