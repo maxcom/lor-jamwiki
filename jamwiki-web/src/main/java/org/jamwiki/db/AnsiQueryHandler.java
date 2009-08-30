@@ -191,10 +191,17 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public boolean authenticateUser(String username, String encryptedPassword, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_USERS_AUTHENTICATION);
-		stmt.setString(1, username);
-		stmt.setString(2, encryptedPassword);
-		return (stmt.executeQuery(conn).size() != 0);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_SELECT_USERS_AUTHENTICATION);
+			stmt.setString(1, username);
+			stmt.setString(2, encryptedPassword);
+			return (stmt.executeQuery().next());
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
@@ -389,8 +396,15 @@ public class AnsiQueryHandler implements QueryHandler {
 		if (sql == null) {
 			throw new SQLException("No property found for " + prop);
 		}
-		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
-		stmt.executeQuery(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(sql);
+			stmt.executeQuery();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
@@ -401,8 +415,15 @@ public class AnsiQueryHandler implements QueryHandler {
 		if (sql == null) {
 			throw new SQLException("No property found for " + prop);
 		}
-		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(sql);
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
@@ -1542,28 +1563,34 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void reloadLogItems(int virtualWikiId, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = null;
-		stmt = new WikiPreparedStatement(STATEMENT_DELETE_LOG_ITEMS);
-		stmt.setInt(1, virtualWikiId);
-		stmt.executeUpdate(conn);
-		stmt = new WikiPreparedStatement(STATEMENT_INSERT_LOG_ITEMS_DELETE);
-		stmt.setInt(1, virtualWikiId);
-		stmt.executeUpdate(conn);
-		stmt = new WikiPreparedStatement(STATEMENT_INSERT_LOG_ITEMS_IMPORT);
-		stmt.setInt(1, virtualWikiId);
-		stmt.executeUpdate(conn);
-		stmt = new WikiPreparedStatement(STATEMENT_INSERT_LOG_ITEMS_MOVE);
-		stmt.setInt(1, virtualWikiId);
-		stmt.executeUpdate(conn);
-		stmt = new WikiPreparedStatement(STATEMENT_INSERT_LOG_ITEMS_PERMISSION);
-		stmt.setInt(1, virtualWikiId);
-		stmt.executeUpdate(conn);
-		stmt = new WikiPreparedStatement(STATEMENT_INSERT_LOG_ITEMS_UPLOAD);
-		stmt.setInt(1, virtualWikiId);
-		stmt.executeUpdate(conn);
-		stmt = new WikiPreparedStatement(STATEMENT_INSERT_LOG_ITEMS_USER);
-		stmt.setInt(1, virtualWikiId);
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_DELETE_LOG_ITEMS);
+			stmt.setInt(1, virtualWikiId);
+			stmt.executeUpdate();
+			stmt = conn.prepareStatement(STATEMENT_INSERT_LOG_ITEMS_DELETE);
+			stmt.setInt(1, virtualWikiId);
+			stmt.executeUpdate();
+			stmt = conn.prepareStatement(STATEMENT_INSERT_LOG_ITEMS_IMPORT);
+			stmt.setInt(1, virtualWikiId);
+			stmt.executeUpdate();
+			stmt = conn.prepareStatement(STATEMENT_INSERT_LOG_ITEMS_MOVE);
+			stmt.setInt(1, virtualWikiId);
+			stmt.executeUpdate();
+			stmt = conn.prepareStatement(STATEMENT_INSERT_LOG_ITEMS_PERMISSION);
+			stmt.setInt(1, virtualWikiId);
+			stmt.executeUpdate();
+			stmt = conn.prepareStatement(STATEMENT_INSERT_LOG_ITEMS_UPLOAD);
+			stmt.setInt(1, virtualWikiId);
+			stmt.executeUpdate();
+			stmt = conn.prepareStatement(STATEMENT_INSERT_LOG_ITEMS_USER);
+			stmt.setInt(1, virtualWikiId);
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
@@ -1578,97 +1605,146 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void updateRole(Role role, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_ROLE);
-		stmt.setString(1, role.getDescription());
-		stmt.setString(2, role.getAuthority());
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_UPDATE_ROLE);
+			stmt.setString(1, role.getDescription());
+			stmt.setString(2, role.getAuthority());
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
 	 *
 	 */
 	public void updateTopic(Topic topic, int virtualWikiId, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_TOPIC);
-		stmt.setInt(1, virtualWikiId);
-		stmt.setString(2, topic.getName());
-		stmt.setInt(3, topic.getTopicType());
-		stmt.setInt(4, (topic.getReadOnly() ? 1 : 0));
-		if (topic.getCurrentVersionId() == null) {
-			stmt.setNull(5, Types.INTEGER);
-		} else {
-			stmt.setInt(5, topic.getCurrentVersionId());
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_UPDATE_TOPIC);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setString(2, topic.getName());
+			stmt.setInt(3, topic.getTopicType());
+			stmt.setInt(4, (topic.getReadOnly() ? 1 : 0));
+			if (topic.getCurrentVersionId() == null) {
+				stmt.setNull(5, Types.INTEGER);
+			} else {
+				stmt.setInt(5, topic.getCurrentVersionId());
+			}
+			stmt.setTimestamp(6, topic.getDeleteDate());
+			stmt.setInt(7, (topic.getAdminOnly() ? 1 : 0));
+			stmt.setString(8, topic.getRedirectTo());
+			stmt.setInt(9, topic.getTopicId());
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
 		}
-		stmt.setTimestamp(6, topic.getDeleteDate());
-		stmt.setInt(7, (topic.getAdminOnly() ? 1 : 0));
-		stmt.setString(8, topic.getRedirectTo());
-		stmt.setInt(9, topic.getTopicId());
-		stmt.executeUpdate(conn);
 	}
 
 	/**
 	 *
 	 */
 	public void updateUserDetails(WikiUserDetails userDetails, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_USER);
-		stmt.setString(1, userDetails.getPassword());
-		stmt.setInt(2, 1);
-		stmt.setString(3, userDetails.getUsername());
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_UPDATE_USER);
+			stmt.setString(1, userDetails.getPassword());
+			stmt.setInt(2, 1);
+			stmt.setString(3, userDetails.getUsername());
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
 	 *
 	 */
 	public void updateVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_VIRTUAL_WIKI);
-		stmt.setString(1, virtualWiki.getDefaultTopicName());
-		stmt.setInt(2, virtualWiki.getVirtualWikiId());
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_UPDATE_VIRTUAL_WIKI);
+			stmt.setString(1, virtualWiki.getDefaultTopicName());
+			stmt.setInt(2, virtualWiki.getVirtualWikiId());
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
 	 *
 	 */
 	public void updateWikiFile(WikiFile wikiFile, int virtualWikiId, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_FILE);
-		stmt.setInt(1, virtualWikiId);
-		stmt.setString(2, wikiFile.getFileName());
-		stmt.setString(3, wikiFile.getUrl());
-		stmt.setString(4, wikiFile.getMimeType());
-		stmt.setInt(5, wikiFile.getTopicId());
-		stmt.setTimestamp(6, wikiFile.getDeleteDate());
-		stmt.setInt(7, (wikiFile.getReadOnly() ? 1 : 0));
-		stmt.setInt(8, (wikiFile.getAdminOnly() ? 1 : 0));
-		stmt.setInt(9, wikiFile.getFileSize());
-		stmt.setInt(10, wikiFile.getFileId());
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_UPDATE_WIKI_FILE);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setString(2, wikiFile.getFileName());
+			stmt.setString(3, wikiFile.getUrl());
+			stmt.setString(4, wikiFile.getMimeType());
+			stmt.setInt(5, wikiFile.getTopicId());
+			stmt.setTimestamp(6, wikiFile.getDeleteDate());
+			stmt.setInt(7, (wikiFile.getReadOnly() ? 1 : 0));
+			stmt.setInt(8, (wikiFile.getAdminOnly() ? 1 : 0));
+			stmt.setLong(9, wikiFile.getFileSize());
+			stmt.setInt(10, wikiFile.getFileId());
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
 	 *
 	 */
 	public void updateWikiGroup(WikiGroup group, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_GROUP);
-		stmt.setString(1, group.getName());
-		stmt.setString(2, group.getDescription());
-		stmt.setInt(3, group.getGroupId());
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_UPDATE_GROUP);
+			stmt.setString(1, group.getName());
+			stmt.setString(2, group.getDescription());
+			stmt.setInt(3, group.getGroupId());
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 
 	/**
 	 *
 	 */
 	public void updateWikiUser(WikiUser user, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_USER);
-		stmt.setString(1, user.getUsername());
-		stmt.setString(2, user.getDisplayName());
-		stmt.setTimestamp(3, user.getLastLoginDate());
-		stmt.setString(4, user.getLastLoginIpAddress());
-		stmt.setString(5, user.getDefaultLocale());
-		stmt.setString(6, user.getEmail());
-		stmt.setString(7, user.getEditor());
-		stmt.setString(8, user.getSignature());
-		stmt.setInt(9, user.getUserId());
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_UPDATE_WIKI_USER);
+			stmt.setString(1, user.getUsername());
+			stmt.setString(2, user.getDisplayName());
+			stmt.setTimestamp(3, user.getLastLoginDate());
+			stmt.setString(4, user.getLastLoginIpAddress());
+			stmt.setString(5, user.getDefaultLocale());
+			stmt.setString(6, user.getEmail());
+			stmt.setString(7, user.getEditor());
+			stmt.setString(8, user.getSignature());
+			stmt.setInt(9, user.getUserId());
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
 	}
 }
