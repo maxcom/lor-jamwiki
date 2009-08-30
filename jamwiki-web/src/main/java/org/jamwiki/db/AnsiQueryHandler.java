@@ -763,11 +763,16 @@ public class AnsiQueryHandler implements QueryHandler {
 		if (topicId == -1) {
 			throw new SQLException("Unable to find child topic " + category.getChildTopicName() + " for category " + category.getName());
 		}
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_CATEGORY);
-		stmt.setInt(1, rs.getInt("topic_id"));
-		stmt.setString(2, category.getName());
-		stmt.setString(3, category.getSortKey());
-		stmt.executeUpdate(conn);
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_INSERT_CATEGORY);
+			stmt.setInt(1, rs.getInt("topic_id"));
+			stmt.setString(2, category.getName());
+			stmt.setString(3, category.getSortKey());
+			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
 	}
 
 	/**
