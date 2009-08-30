@@ -9,6 +9,7 @@ JAMWiki Contributors
   Developers:               Ryan Holliday (wrh2)
                             Scott Croco (scroco)
                             Régis Décamps (RegisDecamps)
+                            Daniel Fisla (dfisla)
                             Michael Greifeneder (mikegr)
                             Dallas Hopewell (dallas)
                             Hanspeter Klapf (hanspeterklapf)
