@@ -198,9 +198,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setString(2, encryptedPassword);
 			return (stmt.executeQuery().next());
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -252,9 +250,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(1, groupId);
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -268,9 +264,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(1, topicId);
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -284,9 +278,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(1, childTopicId);
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -300,9 +292,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setString(1, username);
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -318,9 +308,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(3, userId);
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -401,9 +389,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt = conn.prepareStatement(sql);
 			stmt.executeQuery();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -420,9 +406,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt = conn.prepareStatement(sql);
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -797,9 +781,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setString(2, authority);
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -821,9 +803,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(index++, groupId);
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -857,9 +837,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			}
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -914,9 +892,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setString(14, change.getLogParamString());
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -931,9 +907,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setString(2, role.getDescription());
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -973,9 +947,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				topic.setTopicId(rs.getInt(1));
 			}
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -1028,9 +1000,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(2, topicVersion.getTopicId());
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -1045,9 +1015,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setString(2, userDetails.getPassword());
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -1062,9 +1030,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setString(2, authority);
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -1094,9 +1060,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				virtualWiki.setVirtualWikiId(rs.getInt(1));
 			}
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -1112,9 +1076,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(3, userId);
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -1151,9 +1113,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				wikiFile.setFileId(rs.getInt(1));
 			}
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -1197,9 +1157,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				wikiFileVersion.setFileVersionId(rs.getInt(1));
 			}
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -1229,9 +1187,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				group.setGroupId(rs.getInt(1));
 			}
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -1269,9 +1225,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				user.setUserId(rs.getInt(1));
 			}
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -1587,9 +1541,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(1, virtualWikiId);
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -1612,9 +1564,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setString(2, role.getAuthority());
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -1640,9 +1590,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(9, topic.getTopicId());
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -1658,9 +1606,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setString(3, userDetails.getUsername());
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -1675,9 +1621,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(2, virtualWiki.getVirtualWikiId());
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -1700,9 +1644,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(10, wikiFile.getFileId());
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -1718,9 +1660,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(3, group.getGroupId());
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -1742,9 +1682,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(9, user.getUserId());
 			stmt.executeUpdate();
 		} finally {
-			if (stmt != null) {
-				stmt.close();
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 }

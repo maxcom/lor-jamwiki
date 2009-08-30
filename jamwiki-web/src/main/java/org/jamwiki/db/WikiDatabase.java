@@ -282,8 +282,8 @@ public class WikiDatabase {
 						}
 					}
 					rs.close();
-					stmt.close();
-					insertStmt.close();
+					DatabaseConnection.closeStatement(stmt);
+					DatabaseConnection.closeStatement(insertStmt);
 				}
 			}
 			// update the jam_topic.current_version_id field that we had to leave blank on initial insert
