@@ -144,6 +144,21 @@ public class UploadServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private String processDestinationFilename(String destinationFilename, String filename) {
+		if (StringUtils.isBlank(destinationFilename)) {
+			return destinationFilename;
+		}
+		if (!StringUtils.isBlank(FilenameUtils.getExtension(filename)) && StringUtils.isBlank(FilenameUtils.getExtension(destinationFilename))) {
+			// if original has an extension, the renamed version must as well
+			destinationFilename += (!destinationFilename.endsWith(".") ? "." : "") + FilenameUtils.getExtension(filename);
+		}
+		// if the user entered a file name of the form "Image:Foo.jpg" strip the namespace
+		return StringUtils.removeStart(destinationFilename, NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR);
+	}
+
+	/**
+	 *
+	 */
 	private static String sanitizeFilename(String filename) {
 		if (StringUtils.isBlank(filename)) {
 			return null;
@@ -206,10 +221,7 @@ public class UploadServlet extends JAMWikiServlet {
 		}
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		String topicName = NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR;
-		if (!StringUtils.isEmpty(destinationFilename) && !StringUtils.isBlank(FilenameUtils.getExtension(filename)) && StringUtils.isBlank(FilenameUtils.getExtension(destinationFilename))) {
-			// if original has an extension, the renamed version must as well
-			destinationFilename += (!destinationFilename.endsWith(".") ? "." : "") + FilenameUtils.getExtension(filename);
-		}
+		destinationFilename = processDestinationFilename(destinationFilename, filename);
 		topicName += Utilities.decodeAndEscapeTopicName((!StringUtils.isEmpty(destinationFilename) ? destinationFilename : filename), true);
 		if (this.handleSpam(request, next, topicName, contents)) {
 			// delete the spam file
