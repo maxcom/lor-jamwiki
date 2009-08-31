@@ -16,6 +16,7 @@
  */
 package org.jamwiki.utils;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -165,8 +166,7 @@ public class LinkUtil {
 	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, int maxDimension, boolean suppressLink, String style, boolean escapeHtml) throws DataAccessException, IOException {
 		String url = LinkUtil.buildImageFileUrl(context, virtualWiki, topicName);
 		if (url == null) {
-			WikiLink uploadLink = LinkUtil.parseWikiLink("Special:Upload");
-			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, uploadLink, topicName, "edit", null, true);
+			return LinkUtil.buildUploadLink(context, virtualWiki, topicName);
 		}
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
@@ -185,7 +185,14 @@ public class LinkUtil {
 			html.append("</a>");
 			return html.toString();
 		}
-		WikiImage wikiImage = ImageUtil.initializeImage(wikiFile, maxDimension);
+		WikiImage wikiImage = null;
+		try {
+			wikiImage = ImageUtil.initializeImage(wikiFile, maxDimension);
+		} catch (FileNotFoundException e) {
+			// do not log the full exception as the logs can fill up very for this sort of error, and it is generally due to a bad configuration.  instead log a warning message so that the administrator can try to fix the problem
+			logger.warning("File not found while parsing image link for topic: " + virtualWiki + " / " + topicName + ".  Make sure that the following file exists and is readable by the JAMWiki installation: " + e.getMessage());
+			return LinkUtil.buildUploadLink(context, virtualWiki, topicName);
+		}
 		if (caption == null) {
 			caption = "";
 		}
@@ -396,6 +403,14 @@ public class LinkUtil {
 			url.append(Utilities.encodeAndEscapeTopicName(section));
 		}
 		return url.toString();
+	}
+
+	/**
+	 *
+	 */
+	private static String buildUploadLink(String context, String virtualWiki, String topicName) throws DataAccessException {
+		WikiLink uploadLink = LinkUtil.parseWikiLink("Special:Upload?topic=" + topicName);
+		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, uploadLink, topicName, "edit", null, true);
 	}
 
 	/**

@@ -185,6 +185,9 @@ Bugfixes:
   * Fix issues with the database migration code that could cause failures
     when migrating categories or migrating very large data sets.
   * Fix a case-sensitivity issue when building on UNIX machines (marcust).
+  * If the file for an Image: link cannot be found on the filesystem generate
+    an upload link rather than throwing an exception and silently hiding the
+    image from the front-end.
 
 Translation Updates:
 

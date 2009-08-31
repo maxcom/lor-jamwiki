@@ -34,7 +34,7 @@
 </tr>
 <tr>
 	<td><label for="uploadDestination"><fmt:message key="upload.caption.destination" /></label>:</td>
-	<td><input type="text" name="destination" size="50" id="uploadDestination" /></td>
+	<td><input type="text" name="destination" size="50" id="uploadDestination" value="${uploadDestination}" /></td>
 </tr>
 <tr><td colspan="2"><div class="formhelp"><fmt:message key="upload.help.destination" /></div></td></tr>
 <tr>
