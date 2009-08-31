@@ -241,24 +241,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 */
 	private boolean upgradeStyleSheetRequired() {
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
-		if (oldVersion.before(0, 6, 1)) {
-			return true;
-		}
-		if (oldVersion.before(0, 6, 2)) {
-			return true;
-		}
-		if (oldVersion.before(0, 6, 3)) {
-			return true;
-		}
-		if (oldVersion.before(0, 6, 6)) {
-			return true;
-		}
-		if (oldVersion.before(0, 6, 7)) {
-			return true;
-		}
-		if (oldVersion.before(0, 7, 0)) {
-			return true;
-		}
 		if (oldVersion.before(0, 8, 0)) {
 			return true;
 		}
