@@ -18,6 +18,7 @@ package org.jamwiki.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -37,6 +38,12 @@ public class TopicVersion implements Serializable {
 	private String authorDisplay = null;
 	private int charactersChanged = 0;
 	private String editComment = null;
+	/**
+	 * This field is seldom used but may occasionally be populated when a version is created as a result
+	 * of something like a page move.  In such a case a system message (Page moved from A to B) will be
+	 * stored in this field and appended to the editComment prior to saving the topic version.
+	 */
+	private String editCommentAuto = null;
 	private Timestamp editDate = new Timestamp(System.currentTimeMillis());
 	private int editType = EDIT_NORMAL;
 	/** This field is not persisted and is simply used when writing versions to indicate whether the version can be logged. */
@@ -122,6 +129,38 @@ public class TopicVersion implements Serializable {
 	 */
 	public void setEditComment(String editComment) {
 		this.editComment = editComment;
+	}
+
+	/**
+	 *
+	 */
+	public String getEditCommentAuto() {
+		return this.editCommentAuto;
+	}
+
+	/**
+	 *
+	 */
+	public void setEditCommentAuto(String editCommentAuto) {
+		this.editCommentAuto = editCommentAuto;
+	}
+
+	/**
+	 * Utility method for concatenating the auto edit comment and the edit comment.
+	 */
+	public String getEditCommentFull() {
+		String result = null;
+		if (!StringUtils.isBlank(this.editCommentAuto)) {
+			result = this.editCommentAuto;
+		}
+		if (!StringUtils.isBlank(this.editComment)) {
+			if (StringUtils.isBlank(this.editCommentAuto)) {
+				result = this.editComment;
+			} else {
+				result += " (" + this.editComment + ")";
+			}
+		}
+		return result;
 	}
 
 	/**

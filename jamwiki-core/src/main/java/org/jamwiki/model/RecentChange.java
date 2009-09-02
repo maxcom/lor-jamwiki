@@ -57,7 +57,7 @@ public class RecentChange {
 		recentChange.setAuthorId(topicVersion.getAuthorId());
 		recentChange.setAuthorName(authorName);
 		recentChange.setCharactersChanged(topicVersion.getCharactersChanged());
-		recentChange.setChangeComment(topicVersion.getEditComment());
+		recentChange.setChangeComment(topicVersion.getEditCommentFull());
 		recentChange.setChangeDate(topicVersion.getEditDate());
 		recentChange.setEditType(topicVersion.getEditType());
 		recentChange.setVirtualWiki(topic.getVirtualWiki());

@@ -976,7 +976,9 @@ public class AnsiQueryHandler implements QueryHandler {
 				topicVersion.setEditDate(editDate);
 			}
 			stmt.setInt(index++, topicVersion.getTopicId());
-			stmt.setString(index++, topicVersion.getEditComment());
+			// store the full edit comment.  trim if it's too long for the database.
+			String editComment = StringUtils.substring(topicVersion.getEditCommentFull(), 0, 200);
+			stmt.setString(index++, editComment);
 			stmt.setString(index++, topicVersion.getVersionContent());
 			if (topicVersion.getAuthorId() == null) {
 				stmt.setNull(index++, Types.INTEGER);

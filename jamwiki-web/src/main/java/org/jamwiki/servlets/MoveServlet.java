@@ -136,13 +136,12 @@ public class MoveServlet extends JAMWikiServlet {
 			next.addObject("messageObject", new WikiMessage("move.exception.destinationexists", moveDestination));
 			return false;
 		}
-		String moveComment = Utilities.formatMessage("move.editcomment", request.getLocale(), new String[]{moveFrom, moveDestination});
-		if (!StringUtils.isBlank(request.getParameter("moveComment"))) {
-			moveComment += " (" + request.getParameter("moveComment") + ")";
-		}
+		String moveComment = request.getParameter("moveComment");
 		WikiUser user = ServletUtil.currentWikiUser();
 		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), moveComment, fromTopic.getTopicContent(), 0);
 		topicVersion.setEditType(TopicVersion.EDIT_MOVE);
+		String moveCommentAuto = Utilities.formatMessage("move.editcomment", request.getLocale(), new String[]{moveFrom, moveDestination});
+		topicVersion.setEditCommentAuto(moveCommentAuto);
 		WikiBase.getDataHandler().moveTopic(fromTopic, topicVersion, moveDestination);
 		return true;
 	}
