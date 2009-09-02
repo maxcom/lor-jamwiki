@@ -306,12 +306,12 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws DataAccessException, WikiException {
+	public void deleteTopic(Topic topic, TopicVersion topicVersion) throws DataAccessException, WikiException {
 		TransactionStatus status = null;
 		try {
 			status = DatabaseConnection.startTransaction();
 			Connection conn = DatabaseConnection.getConnection();
-			if (userVisible) {
+			if (topicVersion != null) {
 				// delete old recent changes
 				deleteRecentChanges(topic, conn);
 			}
@@ -319,7 +319,7 @@ public class AnsiDataHandler implements DataHandler {
 			// should be empty since nothing to add to search engine.
 			ParserOutput parserOutput = new ParserOutput();
 			topic.setDeleteDate(new Timestamp(System.currentTimeMillis()));
-			this.writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), userVisible);
+			this.writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks());
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
@@ -1351,7 +1351,7 @@ public class AnsiDataHandler implements DataHandler {
 			if (detinationExistsFlag) {
 				// if the target topic is a redirect to the source topic then the
 				// target must first be deleted.
-				this.deleteTopic(toTopic, null, false);
+				this.deleteTopic(toTopic, null);
 			}
 			// first rename the source topic with the new destination name
 			String fromTopicName = fromTopic.getName();
@@ -1360,15 +1360,15 @@ public class AnsiDataHandler implements DataHandler {
 			// for the "from" version
 			fromVersion.setRecentChangeAllowed(false);
 			ParserOutput fromParserOutput = ParserUtil.parserOutput(fromTopic.getTopicContent(), fromTopic.getVirtualWiki(), fromTopic.getName());
-			writeTopic(fromTopic, fromVersion, fromParserOutput.getCategories(), fromParserOutput.getLinks(), true);
+			writeTopic(fromTopic, fromVersion, fromParserOutput.getCategories(), fromParserOutput.getLinks());
 			// now either create a new topic that is a redirect with the
 			// source topic's old name, or else undelete the new topic and
 			// rename.
 			if (detinationExistsFlag) {
 				// target topic was deleted, so rename and undelete
 				toTopic.setName(fromTopicName);
-				writeTopic(toTopic, null, null, null, false);
-				this.undeleteTopic(toTopic, null, false);
+				writeTopic(toTopic, null, null, null);
+				this.undeleteTopic(toTopic, null);
 			} else {
 				// create a new topic that redirects to the destination
 				toTopic = fromTopic;
@@ -1384,7 +1384,7 @@ public class AnsiDataHandler implements DataHandler {
 			toVersion.setVersionContent(content);
 			toVersion.setRecentChangeAllowed(true);
 			ParserOutput toParserOutput = ParserUtil.parserOutput(toTopic.getTopicContent(), toTopic.getVirtualWiki(), toTopic.getName());
-			writeTopic(toTopic, toVersion, toParserOutput.getCategories(), toParserOutput.getLinks(), true);
+			writeTopic(toTopic, toVersion, toParserOutput.getCategories(), toParserOutput.getLinks());
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
@@ -1486,7 +1486,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws DataAccessException, WikiException {
+	public void undeleteTopic(Topic topic, TopicVersion topicVersion) throws DataAccessException, WikiException {
 		TransactionStatus status = null;
 		try {
 			status = DatabaseConnection.startTransaction();
@@ -1495,7 +1495,7 @@ public class AnsiDataHandler implements DataHandler {
 			// also needed.
 			ParserOutput parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), topic.getVirtualWiki(), topic.getName());
 			topic.setDeleteDate(null);
-			this.writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), userVisible);
+			this.writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks());
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
@@ -1528,7 +1528,7 @@ public class AnsiDataHandler implements DataHandler {
 			// FIXME - hard coding
 			TopicVersion topicVersion = new TopicVersion(null, userDisplay, "Automatically updated by system upgrade", contents, charactersChanged);
 			ParserOutput parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki, topicName);
-			writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true);
+			writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks());
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
@@ -1868,11 +1868,8 @@ public class AnsiDataHandler implements DataHandler {
 	 * @param links A List of all topic names that are linked to from the
 	 *  current topic.  These will be passed to the search engine to create
 	 *  searchable metadata.
-	 * @param userVisible A flag indicating whether or not this change should
-	 *  be visible to Wiki users.  This flag should be true except in rare
-	 *  cases, such as when temporarily deleting a topic during page moves.
 	 */
-	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links, boolean userVisible) throws DataAccessException, WikiException {
+	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links) throws DataAccessException, WikiException {
 		TransactionStatus status = null;
 		try {
 			status = DatabaseConnection.startTransaction();
@@ -1886,7 +1883,7 @@ public class AnsiDataHandler implements DataHandler {
 			} else {
 				updateTopic(topic, conn);
 			}
-			if (userVisible) {
+			if (topicVersion != null) {
 				if (topicVersion.getPreviousTopicVersionId() == null && topic.getCurrentVersionId() != null) {
 					topicVersion.setPreviousTopicVersionId(topic.getCurrentVersionId());
 				}

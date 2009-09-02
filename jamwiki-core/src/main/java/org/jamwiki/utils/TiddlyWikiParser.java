@@ -57,15 +57,15 @@ public class TiddlyWikiParser {
 	 * @author Michael Greifeneder mikegr@gmx.net
 	 */
 	public interface WikiBaseFascade {
-		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, List<String> links, boolean userVisible, Object transactionObject) throws Exception;
+		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, List<String> links, Object transactionObject) throws Exception;
 	}
 
 	/**
 	 * Defaul WikiBaseFascade for production.
 	 */
 	private WikiBaseFascade wikiBase = new WikiBaseFascade() {
-		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, List<String> links, boolean userVisible, Object transactionObject) throws Exception {
-			WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true);
+		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, List<String> links, Object transactionObject) throws Exception {
+			WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
 		}
 	};
 
@@ -195,7 +195,7 @@ public class TiddlyWikiParser {
 		// manage mapping bitween MediaWiki and JAMWiki namespaces
 		topic.setTopicType(Topic.TYPE_ARTICLE);
 		// Store topic in database
-		wikiBase.writeTopic(topic, topicVersion, null, null, true, null);
+		wikiBase.writeTopic(topic, topicVersion, null, null, null);
 	}
 
 	private String findName(String content, String name) {

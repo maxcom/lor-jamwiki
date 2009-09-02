@@ -102,14 +102,13 @@ public interface DataHandler {
 	 *
 	 * @param topic The Topic object that is being deleted.
 	 * @param topicVersion A TopicVersion object that indicates the delete
-	 *  date, author, and other parameters for the topic.
-	 * @param userVisible Set to <code>true</code> if a recent change should
-	 *  should be created indicating that the topic was deleted,
-	 *  <code>false</code> otherwise.
+	 *  date, author, and other parameters for the topic.  If this value is
+	 *  <code>null</code> then no version is saved, nor is any recent change
+	 *  entry created.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 * @throws WikiException Thrown if the topic information is invalid.
 	 */
-	void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws DataAccessException, WikiException;
+	void deleteTopic(Topic topic, TopicVersion topicVersion) throws DataAccessException, WikiException;
 
 	/**
 	 * This method should be called only during upgrades and provides the capability
@@ -594,14 +593,13 @@ public interface DataHandler {
 	 *
 	 * @param topic The Topic object that is being undeleted.
 	 * @param topicVersion A TopicVersion object that indicates the undelete
-	 *  date, author, and other parameters for the topic.
-	 * @param userVisible Set to <code>true</code> if a recent change should
-	 *  should be created indicating that the topic was undeleted,
-	 *  <code>false</code> otherwise.
+	 *  date, author, and other parameters for the topic.  If this value is
+	 *  <code>null</code> then no version is saved, nor is any recent change
+	 *  entry created.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 * @throws WikiException Thrown if the topic information is invalid.
 	 */
-	void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws DataAccessException, WikiException;
+	void undeleteTopic(Topic topic, TopicVersion topicVersion) throws DataAccessException, WikiException;
 
 	/**
 	 * Update a special page used on the wiki, such as the left menu or
@@ -689,19 +687,17 @@ public interface DataHandler {
 	 *  a topic ID then a new record is created, otherwise an update is
 	 *  performed.
 	 * @param topicVersion A TopicVersion containing the author, date, and
-	 *  other information about the version being added.
+	 *  other information about the version being added.  If this value is <code>null</code>
+	 *  then no version is saved and no recent change record is created.
 	 * @param categories A mapping of categories and their associated sort keys (if any)
 	 *  for all categories that are associated with the current topic.
 	 * @param links A List of all topic names that are linked to from the
 	 *  current topic.  These will be passed to the search engine to create
 	 *  searchable metadata.
-	 * @param userVisible Set to <code>false</code> if no recent change record
-	 *  should be created for the topic add/update, <code>true</code>
-	 *  otherwise.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 * @throws WikiException Thrown if the topic information is invalid.
 	 */
-	void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links, boolean userVisible) throws DataAccessException, WikiException;
+	void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links) throws DataAccessException, WikiException;
 
 	/**
 	 * Add or update a VirtualWiki object.  This method will add a new record

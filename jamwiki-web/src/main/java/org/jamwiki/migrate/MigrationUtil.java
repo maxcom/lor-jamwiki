@@ -148,14 +148,14 @@ public class MigrationUtil {
 					}
 					// only the final import version is logged
 					topicVersion.setLoggable(false);
-					WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true);
+					WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks());
 				}
 				// create a dummy version to indicate that the topic was imported
 				String importedBy = (user != null && user.getUserId() > 0) ? user.getUsername() : authorDisplay;
 				String editComment = Utilities.formatMessage("import.message.importedby", locale, new Object[]{importedBy});
 				TopicVersion topicVersion = new TopicVersion(user, authorDisplay, editComment, topic.getTopicContent(), 0);
 				topicVersion.setEditType(TopicVersion.EDIT_IMPORT);
-				WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true);
+				WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks());
 			} catch (DataAccessException e) {
 				throw new MigrationException("Data access exception while processing topic " + topic.getName(), e);
 			}

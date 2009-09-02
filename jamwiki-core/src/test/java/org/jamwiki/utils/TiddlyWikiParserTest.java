@@ -69,7 +69,7 @@ public class TiddlyWikiParserTest {
 		public ArrayList<Topic> topics = new ArrayList<Topic>();
 		public ArrayList<TopicVersion> versions = new ArrayList<TopicVersion>();
 
-		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, List<String> links, boolean userVisible, Object transactionObject) throws Exception {
+		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, List<String> links, Object transactionObject) throws Exception {
 			topics.add(topic);
 			versions.add(topicVersion);
 		}

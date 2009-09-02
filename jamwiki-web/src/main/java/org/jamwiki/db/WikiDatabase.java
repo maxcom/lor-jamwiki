@@ -662,8 +662,8 @@ public class WikiDatabase {
 		TopicVersion topicVersion = new TopicVersion(user, user.getLastLoginIpAddress(), "Automatically created by system setup", contents, charactersChanged);
 		// FIXME - it is not connection-safe to parse for metadata since we are already holding a connection
 		// ParserOutput parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki, topicName);
-		// WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true);
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true);
+		// WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks());
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
 	}
 
 	/**

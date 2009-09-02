@@ -66,7 +66,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws DataAccessException, WikiException {
+	public void deleteTopic(Topic topic, TopicVersion topicVersion) throws DataAccessException, WikiException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -375,7 +375,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws DataAccessException, WikiException {
+	public void undeleteTopic(Topic topic, TopicVersion topicVersion) throws DataAccessException, WikiException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -417,7 +417,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links, boolean userVisible) throws DataAccessException, WikiException {
+	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links) throws DataAccessException, WikiException {
 		// store topics in a local map.  not very sophisticated, but enough to support testing.
 		this.topics.put(topic.getName(), topic);
 	}
