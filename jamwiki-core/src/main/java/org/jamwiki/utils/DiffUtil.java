@@ -183,7 +183,7 @@ public class DiffUtil {
 			for (WikiDiff changedLineWikiDiff : changedLineWikiDiffs) {
 				oldLineArray = DiffUtil.stringToArray(changedLineWikiDiff.getOldText());
 				newLineArray = DiffUtil.stringToArray(changedLineWikiDiff.getNewText());
-				changedLineDiffs = new Diff(oldLineArray, newLineArray).diff();
+				changedLineDiffs = new Diff<String>(oldLineArray, newLineArray).diff();
 				wikiSubDiffs = new ArrayList<WikiDiff>();
 				int j = 0;
 				for (Difference changedLineDiff : changedLineDiffs) {
@@ -340,7 +340,7 @@ public class DiffUtil {
 		}
 		String[] oldArray = DiffUtil.split(oldVersion);
 		String[] newArray = DiffUtil.split(newVersion);
-		Diff diffObject = new Diff(oldArray, newArray);
+		Diff<String> diffObject = new Diff<String>(oldArray, newArray);
 		List<Difference> diffs = diffObject.diff();
 		return DiffUtil.generateWikiDiffs(diffs, oldArray, newArray);
 	}

@@ -25,7 +25,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;

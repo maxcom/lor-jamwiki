@@ -25,7 +25,6 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.utils.Utilities;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

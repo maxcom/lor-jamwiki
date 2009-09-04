@@ -20,7 +20,6 @@ import java.sql.SQLException;
 import java.util.Properties;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.Pagination;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 /**
