@@ -993,6 +993,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				stmt.setInt(index++, topicVersion.getPreviousTopicVersionId());
 			}
 			stmt.setInt(index++, topicVersion.getCharactersChanged());
+			stmt.setString(index++, topicVersion.getVersionParamString());
 			stmt.executeUpdate();
 			if (this.autoIncrementPrimaryKeys()) {
 				ResultSet rs = stmt.getGeneratedKeys();

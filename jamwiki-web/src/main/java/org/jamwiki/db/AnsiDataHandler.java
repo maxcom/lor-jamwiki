@@ -883,6 +883,7 @@ public class AnsiDataHandler implements DataHandler {
 				topicVersion.setAuthorId(userId);
 			}
 			topicVersion.setCharactersChanged(rs.getInt("characters_changed"));
+			topicVersion.setVersionParamString(rs.getString("version_params"));
 			topicVersion.setEditDate(rs.getTimestamp("edit_date"));
 			topicVersion.setEditType(rs.getInt("edit_type"));
 			topicVersion.setAuthorDisplay(rs.getString("wiki_user_display"));
@@ -1678,6 +1679,7 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	protected void validateTopicVersion(TopicVersion topicVersion) throws WikiException {
 		checkLength(topicVersion.getAuthorDisplay(), 100);
+		checkLength(topicVersion.getVersionParamString(), 500);
 		topicVersion.setEditComment(StringUtils.substring(topicVersion.getEditComment(), 0, 200));
 	}
 

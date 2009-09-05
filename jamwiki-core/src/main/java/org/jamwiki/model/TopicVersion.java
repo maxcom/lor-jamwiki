@@ -18,6 +18,9 @@ package org.jamwiki.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
 
@@ -54,6 +57,7 @@ public class TopicVersion implements Serializable {
 	private int topicId = -1;
 	private int topicVersionId = -1;
 	private String versionContent = null;
+	private List<String> versionParams = null;
 	private static final WikiLogger logger = WikiLogger.getLogger(TopicVersion.class.getName());
 
 	/**
@@ -273,5 +277,46 @@ public class TopicVersion implements Serializable {
 	 */
 	public void setVersionContent(String versionContent) {
 		this.versionContent = versionContent;
+	}
+
+	/**
+	 *
+	 */
+	public List<String> getVersionParams() {
+		return this.versionParams;
+	}
+
+	/**
+	 *
+	 */
+	public void setVersionParams(List<String> versionParams) {
+		this.versionParams = versionParams;
+	}
+
+	/**
+	 * Utility method for converting the version params to a pipe-delimited string.
+	 */
+	public String getVersionParamString() {
+		if (this.versionParams == null || this.versionParams.isEmpty()) {
+			return null;
+		}
+		String result = "";
+		for (String versionParam : this.versionParams) {
+			if (result.length() > 0) {
+				result += "|";
+			}
+			result += versionParam;
+		}
+		return result;
+	}
+
+	/**
+	 * Utility method for converting a version params pipe-delimited string to a list.
+	 */
+	public void setVersionParamString(String versionParamsString) {
+		if (!StringUtils.isBlank(versionParamsString)) {
+			List<String> versionParams = Arrays.asList(versionParamsString.split("\\|"));
+			this.setVersionParams(versionParams);
+		}
 	}
 }

@@ -202,15 +202,22 @@ followed by 0.6.3.
           jam_recent_change and jam_file_version tables.
               alter table jam_topic_version drop column wiki_user_ip_address;
               alter table jam_file_version drop column wiki_user_ip_address;
-       f) Add the new ROLE_IMPORT:
+       f) Add the version_params column to the jam_topic_version table.
+            Oracle:
+              alter table jam_topic_version add (version_params VARCHAR(500));
+            MS SQL:
+              alter table jam_topic_version add [version_params] VARCHAR(500);
+            Other Databases:
+              alter table jam_topic_version add column version_params VARCHAR(500);
+       g) Add the new ROLE_IMPORT:
               INSERT into jam_role (role_name) values ('ROLE_IMPORT');
-       g) Assign ROLE_IMPORT to all users with ROLE_ADMIN:
+       h) Assign ROLE_IMPORT to all users with ROLE_ADMIN:
               INSERT into jam_authorities (authority, username)
                    select 'ROLE_IMPORT', username
                    from jam_authorities where authority = 'ROLE_ADMIN';
-       h) Drop the jam_recent_change table:
+       i) Drop the jam_recent_change table:
               DROP TABLE jam_recent_change
-       i) Re-add the jam_recent_change table with the new schema:
+       j) Re-add the jam_recent_change table with the new schema:
             Asa:
               CREATE TABLE jam_recent_change ( 
                 topic_version_id INTEGER NULL, 
