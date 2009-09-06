@@ -18,6 +18,9 @@ package org.jamwiki.model;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Locale;
+import org.apache.commons.lang.StringUtils;
+import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -31,6 +34,7 @@ public class RecentChange {
 	private Integer charactersChanged = null;
 	private String changeComment = null;
 	private Timestamp changeDate = null;
+	private transient WikiMessage changeWikiMessage = null;
 	private Integer editType = null;
 	private LogItem logItem = null;
 	private Integer previousTopicVersionId = null;
@@ -57,10 +61,11 @@ public class RecentChange {
 		recentChange.setAuthorId(topicVersion.getAuthorId());
 		recentChange.setAuthorName(authorName);
 		recentChange.setCharactersChanged(topicVersion.getCharactersChanged());
-		recentChange.setChangeComment(topicVersion.getEditCommentFull());
+		recentChange.setChangeComment(topicVersion.getEditComment());
 		recentChange.setChangeDate(topicVersion.getEditDate());
 		recentChange.setEditType(topicVersion.getEditType());
 		recentChange.setVirtualWiki(topic.getVirtualWiki());
+		recentChange.initChangeWikiMessage(topicVersion.getEditType(), topicVersion.getVersionParamString());
 		return recentChange;
 	}
 
@@ -75,6 +80,7 @@ public class RecentChange {
 		recentChange.setChangeDate(logItem.getLogDate());
 		recentChange.setLogItem(logItem);
 		recentChange.setVirtualWiki(logItem.getVirtualWiki());
+		recentChange.initChangeWikiMessage(logItem);
 		return recentChange;
 	}
 
@@ -90,6 +96,39 @@ public class RecentChange {
 		this.logItem.setUserDisplayName(this.authorName);
 		this.logItem.setUserId(this.authorId);
 		this.logItem.setVirtualWiki(this.virtualWiki);
+		this.initChangeWikiMessage(this.logItem);
+	}
+
+	/**
+	 *
+	 */
+	private void initChangeWikiMessage(LogItem logItem) {
+		if (logItem.isDelete()) {
+			this.setChangeWikiMessage(new WikiMessage("log.message.deletion", logItem.getLogParams()));
+		} else if (logItem.isImport()) {
+			this.setChangeWikiMessage(new WikiMessage("log.message.import", logItem.getLogParams()));
+		} else if (logItem.isMove()) {
+			this.setChangeWikiMessage(new WikiMessage("log.message.move", logItem.getLogParams()));
+		} else if (logItem.isPermission()) {
+			this.setChangeWikiMessage(new WikiMessage("log.message.permission", logItem.getLogParams()));
+		} else if (logItem.isUpload()) {
+			this.setChangeWikiMessage(new WikiMessage("log.message.upload", logItem.getLogParams()));
+		} else if (logItem.isUser()) {
+			this.setChangeWikiMessage(new WikiMessage("log.message.user"));
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void initChangeWikiMessage(int editType, String logParamString) {
+		if (StringUtils.isBlank(logParamString)) {
+			// older versions of JAMWiki did not have this field, so it may not always be populated as expected
+			return;
+		}
+		if (editType == TopicVersion.EDIT_MOVE) {
+			this.setChangeWikiMessage(new WikiMessage("log.message.move", logParamString.split("\\|")));
+		}
 	}
 
 	/**
@@ -172,6 +211,24 @@ public class RecentChange {
 			changeTypeNotification.append('i');
 		}
 		return changeTypeNotification.toString();
+	}
+
+	/**
+	 * This field is a generated field used to return a <code>WikiMessage</code> object
+	 * that represents any auto-generated message information for the recent change entry,
+	 * such as "Topic A renamed to Topic B" when renaming a topic.
+	 */
+	public WikiMessage getChangeWikiMessage() {
+		return this.changeWikiMessage;
+	}
+
+	/**
+	 * This field is a generated field used to return a <code>WikiMessage</code> object
+	 * that represents any auto-generated message information for the recent change entry,
+	 * such as "Topic A renamed to Topic B" when renaming a topic.
+	 */
+	public void setChangeWikiMessage(WikiMessage changeWikiMessage) {
+		this.changeWikiMessage = changeWikiMessage;
 	}
 
 	/**

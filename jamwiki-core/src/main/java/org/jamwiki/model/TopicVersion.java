@@ -41,12 +41,6 @@ public class TopicVersion implements Serializable {
 	private String authorDisplay = null;
 	private int charactersChanged = 0;
 	private String editComment = null;
-	/**
-	 * This field is seldom used but may occasionally be populated when a version is created as a result
-	 * of something like a page move.  In such a case a system message (Page moved from A to B) will be
-	 * stored in this field and appended to the editComment prior to saving the topic version.
-	 */
-	private String editCommentAuto = null;
 	private Timestamp editDate = new Timestamp(System.currentTimeMillis());
 	private int editType = EDIT_NORMAL;
 	/** This field is not persisted and is simply used when writing versions to indicate whether the version can be logged. */
@@ -77,6 +71,40 @@ public class TopicVersion implements Serializable {
 		this.editComment = editComment;
 		this.versionContent = versionContent;
 		this.charactersChanged = charactersChanged;
+	}
+
+	/**
+	 * Given a topic associated with this topic version, initialize the version
+	 * parameters field.
+	 */
+	public void initializeVersionParams(Topic topic) {
+		switch (this.editType) {
+			case TopicVersion.EDIT_DELETE:
+			case TopicVersion.EDIT_UNDELETE:
+				// store the name of the deleted topic
+				this.addVersionParam(topic.getName());
+				break;
+			case TopicVersion.EDIT_MOVE:
+				if (!StringUtils.isBlank(topic.getRedirectTo())) {
+					// store the old and new topic names
+					this.addVersionParam(topic.getName());
+					this.addVersionParam(topic.getRedirectTo());
+				}
+				break;
+			case TopicVersion.EDIT_PERMISSION:
+				// store the name of the topic
+				this.addVersionParam(topic.getName());
+				break;
+			case TopicVersion.EDIT_IMPORT:
+				this.addVersionParam(topic.getName());
+				break;
+			default:
+				if (topic.getTopicType() == Topic.TYPE_FILE || topic.getTopicType() == Topic.TYPE_IMAGE) {
+					// store the topic name for uploads
+					this.addVersionParam(topic.getName());
+				}
+				break;
+		}
 	}
 
 	/**
@@ -133,38 +161,6 @@ public class TopicVersion implements Serializable {
 	 */
 	public void setEditComment(String editComment) {
 		this.editComment = editComment;
-	}
-
-	/**
-	 *
-	 */
-	public String getEditCommentAuto() {
-		return this.editCommentAuto;
-	}
-
-	/**
-	 *
-	 */
-	public void setEditCommentAuto(String editCommentAuto) {
-		this.editCommentAuto = editCommentAuto;
-	}
-
-	/**
-	 * Utility method for concatenating the auto edit comment and the edit comment.
-	 */
-	public String getEditCommentFull() {
-		String result = null;
-		if (!StringUtils.isBlank(this.editCommentAuto)) {
-			result = this.editCommentAuto;
-		}
-		if (!StringUtils.isBlank(this.editComment)) {
-			if (StringUtils.isBlank(this.editCommentAuto)) {
-				result = this.editComment;
-			} else {
-				result += " (" + this.editComment + ")";
-			}
-		}
-		return result;
 	}
 
 	/**
@@ -277,6 +273,16 @@ public class TopicVersion implements Serializable {
 	 */
 	public void setVersionContent(String versionContent) {
 		this.versionContent = versionContent;
+	}
+
+	/**
+	 * Utility method for adding a version param.
+	 */
+	private void addVersionParam(String param) {
+		if (this.versionParams == null) {
+			this.versionParams = new ArrayList<String>();
+		}
+		this.versionParams.add(param);
 	}
 
 	/**

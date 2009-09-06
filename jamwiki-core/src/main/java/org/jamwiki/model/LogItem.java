@@ -78,8 +78,6 @@ public class LogItem {
 			case TopicVersion.EDIT_DELETE:
 			case TopicVersion.EDIT_UNDELETE:
 				logItem.setLogType(LOG_TYPE_DELETE);
-				// format for delete log is "Topic {0} deleted"
-				logItem.addLogParam(topic.getName());
 				break;
 			case TopicVersion.EDIT_MOVE:
 				if (StringUtils.isBlank(topic.getRedirectTo())) {
@@ -87,14 +85,9 @@ public class LogItem {
 					return null;
 				}
 				logItem.setLogType(LOG_TYPE_MOVE);
-				// format for move log is "Topic {0} renamed to {1}"
-				logItem.addLogParam(topic.getName());
-				logItem.addLogParam(topic.getRedirectTo());
 				break;
 			case TopicVersion.EDIT_PERMISSION:
 				logItem.setLogType(LOG_TYPE_PERMISSION);
-				// format for permission log is "Permissions updated for topic {0}"
-				logItem.addLogParam(topic.getName());
 				break;
 			case TopicVersion.EDIT_IMPORT:
 				if (topic.getCurrentVersionId() != topicVersion.getTopicVersionId()) {
@@ -102,19 +95,16 @@ public class LogItem {
 					return null;
 				}
 				logItem.setLogType(LOG_TYPE_IMPORT);
-				// format for import log is "Topic {0} imported"
-				logItem.addLogParam(topic.getName());
 				break;
 			default:
 				if (topic.getTopicType() == Topic.TYPE_FILE || topic.getTopicType() == Topic.TYPE_IMAGE) {
 					logItem.setLogType(LOG_TYPE_UPLOAD);
-					// format user log is "File {0} uploaded"
-					logItem.addLogParam(topic.getName());
 					break;
 				}
 				// not valid for logging
 				return null;
 		}
+		logItem.setLogParams(topicVersion.getVersionParams());
 		logItem.setLogComment(topicVersion.getEditComment());
 		logItem.setLogDate(topicVersion.getEditDate());
 		logItem.setTopicId(topic.getTopicId());
@@ -165,16 +155,6 @@ public class LogItem {
 	 */
 	public void setLogDate(Timestamp logDate) {
 		this.logDate = logDate;
-	}
-
-	/**
-	 * Utility method for adding a log param.
-	 */
-	private void addLogParam(String param) {
-		if (this.logParams == null) {
-			this.logParams = new ArrayList<String>();
-		}
-		this.logParams.add(param);
 	}
 
 	/**

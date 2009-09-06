@@ -16,6 +16,7 @@
  */
 package org.jamwiki;
 
+import java.util.List;
 import org.jamwiki.utils.WikiLogger;
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -92,6 +93,27 @@ public class WikiMessage {
 			this.params = new String[params.length];
 			for (int i = 0; i < params.length; i++) {
 				this.params[i] = StringEscapeUtils.escapeHtml(params[i]);
+			}
+		}
+	}
+
+	/**
+	 * Create a new message that is mapped to the specified ApplicationResources
+	 * key value using an list of parameters.
+	 *
+	 * @param key The ApplicationResources key that corresponds to the message
+	 *  to display.
+	 * @param params An list of parameters that correspond to the {0}, {1}, etc
+	 *  params in the specified message key value.  Note that these parameters are
+	 *  automatically HTML escaped to prevent erorrs in display.
+	 */
+	public WikiMessage(String key, List<String> paramList) {
+		this.key = key;
+		if (paramList != null && !paramList.isEmpty()) {
+			this.params = new String[paramList.size()];
+			int i = 0;
+			for (String param : paramList) {
+				this.params[i++] = StringEscapeUtils.escapeHtml(param);
 			}
 		}
 	}

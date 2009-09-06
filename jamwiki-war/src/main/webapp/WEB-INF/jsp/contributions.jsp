@@ -48,6 +48,13 @@
 	<c:if test="${change.delete}"><c:out value="${change.topicName}" /></c:if>
 	</jamwiki:watchlist>
 	<c:if test="${!empty change.changeTypeNotification}">&#160;<b><c:out value="${change.changeTypeNotification}" /></b></c:if>
+	<c:if test="${!empty change.changeWikiMessage}">
+		&#160;
+		<fmt:message key="${change.changeWikiMessage.key}">
+			<fmt:param><jamwiki:link value="${change.changeWikiMessage.params[0]}" text="${change.changeWikiMessage.params[0]}" /></fmt:param>
+			<fmt:param><jamwiki:link value="${change.changeWikiMessage.params[1]}" text="${change.changeWikiMessage.params[1]}" /></fmt:param>
+		</fmt:message>
+	</c:if>
 	<c:if test="${!empty change.changeComment}">&#160;(<span class="edit-comment"><jamwiki:editComment comment="${change.changeComment}" topic="${change.topicName}" /></span>)</c:if>
 </li>
 </c:forEach>

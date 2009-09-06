@@ -140,8 +140,6 @@ public class MoveServlet extends JAMWikiServlet {
 		WikiUser user = ServletUtil.currentWikiUser();
 		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), moveComment, fromTopic.getTopicContent(), 0);
 		topicVersion.setEditType(TopicVersion.EDIT_MOVE);
-		String moveCommentAuto = Utilities.formatMessage("move.editcomment", request.getLocale(), new String[]{moveFrom, moveDestination});
-		topicVersion.setEditCommentAuto(moveCommentAuto);
 		WikiBase.getDataHandler().moveTopic(fromTopic, topicVersion, moveDestination);
 		return true;
 	}

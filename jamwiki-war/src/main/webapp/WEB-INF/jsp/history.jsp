@@ -63,9 +63,14 @@
 	<jamwiki:link value="User:${change.authorName}" text="${change.authorName}" />
 	(<jamwiki:link value="User comments:${change.authorName}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${change.authorName}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
 	<c:if test="${!empty change.changeTypeNotification}">&#160;<b><c:out value="${change.changeTypeNotification}" /></b></c:if>
-	<c:if test="${!empty change.changeComment}">
-	<label for="<c:out value="diff:${change.topicVersionId}" />">&#160;(<span class="edit-comment"><jamwiki:editComment comment="${change.changeComment}" topic="${change.topicName}" /></span>)</label>
+	<c:if test="${!empty change.changeWikiMessage}">
+		&#160;
+		<fmt:message key="${change.changeWikiMessage.key}">
+			<fmt:param><jamwiki:link value="${change.changeWikiMessage.params[0]}" text="${change.changeWikiMessage.params[0]}" /></fmt:param>
+			<fmt:param><jamwiki:link value="${change.changeWikiMessage.params[1]}" text="${change.changeWikiMessage.params[1]}" /></fmt:param>
+		</fmt:message>
 	</c:if>
+	<c:if test="${!empty change.changeComment}"><label for="<c:out value="diff:${change.topicVersionId}" />">&#160;(<span class="edit-comment"><jamwiki:editComment comment="${change.changeComment}" topic="${change.topicName}" /></span>)</label></c:if>
 </li>
 </c:forEach>
 </ul>

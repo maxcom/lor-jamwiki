@@ -75,17 +75,12 @@
 	<jamwiki:link value="User:${change.authorName}" text="${change.authorName}" />
 	(<jamwiki:link value="User comments:${change.authorName}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${change.authorName}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
 	<c:if test="${!empty change.changeTypeNotification}">&#160;<b><c:out value="${change.changeTypeNotification}" /></b></c:if>
-	<c:if test="${!empty change.logItem}">
+	<c:if test="${!empty change.changeWikiMessage}">
 		&#160;
-		<%-- FIXME - clean up --%>
-		<c:choose>
-			<c:when test="${change.logItem.delete}"><fmt:message key="log.message.deletion"><fmt:param><jamwiki:link value="${change.logItem.logParams[0]}" text="${change.logItem.logParams[0]}" /></fmt:param></fmt:message></c:when> 
-			<c:when test="${change.logItem.import}"><fmt:message key="log.message.import"><fmt:param><jamwiki:link value="${change.logItem.logParams[0]}" text="${change.logItem.logParams[0]}" /></fmt:param></fmt:message></c:when> 
-			<c:when test="${change.logItem.move}"><fmt:message key="log.message.move"><fmt:param><jamwiki:link value="${change.logItem.logParams[0]}" text="${change.logItem.logParams[0]}" /></fmt:param><fmt:param><jamwiki:link value="${change.logItem.logParams[1]}" text="${change.logItem.logParams[1]}" /></fmt:param></fmt:message></c:when>
-			<c:when test="${change.logItem.permission}"><fmt:message key="log.message.permission"><fmt:param><jamwiki:link value="${change.logItem.logParams[0]}" text="${change.logItem.logParams[0]}" /></fmt:param></fmt:message></c:when> 
-			<c:when test="${change.logItem.upload}"><fmt:message key="log.message.upload"><fmt:param><jamwiki:link value="${change.logItem.logParams[0]}" text="${change.logItem.logParams[0]}" /></fmt:param></fmt:message></c:when> 
-			<c:when test="${change.logItem.user}"><fmt:message key="log.message.user" /></c:when> 
-		</c:choose>
+		<fmt:message key="${change.changeWikiMessage.key}">
+			<fmt:param><jamwiki:link value="${change.changeWikiMessage.params[0]}" text="${change.changeWikiMessage.params[0]}" /></fmt:param>
+			<fmt:param><jamwiki:link value="${change.changeWikiMessage.params[1]}" text="${change.changeWikiMessage.params[1]}" /></fmt:param>
+		</fmt:message>
 	</c:if>
 	<c:if test="${!empty change.changeComment}">&#160;(<span class="edit-comment"><jamwiki:editComment comment="${change.changeComment}" topic="${change.topicName}" /></span>)</c:if>
 </li>

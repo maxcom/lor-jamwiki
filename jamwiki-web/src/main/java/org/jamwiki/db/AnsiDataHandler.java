@@ -795,6 +795,8 @@ public class AnsiDataHandler implements DataHandler {
 			int logType = rs.getInt("log_type");
 			if (logType > 0) {
 				change.initLogItem(logType, rs.getString("log_params"));
+			} else {
+				change.initChangeWikiMessage(editType, rs.getString("log_params"));
 			}
 			change.setVirtualWiki(rs.getString("virtual_wiki_name"));
 			return change;
@@ -1890,6 +1892,7 @@ public class AnsiDataHandler implements DataHandler {
 					topicVersion.setPreviousTopicVersionId(topic.getCurrentVersionId());
 				}
 				topicVersion.setTopicId(topic.getTopicId());
+				topicVersion.initializeVersionParams(topic);
 				// write version
 				addTopicVersion(topicVersion, conn);
 				topic.setCurrentVersionId(topicVersion.getTopicVersionId());
