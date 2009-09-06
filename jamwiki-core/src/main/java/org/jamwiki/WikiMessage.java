@@ -18,7 +18,7 @@ package org.jamwiki;
 
 import java.util.List;
 import org.jamwiki.utils.WikiLogger;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This class is a utility class useful for storing messages key and object
@@ -54,7 +54,7 @@ public class WikiMessage {
 	public WikiMessage(String key, String param1) {
 		this.key = key;
 		this.params = new String[1];
-		params[0] = StringEscapeUtils.escapeHtml(param1);
+		params[0] = this.escapeHtml(param1);
 	}
 
 	/**
@@ -73,8 +73,8 @@ public class WikiMessage {
 	public WikiMessage(String key, String param1, String param2) {
 		this.key = key;
 		this.params = new String[2];
-		params[0] = StringEscapeUtils.escapeHtml(param1);
-		params[1] = StringEscapeUtils.escapeHtml(param2);
+		params[0] = this.escapeHtml(param1);
+		params[1] = this.escapeHtml(param2);
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class WikiMessage {
 		if (params != null) {
 			this.params = new String[params.length];
 			for (int i = 0; i < params.length; i++) {
-				this.params[i] = StringEscapeUtils.escapeHtml(params[i]);
+				this.params[i] = this.escapeHtml(params[i]);
 			}
 		}
 	}
@@ -113,7 +113,7 @@ public class WikiMessage {
 			this.params = new String[paramList.size()];
 			int i = 0;
 			for (String param : paramList) {
-				this.params[i++] = StringEscapeUtils.escapeHtml(param);
+				this.params[i++] = this.escapeHtml(param);
 			}
 		}
 	}
@@ -146,5 +146,19 @@ public class WikiMessage {
 	 */
 	public void setParamsWithoutEscaping(String[] params) {
 		this.params = params;
+	}
+	
+	/**
+	 * Escape HTML.  StringEscapeUtils.escapeHtml should be used for this functionality,
+	 * but the current version escapes unicode characters as well as HTML entities
+	 * which breaks some wiki functionality.
+	 */
+	private String escapeHtml(String param) {
+		// this could be optimized should performance become an issue
+		param = StringUtils.replace(param, "&", "&amp;");
+		param = StringUtils.replace(param, "<", "&lt;");
+		param = StringUtils.replace(param, ">", "&gt;");
+		param = StringUtils.replace(param, "\"", "&quot;");
+		return param;
 	}
 }
