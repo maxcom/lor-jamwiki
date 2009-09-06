@@ -26,8 +26,10 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -138,6 +140,24 @@ public class Utilities {
 			throw new IllegalStateException("Unsupporting encoding UTF-8");
 		}
 		return Utilities.decodeTopicName(result, decodeUnderlines);
+	}
+
+	/**
+	 * Convert a delimited string to a list.
+	 *
+	 * @param delimitedString A string consisting of the delimited list items.
+	 * @param delimiter The string used as the delimiter.
+	 * @return A list consisting of the delimited string items, or <code>null</code> if the
+	 *  string is <code>null</code> or empty.
+	 */
+	public static List<String> delimitedStringToList(String delimitedString, String delimiter) {
+		if (delimiter == null) {
+			throw new IllegalArgumentException("Attempt to call Utilities.delimitedStringToList with no delimiter specified");
+		}
+		if (StringUtils.isBlank(delimitedString)) {
+			return null;
+		}
+		return Arrays.asList(StringUtils.splitByWholeSeparator(delimitedString, delimiter));
 	}
 
 	/**
@@ -490,6 +510,31 @@ public class Utilities {
 		}
 		Matcher m2 = Utilities.VALID_IPV6_PATTERN.matcher(ipAddress);
 		return m2.matches();
+	}
+
+	/**
+	 * Convert a list to a delimited string.
+	 *
+	 * @param list The list to convert to a string.
+	 * @param delimiter The string to use as a delimiter.
+	 * @return A string consisting of the delimited list items, or <code>null</code> if the
+	 *  list is <code>null</code> or empty.
+	 */
+	public static String listToDelimitedString(List<String> list, String delimiter) {
+		if (delimiter == null) {
+			throw new IllegalArgumentException("Attempt to call Utilities.delimitedStringToList with no delimiter specified");
+		}
+		if (list == null || list.isEmpty()) {
+			return null;
+		}
+		String result = "";
+		for (String item : list) {
+			if (result.length() > 0) {
+				result += delimiter;
+			}
+			result += item;
+		}
+		return result;
 	}
 
 	/**

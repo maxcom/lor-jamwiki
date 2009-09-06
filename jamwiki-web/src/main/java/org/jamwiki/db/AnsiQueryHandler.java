@@ -893,7 +893,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			} else {
 				stmt.setInt(13, change.getLogType());
 			}
-			stmt.setString(14, change.getLogParamString());
+			stmt.setString(14, change.getParamString());
 			stmt.executeUpdate();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);

@@ -201,7 +201,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 		if (!StringUtils.isBlank(change.getChangeComment())) {
 			descr.append(change.getChangeComment());
 		}
-		if (change.getDelete()) {
+		if (change.isDelete()) {
 			descr.append(" (deleted)");
 		} else {
 			if (linkToVersion) {
@@ -217,7 +217,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 				entry.setLink(feedURL + Utilities.encodeAndEscapeTopicName(change.getTopicName()));
 			}
 		}
-		if (change.getUndelete()) {
+		if (change.isUndelete()) {
 			descr.append(" (undeleted)");
 		}
 		if (change.getMinor()) {

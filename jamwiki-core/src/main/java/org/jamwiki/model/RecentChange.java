@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -36,7 +37,8 @@ public class RecentChange {
 	private Timestamp changeDate = null;
 	private transient WikiMessage changeWikiMessage = null;
 	private Integer editType = null;
-	private LogItem logItem = null;
+	private Integer logType = null;
+	private List<String> params = null;
 	private Integer previousTopicVersionId = null;
 	private Integer topicId = null;
 	private String topicName = null;
@@ -65,7 +67,8 @@ public class RecentChange {
 		recentChange.setChangeDate(topicVersion.getEditDate());
 		recentChange.setEditType(topicVersion.getEditType());
 		recentChange.setVirtualWiki(topic.getVirtualWiki());
-		recentChange.initChangeWikiMessage(topicVersion.getEditType(), topicVersion.getVersionParamString());
+		recentChange.setParamString(topicVersion.getVersionParamString());
+		recentChange.initChangeWikiMessageForVersion(topicVersion.getEditType(), topicVersion.getVersionParamString());
 		return recentChange;
 	}
 
@@ -78,42 +81,31 @@ public class RecentChange {
 		recentChange.setAuthorName(logItem.getUserDisplayName());
 		recentChange.setChangeComment(logItem.getLogComment());
 		recentChange.setChangeDate(logItem.getLogDate());
-		recentChange.setLogItem(logItem);
 		recentChange.setVirtualWiki(logItem.getVirtualWiki());
-		recentChange.initChangeWikiMessage(logItem);
+		recentChange.setParamString(logItem.getLogParamString());
+		recentChange.initChangeWikiMessageForLog(logItem.getLogType(), logItem.getLogParamString());
 		return recentChange;
-	}
-
-	/**
-	 * Utility method for initializing the LogItem field of this object.
-	 */
-	public void initLogItem(int logType, String logParamString) {
-		this.logItem = new LogItem();
-		this.logItem.setLogComment(this.changeComment);
-		this.logItem.setLogDate(this.changeDate);
-		this.logItem.setLogParamString(logParamString);
-		this.logItem.setLogType(logType);
-		this.logItem.setUserDisplayName(this.authorName);
-		this.logItem.setUserId(this.authorId);
-		this.logItem.setVirtualWiki(this.virtualWiki);
-		this.initChangeWikiMessage(this.logItem);
 	}
 
 	/**
 	 *
 	 */
-	private void initChangeWikiMessage(LogItem logItem) {
-		if (logItem.isDelete()) {
-			this.setChangeWikiMessage(new WikiMessage("log.message.deletion", logItem.getLogParams()));
-		} else if (logItem.isImport()) {
-			this.setChangeWikiMessage(new WikiMessage("log.message.import", logItem.getLogParams()));
-		} else if (logItem.isMove()) {
-			this.setChangeWikiMessage(new WikiMessage("log.message.move", logItem.getLogParams()));
-		} else if (logItem.isPermission()) {
-			this.setChangeWikiMessage(new WikiMessage("log.message.permission", logItem.getLogParams()));
-		} else if (logItem.isUpload()) {
-			this.setChangeWikiMessage(new WikiMessage("log.message.upload", logItem.getLogParams()));
-		} else if (logItem.isUser()) {
+	public void initChangeWikiMessageForLog(int logType, String logParamString) {
+		String[] logParams = null;
+		if (!StringUtils.isBlank(logParamString)) {
+			logParams = logParamString.split("\\|");
+		}
+		if (logType == LogItem.LOG_TYPE_DELETE) {
+			this.setChangeWikiMessage(new WikiMessage("log.message.deletion", logParams));
+		} else if (logType == LogItem.LOG_TYPE_IMPORT) {
+			this.setChangeWikiMessage(new WikiMessage("log.message.import", logParams));
+		} else if (logType == LogItem.LOG_TYPE_MOVE) {
+			this.setChangeWikiMessage(new WikiMessage("log.message.move", logParams));
+		} else if (logType == LogItem.LOG_TYPE_PERMISSION) {
+			this.setChangeWikiMessage(new WikiMessage("log.message.permission", logParams));
+		} else if (logType == LogItem.LOG_TYPE_UPLOAD) {
+			this.setChangeWikiMessage(new WikiMessage("log.message.upload", logParams));
+		} else if (logType == LogItem.LOG_TYPE_USER_CREATION) {
 			this.setChangeWikiMessage(new WikiMessage("log.message.user"));
 		}
 	}
@@ -121,13 +113,13 @@ public class RecentChange {
 	/**
 	 *
 	 */
-	public void initChangeWikiMessage(int editType, String logParamString) {
-		if (StringUtils.isBlank(logParamString)) {
+	public void initChangeWikiMessageForVersion(int editType, String versionParamString) {
+		if (StringUtils.isBlank(versionParamString)) {
 			// older versions of JAMWiki did not have this field, so it may not always be populated as expected
 			return;
 		}
 		if (editType == TopicVersion.EDIT_MOVE) {
-			this.setChangeWikiMessage(new WikiMessage("log.message.move", logParamString.split("\\|")));
+			this.setChangeWikiMessage(new WikiMessage("log.message.move", versionParamString.split("\\|")));
 		}
 	}
 
@@ -248,13 +240,6 @@ public class RecentChange {
 	/**
 	 *
 	 */
-	public boolean getDelete() {
-		return (this.editType != null && this.editType == TopicVersion.EDIT_DELETE);
-	}
-
-	/**
-	 *
-	 */
 	public Integer getEditType() {
 		return this.editType;
 	}
@@ -269,64 +254,43 @@ public class RecentChange {
 	/**
 	 *
 	 */
-	public boolean getImport() {
-		return (this.editType != null && this.editType == TopicVersion.EDIT_IMPORT);
-	}
-
-	/**
-	 *
-	 */
-	public LogItem getLogItem() {
-		return this.logItem;
-	}
-
-	/**
-	 *
-	 */
-	public void setLogItem(LogItem logItem) {
-		this.logItem = logItem;
-	}
-
-	/**
-	 *
-	 */
-	public List<String> getLogParams() {
-		return (this.logItem == null) ? null : this.logItem.getLogParams();
-	}
-
-	/**
-	 * Utility method for converting the log params to a pipe-delimited string.
-	 */
-	public String getLogParamString() {
-		return (this.logItem == null) ? null : this.logItem.getLogParamString();
-	}
-
-	/**
-	 *
-	 */
 	public Integer getLogType() {
-		return (this.logItem == null) ? null : this.logItem.getLogType();
+		return this.logType;
 	}
 
 	/**
 	 *
 	 */
-	public boolean getMinor() {
-		return (this.editType != null && this.editType == TopicVersion.EDIT_MINOR);
+	public void setLogType(Integer logType) {
+		this.logType = logType;
 	}
 
 	/**
 	 *
 	 */
-	public boolean getMove() {
-		return (this.editType != null && this.editType == TopicVersion.EDIT_MOVE);
+	public List<String> getParams() {
+		return this.params;
 	}
 
 	/**
 	 *
 	 */
-	public boolean getNormal() {
-		return (this.editType != null && this.editType == TopicVersion.EDIT_NORMAL);
+	public void setParams(List<String> params) {
+		this.params = params;
+	}
+
+	/**
+	 * Utility method for converting the params to a pipe-delimited string.
+	 */
+	public String getParamString() {
+		return Utilities.listToDelimitedString(this.params, "|");
+	}
+
+	/**
+	 * Utility method for converting a params pipe-delimited string to a list.
+	 */
+	public void setParamString(String paramsString) {
+		this.setParams(Utilities.delimitedStringToList(paramsString, "|"));
 	}
 
 	/**
@@ -388,13 +352,6 @@ public class RecentChange {
 	/**
 	 *
 	 */
-	public boolean getUndelete() {
-		return (this.editType != null && this.editType == TopicVersion.EDIT_UNDELETE);
-	}
-
-	/**
-	 *
-	 */
 	public String getVirtualWiki() {
 		return this.virtualWiki;
 	}
@@ -404,5 +361,86 @@ public class RecentChange {
 	 */
 	public void setVirtualWiki(String virtualWiki) {
 		this.virtualWiki = virtualWiki;
+	}
+
+	/**
+	 *
+	 */
+	public boolean isDelete() {
+		if (this.editType != null && this.editType == TopicVersion.EDIT_DELETE) {
+			return true;
+		} else if (this.logType != null && this.logType == LogItem.LOG_TYPE_DELETE) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 *
+	 */
+	public boolean isImport() {
+		if (this.editType != null && this.editType == TopicVersion.EDIT_IMPORT) {
+			return true;
+		} else if (this.logType != null && this.logType == LogItem.LOG_TYPE_IMPORT) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 *
+	 */
+	public boolean getMinor() {
+		return (this.editType != null && this.editType == TopicVersion.EDIT_MINOR);
+	}
+
+	/**
+	 *
+	 */
+	public boolean isMove() {
+		if (this.editType != null && this.editType == TopicVersion.EDIT_MOVE) {
+			return true;
+		} else if (this.logType != null && this.logType == LogItem.LOG_TYPE_MOVE) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 *
+	 */
+	public boolean isPermission() {
+		return (this.logType != null && this.logType == LogItem.LOG_TYPE_PERMISSION);
+	}
+
+	/**
+	 *
+	 */
+	public boolean isNormal() {
+		return (this.editType != null && this.editType == TopicVersion.EDIT_NORMAL);
+	}
+
+	/**
+	 *
+	 */
+	public boolean isUndelete() {
+		return (this.editType != null && this.editType == TopicVersion.EDIT_UNDELETE);
+	}
+
+	/**
+	 *
+	 */
+	public boolean isUpload() {
+		return (this.logType != null && this.logType == LogItem.LOG_TYPE_UPLOAD);
+	}
+
+	/**
+	 *
+	 */
+	public boolean isUser() {
+		return (this.logType != null && this.logType == LogItem.LOG_TYPE_USER_CREATION);
 	}
 }

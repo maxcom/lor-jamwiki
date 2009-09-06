@@ -791,12 +791,12 @@ public class AnsiDataHandler implements DataHandler {
 			int editType = rs.getInt("edit_type");
 			if (editType > 0) {
 				change.setEditType(editType);
+				change.initChangeWikiMessageForVersion(editType, rs.getString("log_params"));
 			}
 			int logType = rs.getInt("log_type");
 			if (logType > 0) {
-				change.initLogItem(logType, rs.getString("log_params"));
-			} else {
-				change.initChangeWikiMessage(editType, rs.getString("log_params"));
+				change.setLogType(logType);
+				change.initChangeWikiMessageForLog(logType, rs.getString("log_params"));
 			}
 			change.setVirtualWiki(rs.getString("virtual_wiki_name"));
 			return change;
@@ -1657,7 +1657,7 @@ public class AnsiDataHandler implements DataHandler {
 		checkLength(change.getAuthorName(), 200);
 		checkLength(change.getVirtualWiki(), 100);
 		change.setChangeComment(StringUtils.substring(change.getChangeComment(), 0, 200));
-		checkLength(change.getLogParamString(), 500);
+		checkLength(change.getParamString(), 500);
 	}
 
 	/**

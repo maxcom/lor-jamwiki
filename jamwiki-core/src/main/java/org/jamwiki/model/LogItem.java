@@ -18,11 +18,11 @@ package org.jamwiki.model;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -175,27 +175,14 @@ public class LogItem {
 	 * Utility method for converting the log params to a pipe-delimited string.
 	 */
 	public String getLogParamString() {
-		if (this.logParams == null || this.logParams.isEmpty()) {
-			return null;
-		}
-		String result = "";
-		for (String logParam : this.logParams) {
-			if (result.length() > 0) {
-				result += "|";
-			}
-			result += logParam;
-		}
-		return result;
+		return Utilities.listToDelimitedString(this.logParams, "|");
 	}
 
 	/**
 	 * Utility method for converting a log params pipe-delimited string to a list.
 	 */
 	public void setLogParamString(String logParamsString) {
-		if (!StringUtils.isBlank(logParamsString)) {
-			List<String> logParams = Arrays.asList(logParamsString.split("\\|"));
-			this.setLogParams(logParams);
-		}
+		this.setLogParams(Utilities.delimitedStringToList(logParamsString, "|"));
 	}
 
 	/**

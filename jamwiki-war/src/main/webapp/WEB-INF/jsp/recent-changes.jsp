@@ -43,20 +43,20 @@
 <h4><c:out value="${currentDate}" /></h4>
 <ul>
 </c:if>
-<li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.import}"> class="importchange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
+<li<c:if test="${change.delete && empty change.logType}"> class="deletechange"</c:if><c:if test="${change.import && empty change.logType}"> class="importchange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move && empty change.logType}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
 	<c:if test="${!empty change.topicName}">
 		(<jamwiki:link value="Special:Diff"><jamwiki:linkParam key="topic" value="${change.topicName}" /><jamwiki:linkParam key="version2"><c:out value="${change.previousTopicVersionId}" /></jamwiki:linkParam><jamwiki:linkParam key="version1" value="${change.topicVersionId}" /><fmt:message key="common.caption.diff" /></jamwiki:link>)
 		&#160;
 		(<jamwiki:link value="Special:History"><jamwiki:linkParam key="topic" value="${change.topicName}" /><fmt:message key="common.caption.history" /></jamwiki:link>)
 	</c:if>
-	<c:if test="${!empty change.logItem}">
+	<c:if test="${!empty change.logType}">
 		<%-- FIXME - clean up --%>
 		<c:choose>
-			<c:when test="${change.logItem.delete}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${change.logItem.logType}" /><fmt:message key="log.caption.log.deletion" /></jamwiki:link>)</c:when> 
-			<c:when test="${change.logItem.import}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${change.logItem.logType}" /><fmt:message key="log.caption.log.import" /></jamwiki:link>)</c:when> 
-			<c:when test="${change.logItem.move}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${change.logItem.logType}" /><fmt:message key="log.caption.log.move" /></jamwiki:link>)</c:when> 
-			<c:when test="${change.logItem.upload}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${change.logItem.logType}" /><fmt:message key="log.caption.log.upload" /></jamwiki:link>)</c:when> 
-			<c:when test="${change.logItem.user}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${change.logItem.logType}" /><fmt:message key="log.caption.log.user" /></jamwiki:link>)</c:when> 
+			<c:when test="${change.delete}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${change.logType}" /><fmt:message key="log.caption.log.deletion" /></jamwiki:link>)</c:when> 
+			<c:when test="${change.import}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${change.logType}" /><fmt:message key="log.caption.log.import" /></jamwiki:link>)</c:when> 
+			<c:when test="${change.move}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${change.logType}" /><fmt:message key="log.caption.log.move" /></jamwiki:link>)</c:when> 
+			<c:when test="${change.upload}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${change.logType}" /><fmt:message key="log.caption.log.upload" /></jamwiki:link>)</c:when> 
+			<c:when test="${change.user}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${change.logType}" /><fmt:message key="log.caption.log.user" /></jamwiki:link>)</c:when> 
 		</c:choose>
 	</c:if>
 	&#160;

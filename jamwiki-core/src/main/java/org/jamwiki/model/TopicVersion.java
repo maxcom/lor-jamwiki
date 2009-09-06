@@ -19,9 +19,9 @@ package org.jamwiki.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -303,26 +303,13 @@ public class TopicVersion implements Serializable {
 	 * Utility method for converting the version params to a pipe-delimited string.
 	 */
 	public String getVersionParamString() {
-		if (this.versionParams == null || this.versionParams.isEmpty()) {
-			return null;
-		}
-		String result = "";
-		for (String versionParam : this.versionParams) {
-			if (result.length() > 0) {
-				result += "|";
-			}
-			result += versionParam;
-		}
-		return result;
+		return Utilities.listToDelimitedString(this.versionParams, "|");
 	}
 
 	/**
 	 * Utility method for converting a version params pipe-delimited string to a list.
 	 */
 	public void setVersionParamString(String versionParamsString) {
-		if (!StringUtils.isBlank(versionParamsString)) {
-			List<String> versionParams = Arrays.asList(versionParamsString.split("\\|"));
-			this.setVersionParams(versionParams);
-		}
+		this.setVersionParams(Utilities.delimitedStringToList(versionParamsString, "|"));
 	}
 }
