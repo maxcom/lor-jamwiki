@@ -27,7 +27,9 @@ whitespace         = {newline} | [ \t\f]
 nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
 
 /* pre */
-htmlprestart       = (<[ ]*pre[ ]*>)
+htmlpreattributes  = class|dir|id|lang|style|title
+htmlpreattribute   = ([ ]+) {htmlpreattributes} ([ ]*=[^>\n]+[ ]*)*
+htmlprestart       = (<[ ]*pre ({htmlpreattribute})* [ ]* (\/)? [ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
 
 /* javascript */

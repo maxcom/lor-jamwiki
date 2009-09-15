@@ -46,7 +46,9 @@ listdt             = ":"
 nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
 
 /* pre */
-htmlprestart       = (<[ ]*pre[ ]*>)
+htmlpreattributes  = class|dir|id|lang|style|title
+htmlpreattribute   = ([ ]+) {htmlpreattributes} ([ ]*=[^>\n]+[ ]*)*
+htmlprestart       = (<[ ]*pre ({htmlpreattribute})* [ ]* (\/)? [ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
 wikiprestart       = (" ")+ ([^ \t\n])
 wikiprecontinue    = (" ") ([ \t\n])
@@ -155,7 +157,8 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
         return StringEscapeUtils.escapeHtml(yytext());
     }
     beginState(PRE);
-    this.pushTag("pre", null);
+    String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
+    this.pushTag(tagInfo[0], tagInfo[1]);
     return "";
 }
 
