@@ -83,6 +83,7 @@ public class RecentChange {
 		recentChange.setChangeDate(logItem.getLogDate());
 		recentChange.setVirtualWiki(logItem.getVirtualWiki());
 		recentChange.setParamString(logItem.getLogParamString());
+		recentChange.setLogType(logItem.getLogType());
 		recentChange.initChangeWikiMessageForLog(logItem.getLogType(), logItem.getLogParamString());
 		return recentChange;
 	}
