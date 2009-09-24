@@ -7,5 +7,5 @@
 * [[Special:Upload|Upload File]]
 ----
 * [http://jamwiki.org/ JAMWiki]
-* [http://sourceforge.net/projects/jamwiki/ Sourceforge Page]
+* [http://sourceforge.net/projects/jamwiki/ SourceForge Page]
 * [http://mediawiki.org/ MediaWiki]
