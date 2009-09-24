@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
@@ -132,6 +133,31 @@ public class LogItem {
 	/**
 	 *
 	 */
+	public static WikiMessage retrieveLogWikiMessage(int logType, String logParamString) {
+		String[] logParams = null;
+		if (!StringUtils.isBlank(logParamString)) {
+			logParams = logParamString.split("\\|");
+		}
+		WikiMessage logWikiMessage = null;
+		if (logType == LogItem.LOG_TYPE_DELETE) {
+			logWikiMessage = new WikiMessage("log.message.deletion", logParams);
+		} else if (logType == LogItem.LOG_TYPE_IMPORT) {
+			logWikiMessage = new WikiMessage("log.message.import", logParams);
+		} else if (logType == LogItem.LOG_TYPE_MOVE) {
+			logWikiMessage = new WikiMessage("log.message.move", logParams);
+		} else if (logType == LogItem.LOG_TYPE_PERMISSION) {
+			logWikiMessage = new WikiMessage("log.message.permission", logParams);
+		} else if (logType == LogItem.LOG_TYPE_UPLOAD) {
+			logWikiMessage = new WikiMessage("log.message.upload", logParams);
+		} else if (logType == LogItem.LOG_TYPE_USER_CREATION) {
+			logWikiMessage = new WikiMessage("log.message.user");
+		}
+		return logWikiMessage;
+	}
+
+	/**
+	 *
+	 */
 	public String getLogComment() {
 		return this.logComment;
 	}
@@ -197,6 +223,21 @@ public class LogItem {
 	 */
 	public void setLogType(int logType) {
 		this.logType = logType;
+	}
+
+	/**
+	 * Utility method for retrieving the log type caption for the specific log type.
+	 */
+	public String getLogWikiLinkCaption() {
+		return LOG_TYPES.get(this.logType);
+	}
+
+	/**
+	 * Utility method for displaying a formatted log message specific to the log type and
+	 * params.
+	 */
+	public WikiMessage getLogWikiMessage() {
+		return LogItem.retrieveLogWikiMessage(this.getLogType(), this.getLogParamString());
 	}
 
 	/**

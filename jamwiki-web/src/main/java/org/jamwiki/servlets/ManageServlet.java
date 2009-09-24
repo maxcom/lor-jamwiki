@@ -109,7 +109,7 @@ public class ManageServlet extends JAMWikiServlet {
 		topic.setReadOnly(request.getParameter("readOnly") != null);
 		topic.setAdminOnly(request.getParameter("adminOnly") != null);
 		WikiUser user = ServletUtil.currentWikiUser();
-		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), Utilities.formatMessage("manage.message.permissions", request.getLocale()), topic.getTopicContent(), 0);
+		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), null, topic.getTopicContent(), 0);
 		topicVersion.setEditType(TopicVersion.EDIT_PERMISSION);
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
 		next.addObject("message", new WikiMessage("manage.message.updated", topicName));

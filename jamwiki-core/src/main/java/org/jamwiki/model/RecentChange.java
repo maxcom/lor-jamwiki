@@ -92,23 +92,7 @@ public class RecentChange {
 	 *
 	 */
 	public void initChangeWikiMessageForLog(int logType, String logParamString) {
-		String[] logParams = null;
-		if (!StringUtils.isBlank(logParamString)) {
-			logParams = logParamString.split("\\|");
-		}
-		if (logType == LogItem.LOG_TYPE_DELETE) {
-			this.setChangeWikiMessage(new WikiMessage("log.message.deletion", logParams));
-		} else if (logType == LogItem.LOG_TYPE_IMPORT) {
-			this.setChangeWikiMessage(new WikiMessage("log.message.import", logParams));
-		} else if (logType == LogItem.LOG_TYPE_MOVE) {
-			this.setChangeWikiMessage(new WikiMessage("log.message.move", logParams));
-		} else if (logType == LogItem.LOG_TYPE_PERMISSION) {
-			this.setChangeWikiMessage(new WikiMessage("log.message.permission", logParams));
-		} else if (logType == LogItem.LOG_TYPE_UPLOAD) {
-			this.setChangeWikiMessage(new WikiMessage("log.message.upload", logParams));
-		} else if (logType == LogItem.LOG_TYPE_USER_CREATION) {
-			this.setChangeWikiMessage(new WikiMessage("log.message.user"));
-		}
+		this.setChangeWikiMessage(LogItem.retrieveLogWikiMessage(logType, logParamString));
 	}
 
 	/**
@@ -120,7 +104,9 @@ public class RecentChange {
 			return;
 		}
 		if (editType == TopicVersion.EDIT_MOVE) {
-			this.setChangeWikiMessage(new WikiMessage("log.message.move", versionParamString.split("\\|")));
+			this.setChangeWikiMessage(new WikiMessage("move.editcomment", versionParamString.split("\\|")));
+		} else if (editType == TopicVersion.EDIT_PERMISSION) {
+			this.setChangeWikiMessage(new WikiMessage("manage.message.permissions"));
 		}
 	}
 
@@ -264,6 +250,13 @@ public class RecentChange {
 	 */
 	public void setLogType(Integer logType) {
 		this.logType = logType;
+	}
+
+	/**
+	 * Utility method for retrieving the log type caption for the specific log type.
+	 */
+	public String getLogWikiLinkCaption() {
+		return LogItem.LOG_TYPES.get(this.logType);
 	}
 
 	/**

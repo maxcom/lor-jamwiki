@@ -50,14 +50,7 @@
 		(<jamwiki:link value="Special:History"><jamwiki:linkParam key="topic" value="${change.topicName}" /><fmt:message key="common.caption.history" /></jamwiki:link>)
 	</c:if>
 	<c:if test="${!empty change.logType}">
-		<%-- FIXME - clean up --%>
-		<c:choose>
-			<c:when test="${change.delete}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${change.logType}" /><fmt:message key="log.caption.log.deletion" /></jamwiki:link>)</c:when> 
-			<c:when test="${change.import}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${change.logType}" /><fmt:message key="log.caption.log.import" /></jamwiki:link>)</c:when> 
-			<c:when test="${change.move}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${change.logType}" /><fmt:message key="log.caption.log.move" /></jamwiki:link>)</c:when> 
-			<c:when test="${change.upload}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${change.logType}" /><fmt:message key="log.caption.log.upload" /></jamwiki:link>)</c:when> 
-			<c:when test="${change.user}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${change.logType}" /><fmt:message key="log.caption.log.user" /></jamwiki:link>)</c:when> 
-		</c:choose>
+		(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${change.logType}" /><fmt:message key="${change.logWikiLinkCaption}" /></jamwiki:link>)
 	</c:if>
 	&#160;
 	<fmt:formatDate value="${change.changeDate}" type="both" pattern="HH:mm" />

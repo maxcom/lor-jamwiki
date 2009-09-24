@@ -53,27 +53,18 @@
 <li>
 	<fmt:formatDate value="${logItem.logDate}" type="both" pattern="HH:mm" />
 	&#160;
-	<%-- FIXME - clean up --%>
-	<c:choose>
-		<c:when test="${logItem.delete}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${logItem.logType}" /><fmt:message key="log.caption.log.deletion" /></jamwiki:link>)</c:when> 
-		<c:when test="${logItem.import}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${logItem.logType}" /><fmt:message key="log.caption.log.import" /></jamwiki:link>)</c:when> 
-		<c:when test="${logItem.move}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${logItem.logType}" /><fmt:message key="log.caption.log.move" /></jamwiki:link>)</c:when> 
-		<c:when test="${logItem.upload}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${logItem.logType}" /><fmt:message key="log.caption.log.upload" /></jamwiki:link>)</c:when> 
-		<c:when test="${logItem.user}">(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${logItem.logType}" /><fmt:message key="log.caption.log.user" /></jamwiki:link>)</c:when> 
-	</c:choose>
+	(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${logItem.logType}" /><fmt:message key="${logItem.logWikiLinkCaption}" /></jamwiki:link>)
 	&#160;.&#160;.&#160;
 	<jamwiki:link value="User:${logItem.userDisplayName}" text="${logItem.userDisplayName}" />
 	(<jamwiki:link value="User comments:${logItem.userDisplayName}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${logItem.userDisplayName}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
 	&#160;
-	<%-- FIXME - clean up --%>
-	<c:choose>
-		<c:when test="${logItem.delete}"><fmt:message key="log.message.deletion"><fmt:param><jamwiki:link value="${logItem.logParams[0]}" text="${logItem.logParams[0]}" /></fmt:param></fmt:message></c:when> 
-		<c:when test="${logItem.import}"><fmt:message key="log.message.import"><fmt:param><jamwiki:link value="${logItem.logParams[0]}" text="${logItem.logParams[0]}" /></fmt:param></fmt:message></c:when> 
-		<c:when test="${logItem.move}"><fmt:message key="log.message.move"><fmt:param><jamwiki:link value="${logItem.logParams[0]}" text="${logItem.logParams[0]}" /></fmt:param><fmt:param><jamwiki:link value="${logItem.logParams[1]}" text="${logItem.logParams[1]}" /></fmt:param></fmt:message></c:when>
-		<c:when test="${logItem.permission}"><fmt:message key="log.message.permission"><fmt:param><jamwiki:link value="${logItem.logParams[0]}" text="${logItem.logParams[0]}" /></fmt:param></fmt:message></c:when> 
-		<c:when test="${logItem.upload}"><fmt:message key="log.message.upload"><fmt:param><jamwiki:link value="${logItem.logParams[0]}" text="${logItem.logParams[0]}" /></fmt:param></fmt:message></c:when> 
-		<c:when test="${logItem.user}"><fmt:message key="log.message.user" /></c:when> 
-	</c:choose>
+	<c:if test="${!empty logItem.logWikiMessage}">
+		&#160;
+		<fmt:message key="${logItem.logWikiMessage.key}">
+			<fmt:param><jamwiki:link value="${logItem.logWikiMessage.params[0]}" text="${logItem.logWikiMessage.params[0]}" /></fmt:param>
+			<fmt:param><jamwiki:link value="${logItem.logWikiMessage.params[1]}" text="${logItem.logWikiMessage.params[1]}" /></fmt:param>
+		</fmt:message>
+	</c:if>
 	<c:if test="${!empty logItem.logComment}">&#160;<span class="edit-comment">(<c:out value="${logItem.logComment}" />)</span></c:if>
 </li>
 <c:set var="previousDate" value="${currentDate}" />
