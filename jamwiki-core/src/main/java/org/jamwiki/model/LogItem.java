@@ -75,10 +75,15 @@ public class LogItem {
 		if (!topicVersion.isLoggable() || !topicVersion.isRecentChangeAllowed()) {
 			return null;
 		}
+		logItem.setLogParams(topicVersion.getVersionParams());
 		switch (topicVersion.getEditType()) {
 			case TopicVersion.EDIT_DELETE:
+				logItem.setLogType(LOG_TYPE_DELETE);
+				break;
 			case TopicVersion.EDIT_UNDELETE:
 				logItem.setLogType(LOG_TYPE_DELETE);
+				// add a param to distinguish undeletes from deletes
+				logItem.addLogParam(Integer.toString(TopicVersion.EDIT_UNDELETE));
 				break;
 			case TopicVersion.EDIT_MOVE:
 				if (StringUtils.isBlank(topic.getRedirectTo())) {
@@ -105,7 +110,6 @@ public class LogItem {
 				// not valid for logging
 				return null;
 		}
-		logItem.setLogParams(topicVersion.getVersionParams());
 		logItem.setLogComment(topicVersion.getEditComment());
 		logItem.setLogDate(topicVersion.getEditDate());
 		logItem.setTopicId(topic.getTopicId());
@@ -140,7 +144,11 @@ public class LogItem {
 		}
 		WikiMessage logWikiMessage = null;
 		if (logType == LogItem.LOG_TYPE_DELETE) {
-			logWikiMessage = new WikiMessage("log.message.deletion", logParams);
+			if (logParams != null && logParams.length >= 2 && StringUtils.equals(logParams[1], Integer.toString(TopicVersion.EDIT_UNDELETE))) {
+				logWikiMessage = new WikiMessage("log.message.undeletion", logParams);
+			} else {
+				logWikiMessage = new WikiMessage("log.message.deletion", logParams);
+			}
 		} else if (logType == LogItem.LOG_TYPE_IMPORT) {
 			logWikiMessage = new WikiMessage("log.message.import", logParams);
 		} else if (logType == LogItem.LOG_TYPE_MOVE) {
@@ -181,6 +189,16 @@ public class LogItem {
 	 */
 	public void setLogDate(Timestamp logDate) {
 		this.logDate = logDate;
+	}
+
+	/**
+	 * Utility method for adding a log param.
+	 */
+	private void addLogParam(String param) {
+		if (this.logParams == null) {
+			this.logParams = new ArrayList<String>();
+		}
+		this.logParams.add(param);
 	}
 
 	/**
