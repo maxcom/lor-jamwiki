@@ -851,7 +851,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		try {
 			stmt = conn.prepareStatement(STATEMENT_INSERT_RECENT_CHANGE);
 			if (change.getTopicVersionId() == null) {
-				stmt.setInt(1, Types.INTEGER);
+				stmt.setNull(1, Types.INTEGER);
 			} else {
 				stmt.setInt(1, change.getTopicVersionId());
 			}
@@ -861,7 +861,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				stmt.setInt(2, change.getPreviousTopicVersionId());
 			}
 			if (change.getTopicId() == null) {
-				stmt.setInt(3, Types.INTEGER);
+				stmt.setNull(3, Types.INTEGER);
 			} else {
 				stmt.setInt(3, change.getTopicId());
 			}
