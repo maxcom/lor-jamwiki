@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
+import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.NamespaceHandler;
@@ -50,7 +51,7 @@ public class TemplateTag {
 	 * voodoo magic that happens here to first parse any embedded values, and
 	 * to apply default values when no template value has been set.
 	 */
-	private String applyParameter(ParserInput parserInput, String param) throws Exception {
+	private String applyParameter(ParserInput parserInput, String param) throws ParserException {
 		if (this.parameterValues == null) {
 			return param;
 		}
@@ -140,7 +141,7 @@ public class TemplateTag {
 	 * Given template parameter content of the form "name" or "name|default",
 	 * return the default value if it exists.
 	 */
-	private String parseParamDefaultValue(ParserInput parserInput, String raw) throws Exception {
+	private String parseParamDefaultValue(ParserInput parserInput, String raw) throws ParserException {
 		List<String> tokens = this.tokenizeParams(raw);
 		if (tokens.size() < 2) {
 			return null;
@@ -156,7 +157,7 @@ public class TemplateTag {
 	 * Given template parameter content of the form "name" or "name|default",
 	 * return the parameter name.
 	 */
-	private String parseParamName(String raw) throws Exception {
+	private String parseParamName(String raw) throws ParserException {
 		int pos = raw.indexOf('|');
 		String name = null;
 		if (pos != -1) {
@@ -167,7 +168,7 @@ public class TemplateTag {
 		name = name.trim();
 		if (StringUtils.isBlank(name)) {
 			// FIXME - no need for an exception
-			throw new Exception("No parameter name specified");
+			throw new ParserException("No parameter name specified");
 		}
 		return name;
 	}
@@ -177,7 +178,7 @@ public class TemplateTag {
 	 * and replace parameters with parameter values or defaults, processing any
 	 * embedded parameters or templates.
 	 */
-	private String parseTemplateBody(ParserInput parserInput, String content) throws Exception {
+	private String parseTemplateBody(ParserInput parserInput, String content) throws ParserException {
 		StringBuffer output = new StringBuffer();
 		int pos = 0;
 		while (pos < content.length()) {
@@ -202,7 +203,7 @@ public class TemplateTag {
 	 * Given a template call of the form "{{template|param|param}}", return
 	 * the template name.
 	 */
-	private String parseTemplateName(String raw) throws Exception {
+	private String parseTemplateName(String raw) throws ParserException {
 		String name = raw;
 		int pos = raw.indexOf('|');
 		if (pos != -1) {
@@ -211,12 +212,12 @@ public class TemplateTag {
 		name = Utilities.decodeTopicName(name.trim(), true);
 		if (StringUtils.isBlank(name)) {
 			// FIXME - no need for an exception
-			throw new Exception("No template name specified");
+			throw new ParserException("No template name specified");
 		}
 		if (name.startsWith(NamespaceHandler.NAMESPACE_SEPARATOR)) {
 			if (name.length() == 1) {
 				// FIXME - no need for an exception
-				throw new Exception("No template name specified");
+				throw new ParserException("No template name specified");
 			}
 		} else if (!name.startsWith(NamespaceHandler.NAMESPACE_TEMPLATE + NamespaceHandler.NAMESPACE_SEPARATOR)) {
 			name = NamespaceHandler.NAMESPACE_TEMPLATE + NamespaceHandler.NAMESPACE_SEPARATOR + StringUtils.capitalize(name);
@@ -228,10 +229,10 @@ public class TemplateTag {
 	 * Given a template call of the form "{{name|param=value|param=value}}"
 	 * parse the parameter names and values.
 	 */
-	private void parseTemplateParameterValues(ParserInput parserInput, String templateContent) throws Exception {
+	private void parseTemplateParameterValues(ParserInput parserInput, String templateContent) throws ParserException {
 		List<String> tokens = this.tokenizeParams(templateContent);
 		if (tokens.isEmpty()) {
-			throw new Exception("No template name found in " + templateContent);
+			throw new ParserException("No template name found in " + templateContent);
 		}
 		int count = -1;
 		for (String token : tokens) {
@@ -254,7 +255,7 @@ public class TemplateTag {
 	 * Given a template call of the form "{{name|param|param}}" return the
 	 * parsed output.
 	 */
-	private String processTemplateContent(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String templateContent, String name) throws Exception {
+	private String processTemplateContent(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String templateContent, String name) throws ParserException {
 		if (templateTopic == null) {
 			return "[[" + name + "]]";
 		}
@@ -267,7 +268,7 @@ public class TemplateTag {
 	 * Given a template call of the form "{{:name}}" parse the template
 	 * inclusion.
 	 */
-	private String processTemplateInclusion(ParserInput parserInput, ParserOutput parserOutput, int mode, Topic templateTopic, String raw, String name) throws Exception {
+	private String processTemplateInclusion(ParserInput parserInput, ParserOutput parserOutput, int mode, Topic templateTopic, String raw, String name) throws ParserException {
 		if (templateTopic == null) {
 			return "[[" + name + "]]";
 		}
@@ -279,7 +280,7 @@ public class TemplateTag {
 	/**
 	 * Process template values, setting link and other metadata output values.
 	 */
-	private void processTemplateMetadata(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String raw, String name) throws Exception {
+	private void processTemplateMetadata(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String raw, String name) {
 		name = (templateTopic != null) ? templateTopic.getName() : name;
 		parserOutput.addLink(name);
 		parserOutput.addTemplate(name);

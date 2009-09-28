@@ -16,6 +16,7 @@
  */
 package org.jamwiki;
 
+import java.io.IOException;
 import java.util.Locale;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
@@ -84,9 +85,9 @@ public class WikiBase {
 	 * Creates an instance of <code>WikiBase</code>, initializing the default
 	 * data handler instance and search engine instance.
 	 *
-	 * @throws Exception If the instance cannot be instantiated.
+	 * @throws IOException If the instance cannot be instantiated.
 	 */
-	private WikiBase() throws Exception {
+	private WikiBase() throws IOException {
 		this.reload();
 	}
 
@@ -130,7 +131,7 @@ public class WikiBase {
 	 * Reload the data handler, user handler, and other basic wiki
 	 * data structures.
 	 */
-	public static void reload() throws Exception {
+	public static void reload() throws IOException {
 		WikiBase.dataHandler = WikiUtil.dataHandlerInstance();
 		WikiBase.searchEngine = WikiUtil.searchEngineInstance();
 	}
@@ -146,9 +147,11 @@ public class WikiBase {
 	 * @param username The admin user's username (login).
 	 * @param encryptedPassword The admin user's encrypted password.  This value
 	 *  is only required when creating a new admin user.
-	 * @throws Exception Thrown if an error occurs during re-initialization.
+	 * @throws DataAccessException Thrown if an error occurs during re-initialization.
+	 * @throws IOException Thrown if an error occurs during re-initialization.
+	 * @throws WikiException Thrown if an error occurs during re-initialization.
 	 */
-	public static void reset(Locale locale, WikiUser user, String username, String encryptedPassword) throws Exception {
+	public static void reset(Locale locale, WikiUser user, String username, String encryptedPassword) throws DataAccessException, IOException, WikiException {
 		WikiBase.instance = new WikiBase();
 		WikiCache.initialize();
 		WikiBase.dataHandler.setup(locale, user, username, encryptedPassword);

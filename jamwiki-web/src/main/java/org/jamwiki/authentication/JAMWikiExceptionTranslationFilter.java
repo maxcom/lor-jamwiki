@@ -44,7 +44,7 @@ public class JAMWikiExceptionTranslationFilter implements Filter, InitializingBe
 	/**
 	 *
 	 */
-	public void afterPropertiesSet() throws Exception {
+	public void afterPropertiesSet() {
 		if (errorMessageProvider == null) {
 			throw new IllegalArgumentException("errorMessageProvider must be specified");
 		}

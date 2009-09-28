@@ -52,10 +52,10 @@ public class TestFileUtil {
 	/**
 	 *
 	 */
-	public static File getClassLoaderFile(String fileName) throws Exception {
+	public static File getClassLoaderFile(String fileName) throws FileNotFoundException {
 		try {
 			return Utilities.getClassLoaderFile(fileName);
-		} catch (Exception e) {
+		} catch (FileNotFoundException e) {
 			// ignore
 		}
 		return new File(Utilities.getClassLoaderRoot(), fileName);
@@ -69,10 +69,10 @@ public class TestFileUtil {
 		String fullName = directory + fileName;
 		try {
 			return Utilities.getClassLoaderFile(fullName);
-		} catch (Exception e) { }
+		} catch (FileNotFoundException e) { }
 		try {
 			return new File(Utilities.getClassLoaderRoot(), fullName);
-		} catch (Exception e) { }
+		} catch (FileNotFoundException e) { }
 		return null;
 	}
 

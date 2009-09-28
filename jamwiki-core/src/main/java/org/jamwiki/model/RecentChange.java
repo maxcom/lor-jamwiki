@@ -18,7 +18,6 @@ package org.jamwiki.model;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Locale;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.Utilities;

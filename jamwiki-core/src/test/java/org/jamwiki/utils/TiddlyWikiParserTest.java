@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jamwiki.DataAccessException;
+import org.jamwiki.WikiException;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.junit.Test;
@@ -69,7 +71,7 @@ public class TiddlyWikiParserTest {
 		public ArrayList<Topic> topics = new ArrayList<Topic>();
 		public ArrayList<TopicVersion> versions = new ArrayList<TopicVersion>();
 
-		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, List<String> links, Object transactionObject) throws Exception {
+		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, List<String> links, Object transactionObject) throws DataAccessException, WikiException {
 			topics.add(topic);
 			versions.add(topicVersion);
 		}

@@ -17,6 +17,7 @@
 package org.jamwiki.search;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -121,7 +122,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * Create a basic Lucene document to add to the index that does treats
 	 * the topic content as a single keyword and does not tokenize it.
 	 */
-	private Document createKeywordDocument(Topic topic, List<String> links) throws Exception {
+	private Document createKeywordDocument(Topic topic, List<String> links) {
 		String topicContent = topic.getTopicContent();
 		if (topicContent == null) {
 			topicContent = "";
@@ -143,7 +144,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * Create a basic Lucene document to add to the index.  This document
 	 * is suitable to be parsed with the StandardAnalyzer.
 	 */
-	private Document createStandardDocument(Topic topic) throws Exception {
+	private Document createStandardDocument(Topic topic) {
 		String topicContent = topic.getTopicContent();
 		if (topicContent == null) {
 			topicContent = "";
@@ -372,7 +373,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	/**
 	 *
 	 */
-	private String retrieveResultSummary(Document document, Highlighter highlighter, StandardAnalyzer analyzer) throws Exception {
+	private String retrieveResultSummary(Document document, Highlighter highlighter, StandardAnalyzer analyzer) throws IOException {
 		String content = document.get(ITYPE_CONTENT_PLAIN);
 		TokenStream tokenStream = analyzer.tokenStream(ITYPE_CONTENT_PLAIN, new StringReader(content));
 		String summary = highlighter.getBestFragments(tokenStream, content, 3, "...");

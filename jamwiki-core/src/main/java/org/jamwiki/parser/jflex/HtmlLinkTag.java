@@ -18,6 +18,7 @@ package org.jamwiki.parser.jflex;
 
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
+import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
@@ -38,7 +39,7 @@ public class HtmlLinkTag {
 	 * @param raw The raw Wiki syntax that is to be converted into an HTML link.
 	 * @return A formatted HTML link for the Wiki syntax.
 	 */
-	private String buildHtmlLink(ParserInput parserInput, int mode, String raw) throws Exception {
+	private String buildHtmlLink(ParserInput parserInput, int mode, String raw) throws ParserException {
 		if (raw.length() <= 2) {
 			// no link, display the raw text
 			return raw;
@@ -55,7 +56,7 @@ public class HtmlLinkTag {
 	 * @param raw The raw HTML link that is to be converted into an HTML link.
 	 * @return A formatted HTML link.
 	 */
-	private String buildHtmlLinkRaw(ParserInput parserInput, int mode, String raw) throws Exception {
+	private String buildHtmlLinkRaw(ParserInput parserInput, int mode, String raw) throws ParserException {
 		String link = raw.trim();
 		// search for link text (space followed by text)
 		String punctuation = this.extractTrailingPunctuation(link);
@@ -121,7 +122,7 @@ public class HtmlLinkTag {
 	/**
 	 *
 	 */
-	private String linkHtml(ParserInput parserInput, int mode, String link, String text, String punctuation) throws Exception {
+	private String linkHtml(ParserInput parserInput, int mode, String link, String text, String punctuation) throws ParserException {
 		String html = null;
 		String linkLower = link.toLowerCase();
 		if (linkLower.startsWith("mailto://")) {
@@ -144,7 +145,7 @@ public class HtmlLinkTag {
 		} else if (linkLower.startsWith("file://")) {
 			protocol = "file://";
 		} else {
-			throw new Exception("Invalid protocol in link " + link);
+			throw new ParserException("Invalid protocol in link " + link);
 		}
 		String caption = link;
 		if (!StringUtils.isBlank(text)) {

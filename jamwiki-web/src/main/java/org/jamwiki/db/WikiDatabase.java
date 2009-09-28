@@ -18,7 +18,6 @@ package org.jamwiki.db;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,7 +30,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.DataHandler;
@@ -46,6 +44,7 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.transaction.TransactionStatus;
@@ -87,7 +86,7 @@ public class WikiDatabase {
 	 * Dump the database to a CSV file.  This is an HSQL-specific method useful
 	 * for individuals who want to convert from HSQL to another database.
 	 */
-	public static void exportToCsv() throws Exception {
+	public static void exportToCsv() throws DataAccessException, SQLException {
 		if (!(WikiBase.getDataHandler() instanceof HSqlDataHandler)) {
 			throw new IllegalStateException("Exporting to CSV is allowed only when the wiki is configured to use the internal database setting.");
 		}
@@ -129,10 +128,10 @@ public class WikiDatabase {
 			stmt.executeUpdate();
 		} catch (Exception e) {
 			DatabaseConnection.rollbackOnException(status, e);
-			throw e;
+			throw new DataAccessException(e);
 		} catch (Error err) {
 			DatabaseConnection.rollbackOnException(status, err);
-			throw err;
+			throw new DataAccessException(err);
 		}
 		DatabaseConnection.commit(status);
 	}
@@ -140,7 +139,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	private static DataHandler findNewDataHandler(Properties props) throws Exception {
+	private static DataHandler findNewDataHandler(Properties props) {
 		// find the DataHandler appropriate to the NEW database
 		String handlerClassName = props.getProperty(Environment.PROP_DB_TYPE);
 		if (handlerClassName.equals(Environment.getValue(Environment.PROP_DB_TYPE))) {
@@ -148,11 +147,7 @@ public class WikiDatabase {
 			return WikiBase.getDataHandler();
 		}
 		logger.fine("Using NEW data handler: " + handlerClassName);
-		Class clazz = ClassUtils.getClass(handlerClassName);
-		Class[] parameterTypes = new Class[0];
-		Constructor constructor = clazz.getConstructor(parameterTypes);
-		Object[] initArgs = new Object[0];
-		return (DataHandler)constructor.newInstance(initArgs);
+		return (DataHandler)Utilities.instantiateClass(handlerClassName);
 	}
 
 	/**
@@ -163,7 +158,7 @@ public class WikiDatabase {
 	 * @param props Properties object containing the new database properties
 	 * @param errors List to add error messages to
 	 */
-	public static void migrateDatabase(Properties props, List<WikiMessage> errors) throws Exception {
+	public static void migrateDatabase(Properties props, List<WikiMessage> errors) throws DataAccessException {
 		// verify that new database is different from the old database
 		if (StringUtils.equalsIgnoreCase(Environment.getValue(Environment.PROP_DB_URL), props.getProperty(Environment.PROP_DB_URL))) {
 			errors.add(new WikiMessage("error.databaseconnection", "Cannot migrate to the same database"));
@@ -414,7 +409,7 @@ public class WikiDatabase {
 	 * when totally re-initializing a system.  To reiterate: CALLING THIS METHOD WILL
 	 * DELETE ALL WIKI DATA!
 	 */
-	protected static void purgeData(Connection conn) throws Exception {
+	protected static void purgeData(Connection conn) throws DataAccessException {
 		// BOOM!  Everything gone...
 		WikiDatabase.queryHandler().dropTables(conn);
 		try {
@@ -441,7 +436,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	protected static void releaseConnection(Connection conn, Object transactionObject) throws Exception {
+	protected static void releaseConnection(Connection conn, Object transactionObject) throws SQLException {
 		if (transactionObject instanceof Connection) {
 			// transaction objects will be released elsewhere
 			return;
@@ -452,7 +447,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	private static void releaseConnection(Connection conn) throws Exception {
+	private static void releaseConnection(Connection conn) throws SQLException {
 		if (conn == null) {
 			return;
 		}

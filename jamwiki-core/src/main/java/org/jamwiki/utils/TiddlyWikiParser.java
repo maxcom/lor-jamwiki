@@ -19,6 +19,7 @@ package org.jamwiki.utils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -27,7 +28,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
@@ -57,14 +60,14 @@ public class TiddlyWikiParser {
 	 * @author Michael Greifeneder mikegr@gmx.net
 	 */
 	public interface WikiBaseFascade {
-		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, List<String> links, Object transactionObject) throws Exception;
+		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, List<String> links, Object transactionObject) throws DataAccessException, WikiException;
 	}
 
 	/**
 	 * Defaul WikiBaseFascade for production.
 	 */
 	private WikiBaseFascade wikiBase = new WikiBaseFascade() {
-		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, List<String> links, Object transactionObject) throws Exception {
+		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, List<String> links, Object transactionObject) throws DataAccessException, WikiException {
 			WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
 		}
 	};
@@ -73,6 +76,7 @@ public class TiddlyWikiParser {
 
 	/**
 	 * Main constructor
+	 *
 	 * @param virtualWiki virtualWiki
 	 * @param user user who is currently logged in
 	 * @param authorDisplay A display value for the importing user, typically the IP address.
@@ -85,6 +89,7 @@ public class TiddlyWikiParser {
 
 	/**
 	 * Use this contructor for test cases
+	 *
 	 * @param virtualWiki Name of VirtualWiki
 	 * @param user User who is logged in.
 	 * @param authorDisplay A display value for the importing user, typically the IP address.
@@ -95,21 +100,25 @@ public class TiddlyWikiParser {
 		this.wikiBase = wikiBase;
 	}
 
-	/** Parses file and returns default topic.
+	/**
+	 * Parses file and returns default topic.
+	 *
 	 * @param file TiddlyWiki file
 	 * @return main topic for this TiddlyWiki
 	 */
-	public String parse(File file) throws Exception {
+	public String parse(File file) throws DataAccessException, IOException, WikiException {
 		Reader r = new FileReader(file);
 		BufferedReader br = new BufferedReader(r);
 		return parse(br);
 	}
 
-	/** Parses TiddlyWiki content and returns default topic.
+	/**
+	 * Parses TiddlyWiki content and returns default topic.
+	 *
 	 * @param br TiddlyWiki file content
 	 * @return main topic for this TiddlyWiki
 	 */
-	public String parse(BufferedReader br) throws Exception {
+	public String parse(BufferedReader br) throws DataAccessException, IOException, WikiException {
 		String line = br.readLine();
 		boolean inTiddler = false;
 		int start = 0;
@@ -121,7 +130,7 @@ public class TiddlyWikiParser {
 				if (end != -1) {
 					inTiddler = false;
 					content.append(line.substring(0, end));
-					proecessContent(content.toString());
+					processContent(content.toString());
 					content.setLength(0);
 					line = line.substring(end);
 				} else {
@@ -143,7 +152,10 @@ public class TiddlyWikiParser {
 		return "DefaultTiddlers";
 	}
 
-	private void proecessContent(String content) throws Exception {
+	/**
+	 *
+	 */
+	private void processContent(String content) throws DataAccessException, IOException, WikiException {
 		logger.fine("Content: " + content);
 		String name = findName(content, TIDLLER);
 		if (name == null|| "%0".equals(user)) {
@@ -184,7 +196,10 @@ public class TiddlyWikiParser {
 		logger.fine("Code:" + wikicode);
 	}
 
-	private void saveTopic(String name, Date lastMod, String content) throws Exception {
+	/**
+	 *
+	 */
+	private void saveTopic(String name, Date lastMod, String content) throws DataAccessException, WikiException {
 		Topic topic = new Topic();
 		topic.setName(name);
 		topic.setVirtualWiki(virtualWiki);
@@ -198,6 +213,9 @@ public class TiddlyWikiParser {
 		wikiBase.writeTopic(topic, topicVersion, null, null, null);
 	}
 
+	/**
+	 *
+	 */
 	private String findName(String content, String name) {
 		int startIdx = content.indexOf(name);
 		if (startIdx == -1) {
@@ -211,6 +229,9 @@ public class TiddlyWikiParser {
 		return value;
 	}
 
+	/**
+	 *
+	 */
 	public String getOutput() {
 		return messages.toString();
 	}
