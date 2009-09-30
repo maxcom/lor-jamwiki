@@ -1,0 +1,2 @@
+<!-- verify that improper HTML with no attribute tags will be sanitized and processed correctly -->
+< u >text< / u >

@@ -2,12 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
- http://maven.apache.org/maven-v4_0_0.xsd">
+			    http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jamwiki</groupId>
+        <parent>
+                <groupId>org.jamwiki</groupId>
+                <artifactId>jamwiki</artifactId>
+                <version>0.6.4</version>
+        </parent>
+	<groupId>org.incava</groupId>
 	<artifactId>javadiff</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0.5</version>
-	<name>Javadiff Project</name>
-	<url>http://www.jamwiki.org</url>
+	<name>Javadiff</name>
+	<url>http://incava.org/projects/java/java-diff/</url>
 </project>

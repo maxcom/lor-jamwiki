@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jamwiki</groupId>
+	<artifactId>jamwiki</artifactId>
+	<packaging>pom</packaging>
+	<version>0.6.4</version>
+	<name>Jamwiki Super POM</name>
+	<description>
+		JAMWiki is a Java-based Wiki engine, which offers many of the
+		features of MediaWiki.
+	</description>
+	<url>http://www.jamwiki.org</url>
+	<modules>
+		<module>javadiff</module>
+		<module>jamwiki-core</module>
+		<module>jamwiki-web</module>
+		<module>jamwiki-war</module>
+	</modules>
+	<scm>
+		<connection>scm:svn:http://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/trunk</connection>
+		<developerConnection>scm:svn:https://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/trunk</developerConnection>
+		<tag>HEAD</tag>
+		<url>http://jamwiki.svn.sourceforge.net/viewvc/jamwiki/</url>
+	</scm>
+	<issueManagement>
+		<system>Wiki</system>
+		<url>http://jamwiki.org/wiki/en/Bug_Reports</url>
+	</issueManagement>
+	<licenses>
+		<license>
+			<name>LGPL</name>
+			<url>http://www.gnu.org/licenses/lgpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<properties>
+		<jamwiki.version>0.6.4</jamwiki.version>
+		<dependency.spring.version>2.5.1</dependency.spring.version>
+	</properties>
+	<repositories>
+		<repository>
+			<id>org.jamwiki</id>
+			<name>Maven Repository for Jamwiki</name>
+			<layout>default</layout>
+			<url>file://${basedir}/../repository</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+	</repositories>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.jamwiki</groupId>
+				<artifactId>jamwiki-core</artifactId>
+				<version>${jamwiki.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jamwiki</groupId>
+				<artifactId>jamwiki-web</artifactId>
+				<version>${jamwiki.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.incava</groupId>
+				<artifactId>javadiff</artifactId>
+				<version>1.0.5</version>
+			</dependency>
+			<dependency>
+				<groupId>org.acegisecurity</groupId>
+				<artifactId>acegi-security</artifactId>
+				<version>1.0.6</version>
+				<!-- FIXME: The Maven dependencies have not been updated for Spring 2.5 -->
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-dao</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-jdbc</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-remoting</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-support</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>1.3</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-dbcp</groupId>
+				<artifactId>commons-dbcp</artifactId>
+				<version>1.2.2</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>1.2</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>1.3.1</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>2.3</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-pool</groupId>
+				<artifactId>commons-pool</artifactId>
+				<version>1.3</version>
+			</dependency>
+			<dependency>
+				<groupId>hsqldb</groupId>
+				<artifactId>hsqldb</artifactId>
+				<version>1.8.0.7</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.mail</groupId>
+				<artifactId>mail</artifactId>
+				<version>1.4</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>jsp-api</artifactId>
+				<version>2.0</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>jstl</artifactId>
+				<version>1.1.2</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>servlet-api</artifactId>
+				<version>2.4</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>jdom</groupId>
+				<artifactId>jdom</artifactId>
+				<version>1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>3.8.2</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.ehcache</groupId>
+				<artifactId>ehcache</artifactId>
+				<version>1.3.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.lucene</groupId>
+				<artifactId>lucene-core</artifactId>
+				<version>2.3.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.lucene</groupId>
+				<artifactId>lucene-highlighter</artifactId>
+				<version>2.3.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aop</artifactId>
+				<version>${dependency.spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${dependency.spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${dependency.spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-dao</artifactId>
+				<version>${dependency.spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jdbc</artifactId>
+				<version>${dependency.spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-support</artifactId>
+				<version>${dependency.spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+				<version>${dependency.spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+				<version>${dependency.spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>${dependency.spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>oro</groupId>
+				<artifactId>oro</artifactId>
+				<version>2.0.8</version>
+			</dependency>
+			<dependency>
+				<groupId>rome</groupId>
+				<artifactId>rome</artifactId>
+				<version>0.9</version>
+			</dependency>
+			<dependency>
+				<groupId>taglibs</groupId>
+				<artifactId>standard</artifactId>
+				<version>1.0.6</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<developers>
+		<!--
+		See http://www.ohloh.net/projects/6482/analyses/latest/contributors
+		 -->
+		<developer>
+			<id>wrh2</id>
+			<name>Ryan Holliday</name>
+			<url>http://mountaininterval.org/</url>
+			<roles>
+				<role>project lead</role>
+				<role>developer</role>
+			</roles>
+			<timezone>-8</timezone>
+		</developer>
+		<developer>
+			<id>rainers</id>
+			<name>Rainer Schmitz</name>
+			<email>rainers at users.sf.net</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>dlpa</id>
+			<name>dlpa</name>
+			<email>dlpa at users.sf.net</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>mikegremi</id>
+			<name>Michael Greifeneder</name>
+			<email>mikegr@gmx.net</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<id>axelcl</id>
+			<name>Axel C. Kramer</name>
+			<email>axelcl at users.sf.net</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>ncsaba</id>
+			<name>Csaba Nagy</name>
+			<email>ncsaba at users.sf.net</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>decamps</id>
+			<name>Régis Décamps</name>
+			<email>decamps@users.sf.net</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+	</developers>
+	<contributors>
+		<contributor><name>Jiading</name><email>ewen0930</email><roles><role>translator (Chinese)</role></roles></contributor>
+		<contributor><name>Feilong Huang</name><email>hfl</email><roles><role>translator (Chinese)</role></roles></contributor>
+		<contributor><name>Marija Susovic</name><roles><role>translator (Croatian)</role></roles></contributor>
+		<contributor><name>Anders Monrad</name><email>g9adm</email><roles><role>translator (Danish)</role></roles></contributor>
+		<contributor><name>Tarik Menbhi</name><roles><role>translator (Dutch)</role></roles></contributor>
+		<contributor><name>Wim Borghs (Angel)</name><roles><role>translator (Dutch)</role></roles></contributor>
+		<contributor><name>Henri Gomez</name><email>hgomez@users.sf.net</email><roles><role>translator (French)</role></roles></contributor>
+		<contributor><name>Manuel Meixide</name><url>http://bagonix.net/</url><organizationUrl>http://ciberirmandade.org/</organizationUrl><roles><role>translator (Galician)</role><role>translator (Spanish)</role><role>translator (Portugese)</role></roles></contributor>
+		<contributor><name>Axel Kramer</name><email>axelclk</email><roles><role>translator (German)</role></roles></contributor>
+		<contributor><name>Frank Reifenstahl (frareinif)</name><roles><role>translator (German)</role></roles></contributor>
+		<contributor><name>Rainer Schmitz (swift)</name><roles><role>translator (German)</role></roles></contributor>
+		<contributor><name>Daniel Tar (bDaneE)</name><roles><role>translator (Hungarian)</role></roles></contributor>
+		<contributor><name>Natto Lover (nattolover)</name><roles><role>translator (Japanese)</role></roles></contributor>
+		<contributor><name>Robert Matyja</name><email>dlpa@users.sf.net</email><roles><role>translator (Polish)</role></roles></contributor>
+		<contributor><name>Angel Luis Pinazo Perpiñán</name><roles><role>translator (Spanish)</role></roles></contributor>
+		<contributor><name>Volodymyr Vlad</name><email>gutsul</email><roles><role>translator (Ukranian)</role></roles></contributor>
+		<!-- TODO indicate roles -->
+		<contributor><name>AleXey "lexis" Rumyantsev</name><email>lexis@mail.ru</email><roles><role>graphics designer</role></roles></contributor>
+		<contributor><name>Luzius Thöny</name><email>luzi</email></contributor>
+		<contributor><name>Oliver</name><email>okohll</email><roles><role>graphics designer</role></roles></contributor>
+		<contributor><name>Carsten Seiffert</name><email>carsten</email><roles><role>bugfixer</role></roles></contributor>
+		<!--  VQWiki developers and contributors -->
+		<contributor><name>Martijn van der Kleijn</name><organization>VQWiki project</organization><email>mvdkleijn at users.sourceforge.net</email><roles><role>VQWiki project lead</role></roles></contributor>
+		<contributor><name>Andreas Studer</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>
+		<contributor><name>Colin Jacobs</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>
+		<contributor><name>Tobias Schulz-Hess</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>
+		<contributor><name>Fritz Freiheit</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>
+		<contributor><name>Gareth Cronin</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>
+		<contributor><name>HongLiang Bi</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>
+		<contributor><name>Tim Howland</name><organization>VQWiki project</organization><roles><role>documentation</role></roles></contributor>
+		<contributor><name>Marcello Teodori</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
+		<contributor><name>Zapo (erzapo)</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
+		<contributor><name>Nico Jabin</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
+		<contributor><name>Johan Lindell</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
+		<contributor><name>Erik (xan-)</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
+		<contributor><name>Sasha Kotlo</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
+		<contributor><name>Michael (mindweb)</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
+	</contributors>
+</project>

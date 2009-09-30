@@ -1,0 +1,2 @@
+<!-- verify that attempted cross-site scripting attacks using javascript will be stripped from HTML -->
+<DIV STYLE="background-image: url(javascript:(1) && ('XSS9'))">x</div>
