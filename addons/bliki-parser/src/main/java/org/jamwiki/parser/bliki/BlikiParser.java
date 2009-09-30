@@ -63,7 +63,7 @@ public class BlikiParser extends JFlexParser {
 			}
 			// context never ends with a "/" per servlet specification
 			baseURL += "/";
-			baseURL += Utilities.encodeForURL(parserInput.getVirtualWiki());
+			baseURL += Utilities.encodeAndEscapeTopicName(parserInput.getVirtualWiki());
 			baseURL += "/";
 			JAMWikiModel wikiModel = new JAMWikiModel(parserInput, parserOutput, baseURL);
 			output = wikiModel.render(new JAMHTMLConverter(parserInput), raw);

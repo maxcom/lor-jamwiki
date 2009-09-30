@@ -18,6 +18,7 @@ package org.jamwiki.utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -100,7 +101,10 @@ public class Utilities {
 	 *  be automatically converted to spaces.
 	 * @return A decoded value.
 	 */
-	public static String decodeFromRequest(String url, boolean decodeUnderlines) {
+	public static String decodeTopicName(String url, boolean decodeUnderlines) {
+		if (StringUtils.isBlank(url)) {
+			throw new IllegalArgumentException("Topic name not specified in decodeTopicName");
+		}
 		return (decodeUnderlines) ? StringUtils.replace(url, "_", " ") : url;
 	}
 
@@ -116,34 +120,32 @@ public class Utilities {
 	 *  be automatically converted to spaces.
 	 * @return A decoded value.
 	 */
-	public static String decodeFromURL(String url, boolean decodeUnderlines) {
+	public static String decodeAndEscapeTopicName(String url, boolean decodeUnderlines) {
+		if (StringUtils.isBlank(url)) {
+			throw new IllegalArgumentException("Topic name not specified in decodeAndEscapeTopicName");
+		}
 		String result = url;
 		try {
 			result = URLDecoder.decode(result, "UTF-8");
-		} catch (Exception e) {
-			logger.info("Failure while decoding url " + url + " with charset UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// this should never happen
+			throw new IllegalStateException("Unsupporting encoding UTF-8");
 		}
-		return Utilities.decodeFromRequest(result, decodeUnderlines);
+		return Utilities.decodeTopicName(result, decodeUnderlines);
 	}
 
 	/**
-	 * Convert a topic name or other value into a value suitable for use as a
-	 * file name.  This method replaces spaces with underscores, and then URL
-	 * encodes the value.
+	 * Encode a value for use a topic name.  This method will replace any
+	 * spaces with underscores.
 	 *
-	 * @param name The value that is to be encoded for use as a file name.
-	 * @return The encoded value.
+	 * @param url The decoded value that is to be encoded.
+	 * @return An encoded value.
 	 */
-	public static String encodeForFilename(String name) {
-		// replace spaces with underscores
-		String result = StringUtils.replace(name, " ", "_");
-		// URL encode the rest of the name
-		try {
-			result = URLEncoder.encode(result, "UTF-8");
-		} catch (Exception e) {
-			logger.warning("Failure while encoding " + name + " with charset UTF-8");
+	public static String encodeTopicName(String url) {
+		if (StringUtils.isBlank(url)) {
+			throw new IllegalArgumentException("Topic name not specified in encodeTopicName");
 		}
-		return result;
+		return StringUtils.replace(url, " ", "_");
 	}
 
 	/**
@@ -154,8 +156,17 @@ public class Utilities {
 	 * @param url The topic name to be encoded for use in a URL.
 	 * @return The encoded topic name value.
 	 */
-	public static String encodeForURL(String url) {
-		String result = Utilities.encodeForFilename(url);
+	public static String encodeAndEscapeTopicName(String url) {
+		if (StringUtils.isBlank(url)) {
+			throw new IllegalArgumentException("Topic name not specified in encodeAndEscapeTopicName");
+		}
+		String result = Utilities.encodeTopicName(url);
+		try {
+			result = URLEncoder.encode(result, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// this should never happen
+			throw new IllegalStateException("Unsupporting encoding UTF-8");
+		}
 		// un-encode colons
 		result = StringUtils.replace(result, "%3A", ":");
 		// un-encode forward slashes

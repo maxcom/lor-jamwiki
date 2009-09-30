@@ -449,7 +449,7 @@ public abstract class JFlexLexer {
 			this.popTag("p");
 		}
 		// push back everything except for any opening newlines that were matched
-		yypushback(StringUtils.stripStart(raw, null).length());
+		yypushback(StringUtils.stripStart(raw, "\n\r\t").length());
 	}
 
 	/**
@@ -467,7 +467,7 @@ public abstract class JFlexLexer {
 	 */
 	protected void parseParagraphStartEmpty(String raw) {
 		// push back everything except for any opening newlines that were matched
-		yypushback(StringUtils.stripStart(raw, null).length());
+		yypushback(StringUtils.stripStart(raw, "\n\r\t").length());
 		if (this.mode < JFlexParser.MODE_LAYOUT) {
 			return;
 		}

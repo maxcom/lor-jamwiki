@@ -279,7 +279,7 @@ public class EditServlet extends JAMWikiServlet {
 		// strip line feeds
 		contents = StringUtils.remove(contents, '\r');
 		String lastTopicContent = (lastTopic != null) ? StringUtils.remove(lastTopic.getTopicContent(), '\r') : "";
-		if (StringUtils.equals(lastTopicContent, contents)) {
+		if (lastTopic != null && StringUtils.equals(lastTopicContent, contents)) {
 			// topic hasn't changed. redirect to prevent user from refreshing and re-submitting
 			ServletUtil.redirect(next, virtualWiki, topic.getName());
 			return;

@@ -38,37 +38,55 @@ public class UtilitiesTest extends TestCase {
 	/**
 	 *
 	 */
-	public void testDecodeFromRequest() throws Throwable {
-		String result = Utilities.decodeFromRequest("Page_requested", true);
+	public void testdecodeTopicName() throws Throwable {
+		String result = Utilities.decodeTopicName("Page_requested", true);
 		assertEquals("Page requested", result);
-		result = Utilities.decodeFromRequest("Page_requested", false);
+		result = Utilities.decodeTopicName("Page_requested", false);
 		assertEquals("Page_requested", result);
 	}
 
 	/**
 	 *
 	 */
-	public void testDecodeFromURL() throws Throwable {
-		String result = Utilities.decodeFromURL("\u1342%20", true);
+	public void testdecodeAndEscapeTopicName() throws Throwable {
+		String result = Utilities.decodeAndEscapeTopicName("\u1342%20", true);
 		assertEquals("\u1342 ", result);
 	}
 
 	/**
 	 *
 	 */
-	public void testEncodeForFilename() throws Throwable {
-		//TODO
-		String result = Utilities.encodeForFilename("testUtilitiesName");
-		assertEquals("result", "testUtilitiesName", result);
+	public void testdecodeAndEscapeTopicName2() throws Throwable {
+		try {
+			String result = Utilities.decodeAndEscapeTopicName(null, true);
+			fail("Expected IllegalArgumentException to be thrown");
+		} catch (IllegalArgumentException ex) {
+			// exception thrown as expected
+		}
 	}
 
 	/**
 	 *
 	 */
-	public void testEncodeForURL() throws Throwable {
-		//TODO
-		String result = Utilities.encodeForURL(null);
-		assertNull("result", result);
+	public void testdecodeAndEscapeTopicName3() throws Throwable {
+		try {
+			String result = Utilities.decodeAndEscapeTopicName(" ", true);
+			fail("Expected IllegalArgumentException to be thrown");
+		} catch (IllegalArgumentException ex) {
+			// exception thrown as expected
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void testEncodeAndEscapeTopicName() throws Throwable {
+		try {
+			String result = Utilities.encodeAndEscapeTopicName(null);
+			fail("Expected IllegalArgumentException to be thrown");
+		} catch (IllegalArgumentException ex) {
+			// exception thrown as expected
+		}
 	}
 
 	/**

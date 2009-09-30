@@ -22,6 +22,7 @@ import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * This class parses wiki headings of the form <code>==heading content==</code>.
@@ -47,7 +48,7 @@ public class WikiHeadingTag {
 		if (disallowInclusion) {
 			return "";
 		}
-		String output = "<div class=\"section-edit\">[";
+		String output = "<span class=\"editsection\">[";
 		String url = "";
 		try {
 			url = LinkUtil.buildEditLinkUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserInput.getTopicName(), null, section);
@@ -56,7 +57,7 @@ public class WikiHeadingTag {
 		}
 		output += "<a href=\"" + url + "\">";
 		output += Utilities.formatMessage("common.sectionedit", parserInput.getLocale());
-		output += "</a>]</div>";
+		output += "</a>]</span>";
 		return output;
 	}
 
@@ -85,16 +86,18 @@ public class WikiHeadingTag {
 			String tocText = JFlexParserUtil.parseFragment(tmpParserInput, tagText, JFlexParser.MODE_PROCESS);
 			tocText = Utilities.stripMarkup(tocText);
 			String tagName = parserInput.getTableOfContents().checkForUniqueName(tocText);
+			// re-convert any &uuml; or other (converted by the parser) entities back
+			tagName = StringEscapeUtils.unescapeHtml(tagName);
 			if (mode <= JFlexParser.MODE_SLICE) {
-				parserOutput.setSectionName(Utilities.encodeForURL(tagName));
+				parserOutput.setSectionName(tagName);
 				return raw;
 			}
 			String output = this.updateToc(parserInput, tagName, tocText, level);
 			int nextSection = parserInput.getTableOfContents().size();
-			output += this.buildSectionEditLink(parserInput, nextSection);
-			output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a>";
+			output += "<a name=\"" + Utilities.encodeAndEscapeTopicName(tagName) + "\"></a>";
 			output += "<h" + level + ">";
-			output += JFlexParserUtil.parseFragment(parserInput, tagText, mode);
+			output += this.buildSectionEditLink(parserInput, nextSection);
+			output += "<span>" + JFlexParserUtil.parseFragment(parserInput, tagText, mode) + "</span>";
 			output += "</h" + level + ">";
 			return output.toString();
 		} catch (Throwable t) {

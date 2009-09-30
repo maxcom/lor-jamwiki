@@ -138,12 +138,12 @@ public class WikiDatabase {
 	 * Migrate from the current database to a new database.
 	 * Tables are created in the new database, and then the contents
 	 * of the existing database are transferred across.
-	 * 
+	 *
 	 * @param props Properties object containing the new database properties
 	 * @param errors Vector to add error messages to
 	 */
 	public static void migrateDatabase(Properties props, Vector errors) throws Exception {
-		
+
 		// verify that new database is different from the old database
 		if (StringUtils.equalsIgnoreCase(
 				 Environment.getValue(Environment.PROP_DB_URL)
@@ -163,7 +163,7 @@ public class WikiDatabase {
 			Class[] parameterTypes = new Class[0];
 			Constructor constructor = clazz.getConstructor(parameterTypes);
 			Object[] initArgs = new Object[0];
-			newDataHandler = (DataHandler)constructor.newInstance(initArgs);				
+			newDataHandler = (DataHandler)constructor.newInstance(initArgs);
 		}
 
 		// the QueryHandler appropriate for the NEW database
@@ -176,7 +176,7 @@ public class WikiDatabase {
 		} else {
 			newQueryHandler = queryHandler();
 		}
-		
+
 		String driver = props.getProperty(Environment.PROP_DB_DRIVER);
 		String url = props.getProperty(Environment.PROP_DB_URL);
 		String userName = props.getProperty(Environment.PROP_DB_USERNAME);
@@ -220,15 +220,15 @@ public class WikiDatabase {
 		} catch (Exception e) {
 			logger.severe("Error attempting to migrate the database", e);
 			errors.add(new WikiMessage("error.unknown", e.getMessage()));
-			
+
 			conn.rollback();
-			
+
 			try {
 				newQueryHandler.dropTables(conn);
 			} catch (Exception ex) {
 				logger.warning("Unable to drop tables in NEW database following failed migration", ex);
 			}
-		} finally {			
+		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
@@ -259,12 +259,12 @@ public class WikiDatabase {
 
 			// used to track current_version_id for each jam_topic row inserted
 			List topicVersions = new ArrayList();
-			
+
 			TransactionStatus status = DatabaseConnection.startTransaction();
 			Connection from = null;
 			try {
 				from = DatabaseConnection.getConnection();
-				
+
 				for (int i=0; i < tableNames.length; i++) {
 					// these 3 variables are for special handling of the jam_topic.current_version_id field
 					// which cannot be loaded on initial insert due to the jam_f_topic_topicv constraint
@@ -281,7 +281,7 @@ public class WikiDatabase {
 				    logger.info(select.toString());
 				    ResultSet rs = stmt.executeQuery(select.toString());
 				    ResultSetMetaData md = rs.getMetaData();
-				    
+
 				    insert.append("INSERT INTO ");
 				    insert.append(tableNames[i]);
 				    insert.append("(");
@@ -291,12 +291,12 @@ public class WikiDatabase {
 				    		insert.append(",");
 				    		values.append(",");
 				    	}
-				    	String columnName = md.getColumnName(j); 
+				    	String columnName = md.getColumnLabel(j);
 			    		if (isTopicTable) {
 			    			if ("topic_id".equalsIgnoreCase(columnName)) {
 			    				topicIdColumn = j;
 			    			} else if ("current_version_id".equalsIgnoreCase(columnName)) {
-			    				currentVersionColumn = j;			    			
+			    				currentVersionColumn = j;
 			    			}
 			    		}
 			    		// special handling for Sybase ASA, which requires the "login" column name to be quoted
@@ -310,7 +310,7 @@ public class WikiDatabase {
 				    insert.append(") VALUES (");
 				    insert.append(values);
 				    insert.append(")");
-				    
+
 				    logger.info(insert.toString());
 				    PreparedStatement insertStmt = conn.prepareStatement(insert.toString());
 				    while (rs.next()) {
@@ -323,7 +323,7 @@ public class WikiDatabase {
 					    			topicId = o;
 				    			} else if (n == currentVersionColumn) {
 				    				currentVersionId = o;
-				    			}			    				
+				    			}
 				    		}
 				    		if (rs.wasNull() || (isTopicTable && n == currentVersionColumn)) {
 				    			insertStmt.setNull(n, md.getColumnType(n));
@@ -345,7 +345,7 @@ public class WikiDatabase {
 				if (!topicVersions.isEmpty()) {
 					String updateSql = "UPDATE jam_topic SET current_version_id = ? WHERE topic_id = ?";
 				    logger.info(updateSql);
-					PreparedStatement update = conn.prepareStatement(updateSql); 
+					PreparedStatement update = conn.prepareStatement(updateSql);
 					for (Iterator it = topicVersions.iterator(); it.hasNext(); ) {
 						Object[] params = (Object[]) it.next();
 						update.setObject(1, params[0]);
@@ -362,26 +362,26 @@ public class WikiDatabase {
 				throw err;
 			}
 			DatabaseConnection.commit(status);
-			
+
 			conn.commit();
 		} catch (Exception e) {
 			logger.severe("Error attempting to migrate the database", e);
 			errors.add(new WikiMessage("error.unknown", e.getMessage()));
-			
+
 			conn.rollback();
-			
+
 			try {
 				newQueryHandler.dropTables(conn);
 			} catch (Exception ex) {
 				logger.warning("Unable to drop tables in NEW database following failed migration", ex);
 			}
-		} finally {			
+		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {}
 			}
-		}		
+		}
     }
 
 	/**
@@ -508,7 +508,7 @@ public class WikiDatabase {
 			DatabaseConnection.rollbackOnException(status, err);
 			throw err;
 		}
-		DatabaseConnection.commit(status);		
+		DatabaseConnection.commit(status);
 	}
 
 	/**

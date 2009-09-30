@@ -62,7 +62,7 @@ public class WikiResultSet {
 		while (rs.next()) {
 			LinkedHashMap column = new LinkedHashMap();
 			for (int i=1; i <= size; i++) {
-				String columnName = rsmd.getColumnName(i);
+				String columnName = rsmd.getColumnLabel(i);
 				type = rsmd.getColumnType(i);
 				switch (type) {
 				case java.sql.Types.VARCHAR:

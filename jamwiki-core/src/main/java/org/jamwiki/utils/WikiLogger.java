@@ -18,6 +18,8 @@ package org.jamwiki.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Properties;
@@ -150,15 +152,22 @@ public class WikiLogger {
 	/**
 	 *
 	 */
-	private static File loadProperties() throws Exception {
+	private static File loadProperties() throws FileNotFoundException {
 		ClassLoader loader = WikiLogger.getClassLoader();
 		URL url = loader.getResource(LOG_PROPERTIES_FILENAME);
 		if (url == null) {
-			throw new Exception("Log initialization file " + LOG_PROPERTIES_FILENAME + " could not be found");
+			throw new FileNotFoundException("Log initialization file " + LOG_PROPERTIES_FILENAME + " could not be found");
 		}
-		File propertyFile = new File(URLDecoder.decode(url.getFile(), "UTF-8"));
+		String fileName = url.getFile();
+		try {
+			fileName = URLDecoder.decode(fileName, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// this should never happen
+			throw new IllegalStateException("Unsupporting encoding UTF-8");
+		} 
+		File propertyFile = new File(fileName);
 		if (!propertyFile.exists()) {
-			throw new Exception("Log initialization file " + LOG_PROPERTIES_FILENAME + " could not be found");
+			throw new FileNotFoundException("Log initialization file " + LOG_PROPERTIES_FILENAME + " could not be found");
 		}
 		return propertyFile;
 	}

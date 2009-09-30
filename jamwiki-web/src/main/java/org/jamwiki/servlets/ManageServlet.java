@@ -64,7 +64,7 @@ public class ManageServlet extends JAMWikiServlet {
 		}
 		deletePage(request, next, pageInfo, topicName);
 		if (!StringUtils.isBlank(request.getParameter("manageCommentsPage"))) {
-			String manageCommentsPage = Utilities.decodeFromRequest(request.getParameter("manageCommentsPage"), true);
+			String manageCommentsPage = Utilities.decodeTopicName(request.getParameter("manageCommentsPage"), true);
 			if (WikiUtil.isCommentsPage(manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
 				deletePage(request, next, pageInfo, manageCommentsPage);
 			}
@@ -124,7 +124,7 @@ public class ManageServlet extends JAMWikiServlet {
 		}
 		undeletePage(request, next, pageInfo, topicName);
 		if (!StringUtils.isBlank(request.getParameter("manageCommentsPage"))) {
-			String manageCommentsPage = Utilities.decodeFromRequest(request.getParameter("manageCommentsPage"), true);
+			String manageCommentsPage = Utilities.decodeTopicName(request.getParameter("manageCommentsPage"), true);
 			if (WikiUtil.isCommentsPage(manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
 				undeletePage(request, next, pageInfo, manageCommentsPage);
 			}

@@ -7,7 +7,7 @@
 	<groupId>org.jamwiki</groupId>
 	<artifactId>jamwiki</artifactId>
 	<packaging>pom</packaging>
-	<version>0.6.6</version>
+	<version>0.6.7</version>
 	<name>Jamwiki Super POM</name>
 	<description>
 		JAMWiki is a Java-based Wiki engine which offers many of the
@@ -39,7 +39,7 @@
 		</license>
 	</licenses>
 	<properties>
-		<jamwiki.version>0.6.6</jamwiki.version>
+		<jamwiki.version>0.6.7</jamwiki.version>
 		<dependency.spring.version>2.5.4</dependency.spring.version>
 	</properties>
 	<repositories>
@@ -320,6 +320,7 @@
 		</developer>
 	</developers>
 	<contributors>
+		<contributor><name>Martin Östmark</name><email>Martin</email><roles><role>translator (Swedish)</role></roles></contributor>
 		<contributor><name>Jiading</name><email>ewen0930</email><roles><role>translator (Chinese)</role></roles></contributor>
 		<contributor><name>Feilong Huang</name><email>hfl</email><roles><role>translator (Chinese)</role></roles></contributor>
 		<contributor><name>Marija Susovic</name><roles><role>translator (Croatian)</role></roles></contributor>
@@ -334,6 +335,7 @@
 		<contributor><name>Daniel Tar (bDaneE)</name><roles><role>translator (Hungarian)</role></roles></contributor>
 		<contributor><name>Natto Lover (nattolover)</name><roles><role>translator (Japanese)</role></roles></contributor>
 		<contributor><name>Robert Matyja</name><email>dlpa@users.sf.net</email><roles><role>translator (Polish)</role></roles></contributor>
+		<contributor><name>Matus Majchrak (aryan)</name><roles><role>translator (Slovak)</role></roles></contributor>
 		<contributor><name>Angel Luis Pinazo Perpiñán</name><roles><role>translator (Spanish)</role></roles></contributor>
 		<contributor><name>Volodymyr Vlad</name><email>gutsul</email><roles><role>translator (Ukranian)</role></roles></contributor>
 		<!-- TODO indicate roles -->

@@ -174,7 +174,10 @@ public class SetupServlet extends JAMWikiServlet {
 	private WikiUserAuth setAdminUser(HttpServletRequest request) throws Exception {
 		String username = request.getParameter("username");
 		WikiUserAuth user = new WikiUserAuth(username);
-		user.setPassword(Encryption.encrypt(request.getParameter("newPassword")));
+		String newPassword = request.getParameter("newPassword");
+		if (!StringUtils.isBlank(newPassword)) {
+			user.setPassword(Encryption.encrypt(newPassword));
+		}
 		user.setCreateIpAddress(ServletUtil.getIpAddress(request));
 		user.setLastLoginIpAddress(ServletUtil.getIpAddress(request));
 		return user;

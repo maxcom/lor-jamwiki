@@ -67,7 +67,7 @@ public class InterWikiHandler {
 			return namespace + NamespaceHandler.NAMESPACE_SEPARATOR + value;
 		}
 		try {
-			Object[] objects = {Utilities.encodeForURL(value)};
+			Object[] objects = {Utilities.encodeAndEscapeTopicName(value)};
 			return MessageFormat.format(pattern, objects);
 		} catch (Exception e) {
 			logger.warning("Unable to format " + pattern + " with value " + value, e);

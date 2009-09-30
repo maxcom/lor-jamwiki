@@ -404,7 +404,7 @@ public class TemplateTag {
 		} else {
 			name = raw.substring("{{".length(), raw.length() - "}}".length());
 		}
-		name = Utilities.decodeFromRequest(name.trim(), true);
+		name = Utilities.decodeTopicName(name.trim(), true);
 		if (this.isMagicWord(name)) {
 			return name;
 		}
@@ -612,13 +612,13 @@ public class TemplateTag {
 			return parserInput.getTopicName();
 		}
 		if (name.equals(MAGIC_FULL_PAGE_NAME_E)) {
-			return Utilities.encodeForURL(parserInput.getTopicName());
+			return Utilities.encodeAndEscapeTopicName(parserInput.getTopicName());
 		}
 		if (name.equals(MAGIC_PAGE_NAME)) {
 			return wikiLink.getArticle();
 		}
 		if (name.equals(MAGIC_PAGE_NAME_E)) {
-			return Utilities.encodeForURL(wikiLink.getArticle());
+			return Utilities.encodeAndEscapeTopicName(wikiLink.getArticle());
 		}
 		if (name.equals(MAGIC_SUB_PAGE_NAME)) {
 			String topic = wikiLink.getArticle();
@@ -634,7 +634,7 @@ public class TemplateTag {
 			if (pos != -1 && pos < topic.length()) {
 				topic = topic.substring(pos + 1);
 			}
-			return Utilities.encodeForURL(topic);
+			return Utilities.encodeAndEscapeTopicName(topic);
 		}
 		if (name.equals(MAGIC_BASE_PAGE_NAME)) {
 			String topic = wikiLink.getArticle();
@@ -650,13 +650,13 @@ public class TemplateTag {
 			if (pos != -1 && pos < topic.length()) {
 				topic = topic.substring(0, pos);
 			}
-			return Utilities.encodeForURL(topic);
+			return Utilities.encodeAndEscapeTopicName(topic);
 		}
 		if (name.equals(MAGIC_NAMESPACE)) {
 			return wikiLink.getNamespace();
 		}
 		if (name.equals(MAGIC_NAMESPACE_E)) {
-			return Utilities.encodeForURL(wikiLink.getNamespace());
+			return Utilities.encodeAndEscapeTopicName(wikiLink.getNamespace());
 		}
 		if (name.equals(MAGIC_TALK_SPACE)) {
 			String namespace = wikiLink.getNamespace();
@@ -664,7 +664,7 @@ public class TemplateTag {
 		}
 		if (name.equals(MAGIC_TALK_SPACE_E)) {
 			String namespace = wikiLink.getNamespace();
-			return Utilities.encodeForURL(NamespaceHandler.getCommentsNamespace(namespace));
+			return Utilities.encodeAndEscapeTopicName(NamespaceHandler.getCommentsNamespace(namespace));
 		}
 		if (name.equals(MAGIC_SUBJECT_SPACE) || name.equals(MAGIC_ARTICLE_SPACE)) {
 			String namespace = wikiLink.getNamespace();
@@ -672,19 +672,19 @@ public class TemplateTag {
 		}
 		if (name.equals(MAGIC_SUBJECT_SPACE_E) || name.equals(MAGIC_ARTICLE_SPACE_E)) {
 			String namespace = wikiLink.getNamespace();
-			return Utilities.encodeForURL(NamespaceHandler.getMainNamespace(namespace));
+			return Utilities.encodeAndEscapeTopicName(NamespaceHandler.getMainNamespace(namespace));
 		}
 		if (name.equals(MAGIC_TALK_PAGE_NAME)) {
 			return WikiUtil.extractCommentsLink(parserInput.getTopicName());
 		}
 		if (name.equals(MAGIC_TALK_PAGE_NAME_E)) {
-			return Utilities.encodeForURL(WikiUtil.extractCommentsLink(parserInput.getTopicName()));
+			return Utilities.encodeAndEscapeTopicName(WikiUtil.extractCommentsLink(parserInput.getTopicName()));
 		}
 		if (name.equals(MAGIC_SUBJECT_PAGE_NAME) || name.equals(MAGIC_ARTICLE_PAGE_NAME)) {
 			return WikiUtil.extractTopicLink(parserInput.getTopicName());
 		}
 		if (name.equals(MAGIC_SUBJECT_PAGE_NAME_E) || name.equals(MAGIC_ARTICLE_PAGE_NAME_E)) {
-			return Utilities.encodeForURL(WikiUtil.extractTopicLink(parserInput.getTopicName()));
+			return Utilities.encodeAndEscapeTopicName(WikiUtil.extractTopicLink(parserInput.getTopicName()));
 		}
 		Topic topic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), parserInput.getTopicName(), false, null);
 		TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId().intValue(), null);

@@ -17,6 +17,7 @@
 package org.jamwiki.utils;
 
 import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
@@ -47,40 +48,27 @@ public class Encryption {
 	/**
 	 * Encrypt a String value using the DES encryption algorithm.
 	 *
-	 * @param unencryptedString The unencrypted String value that is to be encrypted.
-	 * @return An encrypted version of the String that was passed to this method.
-	 */
-	public static String encrypt64(String unencryptedString) throws Exception {
-		if (StringUtils.isBlank(unencryptedString)) {
-			return unencryptedString;
-		}
-		byte[] unencryptedBytes = unencryptedString.getBytes("UTF8");
-		return encrypt64(unencryptedBytes);
-	}
-
-	/**
-	 * Encrypt a String value using the DES encryption algorithm.
-	 *
 	 * @param unencryptedBytes The unencrypted String value that is to be encrypted.
 	 * @return An encrypted version of the String that was passed to this method.
 	 */
-	public static String encrypt64(byte[] unencryptedBytes) throws Exception {
-		try {
-			SecretKey key = createKey();
-			Cipher cipher = Cipher.getInstance(key.getAlgorithm());
-			cipher.init(Cipher.ENCRYPT_MODE, key);
-			byte[] encryptedBytes = Base64.encodeBase64(cipher.doFinal(unencryptedBytes));
-			return bytes2String(encryptedBytes);
-		} catch (Exception e) {
-			logger.severe("Encryption error while processing value '" + bytes2String(unencryptedBytes) + "'", e);
-			throw e;
+	private static String encrypt64(byte[] unencryptedBytes) throws GeneralSecurityException, UnsupportedEncodingException {
+		if (unencryptedBytes == null || unencryptedBytes.length == 0) {
+			throw new IllegalArgumentException("Cannot encrypt a null or empty byte array");
 		}
+		SecretKey key = createKey();
+		Cipher cipher = Cipher.getInstance(key.getAlgorithm());
+		cipher.init(Cipher.ENCRYPT_MODE, key);
+		byte[] encryptedBytes = Base64.encodeBase64(cipher.doFinal(unencryptedBytes));
+		return bytes2String(encryptedBytes);
 	}
 
 	/**
 	 *
 	 */
-	public static String encrypt(String unencryptedString) throws Exception {
+	public static String encrypt(String unencryptedString) {
+		if (StringUtils.isBlank(unencryptedString)) {
+			throw new IllegalArgumentException("Cannot encrypt a null or empty string");
+		}
 		MessageDigest md = null;
 		String encryptionAlgorithm = Environment.getValue(Environment.PROP_ENCRYPTION_ALGORITHM);
 		try {
@@ -93,8 +81,7 @@ public class Encryption {
 			try {
 				md = MessageDigest.getInstance("SHA-1");
 			} catch (NoSuchAlgorithmException e) {
-				logger.severe("JDK does not support either the SHA-1 or SHA-512 encryption algorithms.");
-				throw e;
+				throw new UnsupportedOperationException("JDK does not support the SHA-1 or SHA-512 encryption algorithms");
 			}
 			try {
 				// save the algorithm so that if the user upgrades the JDK they can
@@ -107,13 +94,15 @@ public class Encryption {
 		}
 		try {
 			md.update(unencryptedString.getBytes("UTF-8"));
+			byte raw[] = md.digest();
+			return encrypt64(raw);
+		} catch (GeneralSecurityException e) {
+			logger.severe("Encryption failure", e);
+			throw new IllegalStateException("Failure while encrypting value");
 		} catch (UnsupportedEncodingException e) {
 			// this should never happen
-			logger.severe("Unsupporting encoding UTF-8");
-			throw e;
+			throw new IllegalStateException("Unsupporting encoding UTF-8");
 		}
-		byte raw[] = md.digest();
-		return encrypt64(raw);
 	}
 
 	/**
@@ -122,22 +111,16 @@ public class Encryption {
 	 * @param encryptedString The encrypted String value that is to be unencrypted.
 	 * @return An unencrypted version of the String that was passed to this method.
 	 */
-	public static String decrypt64(String encryptedString) {
-		if (encryptedString == null || encryptedString.trim().length() <= 0) {
+	private static String decrypt64(String encryptedString) throws GeneralSecurityException, UnsupportedEncodingException {
+		if (StringUtils.isBlank(encryptedString)) {
 			return encryptedString;
 		}
-		try {
-			SecretKey key = createKey();
-			Cipher cipher = Cipher.getInstance(key.getAlgorithm());
-			cipher.init(Cipher.DECRYPT_MODE, key);
-			byte[] encryptedBytes = encryptedString.getBytes("UTF8");
-			byte[] unencryptedBytes = cipher.doFinal(Base64.decodeBase64(encryptedBytes));
-			return bytes2String(unencryptedBytes);
-		} catch (Exception e) {
-			logger.severe("Decryption error while processing value '" + encryptedString + "'", e);
-			// FIXME - should this throw the exception - caues issues upstream.
-			return null;
-		}
+		SecretKey key = createKey();
+		Cipher cipher = Cipher.getInstance(key.getAlgorithm());
+		cipher.init(Cipher.DECRYPT_MODE, key);
+		byte[] encryptedBytes = encryptedString.getBytes("UTF8");
+		byte[] unencryptedBytes = cipher.doFinal(Base64.decodeBase64(encryptedBytes));
+		return bytes2String(unencryptedBytes);
 	}
 
 	/**
@@ -159,7 +142,7 @@ public class Encryption {
 	 *
 	 * @return An encryption key value implementing the DES encryption algorithm.
 	 */
-	private static SecretKey createKey() throws Exception {
+	private static SecretKey createKey() throws GeneralSecurityException, UnsupportedEncodingException {
 		byte[] bytes = ENCRYPTION_KEY.getBytes("UTF8");
 		DESKeySpec spec = new DESKeySpec(bytes);
 		SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(DES_ALGORITHM);
@@ -173,10 +156,17 @@ public class Encryption {
 	 * @return The unencrypted value of the property.
 	 */
 	public static String getEncryptedProperty(String name, Properties props) {
-		if (props != null) {
-			return Encryption.decrypt64(props.getProperty(name));
+		try {
+			if (props != null) {
+				return Encryption.decrypt64(props.getProperty(name));
+			}
+			return Encryption.decrypt64(Environment.getValue(name));
+		} catch (GeneralSecurityException e) {
+			logger.severe("Encryption failure", e);
+			throw new IllegalStateException("Failure while encrypting value");
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalStateException("Unsupporting encoding UTF-8");
 		}
-		return Encryption.decrypt64(Environment.getValue(name));
 	}
 
 	/**
@@ -186,10 +176,20 @@ public class Encryption {
 	 * @param value The enencrypted value of the property.
 	 * @param props The property object in which the property is being set.
 	 */
-	public static void setEncryptedProperty(String name, String value, Properties props) throws Exception {
-		String encrypted = Encryption.encrypt64(value);
-		if (encrypted == null) {
-			encrypted = "";
+	public static void setEncryptedProperty(String name, String value, Properties props) {
+		String encrypted = "";
+		if (!StringUtils.isBlank(value)) {
+			byte[] unencryptedBytes = null;
+			try {
+				unencryptedBytes = value.getBytes("UTF8");
+				encrypted = Encryption.encrypt64(unencryptedBytes);
+			} catch (GeneralSecurityException e) {
+				logger.severe("Encryption failure", e);
+				throw new IllegalStateException("Failure while encrypting value");
+			} catch (UnsupportedEncodingException e) {
+				// this should never happen
+				throw new IllegalStateException("Unsupporting encoding UTF-8");
+			}
 		}
 		if (props == null) {
 			Environment.setValue(name, encrypted);

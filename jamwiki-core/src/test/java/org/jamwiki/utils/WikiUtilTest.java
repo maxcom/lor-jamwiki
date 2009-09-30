@@ -33,6 +33,39 @@ public class WikiUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	public void testEncodeForFilename() throws Throwable {
+		//TODO
+		String result = WikiUtil.encodeForFilename("testUtilitiesName");
+		assertEquals("result", "testUtilitiesName", result);
+	}
+
+	/**
+	 *
+	 */
+	public void testEncodeForFilename2() throws Throwable {
+		try {
+			String result = WikiUtil.encodeForFilename(null);
+			fail("Expected IllegalArgumentException to be thrown");
+		} catch (IllegalArgumentException ex) {
+			// exception thrown as expected
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void testEncodeForFilename3() throws Throwable {
+		try {
+			String result = WikiUtil.encodeForFilename(" ");
+			fail("Expected IllegalArgumentException to be thrown");
+		} catch (IllegalArgumentException ex) {
+			// exception thrown as expected
+		}
+	}
+
+	/**
+	 *
+	 */
 	public void testExtractCommentsLink() throws Throwable {
 		// FIXME
 //		String result = WikiUtil.extractCommentsLink("testWikiUtilName");

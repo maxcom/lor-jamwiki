@@ -28,7 +28,7 @@ import org.jamwiki.model.WikiImage;
 
 /**
  * General utility methods for handling both wiki topic links such as
- * "Topic#Section?query=param", as well as HTML links of the form
+ * "Topic?query=param#Section", as well as HTML links of the form
  * http://example.com/.
  */
 public class LinkUtil {
@@ -68,9 +68,9 @@ public class LinkUtil {
 		if (StringUtils.isBlank(param)) {
 			return query;
 		}
-		url += Utilities.encodeForURL(param) + "=";
+		url += Utilities.encodeAndEscapeTopicName(param) + "=";
 		if (!StringUtils.isBlank(value)) {
-			url += Utilities.encodeForURL(value);
+			url += Utilities.encodeAndEscapeTopicName(value);
 		}
 		return url;
 	}
@@ -146,6 +146,7 @@ public class LinkUtil {
 			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, uploadLink, topicName, "edit", null, true);
 		}
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
+		String html = "";
 		if (topic.getTopicType() == Topic.TYPE_FILE) {
 			// file, not an image
 			if (StringUtils.isBlank(caption)) {
@@ -153,9 +154,15 @@ public class LinkUtil {
 			}
 			String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + wikiFile.getUrl());
 			url = FilenameUtils.separatorsToUnix(url);
-			return "<a href=\"" + url + "\">" + StringEscapeUtils.escapeHtml(caption) + "</a>";
+			html += "<a href=\"" + url + "\">";
+			if (escapeHtml) {
+				html += StringEscapeUtils.escapeHtml(caption);
+			} else {
+				html += caption;
+			}
+			html += "</a>";
+			return html;
 		}
-		String html = "";
 		WikiImage wikiImage = ImageUtil.initializeImage(wikiFile, maxDimension);
 		if (caption == null) {
 			caption = "";
@@ -259,6 +266,9 @@ public class LinkUtil {
 		} else {
 			target = "";
 		}
+		if (StringUtils.isBlank(topic) && !StringUtils.isBlank(wikiLink.getSection())) {
+			topic = wikiLink.getSection();
+		}
 		String html = "<a href=\"" + url + "\"" + style + " title=\"" + StringEscapeUtils.escapeHtml(topic) + "\"" + target + ">";
 		if (escapeHtml) {
 			html += StringEscapeUtils.escapeHtml(text);
@@ -305,7 +315,7 @@ public class LinkUtil {
 		String section = wikiLink.getSection();
 		String query = wikiLink.getQuery();
 		if (StringUtils.isBlank(topic) && !StringUtils.isBlank(section)) {
-			return "#" + Utilities.encodeForURL(section);
+			return "#" + Utilities.encodeAndEscapeTopicName(section);
 		}
 		if (!LinkUtil.isExistingArticle(virtualWiki, topic)) {
 			return LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, -1);
@@ -317,20 +327,20 @@ public class LinkUtil {
 		// context never ends with a "/" per servlet specification
 		url += "/";
 		// get the virtual wiki, which should have been set by the parent servlet
-		url += Utilities.encodeForURL(virtualWiki);
+		url += Utilities.encodeAndEscapeTopicName(virtualWiki);
 		url += "/";
-		url += Utilities.encodeForURL(topic);
-		if (!StringUtils.isBlank(section)) {
-			if (!section.startsWith("#")) {
-				url += "#";
-			}
-			url += Utilities.encodeForURL(section);
-		}
+		url += Utilities.encodeAndEscapeTopicName(topic);
 		if (!StringUtils.isBlank(query)) {
 			if (!query.startsWith("?")) {
 				url += "?";
 			}
 			url += query;
+		}
+		if (!StringUtils.isBlank(section)) {
+			if (!section.startsWith("#")) {
+				url += "#";
+			}
+			url += Utilities.encodeAndEscapeTopicName(section);
 		}
 		return url;
 	}
@@ -384,7 +394,7 @@ public class LinkUtil {
 	}
 
 	/**
-	 * Parse a topic name of the form "Topic#Section?Query", and return a WikiLink
+	 * Parse a topic name of the form "Topic?Query#Section", and return a WikiLink
 	 * object representing the link.
 	 *
 	 * @param raw The raw topic link text.
@@ -399,19 +409,23 @@ public class LinkUtil {
 		if (StringUtils.isBlank(processed)) {
 			return new WikiLink();
 		}
-		// first see if the link ends with a query param - "?..."
+		// first look for a section param - "#..."
+		int sectionPos = processed.indexOf('#');
+		if (sectionPos != -1 && sectionPos < processed.length()) {
+			String sectionString = processed.substring(sectionPos + 1);
+			wikiLink.setSection(sectionString);
+			if (sectionPos == 0) {
+				// link is of the form #section, no more to process
+				return wikiLink;
+			}
+			processed = processed.substring(0, sectionPos);
+		}
+		// now see if the link ends with a query param - "?..."
 		int queryPos = processed.indexOf('?', 1);
 		if (queryPos != -1 && queryPos < processed.length()) {
 			String queryString = processed.substring(queryPos + 1);
 			wikiLink.setQuery(queryString);
 			processed = processed.substring(0, queryPos);
-		}
-		// now look for a section param - "#..."
-		int sectionPos = processed.indexOf('#', 1);
-		if (sectionPos != -1 && sectionPos < processed.length()) {
-			String sectionString = processed.substring(sectionPos + 1);
-			wikiLink.setSection(sectionString);
-			processed = processed.substring(0, sectionPos);
 		}
 		// since we're having so much fun, let's find a namespace (default empty).
 		String namespaceString = "";
@@ -424,9 +438,9 @@ public class LinkUtil {
 		if (namespacePos > 0) {
 			topic = processed.substring(namespacePos + 1);
 		}
-		wikiLink.setArticle(Utilities.decodeFromURL(topic, true));
+		wikiLink.setArticle(Utilities.decodeTopicName(topic, true));
 		// destination is namespace + topic
-		wikiLink.setDestination(Utilities.decodeFromURL(processed, true));
+		wikiLink.setDestination(Utilities.decodeTopicName(processed, true));
 		return wikiLink;
 	}
 }

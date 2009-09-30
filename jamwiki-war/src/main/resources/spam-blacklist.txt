@@ -4,50 +4,34 @@
 (asian|black|ebony|latina|lesbian|mature|porno|teen)[ \._\-](anal|ass|bdsm|blowjob|cock|cunt|fuck|lesbian|orgy|porn|pussy|sex|tit|video|xxx)
 (best|free|super)[ \._\-]porn
 (buy|cheap|generic|online)[ \._\-](adipex|albuterol|allegra|alprazolam|ativan|carisoprodol|celexa|cialis|claritin|clomid|clonazepam|diazepam|didrex|flexeril|hoodia|hydrocodone|levitra|lipitor|lisinopril|lorazepam|meridia|nexium|norco|paxil|phentermine|propecia|prozac|rivotril|sildenafil|soma|tenuate|tramadol|ultracet|ultram|valium|viagra|vicodin|wellbutrin|xanax|xenical|zanaflex|zoloft|zyban)
-([\[]?http[s]?\://[^ \n\t\.]+\.[^ \n\t]+[\]]?[ \n\t]+){10,}
+(bookmark you|good post|nice site|nice work) (man|dude)?[ ]*(10x|thx)
+(news|tickets)_[0-9]+\.(htm|txt)
+([\[]?http[s]?\://[^ \n\t\.]+\.[^ \n\t]+[\]]?[ \n\t]+){5,}
 [0-9]{5,}\.com
 [\.\/]km\.ru
-\.bj\.cn
-1\-hyip\.com
-2008healthinsurance\.com
-247ihost\.com
-4gem\.info
 adware[ -_\.]freeware
 airline\-tickets\-cheap
-amatorial[ -_\.]sex
-banklife\.ru
 cheap[\-\.]+tickets
 comment[0-9],
-diplom21\.ru 
 display\:none
-flingdesire\.com
-freepages\.at
-freewebtown\.com
 free\-site\-host
-futaji\.com
-insgc\.hocom\.by
-israwell\.com
-lavandos\.org
-lenaperova\.ucoz\.ru
+freehost(ing)?\.(com|net)
+gigazu\.com
+google\.[a-z]{2,3}(\.[a-z]{2,3})*/group
+hice\ site
+hostaim\.com
+hostvo\.com
+jerremsproperties\.com
+justfree\.com
 louis[\-_\.]?vuitton
-mega\-life\-health\.cn
 naked[ -_\.]teen
-news_[0-9]+\.htm
-nucreate\.info
-nudisplay\.info
-online\-unlock\.com  
+nofeehost\.com
+(nursing|spam_|virus)([0-9]){2,}
 payday[ -_\.]loans
-peace\.com
-plantar\-wart
-plus18\.eu
 porn[ -_\.]video
 replica[-_]?watches
 russianbrides
-seo\-master\.info
-sexjay\.ru
-shop\-shine\.ru
-superche\.info
-theche\.info
-top\-dating
-viagrapills
-xenot\.co\.ua
+sedra\.net
+site2gb\.com
+webhost\.com
+xxxmovie

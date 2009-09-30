@@ -46,47 +46,33 @@ p {
 	margin: .4em 0 .5em 0;
 	line-height: 1.5em;
 }
-h1 {
-	border-bottom: 1px solid #D8D8E7;
+h1, h2, h3, h4, h5 {
 	color: black;
-	font-size: 200%;
-	font-weight: normal;
-	margin: 0em 0em 0.15em 0em;
+	margin: 0;
 	padding: 0.5em 0em 0.2em 0em;
 	text-align: left;
+}
+h1 {
+	border-bottom: 1px solid #D8D8E7;
+	font-size: 200%;
+	font-weight: normal;
 }
 h2 {
 	border-bottom: 1px solid #D8D8E7;
-	color: black;
 	font-size: 175%;
 	font-weight: normal;
-	margin: 0em 0em 0.15em 0em;
-	padding: 0.5em 0em 0.2em 0em;
-	text-align: left;
 }
 h3 {
-	color: black;
 	font-size: 150%;
 	font-weight: normal;
-	margin: 0em 0em 0.15em 0em;
-	padding: 0.5em 0em 0.2em 0em;
-	text-align: left;
 }
 h4 {
-	color: black;
 	font-size: 125%;
 	font-weight: bold;
-	margin: 0em 0em 0.15em 0em;
-	padding: 0.5em 0em 0.2em 0em;
-	text-align: left;
 }
 h5 {
-	color: black;
 	font-size: 110%;
 	font-weight: bold;
-	margin: 0em 0em 0.15em 0em;
-	padding: 0.5em 0em 0.2em 0em;
-	text-align: left;
 }
 pre {
 	background-color: #FBFBFD;
@@ -401,10 +387,11 @@ li.undeletechange {
 #content-article pre {
 	overflow: hidden;
 }
-.section-edit {
-	font-size: 90%;
+.editsection {
+	font-size: 67%;
 	float: right;
-	padding: 15px 0px 0px 5px;
+	margin-left: 5px;
+	position: relative;
 }
 
 /* images */
@@ -433,6 +420,7 @@ div.imgcenter {
 div.imgthumb {
 	border: 1px solid #bbbbbb;
 	padding: 0.3em;
+	position: relative;
 }
 table.gallery {
 	border: 1px solid #ccc;

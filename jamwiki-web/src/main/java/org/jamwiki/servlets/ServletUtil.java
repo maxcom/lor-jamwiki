@@ -145,37 +145,37 @@ public class ServletUtil {
 				links.put(article, new WikiMessage("tab.common.article"));
 				links.put(comments, new WikiMessage("tab.common.comments"));
 				if (ServletUtil.isEditable(virtualWiki, pageName, user)) {
-					String editLink = "Special:Edit?topic=" + Utilities.encodeForURL(pageName);
+					String editLink = "Special:Edit?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 					if (!StringUtils.isBlank(request.getParameter("topicVersionId"))) {
 						editLink += "&topicVersionId=" + request.getParameter("topicVersionId");
 					}
 					links.put(editLink, new WikiMessage("tab.common.edit"));
 				}
-				String historyLink = "Special:History?topic=" + Utilities.encodeForURL(pageName);
+				String historyLink = "Special:History?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 				links.put(historyLink, new WikiMessage("tab.common.history"));
 				if (ServletUtil.isMoveable(virtualWiki, pageName, user)) {
-					String moveLink = "Special:Move?topic=" + Utilities.encodeForURL(pageName);
+					String moveLink = "Special:Move?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 					links.put(moveLink, new WikiMessage("tab.common.move"));
 				}
 				if (user.hasRole(Role.ROLE_USER)) {
 					Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
 					boolean watched = (watchlist.containsTopic(pageName));
 					String watchlistLabel = (watched) ? "tab.common.unwatch" : "tab.common.watch";
-					String watchlistLink = "Special:Watchlist?topic=" + Utilities.encodeForURL(pageName);
+					String watchlistLink = "Special:Watchlist?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 					links.put(watchlistLink, new WikiMessage(watchlistLabel));
 				}
 				if (pageInfo.isUserPage()) {
 					WikiLink wikiLink = LinkUtil.parseWikiLink(pageName);
-					String contributionsLink = "Special:Contributions?contributor=" + Utilities.encodeForURL(wikiLink.getArticle());
+					String contributionsLink = "Special:Contributions?contributor=" + Utilities.encodeAndEscapeTopicName(wikiLink.getArticle());
 					links.put(contributionsLink, new WikiMessage("tab.common.contributions"));
 				}
-				String linkToLink = "Special:LinkTo?topic=" + Utilities.encodeForURL(pageName);
+				String linkToLink = "Special:LinkTo?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 				links.put(linkToLink, new WikiMessage("tab.common.links"));
 				if (user.hasRole(Role.ROLE_ADMIN)) {
-					String manageLink = "Special:Manage?topic=" + Utilities.encodeForURL(pageName);
+					String manageLink = "Special:Manage?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 					links.put(manageLink, new WikiMessage("tab.common.manage"));
 				}
-				String printLink = "Special:Print?topic=" + Utilities.encodeForURL(pageName);
+				String printLink = "Special:Print?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 				links.put(printLink, new WikiMessage("tab.common.print"));
 			}
 		} catch (Exception e) {

@@ -18,7 +18,9 @@ package org.jamwiki.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
@@ -144,6 +146,30 @@ public class WikiUtil {
 	}
 
 	/**
+	 * Convert a topic name or other value into a value suitable for use as a
+	 * file name.  This method replaces spaces with underscores, and then URL
+	 * encodes the value.
+	 *
+	 * @param name The value that is to be encoded for use as a file name.
+	 * @return The encoded value.
+	 */
+	public static String encodeForFilename(String name) {
+		if (StringUtils.isBlank(name)) {
+			throw new IllegalArgumentException("File name not specified in encodeForFilename");
+		}
+		// replace spaces with underscores
+		String result = Utilities.encodeTopicName(name);
+		// URL encode the rest of the name
+		try {
+			result = URLEncoder.encode(result, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// this should never happen
+			throw new IllegalStateException("Unsupporting encoding UTF-8");
+		}
+		return result;
+	}
+
+	/**
 	 * Given an article name, return the appropriate comments topic article name.
 	 * For example, if the article name is "Topic" then the return value is
 	 * "Comments:Topic".
@@ -249,7 +275,7 @@ public class WikiUtil {
 					value = value.substring(0, value.indexOf('&'));
 				}
 			}
-			return Utilities.decodeFromURL(value, decodeUnderlines);
+			return Utilities.decodeAndEscapeTopicName(value, decodeUnderlines);
 		}
 		value = request.getParameter(name);
 		if (value == null) {
@@ -258,7 +284,7 @@ public class WikiUtil {
 		if (value == null) {
 			return null;
 		}
-		return Utilities.decodeFromRequest(value, decodeUnderlines);
+		return Utilities.decodeTopicName(value, decodeUnderlines);
 	}
 
 	/**
@@ -288,16 +314,7 @@ public class WikiUtil {
 			logger.warning("No topic in URL: " + request.getRequestURI());
 			return null;
 		}
-		int pos = topic.indexOf('?');
-		if (pos != -1) {
-			// strip everything after and including '?'
-			if (pos == 0) {
-				logger.warning("No topic in URL: " + request.getRequestURI());
-				return null;
-			}
-			topic = topic.substring(0, topic.indexOf('?'));
-		}
-		pos = topic.indexOf('#');
+		int pos = topic.indexOf('#');
 		if (pos != -1) {
 			// strip everything after and including '#'
 			if (pos == 0) {
@@ -306,7 +323,18 @@ public class WikiUtil {
 			}
 			topic = topic.substring(0, topic.indexOf('#'));
 		}
-		topic = Utilities.decodeFromURL(topic, true);
+		pos = topic.indexOf('?');
+		if (pos != -1) {
+			// strip everything after and including '?'
+			if (pos == 0) {
+				logger.warning("No topic in URL: " + request.getRequestURI());
+				return null;
+			}
+			topic = topic.substring(0, topic.indexOf('?'));
+		}
+		if (!StringUtils.isBlank(topic)) {
+			topic = Utilities.decodeAndEscapeTopicName(topic, true);
+		}
 		return topic;
 	}
 
@@ -326,7 +354,7 @@ public class WikiUtil {
 		if (virtualWiki == null) {
 			return null;
 		}
-		return Utilities.decodeFromRequest(virtualWiki, true);
+		return Utilities.decodeTopicName(virtualWiki, true);
 	}
 
 	/**
@@ -340,16 +368,17 @@ public class WikiUtil {
 	public static String getVirtualWikiFromURI(HttpServletRequest request) {
 		String uri = retrieveDirectoriesFromURI(request, 0);
 		if (StringUtils.isBlank(uri)) {
-			logger.warning("No virtual wiki found in URL: " + request.getRequestURI());
+			logger.info("No virtual wiki found in URL: " + request.getRequestURI());
 			return null;
 		}
+		// default the virtual wiki to the URI since the user may have accessed a URL of
+		// the form /context/virtualwiki with no trailing slash
+		String virtualWiki = uri;
 		int slashIndex = uri.indexOf('/');
-		if (slashIndex == -1) {
-			logger.warning("No virtual wiki found in URL: " + request.getRequestURI());
-			return null;
+		if (slashIndex != -1) {
+			virtualWiki = uri.substring(0, slashIndex);
 		}
-		String virtualWiki = uri.substring(0, slashIndex);
-		return Utilities.decodeFromURL(virtualWiki, true);
+		return Utilities.decodeAndEscapeTopicName(virtualWiki, true);
 	}
 
 	/**
@@ -422,7 +451,7 @@ public class WikiUtil {
 		if (!StringUtils.isBlank(language) && !StringUtils.isBlank(country)) {
 			try {
 				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language + "_" + country).getPath();
-				filename = new File(subdirectory, Utilities.encodeForFilename(pageName) + ".txt").getPath();
+				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
 				contents = Utilities.readFile(filename);
 			} catch (Exception e) {
 				logger.info("File " + filename + " does not exist");
@@ -431,7 +460,7 @@ public class WikiUtil {
 		if (contents == null && !StringUtils.isBlank(language)) {
 			try {
 				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language).getPath();
-				filename = new File(subdirectory, Utilities.encodeForFilename(pageName) + ".txt").getPath();
+				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
 				contents = Utilities.readFile(filename);
 			} catch (Exception e) {
 				logger.info("File " + filename + " does not exist");
@@ -440,7 +469,7 @@ public class WikiUtil {
 		if (contents == null) {
 			try {
 				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR).getPath();
-				filename = new File(subdirectory, Utilities.encodeForFilename(pageName) + ".txt").getPath();
+				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
 				contents = Utilities.readFile(filename);
 			} catch (Exception e) {
 				logger.warning("File " + filename + " could not be read", e);

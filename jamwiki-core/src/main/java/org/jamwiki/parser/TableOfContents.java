@@ -261,7 +261,7 @@ public class TableOfContents {
 				// only display if not nested deeper than max
 				closeList(adjustedLevel, text, previousLevel);
 				openList(adjustedLevel, text, previousLevel);
-				text.append("<a href=\"#").append(Utilities.encodeForURL(entry.name)).append("\">");
+				text.append("<a href=\"#").append(Utilities.encodeAndEscapeTopicName(entry.name)).append("\">");
 				text.append("<span class=\"tocnumber\">").append(this.nextTocPrefix(adjustedLevel - 1)).append("</span> ");
 				text.append("<span class=\"toctext\">").append(entry.text).append("</span></a>");
 			}

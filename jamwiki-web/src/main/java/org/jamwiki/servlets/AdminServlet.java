@@ -350,8 +350,8 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private static void setPassword(Properties props, HttpServletRequest request, ModelAndView next, String parameter, String passwordParam) throws Exception {
-		if (!StringUtils.isBlank(request.getParameter(parameter))) {
-			String value = request.getParameter(parameter);
+		String value = request.getParameter(parameter);
+		if (!StringUtils.isBlank(value)) {
 			Encryption.setEncryptedProperty(parameter, value, props);
 			next.addObject(passwordParam, request.getParameter(parameter));
 		} else {
@@ -444,7 +444,7 @@ public class AdminServlet extends JAMWikiServlet {
 				virtualWiki.setVirtualWikiId(new Integer(request.getParameter("virtualWikiId")).intValue());
 			}
 			virtualWiki.setName(request.getParameter("name"));
-			virtualWiki.setDefaultTopicName(Utilities.encodeForURL(request.getParameter("defaultTopicName")));
+			virtualWiki.setDefaultTopicName(Utilities.decodeTopicName(request.getParameter("defaultTopicName"), true));
 			WikiBase.getDataHandler().writeVirtualWiki(virtualWiki, null);
 			if (StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
 				WikiBase.getDataHandler().setupSpecialPages(request.getLocale(), user, virtualWiki, null);
