@@ -22,6 +22,7 @@
 
 <%@ include file="page-init.jsp" %>
 
+<c:if test="${newuser.userId > 0}">
 <div class="message"><f:message key="register.form.info" /></div>
 
 <fieldset>
@@ -115,5 +116,7 @@
 	<span class="formelement"><input type="submit" name="function" value="<f:message key="common.save" />"></span>
 </div>
 </form>
+</c:if>
+<a href="/register.jsp">Register</a>
 
 </fieldset>
