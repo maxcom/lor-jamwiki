@@ -48,10 +48,6 @@ public class WikiDatabase {
 	private static String EXISTENCE_VALIDATION_QUERY = null;
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiDatabase.class.getName());
 
-	static {
-		WikiDatabase.initialize();
-	}
-
 	/**
 	 *
 	 */
@@ -95,7 +91,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	protected static void initialize() {
+	public synchronized static void initialize() {
 		try {
 			WikiDatabase.CONNECTION_VALIDATION_QUERY = WikiDatabase.queryHandler().connectionValidationQuery();
 			WikiDatabase.EXISTENCE_VALIDATION_QUERY = WikiDatabase.queryHandler().existenceValidationQuery();
@@ -104,6 +100,14 @@ public class WikiDatabase {
 			DatabaseConnection.setPoolInitialized(false);
 		} catch (Exception e) {
 			logger.severe("Unable to initialize database", e);
+		}
+	}
+
+	public synchronized static void shutdown() {
+		try {
+			DatabaseConnection.closeConnectionPool();
+		} catch (Exception e) {
+			logger.severe("Unable to close the connection pool on shutdown", e);
 		}
 	}
 
@@ -229,7 +233,7 @@ public class WikiDatabase {
 		if (!file.exists()) {
 			file.mkdirs();
 		}
-		String url = "jdbc:hsqldb:file:" + new File(file.getPath(), "jamwiki").getPath();
+		String url = "jdbc:hsqldb:file:" + new File(file.getPath(), "jamwiki").getPath() + ";shutdown=true";
 		props.setProperty(Environment.PROP_DB_URL, url);
 	}
 
@@ -326,8 +330,10 @@ public class WikiDatabase {
 		topic.setAdminOnly(adminOnly);
 		// FIXME - hard coding
 		TopicVersion topicVersion = new TopicVersion(user, user.getLastLoginIpAddress(), "Automatically created by system setup", contents);
-		ParserOutput parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki, topicName);
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true, conn);
+		// FIXME - it is not connection-safe to parse for metadata since we are already holding a connection
+		// ParserOutput parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki, topicName);
+		// WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true, conn);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true, conn);
 	}
 
 	/**

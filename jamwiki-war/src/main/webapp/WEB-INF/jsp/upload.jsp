@@ -22,6 +22,10 @@
 
 <%@ include file="page-init.jsp" %>
 
+<c:if test="${!empty uploadSpam}">
+<div class="message red"><f:message key="${spam.key}"><f:param value="${spam.params[0]}" /></f:message></div>
+</c:if>
+
 <form name="form1" method="post" action="<jamwiki:link value="Special:Upload" />" enctype="multipart/form-data">
 <table border="0">
 <tr>
@@ -30,7 +34,7 @@
 </tr>
 <tr>
 	<td><label for="uploadDescription"><f:message key="upload.caption.filedescription" /></label>:</td>
-	<td><textarea name="description" rows="6" cols="80" id="uploadDescription"></textarea></td>
+	<td><textarea name="description" rows="6" cols="80" id="uploadDescription"><c:out value="${contents}" escapeXml="true" /></textarea></td>
 </tr>
 <tr>
 	<td colspan="2" align="center"><input type="submit" name="save" value="<f:message key="common.save" />" /></td>

@@ -17,7 +17,7 @@
 
 --%>
 <%@ page import="
-        org.jamwiki.servlets.ServletUtil
+        org.jamwiki.utils.WikiUtil
     "
     errorPage="/WEB-INF/jsp/error.jsp"
     contentType="text/html; charset=utf-8"
@@ -31,7 +31,7 @@
 
 <%-- FIXME: change from table to divs --%>
 <form name="delete" method="get" action="<jamwiki:link value="Special:Move" />">
-<input type="hidden" name="<%= ServletUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
+<input type="hidden" name="<%= WikiUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 <div class="formentry">
 	<span class="formcaption-medium" nowrap><label for="moveDestination"><f:message key="move.destination" /></label>: </span>
 	<span class="formelement" width="90%"><input type="text" name="moveDestination" value="<c:out value="${moveDestination}" />" id="moveDestination" size="60" /></span>

@@ -144,6 +144,9 @@ public class SetupServlet extends JAMWikiServlet {
 		JAMWikiAnonymousProcessingFilter.reset();
 		WikiUserAuth.resetDefaultGroupRoles();
 		Environment.saveProperties();
+		// the setup process does not add new topics to the index (currently)
+		// TODO - remove this once setup uses safe connection handling
+		WikiBase.getSearchEngine().refreshIndex();
 		// force current user credentials to be removed and re-validated.
 		SecurityContextHolder.clearContext();
 		return true;

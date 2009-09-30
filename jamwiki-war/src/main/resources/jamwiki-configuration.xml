@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 
 <configuration>
 
@@ -99,6 +99,10 @@
 	<data-handler>
 		<name>postgres</name>
 		<class>org.jamwiki.db.PostgresDataHandler</class>
+	</data-handler>
+	<data-handler>
+		<name>asa</name>
+		<class>org.jamwiki.db.SybaseASADataHandler</class>
 	</data-handler>
 	<data-handler>
 		<name>db2</name>

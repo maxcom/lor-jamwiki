@@ -1,4 +1,33 @@
-﻿0.6.4
+﻿0.6.5
+=====
+
+New Features:
+
+  * Support added for Sybase ASA (dallas).
+  * The spam filter will now also check descriptions for uploaded files in
+    order to block spam from bots using this path.
+  * Updated spam filter patterns.
+
+Bugfixes:
+  * Fix a problem that could cause HSQL to generate locking errors on context
+    reload (dallas).
+  * Resolve a problem that could cause database connection lockups during
+    setup on MS SQL and some other databases.  Reported by multiple users, with
+    significant debugging help provided by dallas.
+  * Fix a regression that broke the Special:Manage page.  Bug reported with a
+    suggested fix by tfschueller.
+  * Fix a regression that broke the Special:Move page (dallas).
+  * Resolve a logic error that prevented topics from being retrieved from the
+    cache at appropriate times.  Pointed out by Jim.
+  * The "Special" tab on the Special:Contributions page did not have the
+    correct URL.  Reported by yesesnono.
+
+Translation Updates:
+
+  * Updated Hungarian translations (bdanee).
+
+
+0.6.4
 =====
 
 New Features:

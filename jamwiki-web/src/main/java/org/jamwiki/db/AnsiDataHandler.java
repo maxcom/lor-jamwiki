@@ -747,8 +747,10 @@ public class AnsiDataHandler implements DataHandler {
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
 			String key = WikiCache.key(virtualWiki, topicName);
-			if (transactionObject != null) {
-				// do not use cache if part of a transaction
+			if (transactionObject == null) {
+				// retrieve topic from the cache only if this call is not currently a part
+				// of a transaction to avoid retrieving data that might have been updated
+				// as part of this transaction and would thus now be out of date
 				Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPICS, key);
 				if (cacheElement != null) {
 					Topic cacheTopic = (Topic)cacheElement.getObjectValue();
@@ -774,8 +776,9 @@ public class AnsiDataHandler implements DataHandler {
 			if (rs.size() != 0) {
 				topic = initTopic(rs);
 			}
-			if (transactionObject != null) {
-				// do not use cache if part of a transaction
+			if (transactionObject == null) {
+				// add topic to the cache only if it is not currently a part of a transaction
+				// to avoid caching something that might need to be rolled back
 				Topic cacheTopic = (topic == null) ? null : new Topic(topic);
 				WikiCache.addToCache(CACHE_TOPICS, key, cacheTopic);
 			}

@@ -7,7 +7,7 @@
 	<groupId>org.jamwiki</groupId>
 	<artifactId>jamwiki</artifactId>
 	<packaging>pom</packaging>
-	<version>0.6.4</version>
+	<version>0.6.5</version>
 	<name>Jamwiki Super POM</name>
 	<description>
 		JAMWiki is a Java-based Wiki engine, which offers many of the
@@ -38,7 +38,7 @@
 		</license>
 	</licenses>
 	<properties>
-		<jamwiki.version>0.6.4</jamwiki.version>
+		<jamwiki.version>0.6.5</jamwiki.version>
 		<dependency.spring.version>2.5.1</dependency.spring.version>
 	</properties>
 	<repositories>
@@ -279,6 +279,13 @@
 				<role>developer</role>
 			</roles>
 			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<id>dallas</id>
+			<name>Dallas Hopewell</name>
+			<roles>
+				<role>developer</role>
+			</roles>
 		</developer>
 		<developer>
 			<id>axelcl</id>
