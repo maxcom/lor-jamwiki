@@ -48,6 +48,7 @@ public class ContributionsServlet extends JAMWikiServlet {
 	private void contributions(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		String userString = WikiUtil.getParameterFromRequest(request, "contributor", false);
+	        userString = userString.replaceAll(" ","_");
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		Collection contributions = WikiBase.getDataHandler().getUserContributions(virtualWiki, userString, pagination, true);
 		next.addObject("contributions", contributions);
