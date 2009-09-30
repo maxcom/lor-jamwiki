@@ -17,7 +17,9 @@
 package org.jamwiki;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
@@ -34,9 +36,24 @@ public class TestFileUtil {
 	/**
 	 *
 	 */
+	public static File getClassLoaderFile(String fileName) throws Exception {
+		try {
+			return Utilities.getClassLoaderFile(fileName);
+		} catch (Exception e) {
+			// ignore
+		}
+		return new File(Utilities.getClassLoaderRoot(), fileName);
+	}
+
+	/**
+	 *
+	 */
 	private static File retrieveFile(String directory, String fileName) {
 		// files containing colons aren't allowed, so replace with "_-_"
-		String fullName = directory + StringUtils.replace(fileName, ":", "_-_");
+		fileName = StringUtils.replace(fileName, ":", "_-_");
+		// replace spaces with underscores
+		fileName = StringUtils.replace(fileName, " ", "_");
+		String fullName = directory + fileName;
 		File file = null;
 		try {
 			return Utilities.getClassLoaderFile(fullName);
@@ -50,11 +67,18 @@ public class TestFileUtil {
 	/**
 	 *
 	 */
-	public static String retrieveFileContent(String directory, String fileName) throws Exception {
+	public static String retrieveFileContent(String directory, String fileName) throws IOException, FileNotFoundException {
+		File file = TestFileUtil.retrieveFile(directory, fileName);
+		return TestFileUtil.retrieveFileContent(file);
+	}
+
+	/**
+	 *
+	 */
+	public static String retrieveFileContent(File file) throws IOException, FileNotFoundException {
 		FileReader reader = null;
 		try {
-			File file = TestFileUtil.retrieveFile(directory, fileName);
-			if (file == null) {
+			if (file == null || !file.exists()) {
 				return null;
 			}
 			reader = new FileReader(file);

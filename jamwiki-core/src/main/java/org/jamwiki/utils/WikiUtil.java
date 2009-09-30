@@ -633,6 +633,24 @@ public class WikiUtil {
 	}
 
 	/**
+	 * Utility method for determining if a password is valid for use on the wiki.
+	 *
+	 * @param password The password value.
+	 * @param passwordConfirmation The password confirmation.
+	 */
+	public static void validatePassword(String password, String confirmPassword) throws WikiException {
+		if (StringUtils.isBlank(password)) {
+			throw new WikiException(new WikiMessage("error.newpasswordempty"));
+		}
+		if (WikiBase.getUserHandler().isWriteable() && StringUtils.isBlank(confirmPassword)) {
+			throw new WikiException(new WikiMessage("error.passwordconfirm"));
+		}
+		if (WikiBase.getUserHandler().isWriteable() && !password.equals(confirmPassword)) {
+			throw new WikiException(new WikiMessage("admin.message.passwordsnomatch"));
+		}
+	}
+
+	/**
 	 * Utility method for determining if a username is valid for use on the Wiki,
 	 * meaning that it is not empty and does not contain any invalid characters.
 	 *

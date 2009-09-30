@@ -22,52 +22,6 @@
 
 <%@ include file="page-init.jsp" %>
 
-<script type="text/javascript">
-<!--
-// enable/disable checkboxes before or after the current element
-<%-- FIXME: might be better moved to a jamwiki.js file --%>
-function inactive(element) {
-  var found = 0;
-  var totalChecked = 0;
-  for (i=0; i < document.diffForm.length; i++) {
-    if (element.type != document.diffForm.elements[i].type) continue;
-    if (document.diffForm.elements[i].checked) totalChecked++;
-  }
-  for (i=0; i < document.diffForm.length; i++) {
-    if (element.type != document.diffForm.elements[i].type) continue;
-    if (document.diffForm.elements[i].checked && found < 2) {
-      found++;
-      continue;
-    }
-    if (totalChecked == 0) {
-      // enable everything
-      document.diffForm.elements[i].checked = false;
-      document.diffForm.elements[i].disabled = false;
-      continue;
-    }
-    if (found == 0 && totalChecked == 1) {
-      // disable everything up to the first one
-      document.diffForm.elements[i].checked = false;
-      document.diffForm.elements[i].disabled = true;
-      continue;
-    }
-    if (found == 1 && totalChecked >= 1) {
-      // un-select everything after the first one
-      document.diffForm.elements[i].checked = false;
-      document.diffForm.elements[i].disabled = false;
-      continue;
-    }
-    if (found == 2 && totalChecked >= 2) {
-      // disable elements after the second one
-      document.diffForm.elements[i].checked = false;
-      document.diffForm.elements[i].disabled = true;
-      continue;
-    }
-  }
-}
-// -->
-</script>
-
 <div id="change">
 
 <div class="message"><f:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:History?topic=${pageInfo.topicName}" /></div>
@@ -78,7 +32,6 @@ function inactive(element) {
 </form>
 
 <form action="<jamwiki:link value="Special:Diff" />" method="get" name="diffForm">
-<input type="hidden" name="type" value="arbitrary"/>
 <input type="hidden" name="topic" value='<c:out value="${pageInfo.topicName}" />' />
 
 <input type="submit" value='<f:message key="history.diff" />' />
@@ -86,10 +39,14 @@ function inactive(element) {
 <br /><br />
 
 <ul>
-<c:forEach items="${changes}" var="change">
+<c:forEach items="${changes}" var="change" varStatus="status">
 <li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
+	<c:if test="${numChanges > 1}">
 	&#160;
-	<input type="checkbox" name="<c:out value="diff:${change.topicVersionId}" />" onclick="inactive(this)" id="<c:out value="diff:${change.topicVersionId}" />" />
+	<input type="radio" name="version2" id="ver2_<c:out value="${change.topicVersionId}" />" onclick="historyRadio(this, 'version1', true)" value="<c:out value="${change.topicVersionId}" />" <c:if test="${status.index == 1}">checked="checked"</c:if> <c:if test="${status.first}">style="visibility:hidden"</c:if> />
+	&#160;
+	<input type="radio" name="version1" id="ver1_<c:out value="${change.topicVersionId}" />" onclick="historyRadio(this, 'version2', false)" value="<c:out value="${change.topicVersionId}" />" <c:if test="${status.first}">checked="checked"</c:if> <c:if test="${status.last}">style="visibility:hidden"</c:if> />
+	</c:if>
 	&#160;
 	<%-- FIXME: do not hardcode date pattern --%>
 	<jamwiki:link value="Special:History"><jamwiki:linkParam key="topicVersionId" value="${change.topicVersionId}" /><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></jamwiki:link>
@@ -103,6 +60,12 @@ function inactive(element) {
 </li>
 </c:forEach>
 </ul>
+
+<c:if test="${numChanges > 1}">
+<script type="text/javascript">
+historyRadio(document.getElementById('ver2_<c:out value="${changes[1].topicVersionId}" />'), 'version1', true)
+</script>
+</c:if>
 
 <br />
 

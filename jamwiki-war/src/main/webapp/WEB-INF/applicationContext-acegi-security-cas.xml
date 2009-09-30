@@ -238,6 +238,7 @@
 				/**/Special:Upgrade=ROLE_ANONYMOUS,ROLE_USER,ROLE_ADMIN
 				/**/*.css=ROLE_ANONYMOUS,ROLE_USER
 				/images/**=ROLE_ANONYMOUS,ROLE_USER
+				/js/**=ROLE_ANONYMOUS,ROLE_USER
 				/upload/**=ROLE_ANONYMOUS,ROLE_USER
 				/**=ROLE_USER
 			</value>

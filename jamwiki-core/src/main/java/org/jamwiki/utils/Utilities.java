@@ -31,6 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -189,6 +190,27 @@ public class Utilities {
 	}
 
 	/**
+	 * This method is a wrapper for Class.forName that will attempt to load a
+	 * class from both the current thread context class loader and the default
+	 * class loader.
+	 *
+	 * @param className The full class name that is to be initialized with the
+	 *  <code>Class.forName</code> call.
+	 * @throws ClassNotFoundException Thrown if the class cannot be initialized
+	 *  from any class loader.
+	 */
+	public static void forName(String className) throws ClassNotFoundException {
+		try {
+			// first try using the current thread's class loader
+			Class.forName(className, true, Thread.currentThread().getContextClassLoader());
+			return;
+		} catch (ClassNotFoundException e) {
+			logger.info("Unable to load class " + className + " using the thread class loader, now trying the default class loader");
+		}
+		Class.forName(className);
+	}
+
+	/**
 	 * Given a message key and locale return a locale-specific message.
 	 *
 	 * @param key The message key that corresponds to the formatted message
@@ -314,6 +336,22 @@ public class Utilities {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Given a string, determine if it is a valid HTML entity (such as &trade; or
+	 * &#160;).
+	 *
+	 * @param text The text that is being examined.
+	 * @return <code>true</code> if the text is a valid HTML entity.
+	 */
+	public static boolean isHtmlEntity(String text) {
+		if (text == null) {
+			return false;
+		}
+		String unescaped = StringEscapeUtils.unescapeHtml(text);
+		// see if it was successfully converted, in which case it is an entity
+		return (!text.equals(unescaped));
 	}
 
 	/**

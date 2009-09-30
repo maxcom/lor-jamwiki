@@ -7,13 +7,11 @@
 	<parent>
 		<groupId>org.jamwiki</groupId>
 		<artifactId>jamwiki</artifactId>
-		<version>0.6.5</version>
+		<version>0.6.6</version>
 	</parent>
-	<groupId>org.jamwiki</groupId>
 	<artifactId>jamwiki-war</artifactId>
 	<packaging>war</packaging>
 	<name>JAMWiki WAR</name>
-	<version>${jamwiki.version}</version>
 	<dependencies>
 		<dependency>
 			<groupId>org.jamwiki</groupId>
@@ -24,4 +22,49 @@
 			<artifactId>jamwiki-web</artifactId>
 		</dependency>
 	</dependencies>
+	<!-- FIXME - this code is messy.  there must be a better way to test for JDK 1.5+ -->
+	<profiles>
+		<profile>
+			<id>jdk-1.5</id>
+			<activation>
+				<jdk>1.5</jdk>
+			</activation>
+			<dependencies>
+				<!-- this dependency should be on the addons module -->
+				<dependency>
+					<groupId>org.jamwiki</groupId>
+					<artifactId>bliki-parser</artifactId>
+					<version>${jamwiki.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>jdk-1.6</id>
+			<activation>
+				<jdk>1.6</jdk>
+			</activation>
+			<dependencies>
+				<!-- this dependency should be on the addons module -->
+				<dependency>
+					<groupId>org.jamwiki</groupId>
+					<artifactId>bliki-parser</artifactId>
+					<version>${jamwiki.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>jdk-1.7</id>
+			<activation>
+				<jdk>1.7</jdk>
+			</activation>
+			<dependencies>
+				<!-- this dependency should be on the addons module -->
+				<dependency>
+					<groupId>org.jamwiki</groupId>
+					<artifactId>bliki-parser</artifactId>
+					<version>${jamwiki.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 </project>

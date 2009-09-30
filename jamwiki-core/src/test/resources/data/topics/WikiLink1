@@ -1,0 +1,18 @@
+<!-- test parsing of wiki links -->
+[[Example]]
+
+[[Example|text]]
+
+[[Example]]s
+
+[[Example|text]]s
+
+[[Example]]S
+
+[[Example|text]]S
+
+[[Example]]9
+
+[[Example|text]]9
+
+[[Comments:Example]]9

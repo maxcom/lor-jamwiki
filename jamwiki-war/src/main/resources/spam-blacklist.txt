@@ -1,25 +1,35 @@
-\<a\ href\=
+\<a[ ]+h[a]?ref\=
 \[url\=
-(adipex|albuterol|alprazolam|ativan|carisoprodol|celexa|cialis|clomid|clonazepam|diazepam|didrex|flexeril|hoodia|hydrocodone|levitra|lipitor|lisinopril|lorazepam|meridia|nexium|norco|paxil|phentermine|propecia|prozac|rivotril|sildenafil|soma|tenuate|tramadol|ultracet|ultram|valium|viagra|vicodin|wellbutrin|xanax|xenical|zanaflex|zoloft|zyban)[ \._\-](drug|online)
-(asian|black|ebony|latina|lesbian|mature|teen)[ \._\-](anal|ass|bdsm|blowjob|cock|cunt|fuck|lesbian|orgy|porn|pussy|sex|tit|video|xxx)
+(adipex|albuterol|allegra|alprazolam|ativan|carisoprodol|celexa|cialis|claritin|clomid|clonazepam|diazepam|didrex|flexeril|hoodia|hydrocodone|levitra|lipitor|lisinopril|lorazepam|meridia|nexium|norco|paxil|phentermine|propecia|prozac|rivotril|sildenafil|soma|tenuate|tramadol|ultracet|ultram|valium|viagra|vicodin|wellbutrin|xanax|xenical|zanaflex|zoloft|zyban)[ \._\-](drug|generic|online)
+(asian|black|ebony|latina|lesbian|mature|porno|teen)[ \._\-](anal|ass|bdsm|blowjob|cock|cunt|fuck|lesbian|orgy|porn|pussy|sex|tit|video|xxx)
 (best|free|super)[ \._\-]porn
-(buy|cheap|online)[ \._\-](adipex|albuterol|alprazolam|ativan|carisoprodol|celexa|cialis|clomid|clonazepam|diazepam|didrex|flexeril|hoodia|hydrocodone|levitra|lipitor|lisinopril|lorazepam|meridia|nexium|norco|paxil|phentermine|propecia|prozac|rivotril|sildenafil|soma|tenuate|tramadol|ultracet|ultram|valium|viagra|vicodin|wellbutrin|xanax|xenical|zanaflex|zoloft|zyban)
-(http[s]?\://[^ \n\t\.]+\.[^ \n\t]+[ \n\t]+){10,}
+(buy|cheap|generic|online)[ \._\-](adipex|albuterol|allegra|alprazolam|ativan|carisoprodol|celexa|cialis|claritin|clomid|clonazepam|diazepam|didrex|flexeril|hoodia|hydrocodone|levitra|lipitor|lisinopril|lorazepam|meridia|nexium|norco|paxil|phentermine|propecia|prozac|rivotril|sildenafil|soma|tenuate|tramadol|ultracet|ultram|valium|viagra|vicodin|wellbutrin|xanax|xenical|zanaflex|zoloft|zyban)
+([\[]?http[s]?\://[^ \n\t\.]+\.[^ \n\t]+[\]]?[ \n\t]+){10,}
 [0-9]{5,}\.com
+[\.\/]km\.ru
+\.bj\.cn
+1\-hyip\.com
 2008healthinsurance\.com
+247ihost\.com
 4gem\.info
 adware[ -_\.]freeware
-airline\-cheap\-tickets
 airline\-tickets\-cheap
 amatorial[ -_\.]sex
 banklife\.ru
+cheap[\-\.]+tickets
+comment[0-9],
 diplom21\.ru 
 display\:none
+flingdesire\.com
+freepages\.at
 freewebtown\.com
+free\-site\-host
 futaji\.com
 insgc\.hocom\.by
 israwell\.com
 lavandos\.org
+lenaperova\.ucoz\.ru
+louis[\-_\.]?vuitton
 mega\-life\-health\.cn
 naked[ -_\.]teen
 news_[0-9]+\.htm
@@ -31,9 +41,11 @@ peace\.com
 plantar\-wart
 plus18\.eu
 porn[ -_\.]video
+replica[-_]?watches
 russianbrides
 seo\-master\.info
 sexjay\.ru
+shop\-shine\.ru
 superche\.info
 theche\.info
 top\-dating

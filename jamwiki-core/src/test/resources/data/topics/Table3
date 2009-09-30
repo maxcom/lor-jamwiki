@@ -1,4 +1,5 @@
 <!-- test basic wiki table formatting.  example taken from http://meta.wikimedia.org/wiki/Help:Tables. -->
+
 {| class="wikitable" style="text-align:center"
 |+Multiplication table
 |-

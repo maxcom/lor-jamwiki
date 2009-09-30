@@ -304,15 +304,19 @@ div.submenu {
 
 /* topic elements */
 
-.toc-container {
-	clear:both;
-}
-.toc-content {
-	float: left;
-	position: relative;
+#toc {
 	border: 1px solid #D8D8E7;
 	margin: 0.2em auto 0.2em 0em;
 	padding: 0.5em 0.8em 0.5em 0.8em;
+	background-color: #fff;
+}
+#toc ul {
+	list-style-type: none;
+	list-style-image: none;
+	margin-left: 0;
+}
+#toc ul ul {
+	margin-left: 1em;
 }
 #category-index {
 	border: 1px solid #aaa;

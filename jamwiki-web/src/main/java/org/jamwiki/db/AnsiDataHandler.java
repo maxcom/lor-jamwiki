@@ -30,7 +30,6 @@ import org.jamwiki.DataHandler;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter;
 import org.jamwiki.authentication.WikiUserAuth;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
@@ -54,6 +53,7 @@ import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
+import org.springframework.transaction.TransactionStatus;
 
 /**
  * Default implementation of the {@link org.jamwiki.DataHandler} interface for
@@ -211,9 +211,9 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object transactionObject) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			if (userVisible) {
 				// delete old recent changes
 				deleteRecentChanges(topic, conn);
@@ -224,11 +224,13 @@ public class AnsiDataHandler implements DataHandler {
 			topic.setDeleteDate(new Timestamp(System.currentTimeMillis()));
 			this.writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), userVisible, conn);
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 	}
 
 	/**
@@ -463,21 +465,23 @@ public class AnsiDataHandler implements DataHandler {
 	 * Return a List of all VirtualWiki objects that exist for the Wiki.
 	 */
 	public List getVirtualWikiList(Object transactionObject) throws Exception {
-		Connection conn = null;
 		Vector results = new Vector();
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			WikiResultSet rs = this.queryHandler().getVirtualWikis(conn);
 			while (rs.next()) {
 				VirtualWiki virtualWiki = initVirtualWiki(rs);
 				results.add(virtualWiki);
 			}
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 		return results;
 	}
 
@@ -743,36 +747,39 @@ public class AnsiDataHandler implements DataHandler {
 		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(topicName)) {
 			return null;
 		}
-		Connection conn = null;
+
+		String key = WikiCache.key(virtualWiki, topicName);
+		if (transactionObject == null) {
+			// retrieve topic from the cache only if this call is not currently a part
+			// of a transaction to avoid retrieving data that might have been updated
+			// as part of this transaction and would thus now be out of date
+			Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPICS, key);
+			if (cacheElement != null) {
+				Topic cacheTopic = (Topic)cacheElement.getObjectValue();
+				return (cacheTopic == null || (!deleteOK && cacheTopic.getDeleteDate() != null)) ? null : new Topic(cacheTopic);
+			}
+		}
+
+		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
+		String namespace = wikiLink.getNamespace();
+		boolean caseSensitive = true;
+		if (namespace != null) {
+			if (namespace.equals(NamespaceHandler.NAMESPACE_SPECIAL)) {
+				// invalid namespace
+				return null;
+			}
+			if (namespace.equals(NamespaceHandler.NAMESPACE_TEMPLATE) || namespace.equals(NamespaceHandler.NAMESPACE_USER) || namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
+				// user/template/category namespaces are case-insensitive
+				caseSensitive = false;
+			}
+		}
+
+		Topic topic = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
-			String key = WikiCache.key(virtualWiki, topicName);
-			if (transactionObject == null) {
-				// retrieve topic from the cache only if this call is not currently a part
-				// of a transaction to avoid retrieving data that might have been updated
-				// as part of this transaction and would thus now be out of date
-				Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPICS, key);
-				if (cacheElement != null) {
-					Topic cacheTopic = (Topic)cacheElement.getObjectValue();
-					return (cacheTopic == null || (!deleteOK && cacheTopic.getDeleteDate() != null)) ? null : new Topic(cacheTopic);
-				}
-			}
-			WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-			String namespace = wikiLink.getNamespace();
-			boolean caseSensitive = true;
-			if (namespace != null) {
-				if (namespace.equals(NamespaceHandler.NAMESPACE_SPECIAL)) {
-					// invalid namespace
-					return null;
-				}
-				if (namespace.equals(NamespaceHandler.NAMESPACE_TEMPLATE) || namespace.equals(NamespaceHandler.NAMESPACE_USER) || namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
-					// user/template/category namespaces are case-insensitive
-					caseSensitive = false;
-				}
-			}
+			Connection conn = DatabaseConnection.getConnection();
 			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 			WikiResultSet rs = this.queryHandler().lookupTopic(virtualWikiId, topicName, caseSensitive, conn);
-			Topic topic = null;
 			if (rs.size() != 0) {
 				topic = initTopic(rs);
 			}
@@ -782,13 +789,15 @@ public class AnsiDataHandler implements DataHandler {
 				Topic cacheTopic = (topic == null) ? null : new Topic(topic);
 				WikiCache.addToCache(CACHE_TOPICS, key, cacheTopic);
 			}
-			return (topic == null || (!deleteOK && topic.getDeleteDate() != null)) ? null : topic;
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
+		return (topic == null || (!deleteOK && topic.getDeleteDate() != null)) ? null : topic;
 	}
 
 	/**
@@ -821,17 +830,21 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public TopicVersion lookupTopicVersion(int topicVersionId, Object transactionObject) throws Exception {
-		Connection conn = null;
+		TopicVersion result = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			WikiResultSet rs = this.queryHandler().lookupTopicVersion(topicVersionId, conn);
-			return (rs.size() == 0) ? null : this.initTopicVersion(rs);
+			result = (rs.size() == 0) ? null : this.initTopicVersion(rs);
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
+		return result;	
 	}
 
 	/**
@@ -914,38 +927,47 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public WikiUser lookupWikiUser(int userId, Object transactionObject) throws Exception {
-		Connection conn = null;
+		WikiUser result = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			WikiResultSet rs = this.queryHandler().lookupWikiUser(userId, conn);
-			return (rs.size() == 0) ? null : initWikiUser(rs);
+			result = (rs.size() == 0) ? null : initWikiUser(rs);
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
+		return result;
 	}
 
 	/**
 	 *
 	 */
 	public WikiUser lookupWikiUser(String username, Object transactionObject) throws Exception {
-		Connection conn = null;
+		WikiUser result = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			WikiResultSet rs = this.queryHandler().lookupWikiUser(username, conn);
 			if (rs.size() == 0) {
-				return null;
+				result = null;
+			} else {
+				int userId = rs.getInt(DATA_WIKI_USER_ID);
+				result = lookupWikiUser(userId, conn);
 			}
-			int userId = rs.getInt(DATA_WIKI_USER_ID);
-			return lookupWikiUser(userId, conn);
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
+		return result;
 	}
 
 	/**
@@ -973,9 +995,9 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination, Object transactionObject) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			if (!this.canMoveTopic(fromTopic, destination)) {
 				throw new WikiException(new WikiMessage("move.exception.destinationexists", destination));
 			}
@@ -1015,11 +1037,13 @@ public class AnsiDataHandler implements DataHandler {
 			ParserOutput toParserOutput = ParserUtil.parserOutput(toTopic.getTopicContent(), toTopic.getVirtualWiki(), toTopic.getName());
 			writeTopic(toTopic, toVersion, toParserOutput.getCategories(), toParserOutput.getLinks(), true, conn);
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 	}
 
 	/**
@@ -1033,16 +1057,18 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public void reloadRecentChanges(Object transactionObject) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			this.queryHandler().reloadRecentChanges(conn);
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 	}
 
 	/**
@@ -1064,29 +1090,31 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public void setupSpecialPages(Locale locale, WikiUser user, VirtualWiki virtualWiki, Object transactionObject) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			// create the default topics
 			WikiDatabase.setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STARTING_POINTS, user, false, conn);
 			WikiDatabase.setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_LEFT_MENU, user, true, conn);
 			WikiDatabase.setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_BOTTOM_AREA, user, true, conn);
 			WikiDatabase.setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user, true, conn);
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 	}
 
 	/**
 	 *
 	 */
 	public void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object transactionObject) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			// update topic to indicate deleted, add delete topic version.  if
 			// topic has categories or other metadata then parser document is
 			// also needed.
@@ -1094,11 +1122,13 @@ public class AnsiDataHandler implements DataHandler {
 			topic.setDeleteDate(null);
 			this.writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), userVisible, conn);
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 	}
 
 	/**
@@ -1106,9 +1136,9 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	public void updateSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, String ipAddress, Object transactionObject) throws Exception {
 		logger.info("Updating special page " + virtualWiki + " / " + topicName);
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			String contents = WikiUtil.readSpecialPage(locale, topicName);
 			Topic topic = this.lookupTopic(virtualWiki, topicName, false, conn);
 			topic.setTopicContent(contents);
@@ -1117,11 +1147,13 @@ public class AnsiDataHandler implements DataHandler {
 			ParserOutput parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki, topicName);
 			writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true, conn);
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 	}
 
 	/**
@@ -1165,9 +1197,9 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public void writeFile(WikiFile wikiFile, WikiFileVersion wikiFileVersion, Object transactionObject) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			WikiUtil.validateTopicName(wikiFile.getFileName());
 			if (wikiFile.getFileId() <= 0) {
 				addWikiFile(wikiFile, conn);
@@ -1178,20 +1210,22 @@ public class AnsiDataHandler implements DataHandler {
 			// write version
 			addWikiFileVersion(wikiFileVersion, conn);
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 	}
 
 	/**
 	 *
 	 */
 	public void writeRole(Role role, Object transactionObject, boolean update) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			if (update) {
 				this.queryHandler().updateRole(role, conn);
 			} else {
@@ -1199,20 +1233,22 @@ public class AnsiDataHandler implements DataHandler {
 			}
 			// FIXME - add caching
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 	}
 
 	/**
 	 *
 	 */
 	public void writeRoleMapGroup(int groupId, List roles, Object transactionObject) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			this.queryHandler().deleteRoleMapGroup(groupId, conn);
 			Iterator roleIterator = roles.iterator();
 			while (roleIterator.hasNext()) {
@@ -1220,23 +1256,25 @@ public class AnsiDataHandler implements DataHandler {
 				this.queryHandler().insertRoleMap(-1, groupId, role, conn);
 			}
 			// refresh the current role requirements
-			JAMWikiAnonymousProcessingFilter.reset();
+			WikiUserAuth.resetAnonymousGroupRoles();
 			WikiUserAuth.resetDefaultGroupRoles();
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 	}
 
 	/**
 	 *
 	 */
 	public void writeRoleMapUser(int userId, List roles, Object transactionObject) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			this.queryHandler().deleteRoleMapUser(userId, conn);
 			Iterator roleIterator = roles.iterator();
 			while (roleIterator.hasNext()) {
@@ -1244,11 +1282,13 @@ public class AnsiDataHandler implements DataHandler {
 				this.queryHandler().insertRoleMap(userId, -1, role, conn);
 			}
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 	}
 
 	/**
@@ -1274,12 +1314,12 @@ public class AnsiDataHandler implements DataHandler {
 	 *  cases, such as when temporarily deleting a topic during page moves.
 	 */
 	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, Vector links, boolean userVisible, Object transactionObject) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
 			String key = WikiCache.key(topic.getVirtualWiki(), topic.getName());
 			WikiCache.removeFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key);
 			WikiCache.removeFromCache(CACHE_TOPICS, key);
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			WikiUtil.validateTopicName(topic.getName());
 			if (topic.getTopicId() <= 0) {
 				addTopic(topic, conn);
@@ -1320,46 +1360,51 @@ public class AnsiDataHandler implements DataHandler {
 				WikiBase.getSearchEngine().addToIndex(topic, links);
 			}
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 	}
 
 	/**
 	 *
 	 */
 	public void writeVirtualWiki(VirtualWiki virtualWiki, Object transactionObject) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			WikiUtil.validateTopicName(virtualWiki.getName());
 			if (virtualWiki.getVirtualWikiId() <= 0) {
 				this.addVirtualWiki(virtualWiki, conn);
 			} else {
 				this.updateVirtualWiki(virtualWiki, conn);
 			}
-			// update the cache AFTER the commit
-			WikiCache.removeFromCache(CACHE_VIRTUAL_WIKI, virtualWiki.getName());
-			WikiCache.removeFromCache(CACHE_VIRTUAL_WIKI, virtualWiki.getVirtualWikiId());
-			WikiCache.addToCache(CACHE_VIRTUAL_WIKI, virtualWiki.getName(), virtualWiki);
-			WikiCache.addToCache(CACHE_VIRTUAL_WIKI, virtualWiki.getVirtualWikiId(), virtualWiki);
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
+
+		// update the cache AFTER the commit
+		WikiCache.removeFromCache(CACHE_VIRTUAL_WIKI, virtualWiki.getName());
+		WikiCache.removeFromCache(CACHE_VIRTUAL_WIKI, virtualWiki.getVirtualWikiId());
+		WikiCache.addToCache(CACHE_VIRTUAL_WIKI, virtualWiki.getName(), virtualWiki);
+		WikiCache.addToCache(CACHE_VIRTUAL_WIKI, virtualWiki.getVirtualWikiId(), virtualWiki);
 	}
 
 	/**
 	 *
 	 */
 	public void writeWatchlistEntry(Watchlist watchlist, String virtualWiki, String topicName, int userId, Object transactionObject) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 			String article = WikiUtil.extractTopicLink(topicName);
 			String comments = WikiUtil.extractCommentsLink(topicName);
@@ -1377,31 +1422,35 @@ public class AnsiDataHandler implements DataHandler {
 				watchlist.add(comments);
 			}
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 	}
 
 	/**
 	 *
 	 */
 	public void writeWikiGroup(WikiGroup group, Object transactionObject) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			if (group.getGroupId() <= 0) {
 				this.addWikiGroup(group, conn);
 			} else {
 				this.updateWikiGroup(group, conn);
 			}
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 	}
 
 	/**
@@ -1409,9 +1458,9 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	public void writeWikiUser(WikiUser user, WikiUserInfo userInfo, Object transactionObject) throws Exception {
 		WikiUtil.validateUserName(user.getUsername());
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			if (user.getUserId() <= 0) {
 				this.addWikiUser(user, conn);
 				if (WikiBase.getUserHandler().isWriteable()) {
@@ -1425,10 +1474,12 @@ public class AnsiDataHandler implements DataHandler {
 				}
 			}
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 	}
 }

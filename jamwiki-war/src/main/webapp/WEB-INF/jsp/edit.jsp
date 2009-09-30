@@ -55,7 +55,6 @@
 <input type="hidden" name="topicVersionId" value="<c:out value="${topicVersionId}"/>" />
 
 <jamwiki:enabled property="PROP_TOPIC_WYSIWYG">
-<script type="text/javascript" src="../js/edit.js"></script>
 
 <script type="text/javascript">
 /*<![CDATA[*/

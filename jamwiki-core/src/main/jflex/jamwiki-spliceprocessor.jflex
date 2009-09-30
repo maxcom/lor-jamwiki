@@ -6,7 +6,6 @@
  */
 package org.jamwiki.parser.jflex;
 
-import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 
 %%
@@ -18,24 +17,9 @@ import org.jamwiki.utils.WikiLogger;
 %unicode
 %ignorecase
 
-/* code included in the constructor */
-%init{
-    allowHtml = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML);
-    yybegin(NORMAL);
-    states.add(new Integer(yystate()));
-    tagStack.push(new JFlexTagItem());
-%init}
-
-/* code called after parsing is completed */
-%eofval{
-    StringBuffer output = new StringBuffer();
-    return (output.length() == 0) ? null : output.toString();
-%eofval}
-
 /* code copied verbatim into the generated .java file */
 %{
     protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiSpliceProcessor.class.getName());
-    protected boolean allowHtml = false;
     protected int section = 0;
     protected int sectionDepth = 0;
     protected int targetSection = 0;
@@ -51,7 +35,7 @@ import org.jamwiki.utils.WikiLogger;
             inTargetSection = false;
         } else if (this.targetSection == this.section) {
             WikiHeadingTag parserTag = new WikiHeadingTag();
-            this.parseToken(headingText, parserTag);
+            parserTag.parse(this.parserInput, this.parserOutput, this.mode, headingText);
             inTargetSection = true;
             this.sectionDepth = level;
             if (this.mode == JFlexParser.MODE_SPLICE) return this.replacementText;
@@ -72,8 +56,8 @@ import org.jamwiki.utils.WikiLogger;
     public void setReplacementText(String replacementText) {
         // replacementText must end with a newline, otherwise sections get spliced together
         if (replacementText == null) return;
-        if (!replacementText.endsWith("\n") && !replacementText.endsWith("\r")) {
-            replacementText += "\r\n";
+        if (!replacementText.endsWith("\n")) {
+            replacementText += "\n";
         }
         this.replacementText = replacementText;
     }
@@ -87,7 +71,7 @@ import org.jamwiki.utils.WikiLogger;
 %}
 
 /* character expressions */
-newline            = \r|\n|\r\n
+newline            = "\n"
 whitespace         = {newline} | [ \t\f]
 
 /* non-container expressions */
@@ -107,72 +91,66 @@ htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
 /* comments */
 htmlcomment        = "<!--" ~"-->"
 
-%state NORMAL, PRE
+%state PRE
 
 %%
 
 /* ----- parsing tags ----- */
 
-<PRE, NORMAL>{nowiki} {
+<YYINITIAL, PRE>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
-    WikiNowikiTag parserTag = new WikiNowikiTag();
-    return returnText(this.parseToken(yytext(), parserTag));
+    return returnText(yytext());
 }
 
 /* ----- nowiki ----- */
 
-<NORMAL>{htmlprestart} {
-    if (allowHtml) {
+<YYINITIAL>{htmlprestart} {
+    if (allowHTML()) {
         beginState(PRE);
     }
-    HtmlPreTag parserTag = new HtmlPreTag();
-    return returnText(this.parseToken(yytext(), parserTag));
+    return returnText(yytext());
 }
 
 <PRE>{htmlpreend} {
-    // state only changes to pre if allowHTML is true, so no need to check here
+    // state only changes to pre if allowHTML() is true, so no need to check here
     endState();
-    HtmlPreTag parserTag = new HtmlPreTag();
-    return returnText(this.parseToken(yytext(), parserTag));
+    return returnText(yytext());
 }
 
 /* ----- comments ----- */
 
-<NORMAL>{htmlcomment} {
-    HtmlCommentTag parserTag = new HtmlCommentTag();
-    return returnText(this.parseToken(yytext(), parserTag));
+<YYINITIAL>{htmlcomment} {
+    return returnText(yytext());
 }
 
 /* ----- headings ----- */
 
-<NORMAL>^{h1} {
+<YYINITIAL>^{h1} {
     return processHeading(1, yytext());
 }
 
-<NORMAL>^{h2} {
+<YYINITIAL>^{h2} {
     return processHeading(2, yytext());
 }
 
-<NORMAL>^{h3} {
+<YYINITIAL>^{h3} {
     return processHeading(3, yytext());
 }
 
-<NORMAL>^{h4} {
+<YYINITIAL>^{h4} {
     return processHeading(4, yytext());
 }
 
-<NORMAL>^{h5} {
+<YYINITIAL>^{h5} {
     return processHeading(5, yytext());
 }
 
 /* ----- default ----- */
 
-<PRE, NORMAL>{whitespace} {
-    CharacterTag parserTag = new CharacterTag();
-    return returnText(this.parseToken(yytext(), parserTag));
+<YYINITIAL, PRE>{whitespace} {
+    return returnText(yytext());
 }
 
-<PRE, NORMAL>. {
-    CharacterTag parserTag = new CharacterTag();
-    return returnText(this.parseToken(yytext(), parserTag));
+<YYINITIAL, PRE>. {
+    return returnText(yytext());
 }

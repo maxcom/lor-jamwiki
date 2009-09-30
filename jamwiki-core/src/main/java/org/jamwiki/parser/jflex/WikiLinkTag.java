@@ -22,7 +22,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
-import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
@@ -33,7 +32,7 @@ import org.jamwiki.utils.WikiLogger;
 /**
  * This class parses wiki links of the form <code>[[Topic to Link To|Link Text]]</code>.
  */
-public class WikiLinkTag implements ParserTag {
+public class WikiLinkTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiLinkTag.class.getName());
 	private static Pattern WIKI_LINK_PATTERN = null;
@@ -43,7 +42,7 @@ public class WikiLinkTag implements ParserTag {
 
 	static {
 		try {
-			WIKI_LINK_PATTERN = Pattern.compile("\\[\\[[ ]*(\\:[ ]*)?[ ]*([^\\n\\r\\|]+)([ ]*\\|[ ]*([^\\n\\r]+))?[ ]*\\]\\]");
+			WIKI_LINK_PATTERN = Pattern.compile("\\[\\[[ ]*(\\:[ ]*)?[ ]*([^\\n\\r\\|]+)([ ]*\\|[ ]*([^\\n\\r]+))?[ ]*\\]\\]([a-z]*)");
 			// look for image size info in image tags
 			IMAGE_SIZE_PATTERN = Pattern.compile("([0-9]+)[ ]*px", Pattern.CASE_INSENSITIVE);
 		} catch (Exception e) {
@@ -89,7 +88,7 @@ public class WikiLinkTag implements ParserTag {
 			} else if (StringUtils.isBlank(wikiLink.getText()) && !StringUtils.isBlank(wikiLink.getSection())) {
 				wikiLink.setText(Utilities.decodeFromURL(wikiLink.getSection(), true));
 			} else {
-				wikiLink.setText(ParserUtil.parseFragment(parserInput, wikiLink.getText(), mode));
+				wikiLink.setText(JFlexParserUtil.parseFragment(parserInput, wikiLink.getText(), mode));
 			}
 			// do not escape text html - already done by parser
 			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, wikiLink, wikiLink.getText(), null, null, false);
@@ -103,13 +102,18 @@ public class WikiLinkTag implements ParserTag {
 	 * Parse a Mediawiki link of the form "[[topic|text]]" and return the
 	 * resulting HTML output.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
-		this.processLinkMetadata(parserOutput, raw);
-		if (mode <= JFlexParser.MODE_PREPROCESS) {
-			// do not parse to HTML when in preprocess mode
+	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
+		try {
+			this.processLinkMetadata(parserOutput, raw);
+			if (mode <= JFlexParser.MODE_PREPROCESS) {
+				// do not parse to HTML when in preprocess mode
+				return raw;
+			}
+			return this.processLinkContent(parserInput, parserOutput, mode, raw);
+		} catch (Throwable t) {
+			logger.info("Unable to parse " + raw, t);
 			return raw;
 		}
-		return this.processLinkContent(parserInput, parserOutput, mode, raw);
 	}
 
 	/**
@@ -160,7 +164,7 @@ public class WikiLinkTag implements ParserTag {
 			if (thumb && maxDimension <= 0) {
 				maxDimension = DEFAULT_THUMBNAIL_SIZE;
 			}
-			caption = ParserUtil.parseFragment(parserInput, caption, mode);
+			caption = JFlexParserUtil.parseFragment(parserInput, caption, mode);
 		}
 		// do not escape html for caption since parser does it above
 		return LinkUtil.buildImageLinkHtml(context, virtualWiki, wikiLink.getDestination(), frame, thumb, align, caption, maxDimension, false, null, false);
@@ -185,6 +189,14 @@ public class WikiLinkTag implements ParserTag {
 		WikiLink wikiLink = LinkUtil.parseWikiLink(url);
 		wikiLink.setColon((m.group(1) != null));
 		wikiLink.setText(m.group(4));
+		String suffix = m.group(5);
+		if (!StringUtils.isBlank(suffix)) {
+			if (StringUtils.isBlank(wikiLink.getText())) {
+				wikiLink.setText(wikiLink.getDestination() + suffix);
+			} else {
+				wikiLink.setText(wikiLink.getText() + suffix);
+			}
+		}
 		return wikiLink;
 	}
 

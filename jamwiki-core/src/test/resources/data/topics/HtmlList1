@@ -1,0 +1,6 @@
+<!-- test parsing of lists in HTML format -->
+<ol start="9">
+<li>Amsterdam
+<li>Rotterdam
+<li>The Hague
+</ol>

@@ -16,6 +16,7 @@
  */
 package org.jamwiki.servlets;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -28,18 +29,20 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
+import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter;
 import org.jamwiki.authentication.WikiUserAuth;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.SpamFilter;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -61,48 +64,31 @@ public class AdminServlet extends JAMWikiServlet {
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String function = request.getParameter("function");
+		next.addObject("function", function);
 		if (StringUtils.isBlank(function) && ServletUtil.isTopic(request, "Special:Maintenance")) {
 			viewAdminSystem(request, next, pageInfo);
 		} else if (StringUtils.isBlank(function)) {
 			viewAdmin(request, next, pageInfo, null);
 		} else if (function.equals("cache")) {
 			cache(request, next, pageInfo);
-		} else if (function.equals("refreshIndex")) {
+		} else if (function.equals("search")) {
 			refreshIndex(request, next, pageInfo);
 		} else if (function.equals("properties")) {
 			properties(request, next, pageInfo);
-		} else if (function.equals("addVirtualWiki")) {
-			addVirtualWiki(request, next, pageInfo);
-		} else if (function.equals("recentChanges")) {
+		} else if (function.equals("virtualwiki")) {
+			virtualWiki(request, next, pageInfo);
+		} else if (function.equals("recentchanges")) {
 			recentChanges(request, next, pageInfo);
-		} else if (function.equals("spamFilter")) {
-			spamFilter(request, next, pageInfo);
+		} else if (function.equals("spam")) {
+			spam(request, next, pageInfo);
+		} else if (function.equals("export")) {
+			exportToCsv(request, next, pageInfo);
+		} else if (function.equals("migrate")) {
+			migrateDatabase(request, next, pageInfo);
+		} else if (function.equals("password")) {
+			password(request, next, pageInfo);
 		}
 		return next;
-	}
-
-	/**
-	 *
-	 */
-	private void addVirtualWiki(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		WikiUser user = ServletUtil.currentUser();
-		try {
-			VirtualWiki virtualWiki = new VirtualWiki();
-			if (!StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
-				virtualWiki.setVirtualWikiId(new Integer(request.getParameter("virtualWikiId")).intValue());
-			}
-			virtualWiki.setName(request.getParameter("name"));
-			virtualWiki.setDefaultTopicName(Utilities.encodeForURL(request.getParameter("defaultTopicName")));
-			WikiBase.getDataHandler().writeVirtualWiki(virtualWiki, null);
-			if (StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
-				WikiBase.getDataHandler().setupSpecialPages(request.getLocale(), user, virtualWiki, null);
-			}
-			next.addObject("message", new WikiMessage("admin.message.virtualwikiadded"));
-		} catch (Exception e) {
-			logger.severe("Failure while adding virtual wiki", e);
-			next.addObject("message", new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
-		}
-		viewAdminSystem(request, next, pageInfo);
 	}
 
 	/**
@@ -114,7 +100,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.message.cache"));
 		} catch (Exception e) {
 			logger.severe("Failure while clearing cache", e);
-			next.addObject("errors", new WikiMessage("admin.cache.message.clearfailed", e.getMessage()));
+			next.addObject("message", new WikiMessage("admin.cache.message.clearfailed", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo);
 	}
@@ -122,6 +108,106 @@ public class AdminServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private void exportToCsv(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		try {
+			WikiDatabase.exportToCsv();
+			String outputDirectory = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), "database").getPath();
+			next.addObject("message", new WikiMessage("admin.message.exportcsv", outputDirectory));
+		} catch (Exception e) {
+			logger.severe("Failure while exporting database data to CSV file", e);
+			next.addObject("message", new WikiMessage("admin.message.exportcsvfail", e.getMessage()));
+		}
+		viewAdminSystem(request, next, pageInfo);
+	}
+
+	/**
+	 *
+	 */
+	private void migrateDatabase(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		Vector errors = new Vector();
+		Properties props = new Properties();
+		try {
+			setProperty(props, request, Environment.PROP_BASE_PERSISTENCE_TYPE);
+			if (props.getProperty(Environment.PROP_BASE_PERSISTENCE_TYPE).equals(WikiBase.PERSISTENCE_EXTERNAL)) {
+				setProperty(props, request, Environment.PROP_DB_DRIVER);
+				setProperty(props, request, Environment.PROP_DB_TYPE);
+				setProperty(props, request, Environment.PROP_DB_URL);
+				setProperty(props, request, Environment.PROP_DB_USERNAME);
+				setPassword(props, request, next, Environment.PROP_DB_PASSWORD, "dbPassword");
+			} else {
+				// reverting from external database to an internal database
+				props.setProperty(Environment.PROP_BASE_FILE_DIR, Environment.getValue(Environment.PROP_BASE_FILE_DIR));
+				WikiDatabase.setupDefaultDatabase(props);
+			}
+			// migrate from the current database to the new database
+			// identified by the properties
+			// Will return errors if the new database cannot be connected to,
+			// if it is already populated, or an error occurs copying the contents
+			WikiDatabase.migrateDatabase(props, errors);
+			if (!errors.isEmpty()) {
+				next.addObject("errors", errors);
+				next.addObject("message", new WikiMessage("admin.message.changesnotsaved"));
+			} else {
+				// all is well, save the properties
+				Iterator iterator = props.keySet().iterator();
+				while (iterator.hasNext()) {
+					String key = (String)iterator.next();
+					String value = props.getProperty(key);
+					Environment.setValue(key, value);
+				}
+				Environment.saveProperties();
+				// re-initialize to reset database settings (if needed)
+				WikiUserAuth user = ServletUtil.currentUser();
+				if (user == null || !user.hasRole(Role.ROLE_USER)) {
+					throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
+				}
+				WikiBase.reset(request.getLocale(), user);
+				WikiUserAuth.resetAnonymousGroupRoles();
+				WikiUserAuth.resetDefaultGroupRoles();
+				next.addObject("message", new WikiMessage("admin.message.migratedatabase", Environment.getValue(Environment.PROP_DB_URL)));
+			}
+		} catch (Exception e) {
+			logger.severe("Failure while migrating to a new database", e);
+			next.addObject("message", new WikiMessage("admin.message.migrationfailure", e.getMessage()));
+		}
+		viewAdminSystem(request, next, pageInfo);
+	}
+
+	/**
+	 *
+	 */
+	private void password(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		Vector errors = new Vector();
+		String userLogin = request.getParameter("passwordLogin");
+		String newPassword = request.getParameter("passwordPassword");
+		String confirmPassword = request.getParameter("passwordPasswordConfirm");
+		try {
+			WikiUser user = WikiBase.getDataHandler().lookupWikiUser(userLogin, null);
+			WikiUserInfo userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(userLogin);
+			if (user == null || userInfo == null) {
+				throw new WikiException(new WikiMessage("admin.password.message.invalidlogin", userLogin));
+			}
+			WikiUtil.validatePassword(newPassword, confirmPassword);
+			user.setPassword(Encryption.encrypt(newPassword));
+			userInfo.setEncodedPassword(Encryption.encrypt(newPassword));
+			WikiBase.getDataHandler().writeWikiUser(user, userInfo, null);
+		} catch (WikiException e) {
+			errors.add(e.getWikiMessage());
+		} catch (Exception e) {
+			logger.severe("Failure while updating user password", e);
+			errors.add(new WikiMessage("admin.message.exportcsvfail", e.getMessage()));
+		}
+		if (!errors.isEmpty()) {
+			next.addObject("errors", errors);
+			next.addObject("passwordLogin", userLogin);
+			next.addObject("passwordPassword", newPassword);
+			next.addObject("passwordPasswordConfirm", confirmPassword);
+		} else {
+			next.addObject("message", new WikiMessage("admin.password.message.success", userLogin));
+		}
+		viewAdminSystem(request, next, pageInfo);
+	}
+
 	private void properties(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		Properties props = new Properties();
 		try {
@@ -213,7 +299,7 @@ public class AdminServlet extends JAMWikiServlet {
 					throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 				}
 				WikiBase.reset(request.getLocale(), user);
-				JAMWikiAnonymousProcessingFilter.reset();
+				WikiUserAuth.resetAnonymousGroupRoles();
 				WikiUserAuth.resetDefaultGroupRoles();
 				next.addObject("message", new WikiMessage("admin.message.changessaved"));
 			}
@@ -233,7 +319,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.message.recentchanges"));
 		} catch (Exception e) {
 			logger.severe("Failure while loading recent changes", e);
-			next.addObject("errors", new WikiMessage("admin.message.recentchangesfail", e.getMessage()));
+			next.addObject("message", new WikiMessage("admin.message.recentchangesfail", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo);
 	}
@@ -287,13 +373,13 @@ public class AdminServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void spamFilter(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	private void spam(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		try {
 			SpamFilter.reload();
 			next.addObject("message", new WikiMessage("admin.message.spamfilter"));
 		} catch (Exception e) {
 			logger.severe("Failure while reloading spam filter patterns", e);
-			next.addObject("errors", new WikiMessage("admin.message.spamfilterfail", e.getMessage()));
+			next.addObject("message", new WikiMessage("admin.message.spamfilterfail", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo);
 	}
@@ -341,5 +427,33 @@ public class AdminServlet extends JAMWikiServlet {
 		pageInfo.setPageTitle(new WikiMessage("admin.maintenance.title"));
 		Collection virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList(null);
 		next.addObject("wikis", virtualWikiList);
+		boolean allowExport = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals(WikiBase.PERSISTENCE_INTERNAL);
+		next.addObject("allowExport", new Boolean(allowExport));
+		Collection dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
+		next.addObject("dataHandlers", dataHandlers);
+	}
+
+	/**
+	 *
+	 */
+	private void virtualWiki(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		WikiUser user = ServletUtil.currentUser();
+		try {
+			VirtualWiki virtualWiki = new VirtualWiki();
+			if (!StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
+				virtualWiki.setVirtualWikiId(new Integer(request.getParameter("virtualWikiId")).intValue());
+			}
+			virtualWiki.setName(request.getParameter("name"));
+			virtualWiki.setDefaultTopicName(Utilities.encodeForURL(request.getParameter("defaultTopicName")));
+			WikiBase.getDataHandler().writeVirtualWiki(virtualWiki, null);
+			if (StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
+				WikiBase.getDataHandler().setupSpecialPages(request.getLocale(), user, virtualWiki, null);
+			}
+			next.addObject("message", new WikiMessage("admin.message.virtualwikiadded"));
+		} catch (Exception e) {
+			logger.severe("Failure while adding virtual wiki", e);
+			next.addObject("message", new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
+		}
+		viewAdminSystem(request, next, pageInfo);
 	}
 }

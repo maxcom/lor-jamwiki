@@ -1,6 +1,6 @@
 <!-- verify parsing of HTML comments -->
 
-This is text <!-- comment --> that contains an embedded comment.
+This is text<!-- comment --> that contains an embedded comment.
 
 Wiki text ''i<!-- comment -->'' with comment.
 

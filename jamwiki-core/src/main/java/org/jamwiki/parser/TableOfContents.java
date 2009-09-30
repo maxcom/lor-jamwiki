@@ -31,24 +31,38 @@ import org.jamwiki.utils.Utilities;
 public class TableOfContents {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(TableOfContents.class.getName());
-	/** Status indicating that this TOC object has not yet been initialized.  For the JFlex parser this will mean no __TOC__ tag has been added to the document being parsed. */
+	/**
+	 * Status indicating that this TOC object has not yet been initialized.  For the JFlex parser
+	 * this will mean no __TOC__ tag has been added to the document being parsed.
+	 */
 	public static final int STATUS_TOC_UNINITIALIZED = 0;
-	/** Status indicating that this TOC object has been initialized.  For the JFlex parser this will mean a __TOC__ tag has been added to the document being parsed. */
+	/**
+	 * Status indicating that this TOC object has been initialized.  For the JFlex parser this
+	 * will mean a __TOC__ tag has been added to the document being parsed.
+	 */
 	public static final int STATUS_TOC_INITIALIZED = 1;
 	/** Status indicating that the document being parsed does not allow a table of contents. */
 	public static final int STATUS_NO_TOC = 2;
-	private int currentLevel = 0;
 	/** Force a TOC to appear */
 	private boolean forceTOC = false;
 	/** It is possible for a user to include more than one "TOC" tag in a document, so keep count. */
 	private int insertTagCount = 0;
 	/** Keep track of how many times the parser attempts to insert the TOC (one per "TOC" tag) */
 	private int insertionAttempt = 0;
+	/**
+	 * minLevel holds the minimum TOC heading level that is being displayed by the current TOC.  For
+	 * example, if the TOC contains only h3 and h4 entries, this value would be 3.
+	 */
 	private int minLevel = 4;
 	private final Map entries = new LinkedHashMap();
 	private int status = STATUS_TOC_UNINITIALIZED;
 	/** The minimum number of headings that must be present for a TOC to appear, unless forceTOC is set to true. */
 	private static final int MINIMUM_HEADINGS = 4;
+	/**
+	 * Keep track of the TOC prefix to display.  This array is initialized with all ones, and each element
+	 * is then incremented as the TOC is displayed.
+	 */
+	private int[] tocPrefixes = null;
 
 	/**
 	 * Add a new table of contents entry to the table of contents object.
@@ -131,11 +145,10 @@ public class TableOfContents {
 	/**
 	 * Internal method to close any list tags prior to adding the next entry.
 	 */
-	private void closeList(int level, StringBuffer text) {
-		while (level < currentLevel) {
+	private void closeList(int level, StringBuffer text, int previousLevel) {
+		for (int i = previousLevel; i > level; i--) {
 			// close lists to current level
-			text.append("</li></ol>");
-			currentLevel--;
+			text.append("</li>\n</ul>");
 		}
 	}
 
@@ -150,18 +163,44 @@ public class TableOfContents {
 	}
 
 	/**
+	 *
+	 */
+	private String nextTocPrefix(int depth) {
+		// initialize the tocPrefixes value for display
+		int maxDepth = Environment.getIntValue(Environment.PROP_PARSER_TOC_DEPTH);
+		if (this.tocPrefixes == null) {
+			// initialize the prefix array
+			this.tocPrefixes = new int[maxDepth];
+			for (int i = 0; i < maxDepth; i++) {
+				this.tocPrefixes[i] = 0;
+			}
+		}
+		// increment current element
+		this.tocPrefixes[depth] = this.tocPrefixes[depth] + 1;
+		// clear out all lower elements
+		for (int i = depth + 1; i < maxDepth; i++) {
+			this.tocPrefixes[i] = 0;
+		}
+		// generate next prefix of the form 1.1.1
+		String prefix = new Integer(this.tocPrefixes[0]).toString();
+		for (int i = 1; i <= depth; i++) {
+			prefix += "." + this.tocPrefixes[i];
+		}
+		return prefix;
+	}
+
+	/**
 	 * Internal method to open any list tags prior to adding the next entry.
 	 */
-	private void openList(int level, StringBuffer text) {
-		if (level == currentLevel) {
-			// same level as previous item, close previous and open new
-			text.append("</li><li>");
+	private void openList(int level, StringBuffer text, int previousLevel) {
+		if (level <= previousLevel) {
+			// same or lower level as previous item, close previous and open new
+			text.append("</li>\n<li>");
 			return;
 		}
-		while (level > currentLevel) {
+		for (int i = previousLevel; i < level; i++) {
 			// open lists to current level
-			text.append("<ol><li>");
-			currentLevel++;
+			text.append("<ul>\n<li>");
 		}
 	}
 
@@ -204,32 +243,32 @@ public class TableOfContents {
 	 * @return An HTML representation of this table of contents object.
 	 */
 	public String toHTML() {
-		Iterator tocIterator = this.entries.keySet().iterator();
 		StringBuffer text = new StringBuffer();
-		text.append("<div class=\"toc-container\"><div class=\"toc-content\">");
+		text.append("<table id=\"toc\">\n<tr>\n<td>\n");
 		TableOfContentsEntry entry = null;
 		int adjustedLevel = 0;
 		int previousLevel = 0;
+		Iterator tocIterator = this.entries.values().iterator();
 		while (tocIterator.hasNext()) {
-			String key = (String)tocIterator.next();
-			entry = (TableOfContentsEntry)this.entries.get(key);
+			entry = (TableOfContentsEntry)tocIterator.next();
 			// adjusted level determines how far to indent the list
 			adjustedLevel = ((entry.level - minLevel) + 1);
 			// cannot increase TOC indent level more than one level at a time
 			if (adjustedLevel > (previousLevel + 1)) {
 				adjustedLevel = previousLevel + 1;
 			}
-			previousLevel = adjustedLevel;
-			if (adjustedLevel > Environment.getIntValue(Environment.PROP_PARSER_TOC_DEPTH)) {
-				// do not display if nested deeper than max
-				continue;
+			if (adjustedLevel <= Environment.getIntValue(Environment.PROP_PARSER_TOC_DEPTH)) {
+				// only display if not nested deeper than max
+				closeList(adjustedLevel, text, previousLevel);
+				openList(adjustedLevel, text, previousLevel);
+				text.append("<a href=\"#").append(Utilities.encodeForURL(entry.name)).append("\">");
+				text.append("<span class=\"tocnumber\">").append(this.nextTocPrefix(adjustedLevel - 1)).append("</span> ");
+				text.append("<span class=\"toctext\">").append(entry.text).append("</span></a>");
 			}
-			closeList(adjustedLevel, text);
-			openList(adjustedLevel, text);
-			text.append("<a href=\"#").append(Utilities.encodeForURL(entry.name)).append("\">").append(entry.text).append("</a>");
+			previousLevel = adjustedLevel;
 		}
-		closeList(0, text);
-		text.append("</div><div class=\"clear\"></div></div>");
+		closeList(0, text, previousLevel);
+		text.append("\n</td>\n</tr>\n</table>\n");
 		return text.toString();
 	}
 

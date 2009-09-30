@@ -1,7 +1,5 @@
-<p>This is text  that contains an embedded comment.</p>
-
+<p><br />
+This is text that contains an embedded comment.</p>
 <p>Wiki text <i>i</i> with comment.</p>
-
 <p>start of line comment.</p>
-
 <p>end of line comment.</p>

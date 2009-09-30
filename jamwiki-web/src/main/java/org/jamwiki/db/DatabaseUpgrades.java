@@ -24,6 +24,9 @@ import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.WikiLogger;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 /**
  * This class simply contains utility methods for upgrading database schemas
@@ -41,6 +44,11 @@ public class DatabaseUpgrades {
 	private DatabaseUpgrades() {
 	}
 
+	private static TransactionDefinition getTransactionDefinition() {
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		return def;
+	}
 	/**
 	 *
 	 */
@@ -49,9 +57,10 @@ public class DatabaseUpgrades {
 		// the ability to upgrade to JAMWiki 0.5.0 is removed this code can be
 		// replaced with the method (below) that has been commented out.
 //		user = WikiBase.getDataHandler().lookupWikiUser(username, password, false);
-		Connection conn = null;
+		WikiUser user = null;
+		TransactionStatus status = DatabaseConnection.startTransaction(getTransactionDefinition());
 		try {
-			conn = DatabaseConnection.getConnection();
+			Connection conn = DatabaseConnection.getConnection();
 			AnsiQueryHandler queryHandler = new AnsiQueryHandler();
 			WikiResultSet rs = queryHandler.lookupWikiUser(username, conn);
 			if (rs.size() == 0) {
@@ -62,30 +71,31 @@ public class DatabaseUpgrades {
 			WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 			stmt.setInt(1, userId);
 			rs = stmt.executeQuery();
-			WikiUser user = new WikiUser(username);
+			user = new WikiUser(username);
 			user.setUserId(rs.getInt(AnsiDataHandler.DATA_WIKI_USER_ID));
 			user.setDisplayName(rs.getString("display_name"));
 			user.setCreateDate(rs.getTimestamp("create_date"));
 			user.setLastLoginDate(rs.getTimestamp("last_login_date"));
 			user.setCreateIpAddress(rs.getString("create_ip_address"));
 			user.setLastLoginIpAddress(rs.getString("last_login_ip_address"));
-			return user;
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			DatabaseConnection.closeConnection(conn);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
+		return user;
 	}
 
 	/**
 	 *
 	 */
 	public static Vector upgrade042(Vector messages) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction(getTransactionDefinition());
 		try {
-			conn = DatabaseConnection.getConnection();
-			conn.setAutoCommit(false);
+			Connection conn = DatabaseConnection.getConnection();
 			// drop topic_content column
 			String sql = "alter table jam_topic drop column topic_content ";
 			DatabaseConnection.executeUpdate(sql, conn);
@@ -107,14 +117,21 @@ public class DatabaseUpgrades {
 			// create the jam_watchlist table
 			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_WATCHLIST_TABLE, conn);
 			messages.add("Created watchlist table");
-			conn.commit();
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
-			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_WATCHLIST_TABLE);
+			DatabaseConnection.rollbackOnException(status, e);
+			
+			// cleanup
+			messages.add("Error during upgrade, dropping the watchlist table");
+			try {
+				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_WATCHLIST_TABLE);				
+			} catch (Exception e2) {}
+			
 			throw e;
-		} finally {
-			DatabaseConnection.closeConnection(conn);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 		return messages;
 	}
 
@@ -122,10 +139,9 @@ public class DatabaseUpgrades {
 	 *
 	 */
 	public static Vector upgrade050(Vector messages) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction(getTransactionDefinition());
 		try {
-			conn = DatabaseConnection.getConnection();
-			conn.setAutoCommit(false);
+			Connection conn = DatabaseConnection.getConnection();
 			// add remember_key to jam_wiki_user
 			String sql = "";
 			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_ORACLE)) {
@@ -159,13 +175,14 @@ public class DatabaseUpgrades {
 			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added default_locale column to jam_wiki_user");
-			conn.commit();
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			DatabaseConnection.closeConnection(conn);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 		return messages;
 	}
 
@@ -173,10 +190,9 @@ public class DatabaseUpgrades {
 	 *
 	 */
 	public static Vector upgrade060(Vector messages) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction(getTransactionDefinition());
 		try {
-			conn = DatabaseConnection.getConnection();
-			conn.setAutoCommit(false);
+			Connection conn = DatabaseConnection.getConnection();
 			// create jam_group table
 			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_GROUP_TABLE, conn);
 			messages.add("Added jam_group table");
@@ -231,9 +247,9 @@ public class DatabaseUpgrades {
 			sql = "alter table jam_wiki_user drop column is_admin ";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Converted admin users to new role structure.");
-			conn.commit();
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
+
 			try {
 				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_ROLE_MAP_TABLE);
 			} catch (Exception ex) {}
@@ -243,10 +259,13 @@ public class DatabaseUpgrades {
 			try {
 				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_GROUP_TABLE);
 			} catch (Exception ex) {}
+
 			throw e;
-		} finally {
-			DatabaseConnection.closeConnection(conn);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 		return messages;
 	}
 
@@ -254,24 +273,24 @@ public class DatabaseUpgrades {
 	 *
 	 */
 	public static Vector upgrade061(Vector messages) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction(getTransactionDefinition());
 		try {
 			String sql = null;
-			conn = DatabaseConnection.getConnection();
-			conn.setAutoCommit(false);
+			Connection conn = DatabaseConnection.getConnection();
 			// delete ROLE_DELETE
 			sql = "delete from jam_role_map where role_name = 'ROLE_DELETE'";
 			DatabaseConnection.executeUpdate(sql, conn);
 			sql = "delete from jam_role where role_name = 'ROLE_DELETE'";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Removed ROLE_DELETE");
-			conn.commit();
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			DatabaseConnection.closeConnection(conn);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 		return messages;
 	}
 
@@ -279,11 +298,10 @@ public class DatabaseUpgrades {
 	 *
 	 */
 	public static Vector upgrade063(Vector messages) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction(getTransactionDefinition());
 		try {
 			String sql = null;
-			conn = DatabaseConnection.getConnection();
-			conn.setAutoCommit(false);
+			Connection conn = DatabaseConnection.getConnection();
 			// increase the size of ip address columns
 			String dbType = Environment.getValue(Environment.PROP_DB_TYPE);
 			if (dbType.equals(WikiBase.DATA_HANDLER_DB2) || dbType.equals(WikiBase.DATA_HANDLER_DB2400)) {
@@ -324,16 +342,20 @@ public class DatabaseUpgrades {
 				DatabaseConnection.executeUpdate(sql, conn);
 			}
 			messages.add("Increased IP address field sizes to support IPv6");
-			conn.commit();
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
 			messages.add("Unable to modify database schema to support IPv6.  Please see UPGRADE.txt for further details on this optional modification." + e.getMessage());
 			// do not throw this error and halt the upgrade process - changing the column size
 			// is not required for systems that have already been successfully installed, it
 			// is simply being done to keep new installs consistent with existing installs.
 			logger.info("Failure while updating database for IPv6 support.  See UPGRADE.txt for instructions on how to manually complete this optional step.", e);
-		} finally {
-			DatabaseConnection.closeConnection(conn);
+			DatabaseConnection.rollbackOnException(status, e);
+			status = null;	// so we do not try to commit
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
+		}
+		if (status != null) {
+			DatabaseConnection.commit(status);
 		}
 		return messages;
 	}

@@ -6,7 +6,6 @@
 package org.jamwiki.parser.jflex;
 
 import org.apache.commons.lang.StringUtils;
-import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 
 %%
@@ -17,14 +16,6 @@ import org.jamwiki.utils.WikiLogger;
 %type String
 %unicode
 %ignorecase
-
-/* code included in the constructor */
-%init{
-    allowHTML = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML);
-    yybegin(NORMAL);
-    states.add(new Integer(yystate()));
-    tagStack.push(new JFlexTagItem());
-%init}
 
 /* code called after parsing is completed */
 %eofval{
@@ -40,13 +31,12 @@ import org.jamwiki.utils.WikiLogger;
 /* code copied verbatim into the generated .java file */
 %{
     protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiPreProcessor.class.getName());
-    protected boolean allowHTML = false;
     protected int templateCharCount = 0;
     protected String templateString = "";
 %}
 
 /* character expressions */
-newline            = ((\r\n) | (\n))
+newline            = "\n"
 whitespace         = {newline} | [ \t\f]
 
 /* nowiki */
@@ -55,62 +45,59 @@ nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
 /* pre */
 htmlprestart       = (<[ ]*pre[ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
-wikiprestart       = (" ")+ ([^ \t\r\n])
+wikiprestart       = (" ")+ ([^ \t\n])
 wikipreend         = ([^ ]) | ({newline})
 
 /* comments */
 htmlcomment        = "<!--" ~"-->"
 
 /* wiki links */
-wikilink           = "[[" [^\]\n\r]+ "]]"
+wikilink           = "[[" [^\]\n]+ "]]"
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
-htmllinkwiki       = "[" ({protocol}) ([^\]\n\r]+) "]"
+htmllinkwiki       = "[" ({protocol}) ([^\]\n]+) "]"
 /* FIXME - hard-coding of image namespace */
-imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkwiki}) [^\n\r\]\[]*)+ "]]"
+imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\]\[]* ({wikilink} | {htmllinkwiki}) [^\n\]\[]*)+ "]]"
 
 /* templates */
 templatestart      = "{{"
 templatestartchar  = "{"
 templateendchar    = "}"
-templateparam      = "{{{" [^\{\}\r\n]+ "}}}"
+templateparam      = "{{{" [^\{\}\n]+ "}}}"
 includeonly        = (<[ ]*includeonly[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*includeonly[ ]*>)
 noinclude          = (<[ ]*noinclude[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*noinclude[ ]*>)
 
 /* signatures */
 wikisignature      = ([~]{3,5})
 
-%state NORMAL, PRE, WIKIPRE, TEMPLATE
+%state PRE, WIKIPRE, TEMPLATE
 
 %%
 
 /* ----- nowiki ----- */
 
-<WIKIPRE, PRE, NORMAL>{nowiki} {
+<YYINITIAL, WIKIPRE, PRE>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
-    WikiNowikiTag parserTag = new WikiNowikiTag();
-    return this.parseToken(yytext(), parserTag);
+    return yytext();
 }
 
 /* ----- pre ----- */
 
-<NORMAL>{htmlprestart} {
+<YYINITIAL>{htmlprestart} {
     logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
-    if (allowHTML) {
+    if (allowHTML()) {
         beginState(PRE);
     }
-    HtmlPreTag parserTag = new HtmlPreTag();
-    return this.parseToken(yytext(), parserTag);
+    return yytext();
 }
 
 <PRE>{htmlpreend} {
     logger.finer("htmlpreend: " + yytext() + " (" + yystate() + ")");
-    // state only changes to pre if allowHTML is true, so no need to check here
+    // state only changes to pre if allowHTML() is true, so no need to check here
     endState();
-    HtmlPreTag parserTag = new HtmlPreTag();
-    return this.parseToken(yytext(), parserTag);
+    return yytext();
 }
 
-<NORMAL, WIKIPRE>^{wikiprestart} {
+<YYINITIAL, WIKIPRE>^{wikiprestart} {
     logger.finer("wikiprestart: " + yytext() + " (" + yystate() + ")");
     // rollback the one non-pre character so it can be processed
     yypushback(yytext().length() - 1);
@@ -130,10 +117,10 @@ wikisignature      = ([~]{3,5})
 
 /* ----- templates ----- */
 
-<NORMAL, TEMPLATE>{templatestart} {
+<YYINITIAL, TEMPLATE>{templatestart} {
     logger.finer("templatestart: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
-    if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_TEMPLATES)) {
+    if (!allowTemplates()) {
         return yytext();
     }
     this.templateString += raw;
@@ -154,7 +141,7 @@ wikisignature      = ([~]{3,5})
         String value = new String(this.templateString);
         this.templateString = "";
         TemplateTag parserTag = new TemplateTag();
-        return this.parseToken(value, parserTag);
+        return parserTag.parse(this.parserInput, this.parserOutput, this.mode, value);
     }
     return "";
 }
@@ -175,7 +162,7 @@ wikisignature      = ([~]{3,5})
     return "";
 }
 
-<NORMAL>{templateparam} {
+<YYINITIAL>{templateparam} {
     logger.finer("templateparam: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     return raw;
@@ -195,58 +182,59 @@ wikisignature      = ([~]{3,5})
     return "";
 }
 
-<NORMAL, TEMPLATE>{includeonly} {
+<YYINITIAL, TEMPLATE>{includeonly} {
     logger.finer("includeonly: " + yytext() + " (" + yystate() + ")");
     IncludeOnlyTag parserTag = new IncludeOnlyTag();
-    return this.parseToken(yytext(), parserTag);
+    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
-<NORMAL, TEMPLATE>{noinclude} {
+<YYINITIAL, TEMPLATE>{noinclude} {
     logger.finer("noinclude: " + yytext() + " (" + yystate() + ")");
     NoIncludeTag parserTag = new NoIncludeTag();
-    return this.parseToken(yytext(), parserTag);
+    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
 /* ----- wiki links ----- */
 
-<NORMAL>{imagelinkcaption} {
+<YYINITIAL>{imagelinkcaption} {
     logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
     WikiLinkTag parserTag = new WikiLinkTag();
-    return this.parseToken(yytext(), parserTag);
+    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
-<NORMAL>{wikilink} {
+<YYINITIAL>{wikilink} {
     logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
     WikiLinkTag parserTag = new WikiLinkTag();
-    return this.parseToken(yytext(), parserTag);
+    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
 /* ----- signatures ----- */
 
-<NORMAL>{wikisignature} {
+<YYINITIAL>{wikisignature} {
     logger.finer("wikisignature: " + yytext() + " (" + yystate() + ")");
     WikiSignatureTag parserTag = new WikiSignatureTag();
-    return this.parseToken(yytext(), parserTag);
+    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
 /* ----- comments ----- */
 
-<NORMAL>{htmlcomment} {
+<YYINITIAL>{htmlcomment} {
     logger.finer("htmlcomment: " + yytext() + " (" + yystate() + ")");
-    HtmlCommentTag parserTag = new HtmlCommentTag();
-    return this.parseToken(yytext(), parserTag);
+    if (this.mode < JFlexParser.MODE_PREPROCESS) {
+        return yytext();
+    }
+    // strip out the comment
+    return "";
 }
 
 /* ----- other ----- */
 
-<WIKIPRE, PRE, NORMAL>{whitespace} {
+<YYINITIAL, WIKIPRE, PRE>{whitespace} {
     // no need to log this
-    CharacterTag parserTag = new CharacterTag();
-    return this.parseToken(yytext(), parserTag);
+    return yytext();
 }
 
-<WIKIPRE, PRE, NORMAL>. {
+<YYINITIAL, WIKIPRE, PRE>. {
     // no need to log this
-    CharacterTag parserTag = new CharacterTag();
-    return this.parseToken(yytext(), parserTag);
+    return yytext();
 }

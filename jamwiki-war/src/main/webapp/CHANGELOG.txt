@@ -1,4 +1,59 @@
-﻿0.6.5
+﻿0.6.6
+=====
+
+New Features:
+
+  * Significant modifications to the parser to simplify the code, fix
+    bugs, and ensure that output is as close as possible to that of Mediawiki.
+  * Use Spring-managed transactions for database connections (dallas).
+  * Utility added to Special:Maintenance to allow administrators to reset user
+    passwords.
+  * Utility added to Special:Maintenance to allow administrators to export
+    internal database data to CSV.
+  * Utility added to Special:Maintenance to allow administartors to migrate
+    data from one database to another (dallas).
+  * The Special:History page now implements the same UI as Mediawiki with radio
+    buttons instead of checkboxes.
+  * Unit test coverage has been significantly improved.
+  * Support added for definition lists of the form "; term : definition".
+  * Support added to allow use of HTML list tags ("ol", "dl", "dt", "li", and
+    "ul").
+  * Support added for plural wiki links of the form [[Topic]]s.  Suggested by
+    axelclk.
+  * Sub-headings in the table of contents should be of the form "1.1.1" to
+    match Mediawiki.  Reported by Sil68.
+  * Updated spam filter patterns.
+  * Upgrade to the Bliki 3.0 parser (axelclk).
+  * Upgrade to Spring Framework 2.5.4.
+  * Upgrade to Spring Security 1.0.7.
+  * Upgrade to Lucene Search 2.3.2.
+  * Upgrade to commons-lang 2.4.
+
+Bugfixes:
+
+  * Unbalanced / unclosed HTML tags will now be automatically closed by the
+    parser.  Originally reported by Michael Habbert.
+  * Fix an issue that prevented error messages from being correctly reported on
+    the Special:Maintenance page.
+  * Resolve a problem that prevented __TOC__ tags within tables from being
+    processed.  Reported by an anonymous user.
+  * Wiki table captions now process table CSS such as |+align="bottom"|caption.
+    Reported by an anonymous user.
+  * Image files were being cached unnecessarily, leading to excessive memory
+    use.  Reported by Jim.
+  * Underscores in template names should be ignored so that {{Template Name}}
+    and {{Template_Name}} are seen as equivalent.  Reported by yesesnono.
+  * Fix an issue where in some cases (most commonly after server restarts) a
+    remembered user could be incorrectly loaded as a null user.
+
+Translation Updates:
+
+  * Updated Danish translations (g9adm).
+  * Updated German translations (axelclk).
+  * Updated Japanese translations (nattolover).
+
+
+0.6.5
 =====
 
 New Features:

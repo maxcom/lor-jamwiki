@@ -45,10 +45,12 @@ public class JFlexParser extends AbstractParser {
 	protected static final int MODE_MINIMAL = 3;
 	/** Pre-process mode is currently equivalent to metadata mode and indicates that that the JFlex pre-processor parser should be run in full. */
 	protected static final int MODE_PREPROCESS = 4;
-	/** Processing mode indicates that the pre-processor and processor should be run in full, parsing all Wiki syntax into formatted output. */
+	/** Processing mode indicates that the pre-processor and processor should be run, parsing all Wiki syntax into formatted output but NOT parsing paragraph tags. */
 	protected static final int MODE_PROCESS = 5;
-	/** Layout mode indicates that the pre-processor, processor and post-processor should be run in full, parsing all Wiki syntax into formatted output and adding layout tags such as paragraphs. */
+	/** Layout mode indicates that the pre-processor and processor should be run in full, parsing all Wiki syntax into formatted output and adding layout tags such as paragraphs. */
 	protected static final int MODE_LAYOUT = 6;
+	/** Post-process mode indicates that the pre-processor, processor and post-processor should be run in full, parsing all Wiki syntax into formatted output and adding layout tags such as paragraphs and TOC. */
+	protected static final int MODE_POSTPROCESS = 7;
 
 	private static Pattern REDIRECT_PATTERN = null;
 
@@ -88,7 +90,7 @@ public class JFlexParser extends AbstractParser {
 	/**
 	 *
 	 */
-	private String isRedirect(String content) {
+	protected String isRedirect(String content) {
 		if (StringUtils.isBlank(content)) {
 			return null;
 		}
@@ -165,8 +167,8 @@ public class JFlexParser extends AbstractParser {
 		// to the end of the content for good measure
 		String output = raw + '\n';
 		output = this.parsePreProcess(parserOutput, output, JFlexParser.MODE_PREPROCESS);
-		output = this.parseProcess(parserOutput, output, JFlexParser.MODE_PROCESS);
-		output = this.parsePostProcess(parserOutput, output, JFlexParser.MODE_LAYOUT);
+		output = this.parseProcess(parserOutput, output, JFlexParser.MODE_LAYOUT);
+		output = this.parsePostProcess(parserOutput, output, JFlexParser.MODE_POSTPROCESS);
 		if (!StringUtils.isBlank(this.isRedirect(raw))) {
 			// redirects are parsed differently
 			output = this.parseRedirect(parserOutput, raw);
@@ -228,7 +230,7 @@ public class JFlexParser extends AbstractParser {
 	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
 	private String parsePreProcess(ParserOutput parserOutput, String raw, int mode) throws Exception {
-		StringReader reader = new StringReader(raw);
+		StringReader reader = toStringReader(raw);
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(reader);
 		int preMode = (mode > JFlexParser.MODE_PREPROCESS) ? JFlexParser.MODE_PREPROCESS : mode;
 		return this.lex(lexer, raw, parserOutput, preMode);
@@ -245,9 +247,9 @@ public class JFlexParser extends AbstractParser {
 	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
 	private String parseProcess(ParserOutput parserOutput, String raw, int mode) throws Exception {
-		StringReader reader = new StringReader(raw);
+		StringReader reader = toStringReader(raw);
 		JAMWikiProcessor lexer = new JAMWikiProcessor(reader);
-		return this.lex(lexer, raw, parserOutput, JFlexParser.MODE_PROCESS);
+		return this.lex(lexer, raw, parserOutput, mode);
 	}
 
 	/**
@@ -262,9 +264,9 @@ public class JFlexParser extends AbstractParser {
 	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
 	private String parsePostProcess(ParserOutput parserOutput, String raw, int mode) throws Exception {
-		StringReader reader = new StringReader(raw);
+		StringReader reader = toStringReader(raw);
 		JAMWikiPostProcessor lexer = new JAMWikiPostProcessor(reader);
-		return this.lex(lexer, raw, parserOutput, JFlexParser.MODE_LAYOUT);
+		return this.lex(lexer, raw, parserOutput, mode);
 	}
 
 	/**
@@ -278,7 +280,7 @@ public class JFlexParser extends AbstractParser {
 	 * @return The parsed content.
 	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
-	private String parseRedirect(ParserOutput parserOutput, String raw) throws Exception {
+	protected String parseRedirect(ParserOutput parserOutput, String raw) throws Exception {
 		String redirect = this.isRedirect(raw);
 		String style = "redirect";
 		if (!LinkUtil.isExistingArticle(this.parserInput.getVirtualWiki(), redirect.trim())) {
@@ -307,7 +309,7 @@ public class JFlexParser extends AbstractParser {
 	 */
 	public String parseSlice(ParserOutput parserOutput, String raw, int targetSection) throws Exception {
 		long start = System.currentTimeMillis();
-		StringReader reader = new StringReader(raw);
+		StringReader reader = toStringReader(raw);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(reader);
 		lexer.setTargetSection(targetSection);
 		String output = this.lex(lexer, raw, parserOutput, JFlexParser.MODE_SLICE);
@@ -335,7 +337,7 @@ public class JFlexParser extends AbstractParser {
 	 */
 	public String parseSplice(ParserOutput parserOutput, String raw, int targetSection, String replacementText) throws Exception {
 		long start = System.currentTimeMillis();
-		StringReader reader = new StringReader(raw);
+		StringReader reader = toStringReader(raw);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(reader);
 		lexer.setReplacementText(replacementText);
 		lexer.setTargetSection(targetSection);
@@ -343,6 +345,14 @@ public class JFlexParser extends AbstractParser {
 		String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 		logger.fine("Parse time (parseSplice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return output;
+	}
+
+	/**
+	 * Convert a string of text to be parsed into a StringReader, performing any
+	 * preprocessing, such as removing linefeeds, in the process.
+	 */
+	private StringReader toStringReader(String raw) {
+		return new StringReader(StringUtils.remove(raw, '\r'));
 	}
 
 	/**
@@ -360,7 +370,7 @@ public class JFlexParser extends AbstractParser {
 				logger.info("Failure while initializing parser: topic name is null.");
 				validated = false;
 			}
-		} else if (lexer.mode == JFlexParser.MODE_LAYOUT) {
+		} else if (lexer.mode == JFlexParser.MODE_POSTPROCESS) {
 			if (lexer.parserInput == null) {
 				logger.info("Failure while initializing parser: ParserInput is null.");
 				validated = false;
@@ -369,7 +379,7 @@ public class JFlexParser extends AbstractParser {
 				logger.info("Failure while initializing parser: table of contents object is null.");
 				validated = false;
 			}
-		} else if (lexer.mode == JFlexParser.MODE_PROCESS) {
+		} else if (lexer.mode >= JFlexParser.MODE_PROCESS && lexer.mode <= JFlexParser.MODE_LAYOUT) {
 			if (lexer.parserInput.getTableOfContents() == null) {
 				logger.info("Failure while initializing parser: table of contents object is null.");
 				validated = false;

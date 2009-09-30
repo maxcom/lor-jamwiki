@@ -7,13 +7,11 @@
 	<parent>
 		<groupId>org.jamwiki</groupId>
 		<artifactId>jamwiki</artifactId>
-		<version>0.6.5</version>
+		<version>0.6.6</version>
 	</parent>
-	<groupId>org.jamwiki</groupId>
 	<artifactId>jamwiki-web</artifactId>
 	<packaging>jar</packaging>
 	<name>JAMWiki Web</name>
-	<version>${jamwiki.version}</version>
 	<dependencies>
 		<dependency>
 			<groupId>commons-dbcp</groupId>
@@ -85,6 +83,10 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

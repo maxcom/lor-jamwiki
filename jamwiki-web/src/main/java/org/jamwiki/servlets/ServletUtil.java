@@ -311,7 +311,23 @@ public class ServletUtil {
 	public static WikiUserAuth currentUser() throws AuthenticationCredentialsNotFoundException {
 		SecurityContext ctx = SecurityContextHolder.getContext();
 		Authentication auth = ctx.getAuthentication();
-		return WikiUserAuth.initWikiUserAuth(auth);
+		// FIXME - hopefully this workaround is unneeded after Acegi 2.0 upgrade
+		// this conditional is a workaround for a bug that's proving difficult to track down.
+		// the problem is that the authentication credential returned has the proper
+		// authorities, but a null username.  the steps to reproduce:
+		//   1. login with the remember me cookie set.
+		//   2. restart the app server.
+		//   3. reload a wiki page while the app server is restarting.
+		//   4. once the app server restarts the user name will be null.
+		WikiUserAuth user = null;
+		if (auth != null) {
+			user = WikiUserAuth.initWikiUserAuth(auth);
+		}
+		if (user == null || (user.hasRole(Role.ROLE_USER) && StringUtils.isBlank(user.getUsername()))) {
+			SecurityContextHolder.clearContext();
+			return WikiUserAuth.initAnonymousWikiUserAuth();
+		}
+		return user;
 	}
 
 	/**
