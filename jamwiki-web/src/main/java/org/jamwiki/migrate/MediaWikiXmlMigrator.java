@@ -182,6 +182,8 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 				ret = jamwikiNamespace + ":" + title;
 			}
 		}
+		// remove any characters that are valid for Mediawiki but not JAMWiki
+		ret = StringUtils.remove(ret, '?');
 		return ret;
 	}
 

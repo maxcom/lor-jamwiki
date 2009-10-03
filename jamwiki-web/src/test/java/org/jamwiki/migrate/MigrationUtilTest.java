@@ -35,10 +35,12 @@ public class MigrationUtilTest {
 
 	private static final String FILE_TEST_TWO_TOPICS_WITH_HISTORY = "mediawiki-export-two-topics-with-history.xml";
 	private static final String FILE_ONE_TOPIC_WITH_UNSORTED_HISTORY = "mediawiki-export-one-topic-with-unsorted-history.xml";
+	private static final String FILE_TOPIC_NAME_WITH_QUESTION_MARK = "mediawiki-export-topic-name-with-question-mark.xml";
 	private static final String TEST_FILES_DIR = "data/files/";
 	private static final String TOPIC_NAME1 = "Test Page 1";
 	private static final String TOPIC_NAME2 = "Template comments:Test Template";
 	private static final String TOPIC_NAME3 = "Test Page 2";
+	private static final String TOPIC_NAME4 = "Who am i";
 	private static final String VIRTUAL_WIKI_EN = "en";
 
 	/**
@@ -46,13 +48,9 @@ public class MigrationUtilTest {
 	 */
 	@Test
 	public void testImportFromFileWithTwoTopics() throws Throwable {
-		File file = TestFileUtil.retrieveFile(TEST_FILES_DIR, FILE_TEST_TWO_TOPICS_WITH_HISTORY);
-		Locale locale = new Locale("en", "US");
 		String virtualWiki = VIRTUAL_WIKI_EN;
-		String authorDisplay = "127.0.0.1";
-		WikiUser user = null;
 		List<WikiMessage> errors = new ArrayList<WikiMessage>();
-		List<String> results = MigrationUtil.importFromFile(file, virtualWiki, user, authorDisplay, locale, errors);
+		List<String> results = this.importTestFile(FILE_TEST_TWO_TOPICS_WITH_HISTORY, errors);
 		// validate that the first topic parsed
 		assertTrue("Parsed topic '" + TOPIC_NAME1 + "'", results.contains(TOPIC_NAME1));
 		Topic topic1 = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME1, false, null);
@@ -73,15 +71,35 @@ public class MigrationUtilTest {
 	 */
 	@Test
 	public void testImportFromFileWithUnsortedHistory() throws Throwable {
-		File file = TestFileUtil.retrieveFile(TEST_FILES_DIR, FILE_ONE_TOPIC_WITH_UNSORTED_HISTORY);
+		String virtualWiki = VIRTUAL_WIKI_EN;
+		List<WikiMessage> errors = new ArrayList<WikiMessage>();
+		List<String> results = this.importTestFile(FILE_ONE_TOPIC_WITH_UNSORTED_HISTORY, errors);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME3, false, null);
+		// validate that the current topic content is correct
+		assertEquals("Topic content set correctly", "Newest Revision", topic.getTopicContent());
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testImportFromFileTopicNameWithQuestionMark() throws Throwable {
+		String virtualWiki = VIRTUAL_WIKI_EN;
+		List<WikiMessage> errors = new ArrayList<WikiMessage>();
+		List<String> results = this.importTestFile(FILE_TOPIC_NAME_WITH_QUESTION_MARK, errors);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME4, false, null);
+		assertNotNull("Topic with question mark in name imported correctly", topic);
+	}
+
+	/**
+	 * Utility method for importing test files.
+	 */
+	private List<String> importTestFile(String filename, List<WikiMessage> errors) throws Throwable {
+		File file = TestFileUtil.retrieveFile(TEST_FILES_DIR, filename);
 		Locale locale = new Locale("en", "US");
 		String virtualWiki = VIRTUAL_WIKI_EN;
 		String authorDisplay = "127.0.0.1";
 		WikiUser user = null;
-		List<WikiMessage> errors = new ArrayList<WikiMessage>();
-		List<String> results = MigrationUtil.importFromFile(file, virtualWiki, user, authorDisplay, locale, errors);
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME3, false, null);
-		// validate that the current topic content is correct
-		assertEquals("Topic content set correctly", "Newest Revision", topic.getTopicContent());
+		return MigrationUtil.importFromFile(file, virtualWiki, user, authorDisplay, locale, errors);
 	}
 }
