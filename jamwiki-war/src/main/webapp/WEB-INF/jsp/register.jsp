@@ -56,7 +56,7 @@
 <c:if test="${newuser.userId > 0}">
 <div class="formentry">
 	<input type="hidden" name="login" value="<c:out value="${newuser.username}" />" />
-	<span class="formcaption"><fmt:message key="common.login" />:</span>
+	<span class="formcaption"><fmt:message key="login.username" />:</span>
 	<span class="formelement"><c:out value="${newuser.username}" /></span>
 </div>
 </c:if>
