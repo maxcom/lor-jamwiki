@@ -109,7 +109,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_INSERT_LOG_ITEMS_UPLOAD = null;
 	protected static String STATEMENT_INSERT_LOG_ITEMS_USER = null;
 	protected static String STATEMENT_INSERT_RECENT_CHANGE = null;
-	protected static String STATEMENT_INSERT_RECENT_CHANGES = null;
+	protected static String STATEMENT_INSERT_RECENT_CHANGES_LOGS = null;
+	protected static String STATEMENT_INSERT_RECENT_CHANGES_VERSIONS = null;
 	protected static String STATEMENT_INSERT_ROLE = null;
 	protected static String STATEMENT_INSERT_TOPIC = null;
 	protected static String STATEMENT_INSERT_TOPIC_AUTO_INCREMENT = null;
@@ -676,7 +677,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_INSERT_LOG_ITEMS_UPLOAD        = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_UPLOAD");
 		STATEMENT_INSERT_LOG_ITEMS_USER          = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_USER");
 		STATEMENT_INSERT_RECENT_CHANGE           = props.getProperty("STATEMENT_INSERT_RECENT_CHANGE");
-		STATEMENT_INSERT_RECENT_CHANGES          = props.getProperty("STATEMENT_INSERT_RECENT_CHANGES");
+		STATEMENT_INSERT_RECENT_CHANGES_LOGS     = props.getProperty("STATEMENT_INSERT_RECENT_CHANGES_LOGS");
+		STATEMENT_INSERT_RECENT_CHANGES_VERSIONS = props.getProperty("STATEMENT_INSERT_RECENT_CHANGES_VERSIONS");
 		STATEMENT_INSERT_ROLE                    = props.getProperty("STATEMENT_INSERT_ROLE");
 		STATEMENT_INSERT_TOPIC                   = props.getProperty("STATEMENT_INSERT_TOPIC");
 		STATEMENT_INSERT_TOPIC_AUTO_INCREMENT    = props.getProperty("STATEMENT_INSERT_TOPIC_AUTO_INCREMENT");
@@ -1573,7 +1575,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public void reloadRecentChanges(Connection conn) throws SQLException {
 		DatabaseConnection.executeUpdate(STATEMENT_DELETE_RECENT_CHANGES, conn);
-		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES_VERSIONS, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES_LOGS, conn);
 	}
 
 	/**
