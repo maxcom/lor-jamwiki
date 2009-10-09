@@ -262,6 +262,7 @@ public class UploadServlet extends JAMWikiServlet {
 		}
 		wikiFileVersion.setAuthorId(authorId);
 		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), contents, topic.getTopicContent(), charactersChanged);
+		topicVersion.setEditType(TopicVersion.EDIT_UPLOAD);
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
 		if (wikiFile == null) {
 			wikiFile = new WikiFile();

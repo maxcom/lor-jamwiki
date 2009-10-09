@@ -102,11 +102,10 @@ public class LogItem {
 				}
 				logItem.setLogType(LOG_TYPE_IMPORT);
 				break;
+			case TopicVersion.EDIT_UPLOAD:
+				logItem.setLogType(LOG_TYPE_UPLOAD);
+				break;
 			default:
-				if (topic.getTopicType() == Topic.TYPE_FILE || topic.getTopicType() == Topic.TYPE_IMAGE) {
-					logItem.setLogType(LOG_TYPE_UPLOAD);
-					break;
-				}
 				// not valid for logging
 				return null;
 		}

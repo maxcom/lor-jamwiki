@@ -37,6 +37,7 @@ public class TopicVersion implements Serializable {
 	public static final int EDIT_PERMISSION = 6;
 	public static final int EDIT_UNDELETE = 7;
 	public static final int EDIT_IMPORT = 8;
+	public static final int EDIT_UPLOAD = 9;
 	private Integer authorId = null;
 	private String authorDisplay = null;
 	private int charactersChanged = 0;
@@ -98,11 +99,11 @@ public class TopicVersion implements Serializable {
 			case TopicVersion.EDIT_IMPORT:
 				this.addVersionParam(topic.getName());
 				break;
+			case TopicVersion.EDIT_UPLOAD:
+				// store the topic name for uploads
+				this.addVersionParam(topic.getName());
+				break;
 			default:
-				if (topic.getTopicType() == Topic.TYPE_FILE || topic.getTopicType() == Topic.TYPE_IMAGE) {
-					// store the topic name for uploads
-					this.addVersionParam(topic.getName());
-				}
 				break;
 		}
 	}

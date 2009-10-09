@@ -209,15 +209,29 @@ followed by 0.6.3.
               alter table jam_topic_version add [version_params] VARCHAR(500);
             Other Databases:
               alter table jam_topic_version add column version_params VARCHAR(500);
-       g) Add the new ROLE_IMPORT:
+       g) Update the edit type for topic versions created for uploads:
+              update jam_topic_version set edit_type = 9 
+                    where jam_topic_version.topic_version_id in ( 
+                      select jam_topic_version.topic_version_id 
+                      from jam_topic_version, jam_file, jam_file_version 
+                      where jam_topic_version.topic_id = jam_file.topic_id 
+                      and jam_file.file_id = jam_file_version.file_id 
+                      and extract(year from jam_topic_version.edit_date) = extract(year from jam_file_version.upload_date) 
+                      and extract(month from jam_topic_version.edit_date) = extract(month from jam_file_version.upload_date) 
+                      and extract(day from jam_topic_version.edit_date) = extract(day from jam_file_version.upload_date) 
+                      and extract(hour from jam_topic_version.edit_date) = extract(hour from jam_file_version.upload_date) 
+                      and extract(minute from jam_topic_version.edit_date) = extract(minute from jam_file_version.upload_date) 
+                      and (abs(extract(second from jam_topic_version.edit_date) - extract(second from jam_file_version.upload_date)) < 3) 
+                    );
+       h) Add the new ROLE_IMPORT:
               INSERT into jam_role (role_name) values ('ROLE_IMPORT');
-       h) Assign ROLE_IMPORT to all users with ROLE_ADMIN:
+       i) Assign ROLE_IMPORT to all users with ROLE_ADMIN:
               INSERT into jam_authorities (authority, username)
                    select 'ROLE_IMPORT', username
                    from jam_authorities where authority = 'ROLE_ADMIN';
-       i) Drop the jam_recent_change table:
+       j) Drop the jam_recent_change table:
               DROP TABLE jam_recent_change
-       j) Re-add the jam_recent_change table with the new schema:
+       k) Re-add the jam_recent_change table with the new schema:
             Asa:
               CREATE TABLE jam_recent_change ( 
                 topic_version_id INTEGER NULL, 

@@ -328,10 +328,34 @@ public class DatabaseUpgrades {
 		}
 		DatabaseConnection.commit(status);
 		try {
-			// perform a second transaction to assign ROLE_IMPORT.  this code is in its own
+			// perform a separate transaction to update existing data.  this code is in its own
 			// transaction since if it fails the upgrade can still be considered successful.
 			status = DatabaseConnection.startTransaction(getTransactionDefinition());
 			Connection conn = DatabaseConnection.getConnection();
+			// update the edit type field for topic versions
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_UPDATE_TOPIC_VERSION_UPLOAD_EDIT_TYPE", conn);
+			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic_version"));
+		} catch (SQLException e) {
+			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
+			// do not throw this error and halt the upgrade process - populating the field
+			// is not required for existing systems.
+			logger.warning("Failure while updating edit_type value in jam_topic_version.  See UPGRADE.txt for instructions on how to manually complete this optional step.", e);
+			try {
+				DatabaseConnection.rollbackOnException(status, e);
+			} catch (Exception ex) {
+				// ignore
+			}
+			status = null; // so we do not try to commit
+		}
+		if (status != null) {
+			DatabaseConnection.commit(status);
+		}
+		try {
+			// perform a separate transaction to update existing data.  this code is in its own
+			// transaction since if it fails the upgrade can still be considered successful.
+			status = DatabaseConnection.startTransaction(getTransactionDefinition());
+			Connection conn = DatabaseConnection.getConnection();
+			// assign ROLE_IMPORT
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_INSERT_ROLE_ROLE_IMPORT", conn);
 			messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_role"));
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_INSERT_AUTHORITIES_ROLE_IMPORT", conn);
@@ -340,7 +364,7 @@ public class DatabaseUpgrades {
 			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 			// do not throw this error and halt the upgrade process - populating the field
 			// is not required for existing systems.
-			logger.warning("Failure while populating characters_changed colum in jam_topic_version.  See UPGRADE.txt for instructions on how to manually complete this optional step.", e);
+			logger.warning("Failure while updating ROLE_IMPORT in the jam_authorities table.  See UPGRADE.txt for instructions on how to manually complete this optional step.", e);
 			try {
 				DatabaseConnection.rollbackOnException(status, e);
 			} catch (Exception ex) {
