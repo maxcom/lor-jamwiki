@@ -26,18 +26,9 @@
 
 <%@ include file="page-init.jsp" %>
 
+<%@ include file="shared-db-javascript.jsp" %>
+
 <script type="text/javascript">
-function onPersistenceType() {
-	var disabled = true;
-	if (document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").options[document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").selectedIndex].value == "<%= WikiBase.PERSISTENCE_EXTERNAL %>") {
-		disabled = false;
-	}
-	document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled = disabled;
-	document.getElementById("<%= Environment.PROP_DB_TYPE %>").disabled = disabled;
-	document.getElementById("<%= Environment.PROP_DB_URL %>").disabled = disabled;
-	document.getElementById("<%= Environment.PROP_DB_USERNAME %>").disabled = disabled;
-	document.getElementById("<%= Environment.PROP_DB_PASSWORD %>").disabled = disabled;
-}
 function onUploadType() {
 	var whitelistDisabled = true;
 	var blacklistDisabled = true;
@@ -277,7 +268,7 @@ FIXME - Email not supported right now, comment this out
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="database" />">
 	<span class="formcaption"><label for="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>"><fmt:message key="admin.persistence.caption" /></label></span>
 	<span class="formelement">
-		<select name="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" id="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" onchange="onPersistenceType()">
+		<select name="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" id="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" onchange="onPersistenceType(this)">
 		<c:set var="PROP_BASE_PERSISTENCE_TYPE"><%= Environment.PROP_BASE_PERSISTENCE_TYPE %></c:set>
 		<c:set var="persistenceTypeInternal"><%= WikiBase.PERSISTENCE_INTERNAL %></c:set>
 		<c:set var="persistenceTypeExternal"><%= WikiBase.PERSISTENCE_EXTERNAL %></c:set>
@@ -289,7 +280,8 @@ FIXME - Email not supported right now, comment this out
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="database" />">
 	<span class="formcaption"><label for="<%= Environment.PROP_DB_TYPE %>"><fmt:message key="admin.persistence.caption.type" /></label></span>
 	<span class="formelement">
-		<select name="<%= Environment.PROP_DB_TYPE %>" id="<%= Environment.PROP_DB_TYPE %>">
+		<select name="<%= Environment.PROP_DB_TYPE %>" id="<%= Environment.PROP_DB_TYPE %>" onchange="onDatabaseType()">
+		<option value=""></option>
 		<c:set var="PROP_DB_TYPE"><%= Environment.PROP_DB_TYPE %></c:set>
 		<c:forEach items="${dataHandlers}" var="dataHandler">
 		<option value="<c:out value="${dataHandler.clazz}" />"<c:if test="${props[PROP_DB_TYPE] == dataHandler.clazz}"> selected="selected"</c:if>><c:if test="${!empty dataHandler.key}"><fmt:message key="${dataHandler.key}" /></c:if><c:if test="${empty dataHandler.key}"><c:out value="${dataHandler.name}" /></c:if><c:if test="${dataHandler.experimental}"> (<fmt:message key="common.caption.experimental" />)</c:if></option>
