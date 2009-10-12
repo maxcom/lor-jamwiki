@@ -582,6 +582,9 @@ public class WikiUtil {
 		}
 		// make sure there are no instances of "//" in the URL
 		uri = uri.replaceAll("(/){2,}", "/");
+		if (uri.length() <= contextPath.length()) {
+			return null;
+		}
 		uri = uri.substring(contextPath.length() + 1);
 		int i = 0;
 		while (i < skipCount) {
