@@ -61,8 +61,7 @@
 	<c:if test="${!empty logItem.logWikiMessage}">
 		&#160;
 		<fmt:message key="${logItem.logWikiMessage.key}">
-			<fmt:param><jamwiki:link value="${logItem.logWikiMessage.params[0]}" text="${logItem.logWikiMessage.params[0]}" /></fmt:param>
-			<fmt:param><jamwiki:link value="${logItem.logWikiMessage.params[1]}" text="${logItem.logWikiMessage.params[1]}" /></fmt:param>
+			<c:forEach items="${logItem.logWikiMessage.params}" var="param"><fmt:param><jamwiki:link value="${param}" text="${param}" /></fmt:param></c:forEach>
 		</fmt:message>
 	</c:if>
 	<c:if test="${!empty logItem.logComment}">&#160;<span class="edit-comment">(<c:out value="${logItem.logComment}" />)</span></c:if>
