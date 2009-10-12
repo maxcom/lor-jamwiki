@@ -64,7 +64,8 @@
 	<c:if test="${!empty change.changeWikiMessage}">
 		&#160;
 		<fmt:message key="${change.changeWikiMessage.key}">
-			<c:forEach items="${change.changeWikiMessage.params}" var="param"><fmt:param><jamwiki:link value="${param}" text="${param}" /></fmt:param></c:forEach>
+			<fmt:param><jamwiki:link value="${change.changeWikiMessage.params[0]}" text="${change.changeWikiMessage.params[0]}" /></fmt:param>
+			<fmt:param><jamwiki:link value="${change.changeWikiMessage.params[1]}" text="${change.changeWikiMessage.params[1]}" /></fmt:param>
 		</fmt:message>
 	</c:if>
 	<c:if test="${!empty change.changeComment}">&#160;(<span class="edit-comment"><jamwiki:editComment comment="${change.changeComment}" topic="${change.topicName}" /></span>)</c:if>

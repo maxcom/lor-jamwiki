@@ -80,7 +80,7 @@ function onPersistenceType() {
 
 <h3><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /></fmt:message></h3>
 
-<c:if test="${!empty messageObject}"><p class="red"><fmt:message key="${messageObject.key}"><c:forEach items="${messageObject.params}" var="param"><fmt:param value="${param}" /></c:forEach></fmt:message></p></c:if>
+<c:if test="${!empty messageObject}"><p class="red"><fmt:message key="${messageObject.key}"><fmt:param value="${messageObject.params[0]}" /><fmt:param value="${messageObject.params[1]}" /></fmt:message></p></c:if>
 
 <form name="setup" method="post">
 <input type="hidden" value="<c:out value="${upgrade}" />" />
@@ -164,7 +164,7 @@ function onPersistenceType() {
 	<td class="formelement"><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="setupConfirmPassword" /></td>
 </tr>
 <tr><td colspan="2">&#160;</td></tr>
-<tr><td colspan="2" class="formHelp"><fmt:message key="${logMessage.key}"><c:forEach items="${logMessage.params}" var="param"><fmt:param value="${param}" /></c:forEach></fmt:message></td></tr>
+<tr><td colspan="2" class="formHelp"><fmt:message key="${logMessage.key}"><fmt:param value="${logMessage.params[0]}" /><fmt:param value="${logMessage.params[1]}" /></fmt:message></td></tr>
 <tr><td colspan="2">&#160;</td></tr>
 <tr><td colspan="2" align="center"><input type="submit" name="function" value="<fmt:message key="admin.action.save" />" /></td></tr>
 <tr><td colspan="2">&#160;</td></tr>

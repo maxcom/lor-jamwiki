@@ -25,7 +25,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title><fmt:message key="${pageInfo.pageTitle.key}"><c:forEach items="${pageInfo.pageTitle.params}" var="param"><fmt:param value="${param}" /></c:forEach></fmt:message></title>
+	<title><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /><fmt:param value="${pageInfo.pageTitle.params[1]}" /></fmt:message></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <style>
 body {
@@ -61,7 +61,7 @@ body, input, select {
 <body>
 <div id="upgrade-container">
 
-<h3><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /><c:forEach items="${pageInfo.pageTitle.params}" var="param"><fmt:param value="${param}" /></c:forEach></fmt:message></h3>
+<h3><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /><fmt:param value="${pageInfo.pageTitle.params[1]}" /></fmt:message></h3>
 
 <form name="adminUpgrade" method="post">
 <input type="hidden" name="function" value="upgrade" />
@@ -72,10 +72,10 @@ body, input, select {
 			<div id="upgrade-messages">
 				<c:if test="${!empty successMessage}"><h4><fmt:message key="${successMessage.key}"><fmt:param value="${successMessage.params[0]}" /></fmt:message></h4></c:if>
 				<c:if test="${!empty errors}">
-					<c:forEach items="${errors}" var="message"><div class="red"><fmt:message key="${message.key}"><c:forEach items="${message.params}" var="param"><fmt:param value="${param}" /></c:forEach></fmt:message></div></c:forEach>
+					<c:forEach items="${errors}" var="message"><div class="red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /><fmt:param value="${message.params[1]}" /></fmt:message></div></c:forEach>
 				</c:if>
 				<c:if test="${!empty messages}">
-					<c:forEach items="${messages}" var="message"><div class="green"><fmt:message key="${message.key}"><c:forEach items="${message.params}" var="param"><fmt:param value="${param}" /></c:forEach></fmt:message></div></c:forEach>
+					<c:forEach items="${messages}" var="message"><div class="green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /><fmt:param value="${message.params[1]}" /></fmt:message></div></c:forEach>
 				</c:if>
 			</div>
 		</td>
