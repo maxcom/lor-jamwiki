@@ -124,7 +124,6 @@ public class MigrationUtil {
 		if (parsedTopics.isEmpty()) {
 			throw new WikiException(new WikiMessage("import.error.notopic"));
 		}
-		ParserOutput parserOutput = null;
 		List<TopicVersion> topicVersions;
 		List<String> successfulImports = new ArrayList<String>();
 		for (Topic topic : parsedTopics.keySet()) {
@@ -141,20 +140,23 @@ public class MigrationUtil {
 					throw new WikiException(new WikiMessage("import.error.notopic"));
 				}
 				for (TopicVersion topicVersion : topicVersions) {
-					try {
-						parserOutput = ParserUtil.parserOutput(topicVersion.getVersionContent(), virtualWiki, topic.getName());
-					} catch (ParserException e) {
-						throw new MigrationException("Failure while parsing topic version of topic: " + topic.getName(), e);
-					}
 					// only the final import version is logged
 					topicVersion.setLoggable(false);
-					WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks());
+					// metadata is needed only for the final import version, so for performance reasons
+					// do not include category or link data for older versions
+					WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
 				}
 				// create a dummy version to indicate that the topic was imported
 				String importedBy = (user != null && user.getUserId() > 0) ? user.getUsername() : authorDisplay;
 				String editComment = Utilities.formatMessage("import.message.importedby", locale, new Object[]{importedBy});
 				TopicVersion topicVersion = new TopicVersion(user, authorDisplay, editComment, topic.getTopicContent(), 0);
 				topicVersion.setEditType(TopicVersion.EDIT_IMPORT);
+				ParserOutput parserOutput = null;
+				try {
+					parserOutput = ParserUtil.parserOutput(topicVersion.getVersionContent(), virtualWiki, topic.getName());
+				} catch (ParserException e) {
+					throw new MigrationException("Failure while parsing topic version of topic: " + topic.getName(), e);
+				}
 				WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks());
 			} catch (DataAccessException e) {
 				throw new MigrationException("Data access exception while processing topic " + topic.getName(), e);
