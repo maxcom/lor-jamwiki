@@ -36,11 +36,13 @@ public class MigrationUtilTest {
 	private static final String FILE_TEST_TWO_TOPICS_WITH_HISTORY = "mediawiki-export-two-topics-with-history.xml";
 	private static final String FILE_ONE_TOPIC_WITH_UNSORTED_HISTORY = "mediawiki-export-one-topic-with-unsorted-history.xml";
 	private static final String FILE_TOPIC_NAME_WITH_QUESTION_MARK = "mediawiki-export-topic-name-with-question-mark.xml";
+	private static final String FILE_NAMESPACE_TEST = "mediawiki-export-namespace-test.xml";
 	private static final String TEST_FILES_DIR = "data/files/";
 	private static final String TOPIC_NAME1 = "Test Page 1";
 	private static final String TOPIC_NAME2 = "Template comments:Test Template";
 	private static final String TOPIC_NAME3 = "Test Page 2";
 	private static final String TOPIC_NAME4 = "Who am i";
+	private static final String TOPIC_NAME5 = "Namespace Test";
 	private static final String VIRTUAL_WIKI_EN = "en";
 
 	/**
@@ -89,6 +91,30 @@ public class MigrationUtilTest {
 		List<String> results = this.importTestFile(FILE_TOPIC_NAME_WITH_QUESTION_MARK, errors);
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME4, false, null);
 		assertNotNull("Topic with question mark in name imported correctly", topic);
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testImportFromFileNamespaceTest() throws Throwable {
+		String virtualWiki = VIRTUAL_WIKI_EN;
+		List<WikiMessage> errors = new ArrayList<WikiMessage>();
+		List<String> results = this.importTestFile(FILE_NAMESPACE_TEST, errors);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME5, false, null);
+		assertNotNull("Namespace test topic imported correctly", topic);
+		// verify that Mediawiki namespaces were correctly converted to JAMWiki namespaces
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Talk:Test - [[Comments:Test]]") != -1));
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("User:Test - [[User:Test]]") != -1));
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("User talk:Test - [[User comments:Test]]") != -1));
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Wikipedia:Test - [[Wikipedia:Test]]") != -1));
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Wikipedia talk:Test - [[Wikipedia talk:Test]]") != -1));
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("File:Test - [[Image:Test]]") != -1));
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("File talk:Test - [[Image comments:Test]]") != -1));
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Template:Test - [[Template:Test]]") != -1));
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Template talk:Test - [[Template comments:Test]]") != -1));
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Category:Test - [[Category:Test]]") != -1));
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Category talk:Test - [[Category comments:Test]]") != -1));
 	}
 
 	/**
