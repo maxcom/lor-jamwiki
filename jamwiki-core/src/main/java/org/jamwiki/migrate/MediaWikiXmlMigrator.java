@@ -190,7 +190,7 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 	/**
 	 * Convert all namespaces names from MediaWiki to JAMWiki local representation.
 	 */
-	private String convertNamespaces(String text) {
+	private String convertToJAMWikiNamespaces(String text) {
 		String ret = text;
 		// convert all namespaces names from MediaWiki to JAMWiki local representation
 		String jamwikiNamespace;
@@ -276,7 +276,7 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 			currentTopic.setName(topicName);
 		} else if (MEDIAWIKI_ELEMENT_TOPIC_CONTENT.equals(qName)) {
 			String topicContent = currentElementBuffer.toString().trim();
-			topicContent = convertNamespaces(topicContent);
+			topicContent = convertToJAMWikiNamespaces(topicContent);
 			currentTopicVersion.setVersionContent(topicContent);
 			currentTopicVersion.setCharactersChanged(StringUtils.length(topicContent) - previousTopicContentLength);
 			previousTopicContentLength = StringUtils.length(topicContent);
@@ -359,7 +359,7 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 		Cannot have two titles differing only by case. Not yet implemented as of MediaWiki 1.5
 			<enumeration value="case-insensitive" />
 		*/
-		writer.write('\n' + XMLUtil.buildTag("case", "first-letter", true));
+		writer.write('\n' + XMLUtil.buildTag("case", "case-sensitive", true));
 		writer.write("\n<namespaces>");
 		Map<String, String> attributes = new HashMap<String, String>();
 		String namespace = null;
@@ -377,6 +377,7 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 	 */
 	private void writePages(FileWriter writer, Map<Topic, List<TopicVersion>> data) throws DataAccessException, IOException {
 		List<TopicVersion> topicVersions = null;
+		String versionContent = null;
 		Map<String, String> textAttributes = new HashMap<String, String>();
 		textAttributes.put("xml:space", "preserve");
 		for (Topic topic : data.keySet()) {
@@ -400,7 +401,8 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 				}
 				writer.write("\n</contributor>");
 				writer.write('\n' + XMLUtil.buildTag("comment", topicVersion.getEditComment(), true));
-				writer.write('\n' + XMLUtil.buildTag("text", topicVersion.getVersionContent(), textAttributes, true));
+				versionContent = this.convertToMediawikiNamespaces(topicVersion.getVersionContent());
+				writer.write('\n' + XMLUtil.buildTag("text", versionContent, textAttributes, true));
 				writer.write("\n</revision>");
 			}
 			writer.write("\n</page>");
@@ -413,5 +415,24 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 	private String parseJAMWikiTimestamp(Timestamp timestamp) {
 		SimpleDateFormat sdf = new SimpleDateFormat(ISO_8601_DATE_FORMAT);
 		return sdf.format(timestamp);
+	}
+
+	/**
+	 * Convert all namespaces names from JAMWiki to MediaWiki local representation.
+	 */
+	private String convertToMediawikiNamespaces(String text) {
+		String ret = text;
+		// convert all namespaces names from JAMWiki to MediaWiki local representation
+		String jamwikiNamespace;
+		String mediawikiNamespace;
+		for (Integer key : MEDIAWIKI_NAMESPACE_MAP.keySet()) {
+			// use the JAMWiki namespace if one exists
+			jamwikiNamespace = NAMESPACE_CONVERSION_MAP.get(key);
+			mediawikiNamespace = MEDIAWIKI_NAMESPACE_MAP.get(key);
+			if (jamwikiNamespace != null) {
+				ret = Pattern.compile("\\[\\[" + jamwikiNamespace + "\\:", Pattern.CASE_INSENSITIVE).matcher(ret).replaceAll("[[" + mediawikiNamespace + ":");
+			}
+		}
+		return ret;
 	}
 }
