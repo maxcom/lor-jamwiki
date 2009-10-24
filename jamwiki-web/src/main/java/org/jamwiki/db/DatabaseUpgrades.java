@@ -212,29 +212,33 @@ public class DatabaseUpgrades {
 			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
 		}
 		DatabaseConnection.commit(status);
-		try {
-			// perform a second transaction to populate the new columns.  this code is in its own
-			// transaction since if it fails the upgrade can still be considered successful.
-			status = DatabaseConnection.startTransaction(getTransactionDefinition());
-			Connection conn = DatabaseConnection.getConnection();
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_070_UPDATE_TOPIC_VERSION_CHARACTERS_CHANGED", conn);
-			messages.add(new WikiMessage("upgrade.message.db.column.populated", "characters_changed", "jam_topic_version"));
-		} catch (SQLException e) {
-			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
-			// do not throw this error and halt the upgrade process - populating the field
-			// is not required for existing systems.
-			logger.warning("Failure while populating characters_changed colum in jam_topic_version.  See UPGRADE.txt for instructions on how to manually complete this optional step.", e);
+		// for some reason HSQL hangs when populating the characters_changed column.  since this step is
+		// optional just skip it for HSQL.
+		String dbType = Environment.getValue(Environment.PROP_DB_TYPE);
+		if (!StringUtils.equals(dbType, DataHandler.DATA_HANDLER_HSQL)) {
 			try {
-				DatabaseConnection.rollbackOnException(status, e);
-			} catch (Exception ex) {
-				// ignore
+				// perform a second transaction to populate the new columns.  this code is in its own
+				// transaction since if it fails the upgrade can still be considered successful.
+				status = DatabaseConnection.startTransaction(getTransactionDefinition());
+				Connection conn = DatabaseConnection.getConnection();
+				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_070_UPDATE_TOPIC_VERSION_CHARACTERS_CHANGED", conn);
+				messages.add(new WikiMessage("upgrade.message.db.column.populated", "characters_changed", "jam_topic_version"));
+			} catch (SQLException e) {
+				messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
+				// do not throw this error and halt the upgrade process - populating the field
+				// is not required for existing systems.
+				logger.warning("Failure while populating characters_changed colum in jam_topic_version.  See UPGRADE.txt for instructions on how to manually complete this optional step.", e);
+				try {
+					DatabaseConnection.rollbackOnException(status, e);
+				} catch (Exception ex) {
+					// ignore
+				}
+				status = null; // so we do not try to commit
 			}
-			status = null; // so we do not try to commit
+			if (status != null) {
+				DatabaseConnection.commit(status);
+			}
 		}
-		if (status != null) {
-			DatabaseConnection.commit(status);
-		}
-		messages.add(new WikiMessage("upgrade.message.db.column.populated", "characters_changed", "jam_recent_change"));
 		return messages;
 	}
 
