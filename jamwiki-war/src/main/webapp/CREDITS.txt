@@ -75,4 +75,17 @@ JAMWiki was originally created as a fork of the Very Quick Wiki project
      Dutch:                 Martijn van der Kleijn (mvdkleijn)
      English:               Martijn van der Kleijn (mvdkleijn)
   Non-project contributors: Fabrizio Zellini, Fritz Kunstler, Steve Pugh
-  
+
+
+Non-Project Content
+===================
+
+The following files are included in JAMWiki but come from other projects and
+are released under free licenses:
+
+  Edit toolbar buttons
+    From http://commons.wikimedia.org/wiki/MediaWiki_edit_toolbar by
+    Yonidebest, Erasoft24, Olliminatore, and Rocket000 (GFDL 1.2+ / CC-SA 3.0)
+  /images/bullet.gif
+    From http://commons.wikimedia.org/wiki/File:Bullet.gif by AB-me and
+    Brian0918 (GFDL 1.2+ / CC-SA 3.0)

@@ -8,6 +8,8 @@ New Features:
     dates, and edit comments.
   * Special:Export can now export topics in Mediawiki format with full history,
     edit dates, and edit comments.
+  * Mediawiki-style logs for uploads, user creation, etc are now available via
+    the Special:Log page.
   * Add an optional "Show Changes" button during editing to display a diff
     view of the current edit.
   * Add diff highlighting for the portion of the line that changed (if any),
