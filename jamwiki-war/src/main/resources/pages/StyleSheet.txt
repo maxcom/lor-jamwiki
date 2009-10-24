@@ -102,6 +102,7 @@ dd {
 ul {
 	line-height: 1.5em;
 	list-style-type: square;
+	list-style-image: url(../images/bullet.gif);
 	margin: .3em 0 0 1.5em;
 	padding: 0;
 }
@@ -215,6 +216,7 @@ div.submenu {
 #nav-menu ul {
 	padding: 8px;
 	list-style-type: none;
+	list-style-image: none;
 	border-bottom: 1px solid #D8D8E7;
 	margin-left: 0;
 }
@@ -352,6 +354,7 @@ div.submenu {
 #user-menu li {
 	display: inline;
 	list-style-type: none;
+	list-style-image: none;
 	padding: 0 0.8em;
 	font-size: 90%;
 }
