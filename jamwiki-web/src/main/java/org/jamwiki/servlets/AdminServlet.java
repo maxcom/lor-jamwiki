@@ -464,7 +464,8 @@ public class AdminServlet extends JAMWikiServlet {
 				virtualWiki.setVirtualWikiId(Integer.valueOf(request.getParameter("virtualWikiId")));
 			}
 			virtualWiki.setName(request.getParameter("name"));
-			virtualWiki.setDefaultTopicName(Utilities.decodeTopicName(request.getParameter("defaultTopicName"), true));
+			String defaultTopicName = WikiUtil.getParameterFromRequest(request, "defaultTopicName", true);
+			virtualWiki.setDefaultTopicName(defaultTopicName);
 			WikiBase.getDataHandler().writeVirtualWiki(virtualWiki);
 			if (StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
 				WikiBase.getDataHandler().setupSpecialPages(request.getLocale(), user, virtualWiki);
