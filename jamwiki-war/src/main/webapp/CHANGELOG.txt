@@ -64,7 +64,13 @@ Bugfixes:
     to prevent errors on misconfigured systems.  Reported by jfbraz.
   * Validate that properties which must be numeric are set as numbers from
     Special:Admin.
-
+  * When deleting, undeleting, or moving a page, if the "delete associated
+    comments page" box was checked a NullPointerException would be generated
+    for topics with non-ASCII topic names.
+  * Template parameter names should ignore whitespace so that
+    {{template|name=foo}} is the same as {{template|  name = foo}}.  Reported
+    by floatingworld.
+  
 Translation Updates:
 
   * Updated Chinese translations (hfl).

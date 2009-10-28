@@ -242,10 +242,7 @@ public class TemplateTag {
 				continue;
 			}
 			String[] nameValue = this.tokenizeNameValue(token);
-			String name = nameValue[0];
-			if (name == null) {
-				name = Integer.toString(count);
-			}
+			String name = (StringUtils.isBlank(nameValue[0]) ? Integer.toString(count) : nameValue[0].trim());
 			String value = (nameValue[1] == null) ? null : nameValue[1].trim();
 			this.parameterValues.put(name, value);
 		}
