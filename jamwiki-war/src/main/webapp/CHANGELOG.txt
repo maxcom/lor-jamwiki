@@ -70,6 +70,8 @@ Bugfixes:
   * Template parameter names should ignore whitespace so that
     {{template|name=foo}} is the same as {{template|  name = foo}}.  Reported
     by floatingworld.
+  * Do not allow creation of topics that start with "/" or that are of the form
+    Namespace:/Topic.
   
 Translation Updates:
 

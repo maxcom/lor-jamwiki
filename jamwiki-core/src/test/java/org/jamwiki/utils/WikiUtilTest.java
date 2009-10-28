@@ -144,12 +144,77 @@ public class WikiUtilTest {
 	 *
 	 */
 	@Test
-	public void testValidateTopicNameThrowsWikiException() throws Throwable {
+	public void testValidateTopicNameThrowsWikiException1() throws Throwable {
 		try {
 			WikiUtil.validateTopicName("");
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertEquals("ex.getWikiMessage().getKey()", "common.exception.notopic", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateTopicNameThrowsWikiException2() throws Throwable {
+		try {
+			WikiUtil.validateTopicName("/Test");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("ex.getWikiMessage().getKey()", "common.exception.name", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateTopicNameThrowsWikiException3() throws Throwable {
+		try {
+			WikiUtil.validateTopicName("Comments:/Test");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("ex.getWikiMessage().getKey()", "common.exception.name", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateTopicNameThrowsWikiException4() throws Throwable {
+		try {
+			WikiUtil.validateTopicName("Comments: /Test");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("ex.getWikiMessage().getKey()", "common.exception.name", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateTopicNameThrowsWikiException5() throws Throwable {
+		try {
+			WikiUtil.validateTopicName("Comments: /Test");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("ex.getWikiMessage().getKey()", "common.exception.name", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateTopicNameThrowsWikiException6() throws Throwable {
+		try {
+			WikiUtil.validateTopicName("Test?");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("ex.getWikiMessage().getKey()", "common.exception.name", ex.getWikiMessage().getKey());
 		}
 	}
 
