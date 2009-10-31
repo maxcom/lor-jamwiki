@@ -38,6 +38,9 @@
 </ul>
 		</c:if>
 	</c:if>
+
+	<%@ include file="category-include.jsp" %>
+
 	<c:if test="${!empty categories}">
 <div id="category-index"><jamwiki:link value="Special:Categories"><fmt:message key="topic.categories" /></jamwiki:link>:
 		<c:forEach items="${categories}" var="category" varStatus="status">

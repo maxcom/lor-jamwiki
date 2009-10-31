@@ -34,13 +34,6 @@
 <jamwiki:enabled property="PROP_TOPIC_USE_PREVIEW">
 <c:if test="${!empty editPreview}">
 <div class="message red"><fmt:message key="edit.warning.preview" /></div>
-</c:if>
-</jamwiki:enabled>
-
-<%@ include file="category-include.jsp" %>
-
-<jamwiki:enabled property="PROP_TOPIC_USE_PREVIEW">
-<c:if test="${!empty editPreview}">
 <%@ include file="view-topic-include.jsp" %>
 </c:if>
 </jamwiki:enabled>

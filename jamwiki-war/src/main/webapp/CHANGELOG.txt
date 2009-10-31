@@ -72,7 +72,9 @@ Bugfixes:
     by floatingworld.
   * Do not allow creation of topics that start with "/" or that are of the form
     Namespace:/Topic.
-  
+  * Category topics displayed inconsistently in the topic view, print view and
+    editing preview view.
+
 Translation Updates:
 
   * Updated Chinese translations (hfl).
