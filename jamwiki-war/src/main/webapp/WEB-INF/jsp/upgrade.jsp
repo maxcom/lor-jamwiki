@@ -72,10 +72,26 @@ body, input, select {
 			<div id="upgrade-messages">
 				<c:if test="${!empty successMessage}"><h4><fmt:message key="${successMessage.key}"><fmt:param value="${successMessage.params[0]}" /></fmt:message></h4></c:if>
 				<c:if test="${!empty errors}">
-					<c:forEach items="${errors}" var="message"><div class="red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /><fmt:param value="${message.params[1]}" /></fmt:message></div></c:forEach>
+				<c:forEach items="${errors}" var="message">
+					<div class="red">
+						<fmt:message key="${message.key}">
+							<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
+							<fmt:param><c:if test="${message.paramsLength >= 1}">${message.params[0]}</c:if></fmt:param>
+							<fmt:param><c:if test="${message.paramsLength >= 2}">${message.params[1]}</c:if></fmt:param>
+						</fmt:message>
+					</div>
+				</c:forEach>
 				</c:if>
 				<c:if test="${!empty messages}">
-					<c:forEach items="${messages}" var="message"><div class="green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /><fmt:param value="${message.params[1]}" /></fmt:message></div></c:forEach>
+				<c:forEach items="${messages}" var="message">
+					<div class="green">
+						<fmt:message key="${message.key}">
+							<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
+							<fmt:param><c:if test="${message.paramsLength >= 1}">${message.params[0]}</c:if></fmt:param>
+							<fmt:param><c:if test="${message.paramsLength >= 2}">${message.params[1]}</c:if></fmt:param>
+						</fmt:message>
+					</div>
+				</c:forEach>
 				</c:if>
 			</div>
 		</td>
