@@ -789,11 +789,24 @@ public class ServletUtil {
 			} catch (DataAccessException e) {
 				throw new WikiException(new WikiMessage("error.unknown", e.getMessage()), e);
 			}
+			WikiUser wikiUser;
 			for (WikiFileVersion fileVersion : fileVersions) {
 				// update version urls to include web root path
 				String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + fileVersion.getUrl());
 				url = FilenameUtils.separatorsToUnix(url);
 				fileVersion.setUrl(url);
+				// make sure the authorDisplay field is equal to the login for non-anonymous uploads
+				if (fileVersion.getAuthorId() != null) {
+					try {
+						wikiUser = WikiBase.getDataHandler().lookupWikiUser(fileVersion.getAuthorId());
+					} catch (DataAccessException e) {
+						throw new WikiException(new WikiMessage("error.unknown", e.getMessage()), e);
+					}
+					if (wikiUser != null) {
+						// wikiUser should never be null unless the data in the database is somehow corrupt
+						fileVersion.setAuthorDisplay(wikiUser.getUsername());
+					}
+				}
 			}
 			next.addObject("fileVersions", fileVersions);
 			if (topic.getTopicType() == Topic.TYPE_IMAGE) {

@@ -74,6 +74,7 @@ Bugfixes:
     Namespace:/Topic.
   * Category topics displayed inconsistently in the topic view, print view and
     editing preview view.
+  * "File History" on Image: pages should also display author information.
 
 Translation Updates:
 
