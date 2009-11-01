@@ -21,7 +21,7 @@
 					text="${topic.caption.editlegend}"/>
 				<clickLink label="${usermenu.account}"/>
 				<verifyText description="Verify that text is contained in the page"
-					text="${common.login}"/>
+					text="${login.username}"/>
 				<setInputField description="Set password field oldPassword: nimda" htmlId="registerOldPassword" value="${jamwiki.admin.passwd}"/>
 				<setInputField description="Set password field newPassword: admin2" htmlId="registerNewPassword" value="${jamwiki.admin.passwd.new}"/>
 				<setInputField description="Set password field confirmPassword: admin2" name="confirmPassword" value="${jamwiki.admin.passwd.new}"/>
