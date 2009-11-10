@@ -80,6 +80,9 @@ followed by 0.6.3.
   JAMWiki 0.9.0
   =============
 
+  NOTE: The Lucene search engine has been updated in this release.  As a
+  result some users may want to rebuild their search index.
+
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.9.0".
 

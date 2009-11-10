@@ -3,6 +3,8 @@
 
 New Features:
 
+  * Upgrade to Lucene Search 2.9.1.
+
 Bugfixes:
 
 Translation Updates:
