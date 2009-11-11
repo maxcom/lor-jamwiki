@@ -3,6 +3,7 @@
 
 New Features:
 
+  * Support the #if: parser function.  Usage: {{#if: test | true | false}}.
   * Automatically populate sample JDBC values based on database type on the
     setup and admin pages.
   * Upgrade to Lucene Search 2.9.1.

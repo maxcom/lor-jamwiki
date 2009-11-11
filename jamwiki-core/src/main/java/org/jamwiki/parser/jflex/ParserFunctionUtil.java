@@ -38,6 +38,7 @@ public class ParserFunctionUtil {
 	private static final String PARSER_FUNCTION_ANCHOR_ENCODE = "anchorencode:";
 	private static final String PARSER_FUNCTION_FILE_PATH = "filepath:";
 	private static final String PARSER_FUNCTION_FULL_URL = "fullurl:";
+	private static final String PARSER_FUNCTION_IF = "#if:";
 	private static final String PARSER_FUNCTION_LOCAL_URL = "localurl:";
 	private static final String PARSER_FUNCTION_LOWER_CASE = "lc:";
 	private static final String PARSER_FUNCTION_LOWER_CASE_FIRST = "lcfirst:";
@@ -51,6 +52,7 @@ public class ParserFunctionUtil {
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_ANCHOR_ENCODE);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_FILE_PATH);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_FULL_URL);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_IF);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOCAL_URL);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOWER_CASE);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOWER_CASE_FIRST);
@@ -72,7 +74,7 @@ public class ParserFunctionUtil {
 		}
 		String parserFunction = name.substring(0, pos + 1).trim();
 		String parserFunctionArguments = name.substring(pos + 1).trim();
-		if (!PARSER_FUNCTIONS.contains(parserFunction) || StringUtils.isBlank(parserFunctionArguments)) {
+		if (!PARSER_FUNCTIONS.contains(parserFunction)) {
 			return null;
 		}
 		return new String[]{parserFunction, parserFunctionArguments};
@@ -93,6 +95,9 @@ public class ParserFunctionUtil {
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_FULL_URL)) {
 			return ParserFunctionUtil.parseFileUrl(parserInput, parserFunctionArgumentArray);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_IF)) {
+			return ParserFunctionUtil.parseIf(parserInput, parserFunctionArgumentArray);
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_LOCAL_URL)) {
 			return ParserFunctionUtil.parseLocalUrl(parserInput, parserFunctionArgumentArray);
@@ -143,6 +148,18 @@ public class ParserFunctionUtil {
 			result += "?" + parserFunctionArgumentArray[1];
 		}
 		return result;
+	}
+
+	/**
+	 * Parse the {{#if:}} parser function.  Usage: {{#if: test | true | false}}.
+	 */
+	private static String parseIf(ParserInput parserInput, String[] parserFunctionArgumentArray) throws DataAccessException {
+		boolean condition = ((parserFunctionArgumentArray.length >= 1) ? !StringUtils.isBlank(parserFunctionArgumentArray[0]) : false);
+		if (condition) {
+			return (parserFunctionArgumentArray.length >= 2) ? parserFunctionArgumentArray[1] : "";
+		} else {
+			return (parserFunctionArgumentArray.length >= 3) ? parserFunctionArgumentArray[2] : "";
+		}
 	}
 
 	/**
