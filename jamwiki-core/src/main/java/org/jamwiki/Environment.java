@@ -188,10 +188,10 @@ public class Environment {
 		defaults.setProperty(PROP_CACHE_MAX_AGE, "300");
 		defaults.setProperty(PROP_CACHE_MAX_IDLE_AGE, "150");
 		defaults.setProperty(PROP_CACHE_TOTAL_SIZE, "1000");
-		defaults.setProperty(PROP_DB_DRIVER, "org.postgresql.Driver");
+		defaults.setProperty(PROP_DB_DRIVER, "");
 		defaults.setProperty(PROP_DB_PASSWORD, "");
-		defaults.setProperty(PROP_DB_TYPE, DataHandler.DATA_HANDLER_ANSI);
-		defaults.setProperty(PROP_DB_URL, "jdbc:postgresql://localhost:5432/database");
+		defaults.setProperty(PROP_DB_TYPE, "");
+		defaults.setProperty(PROP_DB_URL, "");
 		defaults.setProperty(PROP_DB_USERNAME, "");
 		defaults.setProperty(PROP_DBCP_MAX_ACTIVE, "10");
 		defaults.setProperty(PROP_DBCP_MAX_IDLE, "3");
