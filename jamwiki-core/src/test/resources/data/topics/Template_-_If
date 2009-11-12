@@ -40,3 +40,9 @@ test
 13: {{#if: test | {{#if: | true2 | false2}} }}
 
 14: {{#if: test | {{#if: test2 | true2 | false2}} }}
+
+15: {{#if: | '''bold''' | ''italic'' }}
+
+16: {{#if: test | '''bold''' | ''italic'' }}
+
+17: {{#if: [[Template:If|Pipe Test]] | true | false }}
