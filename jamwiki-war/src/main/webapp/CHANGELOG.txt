@@ -10,6 +10,9 @@ New Features:
 
 Bugfixes:
 
+  * A link from a topic page to itself should be formatted as plain bold text,
+    not as a link.  Reported by floatingworld.
+
 Translation Updates:
 
 
