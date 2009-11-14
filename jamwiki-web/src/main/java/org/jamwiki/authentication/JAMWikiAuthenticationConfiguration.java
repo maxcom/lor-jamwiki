@@ -46,7 +46,7 @@ public class JAMWikiAuthenticationConfiguration {
 		}
 		if (JAMWikiAuthenticationConfiguration.defaultGroupRoles == null) {
 			try {
-				JAMWikiAuthenticationConfiguration.defaultGroupRoles = WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_REGISTERED_USER);
+				JAMWikiAuthenticationConfiguration.defaultGroupRoles = (RoleImpl[])WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_REGISTERED_USER);
 			} catch (DataAccessException e) {
 				// FIXME - without default roles bad things happen, so should this throw the
 				// error to the calling method?
@@ -66,7 +66,7 @@ public class JAMWikiAuthenticationConfiguration {
 		}
 		if (JAMWikiAuthenticationConfiguration.jamwikiAnonymousAuthorities == null) {
 			try {
-				JAMWikiAuthenticationConfiguration.jamwikiAnonymousAuthorities = WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_ANONYMOUS);
+				JAMWikiAuthenticationConfiguration.jamwikiAnonymousAuthorities = (RoleImpl[])WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_ANONYMOUS);
 			} catch (DataAccessException e) {
 				logger.severe("Failure while initializing JAMWiki anonymous user authorities", e);
 			}

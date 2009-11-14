@@ -32,6 +32,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
+import org.jamwiki.authentication.RoleImpl;
 import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.LogItem;
@@ -556,7 +557,7 @@ public class AnsiDataHandler implements DataHandler {
 			Role role = this.initRole(rs);
 			results.add(role);
 		}
-		return results.toArray(new Role[0]);
+		return results.toArray(new RoleImpl[0]);
 	}
 
 	/**
@@ -599,7 +600,7 @@ public class AnsiDataHandler implements DataHandler {
 			Role role = this.initRole(rs);
 			results.add(role);
 		}
-		return results.toArray(new Role[0]);
+		return results.toArray(new RoleImpl[0]);
 	}
 
 	/**
@@ -811,7 +812,7 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	private Role initRole(WikiResultSet rs) throws DataAccessException {
 		try {
-			Role role = new Role(rs.getString("role_name"));
+			Role role = new RoleImpl(rs.getString("role_name"));
 			role.setDescription(rs.getString("role_description"));
 			return role;
 		} catch (SQLException e) {

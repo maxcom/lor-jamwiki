@@ -25,8 +25,8 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.authentication.RoleImpl;
 import org.jamwiki.authentication.WikiUserDetails;
-import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiUser;
@@ -100,12 +100,12 @@ public abstract class JAMWikiServlet extends AbstractController {
 		String pageName = pageInfo.getTopicName();
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		if (pageInfo.getAdmin()) {
-			if (userDetails.hasRole(Role.ROLE_SYSADMIN)) {
+			if (userDetails.hasRole(RoleImpl.ROLE_SYSADMIN)) {
 				links.put("Special:Admin", new WikiMessage("tab.admin.configuration"));
 				links.put("Special:Maintenance", new WikiMessage("tab.admin.maintenance"));
 				links.put("Special:Roles", new WikiMessage("tab.admin.roles"));
 			}
-			if (userDetails.hasRole(Role.ROLE_TRANSLATE)) {
+			if (userDetails.hasRole(RoleImpl.ROLE_TRANSLATE)) {
 				links.put("Special:Translation", new WikiMessage("tab.admin.translations"));
 			}
 		} else if (pageInfo.getSpecial()) {
@@ -134,7 +134,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 					String moveLink = "Special:Move?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 					links.put(moveLink, new WikiMessage("tab.common.move"));
 				}
-				if (!userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
+				if (!userDetails.hasRole(RoleImpl.ROLE_ANONYMOUS)) {
 					Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
 					boolean watched = watchlist.containsTopic(pageName);
 					String watchlistLabel = (watched) ? "tab.common.unwatch" : "tab.common.watch";
@@ -148,7 +148,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 				}
 				String linkToLink = "Special:LinkTo?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 				links.put(linkToLink, new WikiMessage("tab.common.links"));
-				if (userDetails.hasRole(Role.ROLE_ADMIN)) {
+				if (userDetails.hasRole(RoleImpl.ROLE_ADMIN)) {
 					String manageLink = "Special:Manage?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 					links.put(manageLink, new WikiMessage("tab.common.manage"));
 				}
@@ -168,7 +168,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	private LinkedHashMap buildUserMenu(WikiPageInfo pageInfo) {
 		LinkedHashMap<String, WikiMessage> links = new LinkedHashMap<String, WikiMessage>();
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
-		if (userDetails.hasRole(Role.ROLE_ANONYMOUS) && !userDetails.hasRole(Role.ROLE_EMBEDDED)) {
+		if (userDetails.hasRole(RoleImpl.ROLE_ANONYMOUS) && !userDetails.hasRole(RoleImpl.ROLE_EMBEDDED)) {
 			// include the current page in the login link 
 			String loginLink = "Special:Login";
 			if (!StringUtils.startsWith(pageInfo.getTopicName(), "Special:Login")) {
@@ -177,7 +177,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			links.put(loginLink, new WikiMessage("common.login"));
 			links.put("Special:Account", new WikiMessage("usermenu.register"));
 		}
-		if (!userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
+		if (!userDetails.hasRole(RoleImpl.ROLE_ANONYMOUS)) {
 			WikiUser user = ServletUtil.currentWikiUser();
 			String userPage = NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername();
 			String userCommentsPage = NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername();
@@ -192,15 +192,15 @@ public abstract class JAMWikiServlet extends AbstractController {
 			links.put(userCommentsPage, new WikiMessage("usermenu.usercomments"));
 			links.put("Special:Watchlist", new WikiMessage("usermenu.watchlist"));
 		}
-		if (!userDetails.hasRole(Role.ROLE_ANONYMOUS) && !userDetails.hasRole(Role.ROLE_NO_ACCOUNT)) {
+		if (!userDetails.hasRole(RoleImpl.ROLE_ANONYMOUS) && !userDetails.hasRole(RoleImpl.ROLE_NO_ACCOUNT)) {
 			links.put("Special:Account", new WikiMessage("usermenu.account"));
 		}
-		if (!userDetails.hasRole(Role.ROLE_ANONYMOUS) && !userDetails.hasRole(Role.ROLE_EMBEDDED)) {
+		if (!userDetails.hasRole(RoleImpl.ROLE_ANONYMOUS) && !userDetails.hasRole(RoleImpl.ROLE_EMBEDDED)) {
 			links.put("Special:Logout", new WikiMessage("common.logout"));
 		}
-		if (userDetails.hasRole(Role.ROLE_SYSADMIN)) {
+		if (userDetails.hasRole(RoleImpl.ROLE_SYSADMIN)) {
 			links.put("Special:Admin", new WikiMessage("usermenu.admin"));
-		} else if (userDetails.hasRole(Role.ROLE_TRANSLATE)) {
+		} else if (userDetails.hasRole(RoleImpl.ROLE_TRANSLATE)) {
 			links.put("Special:Translation", new WikiMessage("tab.admin.translations"));
 		}
 		return links;
