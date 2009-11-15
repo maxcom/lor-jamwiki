@@ -339,7 +339,7 @@ public class LuceneSearchEngine implements SearchEngine {
 			IndexWriter writer = null;
 			// FIXME - move synchronization to the writer instance for this directory
 			try {
-				writer = new IndexWriter(directory, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+				writer = new IndexWriter(directory, new StandardAnalyzer(USE_LUCENE_VERSION), true, IndexWriter.MaxFieldLength.LIMITED);
 				List<String> topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName());
 				for (String topicName : topicNames) {
 					topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
