@@ -90,13 +90,12 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * @param links A list containing the topic names for all topics that link
 	 *  to the current topic.
 	 */
-	public synchronized void addToIndex(Topic topic, List<String> links) {
+	public void addToIndex(Topic topic, List<String> links) {
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
 		IndexWriter writer = null;
 		try {
 			FSDirectory directory = FSDirectory.open(getSearchIndexPath(virtualWiki));
-			// FIXME - move synchronization to the writer instance for this directory
 			try {
 				writer = new IndexWriter(directory, new StandardAnalyzer(USE_LUCENE_VERSION), false, IndexWriter.MaxFieldLength.LIMITED);
 				KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
@@ -169,14 +168,13 @@ public class LuceneSearchEngine implements SearchEngine {
 	 *
 	 * @param topic The topic object that is to be removed from the index.
 	 */
-	public synchronized void deleteFromIndex(Topic topic) {
+	public void deleteFromIndex(Topic topic) {
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
 		IndexWriter writer = null;
 		try {
 			FSDirectory directory = FSDirectory.open(getSearchIndexPath(virtualWiki));
 			// delete the current document
-			// FIXME - move synchronization to the writer instance for this directory
 			try {
 				writer = new IndexWriter(directory, new StandardAnalyzer(USE_LUCENE_VERSION), false, IndexWriter.MaxFieldLength.LIMITED);
 				writer.deleteDocuments(new Term(ITYPE_TOPIC_PLAIN, topicName));
@@ -328,7 +326,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 *
 	 * @throws Exception Thrown if any error occurs while re-indexing the Wiki.
 	 */
-	public synchronized void refreshIndex() throws Exception {
+	public void refreshIndex() throws Exception {
 		List<VirtualWiki> allWikis = WikiBase.getDataHandler().getVirtualWikiList();
 		Topic topic;
 		for (VirtualWiki virtualWiki : allWikis) {
@@ -337,7 +335,6 @@ public class LuceneSearchEngine implements SearchEngine {
 			FSDirectory directory = FSDirectory.open(this.getSearchIndexPath(virtualWiki.getName()));
 			KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
 			IndexWriter writer = null;
-			// FIXME - move synchronization to the writer instance for this directory
 			try {
 				writer = new IndexWriter(directory, new StandardAnalyzer(USE_LUCENE_VERSION), true, IndexWriter.MaxFieldLength.LIMITED);
 				List<String> topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName());
