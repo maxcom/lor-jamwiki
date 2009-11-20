@@ -19,7 +19,6 @@ package org.jamwiki.migrate;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-import org.jamwiki.migrate.MigrationException;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 
