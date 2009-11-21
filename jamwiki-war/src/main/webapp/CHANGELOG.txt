@@ -1,4 +1,29 @@
-﻿0.8.0
+﻿0.9.0
+=====
+
+New Features:
+
+  * Support the #if: parser function.  Usage: {{#if: test | true | false}}.
+  * Automatically populate sample JDBC values based on database type on the
+    setup and admin pages.
+  * Remove all dependencies on Spring from the jamwiki-core project by
+    converting org.jamwiki.model.Role to an interface and creating a new
+    org.jamwiki.authentication.RoleImpl class.
+  * Upgrade to Lucene Search 2.9.1.
+  * Upgrade to ehcache 1.7.0.
+
+Bugfixes:
+
+  * A link from a topic page to itself should be formatted as plain bold text,
+    not as a link.  Reported by floatingworld.
+  * XML imports of redirect topics were not redirecting properly.
+  * Leading whitespace should be trimmed from category names such as
+    "Category: Test" or "Category : Test".
+
+Translation Updates:
+
+
+0.8.0
 =====
 
 New Features:
@@ -8,6 +33,8 @@ New Features:
     dates, and edit comments.
   * Special:Export can now export topics in Mediawiki format with full history,
     edit dates, and edit comments.
+  * Mediawiki-style logs for uploads, user creation, etc are now available via
+    the Special:Log page.
   * Add an optional "Show Changes" button during editing to display a diff
     view of the current edit.
   * Add diff highlighting for the portion of the line that changed (if any),
@@ -62,6 +89,17 @@ Bugfixes:
     to prevent errors on misconfigured systems.  Reported by jfbraz.
   * Validate that properties which must be numeric are set as numbers from
     Special:Admin.
+  * When deleting, undeleting, or moving a page, if the "delete associated
+    comments page" box was checked a NullPointerException would be generated
+    for topics with non-ASCII topic names.
+  * Template parameter names should ignore whitespace so that
+    {{template|name=foo}} is the same as {{template|  name = foo}}.  Reported
+    by floatingworld.
+  * Do not allow creation of topics that start with "/" or that are of the form
+    Namespace:/Topic.
+  * Category topics displayed inconsistently in the topic view, print view and
+    editing preview view.
+  * "File History" on Image: pages should also display author information.
 
 Translation Updates:
 

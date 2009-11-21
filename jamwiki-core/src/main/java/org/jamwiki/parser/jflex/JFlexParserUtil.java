@@ -27,6 +27,7 @@ import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 
@@ -254,6 +255,52 @@ public class JFlexParserUtil {
 			parserInput.getTempParams().put(WikiReferenceTag.REFERENCES_PARAM, references);
 		}
 		return references;
+	}
+
+	/**
+	 * Parse a template string of the form "param1|param2|param3" into tokens
+	 * (param1, param2, and param3 in the example), handling such cases as
+	 * "param1|[[foo|bar]]|param3" correctly.
+	 */
+	protected static List<String> tokenizeParamString(String content) {
+		List<String> tokens = new ArrayList<String>();
+		int pos = 0;
+		int endPos = -1;
+		String substring = "";
+		String value = "";
+		while (pos < content.length()) {
+			substring = content.substring(pos);
+			endPos = -1;
+			if (substring.startsWith("{{{")) {
+				// template parameter
+				endPos = Utilities.findMatchingEndTag(content, pos, "{{{", "}}}");
+			} else if (substring.startsWith("{{")) {
+				// template
+				endPos = Utilities.findMatchingEndTag(content, pos, "{{", "}}");
+			} else if (substring.startsWith("[[")) {
+				// link
+				endPos = Utilities.findMatchingEndTag(content, pos, "[[", "]]");
+			} else if (substring.startsWith("{|")) {
+				// table
+				endPos = Utilities.findMatchingEndTag(content, pos, "{|", "|}");
+			} else if (content.charAt(pos) == '|') {
+				// new token
+				tokens.add(value);
+				value = "";
+				pos++;
+				continue;
+			}
+			if (endPos != -1) {
+				value += content.substring(pos, endPos);
+				pos = endPos;
+			} else {
+				value += content.charAt(pos);
+				pos++;
+			}
+		}
+		// add the last one
+		tokens.add(value);
+		return tokens;
 	}
 
 	/**

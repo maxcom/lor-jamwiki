@@ -33,15 +33,14 @@ import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
+import org.jamwiki.authentication.RoleImpl;
 import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.db.WikiDatabase;
-import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.SpamFilter;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -337,7 +336,7 @@ public class AdminServlet extends JAMWikiServlet {
 		Environment.saveProperties();
 		// re-initialize to reset database settings (if needed)
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
-		if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
+		if (userDetails.hasRole(RoleImpl.ROLE_ANONYMOUS)) {
 			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 		}
 		WikiUser user = ServletUtil.currentWikiUser();
@@ -464,7 +463,8 @@ public class AdminServlet extends JAMWikiServlet {
 				virtualWiki.setVirtualWikiId(Integer.valueOf(request.getParameter("virtualWikiId")));
 			}
 			virtualWiki.setName(request.getParameter("name"));
-			virtualWiki.setDefaultTopicName(Utilities.decodeTopicName(request.getParameter("defaultTopicName"), true));
+			String defaultTopicName = WikiUtil.getParameterFromRequest(request, "defaultTopicName", true);
+			virtualWiki.setDefaultTopicName(defaultTopicName);
 			WikiBase.getDataHandler().writeVirtualWiki(virtualWiki);
 			if (StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
 				WikiBase.getDataHandler().setupSpecialPages(request.getLocale(), user, virtualWiki);

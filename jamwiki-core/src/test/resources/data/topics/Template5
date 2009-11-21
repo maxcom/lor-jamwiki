@@ -1,0 +1,26 @@
+<!-- test whitespace around template arguments -->
+{{reprint    |content=test}}
+
+{{reprint|  content=test}}
+
+{{reprint|content   =test}}
+
+{{reprint|   content   =test}}
+
+{{reprint|content=    test}}
+
+{{reprint|content=test    }}
+
+{{reprint|content=    test    }}
+
+{{reprint|
+content=    test
+}}
+
+{{reprint
+| content=    test
+}}
+
+{{reprint
+| content=
+test}}

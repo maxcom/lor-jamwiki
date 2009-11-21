@@ -16,7 +16,6 @@
  */
 package org.jamwiki.parser.jflex;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -142,7 +141,7 @@ public class TemplateTag {
 	 * return the default value if it exists.
 	 */
 	private String parseParamDefaultValue(ParserInput parserInput, String raw) throws ParserException {
-		List<String> tokens = this.tokenizeParams(raw);
+		List<String> tokens = JFlexParserUtil.tokenizeParamString(raw);
 		if (tokens.size() < 2) {
 			return null;
 		}
@@ -159,13 +158,7 @@ public class TemplateTag {
 	 */
 	private String parseParamName(String raw) throws ParserException {
 		int pos = raw.indexOf('|');
-		String name = null;
-		if (pos != -1) {
-			name = raw.substring(0, pos);
-		} else {
-			name = raw;
-		}
-		name = name.trim();
+		String name = ((pos != -1) ? raw.substring(0, pos) : raw).trim();
 		if (StringUtils.isBlank(name)) {
 			// FIXME - no need for an exception
 			throw new ParserException("No parameter name specified");
@@ -230,7 +223,7 @@ public class TemplateTag {
 	 * parse the parameter names and values.
 	 */
 	private void parseTemplateParameterValues(ParserInput parserInput, String templateContent) throws ParserException {
-		List<String> tokens = this.tokenizeParams(templateContent);
+		List<String> tokens = JFlexParserUtil.tokenizeParamString(templateContent);
 		if (tokens.isEmpty()) {
 			throw new ParserException("No template name found in " + templateContent);
 		}
@@ -242,10 +235,7 @@ public class TemplateTag {
 				continue;
 			}
 			String[] nameValue = this.tokenizeNameValue(token);
-			String name = nameValue[0];
-			if (name == null) {
-				name = Integer.toString(count);
-			}
+			String name = (StringUtils.isBlank(nameValue[0]) ? Integer.toString(count) : nameValue[0].trim());
 			String value = (nameValue[1] == null) ? null : nameValue[1].trim();
 			this.parameterValues.put(name, value);
 		}
@@ -299,50 +289,5 @@ public class TemplateTag {
 			results[1] = m.group(2);
 		}
 		return results;
-	}
-
-	/**
-	 * Parse a template string of the form "param1|param2|param3" into
-	 * tokens (param1, param2, and param3 in the example).
-	 */
-	private List<String> tokenizeParams(String content) {
-		List<String> tokens = new ArrayList<String>();
-		int pos = 0;
-		int endPos = -1;
-		String substring = "";
-		String value = "";
-		while (pos < content.length()) {
-			substring = content.substring(pos);
-			endPos = -1;
-			if (substring.startsWith("{{{")) {
-				// template parameter
-				endPos = Utilities.findMatchingEndTag(content, pos, "{{{", "}}}");
-			} else if (substring.startsWith("{{")) {
-				// template
-				endPos = Utilities.findMatchingEndTag(content, pos, "{{", "}}");
-			} else if (substring.startsWith("[[")) {
-				// link
-				endPos = Utilities.findMatchingEndTag(content, pos, "[[", "]]");
-			} else if (substring.startsWith("{|")) {
-				// table
-				endPos = Utilities.findMatchingEndTag(content, pos, "{|", "|}");
-			} else if (content.charAt(pos) == '|') {
-				// new token
-				tokens.add(value);
-				value = "";
-				pos++;
-				continue;
-			}
-			if (endPos != -1) {
-				value += content.substring(pos, endPos);
-				pos = endPos;
-			} else {
-				value += content.charAt(pos);
-				pos++;
-			}
-		}
-		// add the last one
-		tokens.add(value);
-		return tokens;
 	}
 }

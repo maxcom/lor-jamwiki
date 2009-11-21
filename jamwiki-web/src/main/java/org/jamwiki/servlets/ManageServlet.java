@@ -25,7 +25,6 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
@@ -64,8 +63,8 @@ public class ManageServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		deletePage(request, next, pageInfo, topicName);
-		if (!StringUtils.isBlank(request.getParameter("manageCommentsPage"))) {
-			String manageCommentsPage = Utilities.decodeTopicName(request.getParameter("manageCommentsPage"), true);
+		String manageCommentsPage = WikiUtil.getParameterFromRequest(request, "manageCommentsPage", true);
+		if (!StringUtils.isBlank(manageCommentsPage)) {
 			if (WikiUtil.isCommentsPage(manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
 				deletePage(request, next, pageInfo, manageCommentsPage);
 			}
@@ -125,8 +124,8 @@ public class ManageServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		undeletePage(request, next, pageInfo, topicName);
-		if (!StringUtils.isBlank(request.getParameter("manageCommentsPage"))) {
-			String manageCommentsPage = Utilities.decodeTopicName(request.getParameter("manageCommentsPage"), true);
+		String manageCommentsPage = WikiUtil.getParameterFromRequest(request, "manageCommentsPage", true);
+		if (!StringUtils.isBlank(manageCommentsPage)) {
 			if (WikiUtil.isCommentsPage(manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
 				undeletePage(request, next, pageInfo, manageCommentsPage);
 			}

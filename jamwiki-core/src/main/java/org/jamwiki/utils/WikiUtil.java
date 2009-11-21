@@ -582,6 +582,9 @@ public class WikiUtil {
 		}
 		// make sure there are no instances of "//" in the URL
 		uri = uri.replaceAll("(/){2,}", "/");
+		if (uri.length() <= contextPath.length()) {
+			return null;
+		}
 		uri = uri.substring(contextPath.length() + 1);
 		int i = 0;
 		while (i < skipCount) {
@@ -711,8 +714,12 @@ public class WikiUtil {
 			throw new WikiException(new WikiMessage("common.exception.pseudotopic", name));
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
-		String namespace = wikiLink.getNamespace();
-		if (namespace != null && namespace.toLowerCase().trim().equals(NamespaceHandler.NAMESPACE_SPECIAL.toLowerCase())) {
+		String namespace = StringUtils.trimToNull(wikiLink.getNamespace());
+		String article = StringUtils.trimToNull(wikiLink.getArticle());
+		if (StringUtils.startsWith(namespace, "/") || StringUtils.startsWith(article, "/")) {
+			throw new WikiException(new WikiMessage("common.exception.name", name));
+		}
+		if (namespace != null && namespace.toLowerCase().equals(NamespaceHandler.NAMESPACE_SPECIAL.toLowerCase())) {
 			throw new WikiException(new WikiMessage("common.exception.name", name));
 		}
 		Matcher m = WikiUtil.INVALID_TOPIC_NAME_PATTERN.matcher(name);

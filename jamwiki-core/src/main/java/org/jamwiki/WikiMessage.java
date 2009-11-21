@@ -137,6 +137,15 @@ public class WikiMessage {
 	}
 
 	/**
+	 * Return the number of params assigned to this WikiMessage.
+	 *
+	 * @return The number of params assigned to this WikiMessage.
+	 */
+	public int getParamsLength() {
+		return ((this.params == null) ? 0 : this.params.length);
+	}
+
+	/**
 	 * This set method allows message parameters to be set without being escaped.
 	 * Note that this can be a gaping security hole as it opens the site up to
 	 * cross-site scripting attacks.  USE THIS METHOD ONLY IF YOU KNOW WHAT YOU ARE

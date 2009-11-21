@@ -242,7 +242,9 @@ public interface DataHandler {
 	List<RoleMap> getRoleMapByRole(String roleName) throws DataAccessException;
 
 	/**
-	 * Retrieve all roles assigned to a given group.
+	 * Retrieve all roles assigned to a given group.  Note that for an implementation
+	 * to work with Spring Security this method MUST return an array of {@link
+	 * org.jamwiki.authentication.RoleMapImpl} objects.
 	 *
 	 * @param groupName The name of the group for whom roles are being retrieved.
 	 * @return An array of Role objects for the given group, or an empty
@@ -263,7 +265,9 @@ public interface DataHandler {
 	List<RoleMap> getRoleMapGroups() throws DataAccessException;
 
 	/**
-	 * Retrieve all roles assigned to a given user.
+	 * Retrieve all roles assigned to a given user.  Note that for an implementation
+	 * to work with Spring Security this method MUST return an array of {@link
+	 * org.jamwiki.authentication.RoleMapImpl} objects.
 	 *
 	 * @param login The login of the user for whom roles are being retrieved.
 	 * @return An array of Role objects for the given user, or an empty

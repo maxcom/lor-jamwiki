@@ -57,10 +57,24 @@ function onRSS() {
 </div>
 
 <c:if test="${!empty message}">
-<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /><fmt:param value="${message.params[1]}" /></fmt:message></div>
+<div class="message red">
+	<fmt:message key="${message.key}">
+		<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
+		<fmt:param><c:if test="${message.paramsLength >= 1}">${message.params[0]}</c:if></fmt:param>
+		<fmt:param><c:if test="${message.paramsLength >= 2}">${message.params[1]}</c:if></fmt:param>
+	</fmt:message>
+</div>
 </c:if>
 <c:if test="${!empty errors}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /><fmt:param value="${message.params[1]}" /></fmt:message><br /></c:forEach></div>
+<div class="message red">
+	<c:forEach items="${errors}" var="message">
+		<fmt:message key="${message.key}">
+			<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
+			<fmt:param><c:if test="${message.paramsLength >= 1}">${message.params[0]}</c:if></fmt:param>
+			<fmt:param><c:if test="${message.paramsLength >= 2}">${message.params[1]}</c:if></fmt:param>
+		</fmt:message>
+	</c:forEach>
+</div>
 </c:if>
 
 <!-- BEGIN GENERAL SETTINGS -->

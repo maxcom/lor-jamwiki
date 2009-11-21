@@ -75,7 +75,7 @@ public class JAMWikiDaoImpl implements UserDetailsService {
 		if (!StringUtils.isBlank(username)) {
 			// FIXME - log error for blank username?  RegisterServlet will trigger that.
 			try {
-				userAuthorities = WikiBase.getDataHandler().getRoleMapUser(username);
+				userAuthorities = (RoleImpl[])WikiBase.getDataHandler().getRoleMapUser(username);
 			} catch (org.jamwiki.DataAccessException e) {
 				throw new DataAccessResourceFailureException("Unable to retrieve authorities for user: " + username, e);
 			}

@@ -22,14 +22,13 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.authentication.RoleImpl;
 import org.jamwiki.authentication.WikiUserDetails;
-import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -49,7 +48,7 @@ public class MoveServlet extends JAMWikiServlet {
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
-		if (!userDetails.hasRole(Role.ROLE_MOVE)) {
+		if (!userDetails.hasRole(RoleImpl.ROLE_MOVE)) {
 			WikiMessage messageObject = new WikiMessage("login.message.move");
 			return ServletUtil.viewLogin(request, pageInfo, WikiUtil.getTopicFromURI(request), messageObject);
 		}
@@ -76,8 +75,8 @@ public class MoveServlet extends JAMWikiServlet {
 		if (!movePage(request, next, pageInfo, topicName, moveDestination)) {
 			return;
 		}
-		if (!StringUtils.isBlank(request.getParameter("moveCommentsPage"))) {
-			String moveCommentsPage = Utilities.decodeTopicName(request.getParameter("moveCommentsPage"), true);
+		String moveCommentsPage = WikiUtil.getParameterFromRequest(request, "moveCommentsPage", true);
+		if (!StringUtils.isBlank(moveCommentsPage)) {
 			String commentsDestination = WikiUtil.extractCommentsLink(moveDestination);
 			if (WikiUtil.isCommentsPage(moveCommentsPage) && !moveCommentsPage.equals(topicName) && !commentsDestination.equals(moveDestination)) {
 				if (!movePage(request, next, pageInfo, moveCommentsPage, commentsDestination)) {
