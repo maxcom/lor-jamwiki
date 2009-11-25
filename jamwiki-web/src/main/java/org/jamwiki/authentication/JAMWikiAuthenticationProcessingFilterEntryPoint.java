@@ -18,8 +18,8 @@ package org.jamwiki.authentication;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.security.AuthenticationException;
-import org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 
@@ -31,7 +31,7 @@ import org.jamwiki.utils.WikiUtil;
  * future versions of Spring Security will add additional flexibility and this class
  * can be removed.
  */
-public class JAMWikiAuthenticationProcessingFilterEntryPoint extends AuthenticationProcessingFilterEntryPoint {
+public class JAMWikiAuthenticationProcessingFilterEntryPoint extends LoginUrlAuthenticationEntryPoint {
 
 	/** Standard logger. */
 	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiAuthenticationProcessingFilterEntryPoint.class.getName());

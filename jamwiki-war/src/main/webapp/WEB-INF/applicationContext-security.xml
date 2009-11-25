@@ -7,8 +7,8 @@
 <b:beans xmlns="http://www.springframework.org/schema/security"
     xmlns:b="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
 
 	<!--
 	This section contains the basic Spring Security configuration settings.  The intercept-url elements
@@ -46,10 +46,13 @@
 		<intercept-url pattern="/js/**" filters="none" />
 		<intercept-url pattern="/upload/**" filters="none" />
 		<intercept-url pattern="/**" access="ROLE_VIEW" />
-		<remember-me key="jam35Wiki" />
+		<remember-me key="jam35Wiki" services-alias="_rememberMeServices" />
 		<anonymous key="jam35Wiki" />
 		<!-- note that the JAMWiki LoginServlet will add the appropriate logout success URL to the request during logout -->
 		<logout />
+		<custom-filter position="FORM_LOGIN_FILTER" ref="authenticationProcessingFilter" />
+		<custom-filter after="EXCEPTION_TRANSLATION_FILTER" ref="exceptionTranslationFilter" />
+		<custom-filter before="EXCEPTION_TRANSLATION_FILTER" ref="jamwikiPostAuthenticationFilter" />
 	</http>
 
 	<!--
@@ -58,25 +61,26 @@
 	-->
 	<b:bean id="authenticationProcessingFilter" class="org.jamwiki.authentication.JAMWikiAuthenticationProcessingFilter">
 		<b:property name="authenticationManager" ref="authenticationManager" />
-		<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilter adds it -->
-		<b:property name="authenticationFailureUrl" value="/Special:Login?message=error.login" />
-		<!-- special hard-coded constant indicating default for virtual wiki -->
-		<b:property name="defaultTargetUrl" value="/DEFAULT_VIRTUAL_WIKI" />
+		<b:property name="authenticationFailureHandler" ref="authenticationFailureHandler" />
 		<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilter adds it -->
 		<b:property name="filterProcessesUrl" value="/j_spring_security_check" />
 		<b:property name="rememberMeServices" ref="_rememberMeServices" />
-		<custom-filter position="AUTHENTICATION_PROCESSING_FILTER" />
 	</b:bean>
-	<authentication-manager alias="authenticationManager" />
-
 	<!--
 	The authentication provider is the element which is passed user login attempts for verification.
 	-->
-	<authentication-provider user-service-ref="jamWikiAuthenticationDao">
-		<password-encoder ref="jamwikiPasswordEncoder" />
-	</authentication-provider>
+	<authentication-manager alias="authenticationManager">
+		<authentication-provider user-service-ref="jamWikiAuthenticationDao">
+			<password-encoder ref="jamwikiPasswordEncoder" />
+		</authentication-provider>
+	</authentication-manager>
 	<b:bean id="jamWikiAuthenticationDao" class="org.jamwiki.authentication.JAMWikiDaoImpl" />
 	<b:bean id="jamwikiPasswordEncoder" class="org.jamwiki.authentication.JAMWikiPasswordEncoder" />
+	<b:bean id="authenticationFailureHandler" class="org.jamwiki.authentication.JAMWikiAuthenticationFailureHandler">
+		<!-- do not include virtual wiki in the url, JAMWikiAuthenticationFailureHandler adds it -->
+		<b:property name="authenticationFailureUrl" value="/Special:Login?message=error.login" />
+	</b:bean>
+
 	<!--
 	LDAP.  See the Spring Security documentation for configuration information.  When using LDAP comment
 	out the authentication provider configuration above.
@@ -115,7 +119,6 @@
 	-->
 	<b:bean id="exceptionTranslationFilter" class="org.jamwiki.authentication.JAMWikiExceptionTranslationFilter">
 		<b:property name="errorMessageProvider" ref="errorMessageProvider" />
-		<custom-filter after="EXCEPTION_TRANSLATION_FILTER" />
 	</b:bean>
 
 	<!--
@@ -140,7 +143,6 @@
 	-->
 	<b:bean id="jamwikiPostAuthenticationFilter" class="org.jamwiki.authentication.JAMWikiPostAuthenticationFilter">
 		<b:property name="key" value="jam35Wiki" />
-		<custom-filter before="EXCEPTION_TRANSLATION_FILTER" />
 		<b:property name="useJAMWikiAnonymousRoles" value="true" />
 	</b:bean>
 

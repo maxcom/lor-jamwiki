@@ -545,7 +545,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Role[] getRoleMapGroup(String groupName) throws DataAccessException {
+	public List<Role> getRoleMapGroup(String groupName) throws DataAccessException {
 		List<Role> results = new ArrayList<Role>();
 		WikiResultSet rs = null;
 		try {
@@ -557,7 +557,7 @@ public class AnsiDataHandler implements DataHandler {
 			Role role = this.initRole(rs);
 			results.add(role);
 		}
-		return results.toArray(new RoleImpl[0]);
+		return results;
 	}
 
 	/**
@@ -588,7 +588,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Role[] getRoleMapUser(String login) throws DataAccessException {
+	public List<Role> getRoleMapUser(String login) throws DataAccessException {
 		List<Role> results = new ArrayList<Role>();
 		WikiResultSet rs = null;
 		try {
@@ -600,7 +600,7 @@ public class AnsiDataHandler implements DataHandler {
 			Role role = this.initRole(rs);
 			results.add(role);
 		}
-		return results.toArray(new RoleImpl[0]);
+		return results;
 	}
 
 	/**

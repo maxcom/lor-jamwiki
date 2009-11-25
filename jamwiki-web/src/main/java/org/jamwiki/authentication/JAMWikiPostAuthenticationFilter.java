@@ -17,6 +17,9 @@
 package org.jamwiki.authentication;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -30,11 +33,11 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.security.Authentication;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.providers.anonymous.AnonymousAuthenticationToken;
-import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * Provide processing of a successfully authenticated user.  This filter will examine
@@ -50,25 +53,6 @@ public class JAMWikiPostAuthenticationFilter implements Filter {
 	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiPostAuthenticationFilter.class.getName());
 	private String key;
 	private boolean useJAMWikiAnonymousRoles;
-
-	/**
-	 *
-	 */
-	private GrantedAuthority[] combineAuthorities(GrantedAuthority[] list1, GrantedAuthority[] list2) {
-		if (list1 == null || list2 == null) {
-			return null;
-		}
-		// add these roles to a single array of authorities
-		int authoritySize = list1.length + list2.length;
-		GrantedAuthority[] combinedAuthorities = new GrantedAuthority[authoritySize];
-		for (int i = 0; i < list1.length; i++) {
-			combinedAuthorities[i] = list1[i];
-		}
-		for (int i = 0; i < list2.length; i++) {
-			combinedAuthorities[i + list1.length] = list2[i];
-		}
-		return combinedAuthorities;
-	}
 
 	/**
 	 *
@@ -104,12 +88,14 @@ public class JAMWikiPostAuthenticationFilter implements Filter {
 			return;
 		}
 		// get arrays of existing Spring Security roles and JAMWiki anonymous user roles
-		GrantedAuthority[] springSecurityAnonymousAuthorities = auth.getAuthorities();
-		GrantedAuthority[] jamwikiAnonymousAuthorities = JAMWikiAuthenticationConfiguration.getJamwikiAnonymousAuthorities();
-		GrantedAuthority[] anonymousAuthorities = combineAuthorities(springSecurityAnonymousAuthorities, jamwikiAnonymousAuthorities);
-		if (anonymousAuthorities == null) {
+		Collection<GrantedAuthority> springSecurityAnonymousAuthorities = auth.getAuthorities();
+		Collection<GrantedAuthority> jamwikiAnonymousAuthorities = JAMWikiAuthenticationConfiguration.getJamwikiAnonymousAuthorities();
+		if (springSecurityAnonymousAuthorities == null || jamwikiAnonymousAuthorities == null) {
 			return;
 		}
+		List<GrantedAuthority> anonymousAuthorities = new ArrayList<GrantedAuthority>();
+		anonymousAuthorities.addAll(springSecurityAnonymousAuthorities);
+		anonymousAuthorities.addAll(jamwikiAnonymousAuthorities);
 		// replace the existing anonymous authentication object with the new authentication array
 		AnonymousAuthenticationToken jamwikiAuth = new AnonymousAuthenticationToken(this.getKey(), auth.getPrincipal(), anonymousAuthorities);
 		jamwikiAuth.setDetails(auth.getDetails());

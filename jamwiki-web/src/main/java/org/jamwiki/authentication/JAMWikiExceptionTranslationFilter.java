@@ -24,10 +24,9 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.security.AccessDeniedException;
-import org.springframework.security.AuthenticationException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.security.SpringSecurityException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 
@@ -65,14 +64,11 @@ public class JAMWikiExceptionTranslationFilter implements Filter, InitializingBe
 		}
 		try {
 			chain.doFilter(request, response);
-		} catch (SpringSecurityException ex) {
-			handleException(request, response, ex);
-			throw ex;
 		} catch (ServletException ex) {
-			if (ex.getRootCause() instanceof SpringSecurityException) {
-				handleException(request, response, (SpringSecurityException)ex.getRootCause());
-			}
-			throw ex;
+			handleException(request, response, (Exception)ex.getRootCause());
+		} catch (Exception ex) {
+			handleException(request, response, ex);
+			throw new ServletException(ex);
 		}
 	}
 
@@ -86,7 +82,7 @@ public class JAMWikiExceptionTranslationFilter implements Filter, InitializingBe
 	/**
 	 *
 	 */
-	private void handleException(ServletRequest servletRequest, ServletResponse servletResponse, SpringSecurityException exception) throws IOException, ServletException {
+	private boolean handleException(ServletRequest servletRequest, ServletResponse servletResponse, Exception exception) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest)servletRequest;
 		if (exception instanceof AccessDeniedException) {
 			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_ACCESS_DENIED_ERROR_KEY, this.getErrorMessageProvider().getErrorMessageKey(request));
@@ -94,10 +90,14 @@ public class JAMWikiExceptionTranslationFilter implements Filter, InitializingBe
 			String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 			String accessDeniedRedirectUri = "/" + virtualWiki + "/Special:Login";
 			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_ACCESS_DENIED_REDIRECT_URI, accessDeniedRedirectUri);
-		} else if (exception instanceof AuthenticationException) {
+			return true;
+		}
+		if (exception instanceof AuthenticationException) {
 			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_AUTHENTICATION_REQUIRED_KEY, this.getErrorMessageProvider().getErrorMessageKey(request));
 			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY, WikiUtil.getTopicFromURI(request));
+			return true;
 		}
+		return false;
 	}
 
 	/**

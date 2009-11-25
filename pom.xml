@@ -46,9 +46,15 @@
 	</licenses>
 	<properties>
 		<jamwiki.version>0.9.0-SNAPSHOT</jamwiki.version>
-		<dependency.spring.version>2.5.6</dependency.spring.version>
-		<dependency.spring.security.version>2.0.5.RELEASE</dependency.spring.security.version>
+		<dependency.spring.version>3.0.0.RC2</dependency.spring.version>
+		<dependency.spring.security.version>3.0.0.RC1</dependency.spring.security.version>
 	</properties>
+	<repositories>
+		<repository>
+			<id>Springframework milestone</id>
+			<url>http://maven.springframework.org/milestone</url>
+		</repository>
+	</repositories>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -74,9 +80,9 @@
 				<version>1.1.0</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.ldap</groupId>
-				<artifactId>spring-ldap</artifactId>
-				<version>1.2.1</version>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-config</artifactId>
+				<version>${dependency.spring.security.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.security</groupId>
@@ -85,7 +91,17 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-ldap</artifactId>
+				<version>${dependency.spring.security.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-taglibs</artifactId>
+				<version>${dependency.spring.security.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-web</artifactId>
 				<version>${dependency.spring.security.version}</version>
 			</dependency>
 			<dependency>

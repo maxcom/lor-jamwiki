@@ -252,7 +252,7 @@ public interface DataHandler {
 	 *  never return <code>null</code>.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	Role[] getRoleMapGroup(String groupName) throws DataAccessException;
+	List<Role> getRoleMapGroup(String groupName) throws DataAccessException;
 
 	/**
 	 * Retrieve a list of RoleMap objects for all groups.
@@ -270,12 +270,12 @@ public interface DataHandler {
 	 * org.jamwiki.authentication.RoleMapImpl} objects.
 	 *
 	 * @param login The login of the user for whom roles are being retrieved.
-	 * @return An array of Role objects for the given user, or an empty
+	 * @return A list of Role objects for the given user, or an empty
 	 *  array if no roles are assigned to the user.  This method will
 	 *  never return <code>null</code>.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	Role[] getRoleMapUser(String login) throws DataAccessException;
+	List<Role> getRoleMapUser(String login) throws DataAccessException;
 
 	/**
 	 * Retrieve a List of RecentChange objects representing a topic's history,

@@ -143,7 +143,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Role[] getRoleMapGroup(String groupName) throws DataAccessException {
+	public List<Role> getRoleMapGroup(String groupName) throws DataAccessException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -157,7 +157,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Role[] getRoleMapUser(String login) throws DataAccessException {
+	public List<Role> getRoleMapUser(String login) throws DataAccessException {
 		throw new UnsupportedOperationException();
 	}
 
