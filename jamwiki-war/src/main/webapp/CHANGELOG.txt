@@ -11,7 +11,7 @@ New Features:
     org.jamwiki.authentication.RoleImpl class.
   * Upgrade to Spring Framework 3.0.0.RC2.
   * Upgrade to Spring Security 3.0.0.RC1.
-  * Upgrade to Lucene Search 2.9.1.
+  * Upgrade to Lucene Search 3.0.0.
   * Upgrade to ehcache 1.7.0.
 
 Bugfixes:
