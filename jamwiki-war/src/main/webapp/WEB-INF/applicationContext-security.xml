@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- Default security configuration.
-   - User accounts and roles are handled by JAMWiki
--->
-
 <b:beans xmlns="http://www.springframework.org/schema/security"
     xmlns:b="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -46,12 +42,12 @@
 		<intercept-url pattern="/js/**" filters="none" />
 		<intercept-url pattern="/upload/**" filters="none" />
 		<intercept-url pattern="/**" access="ROLE_VIEW" />
+		<access-denied-handler ref="jamwikiAccessDeniedHandler" />
 		<remember-me key="jam35Wiki" services-alias="_rememberMeServices" />
 		<anonymous key="jam35Wiki" />
 		<!-- note that the JAMWiki LoginServlet will add the appropriate logout success URL to the request during logout -->
 		<logout />
 		<custom-filter position="FORM_LOGIN_FILTER" ref="authenticationProcessingFilter" />
-		<custom-filter after="EXCEPTION_TRANSLATION_FILTER" ref="exceptionTranslationFilter" />
 		<custom-filter before="EXCEPTION_TRANSLATION_FILTER" ref="jamwikiPostAuthenticationFilter" />
 	</http>
 
@@ -98,7 +94,7 @@
 	access to a page.  For example, a different error is shown to users who are not allowed to edit
 	a page than to those who are denied access to the admin pages.
 	-->
-	<b:bean id="errorMessageProvider" class="org.jamwiki.authentication.JAMWikiErrorMessageProvider">
+	<b:bean id="jamwikiErrorMessageProvider" class="org.jamwiki.authentication.JAMWikiErrorMessageProvider">
 		<b:property name="urlPatterns">
 			<b:map>
 				<b:entry key="/**/Special:Admin" value="login.message.admin" />
@@ -114,11 +110,10 @@
 	</b:bean>
 
 	<!--
-	This method executes after the default Spring exception translation filter and adds any
-	message from the errorMessageProvider to the redirect.
+	This method adds any message from the errorMessageProvider to the redirect.
 	-->
-	<b:bean id="exceptionTranslationFilter" class="org.jamwiki.authentication.JAMWikiExceptionTranslationFilter">
-		<b:property name="errorMessageProvider" ref="errorMessageProvider" />
+	<b:bean id="jamwikiAccessDeniedHandler" class="org.jamwiki.authentication.JAMWikiAccessDeniedHandler">
+		<b:property name="errorMessageProvider" ref="jamwikiErrorMessageProvider" />
 	</b:bean>
 
 	<!--
@@ -129,6 +124,7 @@
 		<b:property name="loginFormUrl" value="/Special:Login" />
 		<!-- a PortMapper has to be configured if this is true and we are not using default ports -->
 		<b:property name="forceHttps" value="false" />
+		<b:property name="errorMessageProvider" ref="jamwikiErrorMessageProvider" />
 	</b:bean>
 
 	<!--

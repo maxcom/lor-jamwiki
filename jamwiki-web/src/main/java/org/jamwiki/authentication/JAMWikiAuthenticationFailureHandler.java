@@ -26,12 +26,12 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
 /**
  * This class is a hack implemented to support virtual wikis and Spring Security.
  */
-public class JAMWikiAuthenticationFailureHandler implements AuthenticationFailureHandler {
+public class JAMWikiAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
 	/** Standard logger. */
 	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiAuthenticationFailureHandler.class.getName());
@@ -59,7 +59,8 @@ public class JAMWikiAuthenticationFailureHandler implements AuthenticationFailur
 		if (StringUtils.isBlank(virtualWikiName)) {
 			virtualWikiName = WikiBase.DEFAULT_VWIKI;
 		}
-		String targetUrl = request.getContextPath() + "/" + virtualWikiName + this.getAuthenticationFailureUrl();
+		String targetUrl = "/" + virtualWikiName + this.getAuthenticationFailureUrl();
+		// set the original target in the request for later use
 		String target = request.getParameter(JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_TARGET_URL_FIELD_NAME);
 		if (!StringUtils.isBlank(target)) {
 			targetUrl += (targetUrl.indexOf('?') == -1) ? "?" : "&";
@@ -70,6 +71,7 @@ public class JAMWikiAuthenticationFailureHandler implements AuthenticationFailur
 				throw new IllegalStateException("Unsupporting encoding UTF-8");
 			}
 		}
-		response.sendRedirect(targetUrl);
+		this.setDefaultFailureUrl(targetUrl);
+		super.onAuthenticationFailure(request, response, exception);
 	}
 }

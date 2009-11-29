@@ -49,8 +49,6 @@ public interface JAMWikiAuthenticationConstants {
 	public static final String JAMWIKI_ACCESS_DENIED_ERROR_KEY = "JAMWIKI_403_ERROR_KEY";
 	/** Key used to store access denied redirection URL in the session. */
 	public static final String JAMWIKI_ACCESS_DENIED_URI_KEY = "JAMWIKI_403_URI_KEY";
-	/** Key used to indicate what URL to redirect to after an access denied error. */
-	public static final String JAMWIKI_ACCESS_DENIED_REDIRECT_URI = "JAMWIKI_403_REDIRECT_URI";
 	/** Key used to store authentication required message key in the session. */
 	public static final String JAMWIKI_AUTHENTICATION_REQUIRED_KEY = "JAMWIKI_AUTHENTICATION_REQUIRED_KEY";
 	/** Key used to store authentication required redirection URL in the session. */
