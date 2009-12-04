@@ -13,6 +13,7 @@ New Features:
   * Upgrade to Spring Security 3.0.0.RC1.
   * Upgrade to Lucene Search 3.0.0.
   * Upgrade to ehcache 1.7.0.
+  * Upgrade to commons-pool 1.5.4.
 
 Bugfixes:
 
