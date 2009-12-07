@@ -1923,8 +1923,7 @@ public class AnsiDataHandler implements DataHandler {
 				}
 			}
 			if (links != null) {
-				WikiBase.getSearchEngine().deleteFromIndex(topic);
-				WikiBase.getSearchEngine().addToIndex(topic, links);
+				WikiBase.getSearchEngine().updateInIndex(topic, links);
 			}
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
