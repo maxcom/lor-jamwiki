@@ -1875,6 +1875,7 @@ public class AnsiDataHandler implements DataHandler {
 	 *  searchable metadata.
 	 */
 	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links) throws DataAccessException, WikiException {
+		long start = System.currentTimeMillis();
 		TransactionStatus status = null;
 		try {
 			status = DatabaseConnection.startTransaction();
@@ -1884,9 +1885,8 @@ public class AnsiDataHandler implements DataHandler {
 			Connection conn = DatabaseConnection.getConnection();
 			WikiUtil.validateTopicName(topic.getName());
 			if (topic.getTopicId() <= 0) {
+				// create the initial topic record
 				addTopic(topic, conn);
-			} else {
-				updateTopic(topic, conn);
 			}
 			if (topicVersion != null) {
 				if (topicVersion.getPreviousTopicVersionId() == null && topic.getCurrentVersionId() != null) {
@@ -1897,6 +1897,8 @@ public class AnsiDataHandler implements DataHandler {
 				// write version
 				addTopicVersion(topicVersion, conn);
 				topic.setCurrentVersionId(topicVersion.getTopicVersionId());
+				// update the topic AFTER creating the version so that the current_topic_version_id parameter is set properly
+				this.updateTopic(topic, conn);
 				String authorName = this.authorName(topicVersion.getAuthorId(), topicVersion.getAuthorDisplay());
 				LogItem logItem = LogItem.initLogItem(topic, topicVersion, authorName);
 				RecentChange change = null;
@@ -1925,6 +1927,7 @@ public class AnsiDataHandler implements DataHandler {
 			if (links != null) {
 				WikiBase.getSearchEngine().updateInIndex(topic, links);
 			}
+			logger.fine("Wrote topic " + topic.getName() + " with params [categories is null: " + (categories == null) + "] / [links is null: " + (links == null) + "] in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
