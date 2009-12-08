@@ -1887,6 +1887,10 @@ public class AnsiDataHandler implements DataHandler {
 			if (topic.getTopicId() <= 0) {
 				// create the initial topic record
 				addTopic(topic, conn);
+			} else if (topicVersion == null) {
+				// if there is no version record then update the topic.  if there is a version
+				// record then the topic will be updated AFTER the version record is created.
+				this.updateTopic(topic, conn);
 			}
 			if (topicVersion != null) {
 				if (topicVersion.getPreviousTopicVersionId() == null && topic.getCurrentVersionId() != null) {
