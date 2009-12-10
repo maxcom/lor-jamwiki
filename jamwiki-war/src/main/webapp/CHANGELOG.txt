@@ -9,8 +9,9 @@ New Features:
   * Remove all dependencies on Spring from the jamwiki-core project by
     converting org.jamwiki.model.Role to an interface and creating a new
     org.jamwiki.authentication.RoleImpl class.
-  * Optimize several search engine functions, including a signficant speedup
-    during topic add/update by not re-optimizing the entire search index
+  * Topic add/update is now significantly faster due to query refactoring
+    and changes so that the search index is not re-optimized after every
+    add/update.
     after every update.
   * Upgrade to Spring Framework 3.0.0.RC2.
   * Upgrade to Spring Security 3.0.0.RC1.

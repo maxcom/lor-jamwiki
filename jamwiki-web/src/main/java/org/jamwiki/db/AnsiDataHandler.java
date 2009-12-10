@@ -78,11 +78,11 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private void addCategory(Category category, Connection conn) throws DataAccessException, WikiException {
+	private void addCategory(Category category, int topicId, Connection conn) throws DataAccessException, WikiException {
 		int virtualWikiId = this.lookupVirtualWikiId(category.getVirtualWiki());
 		this.validateCategory(category);
 		try {
-			this.queryHandler().insertCategory(category, virtualWikiId, conn);
+			this.queryHandler().insertCategory(category, virtualWikiId, topicId, conn);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
@@ -1919,13 +1919,15 @@ public class AnsiDataHandler implements DataHandler {
 			if (categories != null) {
 				// add / remove categories associated with the topic
 				this.deleteTopicCategories(topic, conn);
-				for (String categoryName : categories.keySet()) {
-					Category category = new Category();
-					category.setName(categoryName);
-					category.setSortKey(categories.get(categoryName));
-					category.setVirtualWiki(topic.getVirtualWiki());
-					category.setChildTopicName(topic.getName());
-					this.addCategory(category, conn);
+				if (topic.getDeleteDate() == null) {
+					for (String categoryName : categories.keySet()) {
+						Category category = new Category();
+						category.setName(categoryName);
+						category.setSortKey(categories.get(categoryName));
+						category.setVirtualWiki(topic.getVirtualWiki());
+						category.setChildTopicName(topic.getName());
+						this.addCategory(category, topic.getTopicId(), conn);
+					}
 				}
 			}
 			if (links != null) {

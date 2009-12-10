@@ -747,23 +747,14 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertCategory(Category category, int virtualWikiId, Connection conn) throws SQLException {
-		// FIXME - clean this code up
-		WikiResultSet rs = this.lookupTopic(virtualWikiId, category.getChildTopicName(), false, conn);
-		int topicId = -1;
-		while (rs.next()) {
-			if (rs.getTimestamp("delete_date") == null) {
-				topicId = rs.getInt("topic_id");
-				break;
-			}
-		}
+	public void insertCategory(Category category, int virtualWikiId, int topicId, Connection conn) throws SQLException {
 		if (topicId == -1) {
 			throw new SQLException("Unable to find child topic " + category.getChildTopicName() + " for category " + category.getName());
 		}
 		PreparedStatement stmt = null;
 		try {
 			stmt = conn.prepareStatement(STATEMENT_INSERT_CATEGORY);
-			stmt.setInt(1, rs.getInt("topic_id"));
+			stmt.setInt(1, topicId);
 			stmt.setString(2, category.getName());
 			stmt.setString(3, category.getSortKey());
 			stmt.executeUpdate();
