@@ -25,6 +25,7 @@ Bugfixes:
   * XML imports of redirect topics were not redirecting properly.
   * Leading whitespace should be trimmed from category names such as
     "Category: Test" or "Category : Test".
+  * Fix non-fatal MySQL upgrade warnings.  Reported by an anonymous user.
 
 Translation Updates:
 
