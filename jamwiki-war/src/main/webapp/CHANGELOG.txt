@@ -27,6 +27,8 @@ Bugfixes:
   * Leading whitespace should be trimmed from category names such as
     "Category: Test" or "Category : Test".
   * Fix non-fatal MySQL upgrade warnings.  Reported by an anonymous user.
+  * Fix code that could potentially leave database connections open during
+    authentication.
 
 Translation Updates:
 
