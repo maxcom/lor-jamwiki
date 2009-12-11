@@ -107,7 +107,7 @@ public class UploadServlet extends JAMWikiServlet {
 				throw new WikiException(new WikiMessage("upload.error.filename"));
 			}
 			filename = ImageUtil.sanitizeFilename(filename);
-			url = ImageUtil.generateFileUrl(filename);
+			url = ImageUtil.generateFileUrl(filename, null);
 			if (!ImageUtil.isFileTypeAllowed(filename)) {
 				String extension = FilenameUtils.getExtension(filename);
 				throw new WikiException(new WikiMessage("upload.error.filetype", extension));
@@ -134,7 +134,7 @@ public class UploadServlet extends JAMWikiServlet {
 		if (!StringUtils.isEmpty(destinationFilename)) {
 			// rename the uploaded file if a destination file name was specified
 			filename = ImageUtil.sanitizeFilename(destinationFilename);
-			url = ImageUtil.generateFileUrl(filename);
+			url = ImageUtil.generateFileUrl(filename, null);
 			File renamedFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), url);
 			if (!uploadedFile.renameTo(renamedFile)) {
 				throw new WikiException(new WikiMessage("upload.error.filerename", destinationFilename));

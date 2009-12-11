@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -106,13 +107,16 @@ public class ImageUtil {
 	/**
 	 * Given a filename, generate the URL to use to store the file on the filesystem.
 	 */
-	public static String generateFileUrl(String filename) throws WikiException {
+	public static String generateFileUrl(String filename, Date date) throws WikiException {
 		String url = filename;
 		if (StringUtils.isBlank(url)) {
 			throw new WikiException(new WikiMessage("upload.error.filename"));
 		}
 		// file is appended with a timestamp of DDHHMMSS
 		GregorianCalendar cal = new GregorianCalendar();
+		if (date != null) {
+			cal.setTime(date);
+		}
 		String day = Integer.toString(cal.get(Calendar.DAY_OF_MONTH));
 		if (day.length() == 1) {
 			day = "0" + day;
@@ -425,7 +429,7 @@ public class ImageUtil {
 		wikiFileVersion.setUploadComment(topic.getTopicContent());
 		wikiFileVersion.setAuthorDisplay(ipAddress);
 		Integer authorId = null;
-		if (user.getUserId() > 0) {
+		if (user != null && user.getUserId() > 0) {
 			authorId = user.getUserId();
 		}
 		wikiFileVersion.setAuthorId(authorId);
