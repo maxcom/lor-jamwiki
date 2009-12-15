@@ -1,0 +1,6 @@
+<!-- test parsing of categories -->
+[[:Category:Test]]
+
+[[:Category: Test]]
+
+[[:Category : Test]]

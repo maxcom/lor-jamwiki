@@ -17,8 +17,9 @@
 package org.jamwiki.migrate;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -155,15 +156,26 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 		// For big file parsing
 		System.setProperty("entityExpansionLimit", "1000000");
 		SAXParserFactory factory = SAXParserFactory.newInstance();
+		FileInputStream fis = null;
 		try {
+			// at least in 1.5, the SaxParser has a bug where files with names like "%25s"
+			// will be read as "%s", generating FileNotFound exceptions.  To work around this
+			// issue use a FileInputStream rather than just SAXParser.parse(file, handler)
+			fis = new FileInputStream(file);
 			SAXParser saxParser = factory.newSAXParser();
-			saxParser.parse(file, this);
+			saxParser.parse(fis, this);
 		} catch (ParserConfigurationException e) {
 			throw new MigrationException(e);
 		} catch (IOException e) {
 			throw new MigrationException(e);
 		} catch (SAXException e) {
 			throw new MigrationException(e);
+		} finally {
+			if (fis != null) {
+				try {
+					fis.close();
+				} catch (IOException ignore) {}
+			}
 		}
 	}
 

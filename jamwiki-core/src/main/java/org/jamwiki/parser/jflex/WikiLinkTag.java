@@ -83,6 +83,10 @@ public class WikiLinkTag {
 			} else {
 				wikiLink.setText(JFlexParserUtil.parseFragment(parserInput, wikiLink.getText(), mode));
 			}
+			if (StringUtils.equals(wikiLink.getDestination(), parserInput.getTopicName())) {
+				// same page, bold the text and return
+				return "<b>" + (StringUtils.isBlank(wikiLink.getText()) ? wikiLink.getDestination() : wikiLink.getText()) + "</b>";
+			}
 			// do not escape text html - already done by parser
 			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, wikiLink, wikiLink.getText(), null, null, false);
 		} catch (DataAccessException e) {

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
@@ -156,6 +157,11 @@ public class MigrationUtil {
 					parserOutput = ParserUtil.parserOutput(topicVersion.getVersionContent(), virtualWiki, topic.getName());
 				} catch (ParserException e) {
 					throw new MigrationException("Failure while parsing topic version of topic: " + topic.getName(), e);
+				}
+				if (!StringUtils.isBlank(parserOutput.getRedirect())) {
+					// set up a redirect
+					topic.setRedirectTo(parserOutput.getRedirect());
+					topic.setTopicType(Topic.TYPE_REDIRECT);
 				}
 				WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks());
 			} catch (DataAccessException e) {
