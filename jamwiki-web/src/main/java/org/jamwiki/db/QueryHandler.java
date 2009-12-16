@@ -429,11 +429,12 @@ public interface QueryHandler {
 	 *
 	 * @param category The category record that is being created.
 	 * @param virtualWikiId The virtual wiki id for the record that is being added.
+	 * @param topicId The ID of the topic record to which this category is being added.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	void insertCategory(Category category, int virtualWikiId, Connection conn) throws SQLException;
+	void insertCategory(Category category, int virtualWikiId, int topicId, Connection conn) throws SQLException;
 
 	/**
 	 * Add a new authority for a specified group.  The group must not already have

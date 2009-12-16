@@ -9,8 +9,15 @@ New Features:
   * Remove all dependencies on Spring from the jamwiki-core project by
     converting org.jamwiki.model.Role to an interface and creating a new
     org.jamwiki.authentication.RoleImpl class.
-  * Upgrade to Lucene Search 2.9.1.
+  * Topic add/update is now significantly faster due to query refactoring
+    and changes so that the search index is not re-optimized after every
+    add/update.
+    after every update.
+  * Upgrade to Spring Framework 3.0.0.RC2.
+  * Upgrade to Spring Security 3.0.0.RC1.
+  * Upgrade to Lucene Search 3.0.0.
   * Upgrade to ehcache 1.7.0.
+  * Upgrade to commons-pool 1.5.4.
 
 Bugfixes:
 
@@ -19,8 +26,13 @@ Bugfixes:
   * XML imports of redirect topics were not redirecting properly.
   * Leading whitespace should be trimmed from category names such as
     "Category: Test" or "Category : Test".
+  * Fix non-fatal MySQL upgrade warnings.  Reported by an anonymous user.
+  * Fix code that could potentially leave database connections open during
+    authentication.
 
 Translation Updates:
+
+  * Updated Polish translations (dlpa).
 
 
 0.8.0

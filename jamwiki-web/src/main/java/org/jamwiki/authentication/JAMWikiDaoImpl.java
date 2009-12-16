@@ -16,16 +16,19 @@
  */
 package org.jamwiki.authentication;
 
-import org.apache.commons.lang.ArrayUtils;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.Role;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.userdetails.UserDetails;
-import org.springframework.security.userdetails.UserDetailsService;
-import org.springframework.security.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * Loads user data from JAMWiki database.
@@ -54,32 +57,36 @@ public class JAMWikiDaoImpl implements UserDetailsService {
 		if (encryptedPassword == null) {
 			throw new UsernameNotFoundException("Failure retrieving user information for " + username);
 		}
-		GrantedAuthority[] authorities = this.retrieveUserAuthorities(username);
+		Collection<GrantedAuthority> authorities = this.retrieveUserAuthorities(username);
 		return new WikiUserDetails(username, encryptedPassword, true, true, true, true, authorities);
 	}
 
 	/**
 	 *
 	 */
-	private GrantedAuthority[] retrieveUserAuthorities(String username) throws DataAccessException {
+	private Collection<GrantedAuthority> retrieveUserAuthorities(String username) throws DataAccessException {
 		if (WikiUtil.isFirstUse() || WikiUtil.isUpgrade()) {
-			return new GrantedAuthority[0];
+			return new ArrayList<GrantedAuthority>();
 		}
 		// add authorities given to all users
-		GrantedAuthority[] groupAuthorities = new GrantedAuthority[0];
+		Collection<GrantedAuthority> results = new ArrayList<GrantedAuthority>();
 		if (JAMWikiAuthenticationConfiguration.getDefaultGroupRoles() != null) {
-			groupAuthorities = JAMWikiAuthenticationConfiguration.getDefaultGroupRoles();
+			results.addAll(JAMWikiAuthenticationConfiguration.getDefaultGroupRoles());
 		}
 		// add authorities specific to this user
-		GrantedAuthority[] userAuthorities = new GrantedAuthority[0];
 		if (!StringUtils.isBlank(username)) {
 			// FIXME - log error for blank username?  RegisterServlet will trigger that.
 			try {
-				userAuthorities = (RoleImpl[])WikiBase.getDataHandler().getRoleMapUser(username);
+				List<Role> roles = WikiBase.getDataHandler().getRoleMapUser(username);
+				if (roles != null) {
+					for (Role role : roles) {
+						results.add((RoleImpl)role);
+					}
+				}
 			} catch (org.jamwiki.DataAccessException e) {
 				throw new DataAccessResourceFailureException("Unable to retrieve authorities for user: " + username, e);
 			}
 		}
-		return (GrantedAuthority[])ArrayUtils.addAll(groupAuthorities, userAuthorities);
+		return results;
 	}
 }

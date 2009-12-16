@@ -23,11 +23,28 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 import javax.imageio.ImageIO;
 import net.sf.ehcache.Element;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
+import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiImage;
 import org.jamwiki.model.WikiFile;
+import org.jamwiki.model.WikiFileVersion;
+import org.jamwiki.model.WikiUser;
+import org.jamwiki.parser.ParserException;
+import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserUtil;
 
 /**
  * Utility methods for readding images from disk, saving images to disk,
@@ -88,6 +105,59 @@ public class ImageUtil {
 	}
 
 	/**
+	 * Given a filename, generate the URL to use to store the file on the filesystem.
+	 */
+	public static String generateFileUrl(String filename, Date date) throws WikiException {
+		String url = filename;
+		if (StringUtils.isBlank(url)) {
+			throw new WikiException(new WikiMessage("upload.error.filename"));
+		}
+		// file is appended with a timestamp of DDHHMMSS
+		GregorianCalendar cal = new GregorianCalendar();
+		if (date != null) {
+			cal.setTime(date);
+		}
+		String day = Integer.toString(cal.get(Calendar.DAY_OF_MONTH));
+		if (day.length() == 1) {
+			day = "0" + day;
+		}
+		String hour = Integer.toString(cal.get(Calendar.HOUR_OF_DAY));
+		if (hour.length() == 1) {
+			hour = "0" + hour;
+		}
+		String minute = Integer.toString(cal.get(Calendar.MINUTE));
+		if (minute.length() == 1) {
+			minute = "0" + minute;
+		}
+		String second = Integer.toString(cal.get(Calendar.SECOND));
+		if (second.length() == 1) {
+			second = "0" + second;
+		}
+		String suffix = "-" + day + hour + minute + second;
+		int pos = url.lastIndexOf('.');
+		url = (pos == -1) ? url + suffix : url.substring(0, pos) + suffix + url.substring(pos);
+		// now pre-pend the file system directory
+		// subdirectory is composed of year/month
+		String year = Integer.toString(cal.get(Calendar.YEAR));
+		String month = Integer.toString(cal.get(Calendar.MONTH) + 1);
+		String subdirectory = "/" + year + "/" + month;
+		File directory = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), subdirectory);
+		if (!directory.exists() && !directory.mkdirs()) {
+			throw new WikiException(new WikiMessage("upload.error.directorycreate", directory.getAbsolutePath()));
+		}
+		return subdirectory + "/" + url;
+	}
+
+	/**
+	 * Given an image file name, generate the appropriate topic name for the image.
+	 */
+	public static String generateFileTopicName(String filename) {
+		String topicName = NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR;
+		topicName += Utilities.decodeAndEscapeTopicName(filename, true);
+		return topicName;
+	}
+
+	/**
 	 * Convert a Java Image object to a Java BufferedImage object.
 	 */
 	private static BufferedImage imageToBufferedImage(Image image) {
@@ -135,6 +205,37 @@ public class ImageUtil {
 			}
 		}
 		return wikiImage;
+	}
+
+	/**
+	 * Utility method for determining if a file name corresponds to a file type that is allowed
+	 * for this wiki instance.
+	 *
+	 * @param filename The file name.
+	 * @return <code>true</code> if the file type has not been blacklisted and is allowed for upload.
+	 */
+	public static boolean isFileTypeAllowed(String filename) {
+		String extension = FilenameUtils.getExtension(filename);
+		int blacklistType = Environment.getIntValue(Environment.PROP_FILE_BLACKLIST_TYPE);
+		if (blacklistType == WikiBase.UPLOAD_ALL) {
+			return true;
+		}
+		if (blacklistType == WikiBase.UPLOAD_NONE) {
+			return false;
+		}
+		if (StringUtils.isBlank(extension)) {
+			// FIXME - should non-extensions be represented in the whitelist/blacklist?
+			return true;
+		}
+		extension = extension.toLowerCase();
+		List list = WikiUtil.retrieveUploadFileList();
+		if (blacklistType == WikiBase.UPLOAD_BLACKLIST) {
+			return !list.contains(extension);
+		}
+		if (blacklistType == WikiBase.UPLOAD_WHITELIST) {
+			return list.contains(extension);
+		}
+		return false;
 	}
 
 	/**
@@ -238,6 +339,23 @@ public class ImageUtil {
 	}
 
 	/**
+	 * Given a file name that might correspond to an absolute URL, strip any directories
+	 * and convert spaces in the name to underscores.
+	 *
+	 * @param filename The file name (path) to be sanitized.
+	 * @return A sanitized version of the file name.
+	 */
+	public static String sanitizeFilename(String filename) {
+		if (StringUtils.isBlank(filename)) {
+			return null;
+		}
+		// some browsers set the full path, so strip to just the file name
+		filename = FilenameUtils.getName(filename);
+		filename = StringUtils.replace(filename.trim(), " ", "_");
+		return filename;
+	}
+
+	/**
 	 * Save an image to a specified file.
 	 */
 	private static void saveImage(BufferedImage image, File file) throws IOException {
@@ -276,5 +394,59 @@ public class ImageUtil {
 		}
 		wikiImage.setWidth(width);
 		wikiImage.setHeight(height);
+	}
+
+	/**
+	 *
+	 */
+	public static Topic writeImageTopic(String virtualWiki, String topicName, String contents, WikiUser user, boolean isImage, String ipAddress) throws DataAccessException, ParserException, WikiException {
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+		int charactersChanged = 0;
+		if (topic == null) {
+			topic = new Topic();
+			topic.setVirtualWiki(virtualWiki);
+			topic.setName(topicName);
+			topic.setTopicContent(contents);
+			charactersChanged = StringUtils.length(contents);
+		}
+		if (isImage) {
+			topic.setTopicType(Topic.TYPE_IMAGE);
+		} else {
+			topic.setTopicType(Topic.TYPE_FILE);
+		}
+		TopicVersion topicVersion = new TopicVersion(user, ipAddress, contents, topic.getTopicContent(), charactersChanged);
+		topicVersion.setEditType(TopicVersion.EDIT_UPLOAD);
+		ParserOutput parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki, topicName);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks());
+		return topic;
+	}
+
+	/**
+	 *
+	 */
+	public static WikiFile writeWikiFile(Topic topic, WikiUser user, String ipAddress, String filename, String url, String contentType, long fileSize) throws DataAccessException, WikiException {
+		WikiFileVersion wikiFileVersion = new WikiFileVersion();
+		wikiFileVersion.setUploadComment(topic.getTopicContent());
+		wikiFileVersion.setAuthorDisplay(ipAddress);
+		Integer authorId = null;
+		if (user != null && user.getUserId() > 0) {
+			authorId = user.getUserId();
+		}
+		wikiFileVersion.setAuthorId(authorId);
+		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(topic.getVirtualWiki(), topic.getName());
+		if (wikiFile == null) {
+			wikiFile = new WikiFile();
+			wikiFile.setVirtualWiki(topic.getVirtualWiki());
+		}
+		wikiFile.setFileName(filename);
+		wikiFile.setUrl(url);
+		wikiFileVersion.setUrl(url);
+		wikiFileVersion.setMimeType(contentType);
+		wikiFile.setMimeType(contentType);
+		wikiFileVersion.setFileSize(fileSize);
+		wikiFile.setFileSize(fileSize);
+		wikiFile.setTopicId(topic.getTopicId());
+		WikiBase.getDataHandler().writeFile(wikiFile, wikiFileVersion);
+		return wikiFile;
 	}
 }

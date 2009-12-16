@@ -16,15 +16,16 @@
  */
 package org.jamwiki.authentication;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.security.ConfigAttribute;
-import org.springframework.security.ConfigAttributeDefinition;
-import org.springframework.security.intercept.web.DefaultFilterInvocationDefinitionSource;
-import org.springframework.security.intercept.web.RequestKey;
-import org.springframework.security.util.UrlMatcher;
-import org.springframework.security.util.AntUrlPathMatcher;
+import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.access.SecurityConfig;
+import org.springframework.security.web.access.intercept.DefaultFilterInvocationSecurityMetadataSource;
+import org.springframework.security.web.access.intercept.RequestKey;
+import org.springframework.security.web.util.AntUrlPathMatcher;
+import org.springframework.security.web.util.UrlMatcher;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -35,7 +36,7 @@ import org.jamwiki.utils.WikiLogger;
 public class JAMWikiErrorMessageProvider {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiErrorMessageProvider.class.getName());
-	private DefaultFilterInvocationDefinitionSource defaultFilterInvocationDefinitionSource = null;
+	private DefaultFilterInvocationSecurityMetadataSource defaultFilterInvocationSecurityMetadataSource = null;
 	private LinkedHashMap<String, String> urlPatterns;
 
 	/**
@@ -55,32 +56,32 @@ public class JAMWikiErrorMessageProvider {
 	/**
 	 *
 	 */
-	private ConfigAttributeDefinition retrieveConfigAttributeDefinition(HttpServletRequest request) {
+	private Collection<ConfigAttribute> retrieveConfigAttribute(HttpServletRequest request) {
 		String uri = request.getRequestURI();
 		if (uri == null) {
 			return null;
 		}
-		if (this.defaultFilterInvocationDefinitionSource == null) {
+		if (this.defaultFilterInvocationSecurityMetadataSource == null) {
 			UrlMatcher matcher = new AntUrlPathMatcher();
-			LinkedHashMap<RequestKey, ConfigAttributeDefinition> requestMap = new LinkedHashMap<RequestKey, ConfigAttributeDefinition>();
+			LinkedHashMap<RequestKey, Collection<ConfigAttribute>> requestMap = new LinkedHashMap<RequestKey, Collection<ConfigAttribute>>();
 			for (String key : this.getUrlPatterns().keySet()) {
 				String value = this.getUrlPatterns().get(key);
-				requestMap.put(new RequestKey(key), new ConfigAttributeDefinition(value));
+				Collection<ConfigAttribute> elements = new ArrayList<ConfigAttribute>();
+				elements.add(new SecurityConfig(value));
+				requestMap.put(new RequestKey(key), elements);
 			}
-			this.defaultFilterInvocationDefinitionSource = new DefaultFilterInvocationDefinitionSource(matcher, requestMap);
+			this.defaultFilterInvocationSecurityMetadataSource = new DefaultFilterInvocationSecurityMetadataSource(matcher, requestMap);
 		}
-		return this.defaultFilterInvocationDefinitionSource.lookupAttributes(uri, null);
+		return this.defaultFilterInvocationSecurityMetadataSource.lookupAttributes(uri, null);
 	}
 
 	/**
 	 *
 	 */
 	private String retrieveErrorKey(HttpServletRequest request) {
-		ConfigAttributeDefinition attrs = this.retrieveConfigAttributeDefinition(request);
+		Collection<ConfigAttribute> attrs = this.retrieveConfigAttribute(request);
 		if (attrs != null) {
-			Iterator configIterator = attrs.getConfigAttributes().iterator();
-			if (configIterator.hasNext()) {
-				ConfigAttribute attr = (ConfigAttribute)configIterator.next();
+			for (ConfigAttribute attr : attrs) {
 				return attr.getAttribute();
 			}
 		}

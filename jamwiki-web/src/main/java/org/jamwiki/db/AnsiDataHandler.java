@@ -78,11 +78,11 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private void addCategory(Category category, Connection conn) throws DataAccessException, WikiException {
+	private void addCategory(Category category, int topicId, Connection conn) throws DataAccessException, WikiException {
 		int virtualWikiId = this.lookupVirtualWikiId(category.getVirtualWiki());
 		this.validateCategory(category);
 		try {
-			this.queryHandler().insertCategory(category, virtualWikiId, conn);
+			this.queryHandler().insertCategory(category, virtualWikiId, topicId, conn);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
@@ -239,22 +239,20 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public boolean authenticate(String username, String password) throws DataAccessException {
-		boolean result = false;
-		TransactionStatus status = null;
-		try {
-			status = DatabaseConnection.startTransaction();
-			Connection conn = DatabaseConnection.getConnection();
-			// password is stored encrypted, so encrypt password
-			if (!StringUtils.isBlank(password)) {
-				String encryptedPassword = Encryption.encrypt(password);
-				return this.queryHandler().authenticateUser(username, encryptedPassword, conn);
-			}
-		} catch (SQLException e) {
-			DatabaseConnection.rollbackOnException(status, e);
-			throw new DataAccessException(e);
+		if (StringUtils.isBlank(password)) {
+			return false;
 		}
-		DatabaseConnection.commit(status);
-		return result;
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			// password is stored encrypted, so encrypt password
+			String encryptedPassword = Encryption.encrypt(password);
+			return this.queryHandler().authenticateUser(username, encryptedPassword, conn);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
 	}
 
 	/**
@@ -545,7 +543,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Role[] getRoleMapGroup(String groupName) throws DataAccessException {
+	public List<Role> getRoleMapGroup(String groupName) throws DataAccessException {
 		List<Role> results = new ArrayList<Role>();
 		WikiResultSet rs = null;
 		try {
@@ -557,7 +555,7 @@ public class AnsiDataHandler implements DataHandler {
 			Role role = this.initRole(rs);
 			results.add(role);
 		}
-		return results.toArray(new RoleImpl[0]);
+		return results;
 	}
 
 	/**
@@ -588,7 +586,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Role[] getRoleMapUser(String login) throws DataAccessException {
+	public List<Role> getRoleMapUser(String login) throws DataAccessException {
 		List<Role> results = new ArrayList<Role>();
 		WikiResultSet rs = null;
 		try {
@@ -600,7 +598,7 @@ public class AnsiDataHandler implements DataHandler {
 			Role role = this.initRole(rs);
 			results.add(role);
 		}
-		return results.toArray(new RoleImpl[0]);
+		return results;
 	}
 
 	/**
@@ -1875,6 +1873,7 @@ public class AnsiDataHandler implements DataHandler {
 	 *  searchable metadata.
 	 */
 	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links) throws DataAccessException, WikiException {
+		long start = System.currentTimeMillis();
 		TransactionStatus status = null;
 		try {
 			status = DatabaseConnection.startTransaction();
@@ -1884,9 +1883,12 @@ public class AnsiDataHandler implements DataHandler {
 			Connection conn = DatabaseConnection.getConnection();
 			WikiUtil.validateTopicName(topic.getName());
 			if (topic.getTopicId() <= 0) {
+				// create the initial topic record
 				addTopic(topic, conn);
-			} else {
-				updateTopic(topic, conn);
+			} else if (topicVersion == null) {
+				// if there is no version record then update the topic.  if there is a version
+				// record then the topic will be updated AFTER the version record is created.
+				this.updateTopic(topic, conn);
 			}
 			if (topicVersion != null) {
 				if (topicVersion.getPreviousTopicVersionId() == null && topic.getCurrentVersionId() != null) {
@@ -1897,6 +1899,8 @@ public class AnsiDataHandler implements DataHandler {
 				// write version
 				addTopicVersion(topicVersion, conn);
 				topic.setCurrentVersionId(topicVersion.getTopicVersionId());
+				// update the topic AFTER creating the version so that the current_topic_version_id parameter is set properly
+				this.updateTopic(topic, conn);
 				String authorName = this.authorName(topicVersion.getAuthorId(), topicVersion.getAuthorDisplay());
 				LogItem logItem = LogItem.initLogItem(topic, topicVersion, authorName);
 				RecentChange change = null;
@@ -1913,19 +1917,21 @@ public class AnsiDataHandler implements DataHandler {
 			if (categories != null) {
 				// add / remove categories associated with the topic
 				this.deleteTopicCategories(topic, conn);
-				for (String categoryName : categories.keySet()) {
-					Category category = new Category();
-					category.setName(categoryName);
-					category.setSortKey(categories.get(categoryName));
-					category.setVirtualWiki(topic.getVirtualWiki());
-					category.setChildTopicName(topic.getName());
-					this.addCategory(category, conn);
+				if (topic.getDeleteDate() == null) {
+					for (String categoryName : categories.keySet()) {
+						Category category = new Category();
+						category.setName(categoryName);
+						category.setSortKey(categories.get(categoryName));
+						category.setVirtualWiki(topic.getVirtualWiki());
+						category.setChildTopicName(topic.getName());
+						this.addCategory(category, topic.getTopicId(), conn);
+					}
 				}
 			}
 			if (links != null) {
-				WikiBase.getSearchEngine().deleteFromIndex(topic);
-				WikiBase.getSearchEngine().addToIndex(topic, links);
+				WikiBase.getSearchEngine().updateInIndex(topic, links);
 			}
+			logger.fine("Wrote topic " + topic.getName() + " with params [categories is null: " + (categories == null) + "] / [links is null: " + (links == null) + "] in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw e;

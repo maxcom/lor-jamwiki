@@ -18,7 +18,7 @@ package org.jamwiki.authentication;
 
 import org.jamwiki.utils.Encryption;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.security.providers.encoding.PasswordEncoder;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
 
 /**
  * Custom implementation of the JAMWiki password encoder.  This class is (hopefully)
@@ -41,7 +41,7 @@ public class JAMWikiPasswordEncoder implements PasswordEncoder {
 		return Encryption.encrypt(rawPass);
 	}
 
-    /**
+	/**
 	 * Validate a raw password against an encoded password as specified by the Spring
 	 * Security PasswordEncoder interface.
 	 *

@@ -171,7 +171,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_UPDATE_GROUP = null;
 	protected static String STATEMENT_UPDATE_ROLE = null;
 	protected static String STATEMENT_UPDATE_TOPIC = null;
-	protected static String STATEMENT_UPDATE_TOPIC_CURRENT_VERSION = null;
 	protected static String STATEMENT_UPDATE_USER = null;
 	protected static String STATEMENT_UPDATE_VIRTUAL_WIKI = null;
 	protected static String STATEMENT_UPDATE_WIKI_FILE = null;
@@ -739,7 +738,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_UPDATE_GROUP                   = props.getProperty("STATEMENT_UPDATE_GROUP");
 		STATEMENT_UPDATE_ROLE                    = props.getProperty("STATEMENT_UPDATE_ROLE");
 		STATEMENT_UPDATE_TOPIC                   = props.getProperty("STATEMENT_UPDATE_TOPIC");
-		STATEMENT_UPDATE_TOPIC_CURRENT_VERSION   = props.getProperty("STATEMENT_UPDATE_TOPIC_CURRENT_VERSION");
 		STATEMENT_UPDATE_USER                    = props.getProperty("STATEMENT_UPDATE_USER");
 		STATEMENT_UPDATE_VIRTUAL_WIKI            = props.getProperty("STATEMENT_UPDATE_VIRTUAL_WIKI");
 		STATEMENT_UPDATE_WIKI_FILE               = props.getProperty("STATEMENT_UPDATE_WIKI_FILE");
@@ -749,23 +747,14 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertCategory(Category category, int virtualWikiId, Connection conn) throws SQLException {
-		// FIXME - clean this code up
-		WikiResultSet rs = this.lookupTopic(virtualWikiId, category.getChildTopicName(), false, conn);
-		int topicId = -1;
-		while (rs.next()) {
-			if (rs.getTimestamp("delete_date") == null) {
-				topicId = rs.getInt("topic_id");
-				break;
-			}
-		}
+	public void insertCategory(Category category, int virtualWikiId, int topicId, Connection conn) throws SQLException {
 		if (topicId == -1) {
 			throw new SQLException("Unable to find child topic " + category.getChildTopicName() + " for category " + category.getName());
 		}
 		PreparedStatement stmt = null;
 		try {
 			stmt = conn.prepareStatement(STATEMENT_INSERT_CATEGORY);
-			stmt.setInt(1, rs.getInt("topic_id"));
+			stmt.setInt(1, topicId);
 			stmt.setString(2, category.getName());
 			stmt.setString(3, category.getSortKey());
 			stmt.executeUpdate();
@@ -1000,10 +989,6 @@ public class AnsiQueryHandler implements QueryHandler {
 				}
 				topicVersion.setTopicVersionId(rs.getInt(1));
 			}
-			stmt = conn.prepareStatement(STATEMENT_UPDATE_TOPIC_CURRENT_VERSION);
-			stmt.setInt(1, topicVersion.getTopicVersionId());
-			stmt.setInt(2, topicVersion.getTopicId());
-			stmt.executeUpdate();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
 		}

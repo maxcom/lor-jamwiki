@@ -16,7 +16,7 @@
  */
 package org.jamwiki.authentication;
 
-import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.jamwiki.model.Role;
 import org.jamwiki.utils.WikiLogger;
 

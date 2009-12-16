@@ -16,25 +16,22 @@
  */
 package org.jamwiki.authentication;
 
+import java.io.IOException;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 
 /**
- * This class is a hack implemented to work around the fact that the default
- * Spring Security classes can only redirect to a single, hard-coded URL.  Due to the
- * fact that JAMWiki may have multiple virtual wikis this class overrides some
- * of the default Spring Security behavior to allow additional flexibility.  Hopefully
- * future versions of Spring Security will add additional flexibility and this class
- * can be removed.
+ * This class is a hack implemented to support virtual wikis and Spring Security.
  */
-public class JAMWikiAuthenticationProcessingFilterEntryPoint extends LoginUrlAuthenticationEntryPoint {
+public class JAMWikiAccessDeniedHandler extends AccessDeniedHandlerImpl {
 
 	/** Standard logger. */
-	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiAuthenticationProcessingFilterEntryPoint.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiAccessDeniedHandler.class.getName());
 	private JAMWikiErrorMessageProvider errorMessageProvider;
 
 	/**
@@ -52,13 +49,14 @@ public class JAMWikiAuthenticationProcessingFilterEntryPoint extends LoginUrlAut
 	}
 
 	/**
-	 * Return the URL to redirect to in case of a login being required.  This method
-	 * uses the configured login URL and prepends the virtual wiki.
+	 *
 	 */
-	protected String determineUrlToUseForThisRequest(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
+	public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String accessDeniedRedirectUri = "/" + virtualWiki + "/Special:Login";
+		this.setErrorPage(accessDeniedRedirectUri);
 		request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_ACCESS_DENIED_ERROR_KEY, this.getErrorMessageProvider().getErrorMessageKey(request));
 		request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_ACCESS_DENIED_URI_KEY, WikiUtil.getTopicFromURI(request));
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
-		return "/" + virtualWiki + this.getLoginFormUrl();
+		super.handle(request, response, accessDeniedException);
 	}
 }
