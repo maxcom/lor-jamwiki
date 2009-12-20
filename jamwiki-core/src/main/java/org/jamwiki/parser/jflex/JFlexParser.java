@@ -108,13 +108,27 @@ public class JFlexParser extends AbstractParser {
 			String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 			throw new ParserException("Infinite parsing loop - over " + this.parserInput.getDepth() + " parser iterations while parsing topic " + topicName);
 		}
+		long start = 0;
+		double execution = 0.000;
+		String line;
 		try {
 			while (true) {
-				String line = lexer.yylex();
+				if (logger.isFineEnabled()) {
+					start = System.currentTimeMillis();
+				}
+				line = lexer.yylex();
 				if (line == null) {
 					break;
 				}
 				lexer.append(line);
+				if (logger.isFineEnabled()) {
+					execution = ((System.currentTimeMillis() - start) / 1000.000);
+					if (execution > 0.005) {
+						String text = lexer.yytext();
+						int state = lexer.yystate();
+						logger.fine("WARNING: slow parsing (" + execution + " s) for input: " + text + " (state: " + state + ") result: " + line);
+					}
+				}
 			}
 		} catch (Exception e) {
 			throw new ParserException(e);

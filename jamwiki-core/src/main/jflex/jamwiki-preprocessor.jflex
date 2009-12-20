@@ -78,14 +78,14 @@ wikisignature      = ([~]{3,5})
 /* ----- nowiki ----- */
 
 <YYINITIAL, WIKIPRE, PRE>{nowiki} {
-    logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
 
 /* ----- pre ----- */
 
 <YYINITIAL>{htmlprestart} {
-    logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
     if (allowHTML()) {
         beginState(PRE);
     }
@@ -93,14 +93,14 @@ wikisignature      = ([~]{3,5})
 }
 
 <PRE>{htmlpreend} {
-    logger.finer("htmlpreend: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("htmlpreend: " + yytext() + " (" + yystate() + ")");
     // state only changes to pre if allowHTML() is true, so no need to check here
     endState();
     return yytext();
 }
 
 <YYINITIAL, WIKIPRE>^{wikiprestart} {
-    logger.finer("wikiprestart: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("wikiprestart: " + yytext() + " (" + yystate() + ")");
     // rollback the one non-pre character so it can be processed
     yypushback(yytext().length() - 1);
     if (yystate() != WIKIPRE) {
@@ -110,7 +110,7 @@ wikisignature      = ([~]{3,5})
 }
 
 <WIKIPRE>^{wikipreend} {
-    logger.finer("wikipreend: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("wikipreend: " + yytext() + " (" + yystate() + ")");
     endState();
     // rollback the one non-pre character so it can be processed
     yypushback(1);
@@ -120,7 +120,7 @@ wikisignature      = ([~]{3,5})
 /* ----- templates ----- */
 
 <YYINITIAL, TEMPLATE>{templatestart} {
-    logger.finer("templatestart: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("templatestart: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     if (!allowTemplates()) {
         return yytext();
@@ -134,7 +134,7 @@ wikisignature      = ([~]{3,5})
 }
 
 <TEMPLATE>{templateendchar} {
-    logger.finer("templateendchar: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("templateendchar: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     this.templateString += raw;
     this.templateCharCount -= raw.length();
@@ -149,7 +149,7 @@ wikisignature      = ([~]{3,5})
 }
 
 <TEMPLATE>{templatestartchar} {
-    logger.finer("templatestartchar: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("templatestartchar: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     this.templateString += raw;
     this.templateCharCount += raw.length();
@@ -165,7 +165,7 @@ wikisignature      = ([~]{3,5})
 }
 
 <YYINITIAL>{templateparam} {
-    logger.finer("templateparam: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("templateparam: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     return raw;
 }
@@ -185,13 +185,13 @@ wikisignature      = ([~]{3,5})
 }
 
 <YYINITIAL, TEMPLATE>{includeonly} {
-    logger.finer("includeonly: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("includeonly: " + yytext() + " (" + yystate() + ")");
     IncludeOnlyTag parserTag = new IncludeOnlyTag();
     return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
 <YYINITIAL, TEMPLATE>{noinclude} {
-    logger.finer("noinclude: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("noinclude: " + yytext() + " (" + yystate() + ")");
     NoIncludeTag parserTag = new NoIncludeTag();
     return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
@@ -199,13 +199,13 @@ wikisignature      = ([~]{3,5})
 /* ----- wiki links ----- */
 
 <YYINITIAL>{imagelinkcaption} {
-    logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
     WikiLinkTag parserTag = new WikiLinkTag();
     return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
 <YYINITIAL>{wikilink} {
-    logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
     WikiLinkTag parserTag = new WikiLinkTag();
     return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
@@ -213,7 +213,7 @@ wikisignature      = ([~]{3,5})
 /* ----- signatures ----- */
 
 <YYINITIAL>{wikisignature} {
-    logger.finer("wikisignature: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("wikisignature: " + yytext() + " (" + yystate() + ")");
     WikiSignatureTag parserTag = new WikiSignatureTag();
     return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
@@ -221,7 +221,7 @@ wikisignature      = ([~]{3,5})
 /* ----- comments ----- */
 
 <YYINITIAL>{htmlcomment} {
-    logger.finer("htmlcomment: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("htmlcomment: " + yytext() + " (" + yystate() + ")");
     if (this.mode < JFlexParser.MODE_PREPROCESS) {
         return yytext();
     }

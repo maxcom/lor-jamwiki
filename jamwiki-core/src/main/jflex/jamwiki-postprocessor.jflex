@@ -48,20 +48,20 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 /* ----- nowiki ----- */
 
 <YYINITIAL, PRE>{nowiki} {
-    logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
     return JFlexParserUtil.tagContent(yytext());
 }
 
 /* ----- pre ----- */
 
 <YYINITIAL>{htmlprestart} {
-    logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
     beginState(PRE);
     return yytext();
 }
 
 <PRE>{htmlpreend} {
-    logger.finer("htmlpreend: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("htmlpreend: " + yytext() + " (" + yystate() + ")");
     endState();
     return yytext();
 }
@@ -69,14 +69,14 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 /* ----- processing commands ----- */
 
 <YYINITIAL>{toc} {
-    logger.finer("toc: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("toc: " + yytext() + " (" + yystate() + ")");
     return this.parserInput.getTableOfContents().attemptTOCInsertion();
 }
 
 /* ----- references ----- */
 
 <YYINITIAL>{references} {
-    logger.finer("references: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("references: " + yytext() + " (" + yystate() + ")");
     WikiReferencesTag parserTag = new WikiReferencesTag();
     return parserTag.parse(this.parserInput, this.mode, yytext());
 }
@@ -84,7 +84,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 /* ----- javascript ----- */
 
 <YYINITIAL>{javascript} {
-    logger.finer("javascript: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("javascript: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
 

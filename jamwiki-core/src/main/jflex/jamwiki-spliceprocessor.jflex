@@ -100,7 +100,7 @@ htmlcomment        = "<!--" ~"-->"
 /* ----- parsing tags ----- */
 
 <YYINITIAL, PRE>{nowiki} {
-    logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
     return returnText(yytext());
 }
 
