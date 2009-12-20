@@ -1031,6 +1031,7 @@ public class AnsiDataHandler implements DataHandler {
 		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(topicName)) {
 			return null;
 		}
+		long start = System.currentTimeMillis();
 		String key = WikiCache.key(virtualWiki, topicName);
 		if (transactionObject == null) {
 			// retrieve topic from the cache only if this call is not currently a part
@@ -1079,6 +1080,10 @@ public class AnsiDataHandler implements DataHandler {
 			throw new DataAccessException(e);
 		}
 		DatabaseConnection.commit(status);
+		double execution = ((System.currentTimeMillis() - start) / 1000.000);
+		if (execution > 0.005) {
+			logger.fine("WARNING: slow topic lookup for: " + topicName + " (" + execution + " s)");
+		}
 		return (topic == null || (!deleteOK && topic.getDeleteDate() != null)) ? null : topic;
 	}
 

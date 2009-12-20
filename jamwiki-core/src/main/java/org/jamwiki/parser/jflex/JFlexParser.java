@@ -113,21 +113,15 @@ public class JFlexParser extends AbstractParser {
 		String line;
 		try {
 			while (true) {
-				if (logger.isFineEnabled()) {
-					start = System.currentTimeMillis();
-				}
+				start = System.currentTimeMillis();
 				line = lexer.yylex();
 				if (line == null) {
 					break;
 				}
 				lexer.append(line);
-				if (logger.isFineEnabled()) {
-					execution = ((System.currentTimeMillis() - start) / 1000.000);
-					if (execution > 0.005) {
-						String text = lexer.yytext();
-						int state = lexer.yystate();
-						logger.fine("WARNING: slow parsing (" + execution + " s) for input: " + text + " (state: " + state + ") result: " + line);
-					}
+				execution = ((System.currentTimeMillis() - start) / 1000.000);
+				if (execution >= 0.010) {
+					logger.fine("WARNING: slow parsing (" + execution + " s) for input: " + lexer.yytext() + " (state: " + lexer.yystate() + ") result: " + line);
 				}
 			}
 		} catch (Exception e) {

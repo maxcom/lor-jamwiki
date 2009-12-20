@@ -121,7 +121,9 @@ public class MigrationUtil {
 	 */
 	public static List<String> importFromFile(File file, String virtualWiki, WikiUser user, String authorDisplay, Locale locale, List<WikiMessage> errors) throws MigrationException, WikiException {
 		Migrator migrator = new MediaWikiXmlMigrator();
+		long start = System.currentTimeMillis();
 		Map<Topic, List<TopicVersion>> parsedTopics = migrator.importFromFile(file);
+		logger.fine("Parsed XML " + file.getAbsolutePath() + " in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 		if (parsedTopics.isEmpty()) {
 			throw new WikiException(new WikiMessage("import.error.notopic"));
 		}
