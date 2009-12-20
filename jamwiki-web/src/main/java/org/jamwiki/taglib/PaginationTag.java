@@ -54,9 +54,9 @@ public class PaginationTag extends BodyTagSupport {
 	/**
 	 *
 	 */
-	private StringBuffer buildOption(int num, Pagination pagination, String baseUrl) {
+	private StringBuilder buildOption(int num, Pagination pagination, String baseUrl) {
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		if (num == pagination.getNumResults()) {
 			output.append(num);
 			return output;
@@ -71,7 +71,7 @@ public class PaginationTag extends BodyTagSupport {
 			output.append(LinkUtil.buildTopicUrl(request.getContextPath(), virtualWiki, wikiLink));
 		} catch (DataAccessException e) {
 			logger.warning("Failure while building pagination element", e);
-			return new StringBuffer();
+			return new StringBuilder();
 		}
 		output.append("\">");
 		output.append(num);
@@ -96,9 +96,9 @@ public class PaginationTag extends BodyTagSupport {
 	/**
 	 *
 	 */
-	private StringBuffer nextPage(Pagination pagination, String baseUrl, int count, boolean previous) {
+	private StringBuilder nextPage(Pagination pagination, String baseUrl, int count, boolean previous) {
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		Object[] objects = new Object[1];
 		objects[0] = pagination.getNumResults();
 		if (pagination.getOffset() == 0 && previous) {
@@ -126,7 +126,7 @@ public class PaginationTag extends BodyTagSupport {
 			output.append(LinkUtil.buildTopicUrl(request.getContextPath(), virtualWiki, wikiLink));
 		} catch (DataAccessException e) {
 			logger.warning("Failure while building pagination element", e);
-			return new StringBuffer();
+			return new StringBuilder();
 		}
 		output.append("\">");
 		if (previous) {
@@ -141,9 +141,9 @@ public class PaginationTag extends BodyTagSupport {
 	/**
 	 *
 	 */
-	private StringBuffer numResults(Pagination pagination, String baseUrl) {
+	private StringBuilder numResults(Pagination pagination, String baseUrl) {
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		output.append(Utilities.formatMessage("common.pagination.results", request.getLocale())).append(":&#160;");
 		output.append(buildOption(10, pagination, baseUrl));
 		output.append("&#160;|&#160;");
@@ -165,7 +165,7 @@ public class PaginationTag extends BodyTagSupport {
 	private String pagination(String baseUrl, int count) {
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		Pagination pagination = WikiUtil.buildPagination(request);
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		output.append(this.nextPage(pagination, baseUrl, count, true));
 		output.append("&#160;|&#160;");
 		output.append(this.nextPage(pagination, baseUrl, count, false));

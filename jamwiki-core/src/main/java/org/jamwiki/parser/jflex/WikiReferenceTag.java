@@ -69,7 +69,7 @@ public class WikiReferenceTag {
 		}
 		WikiReference reference = buildReference(parserInput, raw);
 		this.processMetadata(parserInput, reference);
-		StringBuffer html = new StringBuffer();
+		StringBuilder html = new StringBuilder();
 		html.append("<sup id=\"");
 		html.append(reference.getReferenceName());
 		html.append("\" class=\"reference\"><a href=\"#");

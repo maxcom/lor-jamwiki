@@ -64,7 +64,7 @@ public class LoginServlet extends JAMWikiServlet {
 			// this should never happen
 			throw new IllegalStateException("Unsupporting encoding UTF-8");
 		}
-		StringBuffer springSecurityLogoutUrl = new StringBuffer();
+		StringBuilder springSecurityLogoutUrl = new StringBuilder();
 		if (!StringUtils.equals(request.getContextPath(), "/")) {
 			springSecurityLogoutUrl.append(request.getContextPath());
 		}

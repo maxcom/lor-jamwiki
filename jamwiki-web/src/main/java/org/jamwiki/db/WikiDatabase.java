@@ -204,10 +204,10 @@ public class WikiDatabase {
 				int topicIdColumn = 0;
 				int currentVersionColumn = 0;
 				int maxIndex = WikiDatabase.retrieveMaximumTableId(JAMWIKI_DB_TABLE_INFO[i][0], JAMWIKI_DB_TABLE_INFO[i][1]);
-				StringBuffer insert;
+				StringBuilder insert;
 				ResultSetMetaData md;
-				StringBuffer values;
-				StringBuffer select;
+				StringBuilder values;
+				StringBuilder select;
 				String columnName;
 				Integer topicId;
 				Integer currentVersionId;
@@ -215,19 +215,19 @@ public class WikiDatabase {
 				// cycle through at most RECORDS_PER_CYCLE records at a time to avoid blowing up the system
 				int RECORDS_PER_CYCLE = 25;
 				for (int j = 0; j <= maxIndex; j += RECORDS_PER_CYCLE) {
-					select = new StringBuffer("SELECT * FROM ").append(JAMWIKI_DB_TABLE_INFO[i][0]);
+					select = new StringBuilder("SELECT * FROM ").append(JAMWIKI_DB_TABLE_INFO[i][0]);
 					if (!StringUtils.isBlank(JAMWIKI_DB_TABLE_INFO[i][1])) {
 						select.append(" WHERE ").append(JAMWIKI_DB_TABLE_INFO[i][1]).append(" > ").append(j);
 						select.append(" AND ").append(JAMWIKI_DB_TABLE_INFO[i][1]).append(" <= ").append(j + RECORDS_PER_CYCLE);
 						select.append(" ORDER BY ").append(JAMWIKI_DB_TABLE_INFO[i][1]);
 					}
-					insert = new StringBuffer();
+					insert = new StringBuilder();
 					stmt = from.createStatement();
 					logger.info(select.toString());
 					rs = stmt.executeQuery(select.toString());
 					md = rs.getMetaData();
 					insert.append("INSERT INTO ").append(JAMWIKI_DB_TABLE_INFO[i][0]).append('(');
-					values = new StringBuffer();
+					values = new StringBuilder();
 					for (int k = 1; k <= md.getColumnCount(); k++) {
 						if (k > 1) {
 							insert.append(',');

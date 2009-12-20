@@ -55,7 +55,7 @@ public class WikiHeadingTag {
 		} catch (DataAccessException e) {
 			logger.severe("Failure while building link for topic " + parserInput.getVirtualWiki() + " / " + parserInput.getTopicName(), e);
 		}
-		StringBuffer output = new StringBuffer("<span class=\"editsection\">[<a href=\"").append(url).append("\">");
+		StringBuilder output = new StringBuilder("<span class=\"editsection\">[<a href=\"").append(url).append("\">");
 		output.append(Utilities.formatMessage("common.sectionedit", parserInput.getLocale()));
 		output.append("</a>]</span>");
 		return output.toString();
@@ -92,7 +92,7 @@ public class WikiHeadingTag {
 				parserOutput.setSectionName(tagName);
 				return raw;
 			}
-			StringBuffer output = new StringBuffer(this.updateToc(parserInput, tagName, tocText, level));
+			StringBuilder output = new StringBuilder(this.updateToc(parserInput, tagName, tocText, level));
 			int nextSection = parserInput.getTableOfContents().size();
 			output.append("<a name=\"").append(Utilities.encodeAndEscapeTopicName(tagName)).append("\"></a>");
 			output.append("<h").append(level).append('>');

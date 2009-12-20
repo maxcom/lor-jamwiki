@@ -122,7 +122,7 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 	/** This map holds the current tag's attribute names and values.  It is cleared after an end-element is called and thus fails for nested elements. */
 	private Map<String, String> currentAttributeMap = new HashMap<String, String>();
 	/** This buffer holds the content of the current element during parsing.  It will be flushed after an end-element tag is reached. */
-	private StringBuffer currentElementBuffer = new StringBuffer();
+	private StringBuilder currentElementBuffer = new StringBuilder();
 	private Topic currentTopic = new Topic();
 	private TopicVersion currentTopicVersion = new TopicVersion();
 	private Map<Date, TopicVersion> currentTopicVersions = new TreeMap<Date, TopicVersion>();
@@ -242,7 +242,7 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 	 *  empty Attributes object.
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-		this.currentElementBuffer = new StringBuffer();
+		this.currentElementBuffer = new StringBuilder();
 		this.currentAttributeMap = new HashMap<String, String>();
 		String key;
 		if (attrs != null) {

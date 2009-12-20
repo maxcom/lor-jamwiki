@@ -144,7 +144,7 @@ public class TableOfContents {
 	/**
 	 * Internal method to close any list tags prior to adding the next entry.
 	 */
-	private void closeList(int level, StringBuffer text, int previousLevel) {
+	private void closeList(int level, StringBuilder text, int previousLevel) {
 		for (int i = previousLevel; i > level; i--) {
 			// close lists to current level
 			text.append("</li>\n</ul>");
@@ -191,7 +191,7 @@ public class TableOfContents {
 	/**
 	 * Internal method to open any list tags prior to adding the next entry.
 	 */
-	private void openList(int level, StringBuffer text, int previousLevel) {
+	private void openList(int level, StringBuilder text, int previousLevel) {
 		if (level <= previousLevel) {
 			// same or lower level as previous item, close previous and open new
 			text.append("</li>\n<li>");
@@ -242,7 +242,7 @@ public class TableOfContents {
 	 * @return An HTML representation of this table of contents object.
 	 */
 	public String toHTML() {
-		StringBuffer text = new StringBuffer();
+		StringBuilder text = new StringBuilder();
 		text.append("<table id=\"toc\">\n<tr>\n<td>\n");
 		int adjustedLevel = 0;
 		int previousLevel = 0;

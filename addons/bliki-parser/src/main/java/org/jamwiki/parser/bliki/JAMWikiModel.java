@@ -184,7 +184,7 @@ public class JAMWikiModel extends AbstractWikiModel {
 		if (StringUtils.isBlank(topicName) && !StringUtils.isBlank(section)) {
 			return "#" + Utilities.encodeAndEscapeTopicName(section);
 		}
-		StringBuffer url = new StringBuffer();
+		StringBuilder url = new StringBuilder();
 		if (context != null) {
 			url.append(context);
 		}

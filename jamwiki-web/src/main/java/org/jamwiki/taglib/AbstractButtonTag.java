@@ -51,7 +51,7 @@ public abstract class AbstractButtonTag extends TagSupport {
 	 * Generate the tag HTML output.
 	 */
 	public int doEndTag() throws JspException {
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		output.append("<input type=\"").append(this.getButtonType()).append('\"');
 		output.append(" value=\"").append(this.value).append('\"');
 		output.append(" name=\"").append(this.name).append('\"');

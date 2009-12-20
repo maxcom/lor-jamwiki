@@ -172,7 +172,7 @@ public class TemplateTag {
 	 * embedded parameters or templates.
 	 */
 	private String parseTemplateBody(ParserInput parserInput, String content) throws ParserException {
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		int pos = 0;
 		while (pos < content.length()) {
 			String substring = content.substring(pos);

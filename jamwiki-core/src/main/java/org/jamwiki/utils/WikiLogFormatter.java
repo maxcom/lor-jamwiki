@@ -46,7 +46,7 @@ public class WikiLogFormatter extends Formatter {
 	 *
 	 */
 	public String format(LogRecord record) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		SimpleDateFormat formatter = new SimpleDateFormat(datePattern);
 		buffer.append(formatter.format(new Date(record.getMillis())));
 		buffer.append(' ');

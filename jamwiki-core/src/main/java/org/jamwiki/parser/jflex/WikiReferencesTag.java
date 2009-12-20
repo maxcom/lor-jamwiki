@@ -42,7 +42,7 @@ public class WikiReferencesTag {
 			// reference list for display.  While looping, if there are multiple citations
 			// for the same reference then include those in the output as well.
 			List<WikiReference> references = JFlexParserUtil.retrieveReferences(parserInput);
-			StringBuffer html = new StringBuffer();
+			StringBuilder html = new StringBuilder();
 			if (!references.isEmpty()) {
 				html.append("<ol class=\"references\">");
 			}

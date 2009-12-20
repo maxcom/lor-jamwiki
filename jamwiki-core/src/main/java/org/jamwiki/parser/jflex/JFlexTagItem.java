@@ -30,7 +30,7 @@ class JFlexTagItem {
 	protected static final String ROOT_TAG = "jflex-root";
 	private String closeTagOverride = null;
 	private String tagAttributes = null;
-	private final StringBuffer tagContent = new StringBuffer();
+	private final StringBuilder tagContent = new StringBuilder();
 	private String tagType = null;
 
 	/**
@@ -86,7 +86,7 @@ class JFlexTagItem {
 	/**
 	 *
 	 */
-	protected StringBuffer getTagContent() {
+	protected StringBuilder getTagContent() {
 		return this.tagContent;
 	}
 
@@ -115,7 +115,7 @@ class JFlexTagItem {
 		if (StringUtils.isBlank(content) && !JFlexParserUtil.isEmptyBodyTag(this.tagType)) {
 			return "";
 		}
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		if (!JFlexParserUtil.isRootTag(this.tagType)) {
 			result.append('<').append(this.tagType);
 			if (!StringUtils.isBlank(this.tagAttributes)) {

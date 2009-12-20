@@ -19,7 +19,7 @@ import org.jamwiki.utils.WikiLogger;
 
 /* code called after parsing is completed */
 %eofval{
-    StringBuffer output = new StringBuffer();
+    StringBuilder output = new StringBuilder();
     if (!StringUtils.isBlank(this.templateString)) {
         // FIXME - this leaves unparsed text
         output.append(this.templateString);

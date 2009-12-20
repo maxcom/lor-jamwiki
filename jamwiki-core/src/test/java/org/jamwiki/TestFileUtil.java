@@ -94,7 +94,7 @@ public class TestFileUtil {
 				return null;
 			}
 			reader = new FileReader(file);
-			StringBuffer output = new StringBuffer();
+			StringBuilder output = new StringBuilder();
 			char[] buf = new char[4096];
 			int c;
 			while ((c = reader.read(buf, 0, buf.length)) != -1) {

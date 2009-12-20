@@ -313,7 +313,7 @@ public class JFlexParserUtil {
 		String tagKeyword = tagInfo[0];
 		String attributes = tagInfo[1];
 		String tagClose = tagInfo[3];
-		StringBuffer result = new StringBuffer('<');
+		StringBuilder result = new StringBuilder('<');
 		if (tagOpen.indexOf('/') != -1) {
 			result.append('/');
 		}
