@@ -70,8 +70,7 @@ public abstract class JFlexLexer {
 	 * Append content to the current tag in the tag stack.
 	 */
 	protected void append(String content) {
-		JFlexTagItem currentTag = this.tagStack.peek();
-		currentTag.getTagContent().append(content);
+		this.tagStack.peek().getTagContent().append(content);
 	}
 
 	/**
@@ -133,7 +132,7 @@ public abstract class JFlexLexer {
 	 * the given tag type.
 	 */
 	protected JFlexTagItem peekTag() {
-		return (JFlexTagItem)this.tagStack.peek();
+		return this.tagStack.peek();
 	}
 
 	/**

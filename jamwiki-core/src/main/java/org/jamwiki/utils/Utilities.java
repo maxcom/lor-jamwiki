@@ -486,9 +486,8 @@ public class Utilities {
 		if (text == null) {
 			return false;
 		}
-		String unescaped = StringEscapeUtils.unescapeHtml(text);
 		// see if it was successfully converted, in which case it is an entity
-		return (!text.equals(unescaped));
+		return (!text.equals(StringEscapeUtils.unescapeHtml(text)));
 	}
 
 	/**
