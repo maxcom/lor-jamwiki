@@ -25,6 +25,7 @@ import org.jamwiki.model.Category;
 import org.jamwiki.model.LogItem;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
+import org.jamwiki.model.RoleMap;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
@@ -183,9 +184,8 @@ public interface QueryHandler {
 	String existenceValidationQuery();
 
 	/**
-	 * Retrieve a WikiResultSet containing all topic names that exist for a
-	 * virtual wiki. This method will not return the names of previously
-	 * deleted topics.
+	 * Retrieve a list of all topic names that exist for a virtual wiki. This method
+	 * will not return the names of previously deleted topics.
 	 *
 	 * @param virtualWikiId The id of the virtual wiki for which topic names
 	 *  are being retrieved.
@@ -197,9 +197,9 @@ public interface QueryHandler {
 	List<String> getAllTopicNames(int virtualWikiId) throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet consisting of all wiki file version information for
-	 * a given wiki file.  Version information is sorted by wiki file version id, which
-	 * in effect sorts the wiki file versions from newest to oldest.
+	 * Retrieve a list of all wiki file version information for a given wiki file.
+	 * Version information is sorted by wiki file version id, which in effect sorts
+	 * the wiki file versions from newest to oldest.
 	 *
 	 * @param wikiFile A WikiFile object for which version information is to be retrieved.
 	 * @param descending If <code>true</code> then results are sorted newest to
@@ -211,26 +211,28 @@ public interface QueryHandler {
 	List<WikiFileVersion> getAllWikiFileVersions(WikiFile wikiFile, boolean descending) throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet containing all categories associated with a particular
-	 * virtual wiki.  The result set may be limited by specifying the number of results
-	 * to retrieve in a Pagination object.
+	 * Retrieve a list of all categories associated with a particular virtual wiki.  The
+	 * list may be limited by specifying the number of results to retrieve in a Pagination
+	 * object.
 	 *
 	 * @param virtualWikiId The virtual wiki id for the virtual wiki from which all
 	 *  categories are to be retrieved.
+	 * @param virtualWikiName The name of the virtual wiki for which results are being
+	 *  retrieved.
 	 * @param pagination A Pagination object that specifies the number of results
 	 *  and starting result offset for the result set to be retrieved.
-	 * @return A WikiResultSet containing all categories associated with a particular
-	 *  virtual wiki.
+	 * @return A list of all categories associated with a particular virtual wiki, or
+	 *  an empty list if no categories exist for the virtual wiki.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	WikiResultSet getCategories(int virtualWikiId, Pagination pagination) throws SQLException;
+	List<Category> getCategories(int virtualWikiId, String virtualWikiName, Pagination pagination) throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet containing all recent log items for a specific virtual wiki.
+	 * Retrieve a list of all recent log items for a specific virtual wiki.
 	 *
 	 * @param virtualWikiId The id of the virtual wiki for which log items
 	 *  are being retrieved.
-	 * @param virtualWikiName The name of the virtual wiki for which changes are being
+	 * @param virtualWikiName The name of the virtual wiki for which results are being
 	 *  retrieved.
 	 * @param logType Set to <code>-1</code> if all log items should be returned,
 	 *  otherwise set the log type for items to retrieve.
@@ -244,10 +246,10 @@ public interface QueryHandler {
 	public List<LogItem> getLogItems(int virtualWikiId, String virtualWikiName, int logType, Pagination pagination, boolean descending) throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet containing all recent changes made to the wiki for a
+	 * Retrieve a list of all recent changes made to the wiki for a
 	 * specific virtual wiki.
 	 *
-	 * @param virtualWiki The name of the virtual wiki for which changes are being
+	 * @param virtualWiki The name of the virtual wiki for which results are being
 	 *  retrieved.
 	 * @param pagination A Pagination object that specifies the number of results
 	 *  and starting result offset for the result set to be retrieved.
@@ -260,33 +262,33 @@ public interface QueryHandler {
 	List<RecentChange> getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet of user ids, group ids and role names for all
-	 * users whose login contains the given login fragment.
+	 * Retrieve a list of user ids, group ids and role names for all users whose
+	 * login contains the given login fragment.
 	 *
 	 * @param loginFragment A value that must be contained with the user's
 	 *  login.  This method will return partial matches, so "name" will
 	 *  match "name", "firstname" and "namesake".
-	 * @return A WikiResultSet of user ids, group ids and role names for all
-	 *  users whose login contains the login fragment.  If no matches are
-	 *  found then this method returns an empty WikiResultSet.
+	 * @return A list of user ids, group ids and role names for all users whose
+	 *  login contains the login fragment.  If no matches are found then this
+	 *  method returns an empty list.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	WikiResultSet getRoleMapByLogin(String loginFragment) throws SQLException;
+	List<RoleMap> getRoleMapByLogin(String loginFragment) throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet of user ids, group ids and role names for
-	 * all users and groups who have been assigned the specified role.
+	 * Retrieve a list of user ids, group ids and role names for all users and
+	 * groups who have been assigned the specified role.
 	 *
 	 * @param authority The name of the role being queried against.
-	 * @return A WikiResultSet of user ids, group ids and role names for all
-	 *  users and groups who have been assigned the specified role, or an
-	 *  empty WikiResultSet if no matches are found.
+	 * @return A list of user ids, group ids and role names for all users and
+	 *  groups who have been assigned the specified role, or an empty list if
+	 *  no matches are found.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	WikiResultSet getRoleMapByRole(String authority) throws SQLException;
+	List<RoleMap> getRoleMapByRole(String authority) throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet containing all roles assigned to a given group.
+	 * Retrieve a list of all roles assigned to a given group.
 	 *
 	 * @param groupName The name of the group for whom roles are being retrieved.
 	 * @return A list of roles for the given group, or an empty list if no roles
@@ -296,18 +298,18 @@ public interface QueryHandler {
 	List<Role> getRoleMapGroup(String groupName) throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet of user ids, group ids and role names for
-	 * all groups that have been assigned a role.
+	 * Retrieve a list of user ids, group ids and role names for all groups that
+	 * have been assigned a role.
 	 *
-	 * @return A WikiResultSet of user ids, group ids and role names for all
-	 *  groups that have been assigned a role.  If no matches are found then
-	 *  this method returns an empty WikiResultSet.
+	 * @return A list of user ids, group ids and role names for all groups that
+	 *  have been assigned a role.  If no matches are found then this method
+	 *  returns an empty list.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	WikiResultSet getRoleMapGroups() throws SQLException;
+	List<RoleMap> getRoleMapGroups() throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet containing all roles assigned to a given user.
+	 * Retrieve a list of all roles assigned to a given user.
 	 *
 	 * @param login The login of the user for whom roles are being retrieved.
 	 * @return A list of roles for the given user, or an empty list if no roles
@@ -317,8 +319,7 @@ public interface QueryHandler {
 	List<Role> getRoleMapUser(String login) throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet containing all roles that have been defined for
-	 * the wiki.
+	 * Retrieve a list of all roles that have been defined for the wiki.
 	 *
 	 * @return Returns a list of all roles that have been defined for the wiki,
 	 *  or an empty list if no roles exist.
@@ -327,7 +328,7 @@ public interface QueryHandler {
 	List<Role> getRoles() throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet containing all history for a specific topic.
+	 * Retrieve a list of all history for a specific topic.
 	 *
 	 * @param topicId The id of the topic for which recent changes are being
 	 *  retrieved.
@@ -342,22 +343,21 @@ public interface QueryHandler {
 	List<RecentChange> getTopicHistory(int topicId, Pagination pagination, boolean descending) throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet containing the topic names of all admin-only
-	 * topics for the virtual wiki.
+	 * Retrieve a list containing the topic names of all admin-only topics for
+	 * the virtual wiki.
 	 *
 	 * @param virtualWikiId The id of the virtual wiki for which topic names
 	 *  are being retrieved.
 	 * @param pagination A Pagination object that specifies the number of results
 	 *  and starting result offset for the result set to be retrieved.
-	 * @return A WikiResultSet containing the topic names of all admin-only
-	 *  topics for the virtual wiki.
+	 * @return A list containing the topic names of all admin-only topics for the
+	 *  virtual wiki, or an empty list if there are no admin-only topics.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	WikiResultSet getTopicsAdmin(int virtualWikiId, Pagination pagination) throws SQLException;
+	List<String> getTopicsAdmin(int virtualWikiId, Pagination pagination) throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet containing all recent changes made to the wiki by a
-	 * specific user.
+	 * Retrieve a list of all recent changes made to the wiki by a specific user.
 	 *
 	 * @param virtualWiki The name of the virtual wiki for which user contributions
 	 *  are being retrieved.
@@ -373,9 +373,9 @@ public interface QueryHandler {
 	List<RecentChange> getUserContributionsByLogin(String virtualWiki, String login, Pagination pagination, boolean descending) throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet containing all recent changes made to the wiki by
-	 * searching for matches against the user display field.  This method is
-	 * typically used to retrieve contributions made by anonymous users.
+	 * Retrieve a list of all recent changes made to the wiki by searching for matches
+	 * against the user display field.  This method is typically used to retrieve
+	 * contributions made by anonymous users.
 	 *
 	 * @param virtualWiki The name of the virtual wiki for which user contributions
 	 *  are being retrieved.
@@ -392,8 +392,7 @@ public interface QueryHandler {
 	List<RecentChange> getUserContributionsByUserDisplay(String virtualWiki, String userDisplay, Pagination pagination, boolean descending) throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet containing all virtual wiki information for all
-	 * virtual wikis.
+	 * Retrieve a list of all virtual wiki information for all virtual wikis.
 	 *
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
@@ -404,21 +403,18 @@ public interface QueryHandler {
 	List<VirtualWiki> getVirtualWikis(Connection conn) throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet containing the topic ID and topic name for
-	 * topics in the user's watchlist.
+	 * Retrieve a list of topic names for topics in the user's watchlist.
 	 *
 	 * @param virtualWikiId The virtual wiki ID for the virtual wiki for the
 	 *  watchlist topics.
 	 * @param userId The user ID for the user retrieving the watchlist.
-	 * @return A WikiResultSet containing topic ID and topic name for all
-	 *  watchlist items.
+	 * @return A list of topic names for topics in the user's watchlist.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	WikiResultSet getWatchlist(int virtualWikiId, int userId) throws SQLException;
+	List<String> getWatchlist(int virtualWikiId, int userId) throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet containing all recent changes for topics in the
-	 * user's watchlist.
+	 * Retrieve a list of all recent changes for topics in the user's watchlist.
 	 *
 	 * @param virtualWikiId The virtual wiki ID for the virtual wiki for the
 	 *  watchlist topics.
@@ -624,21 +620,21 @@ public interface QueryHandler {
 	void insertWikiUser(WikiUser user, Connection conn) throws SQLException;
 
 	/**
-	 * Retrieve a result set containing the topic name and sort key for all
-	 * topics associated with a category.
+	 * Retrieve a list of all topics in a category.
 	 *
 	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the topics
 	 *  being retrieved.
+	 * @param virtualWikiName The name of the virtual wiki for the virtual wiki of
+	 *  the topic being retrieved.
 	 * @param categoryName The name of the category for which associated topics
 	 *  are to be retrieved.
-	 * @return A WikiResultSet containing topic name and sort key for all topics
-	 *  associated with a specific category.
+	 * @return A list of all topics associated with a specific category.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	WikiResultSet lookupCategoryTopics(int virtualWikiId, String categoryName) throws SQLException;
+	List<Category> lookupCategoryTopics(int virtualWikiId, String virtualWikiName, String categoryName) throws SQLException;
 
 	/**
-	 * Retrieve a WikiResultSet containing all topic information for a given topic.
+	 * Retrieve a topic that matches a given name and virtual wiki.
 	 *
 	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the topic
 	 *  being retrieved.
@@ -657,7 +653,7 @@ public interface QueryHandler {
 	Topic lookupTopic(int virtualWikiId, String virtualWikiName, String topicName, boolean caseSensitive, Connection conn) throws SQLException;
 
 	/**
-	 * Retrieve a result set of all topics of a given type within a virtual wiki.
+	 * Retrieve a list of all topic names of a given type within a virtual wiki.
 	 *
 	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the topics
 	 *  being retrieved.
@@ -665,12 +661,12 @@ public interface QueryHandler {
 	 *  retrieved.
 	 * @param pagination A Pagination object that specifies the number of results
 	 *  and starting result offset for the result set to be retrieved.
-	 * @return A WikiResult set of all non-deleted topics for the given virtual wiki
-	 *  of the specified topic type, and within the bounds specified by the pagination
-	 *  object.
+	 * @return A list of all topic names of a given type within a virtual wiki, and
+	 *  within the bounds specified by the pagination object.  If no results are
+	 *  found then an empty list is returned.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws SQLException;
+	List<String> lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws SQLException;
 
 	/**
 	 * Return a count of all topics, including redirects, comments pages and templates,
@@ -736,16 +732,15 @@ public interface QueryHandler {
 	WikiUser lookupWikiUser(int userId) throws SQLException;
 
 	/**
-	 * Retrieve a result set containing all user information for a given WikiUser.
+	 * Retrieve a the user id that matches the given login.
 	 *
 	 * @param login The login of the user record being retrieved.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
-	 * @return A WikiResultSet containing all information for the given user, or
-	 *  an empty result set if no matching user exists.
+	 * @return The user id that matches the given login, or -1 if no match is found.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	WikiResultSet lookupWikiUser(String login, Connection conn) throws SQLException;
+	int lookupWikiUser(String login, Connection conn) throws SQLException;
 
 	/**
 	 * Return a count of all wiki users.
@@ -755,25 +750,25 @@ public interface QueryHandler {
 	int lookupWikiUserCount() throws SQLException;
 
 	/**
-	 * Retrieve a result set containing the encrypted password for a user given
-	 * the username.
+	 * Retrieve the encrypted password for a user given the username.
 	 *
 	 * @param username The name of the user whose enrypted password is being retrieved.
-	 * @return A WikiResultSet containing the encrypted password.
+	 * @return The encrypted password, or <code>null</code> if no matching username is
+	 *  found.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	WikiResultSet lookupWikiUserEncryptedPassword(String username) throws SQLException;
+	String lookupWikiUserEncryptedPassword(String username) throws SQLException;
 
 	/**
-	 * Retrieve a result set of all logins for every wiki user.
+	 * Retrieve a list of all logins for every wiki user.
 	 *
 	 * @param pagination A Pagination object that specifies the number of results
 	 *  and starting result offset for the result set to be retrieved.
-	 * @return A WikiResult set of all logins for all wiki users, within the
-	 *  bounds specified by the pagination object.
+	 * @return A list of all logins for all wiki users, within the bounds specified
+	 *  by the pagination object, or an empty list if no logins are available.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	WikiResultSet lookupWikiUsers(Pagination pagination) throws SQLException;
+	List<String> lookupWikiUsers(Pagination pagination) throws SQLException;
 
 	/**
 	 * Refresh the log entries by rebuilding the data based on topic versions,

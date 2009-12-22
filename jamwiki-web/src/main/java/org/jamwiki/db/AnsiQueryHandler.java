@@ -24,6 +24,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
@@ -34,6 +35,7 @@ import org.jamwiki.model.Category;
 import org.jamwiki.model.LogItem;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
+import org.jamwiki.model.RoleMap;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
@@ -470,12 +472,31 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getCategories(int virtualWikiId, Pagination pagination) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_CATEGORIES);
-		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, pagination.getNumResults());
-		stmt.setInt(3, pagination.getOffset());
-		return stmt.executeQuery();
+	public List<Category> getCategories(int virtualWikiId, String virtualWikiName, Pagination pagination) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_CATEGORIES);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setInt(2, pagination.getNumResults());
+			stmt.setInt(3, pagination.getOffset());
+			rs = stmt.executeQuery();
+			List<Category> results = new ArrayList<Category>();
+			while (rs.next()) {
+				Category category = new Category();
+				category.setName(rs.getString("category_name"));
+				// child topic name not initialized since it is not needed
+				category.setVirtualWiki(virtualWikiName);
+				category.setSortKey(rs.getString("sort_key"));
+				// topic type not initialized since it is not needed
+				results.add(category);
+			}
+			return results;
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
 	}
 
 	/**
@@ -537,24 +558,76 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getRoleMapByLogin(String loginFragment) throws SQLException {
+	public List<RoleMap> getRoleMapByLogin(String loginFragment) throws SQLException {
 		if (StringUtils.isBlank(loginFragment)) {
-			return new WikiResultSet();
+			return new ArrayList<RoleMap>();
 		}
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_AUTHORITIES_LOGIN);
-		loginFragment = '%' + loginFragment.toLowerCase() + '%';
-		stmt.setString(1, loginFragment);
-		return stmt.executeQuery();
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_AUTHORITIES_LOGIN);
+			loginFragment = '%' + loginFragment.toLowerCase() + '%';
+			stmt.setString(1, loginFragment);
+			rs = stmt.executeQuery();
+			LinkedHashMap<Integer, RoleMap> roleMaps = new LinkedHashMap<Integer, RoleMap>();
+			while (rs.next()) {
+				Integer userId = rs.getInt("wiki_user_id");
+				RoleMap roleMap = new RoleMap();
+				if (roleMaps.containsKey(userId)) {
+					roleMap = roleMaps.get(userId);
+				} else {
+					roleMap.setUserId(userId);
+					roleMap.setUserLogin(rs.getString("username"));
+				}
+				roleMap.addRole(rs.getString("authority"));
+				roleMaps.put(userId, roleMap);
+			}
+			return new ArrayList<RoleMap>(roleMaps.values());
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
 	}
 
 	/**
 	 *
 	 */
-	public WikiResultSet getRoleMapByRole(String authority) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_AUTHORITIES_AUTHORITY);
-		stmt.setString(1, authority);
-		stmt.setString(2, authority);
-		return stmt.executeQuery();
+	public List<RoleMap> getRoleMapByRole(String authority) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_AUTHORITIES_AUTHORITY);
+			stmt.setString(1, authority);
+			stmt.setString(2, authority);
+			rs = stmt.executeQuery();
+			LinkedHashMap<String, RoleMap> roleMaps = new LinkedHashMap<String, RoleMap>();
+			while (rs.next()) {
+				int userId = rs.getInt("wiki_user_id");
+				int groupId = rs.getInt("group_id");
+				RoleMap roleMap = new RoleMap();
+				String key = userId + "|" + groupId;
+				if (roleMaps.containsKey(key)) {
+					roleMap = roleMaps.get(key);
+				} else {
+					if (userId > 0) {
+						roleMap.setUserId(userId);
+						roleMap.setUserLogin(rs.getString("username"));
+					}
+					if (groupId > 0) {
+						roleMap.setGroupId(groupId);
+						roleMap.setGroupName(rs.getString("group_name"));
+					}
+				}
+				roleMap.addRole(rs.getString("authority"));
+				roleMaps.put(key, roleMap);
+			}
+			return new ArrayList<RoleMap>(roleMaps.values());
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
 	}
 
 	/**
@@ -582,8 +655,31 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getRoleMapGroups() throws SQLException {
-		return DatabaseConnection.executeQuery(STATEMENT_SELECT_GROUPS_AUTHORITIES);
+	public List<RoleMap> getRoleMapGroups() throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_GROUPS_AUTHORITIES);
+			rs = stmt.executeQuery();
+			LinkedHashMap<Integer, RoleMap> roleMaps = new LinkedHashMap<Integer, RoleMap>();
+			while (rs.next()) {
+				Integer groupId = rs.getInt("group_id");
+				RoleMap roleMap = new RoleMap();
+				if (roleMaps.containsKey(groupId)) {
+					roleMap = roleMaps.get(groupId);
+				} else {
+					roleMap.setGroupId(groupId);
+					roleMap.setGroupName(rs.getString("group_name"));
+				}
+				roleMap.addRole(rs.getString("authority"));
+				roleMaps.put(groupId, roleMap);
+			}
+			return new ArrayList<RoleMap>(roleMaps.values());
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
 	}
 
 	/**
@@ -657,12 +753,25 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getTopicsAdmin(int virtualWikiId, Pagination pagination) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPICS_ADMIN);
-		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, pagination.getNumResults());
-		stmt.setInt(3, pagination.getOffset());
-		return stmt.executeQuery();
+	public List<String> getTopicsAdmin(int virtualWikiId, Pagination pagination) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPICS_ADMIN);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setInt(2, pagination.getNumResults());
+			stmt.setInt(3, pagination.getOffset());
+			rs = stmt.executeQuery();
+			List<String> results = new ArrayList<String>();
+			while (rs.next()) {
+				results.add(rs.getString("topic_name"));
+			}
+			return results;
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
 	}
 
 	/**
@@ -744,11 +853,24 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getWatchlist(int virtualWikiId, int userId) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WATCHLIST);
-		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, userId);
-		return stmt.executeQuery();
+	public List<String> getWatchlist(int virtualWikiId, int userId) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_WATCHLIST);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setInt(2, userId);
+			rs = stmt.executeQuery();
+			List<String> watchedTopicNames = new ArrayList<String>();
+			while (rs.next()) {
+				watchedTopicNames.add(rs.getString("topic_name"));
+			}
+			return watchedTopicNames;
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
 	}
 
 	/**
@@ -905,6 +1027,19 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_UPDATE_VIRTUAL_WIKI            = props.getProperty("STATEMENT_UPDATE_VIRTUAL_WIKI");
 		STATEMENT_UPDATE_WIKI_FILE               = props.getProperty("STATEMENT_UPDATE_WIKI_FILE");
 		STATEMENT_UPDATE_WIKI_USER               = props.getProperty("STATEMENT_UPDATE_WIKI_USER");
+	}
+
+	/**
+	 *
+	 */
+	private Category initCategory(ResultSet rs, String virtualWikiName) throws SQLException {
+		Category category = new Category();
+		category.setName("category_name");
+		category.setVirtualWiki(virtualWikiName);
+		category.setChildTopicName(rs.getString("topic_name"));
+		category.setSortKey(rs.getString("sort_key"));
+		category.setTopicType(rs.getInt("topic_type"));
+		return category;
 	}
 
 	/**
@@ -1592,13 +1727,26 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupCategoryTopics(int virtualWikiId, String categoryName) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_CATEGORY_TOPICS);
-		// category name must be lowercase since search is case-insensitive
-		categoryName = categoryName.toLowerCase();
-		stmt.setInt(1, virtualWikiId);
-		stmt.setString(2, categoryName);
-		return stmt.executeQuery();
+	public List<Category> lookupCategoryTopics(int virtualWikiId, String virtualWikiName, String categoryName) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_CATEGORY_TOPICS);
+			// category name must be lowercase since search is case-insensitive
+			categoryName = categoryName.toLowerCase();
+			stmt.setInt(1, virtualWikiId);
+			stmt.setString(2, categoryName);
+			rs = stmt.executeQuery();
+			List<Category> results = new ArrayList<Category>();
+			while (rs.next()) {
+				results.add(this.initCategory(rs, virtualWikiName));
+			}
+			return results;
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
 	}
 
 	/**
@@ -1627,13 +1775,26 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
-		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, topicType);
-		stmt.setInt(3, pagination.getNumResults());
-		stmt.setInt(4, pagination.getOffset());
-		return stmt.executeQuery();
+	public List<String> lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setInt(2, topicType);
+			stmt.setInt(3, pagination.getNumResults());
+			stmt.setInt(4, pagination.getOffset());
+			rs = stmt.executeQuery();
+			List<String> results = new ArrayList<String>();
+			while (rs.next()) {
+				results.add(rs.getString("topic_name"));
+			}
+			return results;
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
 	}
 
 	/**
@@ -1752,10 +1913,18 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUser(String username, Connection conn) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_LOGIN);
-		stmt.setString(1, username);
-		return stmt.executeQuery(conn);
+	public int lookupWikiUser(String username, Connection conn) throws SQLException {
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER_LOGIN);
+			stmt.setString(1, username);
+			rs = stmt.executeQuery();
+			return (rs.next()) ? rs.getInt("wiki_user_id") : -1;
+		} finally {
+			// close only the statement and result set - leave the connection open for further use
+			DatabaseConnection.closeConnection(null, stmt, rs);
+		}
 	}
 
 	/**
@@ -1778,20 +1947,42 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUserEncryptedPassword(String username) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_DETAILS_PASSWORD);
-		stmt.setString(1, username);
-		return stmt.executeQuery();
+	public String lookupWikiUserEncryptedPassword(String username) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER_DETAILS_PASSWORD);
+			stmt.setString(1, username);
+			rs = stmt.executeQuery();
+			return (rs.next()) ? rs.getString("password") : null;
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
 	}
 
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUsers(Pagination pagination) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USERS);
-		stmt.setInt(1, pagination.getNumResults());
-		stmt.setInt(2, pagination.getOffset());
-		return stmt.executeQuery();
+	public List<String> lookupWikiUsers(Pagination pagination) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USERS);
+			stmt.setInt(1, pagination.getNumResults());
+			stmt.setInt(2, pagination.getOffset());
+			rs = stmt.executeQuery();
+			List<String> results = new ArrayList<String>();
+			while (rs.next()) {
+				results.add(rs.getString("login"));
+			}
+			return results;
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
 	}
 
 	/**

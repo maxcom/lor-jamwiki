@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import org.jamwiki.Environment;
+import org.jamwiki.model.Category;
 import org.jamwiki.model.LogItem;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.utils.Pagination;
@@ -51,12 +52,31 @@ public class DB2QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getCategories(int virtualWikiId, Pagination pagination) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_CATEGORIES);
-		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, pagination.getStart());
-		stmt.setInt(3, pagination.getEnd());
-		return stmt.executeQuery();
+	public List<Category> getCategories(int virtualWikiId, String virtualWikiName, Pagination pagination) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_CATEGORIES);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setInt(2, pagination.getStart());
+			stmt.setInt(3, pagination.getEnd());
+			rs = stmt.executeQuery();
+			List<Category> results = new ArrayList<Category>();
+			while (rs.next()) {
+				Category category = new Category();
+				category.setName(rs.getString("category_name"));
+				// child topic name not initialized since it is not needed
+				category.setVirtualWiki(virtualWikiName);
+				category.setSortKey(rs.getString("sort_key"));
+				// topic type not initialized since it is not needed
+				results.add(category);
+			}
+			return results;
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
 	}
 
 	/**
@@ -143,12 +163,25 @@ public class DB2QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getTopicsAdmin(int virtualWikiId, Pagination pagination) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPICS_ADMIN);
-		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, pagination.getStart());
-		stmt.setInt(3, pagination.getEnd());
-		return stmt.executeQuery();
+	public List<String> getTopicsAdmin(int virtualWikiId, Pagination pagination) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPICS_ADMIN);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setInt(2, pagination.getStart());
+			stmt.setInt(3, pagination.getEnd());
+			rs = stmt.executeQuery();
+			List<String> results = new ArrayList<String>();
+			while (rs.next()) {
+				results.add(rs.getString("topic_name"));
+			}
+			return results;
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
 	}
 
 	/**
@@ -231,22 +264,48 @@ public class DB2QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
-		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, topicType);
-		stmt.setInt(3, pagination.getStart());
-		stmt.setInt(4, pagination.getEnd());
-		return stmt.executeQuery();
+	public List<String> lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setInt(2, topicType);
+			stmt.setInt(3, pagination.getStart());
+			stmt.setInt(4, pagination.getEnd());
+			rs = stmt.executeQuery();
+			List<String> results = new ArrayList<String>();
+			while (rs.next()) {
+				results.add(rs.getString("topic_name"));
+			}
+			return results;
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
 	}
 
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUsers(Pagination pagination) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USERS);
-		stmt.setInt(1, pagination.getStart());
-		stmt.setInt(2, pagination.getEnd());
-		return stmt.executeQuery();
+	public List<String> lookupWikiUsers(Pagination pagination) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USERS);
+			stmt.setInt(1, pagination.getStart());
+			stmt.setInt(2, pagination.getEnd());
+			rs = stmt.executeQuery();
+			List<String> results = new ArrayList<String>();
+			while (rs.next()) {
+				results.add(rs.getString("login"));
+			}
+			return results;
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
 	}
 }

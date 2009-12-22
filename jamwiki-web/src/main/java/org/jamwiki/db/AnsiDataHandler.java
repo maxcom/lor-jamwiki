@@ -373,23 +373,12 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public List<Category> getAllCategories(String virtualWiki, Pagination pagination) throws DataAccessException {
-		List<Category> results = new ArrayList<Category>();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		try {
-			WikiResultSet rs = this.queryHandler().getCategories(virtualWikiId, pagination);
-			while (rs.next()) {
-				Category category = new Category();
-				category.setName(rs.getString("category_name"));
-				// child topic name not initialized since it is not needed
-				category.setVirtualWiki(virtualWiki);
-				category.setSortKey(rs.getString("sort_key"));
-				// topic type not initialized since it is not needed
-				results.add(category);
-			}
+			return this.queryHandler().getCategories(virtualWikiId, virtualWiki, pagination);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
-		return results;
 	}
 
 	/**
@@ -458,58 +447,22 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public List<RoleMap> getRoleMapByLogin(String loginFragment) throws DataAccessException {
-		LinkedHashMap<Integer, RoleMap> roleMaps = new LinkedHashMap<Integer, RoleMap>();
 		try {
-			WikiResultSet rs = this.queryHandler().getRoleMapByLogin(loginFragment);
-			while (rs.next()) {
-				Integer userId = rs.getInt("wiki_user_id");
-				RoleMap roleMap = new RoleMap();
-				if (roleMaps.containsKey(userId)) {
-					roleMap = roleMaps.get(userId);
-				} else {
-					roleMap.setUserId(userId);
-					roleMap.setUserLogin(rs.getString("username"));
-				}
-				roleMap.addRole(rs.getString("authority"));
-				roleMaps.put(userId, roleMap);
-			}
+			return this.queryHandler().getRoleMapByLogin(loginFragment);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
-		return new ArrayList<RoleMap>(roleMaps.values());
 	}
 
 	/**
 	 *
 	 */
 	public List<RoleMap> getRoleMapByRole(String authority) throws DataAccessException {
-		LinkedHashMap<String, RoleMap> roleMaps = new LinkedHashMap<String, RoleMap>();
 		try {
-			WikiResultSet rs = this.queryHandler().getRoleMapByRole(authority);
-			while (rs.next()) {
-				int userId = rs.getInt("wiki_user_id");
-				int groupId = rs.getInt("group_id");
-				RoleMap roleMap = new RoleMap();
-				String key = userId + "|" + groupId;
-				if (roleMaps.containsKey(key)) {
-					roleMap = roleMaps.get(key);
-				} else {
-					if (userId > 0) {
-						roleMap.setUserId(userId);
-						roleMap.setUserLogin(rs.getString("username"));
-					}
-					if (groupId > 0) {
-						roleMap.setGroupId(groupId);
-						roleMap.setGroupName(rs.getString("group_name"));
-					}
-				}
-				roleMap.addRole(rs.getString("authority"));
-				roleMaps.put(key, roleMap);
-			}
+			return this.queryHandler().getRoleMapByRole(authority);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
-		return new ArrayList<RoleMap>(roleMaps.values());
 	}
 
 	/**
@@ -527,25 +480,11 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public List<RoleMap> getRoleMapGroups() throws DataAccessException {
-		LinkedHashMap<Integer, RoleMap> roleMaps = new LinkedHashMap<Integer, RoleMap>();
 		try {
-			WikiResultSet rs = this.queryHandler().getRoleMapGroups();
-			while (rs.next()) {
-				Integer groupId = rs.getInt("group_id");
-				RoleMap roleMap = new RoleMap();
-				if (roleMaps.containsKey(groupId)) {
-					roleMap = roleMaps.get(groupId);
-				} else {
-					roleMap.setGroupId(groupId);
-					roleMap.setGroupName(rs.getString("group_name"));
-				}
-				roleMap.addRole(rs.getString("authority"));
-				roleMaps.put(groupId, roleMap);
-			}
+			return this.queryHandler().getRoleMapGroups();
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
-		return new ArrayList<RoleMap>(roleMaps.values());
 	}
 
 	/**
@@ -578,18 +517,12 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public List<String> getTopicsAdmin(String virtualWiki, Pagination pagination) throws DataAccessException {
-		List<String> all = new ArrayList<String>();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		try {
-			WikiResultSet rs = this.queryHandler().getTopicsAdmin(virtualWikiId, pagination);
-			while (rs.next()) {
-				String topicName = rs.getString("topic_name");
-				all.add(topicName);
-			}
+			return this.queryHandler().getTopicsAdmin(virtualWikiId, pagination);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
-		return all;
 	}
 
 	/**
@@ -631,18 +564,13 @@ public class AnsiDataHandler implements DataHandler {
 	 * watchlist.
 	 */
 	public Watchlist getWatchlist(String virtualWiki, int userId) throws DataAccessException {
-		List<String> all = new ArrayList<String>();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		try {
-			WikiResultSet rs = this.queryHandler().getWatchlist(virtualWikiId, userId);
-			while (rs.next()) {
-				String topicName = rs.getString("topic_name");
-				all.add(topicName);
-			}
+			List<String> watchedTopicNames = this.queryHandler().getWatchlist(virtualWikiId, userId);
+			return new Watchlist(virtualWiki, watchedTopicNames);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
-		return new Watchlist(virtualWiki, all);
 	}
 
 	/**
@@ -662,23 +590,12 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public List<Category> lookupCategoryTopics(String virtualWiki, String categoryName) throws DataAccessException {
-		List<Category> results = new ArrayList<Category>();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		try {
-			WikiResultSet rs = this.queryHandler().lookupCategoryTopics(virtualWikiId, categoryName);
-			while (rs.next()) {
-				Category category = new Category();
-				category.setName(categoryName);
-				category.setVirtualWiki(virtualWiki);
-				category.setChildTopicName(rs.getString("topic_name"));
-				category.setSortKey(rs.getString("sort_key"));
-				category.setTopicType(rs.getInt("topic_type"));
-				results.add(category);
-			}
+			return this.queryHandler().lookupCategoryTopics(virtualWikiId, virtualWiki, categoryName);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
-		return results;
 	}
 
 	/**
@@ -761,17 +678,12 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public List<String> lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws DataAccessException {
-		List<String> results = new ArrayList<String>();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		try {
-			WikiResultSet rs = this.queryHandler().lookupTopicByType(virtualWikiId, topicType, pagination);
-			while (rs.next()) {
-				results.add(rs.getString("topic_name"));
-			}
+			return this.queryHandler().lookupTopicByType(virtualWikiId, topicType, pagination);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
-		return results;
 	}
 
 	/**
@@ -913,11 +825,8 @@ public class AnsiDataHandler implements DataHandler {
 		try {
 			status = DatabaseConnection.startTransaction();
 			Connection conn = DatabaseConnection.getConnection();
-			WikiResultSet rs = this.queryHandler().lookupWikiUser(username, conn);
-			if (rs.size() == 0) {
-				result = null;
-			} else {
-				int userId = rs.getInt("wiki_user_id");
+			int userId = this.queryHandler().lookupWikiUser(username, conn);
+			if (userId != -1) {
 				result = lookupWikiUser(userId);
 			}
 		} catch (DataAccessException e) {
@@ -948,8 +857,7 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	public String lookupWikiUserEncryptedPassword(String username) throws DataAccessException {
 		try {
-			WikiResultSet rs = this.queryHandler().lookupWikiUserEncryptedPassword(username);
-			return (rs.size() == 0) ? null : rs.getString("password");
+			return this.queryHandler().lookupWikiUserEncryptedPassword(username);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
@@ -959,16 +867,11 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public List<String> lookupWikiUsers(Pagination pagination) throws DataAccessException {
-		List<String> results = new ArrayList<String>();
 		try {
-			WikiResultSet rs = this.queryHandler().lookupWikiUsers(pagination);
-			while (rs.next()) {
-				results.add(rs.getString("login"));
-			}
+			return this.queryHandler().lookupWikiUsers(pagination);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
-		return results;
 	}
 
 	/**
