@@ -483,7 +483,7 @@ public class WikiDatabase {
 			conn = DatabaseConnection.getConnection();
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
-			return rs.getInt("max_table_id");
+			return (rs.next()) ? rs.getInt("max_table_id") : 0;
 		} finally {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}
