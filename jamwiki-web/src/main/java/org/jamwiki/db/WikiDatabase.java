@@ -91,23 +91,25 @@ public class WikiDatabase {
 		if (!(WikiBase.getDataHandler() instanceof HSqlDataHandler)) {
 			throw new IllegalStateException("Exporting to CSV is allowed only when the wiki is configured to use the internal database setting.");
 		}
-		WikiPreparedStatement stmt = null;
+		PreparedStatement stmt = null;
+		Connection conn = null;
 		String sql = null;
 		String exportTableName = null;
 		String csvDirectory = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), "database").getPath();
 		File csvFile = null;
 		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
+			conn = DatabaseConnection.getConnection();
 			// make sure CSV files are encoded UTF-8
 			// TODO: this does not seem to be working currently - HSQL bug?
 			sql = "set property \"textdb.encoding\" 'UTF-8'";
-			stmt = new WikiPreparedStatement(sql);
+			stmt = conn.prepareStatement(sql);
 			stmt.executeUpdate();
 			for (int i=0; i < JAMWIKI_DB_TABLE_INFO.length; i++) {
 				exportTableName = JAMWIKI_DB_TABLE_INFO[i][0] + "_export";
 				// first drop any pre-existing CSV database files.
 				sql = "drop table " + exportTableName + " if exists";
-				stmt = new WikiPreparedStatement(sql);
+				stmt = conn.prepareStatement(sql);
 				stmt.executeUpdate();
 				// now delete the CSV file if it exists
 				csvFile = new File(csvDirectory, exportTableName + ".csv");
@@ -120,12 +122,12 @@ public class WikiDatabase {
 				}
 				// create the CSV files
 				sql = "select * into text " + exportTableName + " from " + JAMWIKI_DB_TABLE_INFO[i][0];
-				stmt = new WikiPreparedStatement(sql);
+				stmt = conn.prepareStatement(sql);
 				stmt.executeUpdate();
 			}
 			// rebuild the data files to make sure everything is committed to disk
 			sql = "checkpoint";
-			stmt = new WikiPreparedStatement(sql);
+			stmt = conn.prepareStatement(sql);
 			stmt.executeUpdate();
 		} catch (Exception e) {
 			DatabaseConnection.rollbackOnException(status, e);
@@ -133,6 +135,8 @@ public class WikiDatabase {
 		} catch (Error err) {
 			DatabaseConnection.rollbackOnException(status, err);
 			throw new DataAccessException(err);
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
 		}
 		DatabaseConnection.commit(status);
 	}
@@ -365,8 +369,10 @@ public class WikiDatabase {
 			return null;
 		}
 		// test to see if JAMWiki tables already exist (if they do, we can't continue this migration process
+		Statement stmt = null;
 		try {
-			DatabaseConnection.executeQuery(newQueryHandler.existenceValidationQuery(), conn);
+			stmt = conn.createStatement();
+			stmt.executeQuery(newQueryHandler.existenceValidationQuery());
 			errors.add(new WikiMessage("setup.error.migrate"));
 			if (conn != null) {
 				try {
@@ -377,6 +383,8 @@ public class WikiDatabase {
 		} catch (Exception ex) {
 			// we expect this exception as the JAMWiki tables don't exist
 			logger.fine("NEW Database does not contain any JAMWiki instance");
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
 		}
 		try {
 			newQueryHandler.createTables(conn);
@@ -468,8 +476,17 @@ public class WikiDatabase {
 			return 1;
 		}
 		String sql = "select max(" + primaryIdColumnName + ") as max_table_id from " + tableName;
-		WikiResultSet rs = DatabaseConnection.executeQuery(sql);
-		return rs.getInt("max_table_id");
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql);
+			return rs.getInt("max_table_id");
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
 	}
 
 	/**

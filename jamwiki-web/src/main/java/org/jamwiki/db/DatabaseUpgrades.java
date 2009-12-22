@@ -17,6 +17,9 @@
 package org.jamwiki.db;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -71,19 +74,24 @@ public class DatabaseUpgrades {
 				throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
 			}
 		}
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
 		try {
-			Connection conn = DatabaseConnection.getConnection();
-			WikiPreparedStatement stmt = new WikiPreparedStatement("select 1 from jam_wiki_user_info where login = ? and encoded_password = ?");
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement("select 1 from jam_wiki_user_info where login = ? and encoded_password = ?");
 			if (!StringUtils.isBlank(password)) {
 				password = Encryption.encrypt(password);
 			}
 			stmt.setString(1, username);
 			stmt.setString(2, password);
-			WikiResultSet rs = stmt.executeQuery(conn);
-			return (rs.size() > 0);
+			rs = stmt.executeQuery();
+			return (rs.next());
 		} catch (SQLException e) {
 			logger.severe("Database failure while authenticating user", e);
 			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}
 	}
 
@@ -142,6 +150,8 @@ public class DatabaseUpgrades {
 	 */
 	public static List<WikiMessage> upgrade070(List<WikiMessage> messages) throws WikiException {
 		TransactionStatus status = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
 		try {
 			status = DatabaseConnection.startTransaction(getTransactionDefinition());
 			Connection conn = DatabaseConnection.getConnection();
@@ -174,12 +184,15 @@ public class DatabaseUpgrades {
 			messages.add(new WikiMessage("upgrade.message.db.table.dropped", "jam_role_map"));
 			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_GROUP_MEMBERS_TABLE", conn);
 			// FIXME - avoid hard coding
-			String sql = "select group_id from jam_group where group_name = '" + WikiGroup.GROUP_REGISTERED_USER + "'";
-			WikiResultSet rs = DatabaseConnection.executeQuery(sql, conn);
+			String sql = "select group_id from jam_group where group_name = ?";
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1, WikiGroup.GROUP_REGISTERED_USER);
+			rs = stmt.executeQuery();
 			int groupId = rs.getInt("group_id");
 			// FIXME - avoid hard coding
 			sql = "select username from jam_users ";
-			rs = DatabaseConnection.executeQuery(sql, conn);
+			stmt = conn.prepareStatement(sql);
+			rs = stmt.executeQuery();
 			int id = 1;
 			while (rs.next()) {
 				// FIXME - avoid hard coding
@@ -210,6 +223,8 @@ public class DatabaseUpgrades {
 			} catch (Exception ex) {}
 			logger.severe("Database failure during upgrade", e);
 			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
+		} finally {
+			DatabaseConnection.closeConnection(null, stmt, rs);
 		}
 		DatabaseConnection.commit(status);
 		// for some reason HSQL hangs when populating the characters_changed column.  since this step is

@@ -18,8 +18,8 @@ package org.jamwiki.db;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -988,11 +988,17 @@ public class AnsiDataHandler implements DataHandler {
 	public void setup(Locale locale, WikiUser user, String username, String encryptedPassword) throws DataAccessException, WikiException {
 		WikiDatabase.initialize();
 		// determine if database exists
+		Connection conn = null;
+		Statement stmt = null;
 		try {
-			DatabaseConnection.executeQuery(WikiDatabase.getExistenceValidationQuery());
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.createStatement();
+			stmt.executeQuery(WikiDatabase.getExistenceValidationQuery());
 			return;
 		} catch (SQLException e) {
 			// database not yet set up
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt);
 		}
 		WikiDatabase.setup(locale, user, username, encryptedPassword);
 	}

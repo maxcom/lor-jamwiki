@@ -150,46 +150,23 @@ public class DatabaseConnection {
 	}
 
 	/**
+	 * Execute a query to retrieve a single integer value, generally the result of SQL such
+	 * as "select max(id) from table".
 	 *
+	 * @param sql The SQL to execute.
+	 * @param field The field that is returned containing the integer value.
+	 * @param conn The database connection to use when querying.
+	 * @return Returns the result of the query or 0 if no result is found.
 	 */
-	protected static WikiResultSet executeQuery(String sql) throws SQLException {
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			return executeQuery(sql, conn);
-		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn);
-			}
-		}
-	}
-
-	/**
-	 *
-	 */
-	protected static WikiResultSet executeQuery(String sql, Connection conn) throws SQLException {
+	protected static int executeSequenceQuery(String sql, String field, Connection conn) throws SQLException {
 		Statement stmt = null;
 		ResultSet rs = null;
 		try {
-			long start = System.currentTimeMillis();
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
-			long execution = System.currentTimeMillis() - start;
-			if (execution > DatabaseConnection.SLOW_QUERY_LIMIT) {
-				logger.warning("Slow query: " + sql + " (" + (execution / 1000.000) + " s.)");
-			}
-			logger.fine("Executed " + sql + " (" + (execution / 1000.000) + " s.)");
-			return new WikiResultSet(rs);
-		} catch (SQLException e) {
-			logger.severe("Failure while executing " + sql, e);
-			throw e;
+			return (rs.next()) ? rs.getInt(field) : 0;
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {}
-			}
-			DatabaseConnection.closeStatement(stmt);
+			DatabaseConnection.closeConnection(null, stmt, rs);
 		}
 	}
 
@@ -287,18 +264,16 @@ public class DatabaseConnection {
 	 */
 	public static void testDatabase(String driver, String url, String user, String password, boolean existence) throws SQLException, ClassNotFoundException {
 		Connection conn = null;
+		Statement stmt = null;
 		try {
 			conn = getTestConnection(driver, url, user, password);
 			if (existence) {
+				stmt = conn.createStatement();
 				// test to see if database exists
-				executeQuery(WikiDatabase.getExistenceValidationQuery(), conn);
+				stmt.executeQuery(WikiDatabase.getExistenceValidationQuery());
 			}
 		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {}
-			}
+			DatabaseConnection.closeConnection(conn, stmt);
 		}
 	}
 
