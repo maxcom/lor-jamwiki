@@ -13,6 +13,8 @@ Bugfixes:
     authentication.
   * Fix an issue that caused the Special:Maintanced "database migration"
     functionality to fail.
+  * Templates will now be listed on Special:Allpages.  Reported by
+    floatingworld.
 
 Translation Updates:
 

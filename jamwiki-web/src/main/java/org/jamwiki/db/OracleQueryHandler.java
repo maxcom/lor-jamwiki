@@ -147,12 +147,13 @@ public class OracleQueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws SQLException {
+	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType1, int topicType2, Pagination pagination) throws SQLException {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
 		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, topicType);
-		stmt.setInt(3, pagination.getEnd());
-		stmt.setInt(4, pagination.getStart());
+		stmt.setInt(2, topicType1);
+		stmt.setInt(3, topicType2);
+		stmt.setInt(4, pagination.getEnd());
+		stmt.setInt(5, pagination.getStart());
 		return stmt.executeQuery();
 	}
 

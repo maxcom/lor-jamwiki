@@ -1101,11 +1101,11 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List<String> lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws DataAccessException {
+	public List<String> lookupTopicByType(String virtualWiki, int topicType1, int topicType2, Pagination pagination) throws DataAccessException {
 		List<String> results = new ArrayList<String>();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		try {
-			WikiResultSet rs = this.queryHandler().lookupTopicByType(virtualWikiId, topicType, pagination);
+			WikiResultSet rs = this.queryHandler().lookupTopicByType(virtualWikiId, topicType1, topicType2, pagination);
 			while (rs.next()) {
 				results.add(rs.getString("topic_name"));
 			}

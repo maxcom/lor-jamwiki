@@ -1265,12 +1265,13 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws SQLException {
+	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType1, int topicType2, Pagination pagination) throws SQLException {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
 		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, topicType);
-		stmt.setInt(3, pagination.getNumResults());
-		stmt.setInt(4, pagination.getOffset());
+		stmt.setInt(2, topicType1);
+		stmt.setInt(3, topicType2);
+		stmt.setInt(4, pagination.getNumResults());
+		stmt.setInt(5, pagination.getOffset());
 		return stmt.executeQuery();
 	}
 
