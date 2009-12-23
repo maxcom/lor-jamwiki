@@ -415,14 +415,16 @@ public interface DataHandler {
 	 * virtual wiki that match a specific topic type.
 	 *
 	 * @param virtualWiki The virtual wiki for the topics being queried.
-	 * @param topicType The type of topics to return.
+	 * @param topicType1 The type of topics to return.
+	 * @param topicType2 The type of topics to return.  Set to the same value
+	 *  as topicType1 if only one type is needed.
 	 * @param pagination A Pagination object indicating the total number of
 	 *  results and offset for the results to be retrieved.
 	 * @return A List of topic names for all non-deleted topics in the
 	 *  virtual wiki that match a specific topic type.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<String> lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws DataAccessException;
+	List<String> lookupTopicByType(String virtualWiki, int topicType1, int topicType2, Pagination pagination) throws DataAccessException;
 
 	/**
 	 * Retrieve a TopicVersion object for a given topic version ID.

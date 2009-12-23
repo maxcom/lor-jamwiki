@@ -677,10 +677,10 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List<String> lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws DataAccessException {
+	public List<String> lookupTopicByType(String virtualWiki, int topicType1, int topicType2, Pagination pagination) throws DataAccessException {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		try {
-			return this.queryHandler().lookupTopicByType(virtualWikiId, topicType, pagination);
+			return this.queryHandler().lookupTopicByType(virtualWikiId, topicType1, topicType2, pagination);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}

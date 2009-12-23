@@ -264,7 +264,7 @@ public class DB2QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public List<String> lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws SQLException {
+	public List<String> lookupTopicByType(int virtualWikiId, int topicType1, int topicType2, Pagination pagination) throws SQLException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -272,9 +272,10 @@ public class DB2QueryHandler extends AnsiQueryHandler {
 			conn = DatabaseConnection.getConnection();
 			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
 			stmt.setInt(1, virtualWikiId);
-			stmt.setInt(2, topicType);
-			stmt.setInt(3, pagination.getStart());
-			stmt.setInt(4, pagination.getEnd());
+			stmt.setInt(2, topicType1);
+			stmt.setInt(3, topicType2);
+			stmt.setInt(4, pagination.getStart());
+			stmt.setInt(5, pagination.getEnd());
 			rs = stmt.executeQuery();
 			List<String> results = new ArrayList<String>();
 			while (rs.next()) {
