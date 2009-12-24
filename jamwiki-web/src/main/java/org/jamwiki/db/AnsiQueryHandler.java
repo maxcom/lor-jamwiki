@@ -478,10 +478,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		ResultSet rs = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_CATEGORIES);
-			stmt.setInt(1, virtualWikiId);
-			stmt.setInt(2, pagination.getNumResults());
-			stmt.setInt(3, pagination.getOffset());
+			stmt = this.getCategoriesStatement(conn, virtualWikiId, virtualWikiName, pagination);
 			rs = stmt.executeQuery();
 			List<Category> results = new ArrayList<Category>();
 			while (rs.next()) {
@@ -502,23 +499,25 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	protected PreparedStatement getCategoriesStatement(Connection conn, int virtualWikiId, String virtualWikiName, Pagination pagination) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_CATEGORIES);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setInt(2, pagination.getNumResults());
+		stmt.setInt(3, pagination.getOffset());
+		return stmt;
+	}
+
+	/**
+	 *
+	 */
 	public List<LogItem> getLogItems(int virtualWikiId, String virtualWikiName, int logType, Pagination pagination, boolean descending) throws SQLException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		int index = 1;
 		List<LogItem> logItems = new ArrayList<LogItem>();
 		try {
 			conn = DatabaseConnection.getConnection();
-			if (logType == -1) {
-				stmt = conn.prepareStatement(STATEMENT_SELECT_LOG_ITEMS);
-			} else {
-				stmt = conn.prepareStatement(STATEMENT_SELECT_LOG_ITEMS_BY_TYPE);
-				stmt.setInt(index++, logType);
-			}
-			stmt.setInt(index++, virtualWikiId);
-			stmt.setInt(index++, pagination.getNumResults());
-			stmt.setInt(index++, pagination.getOffset());
+			stmt = this.getLogItemsStatement(conn, virtualWikiId, virtualWikiName, logType, pagination, descending);
 			// FIXME - sort order ignored
 			rs = stmt.executeQuery();
 			while (rs.next()) {
@@ -533,16 +532,31 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	protected PreparedStatement getLogItemsStatement(Connection conn, int virtualWikiId, String virtualWikiName, int logType, Pagination pagination, boolean descending) throws SQLException {
+		int index = 1;
+		PreparedStatement stmt = null;
+		if (logType == -1) {
+			stmt = conn.prepareStatement(STATEMENT_SELECT_LOG_ITEMS);
+		} else {
+			stmt = conn.prepareStatement(STATEMENT_SELECT_LOG_ITEMS_BY_TYPE);
+			stmt.setInt(index++, logType);
+		}
+		stmt.setInt(index++, virtualWikiId);
+		stmt.setInt(index++, pagination.getNumResults());
+		stmt.setInt(index++, pagination.getOffset());
+		return stmt;
+	}
+
+	/**
+	 *
+	 */
 	public List<RecentChange> getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws SQLException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_RECENT_CHANGES);
-			stmt.setString(1, virtualWiki);
-			stmt.setInt(2, pagination.getNumResults());
-			stmt.setInt(3, pagination.getOffset());
+			stmt = this.getRecentChangesStatement(conn, virtualWiki, pagination, descending);
 			// FIXME - sort order ignored
 			rs = stmt.executeQuery();
 			List<RecentChange> recentChanges = new ArrayList<RecentChange>();
@@ -553,6 +567,17 @@ public class AnsiQueryHandler implements QueryHandler {
 		} finally {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}
+	}
+
+	/**
+	 *
+	 */
+	protected PreparedStatement getRecentChangesStatement(Connection conn, String virtualWiki, Pagination pagination, boolean descending) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_RECENT_CHANGES);
+		stmt.setString(1, virtualWiki);
+		stmt.setInt(2, pagination.getNumResults());
+		stmt.setInt(3, pagination.getOffset());
+		return stmt;
 	}
 
 	/**
@@ -734,10 +759,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		ResultSet rs = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_HISTORY);
-			stmt.setInt(1, topicId);
-			stmt.setInt(2, pagination.getNumResults());
-			stmt.setInt(3, pagination.getOffset());
+			stmt = getTopicHistoryStatement(conn, topicId, pagination, descending);
 			// FIXME - sort order ignored
 			rs = stmt.executeQuery();
 			List<RecentChange> recentChanges = new ArrayList<RecentChange>();
@@ -753,16 +775,24 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	protected PreparedStatement getTopicHistoryStatement(Connection conn, int topicId, Pagination pagination, boolean descending) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_HISTORY);
+		stmt.setInt(1, topicId);
+		stmt.setInt(2, pagination.getNumResults());
+		stmt.setInt(3, pagination.getOffset());
+		return stmt;
+	}
+
+	/**
+	 *
+	 */
 	public List<String> getTopicsAdmin(int virtualWikiId, Pagination pagination) throws SQLException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPICS_ADMIN);
-			stmt.setInt(1, virtualWikiId);
-			stmt.setInt(2, pagination.getNumResults());
-			stmt.setInt(3, pagination.getOffset());
+			stmt = this.getTopicsAdminStatement(conn, virtualWikiId, pagination);
 			rs = stmt.executeQuery();
 			List<String> results = new ArrayList<String>();
 			while (rs.next()) {
@@ -777,17 +807,24 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	protected PreparedStatement getTopicsAdminStatement(Connection conn, int virtualWikiId, Pagination pagination) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_TOPICS_ADMIN);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setInt(2, pagination.getNumResults());
+		stmt.setInt(3, pagination.getOffset());
+		return stmt;
+	}
+
+	/**
+	 *
+	 */
 	public List<RecentChange> getUserContributionsByLogin(String virtualWiki, String login, Pagination pagination, boolean descending) throws SQLException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN);
-			stmt.setString(1, virtualWiki);
-			stmt.setString(2, login);
-			stmt.setInt(3, pagination.getNumResults());
-			stmt.setInt(4, pagination.getOffset());
+			stmt = this.getUserContributionsByLoginStatement(conn, virtualWiki, login, pagination, descending);
 			// FIXME - sort order ignored
 			rs = stmt.executeQuery();
 			List<RecentChange> recentChanges = new ArrayList<RecentChange>();
@@ -803,17 +840,25 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	protected PreparedStatement getUserContributionsByLoginStatement(Connection conn, String virtualWiki, String login, Pagination pagination, boolean descending) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN);
+		stmt.setString(1, virtualWiki);
+		stmt.setString(2, login);
+		stmt.setInt(3, pagination.getNumResults());
+		stmt.setInt(4, pagination.getOffset());
+		return stmt;
+	}
+
+	/**
+	 *
+	 */
 	public List<RecentChange> getUserContributionsByUserDisplay(String virtualWiki, String userDisplay, Pagination pagination, boolean descending) throws SQLException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
-			stmt.setString(1, virtualWiki);
-			stmt.setString(2, userDisplay);
-			stmt.setInt(3, pagination.getNumResults());
-			stmt.setInt(4, pagination.getOffset());
+			stmt = this.getUserContributionsByUserDisplayStatement(conn, virtualWiki, userDisplay, pagination, descending);
 			// FIXME - sort order ignored
 			rs = stmt.executeQuery();
 			List<RecentChange> recentChanges = new ArrayList<RecentChange>();
@@ -824,6 +869,18 @@ public class AnsiQueryHandler implements QueryHandler {
 		} finally {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}
+	}
+
+	/**
+	 *
+	 */
+	protected PreparedStatement getUserContributionsByUserDisplayStatement(Connection conn, String virtualWiki, String userDisplay, Pagination pagination, boolean descending) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
+		stmt.setString(1, virtualWiki);
+		stmt.setString(2, userDisplay);
+		stmt.setInt(3, pagination.getNumResults());
+		stmt.setInt(4, pagination.getOffset());
+		return stmt;
 	}
 
 	/**
@@ -882,11 +939,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		ResultSet rs = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_WATCHLIST_CHANGES);
-			stmt.setInt(1, virtualWikiId);
-			stmt.setInt(2, userId);
-			stmt.setInt(3, pagination.getNumResults());
-			stmt.setInt(4, pagination.getOffset());
+			stmt = this.getWatchlistStatement(conn, virtualWikiId, userId, pagination);
 			rs = stmt.executeQuery();
 			List<RecentChange> recentChanges = new ArrayList<RecentChange>();
 			while (rs.next()) {
@@ -896,6 +949,18 @@ public class AnsiQueryHandler implements QueryHandler {
 		} finally {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}
+	}
+
+	/**
+	 *
+	 */
+	protected PreparedStatement getWatchlistStatement(Connection conn, int virtualWikiId, int userId, Pagination pagination) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_WATCHLIST_CHANGES);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setInt(2, userId);
+		stmt.setInt(3, pagination.getNumResults());
+		stmt.setInt(4, pagination.getOffset());
+		return stmt;
 	}
 
 	/**
@@ -1045,7 +1110,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	protected LogItem initLogItem(ResultSet rs, String virtualWikiName) throws SQLException {
+	private LogItem initLogItem(ResultSet rs, String virtualWikiName) throws SQLException {
 		LogItem logItem = new LogItem();
 		int userId = rs.getInt("wiki_user_id");
 		if (userId > 0) {
@@ -1071,7 +1136,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	protected RecentChange initRecentChange(ResultSet rs) throws SQLException {
+	private RecentChange initRecentChange(ResultSet rs) throws SQLException {
 		RecentChange change = new RecentChange();
 		int topicVersionId = rs.getInt("topic_version_id");
 		if (topicVersionId > 0) {
@@ -1781,12 +1846,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		ResultSet rs = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
-			stmt.setInt(1, virtualWikiId);
-			stmt.setInt(2, topicType1);
-			stmt.setInt(3, topicType2);
-			stmt.setInt(4, pagination.getNumResults());
-			stmt.setInt(5, pagination.getOffset());
+			stmt = this.lookupTopicByTypeStatement(conn, virtualWikiId, topicType1, topicType2, pagination);
 			rs = stmt.executeQuery();
 			List<String> results = new ArrayList<String>();
 			while (rs.next()) {
@@ -1796,6 +1856,19 @@ public class AnsiQueryHandler implements QueryHandler {
 		} finally {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}
+	}
+
+	/**
+	 *
+	 */
+	protected PreparedStatement lookupTopicByTypeStatement(Connection conn, int virtualWikiId, int topicType1, int topicType2, Pagination pagination) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setInt(2, topicType1);
+		stmt.setInt(3, topicType2);
+		stmt.setInt(4, pagination.getNumResults());
+		stmt.setInt(5, pagination.getOffset());
+		return stmt;
 	}
 
 	/**
@@ -1972,9 +2045,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		ResultSet rs = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USERS);
-			stmt.setInt(1, pagination.getNumResults());
-			stmt.setInt(2, pagination.getOffset());
+			stmt = this.lookupWikiUsersStatement(conn, pagination);
 			rs = stmt.executeQuery();
 			List<String> results = new ArrayList<String>();
 			while (rs.next()) {
@@ -1984,6 +2055,16 @@ public class AnsiQueryHandler implements QueryHandler {
 		} finally {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}
+	}
+
+	/**
+	 *
+	 */
+	protected PreparedStatement lookupWikiUsersStatement(Connection conn, Pagination pagination) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USERS);
+		stmt.setInt(1, pagination.getNumResults());
+		stmt.setInt(2, pagination.getOffset());
+		return stmt;
 	}
 
 	/**

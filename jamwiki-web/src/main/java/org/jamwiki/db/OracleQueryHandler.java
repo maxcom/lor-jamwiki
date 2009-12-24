@@ -18,15 +18,9 @@ package org.jamwiki.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import org.jamwiki.Environment;
-import org.jamwiki.model.Category;
-import org.jamwiki.model.LogItem;
-import org.jamwiki.model.RecentChange;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
 
@@ -52,261 +46,121 @@ public class OracleQueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public List<Category> getCategories(int virtualWikiId, String virtualWikiName, Pagination pagination) throws SQLException {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_CATEGORIES);
-			stmt.setInt(1, virtualWikiId);
-			stmt.setInt(2, pagination.getEnd());
-			stmt.setInt(3, pagination.getStart());
-			rs = stmt.executeQuery();
-			List<Category> results = new ArrayList<Category>();
-			while (rs.next()) {
-				Category category = new Category();
-				category.setName(rs.getString("category_name"));
-				// child topic name not initialized since it is not needed
-				category.setVirtualWiki(virtualWikiName);
-				category.setSortKey(rs.getString("sort_key"));
-				// topic type not initialized since it is not needed
-				results.add(category);
-			}
-			return results;
-		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
-		}
+	protected PreparedStatement getCategoriesStatement(Connection conn, int virtualWikiId, String virtualWikiName, Pagination pagination) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_CATEGORIES);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setInt(2, pagination.getEnd());
+		stmt.setInt(3, pagination.getStart());
+		return stmt;
 	}
 
 	/**
 	 *
 	 */
-	public List<LogItem> getLogItems(int virtualWikiId, String virtualWikiName, int logType, Pagination pagination, boolean descending) throws SQLException {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
+	protected PreparedStatement getLogItemsStatement(Connection conn, int virtualWikiId, String virtualWikiName, int logType, Pagination pagination, boolean descending) throws SQLException {
 		int index = 1;
-		List<LogItem> logItems = new ArrayList<LogItem>();
-		try {
-			conn = DatabaseConnection.getConnection();
-			if (logType == -1) {
-				stmt = conn.prepareStatement(STATEMENT_SELECT_LOG_ITEMS);
-			} else {
-				stmt = conn.prepareStatement(STATEMENT_SELECT_LOG_ITEMS_BY_TYPE);
-				stmt.setInt(index++, logType);
-			}
-			stmt.setInt(index++, virtualWikiId);
-			stmt.setInt(index++, pagination.getEnd());
-			stmt.setInt(index++, pagination.getStart());
-			// FIXME - sort order ignored
-			rs = stmt.executeQuery();
-			while (rs.next()) {
-				logItems.add(this.initLogItem(rs, virtualWikiName));
-			}
-			return logItems;
-		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
+		PreparedStatement stmt = null;
+		if (logType == -1) {
+			stmt = conn.prepareStatement(STATEMENT_SELECT_LOG_ITEMS);
+		} else {
+			stmt = conn.prepareStatement(STATEMENT_SELECT_LOG_ITEMS_BY_TYPE);
+			stmt.setInt(index++, logType);
 		}
+		stmt.setInt(index++, virtualWikiId);
+		stmt.setInt(index++, pagination.getEnd());
+		stmt.setInt(index++, pagination.getStart());
+		return stmt;
 	}
 
 	/**
 	 *
 	 */
-	public List<RecentChange> getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws SQLException {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_RECENT_CHANGES);
-			stmt.setString(1, virtualWiki);
-			stmt.setInt(2, pagination.getEnd());
-			stmt.setInt(3, pagination.getStart());
-			// FIXME - sort order ignored
-			rs = stmt.executeQuery();
-			List<RecentChange> recentChanges = new ArrayList<RecentChange>();
-			while (rs.next()) {
-				recentChanges.add(this.initRecentChange(rs));
-			}
-			return recentChanges;
-		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
-		}
+	protected PreparedStatement getRecentChangesStatement(Connection conn, String virtualWiki, Pagination pagination, boolean descending) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_RECENT_CHANGES);
+		stmt.setString(1, virtualWiki);
+		stmt.setInt(2, pagination.getEnd());
+		stmt.setInt(3, pagination.getStart());
+		return stmt;
 	}
 
 	/**
 	 *
 	 */
-	public List<RecentChange> getTopicHistory(int topicId, Pagination pagination, boolean descending) throws SQLException {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_HISTORY);
-			stmt.setInt(1, topicId);
-			stmt.setInt(2, pagination.getEnd());
-			stmt.setInt(3, pagination.getStart());
-			// FIXME - sort order ignored
-			rs = stmt.executeQuery();
-			List<RecentChange> recentChanges = new ArrayList<RecentChange>();
-			while (rs.next()) {
-				recentChanges.add(this.initRecentChange(rs));
-			}
-			return recentChanges;
-		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
-		}
+	protected PreparedStatement getTopicHistoryStatement(Connection conn, int topicId, Pagination pagination, boolean descending) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_HISTORY);
+		stmt.setInt(1, topicId);
+		stmt.setInt(2, pagination.getEnd());
+		stmt.setInt(3, pagination.getStart());
+		return stmt;
 	}
 
 	/**
 	 *
 	 */
-	public List<String> getTopicsAdmin(int virtualWikiId, Pagination pagination) throws SQLException {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPICS_ADMIN);
-			stmt.setInt(1, virtualWikiId);
-			stmt.setInt(2, pagination.getEnd());
-			stmt.setInt(3, pagination.getStart());
-			rs = stmt.executeQuery();
-			List<String> results = new ArrayList<String>();
-			while (rs.next()) {
-				results.add(rs.getString("topic_name"));
-			}
-			return results;
-		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
-		}
+	protected PreparedStatement getTopicsAdminStatement(Connection conn, int virtualWikiId, Pagination pagination) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_TOPICS_ADMIN);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setInt(2, pagination.getEnd());
+		stmt.setInt(3, pagination.getStart());
+		return stmt;
 	}
 
 	/**
 	 *
 	 */
-	public List<RecentChange> getUserContributionsByLogin(String virtualWiki, String login, Pagination pagination, boolean descending) throws SQLException {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN);
-			stmt.setString(1, virtualWiki);
-			stmt.setString(2, login);
-			stmt.setInt(3, pagination.getEnd());
-			stmt.setInt(4, pagination.getStart());
-			// FIXME - sort order ignored
-			rs = stmt.executeQuery();
-			List<RecentChange> recentChanges = new ArrayList<RecentChange>();
-			while (rs.next()) {
-				recentChanges.add(this.initRecentChange(rs));
-			}
-			return recentChanges;
-		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
-		}
+	protected PreparedStatement getUserContributionsByLoginStatement(Connection conn, String virtualWiki, String login, Pagination pagination, boolean descending) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN);
+		stmt.setString(1, virtualWiki);
+		stmt.setString(2, login);
+		stmt.setInt(3, pagination.getEnd());
+		stmt.setInt(4, pagination.getStart());
+		return stmt;
 	}
 
 	/**
 	 *
 	 */
-	public List<RecentChange> getUserContributionsByUserDisplay(String virtualWiki, String userDisplay, Pagination pagination, boolean descending) throws SQLException {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
-			stmt.setString(1, virtualWiki);
-			stmt.setString(2, userDisplay);
-			stmt.setInt(3, pagination.getEnd());
-			stmt.setInt(4, pagination.getStart());
-			// FIXME - sort order ignored
-			rs = stmt.executeQuery();
-			List<RecentChange> recentChanges = new ArrayList<RecentChange>();
-			while (rs.next()) {
-				recentChanges.add(this.initRecentChange(rs));
-			}
-			return recentChanges;
-		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
-		}
+	protected PreparedStatement getUserContributionsByUserDisplayStatement(Connection conn, String virtualWiki, String userDisplay, Pagination pagination, boolean descending) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
+		stmt.setString(1, virtualWiki);
+		stmt.setString(2, userDisplay);
+		stmt.setInt(3, pagination.getEnd());
+		stmt.setInt(4, pagination.getStart());
+		return stmt;
 	}
 
 	/**
 	 *
 	 */
-	public List<RecentChange> getWatchlist(int virtualWikiId, int userId, Pagination pagination) throws SQLException {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_WATCHLIST_CHANGES);
-			stmt.setInt(1, virtualWikiId);
-			stmt.setInt(2, userId);
-			stmt.setInt(3, pagination.getEnd());
-			stmt.setInt(4, pagination.getStart());
-			rs = stmt.executeQuery();
-			List<RecentChange> recentChanges = new ArrayList<RecentChange>();
-			while (rs.next()) {
-				recentChanges.add(this.initRecentChange(rs));
-			}
-			return recentChanges;
-		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
-		}
+	protected PreparedStatement getWatchlistStatement(Connection conn, int virtualWikiId, int userId, Pagination pagination) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_WATCHLIST_CHANGES);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setInt(2, userId);
+		stmt.setInt(3, pagination.getEnd());
+		stmt.setInt(4, pagination.getStart());
+		return stmt;
 	}
 
 	/**
 	 *
 	 */
-	public List<String> lookupTopicByType(int virtualWikiId, int topicType1, int topicType2, Pagination pagination) throws SQLException {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
-			stmt.setInt(1, virtualWikiId);
-			stmt.setInt(2, topicType1);
-			stmt.setInt(3, topicType2);
-			stmt.setInt(4, pagination.getEnd());
-			stmt.setInt(5, pagination.getStart());
-			rs = stmt.executeQuery();
-			List<String> results = new ArrayList<String>();
-			while (rs.next()) {
-				results.add(rs.getString("topic_name"));
-			}
-			return results;
-		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
-		}
+	protected PreparedStatement lookupTopicByTypeStatement(Connection conn, int virtualWikiId, int topicType1, int topicType2, Pagination pagination) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setInt(2, topicType1);
+		stmt.setInt(3, topicType2);
+		stmt.setInt(4, pagination.getEnd());
+		stmt.setInt(5, pagination.getStart());
+		return stmt;
 	}
 
 	/**
 	 *
 	 */
-	public List<String> lookupWikiUsers(Pagination pagination) throws SQLException {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USERS);
-			stmt.setInt(1, pagination.getEnd());
-			stmt.setInt(2, pagination.getStart());
-			rs = stmt.executeQuery();
-			List<String> results = new ArrayList<String>();
-			while (rs.next()) {
-				results.add(rs.getString("login"));
-			}
-			return results;
-		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
-		}
+	protected PreparedStatement lookupWikiUsersStatement(Connection conn, Pagination pagination) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USERS);
+		stmt.setInt(1, pagination.getEnd());
+		stmt.setInt(2, pagination.getStart());
+		return stmt;
 	}
 }
