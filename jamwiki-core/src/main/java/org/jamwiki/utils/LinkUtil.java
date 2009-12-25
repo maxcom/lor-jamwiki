@@ -519,15 +519,13 @@ public class LinkUtil {
 		String namespaceString = "";
 		int namespacePos = processed.indexOf(':', 1);
 		if (namespacePos != -1 && namespacePos < processed.length()) {
-			namespaceString = processed.substring(0, namespacePos).trim();
+			namespaceString = processed.substring(0, namespacePos);
 		}
 		wikiLink.setNamespace(namespaceString);
 		String topic = processed;
 		if (namespacePos > 0 && (namespacePos + 1) < processed.length()) {
 			// get namespace, unless topic ends with a colon
-			topic = processed.substring(namespacePos + 1).trim();
-			// update original text in case topic was of the form "namespace: topic"
-			processed = namespaceString + ':' + topic;
+			topic = processed.substring(namespacePos + 1);
 		}
 		wikiLink.setArticle(Utilities.decodeTopicName(topic, true));
 		// destination is namespace + topic
