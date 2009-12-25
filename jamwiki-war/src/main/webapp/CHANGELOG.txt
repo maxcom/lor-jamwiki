@@ -21,21 +21,31 @@ New Features:
 
 Bugfixes:
 
+  * Leading whitespace should be trimmed from category names such as
+    "Category: Test" or "Category : Test".
+
+Translation Updates:
+
+
+0.8.1
+=====
+
+Bugfixes:
+
   * A link from a topic page to itself should be formatted as plain bold text,
     not as a link.  Reported by floatingworld.
   * XML imports of redirect topics were not redirecting properly.
-  * Leading whitespace should be trimmed from category names such as
-    "Category: Test" or "Category : Test".
   * Fix non-fatal MySQL upgrade warnings.  Reported by an anonymous user.
   * Fix code that could potentially leave database connections open during
     authentication.
-  * Fix an issue that caused the Special:Maintanced "database migration"
+  * Fix an issue that caused the Special:Maintance "database migration"
     functionality to fail.
   * Templates will now be listed on Special:Allpages.  Reported by
     floatingworld.
 
 Translation Updates:
 
+  * Updated Chinese translations (tan9).
   * Updated Polish translations (dlpa).
 
 
