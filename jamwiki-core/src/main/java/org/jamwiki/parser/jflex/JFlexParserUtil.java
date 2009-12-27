@@ -44,17 +44,14 @@ public class JFlexParserUtil {
 	private static final String nonInlineTagStartPattern = "<" + nonInlineTagPattern + ">.*";
 	private static final String nonInlineTagEndPattern = ".*</" + nonInlineTagPattern + ">";
 	private static final Pattern EMPTY_BODY_TAG_PATTERN = Pattern.compile(emptyBodyTagPattern, Pattern.CASE_INSENSITIVE);
-	/** Pattern to catch script insertions of the form "onsubmit=". */
-	private static final Pattern JAVASCRIPT_PATTERN1 = Pattern.compile("( on[^=]{3,}=)+", Pattern.CASE_INSENSITIVE);
-	/** Pattern to catch script insertions that use a javascript url. */
-	private static final Pattern JAVASCRIPT_PATTERN2 = Pattern.compile("(javascript[ ]*\\:)+", Pattern.CASE_INSENSITIVE);
+	/** Pattern to catch script insertions of the form "onsubmit=" or insertions that use a javascript url. */
+	private static final Pattern JAVASCRIPT_PATTERN = Pattern.compile("(( on[a-z]{3,}=)+)|((javascript\\s*\\:)+)", Pattern.CASE_INSENSITIVE);
 	private static final Pattern NON_NESTING_TAG_PATTERN = Pattern.compile(nonNestingTagPattern, Pattern.CASE_INSENSITIVE);
 	private static final Pattern NON_TEXT_BODY_TAG_PATTERN = Pattern.compile(nonTextBodyTagPattern, Pattern.CASE_INSENSITIVE);
 	private static final Pattern NON_INLINE_TAG_PATTERN = Pattern.compile(nonInlineTagPattern, Pattern.CASE_INSENSITIVE);
 	private static final Pattern NON_INLINE_TAG_START_PATTERN = Pattern.compile(nonInlineTagStartPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 	private static final Pattern NON_INLINE_TAG_END_PATTERN = Pattern.compile(nonInlineTagEndPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-	private static final Pattern TAG_PATTERN = Pattern.compile("(<[ ]*[/]?[ ]*)([^\\ />]+)([ ]*(.*?))([/]?[ ]*>)");
-	private static final Pattern WIKI_LINK_PATTERN = Pattern.compile("\\[\\[[ ]*(\\:[ ]*)?[ ]*([^\\n\\r\\|]+)([ ]*\\|[ ]*([^\\n\\r]+))?[ ]*\\]\\]([a-z]*)");
+	private static final Pattern TAG_PATTERN = Pattern.compile("(<\\s*[/]?\\s*)([a-z]+)(\\s*(.*?))([/]?\\s*>)", Pattern.CASE_INSENSITIVE);
 
 	/**
 	 *
@@ -156,21 +153,27 @@ public class JFlexParserUtil {
 		if (StringUtils.isBlank(raw)) {
 			return new WikiLink();
 		}
-		Matcher m = WIKI_LINK_PATTERN.matcher(raw.trim());
-		if (!m.matches()) {
-			return new WikiLink();
+		raw = raw.trim();
+		String suffix = ((!raw.endsWith("]]")) ? raw.substring(raw.lastIndexOf("]]") + 2) : null);
+		// for performance reasons use String methods rather than regex
+		// private static final Pattern WIKI_LINK_PATTERN = Pattern.compile("\\[\\[\\s*(\\:\\s*)?\\s*(.+?)(\\s*\\|\\s*(.+))?\\s*\\]\\]([a-z]*)");
+		raw = raw.substring(raw.indexOf("[[") + 2, raw.lastIndexOf("]]")).trim();
+		boolean colon = false;
+		if (raw.startsWith(":")) {
+			colon = true;
+			raw = raw.substring(1).trim();
 		}
-		String url = m.group(2);
-		WikiLink wikiLink = LinkUtil.parseWikiLink(url);
-		wikiLink.setColon((m.group(1) != null));
-		wikiLink.setText(m.group(4));
-		String suffix = m.group(5);
+		String text = null;
+		int pos = raw.indexOf('|');
+		if (pos != -1 && pos != (raw.length() - 1)) {
+			text = raw.substring(pos + 1).trim();
+			raw = raw.substring(0, pos).trim();
+		}
+		WikiLink wikiLink = LinkUtil.parseWikiLink(raw);
+		wikiLink.setColon(colon);
+		wikiLink.setText(text);
 		if (!StringUtils.isBlank(suffix)) {
-			if (StringUtils.isBlank(wikiLink.getText())) {
-				wikiLink.setText(wikiLink.getDestination() + suffix);
-			} else {
-				wikiLink.setText(wikiLink.getText() + suffix);
-			}
+			wikiLink.setText((StringUtils.isBlank(text) ? wikiLink.getDestination() : text) + suffix);
 		}
 		return wikiLink;
 	}
@@ -337,14 +340,8 @@ public class JFlexParserUtil {
 			return attributes;
 		}
 		if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT)) {
-			// FIXME - can these two patterns be combined into one?
 			// pattern requires a space prior to the "onFoo", so make sure one exists
-			Matcher m = JAVASCRIPT_PATTERN1.matcher(" " + attributes);
-			if (m.find()) {
-				logger.warning("Attempt to include Javascript in Wiki syntax " + attributes);
-				return "";
-			}
-			m = JAVASCRIPT_PATTERN2.matcher(attributes);
+			Matcher m = JAVASCRIPT_PATTERN.matcher(" " + attributes);
 			if (m.find()) {
 				logger.warning("Attempt to include Javascript in Wiki syntax " + attributes);
 				return "";
