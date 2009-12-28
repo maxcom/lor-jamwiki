@@ -23,7 +23,6 @@ import org.jamwiki.Environment;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.WikiLogger;
 
@@ -31,54 +30,54 @@ import org.jamwiki.utils.WikiLogger;
  * This class parses signature tags of the form <code>~~~</code>,
  * <code>~~~~</code> and <code>~~~~~</code>.
  */
-public class WikiSignatureTag {
+public class WikiSignatureTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiSignatureTag.class.getName());
 
 	/**
 	 *
 	 */
-	private String buildWikiSignature(ParserInput parserInput, ParserOutput parserOutput, int mode, boolean includeUser, boolean includeDate) {
-			String signature = "";
-			if (includeUser) {
-				signature = this.retrieveUserSignature(parserInput);
-				// parse signature as link in order to store link metadata
-				WikiLinkTag wikiLinkTag = new WikiLinkTag();
-				wikiLinkTag.parse(parserInput, parserOutput, mode, signature);
-				if (mode != JFlexParser.MODE_MINIMAL) {
-					try {
-						signature = JFlexParserUtil.parseFragment(parserInput, signature, mode);
-					} catch (ParserException e) {
-						logger.severe("Failure while building wiki signature", e);
-						// FIXME - return empty or a failure indicator?
-						return "";
-					}
+	private String buildWikiSignature(JFlexLexer lexer, boolean includeUser, boolean includeDate) {
+		String signature = "";
+		if (includeUser) {
+			signature = this.retrieveUserSignature(lexer.getParserInput());
+			// parse signature as link in order to store link metadata
+			WikiLinkTag wikiLinkTag = new WikiLinkTag();
+			wikiLinkTag.parse(lexer, signature);
+			if (lexer.getMode() != JFlexParser.MODE_MINIMAL) {
+				try {
+					signature = JFlexParserUtil.parseFragment(lexer.getParserInput(), signature, lexer.getMode());
+				} catch (ParserException e) {
+					logger.severe("Failure while building wiki signature", e);
+					// FIXME - return empty or a failure indicator?
+					return "";
 				}
 			}
-			if (includeUser && includeDate) {
-				signature += " ";
-			}
-			if (includeDate) {
-				SimpleDateFormat format = new SimpleDateFormat();
-				format.applyPattern(Environment.getValue(Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN));
-				signature += format.format(new java.util.Date());
-			}
-			return signature;
+		}
+		if (includeUser && includeDate) {
+			signature += " ";
+		}
+		if (includeDate) {
+			SimpleDateFormat format = new SimpleDateFormat();
+			format.applyPattern(Environment.getValue(Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN));
+			signature += format.format(new java.util.Date());
+		}
+		return signature;
 	}
 
 	/**
 	 * Parse a Mediawiki signature of the form "~~~~" and return the resulting
 	 * HTML output.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
+	public String parse(JFlexLexer lexer, String raw, Object... args) {
 		if (raw.equals("~~~")) {
-			return this.buildWikiSignature(parserInput, parserOutput, mode, true, false);
+			return this.buildWikiSignature(lexer, true, false);
 		}
 		if (raw.equals("~~~~")) {
-			return this.buildWikiSignature(parserInput, parserOutput, mode, true, true);
+			return this.buildWikiSignature(lexer, true, true);
 		}
 		if (raw.equals("~~~~~")) {
-			return this.buildWikiSignature(parserInput, parserOutput, mode, false, true);
+			return this.buildWikiSignature(lexer, false, true);
 		}
 		return raw;
 	}

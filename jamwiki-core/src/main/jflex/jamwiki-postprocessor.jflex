@@ -77,8 +77,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <YYINITIAL>{references} {
     if (logger.isFinerEnabled()) logger.finer("references: " + yytext() + " (" + yystate() + ")");
-    WikiReferencesTag parserTag = new WikiReferencesTag();
-    return parserTag.parse(this.parserInput, this.mode, yytext());
+    return this.parse(TAG_TYPE_WIKI_REFERENCES, yytext());
 }
 
 /* ----- javascript ----- */

@@ -35,7 +35,7 @@ import org.jamwiki.utils.WikiUtil;
  * <code>TemplateTag</code> parses Mediawiki template syntax, which allows
  * programmatic structures to be embedded in wiki syntax.
  */
-public class TemplateTag {
+public class TemplateTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(TemplateTag.class.getName());
 	protected static final String TEMPLATE_INCLUSION = "template-inclusion";
@@ -70,9 +70,9 @@ public class TemplateTag {
 	 * Parse a call to a Mediawiki template of the form "{{template|param1|param2}}"
 	 * and return the resulting template output.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
+	public String parse(JFlexLexer lexer, String raw, Object... args) {
 		try {
-			parserInput.incrementTemplateDepth();
+			lexer.getParserInput().incrementTemplateDepth();
 			// validate and extract the template content
 			if (StringUtils.isBlank(raw)) {
 				throw new Exception("Empty template text");
@@ -82,21 +82,21 @@ public class TemplateTag {
 			}
 			String templateContent = raw.substring("{{".length(), raw.length() - "}}".length());
 			// parse for nested templates, signatures, etc.
-			templateContent = JFlexParserUtil.parseFragment(parserInput, templateContent, mode);
+			templateContent = JFlexParserUtil.parseFragment(lexer.getParserInput(), templateContent, lexer.getMode());
 			// update the raw value to handle cases such as a signature in the template content
 			raw = "{{" + templateContent + "}}";
 			// check for magic word or parser function
 			String[] parserFunctionInfo = ParserFunctionUtil.parseParserFunctionInfo(templateContent);
 			if (MagicWordUtil.isMagicWord(templateContent) || parserFunctionInfo != null) {
-				if (mode <= JFlexParser.MODE_MINIMAL) {
-					parserInput.decrementTemplateDepth();
+				if (lexer.getMode() <= JFlexParser.MODE_MINIMAL) {
+					lexer.getParserInput().decrementTemplateDepth();
 					return raw;
 				}
-				parserInput.decrementTemplateDepth();
+				lexer.getParserInput().decrementTemplateDepth();
 				if (MagicWordUtil.isMagicWord(templateContent)) {
-					return MagicWordUtil.processMagicWord(parserInput, templateContent);
+					return MagicWordUtil.processMagicWord(lexer.getParserInput(), templateContent);
 				} else {
-					return ParserFunctionUtil.processParserFunction(parserInput, parserFunctionInfo[0], parserFunctionInfo[1]);
+					return ParserFunctionUtil.processParserFunction(lexer.getParserInput(), parserFunctionInfo[0], parserFunctionInfo[1]);
 				}
 			}
 			// extract the template name
@@ -107,10 +107,10 @@ public class TemplateTag {
 				inclusion = true;
 			}
 			// get the parsed template body
-			Topic templateTopic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), name, false, null);
-			this.processTemplateMetadata(parserInput, parserOutput, templateTopic, raw, name);
-			if (mode <= JFlexParser.MODE_MINIMAL) {
-				parserInput.decrementTemplateDepth();
+			Topic templateTopic = WikiBase.getDataHandler().lookupTopic(lexer.getParserInput().getVirtualWiki(), name, false, null);
+			this.processTemplateMetadata(lexer.getParserInput(), lexer.getParserOutput(), templateTopic, raw, name);
+			if (lexer.getMode() <= JFlexParser.MODE_MINIMAL) {
+				lexer.getParserInput().decrementTemplateDepth();
 				return raw;
 			}
 			// make sure template was not redirected
@@ -123,12 +123,12 @@ public class TemplateTag {
 				templateTopic = null;
 			}
 			if (inclusion) {
-				String output = this.processTemplateInclusion(parserInput, parserOutput, mode, templateTopic, raw, name);
-				parserInput.decrementTemplateDepth();
+				String output = this.processTemplateInclusion(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), templateTopic, raw, name);
+				lexer.getParserInput().decrementTemplateDepth();
 				return output;
 			}
-			String output = this.processTemplateContent(parserInput, parserOutput, templateTopic, templateContent, name);
-			parserInput.decrementTemplateDepth();
+			String output = this.processTemplateContent(lexer.getParserInput(), lexer.getParserOutput(), templateTopic, templateContent, name);
+			lexer.getParserInput().decrementTemplateDepth();
 			return output;
 		} catch (Throwable t) {
 			logger.info("Unable to parse " + raw, t);

@@ -133,7 +133,7 @@ public class JFlexParserUtil {
 	 * as an image caption.  This method should be used sparingly since it is
 	 * not very efficient.
 	 */
-	protected static String parseFragment(ParserInput parserInput, String raw, int mode) throws ParserException {
+	public static String parseFragment(ParserInput parserInput, String raw, int mode) throws ParserException {
 		if (StringUtils.isBlank(raw)) {
 			return raw;
 		}

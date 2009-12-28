@@ -33,7 +33,6 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
-import org.jamwiki.authentication.RoleImpl;
 import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.LogItem;
@@ -1077,10 +1076,10 @@ public class AnsiDataHandler implements DataHandler {
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} catch (IOException e) {
+		} catch (ParserException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw new DataAccessException(e);
-		} catch (ParserException e) {
+		} catch (IOException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw new DataAccessException(e);
 		} catch (SQLException e) {

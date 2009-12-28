@@ -142,8 +142,7 @@ wikisignature      = ([~]{3,5})
         endState();
         String value = new String(this.templateString);
         this.templateString = "";
-        TemplateTag parserTag = new TemplateTag();
-        return parserTag.parse(this.parserInput, this.parserOutput, this.mode, value);
+        return this.parse(TAG_TYPE_TEMPLATE, value);
     }
     return "";
 }
@@ -186,36 +185,31 @@ wikisignature      = ([~]{3,5})
 
 <YYINITIAL, TEMPLATE>{includeonly} {
     if (logger.isFinerEnabled()) logger.finer("includeonly: " + yytext() + " (" + yystate() + ")");
-    IncludeOnlyTag parserTag = new IncludeOnlyTag();
-    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
+    return this.parse(TAG_TYPE_INCLUDE_ONLY, yytext());
 }
 
 <YYINITIAL, TEMPLATE>{noinclude} {
     if (logger.isFinerEnabled()) logger.finer("noinclude: " + yytext() + " (" + yystate() + ")");
-    NoIncludeTag parserTag = new NoIncludeTag();
-    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
+    return this.parse(TAG_TYPE_NO_INCLUDE, yytext());
 }
 
 /* ----- wiki links ----- */
 
 <YYINITIAL>{imagelinkcaption} {
     if (logger.isFinerEnabled()) logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
-    WikiLinkTag parserTag = new WikiLinkTag();
-    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
+    return this.parse(TAG_TYPE_WIKI_LINK, yytext());
 }
 
 <YYINITIAL>{wikilink} {
     if (logger.isFinerEnabled()) logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
-    WikiLinkTag parserTag = new WikiLinkTag();
-    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
+    return this.parse(TAG_TYPE_WIKI_LINK, yytext());
 }
 
 /* ----- signatures ----- */
 
 <YYINITIAL>{wikisignature} {
     if (logger.isFinerEnabled()) logger.finer("wikisignature: " + yytext() + " (" + yystate() + ")");
-    WikiSignatureTag parserTag = new WikiSignatureTag();
-    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
+    return this.parse(TAG_TYPE_WIKI_SIGNATURE, yytext());
 }
 
 /* ----- comments ----- */

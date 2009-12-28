@@ -24,7 +24,7 @@ import org.jamwiki.utils.WikiLogger;
 /**
  * This class parses nowiki tags of the form <code>&lt;ref name="name"&gt;content&lt;/ref&gt;</code>.
  */
-public class WikiReferenceTag {
+public class WikiReferenceTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiReferenceTag.class.getName());
 	protected static final String REFERENCES_PARAM = "WikiReferenceTag.REFERENCES_PARAM";
@@ -63,12 +63,15 @@ public class WikiReferenceTag {
 	/**
 	 *
 	 */
-	public String parse(ParserInput parserInput, int mode, String raw) {
-		if (mode < JFlexParser.MODE_PROCESS) {
+	public String parse(JFlexLexer lexer, String raw, Object... args) {
+		if (logger.isFinerEnabled()) {
+			logger.finer("reference: " + raw + " (" + lexer.yystate() + ")");
+		}
+		if (lexer.getMode() < JFlexParser.MODE_PROCESS) {
 			return raw;
 		}
-		WikiReference reference = buildReference(parserInput, raw);
-		this.processMetadata(parserInput, reference);
+		WikiReference reference = buildReference(lexer.getParserInput(), raw);
+		this.processMetadata(lexer.getParserInput(), reference);
 		StringBuilder html = new StringBuilder();
 		html.append("<sup id=\"");
 		html.append(reference.getReferenceName());

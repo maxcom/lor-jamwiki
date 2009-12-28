@@ -42,19 +42,19 @@ public class JFlexParser extends AbstractParser {
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexParser.class.getName());
 
 	/** Splice mode is used when inserting an edited topic section back into the full topic content. */
-	protected static final int MODE_SPLICE = 1;
+	public static final int MODE_SPLICE = 1;
 	/** Slice mode is used when retrieving a section of a topic for editing. */
-	protected static final int MODE_SLICE = 2;
+	public static final int MODE_SLICE = 2;
 	/** Minimal mode is used to do a bare minimum of parsing, usually just converting signature tags, prior to saving to the database. */
-	protected static final int MODE_MINIMAL = 3;
+	public static final int MODE_MINIMAL = 3;
 	/** Pre-process mode is currently equivalent to metadata mode and indicates that that the JFlex pre-processor parser should be run in full. */
-	protected static final int MODE_PREPROCESS = 4;
+	public static final int MODE_PREPROCESS = 4;
 	/** Processing mode indicates that the pre-processor and processor should be run, parsing all Wiki syntax into formatted output but NOT parsing paragraph tags. */
-	protected static final int MODE_PROCESS = 5;
+	public static final int MODE_PROCESS = 5;
 	/** Layout mode indicates that the pre-processor and processor should be run in full, parsing all Wiki syntax into formatted output and adding layout tags such as paragraphs. */
-	protected static final int MODE_LAYOUT = 6;
+	public static final int MODE_LAYOUT = 6;
 	/** Post-process mode indicates that the pre-processor, processor and post-processor should be run in full, parsing all Wiki syntax into formatted output and adding layout tags such as paragraphs and TOC. */
-	protected static final int MODE_POSTPROCESS = 7;
+	public static final int MODE_POSTPROCESS = 7;
 
 	/** Pattern to determine if the topic is a redirect. */
 	private static final Pattern REDIRECT_PATTERN = Pattern.compile("#REDIRECT[ ]+\\[\\[([^\\n\\r\\]]+)\\]\\]", Pattern.CASE_INSENSITIVE);

@@ -32,7 +32,13 @@ emptyline          = ([ \t])* ({newline})
 
 /* non-container expressions */
 hr                 = ({newline})? "----" ({newline})
-wikiheading        = [\=]+ ([^\n\=]+|[^\n\=][^\n]+[^\n\=]) [\=]+
+wikiheading6       = "======" (.+) "======"
+wikiheading5       = "=====" (.+) "====="
+wikiheading4       = "====" (.+) "===="
+wikiheading3       = "===" (.+) "==="
+wikiheading2       = "==" (.+) "=="
+wikiheading1       = "=" (.+) "="
+wikiheading        = ({wikiheading6})|({wikiheading5})|({wikiheading4})|({wikiheading3})|({wikiheading2})|({wikiheading1})
 bold               = "'''"
 bolditalic         = "'''''"
 italic             = "''"
@@ -72,9 +78,7 @@ htmltagclose       = (<[ ]*\/[ ]*) {htmlkeyword} ([ ]*>)
 htmltagnocontent   = (<[ ]*) {htmlkeyword} ({htmlattribute})* ([ ]*\/[ ]*>)
 
 /* javascript */
-jsattribute        = ([ ]+) (type|charset|defer|language) ([ ]*=[^>\n]+[ ]*)*
-jsopen             = (<[ ]*) script ({jsattribute})* ([ ]*[\/]?[ ]*>)
-jsclose            = (<[ ]*\/[ ]*script[ ]*>)
+javascript         = (<[ ]*script[^>]*>) ~(<[ ]*\/[ ]*script[ ]*>)
 
 /* processing commands */
 notoc              = "__NOTOC__"
@@ -115,7 +119,7 @@ endparagraph2      = (({newline})([ \t]*)){2}
 endparagraph3      = {blockleveltagopen}|{htmlprestart}|{blockleveltagclose}
 endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
-%state TABLE, LIST, PRE, JAVASCRIPT, WIKIPRE, PARAGRAPH
+%state TABLE, LIST, PRE, WIKIPRE, PARAGRAPH
 
 %%
 
@@ -340,16 +344,25 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     return "<hr />";
 }
 
-<YYINITIAL, PARAGRAPH>^{wikiheading} {
-    if (logger.isFinerEnabled()) logger.finer("wikiheading: " + yytext() + " (" + yystate() + ")");
-    if (this.peekTag().getTagType().equals("p")) {
-        popTag("p");
+<YYINITIAL, PARAGRAPH> {
+    ^{wikiheading6} {
+        return this.parse(TAG_TYPE_WIKI_HEADING, yytext(), 6);
     }
-    if (yystate() == PARAGRAPH) {
-        endState();
+    ^{wikiheading5} {
+        return this.parse(TAG_TYPE_WIKI_HEADING, yytext(), 5);
     }
-    WikiHeadingTag parserTag = new WikiHeadingTag();
-    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
+    ^{wikiheading4} {
+        return this.parse(TAG_TYPE_WIKI_HEADING, yytext(), 4);
+    }
+    ^{wikiheading3} {
+        return this.parse(TAG_TYPE_WIKI_HEADING, yytext(), 3);
+    }
+    ^{wikiheading2} {
+        return this.parse(TAG_TYPE_WIKI_HEADING, yytext(), 2);
+    }
+    ^{wikiheading1} {
+        return this.parse(TAG_TYPE_WIKI_HEADING, yytext(), 1);
+    }
 }
 
 /* ----- lists ----- */
@@ -396,60 +409,45 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{imagelinkcaption} {
     if (logger.isFinerEnabled()) logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
-    WikiLinkTag parserTag = new WikiLinkTag();
-    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
+    return this.parse(TAG_TYPE_WIKI_LINK, yytext());
 }
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{wikilink} {
     if (logger.isFinerEnabled()) logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
-    WikiLinkTag parserTag = new WikiLinkTag();
-    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
+    return this.parse(TAG_TYPE_WIKI_LINK, yytext());
 }
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{htmllink} {
     if (logger.isFinerEnabled()) logger.finer("htmllink: " + yytext() + " (" + yystate() + ")");
-    HtmlLinkTag parserTag = new HtmlLinkTag();
-    return parserTag.parse(this.parserInput, this.mode, yytext());
+    return this.parse(TAG_TYPE_HTML_LINK, yytext());
 }
 
 /* ----- bold / italic ----- */
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{bold} {
-    if (logger.isFinerEnabled()) logger.finer("bold: " + yytext() + " (" + yystate() + ")");
-    this.processBoldItalic("b");
-    return "";
+    return this.parse(TAG_TYPE_WIKI_BOLD_ITALIC, yytext(), "b");
 }
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{bolditalic} {
-    if (logger.isFinerEnabled()) logger.finer("bolditalic: " + yytext() + " (" + yystate() + ")");
-    this.processBoldItalic(null);
-    return "";
+    return this.parse(TAG_TYPE_WIKI_BOLD_ITALIC, yytext(), (String)null);
 }
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{italic} {
-    if (logger.isFinerEnabled()) logger.finer("italic: " + yytext() + " (" + yystate() + ")");
-    this.processBoldItalic("i");
-    return "";
+    return this.parse(TAG_TYPE_WIKI_BOLD_ITALIC, yytext(), "i");
 }
 
 /* ----- references ----- */
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{reference} {
-    if (logger.isFinerEnabled()) logger.finer("reference: " + yytext() + " (" + yystate() + ")");
-    WikiReferenceTag parserTag = new WikiReferenceTag();
-    return parserTag.parse(this.parserInput, this.mode, yytext());
+    return this.parse(TAG_TYPE_WIKI_REFERENCE, yytext());
 }
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{referencenocontent} {
-    if (logger.isFinerEnabled()) logger.finer("referencenocontent: " + yytext() + " (" + yystate() + ")");
-    WikiReferenceTag parserTag = new WikiReferenceTag();
-    return parserTag.parse(this.parserInput, this.mode, yytext());
+    return this.parse(TAG_TYPE_WIKI_REFERENCE, yytext());
 }
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{references} {
-    if (logger.isFinerEnabled()) logger.finer("references: " + yytext() + " (" + yystate() + ")");
-    WikiReferencesTag parserTag = new WikiReferencesTag();
-    return parserTag.parse(this.parserInput, this.mode, yytext());
+    return this.parse(TAG_TYPE_WIKI_REFERENCES, yytext());
 }
 
 /* ----- html ----- */
@@ -526,26 +524,8 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 /* ----- javascript ----- */
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{jsopen} {
-    if (logger.isFinerEnabled()) logger.finer("jsopen: " + yytext() + " (" + yystate() + ")");
-    if (allowJavascript()) {
-        beginState(JAVASCRIPT);
-        String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
-        this.pushTag(tagInfo[0], tagInfo[1]);
-        return "";
-    }
-    return StringEscapeUtils.escapeHtml(yytext());
-}
-
-<JAVASCRIPT>{jsclose} {
-    if (logger.isFinerEnabled()) logger.finer("jsclose: " + yytext() + " (" + yystate() + ")");
-    if (allowJavascript()) {
-        endState();
-        String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
-        this.popTag(tagInfo[0]);
-        return "";
-    }
-    return StringEscapeUtils.escapeHtml(yytext());
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{javascript} {
+    return this.parse(TAG_TYPE_JAVASCRIPT, yytext());
 }
 
 /* ----- other ----- */
@@ -566,7 +546,7 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     return " ";
 }
 
-<YYINITIAL, WIKIPRE, PRE, LIST, TABLE, JAVASCRIPT, PARAGRAPH>{whitespace} {
+<YYINITIAL, WIKIPRE, PRE, LIST, TABLE, PARAGRAPH>{whitespace} {
     // no need to log this
     return yytext();
 }
@@ -574,9 +554,4 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 <YYINITIAL, WIKIPRE, PRE, LIST, TABLE, PARAGRAPH>. {
     // no need to log this
     return StringEscapeUtils.escapeHtml(yytext());
-}
-
-<JAVASCRIPT>. {
-    // do not escape or otherwise modify Javascript
-    return yytext();
 }

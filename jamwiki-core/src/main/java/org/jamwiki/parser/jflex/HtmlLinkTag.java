@@ -28,7 +28,7 @@ import org.jamwiki.utils.WikiLogger;
  * <code>[http://example.com optional text]</code> as well as raw links
  * of the form <code>http://example.com</code>.
  */
-public class HtmlLinkTag {
+public class HtmlLinkTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(HtmlLinkTag.class.getName());
 
@@ -169,16 +169,16 @@ public class HtmlLinkTag {
 	 * Parse a Mediawiki HTML link of the form "[http://www.site.com/ text]" or
 	 * "http://www.site.com/" and return the resulting HTML output.
 	 */
-	public String parse(ParserInput parserInput, int mode, String raw) {
+	public String parse(JFlexLexer lexer, String raw, Object... args) {
 		if (raw == null || StringUtils.isBlank(raw)) {
 			// no link to display
 			return raw;
 		}
 		try {
 			if (raw.charAt(0) == '[' && raw.endsWith("]")) {
-				return this.buildHtmlLink(parserInput, mode, raw);
+				return this.buildHtmlLink(lexer.getParserInput(), lexer.getMode(), raw);
 			}
-			return this.buildHtmlLinkRaw(parserInput, mode, raw);
+			return this.buildHtmlLinkRaw(lexer.getParserInput(), lexer.getMode(), raw);
 		} catch (Throwable t) {
 			logger.info("Unable to parse " + raw, t);
 			return raw;

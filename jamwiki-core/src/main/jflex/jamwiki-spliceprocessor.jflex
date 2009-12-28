@@ -34,8 +34,7 @@ import org.jamwiki.utils.WikiLogger;
         if (inTargetSection && this.sectionDepth >= level) {
             inTargetSection = false;
         } else if (this.targetSection == this.section) {
-            WikiHeadingTag parserTag = new WikiHeadingTag();
-            parserTag.parse(this.parserInput, this.parserOutput, this.mode, headingText);
+            this.parse(TAG_TYPE_WIKI_HEADING, headingText);
             inTargetSection = true;
             this.sectionDepth = level;
             if (this.mode == JFlexParser.MODE_SPLICE) return this.replacementText;

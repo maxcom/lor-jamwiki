@@ -20,28 +20,30 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.model.WikiReference;
-import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.WikiLogger;
 
 /**
  * This class parses nowiki tags of the form <code>&lt;references /&gt;</code>.
  */
-public class WikiReferencesTag {
+public class WikiReferencesTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiReferencesTag.class.getName());
 
 	/**
 	 *
 	 */
-	public String parse(ParserInput parserInput, int mode, String raw) {
-		if (mode < JFlexParser.MODE_POSTPROCESS) {
+	public String parse(JFlexLexer lexer, String raw, Object... args) {
+		if (logger.isFinerEnabled()) {
+			logger.finer("references: " + raw + " (" + lexer.yystate() + ")");
+		}
+		if (lexer.getMode() < JFlexParser.MODE_POSTPROCESS) {
 			return raw;
 		}
 		try {
 			// retrieve all references, then loop through in order, building an HTML
 			// reference list for display.  While looping, if there are multiple citations
 			// for the same reference then include those in the output as well.
-			List<WikiReference> references = JFlexParserUtil.retrieveReferences(parserInput);
+			List<WikiReference> references = JFlexParserUtil.retrieveReferences(lexer.getParserInput());
 			StringBuilder html = new StringBuilder();
 			if (!references.isEmpty()) {
 				html.append("<ol class=\"references\">");
@@ -79,7 +81,7 @@ public class WikiReferencesTag {
 					html.append(reference.getCitation()).append("</a>&#160;");
 				}
 				html.append("</sup>");
-				html.append(JFlexParserUtil.parseFragment(parserInput, reference.getContent(), JFlexParser.MODE_PROCESS));
+				html.append(JFlexParserUtil.parseFragment(lexer.getParserInput(), reference.getContent(), JFlexParser.MODE_PROCESS));
 				html.append("</li>");
 			}
 			if (!references.isEmpty()) {

@@ -1,0 +1,8 @@
+<!-- test parsing of Javascript when Javascript is disabled -->
+<script type="text/javascript">
+alert("Hello!");
+</script>
+
+< script  type="text/javascript"  >
+alert("Hello!");
+<  / script  >
