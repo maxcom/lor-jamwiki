@@ -386,15 +386,15 @@ public interface DataHandler {
 	 * @param topicName The name of the topic being queried.
 	 * @param deleteOK Set to <code>true</code> if deleted topics can be
 	 *  retrieved, <code>false</code> otherwise.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
+	 * @param conn If this method is being called as part of a transaction
+	 *  then this parameter should contain the database connection.  If
+	 *  this method is not part of a transaction then this value should be
+	 *  <code>null</code>.
 	 * @return A Topic object that matches the given virtual wiki and topic
 	 *  name, or <code>null</code> if no matching topic exists.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object transactionObject) throws DataAccessException;
+	Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Connection conn) throws DataAccessException;
 
 	/**
 	 * Return a count of all topics, including redirects, comments pages and

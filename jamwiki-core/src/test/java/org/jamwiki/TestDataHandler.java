@@ -213,7 +213,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object transactionObject) throws DataAccessException {
+	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Connection conn) throws DataAccessException {
 		String content = null;
 		if (topics.get(topicName) != null) {
 			// first check the memory store created by writeTopic

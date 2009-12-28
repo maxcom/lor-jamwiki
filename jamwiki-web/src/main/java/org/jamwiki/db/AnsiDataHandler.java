@@ -600,13 +600,13 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object transactionObject) throws DataAccessException {
+	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Connection conn) throws DataAccessException {
 		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(topicName)) {
 			return null;
 		}
 		long start = System.currentTimeMillis();
 		String key = WikiCache.key(virtualWiki, topicName);
-		if (transactionObject == null) {
+		if (conn == null) {
 			// retrieve topic from the cache only if this call is not currently a part
 			// of a transaction to avoid retrieving data that might have been updated
 			// as part of this transaction and would thus now be out of date
@@ -630,29 +630,23 @@ public class AnsiDataHandler implements DataHandler {
 			}
 		}
 		Topic topic = null;
-		TransactionStatus status = null;
 		try {
-			status = DatabaseConnection.startTransaction();
-			Connection conn = DatabaseConnection.getConnection();
 			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 			topic = this.queryHandler().lookupTopic(virtualWikiId, virtualWiki, topicName, caseSensitive, conn);
-			if (transactionObject == null) {
+			if (conn == null) {
 				// add topic to the cache only if it is not currently a part of a transaction
 				// to avoid caching something that might need to be rolled back
 				Topic cacheTopic = (topic == null) ? null : new Topic(topic);
 				WikiCache.addToCache(CACHE_TOPICS, key, cacheTopic);
 			}
-		} catch (DataAccessException e) {
-			DatabaseConnection.rollbackOnException(status, e);
-			throw e;
 		} catch (SQLException e) {
-			DatabaseConnection.rollbackOnException(status, e);
 			throw new DataAccessException(e);
 		}
-		DatabaseConnection.commit(status);
-		double execution = ((System.currentTimeMillis() - start) / 1000.000);
-		if (execution > 0.005) {
-			logger.fine("WARNING: slow topic lookup for: " + topicName + " (" + execution + " s)");
+		if (logger.isFineEnabled()) {
+			double execution = ((System.currentTimeMillis() - start) / 1000.000);
+			if (execution > 0.005) {
+				logger.fine("WARNING: slow topic lookup for: " + topicName + " (" + execution + " s)");
+			}
 		}
 		return (topic == null || (!deleteOK && topic.getDeleteDate() != null)) ? null : topic;
 	}

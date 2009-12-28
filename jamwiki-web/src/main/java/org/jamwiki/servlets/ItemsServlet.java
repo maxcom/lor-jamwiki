@@ -98,7 +98,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		ParserInput parserInput;
 		ParserOutput parserOutput;
 		for (String topicName : unlinkedTopics) {
-			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, new Object());
+			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, null);
 			if (topic == null) {
 				logger.warning("No topic found: " + virtualWiki + " / " + topicName);
 				continue;

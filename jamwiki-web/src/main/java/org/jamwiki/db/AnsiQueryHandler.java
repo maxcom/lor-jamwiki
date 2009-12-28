@@ -1818,9 +1818,13 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public Topic lookupTopic(int virtualWikiId, String virtualWikiName, String topicName, boolean caseSensitive, Connection conn) throws SQLException {
+		boolean closeConnection = (conn == null);
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
+			if (conn == null) {
+				conn = DatabaseConnection.getConnection();
+			}
 			if (caseSensitive) {
 				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC);
 			} else {
@@ -1832,8 +1836,12 @@ public class AnsiQueryHandler implements QueryHandler {
 			rs = stmt.executeQuery();
 			return (rs.next()) ? this.initTopic(rs, virtualWikiName) : null;
 		} finally {
-			// close only the statement and result set - leave the connection open for further use
-			DatabaseConnection.closeConnection(null, stmt, rs);
+			if (closeConnection) {
+				DatabaseConnection.closeConnection(conn, stmt, rs);
+			} else {
+				// close only the statement and result set - leave the connection open for further use
+				DatabaseConnection.closeConnection(null, stmt, rs);
+			}
 		}
 	}
 
