@@ -9,7 +9,7 @@ Bugfixes:
   * Fix non-fatal MySQL upgrade warnings.  Reported by an anonymous user.
   * Fix code that could potentially leave database connections open during
     authentication.
-  * Fix an issue that caused the Special:Maintanced "database migration"
+  * Fix an issue that caused the Special:Maintenance "database migration"
     functionality to fail.
   * Templates will now be listed on Special:Allpages.  Reported by
     floatingworld.
