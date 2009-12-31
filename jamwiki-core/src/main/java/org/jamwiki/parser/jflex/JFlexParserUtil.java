@@ -316,7 +316,7 @@ public class JFlexParserUtil {
 		String tagKeyword = tagInfo[0];
 		String attributes = tagInfo[1];
 		String tagClose = tagInfo[3];
-		StringBuilder result = new StringBuilder('<');
+		StringBuilder result = new StringBuilder("<");
 		if (tagOpen.indexOf('/') != -1) {
 			result.append('/');
 		}
@@ -325,9 +325,10 @@ public class JFlexParserUtil {
 			result.append(' ').append(attributes);
 		}
 		if (tagClose.indexOf('/') != -1) {
-			tagClose = " />";
+			result.append(" />");
+		} else {
+			result.append(tagClose.trim());
 		}
-		result.append(tagClose.trim());
 		return result.toString();
 	}
 
