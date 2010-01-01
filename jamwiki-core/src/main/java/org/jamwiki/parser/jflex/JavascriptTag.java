@@ -62,9 +62,7 @@ public class JavascriptTag implements JFlexParserTag {
 		if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT)) {
 			return StringEscapeUtils.escapeHtml(openTag) + JFlexParserUtil.parseFragment(parserInput, raw, mode) + StringEscapeUtils.escapeHtml(closeTag);
 		}
-		String[] tagInfo = JFlexParserUtil.parseHtmlTag(openTag);
-		JFlexTagItem tag = new JFlexTagItem(tagInfo[0]);
-		tag.setTagAttributes(tagInfo[1]);
+		JFlexTagItem tag = new JFlexTagItem("script", openTag);
 		tag.getTagContent().append(raw);
 		return tag.toHtml();
 	}

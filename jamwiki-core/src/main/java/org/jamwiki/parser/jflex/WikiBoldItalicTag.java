@@ -16,6 +16,7 @@
  */
 package org.jamwiki.parser.jflex;
 
+import org.jamwiki.parser.ParserException;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -36,7 +37,12 @@ public class WikiBoldItalicTag implements JFlexParserTag {
 		if (args.length == 0) {
 			throw new IllegalArgumentException("Must pass heading depth to WikiHeadingTag.parse");
 		}
-		this.processBoldItalic(lexer, (String)args[0]);
+		try {
+			this.processBoldItalic(lexer, (String)args[0]);
+		} catch (ParserException e) {
+			logger.info("Failure while parsing: " + raw, e);
+			return raw;
+		}
 		return "";
 	}
 
@@ -46,7 +52,7 @@ public class WikiBoldItalicTag implements JFlexParserTag {
 	 * @param tagType The tag type being parsed - either "i", "b", or <code>null</code>
 	 *  if a bolditalic tag is being parsed.
 	 */
-	private void processBoldItalic(JFlexLexer lexer, String tagType) {
+	private void processBoldItalic(JFlexLexer lexer, String tagType) throws ParserException {
 		if (tagType == null) {
 			// bold-italic
 			if (lexer.peekTag().getTagType().equals("i")) {

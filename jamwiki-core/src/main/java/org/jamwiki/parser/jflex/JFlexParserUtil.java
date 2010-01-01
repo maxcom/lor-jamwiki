@@ -16,6 +16,7 @@
  */
 package org.jamwiki.parser.jflex;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -44,14 +45,13 @@ public class JFlexParserUtil {
 	private static final String nonInlineTagStartPattern = "<" + nonInlineTagPattern + ">.*";
 	private static final String nonInlineTagEndPattern = ".*</" + nonInlineTagPattern + ">";
 	private static final Pattern EMPTY_BODY_TAG_PATTERN = Pattern.compile(emptyBodyTagPattern, Pattern.CASE_INSENSITIVE);
-	/** Pattern to catch script insertions of the form "onsubmit=" or insertions that use a javascript url. */
-	private static final Pattern JAVASCRIPT_PATTERN = Pattern.compile("(( on[a-z]{3,}=)+)|((javascript\\s*\\:)+)", Pattern.CASE_INSENSITIVE);
 	private static final Pattern NON_NESTING_TAG_PATTERN = Pattern.compile(nonNestingTagPattern, Pattern.CASE_INSENSITIVE);
 	private static final Pattern NON_TEXT_BODY_TAG_PATTERN = Pattern.compile(nonTextBodyTagPattern, Pattern.CASE_INSENSITIVE);
 	private static final Pattern NON_INLINE_TAG_PATTERN = Pattern.compile(nonInlineTagPattern, Pattern.CASE_INSENSITIVE);
 	private static final Pattern NON_INLINE_TAG_START_PATTERN = Pattern.compile(nonInlineTagStartPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 	private static final Pattern NON_INLINE_TAG_END_PATTERN = Pattern.compile(nonInlineTagEndPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-	private static final Pattern TAG_PATTERN = Pattern.compile("(<\\s*[/]?\\s*)([a-z]+)(\\s*(.*?))([/]?\\s*>)", Pattern.CASE_INSENSITIVE);
+
+	private static JAMWikiHtmlProcessor JFLEX_HTML_PROCESSOR = null;
 
 	/**
 	 *
@@ -179,20 +179,6 @@ public class JFlexParserUtil {
 	}
 
 	/**
-	 * Clean up HTML tags to make them XHTML compliant (lowercase, no
-	 * unnecessary spaces).
-	 */
-	protected static String sanitizeHtmlTag(String tag) {
-		String result = tag.trim();
-		result = StringUtils.remove(result, " ").toLowerCase();
-		if (result.endsWith("/>")) {
-			// spaces were stripped, so make sure tag is of the form "<br />"
-			result = result.substring(0, result.length() - 2) + " />";
-		}
-		return result;
-	}
-
-	/**
 	 * Given a tag of the form "<tag>content</tag>", return all content between
 	 * the tags.  Consider the following examples:
 	 *
@@ -217,33 +203,6 @@ public class JFlexParserUtil {
 	}
 
 	/**
-	 * Given an HTML tag, split it into its tag type and tag attributes,
-	 * cleaning up the attribtues in the process - allowing Javascript
-	 * action tags to be used as attributes (onmouseover, etc) is
-	 * a bad thing, so clean up HTML tags to remove any such attributes.
-	 */
-	protected static String[] parseHtmlTag(String tag) {
-		Matcher m = TAG_PATTERN.matcher(tag);
-		String[] result = new String[4];
-		if (!m.find()) {
-			logger.severe("Failure while attempting to match html tag for pattern " + tag);
-			return result;
-		}
-		String tagType = m.group(2).toLowerCase().trim();
-		String tagAttributes = m.group(3).trim();
-		String tagOpen = m.group(1).trim();
-		String tagClose = m.group(5).trim();
-		if (!StringUtils.isBlank(tagAttributes)) {
-			tagAttributes = JFlexParserUtil.validateHtmlTagAttributes(tagAttributes).trim();
-		}
-		result[0] = tagType;
-		result[1] = tagAttributes;
-		result[2] = tagOpen;
-		result[3] = tagClose;
-		return result;
-	}
-
-	/**
 	 * During parsing the reference objects will be stored as a temporary array.  This method
 	 * parses that array and returns the reference objects.
 	 *
@@ -258,6 +217,35 @@ public class JFlexParserUtil {
 			parserInput.getTempParams().put(WikiReferenceTag.REFERENCES_PARAM, references);
 		}
 		return references;
+	}
+
+	/**
+	 * Parse an opening or closing HTML tag to validate attributes and make sure it is XHTML compliant.
+	 *
+	 * @param tag The HTML tag to be parsed.
+	 * @return An HtmlTagItem containing the parsed content, or <code>null</code> if a
+	 *  null or empty string is passed as the argument.
+	 * @throws ParserException Thrown if any error occurs during parsing.
+	 */
+	public static HtmlTagItem sanitizeHtmlTag(String tag) throws ParserException {
+		if (StringUtils.isBlank(tag)) {
+			return null;
+		}
+		if (JFLEX_HTML_PROCESSOR == null) {
+			JFLEX_HTML_PROCESSOR = new JAMWikiHtmlProcessor(new StringReader(tag));
+		} else {
+			JFLEX_HTML_PROCESSOR.yyreset(new StringReader(tag));
+		}
+		StringBuilder result = new StringBuilder();
+		String line;
+		try {
+			while ((line = JFLEX_HTML_PROCESSOR.yylex()) != null) {
+				result.append(line);
+			}
+		} catch (Exception e) {
+			throw new ParserException(e);
+		}
+		return new HtmlTagItem(JFLEX_HTML_PROCESSOR.getTagType(), result.toString());
 	}
 
 	/**
@@ -304,50 +292,5 @@ public class JFlexParserUtil {
 		// add the last one
 		tokens.add(value);
 		return tokens;
-	}
-
-	/**
-	 * Allowing Javascript action tags to be used as attributes (onmouseover, etc) is
-	 * a bad thing, so clean up HTML tags to remove any such attributes.
-	 */
-	protected static String validateHtmlTag(String tag) {
-		String[] tagInfo = JFlexParserUtil.parseHtmlTag(tag);
-		String tagOpen = tagInfo[2];
-		String tagKeyword = tagInfo[0];
-		String attributes = tagInfo[1];
-		String tagClose = tagInfo[3];
-		StringBuilder result = new StringBuilder("<");
-		if (tagOpen.indexOf('/') != -1) {
-			result.append('/');
-		}
-		result.append(tagKeyword);
-		if (!StringUtils.isBlank(attributes)) {
-			result.append(' ').append(attributes);
-		}
-		if (tagClose.indexOf('/') != -1) {
-			result.append(" />");
-		} else {
-			result.append(tagClose.trim());
-		}
-		return result.toString();
-	}
-
-	/**
-	 * Allowing Javascript action tags to be used as attributes (onmouseover, etc) is
-	 * a bad thing, so clean up HTML tags to remove any such attributes.
-	 */
-	protected static String validateHtmlTagAttributes(String attributes) {
-		if (StringUtils.isBlank(attributes)) {
-			return attributes;
-		}
-		if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT)) {
-			// pattern requires a space prior to the "onFoo", so make sure one exists
-			Matcher m = JAVASCRIPT_PATTERN.matcher(" " + attributes);
-			if (m.find()) {
-				logger.warning("Attempt to include Javascript in Wiki syntax " + attributes);
-				return "";
-			}
-		}
-		return attributes;
 	}
 }

@@ -17,6 +17,7 @@
 package org.jamwiki.parser.jflex;
 
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.parser.ParserException;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -29,18 +30,19 @@ class JFlexTagItem {
 
 	protected static final String ROOT_TAG = "jflex-root";
 	private String closeTagOverride = null;
-	private String tagAttributes = null;
+	private HtmlTagItem htmlTagItem = null;
 	private final StringBuilder tagContent = new StringBuilder();
 	private String tagType = null;
 
 	/**
 	 *
 	 */
-	JFlexTagItem(String tagType) {
-		if (tagType == null) {
+	JFlexTagItem(String tagType, String openTagRaw) throws ParserException {
+		this.htmlTagItem = JFlexParserUtil.sanitizeHtmlTag(openTagRaw);
+		if (tagType == null && this.htmlTagItem == null) {
 			throw new IllegalArgumentException("tagType must not be null");
 		}
-		this.tagType = tagType;
+		this.tagType = ((tagType == null) ? this.htmlTagItem.getTagType() : tagType);
 	}
 
 	/**
@@ -67,20 +69,6 @@ class JFlexTagItem {
 	 */
 	protected void setCloseTagOverride(String closeTagOverride) {
 		this.closeTagOverride = closeTagOverride;
-	}
-
-	/**
-	 *
-	 */
-	protected String getTagAttributes() {
-		return this.tagAttributes;
-	}
-
-	/**
-	 *
-	 */
-	protected void setTagAttributes(String tagAttributes) {
-		this.tagAttributes = tagAttributes;
 	}
 
 	/**
@@ -117,11 +105,11 @@ class JFlexTagItem {
 		}
 		StringBuilder result = new StringBuilder();
 		if (!JFlexParserUtil.isRootTag(this.tagType)) {
-			result.append('<').append(this.tagType);
-			if (!StringUtils.isBlank(this.tagAttributes)) {
-				result.append(' ').append(this.tagAttributes);
+			if (this.htmlTagItem != null) {
+				result.append(this.htmlTagItem.getHtml());
+			} else {
+				result.append('<').append(this.tagType).append('>');
 			}
-			result.append('>');
 		}
 		if (JFlexParserUtil.isRootTag(this.tagType)) {
 			result.append(content);

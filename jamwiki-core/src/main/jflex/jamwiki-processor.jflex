@@ -161,8 +161,7 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
         return StringEscapeUtils.escapeHtml(yytext());
     }
     beginState(PRE);
-    String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
-    this.pushTag(tagInfo[0], tagInfo[1]);
+    this.pushTag("pre", yytext());
     return "";
 }
 
@@ -234,8 +233,7 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     }
     beginState(TABLE);
     String tagAttributes = yytext().trim().substring(2).trim();
-    tagAttributes = JFlexParserUtil.validateHtmlTagAttributes(tagAttributes);
-    this.pushTag("table", tagAttributes);
+    this.pushTag("table", "<table " + tagAttributes + ">");
     return "";
 }
 
@@ -314,13 +312,11 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     if (!this.peekTag().getTagType().equals("table") && !this.peekTag().getTagType().equals("caption")) {
         this.popTag("tr");
     }
-    String tagType = "tr";
-    String attributes = null;
+    String openTagRaw = null;
     if (yytext().trim().length() > 2) {
-        attributes = yytext().substring(2).trim();
-        attributes = JFlexParserUtil.validateHtmlTagAttributes(attributes);
+        openTagRaw = "<tr " + yytext().substring(2).trim() + ">";
     }
-    this.pushTag(tagType, attributes);
+    this.pushTag("tr", openTagRaw);
     return "";
 }
 
@@ -417,9 +413,14 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     return this.parse(TAG_TYPE_WIKI_LINK, yytext());
 }
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmllink} {
-    if (logger.isFinerEnabled()) logger.finer("htmllink: " + yytext() + " (" + yystate() + ")");
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmllinkraw} {
     return this.parse(TAG_TYPE_HTML_LINK, yytext());
+}
+
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmllinkwiki} {
+    String raw = yytext();
+    // strip the opening and closing brackets
+    return this.parse(TAG_TYPE_HTML_LINK, raw.substring(1, raw.length() - 1));
 }
 
 /* ----- bold / italic ----- */
@@ -458,8 +459,21 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
         return StringEscapeUtils.escapeHtml(yytext());
     }
     // <br> may have attributes, so check for them
-    String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
-    return (tagInfo[1].length() > 0) ? "<br " + tagInfo[1] + " />\n" : "<br />\n";
+    HtmlTagItem htmlTagItem = JFlexParserUtil.sanitizeHtmlTag(yytext());
+    // FIXME - clean this up
+    if (htmlTagItem == null) {
+        return "";
+    }
+    int start = htmlTagItem.getHtml().indexOf(" ");
+    if (start == -1) {
+        return "<br />\n";
+    }
+    int end = htmlTagItem.getHtml().lastIndexOf("/>");
+    if (end == -1) {
+        end = htmlTagItem.getHtml().lastIndexOf(">");
+    }
+    String attributes = htmlTagItem.getHtml().substring(start, end).trim();
+    return (attributes.length() > 0) ? "<br " + attributes + " />\n" : "<br />\n";
 }
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{htmlparagraphopen} {
@@ -471,8 +485,7 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
         // if a paragraph is already opened, close it before opening a new paragraph
         this.popTag("p");
     }
-    String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
-    this.pushTag("p", tagInfo[1]);
+    this.pushTag("p", yytext());
     if (yystate() != PARAGRAPH) {
         beginState(PARAGRAPH);
     }
@@ -496,10 +509,8 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{htmltagnocontent} {
     if (logger.isFinerEnabled()) logger.finer("htmltagnocontent: " + yytext() + " (" + yystate() + ")");
-    if (!allowHTML()) {
-        return StringEscapeUtils.escapeHtml(yytext());
-    }
-    return JFlexParserUtil.validateHtmlTag(yytext());
+    HtmlTagItem tagItem = JFlexParserUtil.sanitizeHtmlTag(yytext());
+    return ((tagItem == null) ? "" : tagItem.getHtml());
 }
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{htmltagopen} {
@@ -507,8 +518,7 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
     }
-    String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
-    this.pushTag(tagInfo[0], tagInfo[1]);
+    this.pushTag(null, yytext());
     return "";
 }
 
@@ -517,8 +527,7 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
     }
-    String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
-    this.popTag(tagInfo[0]);
+    this.popTag(null, yytext());
     return "";
 }
 

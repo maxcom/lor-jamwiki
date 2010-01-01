@@ -19,6 +19,7 @@ package org.jamwiki.parser.jflex;
 import java.util.Stack;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
+import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.WikiLogger;
@@ -71,6 +72,15 @@ public abstract class JFlexLexer {
 	 */
 	protected boolean allowHTML() {
 		return Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML);
+	}
+
+	/**
+	 * Utility method used to indicate whether Javascript is allowed in wiki syntax
+	 * or not.  Note that enabling Javascript opens a site up to cross-site-scripting
+	 * attacks.
+	 */
+	protected boolean allowJavascript() {
+		return Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT);
 	}
 
 	/**
@@ -158,11 +168,11 @@ public abstract class JFlexLexer {
 	 * @param mode The parser mode to use when parsing.  Mode affects what
 	 *  type of parsing actions are taken when processing raw text.
 	 */
-	public final void init(ParserInput parserInput, ParserOutput parserOutput, int mode) {
+	public final void init(ParserInput parserInput, ParserOutput parserOutput, int mode) throws ParserException {
 		this.parserInput = parserInput;
 		this.parserOutput = parserOutput;
 		this.mode = mode;
-		this.tagStack.push(new JFlexTagItem(JFlexTagItem.ROOT_TAG));
+		this.tagStack.push(new JFlexTagItem(JFlexTagItem.ROOT_TAG, null));
 	}
 
 	/**
@@ -276,6 +286,17 @@ public abstract class JFlexLexer {
 	}
 
 	/**
+	 * Pop the most recent HTML tag from the lexer stack.
+	 */
+	protected JFlexTagItem popTag(String tagType, String closeTagRaw) throws ParserException {
+		if (tagType != null) {
+			return this.popTag(tagType);
+		}
+		HtmlTagItem htmlTagItem = JFlexParserUtil.sanitizeHtmlTag(closeTagRaw);
+		return this.popTag(htmlTagItem.getTagType());
+	}
+
+	/**
 	 * Pop all tags off of the stack and return a string representation.
 	 */
 	protected String popAllTags() {
@@ -292,13 +313,12 @@ public abstract class JFlexLexer {
 	/**
 	 * Push a new HTML tag onto the lexer stack.
 	 */
-	protected void pushTag(String tagType, String tagAttributes) {
-		JFlexTagItem tag = new JFlexTagItem(tagType);
-		tag.setTagAttributes(tagAttributes);
+	protected void pushTag(String tagType, String openTagRaw) throws ParserException {
+		JFlexTagItem tag = new JFlexTagItem(tagType, openTagRaw);
 		// many HTML tags cannot nest (ie "<li><li></li></li>" is invalid), so if a non-nesting
 		// tag is being added and the previous tag is of the same type, close the previous tag
-		if (JFlexParserUtil.isNonNestingTag(tagType) && this.peekTag().getTagType().equals(tagType)) {
-			this.popTag(tagType);
+		if (JFlexParserUtil.isNonNestingTag(tag.getTagType()) && this.peekTag().getTagType().equals(tag.getTagType())) {
+			this.popTag(tag.getTagType());
 		}
 		this.tagStack.push(tag);
 	}
@@ -357,7 +377,7 @@ public abstract class JFlexLexer {
 	/**
 	 *
 	 */
-	protected void processListStack(String wikiSyntax) {
+	protected void processListStack(String wikiSyntax) throws ParserException {
 		int previousDepth = this.currentListDepth();
 		int currentDepth = wikiSyntax.length();
 		String tagType;
@@ -441,12 +461,12 @@ public abstract class JFlexLexer {
 	 * @param tagType The HTML tag type, either "td" or "th".
 	 * @param markup The Wiki markup for the tag, either "|", "|+" or "!"
 	 */
-	protected void parseTableCell(String text, String tagType, String markup) {
+	protected void parseTableCell(String text, String tagType, String markup) throws ParserException {
 		if (text == null) {
 			throw new IllegalArgumentException("No text specified while parsing table cell");
 		}
 		text = text.trim();
-		String tagAttributes = null;
+		String openTagRaw = null;
 		int pos = StringUtils.indexOfAnyBut(text, markup);
 		if (pos != -1) {
 			text = text.substring(pos);
@@ -454,9 +474,9 @@ public abstract class JFlexLexer {
 			if (pos != -1) {
 				text = text.substring(0, pos);
 			}
-			tagAttributes = JFlexParserUtil.validateHtmlTagAttributes(text.trim());
+			openTagRaw = "<" + tagType + " " + text.trim() + ">";
 		}
-		this.pushTag(tagType, tagAttributes);
+		this.pushTag(tagType, openTagRaw);
 	}
 
 	/**
@@ -493,7 +513,7 @@ public abstract class JFlexLexer {
 	/**
 	 *
 	 */
-	protected void parseParagraphStart(String raw) {
+	protected void parseParagraphStart(String raw) throws ParserException {
 		int pushback = raw.length();
 		if (this.mode >= JFlexParser.MODE_LAYOUT) {
 			this.pushTag("p", null);
@@ -512,7 +532,7 @@ public abstract class JFlexLexer {
 	/**
 	 *
 	 */
-	protected void parseParagraphEmpty(String raw) {
+	protected void parseParagraphEmpty(String raw) throws ParserException {
 		// push back everything up to the last of the opening newlines that were matched
 		yypushback(StringUtils.stripStart(raw, " \n\r\t").length() + 1);
 		if (this.mode < JFlexParser.MODE_LAYOUT) {
