@@ -42,3 +42,11 @@
 <blockquote id="blockquote" cite="cite" foo="bar">
 blockquote
 </blockquote>
+
+<ins cite="cite" fakecite="fakecite">test</ins>
+<del cite="cite" fakecite="fakecite">test</del>
+
+<hr noshade="noshade" align="left" border="1" />
+<hr noshade align="left" border="1" />
+
+<br clear="left" />

@@ -16,3 +16,7 @@
 <blockquote id="blockquote" cite="cite">
 <p>blockquote</p>
 </blockquote>
+<p><ins cite="cite">test</ins> <del cite="cite">test</del></p>
+<hr noshade="noshade" align="left" />
+<hr noshade align="left" />
+<p><br clear="left" /></p>
