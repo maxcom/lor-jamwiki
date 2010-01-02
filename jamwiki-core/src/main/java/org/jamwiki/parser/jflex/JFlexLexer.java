@@ -272,7 +272,7 @@ public abstract class JFlexLexer {
 			currentTag = this.tagStack.pop();
 		}
 		JFlexTagItem previousTag = this.tagStack.peek();
-		if (!JFlexParserUtil.isInlineTag(currentTag.getTagType()) || currentTag.getTagType().equals("pre")) {
+		if (!currentTag.isInlineTag() || currentTag.getTagType().equals("pre")) {
 			// if the current tag is not an inline tag, make sure it is on its own lines
 			String trimmedContent = StringUtils.stripEnd(previousTag.getTagContent().toString(), null);
 			previousTag.getTagContent().replace(0, previousTag.getTagContent().length(), trimmedContent);
@@ -317,7 +317,7 @@ public abstract class JFlexLexer {
 		JFlexTagItem tag = new JFlexTagItem(tagType, openTagRaw);
 		// many HTML tags cannot nest (ie "<li><li></li></li>" is invalid), so if a non-nesting
 		// tag is being added and the previous tag is of the same type, close the previous tag
-		if (JFlexParserUtil.isNonNestingTag(tag.getTagType()) && this.peekTag().getTagType().equals(tag.getTagType())) {
+		if (tag.isNonNestingTag() && this.peekTag().getTagType().equals(tag.getTagType())) {
 			this.popTag(tag.getTagType());
 		}
 		this.tagStack.push(tag);

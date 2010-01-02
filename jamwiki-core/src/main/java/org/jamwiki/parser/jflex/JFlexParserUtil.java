@@ -19,8 +19,6 @@ package org.jamwiki.parser.jflex;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.model.WikiReference;
@@ -38,94 +36,12 @@ import org.jamwiki.utils.WikiLogger;
 public class JFlexParserUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexParserUtil.class.getName());
-	private static final String emptyBodyTagPattern = "(br|div|hr|td|th)";
-	private static final String nonNestingTagPattern = "(dd|dl|dt|hr|li|ol|table|tbody|td|tfoot|th|thead|tr|ul)";
-	private static final String nonTextBodyTagPattern = "(dl|ol|table|tr|ul)";
-	private static final String nonInlineTagPattern = "(caption|dd|div|dl|dt|hr|li|ol|p|table|td|th|tr|ul)";
-	private static final String nonInlineTagStartPattern = "<" + nonInlineTagPattern + ">.*";
-	private static final String nonInlineTagEndPattern = ".*</" + nonInlineTagPattern + ">";
-	private static final Pattern EMPTY_BODY_TAG_PATTERN = Pattern.compile(emptyBodyTagPattern, Pattern.CASE_INSENSITIVE);
-	private static final Pattern NON_NESTING_TAG_PATTERN = Pattern.compile(nonNestingTagPattern, Pattern.CASE_INSENSITIVE);
-	private static final Pattern NON_TEXT_BODY_TAG_PATTERN = Pattern.compile(nonTextBodyTagPattern, Pattern.CASE_INSENSITIVE);
-	private static final Pattern NON_INLINE_TAG_PATTERN = Pattern.compile(nonInlineTagPattern, Pattern.CASE_INSENSITIVE);
-	private static final Pattern NON_INLINE_TAG_START_PATTERN = Pattern.compile(nonInlineTagStartPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-	private static final Pattern NON_INLINE_TAG_END_PATTERN = Pattern.compile(nonInlineTagEndPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-
 	private static JAMWikiHtmlProcessor JFLEX_HTML_PROCESSOR = null;
 
 	/**
 	 *
 	 */
 	private JFlexParserUtil() {
-	}
-
-	/**
-	 * An empty body tag is one that contains no content, such as "br".
-	 */
-	protected static boolean isEmptyBodyTag(String tagType) {
-		if (isRootTag(tagType)) {
-			return true;
-		}
-		Matcher matcher = EMPTY_BODY_TAG_PATTERN.matcher(tagType);
-		return matcher.matches();
-	}
-
-	/**
-	 * An inline tag is a tag that does not affect page flow such as
-	 * "b" or "i".  A non-inline tag such as "div" is one that creates
-	 * its own display box.
-	 */
-	protected static boolean isInlineTag(String tagType) {
-		if (isRootTag(tagType)) {
-			return true;
-		}
-		Matcher matcher = NON_INLINE_TAG_PATTERN.matcher(tagType);
-		return !matcher.matches();
-	}
-
-	/**
-	 * A non-nesting tag is a tag such as "li" which cannot be nested within
-	 * another "li" tag.
-	 */
-	protected static boolean isNonNestingTag(String tagType) {
-		Matcher matcher = NON_NESTING_TAG_PATTERN.matcher(tagType);
-		return matcher.matches();
-	}
-
-	/**
-	 *
-	 */
-	protected static boolean isNonInlineTagEnd(String tagText) {
-		Matcher matcher = NON_INLINE_TAG_END_PATTERN.matcher(tagText);
-		return matcher.matches();
-	}
-
-	/**
-	 *
-	 */
-	protected static boolean isNonInlineTagStart(String tagText) {
-		Matcher matcher = NON_INLINE_TAG_START_PATTERN.matcher(tagText);
-		return matcher.matches();
-	}
-
-	/**
-	 * Evaluate the tag to determine whether it is the parser root tag
-	 * that indicates the bottom of the parser tag stack.
-	 */
-	protected static boolean isRootTag(String tagType) {
-		return tagType.equals(JFlexTagItem.ROOT_TAG);
-	}
-
-	/**
-	 * Determine whether the tag allows text body content.  Some tags, such
-	 * as "table", allow only tag content and no text content.
-	 */
-	protected static boolean isTextBodyTag(String tagType) {
-		if (isRootTag(tagType)) {
-			return true;
-		}
-		Matcher matcher = NON_TEXT_BODY_TAG_PATTERN.matcher(tagType);
-		return !matcher.matches();
 	}
 
 	/**

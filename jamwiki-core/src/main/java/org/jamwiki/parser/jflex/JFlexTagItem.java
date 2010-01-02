@@ -16,6 +16,8 @@
  */
 package org.jamwiki.parser.jflex;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.utils.WikiLogger;
@@ -28,6 +30,18 @@ class JFlexTagItem {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexTagItem.class.getName());
 
+	private static final String emptyBodyTagPattern = "(br|div|hr|td|th)";
+	private static final String nonNestingTagPattern = "(dd|dl|dt|hr|li|ol|table|tbody|td|tfoot|th|thead|tr|ul)";
+	private static final String nonTextBodyTagPattern = "(dl|ol|table|tr|ul)";
+	private static final String nonInlineTagPattern = "(caption|dd|div|dl|dt|hr|li|ol|p|table|td|th|tr|ul)";
+	private static final String nonInlineTagStartPattern = "<" + nonInlineTagPattern + ">.*";
+	private static final String nonInlineTagEndPattern = ".*</" + nonInlineTagPattern + ">";
+	private static final Pattern EMPTY_BODY_TAG_PATTERN = Pattern.compile(emptyBodyTagPattern, Pattern.CASE_INSENSITIVE);
+	private static final Pattern NON_NESTING_TAG_PATTERN = Pattern.compile(nonNestingTagPattern, Pattern.CASE_INSENSITIVE);
+	private static final Pattern NON_TEXT_BODY_TAG_PATTERN = Pattern.compile(nonTextBodyTagPattern, Pattern.CASE_INSENSITIVE);
+	private static final Pattern NON_INLINE_TAG_PATTERN = Pattern.compile(nonInlineTagPattern, Pattern.CASE_INSENSITIVE);
+	private static final Pattern NON_INLINE_TAG_START_PATTERN = Pattern.compile(nonInlineTagStartPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+	private static final Pattern NON_INLINE_TAG_END_PATTERN = Pattern.compile(nonInlineTagEndPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 	protected static final String ROOT_TAG = "jflex-root";
 	private String closeTagOverride = null;
 	private HtmlTagItem htmlTagItem = null;
@@ -95,23 +109,92 @@ class JFlexTagItem {
 	}
 
 	/**
+	 * An empty body tag is one that contains no content, such as "br".
+	 */
+	private boolean isEmptyBodyTag() {
+		if (this.isRootTag()) {
+			return true;
+		}
+		Matcher matcher = EMPTY_BODY_TAG_PATTERN.matcher(this.tagType);
+		return matcher.matches();
+	}
+
+	/**
+	 * An inline tag is a tag that does not affect page flow such as
+	 * "b" or "i".  A non-inline tag such as "div" is one that creates
+	 * its own display box.
+	 */
+	protected boolean isInlineTag() {
+		if (this.isRootTag()) {
+			return true;
+		}
+		Matcher matcher = NON_INLINE_TAG_PATTERN.matcher(this.tagType);
+		return !matcher.matches();
+	}
+
+	/**
+	 * A non-nesting tag is a tag such as "li" which cannot be nested within
+	 * another "li" tag.
+	 */
+	protected boolean isNonNestingTag() {
+		Matcher matcher = NON_NESTING_TAG_PATTERN.matcher(this.tagType);
+		return matcher.matches();
+	}
+
+	/**
+	 *
+	 */
+	private boolean isNonInlineTagEnd(String tagText) {
+		Matcher matcher = NON_INLINE_TAG_END_PATTERN.matcher(tagText);
+		return matcher.matches();
+	}
+
+	/**
+	 *
+	 */
+	private boolean isNonInlineTagStart(String tagText) {
+		Matcher matcher = NON_INLINE_TAG_START_PATTERN.matcher(tagText);
+		return matcher.matches();
+	}
+
+	/**
+	 * Determine whether the tag allows text body content.  Some tags, such
+	 * as "table", allow only tag content and no text content.
+	 */
+	private boolean isTextBodyTag() {
+		if (this.isRootTag()) {
+			return true;
+		}
+		Matcher matcher = NON_TEXT_BODY_TAG_PATTERN.matcher(this.tagType);
+		return !matcher.matches();
+	}
+
+	/**
+	 * Evaluate the tag to determine whether it is the parser root tag
+	 * that indicates the bottom of the parser tag stack.
+	 */
+	private boolean isRootTag() {
+		return this.tagType.equals(JFlexTagItem.ROOT_TAG);
+	}
+
+	/**
 	 *
 	 */
 	public String toHtml() {
 		String content = this.tagContent.toString();
 		// if no content do not generate a tag
-		if (StringUtils.isBlank(content) && !JFlexParserUtil.isEmptyBodyTag(this.tagType)) {
+		if (StringUtils.isBlank(content) && !this.isEmptyBodyTag()) {
 			return "";
 		}
 		StringBuilder result = new StringBuilder();
-		if (!JFlexParserUtil.isRootTag(this.tagType)) {
+		if (!this.isRootTag()) {
 			if (this.htmlTagItem != null) {
 				result.append(this.htmlTagItem.getHtml());
 			} else {
 				result.append('<').append(this.tagType).append('>');
 			}
 		}
-		if (JFlexParserUtil.isRootTag(this.tagType)) {
+		if (this.isRootTag()) {
 			result.append(content);
 		} else if (this.tagType.equals("pre")) {
 			// pre-formatted, no trimming but make sure the open and close tags appear on their own lines
@@ -122,14 +205,14 @@ class JFlexTagItem {
 			if (!content.endsWith("\n")) {
 				result.append('\n');
 			}
-		} else if (JFlexParserUtil.isTextBodyTag(this.tagType)) {
+		} else if (this.isTextBodyTag()) {
 			// ugly hack to handle cases such as "<li><ul>" where the "<ul>" should be on its own line
-			if (JFlexParserUtil.isNonInlineTagStart(content.trim())) {
+			if (this.isNonInlineTagStart(content.trim())) {
 				result.append('\n');
 			}
 			result.append(content.trim());
 			// ugly hack to handle cases such as "</ul></li>" where the "</li>" should be on its own line
-			if (JFlexParserUtil.isNonInlineTagEnd(content.trim())) {
+			if (this.isNonInlineTagEnd(content.trim())) {
 				result.append('\n');
 			}
 		} else {
@@ -137,10 +220,10 @@ class JFlexTagItem {
 			result.append(content.trim());
 			result.append('\n');
 		}
-		if (!JFlexParserUtil.isRootTag(this.tagType)) {
+		if (!this.isRootTag()) {
 			result.append("</").append(this.tagType).append('>');
 		}
-		if (JFlexParserUtil.isTextBodyTag(this.tagType) && !JFlexParserUtil.isRootTag(this.tagType) && JFlexParserUtil.isInlineTag(this.tagType) && !this.tagType.equals("pre")) {
+		if (this.isTextBodyTag() && !this.isRootTag() && this.isInlineTag() && !this.tagType.equals("pre")) {
 			// work around issues such as "text''' text'''", where the output should
 			// be "text <b>text</b>", by moving the whitespace to the parent tag
 			int firstWhitespaceIndex = content.indexOf(content.trim());
