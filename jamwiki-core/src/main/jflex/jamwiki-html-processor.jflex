@@ -81,12 +81,35 @@ tagAttributeKey    = ({htmlAttributes})
 tagAttributeValueInQuotes = "\"" ~"\""
 tagAttributeValueInSingleQuotes = "'" ~"'"
 tagAttributeValueNoQuotes = [^ \t\f]
+/* <script> tags */
+tagScript          = "<" ({whitespace})* "script" ~">"
+tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespace})* ">"
+tagScriptAttribute = id|charset|type|language|src|defer|xml:space
 
-%state HTML_CLOSE, HTML_OPEN, HTML_ATTRIBUTE_KEY, HTML_ATTRIBUTE_VALUE
+%state HTML_CLOSE, HTML_OPEN, HTML_ATTRIBUTE_KEY, HTML_ATTRIBUTE_VALUE, SCRIPT_ATTRIBUTE_KEY, SCRIPT_ATTRIBUTE_VALUE
 
 %%
 
 <YYINITIAL> {
+    {tagScript} {
+        if (!allowJavascript()) {
+            return StringEscapeUtils.escapeHtml(yytext());
+        }
+        this.initialize();
+        int pos = this.yytext().toLowerCase().indexOf("script") + "script".length();
+        yypushback(this.html.length() - pos);
+        beginState(SCRIPT_ATTRIBUTE_KEY);
+        this.tagType = "script";
+        return "<";
+    }
+    {tagScriptClose} {
+        if (!allowJavascript()) {
+            return StringEscapeUtils.escapeHtml(yytext());
+        }
+        this.initialize();
+        this.tagType = "script";
+        return "<" + this.closeTag(">");
+    }
     {tagClose} {
         if (!allowHTML()) {
             return StringEscapeUtils.escapeHtml(yytext());
@@ -111,7 +134,6 @@ tagAttributeValueNoQuotes = [^ \t\f]
         throw new IllegalArgumentException("YYINITIAL: Invalid HTML tag: " + yytext());
     }
 }
-
 <HTML_CLOSE> {
     {whitespace} {
         // ignore whitespace
@@ -129,7 +151,6 @@ tagAttributeValueNoQuotes = [^ \t\f]
         throw new IllegalArgumentException("HTML_CLOSE: Invalid HTML tag: " + this.html);
     }
 }
-
 <HTML_OPEN> {
     {whitespace} {
         // ignore whitespace
@@ -145,8 +166,7 @@ tagAttributeValueNoQuotes = [^ \t\f]
         throw new IllegalArgumentException("HTML_OPEN: Invalid HTML tag: " + this.html);
     }
 }
-
-<HTML_ATTRIBUTE_VALUE, HTML_ATTRIBUTE_KEY> {
+<HTML_ATTRIBUTE_VALUE, HTML_ATTRIBUTE_KEY, SCRIPT_ATTRIBUTE_KEY> {
     {tagCloseNoContent} {
         // tag close, done
         endState();
@@ -158,7 +178,6 @@ tagAttributeValueNoQuotes = [^ \t\f]
         return this.closeTag(">");
     }
 }
-
 <HTML_ATTRIBUTE_KEY> {
     {tagAttributeKey} {
         this.currentAttributeKey = yytext();
@@ -180,7 +199,6 @@ tagAttributeValueNoQuotes = [^ \t\f]
         return "";
     }
 }
-
 <HTML_ATTRIBUTE_VALUE> {
     {tagAttributeValueInQuotes} {
         endState();
@@ -222,5 +240,54 @@ tagAttributeValueNoQuotes = [^ \t\f]
     }
     . {
         throw new IllegalArgumentException("HTML_ATTRIBUTE_VALUE: Invalid HTML tag: " + this.html);
+    }
+}
+<SCRIPT_ATTRIBUTE_KEY> {
+    {tagScriptAttribute} {
+        this.currentAttributeKey = yytext();
+        return "";
+    }
+    "=" ({whitespace})* {
+        if (this.currentAttributeKey != null) {
+            endState();
+            beginState(SCRIPT_ATTRIBUTE_VALUE);
+        }
+        return "";
+    }
+    {whitespace} {
+        // ignore whitespace
+        return "";
+    }
+    . {
+        // invalid attribute
+        return "";
+    }
+}
+<SCRIPT_ATTRIBUTE_VALUE> {
+    {tagAttributeValueInQuotes} {
+        endState();
+        beginState(SCRIPT_ATTRIBUTE_KEY);
+        this.attributes.put(this.currentAttributeKey, yytext());
+        this.currentAttributeKey = null;
+        return "";
+    }
+    {tagAttributeValueInSingleQuotes} {
+        endState();
+        beginState(SCRIPT_ATTRIBUTE_KEY);
+        // convert apostrophes to quotation marks
+        this.attributes.put(this.currentAttributeKey, "\"" + yytext().substring(1, yytext().length() - 1) + "\"");
+        this.currentAttributeKey = null;
+        return "";
+    }
+    {tagAttributeValueNoQuotes} {
+        endState();
+        beginState(SCRIPT_ATTRIBUTE_KEY);
+        // add quotes
+        this.attributes.put(this.currentAttributeKey, "\"" + yytext() + "\"");
+        this.currentAttributeKey = null;
+        return "";
+    }
+    . {
+        throw new IllegalArgumentException("SCRIPT_ATTRIBUTE_VALUE: Invalid HTML tag: " + this.html);
     }
 }

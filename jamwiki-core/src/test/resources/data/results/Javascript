@@ -1,2 +1,4 @@
 &lt;script type=&quot;text/javascript&quot;&gt; alert(&quot;Hello!&quot;); &lt;/script&gt;
 &lt; script  type=&quot;text/javascript&quot;  &gt; alert(&quot;Hello!&quot;); &lt;  / script  &gt;
+&lt;script type=&quot;text/javascript&quot; foo='bar'&gt; alert(&quot;Hello!&quot;); &lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot; style=&quot;invalid&quot;&gt; alert(&quot;Hello!&quot;); &lt;/script&gt;

@@ -6,3 +6,11 @@ alert("Hello!");
 < script  type="text/javascript"  >
 alert("Hello!");
 <  / script  >
+
+<script type="text/javascript" foo='bar'>
+alert("Hello!");
+</script>
+
+<script type="text/javascript" style="invalid">
+alert("Hello!");
+</script>

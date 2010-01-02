@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import junit.framework.TestResult;
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.Environment;
 import org.jamwiki.TestFileUtil;
 import org.jamwiki.utils.WikiLogger;
 
@@ -62,17 +63,17 @@ public class ParserTest extends TestCase {
 	/**
 	 *
 	 */
-	private void executeParserTest(String fileName) throws IOException, ParserException {
+	private void executeParserTest(String fileName, String resultDirName) throws IOException, ParserException {
 		String parserResult = this.parserResult(fileName);
-		String expectedResult = this.expectedResult(fileName);
+		String expectedResult = this.expectedResult(fileName, resultDirName);
 		assertEquals("Testing file " + fileName,expectedResult, parserResult);
 	}
 
 	/**
 	 *
 	 */
-	private String expectedResult(String fileName) throws IOException, ParserException {
-		String result = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_RESULTS_DIR, fileName);
+	private String expectedResult(String fileName, String resultDirName) throws IOException, ParserException {
+		String result = TestFileUtil.retrieveFileContent(resultDirName, fileName);
 		return this.sanitize(result);
 	}
 
@@ -100,15 +101,15 @@ public class ParserTest extends TestCase {
 	/**
 	 *
 	 */
-	private void parseAllResults(TestResult result) {
+	private void parseAllResults(TestResult result, String resultDirName) {
 		try {
-			File resultDir = TestFileUtil.getClassLoaderFile(TestFileUtil.TEST_RESULTS_DIR);
+			File resultDir = TestFileUtil.getClassLoaderFile(resultDirName);
 			File[] resultFiles = resultDir.listFiles();
 			String fileName = null;
 			for (int i = 0; i < resultFiles.length; i++) {
 				fileName = resultFiles[i].getName();
 				try {
-					executeParserTest(fileName);
+					executeParserTest(fileName, resultDirName);
 				} catch (Throwable t) {
 					if (!knownFailure(fileName)) {
 						result.addError(new ParserTest(fileName), t);
@@ -133,7 +134,12 @@ public class ParserTest extends TestCase {
 	 *
 	 */
 	public void run(TestResult result) {
-		this.parseAllResults(result);
+		// test with JS disabled
+		Environment.setBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT, false);
+		this.parseAllResults(result, TestFileUtil.TEST_RESULTS_DIR);
+		// test with JS enabled
+		Environment.setBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT, true);
+		this.parseAllResults(result, TestFileUtil.TEST_JS_RESULTS_DIR);
 	}
 
 	/**
