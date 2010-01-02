@@ -30,10 +30,10 @@ class JFlexTagItem {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexTagItem.class.getName());
 
-	private static final String emptyBodyTagPattern = "(br|div|hr|td|th)";
-	private static final String nonNestingTagPattern = "(dd|dl|dt|hr|li|ol|table|tbody|td|tfoot|th|thead|tr|ul)";
-	private static final String nonTextBodyTagPattern = "(dl|ol|table|tr|ul)";
-	private static final String nonInlineTagPattern = "(caption|dd|div|dl|dt|hr|li|ol|p|table|td|th|tr|ul)";
+	private static final String emptyBodyTagPattern = "(br|col|div|hr|td|th)";
+	private static final String nonNestingTagPattern = "(col|colgroup|dd|dl|dt|hr|li|ol|table|tbody|td|tfoot|th|thead|tr|ul)";
+	private static final String nonTextBodyTagPattern = "(col|colgroup|dl|ol|table|tbody|tfoot|thead|tr|ul)";
+	private static final String nonInlineTagPattern = "(caption|col|colgroup|dd|div|dl|dt|hr|li|ol|p|table|tbody|td|tfoot|th|thead|tr|ul)";
 	private static final String nonInlineTagStartPattern = "<" + nonInlineTagPattern + ">.*";
 	private static final String nonInlineTagEndPattern = ".*</" + nonInlineTagPattern + ">";
 	private static final Pattern EMPTY_BODY_TAG_PATTERN = Pattern.compile(emptyBodyTagPattern, Pattern.CASE_INSENSITIVE);

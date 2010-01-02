@@ -54,39 +54,157 @@ import org.jamwiki.utils.WikiLogger;
      */
     private void initialize() {
         this.attributes.clear();
+        this.currentAttributeKey = null;
         this.html = yytext();
         this.tagType = null;
+    }
+
+    /**
+     *
+     */
+    private void initializeCurrentAttribute(String key) {
+        this.currentAttributeKey = key.toLowerCase();
+        this.attributes.put(this.currentAttributeKey, null);
     }
 %}
 
 whitespace         = [ \t\f]
 
-inlineTag          = b|big|br|cite|code|del|em|font|i|ins|pre|s|small|span|strike|strong|sub|sup|tt|u|var
-blockLevelTag      = blockquote|caption|center|dd|div|dl|dt|hr|li|ol|p|table|tbody|td|tfoot|th|thead|tr|ul
+/* Full XHTML 1.0 Transitional DTD */
+coreattrs          = id|class|style|title
+i18n               = lang|xml:lang|dir
+events             = onclick|ondblclick|onmousedown|onmouseup|onmouseover|onmousemove|onmouseout|onkeypress|onkeydown|onkeyup
+attrs              = {coreattrs}|{i18n}|{events}
+TextAlign          = align
+scriptAttr         = id|charset|type|language|src|defer|xml:space
+fontAttr           = {coreattrs}|{i18n}|size|color|face
+cellhalign         = align|char|charoff
+cellvalign         = valign
+/*
+    *** TODO ***
+PCDATA             = [^&<>]
+focus              = accesskey|tabindex|onfocus|onblur
+special_extra      = object|applet|img|map|iframe
+special_basic      = br|span
+special            = {special_basic}|{special_extra}
+fontstyle_extra    = big|small|font|basefont
+fontstyle_basic    = tt|i|b|u|s|strike
+fontstyle          = {fontstyle_basic}|{fontstyle_extra}
+phrase_extra       = sub|sup
+phrase_basic       = em|strong|dfn|code|q|samp|kbd|var|cite|abbr|acronym
+phrase             = {phrase_basic}|{phrase_extra}
+inline_forms       = input|select|textarea|label|button
+misc_inline        = ins|del|script
+misc               = noscript|{misc_inline}
+inline             = a|{special}|{fontstyle}|{phrase}|{inline_forms}
+Inline             = ({PCDATA}|{inline}|{misc_inline})*
+heading            = h1|h2|h3|h4|h5|h6
+lists              = ul|ol|dl
+blocktext          = pre|hr|blockquote|address|center|noframes
+block              = p|{heading}|div|{lists}|{blocktext}|isindex|fieldset|table
+Flow               = ({PCDATA}|{block}|form|{inline}|{misc})*
+pre_content        = ({PCDATA}|a|{special_basic}|{fontstyle_basic}|{phrase_basic}|{inline_forms}|{misc_inline})*
+form_content       = ({PCDATA}|{block}|{inline}|{misc})*
+button_content     = ({PCDATA}|p|{heading}|div|{lists}|{blocktext}|table|br|span|object|applet|img|map|{fontstyle}|{phrase}|{misc})*
+noscriptAttr       = {attrs}
+iframeAttr         = {coreattrs}|longdesc|name|src|frameborder|marginwidth|marginheight|scrolling|align|height|width
+headingAttr        = {attrs}|{TextAlign}
+hrAttr             = {attrs}|align|noshade|size|width
+insAttr            = {attrs}|cite|datetime
+delAttr            = {attrs}|cite|datetime
+brAttr             = {coreattrs}|clear
+qAttr              = {attrs}|cite
+basefontAttr       = id|size|color|face
+table              = caption|col|colgroup|thead|tfoot|tbody|tr|th|td
+*/
+
+/*
+    *** Implemented ***
+abbrAttr           = {attrs}
+bAttr              = {attrs}
+bigAttr            = {attrs}
+blockquoteAttr     = {attrs}|cite
+captionAttr        = {attrs}|align
+centerAttr         = {attrs}
+citeAttr           = {attrs}
+codeAttr           = {attrs}
+colAttr            = {attrs}|span|width|{cellhalign}|{cellvalign}
+colgroupAttr       = {attrs}|span|width|{cellhalign}|{cellvalign}
+ddAttr             = {attrs}
+divAttr            = {attrs}|{TextAlign}
+dlAttr             = {attrs}|compact
+dtAttr             = {attrs}
+emAttr             = {attrs}
+iAttr              = {attrs}
+liAttr             = {attrs}|type|value
+olAttr             = {attrs}|type|compact|start
+pAttr              = {attrs}|{TextAlign}
+preAttr            = {attrs}|width|xml:space
+sAttr              = {attrs}
+smallAttr          = {attrs}
+spanAttr           = {attrs}
+strikeAttr         = {attrs}
+strongAttr         = {attrs}
+subAttr            = {attrs}
+supAttr            = {attrs}
+tableAttr          = {attrs}|summary|width|border|frame|rules|cellspacing|cellpadding|align|bgcolor
+tbodyAttr          = {attrs}|{cellhalign}|{cellvalign}
+tdAttr             = {attrs}|abbr|axis|headers|scope|rowspan|colspan|{cellhalign}|{cellvalign}|nowrap|bgcolor|width|height
+tfootAttr          = {attrs}|{cellhalign}|{cellvalign}
+thAttr             = {attrs}|abbr|axis|headers|scope|rowspan|colspan|{cellhalign}|{cellvalign}|nowrap|bgcolor|width|height
+theadAttr          = {attrs}|{cellhalign}|{cellvalign}
+trAttr             = {attrs}|{cellhalign}|{cellvalign}|bgcolor
+ttAttr             = {attrs}
+uAttr              = {attrs}
+ulAttr             = {attrs}|type|compact
+varAttr            = {attrs}
+    *** Not implemented by Mediawiki ***
+acronymAttr        = {attrs}
+addressAttr        = {attrs}
+dfnAttr            = {attrs}
+kbdAttr            = {attrs}
+sampAttr           = {attrs}
+    *** Form elements - not supported ***
+formAttr           = {attrs}|action|method|name|enctype|onsubmit|onreset|accept|accept-charset|target
+labelAttr          = {attrs}|for|accesskey|onfocus|onblur
+InputType          = text|password|checkbox|radio|submit|reset|file|hidden|image|button
+inputAttr          = {attrs}|{focus}|type|name|value|checked|disabled|readonly|size|maxlength|src|alt|usemap|onselect|onchange|accept|align
+selectAttr         = {attrs}|name|size|multiple|disabled|tabindex|onfocus|onblur|onchange
+optgroupAttr       = {attrs}|disabled|label
+optionAttr         = {attrs}|selected|disabled|label|value
+textareaAttr       = {attrs}|{focus}|name|rows|cols|disabled|readonly|onselect|onchange
+fieldsetAttr       = {attrs}
+legendAttr         = {attrs}|accesskey|align
+buttonAttr         = {attrs}|{focus}|name|value|type|disabled
+    *** <a> links - not supported ***
+a_content          = ({PCDATA}|{special}|{fontstyle}|{phrase}|{inline_forms}|{misc_inline})*
+aAttr              = {attrs}|{focus}|charset|type|name|href|hreflang|rel|rev|shape|coords|target
+    *** images, image maps, objects - not supported ***
+imgAttr            = {attrs}|src|alt|name|longdesc|height|width|usemap|ismap|align|border|hspace|vspace
+objectAttr         = {attrs}|declare|classid|codebase|data|type|codetype|archive|standby|height|width|usemap|name|tabindex|align|border|hspace|vspace
+paramAttr          = id|name|value|valuetype|type
+appletAttr         = {coreattrs}|codebase|archive|code|object|alt|name|width|height|align|hspace|vspace
+mapAttr            = {i18n}|{events}|id|class|style|title|name
+areaAttr           = {attrs}|{focus}|shape|coords|href|nohref|alt|target
+*/
+
+
+inlineTag          = abbr|b|big|br|cite|code|del|em|font|i|ins|pre|s|small|span|strike|strong|sub|sup|tt|u|var
+blockLevelTag      = blockquote|caption|center|col|colgroup|dd|div|dl|dt|hr|li|ol|p|table|tbody|td|tfoot|th|thead|tr|ul
 htmlTag            = {inlineTag}|{blockLevelTag}
-coreAttributes     = id|class|style|title
-i18nAttributes     = lang|xml:lang|dir
-alignAttributes    = align
-tableAttributes    = align|bgcolor|border|cellpadding|cellspacing|class|colspan|height|nowrap|rowspan|start|style|valign|width
-htmlAttributes     = {tableAttributes}|alt|background|clear|color|face|id|size|valign
-eventAttributes    = onclick|ondblclick|onmousedown|onmouseup|onmouseover|onmousemove|onmouseout|onkeypress|onkeydown|onkeyupjsattributes
-focusAttributes    = accesskey|tabindex|onfocus|onblur
-scriptAttributes   = id|charset|type|language|src|defer|xml:space
 
 tagContent         = "<" ({whitespace})* ({htmlTag}) ~">"
 tagClose           = "<" ({whitespace})* "/" ({whitespace})* ({htmlTag}) ({whitespace})* ">"
 tagCloseContent    = ({whitespace})* ">"
 tagCloseNoContent  = "/" ({whitespace})* ">"
-tagAttributeKey    = ({htmlAttributes})
 tagAttributeValueInQuotes = "\"" ~"\""
 tagAttributeValueInSingleQuotes = "'" ~"'"
-tagAttributeValueNoQuotes = [^ \t\f]
+tagAttributeValueNoQuotes = [^ \t\f\"'>/]+
 /* <script> tags */
 tagScript          = "<" ({whitespace})* "script" ~">"
 tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespace})* ">"
-tagScriptAttribute = id|charset|type|language|src|defer|xml:space
 
-%state HTML_CLOSE, HTML_OPEN, HTML_ATTRIBUTE_KEY, HTML_ATTRIBUTE_VALUE, SCRIPT_ATTRIBUTE_KEY, SCRIPT_ATTRIBUTE_VALUE
+%state ATTRS_ATTRIBUTE_KEY, ATTRS_TEXTALIGN_ATTRIBUTE_KEY, BLOCKQUOTE_ATTRIBUTE_KEY, DL_ATTRIBUTE_KEY, FONT_ATTRIBUTE_KEY, HTML_ATTRIBUTE_KEY, HTML_ATTRIBUTE_VALUE, HTML_CLOSE, HTML_OPEN, LI_ATTRIBUTE_KEY, OL_ATTRIBUTE_KEY, PRE_ATTRIBUTE_KEY, SCRIPT_ATTRIBUTE_KEY, TABLE_ATTRIBUTE_KEY, TABLE_CAPTION_ATTRIBUTE_KEY, TABLE_CELL_ATTRIBUTE_KEY, TABLE_COL_ATTRIBUTE_KEY, TABLE_ROW_ATTRIBUTE_KEY, TABLE_SECTION_ATTRIBUTE_KEY, UL_ATTRIBUTE_KEY
 
 %%
 
@@ -158,15 +276,95 @@ tagScriptAttribute = id|charset|type|language|src|defer|xml:space
     }
     {htmlTag} {
         endState();
-        beginState(HTML_ATTRIBUTE_KEY);
         this.tagType = yytext().toLowerCase();
+        if (this.tagType.equals("div")) {
+            beginState(ATTRS_TEXTALIGN_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("p")) {
+            beginState(ATTRS_TEXTALIGN_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("center")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("span")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("em")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("strong")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("code")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("var")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("cite")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("abbr")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("sub")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("sup")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("tt")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("i")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("b")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("big")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("small")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("u")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("s")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("strike")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("font")) {
+            beginState(FONT_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("pre")) {
+            beginState(PRE_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("blockquote")) {
+            beginState(BLOCKQUOTE_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("ul")) {
+            beginState(UL_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("ol")) {
+            beginState(OL_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("dl")) {
+            beginState(DL_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("li")) {
+            beginState(LI_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("dd")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("dt")) {
+            beginState(ATTRS_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("table")) {
+            beginState(TABLE_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("tr")) {
+            beginState(TABLE_ROW_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("td")) {
+            beginState(TABLE_CELL_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("th")) {
+            beginState(TABLE_CELL_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("tbody")) {
+            beginState(TABLE_SECTION_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("thead")) {
+            beginState(TABLE_SECTION_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("tfoot")) {
+            beginState(TABLE_SECTION_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("caption")) {
+            beginState(TABLE_CAPTION_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("col")) {
+            beginState(TABLE_COL_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("colgroup")) {
+            beginState(TABLE_COL_ATTRIBUTE_KEY);
+        } else {
+            beginState(HTML_ATTRIBUTE_KEY);
+        }
         return "";
     }
     . {
         throw new IllegalArgumentException("HTML_OPEN: Invalid HTML tag: " + this.html);
     }
 }
-<HTML_ATTRIBUTE_VALUE, HTML_ATTRIBUTE_KEY, SCRIPT_ATTRIBUTE_KEY> {
+<ATTRS_ATTRIBUTE_KEY, ATTRS_TEXTALIGN_ATTRIBUTE_KEY, BLOCKQUOTE_ATTRIBUTE_KEY, DL_ATTRIBUTE_KEY, FONT_ATTRIBUTE_KEY, HTML_ATTRIBUTE_KEY, HTML_ATTRIBUTE_VALUE, LI_ATTRIBUTE_KEY, OL_ATTRIBUTE_KEY, PRE_ATTRIBUTE_KEY, SCRIPT_ATTRIBUTE_KEY, TABLE_ATTRIBUTE_KEY, TABLE_CAPTION_ATTRIBUTE_KEY, TABLE_CELL_ATTRIBUTE_KEY, TABLE_COL_ATTRIBUTE_KEY, TABLE_ROW_ATTRIBUTE_KEY, TABLE_SECTION_ATTRIBUTE_KEY, UL_ATTRIBUTE_KEY> {
     {tagCloseNoContent} {
         // tag close, done
         endState();
@@ -178,31 +376,136 @@ tagScriptAttribute = id|charset|type|language|src|defer|xml:space
         return this.closeTag(">");
     }
 }
-<HTML_ATTRIBUTE_KEY> {
-    {tagAttributeKey} {
-        this.currentAttributeKey = yytext();
+<ATTRS_ATTRIBUTE_KEY> {
+    {coreattrs}|{i18n} {
+        this.initializeCurrentAttribute(yytext());
         return "";
     }
+}
+<ATTRS_TEXTALIGN_ATTRIBUTE_KEY> {
+    {coreattrs}|{i18n}|{TextAlign} {
+        this.initializeCurrentAttribute(yytext());
+        return "";
+    }
+}
+<BLOCKQUOTE_ATTRIBUTE_KEY> {
+    {coreattrs}|{i18n}|cite {
+        this.initializeCurrentAttribute(yytext());
+        return "";
+    }
+}
+<DL_ATTRIBUTE_KEY> {
+    {coreattrs}|{i18n}|compact {
+        this.initializeCurrentAttribute(yytext());
+        return "";
+    }
+}
+<FONT_ATTRIBUTE_KEY> {
+    {fontAttr} {
+        this.initializeCurrentAttribute(yytext());
+        return "";
+    }
+}
+<HTML_ATTRIBUTE_KEY> {
+    {coreattrs}|{i18n} {
+        this.initializeCurrentAttribute(yytext());
+        return "";
+    }
+}
+<LI_ATTRIBUTE_KEY> {
+    {coreattrs}|{i18n}|type|value {
+        this.initializeCurrentAttribute(yytext());
+        return "";
+    }
+}
+<OL_ATTRIBUTE_KEY> {
+    {coreattrs}|{i18n}|type|compact|start {
+        this.initializeCurrentAttribute(yytext());
+        return "";
+    }
+}
+<PRE_ATTRIBUTE_KEY> {
+    {coreattrs}|{i18n}|width|xml:space {
+        this.initializeCurrentAttribute(yytext());
+        return "";
+    }
+}
+<TABLE_ATTRIBUTE_KEY> {
+    {coreattrs}|{i18n}|summary|width|border|frame|rules|cellspacing|cellpadding|align|bgcolor {
+        this.initializeCurrentAttribute(yytext());
+        return "";
+    }
+}
+<TABLE_CAPTION_ATTRIBUTE_KEY> {
+    {coreattrs}|{i18n}|align {
+        this.initializeCurrentAttribute(yytext());
+        return "";
+    }
+}
+<TABLE_CELL_ATTRIBUTE_KEY> {
+    {coreattrs}|{i18n}|abbr|axis|headers|scope|rowspan|colspan|{cellhalign}|{cellvalign}|nowrap|bgcolor|width|height {
+        this.initializeCurrentAttribute(yytext());
+        return "";
+    }
+}
+<TABLE_COL_ATTRIBUTE_KEY> {
+    {coreattrs}|{i18n}|span|width|{cellhalign}|{cellvalign} {
+        this.initializeCurrentAttribute(yytext());
+        return "";
+    }
+}
+<TABLE_ROW_ATTRIBUTE_KEY> {
+    {coreattrs}|{i18n}|{cellhalign}|{cellvalign}|bgcolor {
+        this.initializeCurrentAttribute(yytext());
+        return "";
+    }
+}
+<TABLE_SECTION_ATTRIBUTE_KEY> {
+    {coreattrs}|{i18n}|{cellhalign}|{cellvalign} {
+        this.initializeCurrentAttribute(yytext());
+        return "";
+    }
+}
+<UL_ATTRIBUTE_KEY> {
+    {coreattrs}|{i18n}|type|compact {
+        this.initializeCurrentAttribute(yytext());
+        return "";
+    }
+}
+<SCRIPT_ATTRIBUTE_KEY> {
+    {scriptAttr} {
+        this.initializeCurrentAttribute(yytext());
+        return "";
+    }
+}
+<ATTRS_ATTRIBUTE_KEY, ATTRS_TEXTALIGN_ATTRIBUTE_KEY, BLOCKQUOTE_ATTRIBUTE_KEY, DL_ATTRIBUTE_KEY, HTML_ATTRIBUTE_KEY, LI_ATTRIBUTE_KEY, OL_ATTRIBUTE_KEY, PRE_ATTRIBUTE_KEY, TABLE_ATTRIBUTE_KEY, TABLE_CAPTION_ATTRIBUTE_KEY, TABLE_CELL_ATTRIBUTE_KEY, TABLE_COL_ATTRIBUTE_KEY, TABLE_ROW_ATTRIBUTE_KEY, TABLE_SECTION_ATTRIBUTE_KEY, UL_ATTRIBUTE_KEY> {
+    // handle tags that allow javascript event handlers
+    {events} {
+        if (allowJavascript()) {
+            this.initializeCurrentAttribute(yytext());
+        }
+        return "";
+    }
+}
+<ATTRS_ATTRIBUTE_KEY, ATTRS_TEXTALIGN_ATTRIBUTE_KEY, BLOCKQUOTE_ATTRIBUTE_KEY, DL_ATTRIBUTE_KEY, FONT_ATTRIBUTE_KEY, HTML_ATTRIBUTE_KEY, LI_ATTRIBUTE_KEY, OL_ATTRIBUTE_KEY, PRE_ATTRIBUTE_KEY, SCRIPT_ATTRIBUTE_KEY, TABLE_ATTRIBUTE_KEY, TABLE_CAPTION_ATTRIBUTE_KEY, TABLE_CELL_ATTRIBUTE_KEY, TABLE_COL_ATTRIBUTE_KEY, TABLE_ROW_ATTRIBUTE_KEY, TABLE_SECTION_ATTRIBUTE_KEY, UL_ATTRIBUTE_KEY> {
     "=" ({whitespace})* {
         if (this.currentAttributeKey != null) {
-            endState();
             beginState(HTML_ATTRIBUTE_VALUE);
         }
         return "";
     }
-    {whitespace} {
-        // ignore whitespace
+    [a-zA-Z]+ {
+        // invalid attribute
         return "";
     }
     . {
-        // invalid attribute
+        // ignore whitespace and any other characters
         return "";
     }
 }
 <HTML_ATTRIBUTE_VALUE> {
     {tagAttributeValueInQuotes} {
         endState();
-        beginState(HTML_ATTRIBUTE_KEY);
         if (!allowJavascript() && yytext().indexOf("javascript") != -1) {
             // potential XSS attack, drop this attribute
             this.attributes.remove(this.currentAttributeKey);
@@ -214,7 +517,6 @@ tagScriptAttribute = id|charset|type|language|src|defer|xml:space
     }
     {tagAttributeValueInSingleQuotes} {
         endState();
-        beginState(HTML_ATTRIBUTE_KEY);
         if (!allowJavascript() && yytext().indexOf("javascript") != -1) {
             // potential XSS attack, drop this attribute
             this.attributes.remove(this.currentAttributeKey);
@@ -227,7 +529,6 @@ tagScriptAttribute = id|charset|type|language|src|defer|xml:space
     }
     {tagAttributeValueNoQuotes} {
         endState();
-        beginState(HTML_ATTRIBUTE_KEY);
         if (!allowJavascript() && yytext().indexOf("javascript") != -1) {
             // potential XSS attack, drop this attribute
             this.attributes.remove(this.currentAttributeKey);
@@ -239,55 +540,7 @@ tagScriptAttribute = id|charset|type|language|src|defer|xml:space
         return "";
     }
     . {
-        throw new IllegalArgumentException("HTML_ATTRIBUTE_VALUE: Invalid HTML tag: " + this.html);
-    }
-}
-<SCRIPT_ATTRIBUTE_KEY> {
-    {tagScriptAttribute} {
-        this.currentAttributeKey = yytext();
+        // ignore anything that doesn't match
         return "";
-    }
-    "=" ({whitespace})* {
-        if (this.currentAttributeKey != null) {
-            endState();
-            beginState(SCRIPT_ATTRIBUTE_VALUE);
-        }
-        return "";
-    }
-    {whitespace} {
-        // ignore whitespace
-        return "";
-    }
-    . {
-        // invalid attribute
-        return "";
-    }
-}
-<SCRIPT_ATTRIBUTE_VALUE> {
-    {tagAttributeValueInQuotes} {
-        endState();
-        beginState(SCRIPT_ATTRIBUTE_KEY);
-        this.attributes.put(this.currentAttributeKey, yytext());
-        this.currentAttributeKey = null;
-        return "";
-    }
-    {tagAttributeValueInSingleQuotes} {
-        endState();
-        beginState(SCRIPT_ATTRIBUTE_KEY);
-        // convert apostrophes to quotation marks
-        this.attributes.put(this.currentAttributeKey, "\"" + yytext().substring(1, yytext().length() - 1) + "\"");
-        this.currentAttributeKey = null;
-        return "";
-    }
-    {tagAttributeValueNoQuotes} {
-        endState();
-        beginState(SCRIPT_ATTRIBUTE_KEY);
-        // add quotes
-        this.attributes.put(this.currentAttributeKey, "\"" + yytext() + "\"");
-        this.currentAttributeKey = null;
-        return "";
-    }
-    . {
-        throw new IllegalArgumentException("SCRIPT_ATTRIBUTE_VALUE: Invalid HTML tag: " + this.html);
     }
 }

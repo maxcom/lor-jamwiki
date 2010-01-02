@@ -61,12 +61,10 @@ wikiprecontinue    = (" ") ([ \t\n])
 wikipreend         = ([^ ]) | ({newline})
 
 /* allowed html */
-inlinetag          = br|b|big|cite|code|del|em|font|i|ins|s|small|span|strike|strong|sub|sup|tt|u|var
-blockleveltag      = blockquote|caption|center|dd|div|dl|dt|hr|li|ol|p|table|tbody|td|tfoot|th|thead|tr|ul
+inlinetag          = abbr|br|b|big|cite|code|del|em|font|i|ins|s|small|span|strike|strong|sub|sup|tt|u|var
+blockleveltag      = blockquote|caption|center|col|colgroup|dd|div|dl|dt|hr|li|ol|p|table|tbody|td|tfoot|th|thead|tr|ul
 htmlkeyword        = {inlinetag}|{blockleveltag}
-tableattributes    = align|bgcolor|border|cellpadding|cellspacing|class|colspan|height|nowrap|rowspan|start|style|valign|width
-htmlattributes     = {tableattributes}|alt|background|clear|color|face|id|size|valign
-htmlattribute      = ([ ]+) {htmlattributes} ([ ]*=[^>\n]+[ ]*)*
+htmlattribute      = ([ ]+) [a-zA-Z:]+ ([ ]*=[^>\n]+[ ]*)*
 htmlbr             = <[ ]* (\/)? [ ]* br ({htmlattribute})* [ ]* (\/)? [ ]*>
 htmlparagraphopen  = <[ ]* p ({htmlattribute})* [ ]* (\/)? [ ]*>
 htmlparagraphclose = (<[ ]*\/[ ]*) p ([ ]*>)
@@ -86,7 +84,7 @@ toc                = "__TOC__"
 forcetoc           = "__FORCETOC__"
 
 /* tables */
-tableattribute     = ([ ]*) {tableattributes} ([ ]*=[^>\n\|]+[ ]*)*
+tableattribute     = ([ ]*) [a-zA-Z:]+ ([ ]*=[^>\n\|]+[ ]*)*
 tablestart         = "{|" (.)* {newline}
 tableend           = "|}" ({newline})?
 tablecell          = "|" [^\+\-\}] | "|" ({tableattribute})+ "|" [^\|]

@@ -3,6 +3,8 @@
 
 New Features:
 
+  * Signficant updates to the syntax parser, including support for additional
+    HTML tags and XHTML transitional validation of tag attributes.
   * Support the #if: parser function.  Usage: {{#if: test | true | false}}.
   * Automatically populate sample JDBC values based on database type on the
     setup and admin pages.
@@ -12,7 +14,6 @@ New Features:
   * Topic add/update is now significantly faster due to query refactoring
     and changes so that the search index is not re-optimized after every
     add/update.
-    after every update.
   * Upgrade to Spring Framework 3.0.0.RC2.
   * Upgrade to Spring Security 3.0.0.RC1.
   * Upgrade to Lucene Search 3.0.0.
