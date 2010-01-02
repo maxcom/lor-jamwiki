@@ -18,6 +18,7 @@ package org.jamwiki.migrate;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -60,7 +61,7 @@ public class MigrationUtil {
 	 */
 	public static void exportToFile(File file, String virtualWiki, List<String> topicNames, boolean excludeHistory, List<WikiMessage> errors) throws MigrationException, WikiException {
 		Migrator migrator = new MediaWikiXmlMigrator();
-		Map<Topic, List<TopicVersion>> data = new java.util.HashMap<Topic, List<TopicVersion>>();
+		Map<Topic, List<TopicVersion>> data = new HashMap<Topic, List<TopicVersion>>();
 		logger.info("topicNames.size(): " + topicNames.size());
 		for (String topicName : topicNames) {
 			logger.info("Parsing topic name: " + topicName);

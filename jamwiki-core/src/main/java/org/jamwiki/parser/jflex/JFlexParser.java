@@ -115,7 +115,7 @@ public class JFlexParser extends AbstractParser {
 			while ((line = lexer.yylex()) != null) {
 				lexer.append(line);
 				current = System.currentTimeMillis();
-				if ((current - previous) > 10) {
+				if (logger.isFineEnabled() && (current - previous) > 10) {
 					// took longer than ten milliseconds, log warning
 					logger.fine("WARNING: slow parsing (" + ((current - previous) / 1000.000) + " s) for input: " + lexer.yytext() + " (state: " + lexer.yystate() + ") result: " + line);
 				}
