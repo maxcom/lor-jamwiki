@@ -1479,6 +1479,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public void insertTopic(Topic topic, int virtualWikiId, Connection conn) throws SQLException {
 		PreparedStatement stmt = null;
+		ResultSet rs = null;
 		try {
 			int index = 1;
 			if (!this.autoIncrementPrimaryKeys()) {
@@ -1503,14 +1504,15 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setString(index++, topic.getRedirectTo());
 			stmt.executeUpdate();
 			if (this.autoIncrementPrimaryKeys()) {
-				ResultSet rs = stmt.getGeneratedKeys();
+				rs = stmt.getGeneratedKeys();
 				if (!rs.next()) {
 					throw new SQLException("Unable to determine auto-generated ID for database record");
 				}
 				topic.setTopicId(rs.getInt(1));
 			}
 		} finally {
-			DatabaseConnection.closeStatement(stmt);
+			// close only the statement and result set - leave the connection open for further use
+			DatabaseConnection.closeConnection(null, stmt, rs);
 		}
 	}
 
@@ -1519,6 +1521,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public void insertTopicVersion(TopicVersion topicVersion, Connection conn) throws SQLException {
 		PreparedStatement stmt = null;
+		ResultSet rs = null;
 		try {
 			int index = 1;
 			if (!this.autoIncrementPrimaryKeys()) {
@@ -1553,14 +1556,15 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setString(index++, topicVersion.getVersionParamString());
 			stmt.executeUpdate();
 			if (this.autoIncrementPrimaryKeys()) {
-				ResultSet rs = stmt.getGeneratedKeys();
+				rs = stmt.getGeneratedKeys();
 				if (!rs.next()) {
 					throw new SQLException("Unable to determine auto-generated ID for database record");
 				}
 				topicVersion.setTopicVersionId(rs.getInt(1));
 			}
 		} finally {
-			DatabaseConnection.closeStatement(stmt);
+			// close only the statement and result set - leave the connection open for further use
+			DatabaseConnection.closeConnection(null, stmt, rs);
 		}
 	}
 
@@ -1599,6 +1603,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public void insertVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws SQLException {
 		PreparedStatement stmt = null;
+		ResultSet rs = null;
 		try {
 			int index = 1;
 			if (!this.autoIncrementPrimaryKeys()) {
@@ -1613,14 +1618,15 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setString(index++, virtualWiki.getDefaultTopicName());
 			stmt.executeUpdate();
 			if (this.autoIncrementPrimaryKeys()) {
-				ResultSet rs = stmt.getGeneratedKeys();
+				rs = stmt.getGeneratedKeys();
 				if (!rs.next()) {
 					throw new SQLException("Unable to determine auto-generated ID for database record");
 				}
 				virtualWiki.setVirtualWikiId(rs.getInt(1));
 			}
 		} finally {
-			DatabaseConnection.closeStatement(stmt);
+			// close only the statement and result set - leave the connection open for further use
+			DatabaseConnection.closeConnection(null, stmt, rs);
 		}
 	}
 
@@ -1645,6 +1651,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public void insertWikiFile(WikiFile wikiFile, int virtualWikiId, Connection conn) throws SQLException {
 		PreparedStatement stmt = null;
+		ResultSet rs = null;
 		try {
 			int index = 1;
 			if (!this.autoIncrementPrimaryKeys()) {
@@ -1666,14 +1673,15 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setLong(index++, wikiFile.getFileSize());
 			stmt.executeUpdate();
 			if (this.autoIncrementPrimaryKeys()) {
-				ResultSet rs = stmt.getGeneratedKeys();
+				rs = stmt.getGeneratedKeys();
 				if (!rs.next()) {
 					throw new SQLException("Unable to determine auto-generated ID for database record");
 				}
 				wikiFile.setFileId(rs.getInt(1));
 			}
 		} finally {
-			DatabaseConnection.closeStatement(stmt);
+			// close only the statement and result set - leave the connection open for further use
+			DatabaseConnection.closeConnection(null, stmt, rs);
 		}
 	}
 
@@ -1682,6 +1690,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public void insertWikiFileVersion(WikiFileVersion wikiFileVersion, Connection conn) throws SQLException {
 		PreparedStatement stmt = null;
+		ResultSet rs = null;
 		try {
 			int index = 1;
 			if (!this.autoIncrementPrimaryKeys()) {
@@ -1710,14 +1719,15 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setLong(index++, wikiFileVersion.getFileSize());
 			stmt.executeUpdate();
 			if (this.autoIncrementPrimaryKeys()) {
-				ResultSet rs = stmt.getGeneratedKeys();
+				rs = stmt.getGeneratedKeys();
 				if (!rs.next()) {
 					throw new SQLException("Unable to determine auto-generated ID for database record");
 				}
 				wikiFileVersion.setFileVersionId(rs.getInt(1));
 			}
 		} finally {
-			DatabaseConnection.closeStatement(stmt);
+			// close only the statement and result set - leave the connection open for further use
+			DatabaseConnection.closeConnection(null, stmt, rs);
 		}
 	}
 
@@ -1726,6 +1736,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public void insertWikiGroup(WikiGroup group, Connection conn) throws SQLException {
 		PreparedStatement stmt = null;
+		ResultSet rs = null;
 		try {
 			int index = 1;
 			if (!this.autoIncrementPrimaryKeys()) {
@@ -1740,14 +1751,15 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setString(index++, group.getDescription());
 			stmt.executeUpdate();
 			if (this.autoIncrementPrimaryKeys()) {
-				ResultSet rs = stmt.getGeneratedKeys();
+				rs = stmt.getGeneratedKeys();
 				if (!rs.next()) {
 					throw new SQLException("Unable to determine auto-generated ID for database record");
 				}
 				group.setGroupId(rs.getInt(1));
 			}
 		} finally {
-			DatabaseConnection.closeStatement(stmt);
+			// close only the statement and result set - leave the connection open for further use
+			DatabaseConnection.closeConnection(null, stmt, rs);
 		}
 	}
 
@@ -1756,6 +1768,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public void insertWikiUser(WikiUser user, Connection conn) throws SQLException {
 		PreparedStatement stmt = null;
+		ResultSet rs = null;
 		try {
 			int index = 1;
 			if (!this.autoIncrementPrimaryKeys()) {
@@ -1778,14 +1791,15 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setString(index++, user.getSignature());
 			stmt.executeUpdate();
 			if (this.autoIncrementPrimaryKeys()) {
-				ResultSet rs = stmt.getGeneratedKeys();
+				rs = stmt.getGeneratedKeys();
 				if (!rs.next()) {
 					throw new SQLException("Unable to determine auto-generated ID for database record");
 				}
 				user.setUserId(rs.getInt(1));
 			}
 		} finally {
-			DatabaseConnection.closeStatement(stmt);
+			// close only the statement and result set - leave the connection open for further use
+			DatabaseConnection.closeConnection(null, stmt, rs);
 		}
 	}
 

@@ -1414,11 +1414,11 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links) throws DataAccessException, WikiException {
 		long start = System.currentTimeMillis();
+		WikiUtil.validateTopicName(topic.getName());
 		TransactionStatus status = null;
 		try {
 			status = DatabaseConnection.startTransaction();
 			Connection conn = DatabaseConnection.getConnection();
-			WikiUtil.validateTopicName(topic.getName());
 			if (topic.getTopicId() <= 0) {
 				// create the initial topic record
 				addTopic(topic, conn);

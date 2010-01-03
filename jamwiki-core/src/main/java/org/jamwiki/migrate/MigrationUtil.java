@@ -146,6 +146,8 @@ public class MigrationUtil {
 				for (TopicVersion topicVersion : topicVersions) {
 					// only the final import version is logged
 					topicVersion.setLoggable(false);
+					// no recent change record needed - can be added by reloading all recent changes if desired
+					topicVersion.setRecentChangeAllowed(false);
 					// metadata is needed only for the final import version, so for performance reasons
 					// do not include category or link data for older versions
 					WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
