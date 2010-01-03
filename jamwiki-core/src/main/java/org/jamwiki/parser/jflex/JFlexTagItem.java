@@ -16,6 +16,8 @@
  */
 package org.jamwiki.parser.jflex;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
@@ -30,16 +32,13 @@ class JFlexTagItem {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexTagItem.class.getName());
 
-	private static final String emptyBodyTagPattern = "(br|col|div|hr|td|th)";
-	private static final String nonNestingTagPattern = "(col|colgroup|dd|dl|dt|hr|li|ol|table|tbody|td|tfoot|th|thead|tr|ul)";
-	private static final String nonTextBodyTagPattern = "(col|colgroup|dl|ol|table|tbody|tfoot|thead|tr|ul)";
+	private static final List<String> EMPTY_BODY_TAGS = Arrays.asList("br", "col", "div", "hr", "td", "th");
+	private static final List<String> NON_NESTING_TAGS = Arrays.asList("col", "colgroup", "dd", "dl", "dt", "hr", "li", "ol", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "ul");
+	private static final List<String> NON_TEXT_BODY_TAGS = Arrays.asList("col", "colgroup", "dl", "ol", "table", "tbody", "tfoot", "thead", "tr", "ul");
+	private static final List<String> NON_INLINE_TAGS = Arrays.asList("caption", "col", "colgroup", "dd", "div", "dl", "dt", "hr", "li", "ol", "p", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "ul");
 	private static final String nonInlineTagPattern = "(caption|col|colgroup|dd|div|dl|dt|hr|li|ol|p|table|tbody|td|tfoot|th|thead|tr|ul)";
 	private static final String nonInlineTagStartPattern = "<" + nonInlineTagPattern + ">.*";
 	private static final String nonInlineTagEndPattern = ".*</" + nonInlineTagPattern + ">";
-	private static final Pattern EMPTY_BODY_TAG_PATTERN = Pattern.compile(emptyBodyTagPattern, Pattern.CASE_INSENSITIVE);
-	private static final Pattern NON_NESTING_TAG_PATTERN = Pattern.compile(nonNestingTagPattern, Pattern.CASE_INSENSITIVE);
-	private static final Pattern NON_TEXT_BODY_TAG_PATTERN = Pattern.compile(nonTextBodyTagPattern, Pattern.CASE_INSENSITIVE);
-	private static final Pattern NON_INLINE_TAG_PATTERN = Pattern.compile(nonInlineTagPattern, Pattern.CASE_INSENSITIVE);
 	private static final Pattern NON_INLINE_TAG_START_PATTERN = Pattern.compile(nonInlineTagStartPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 	private static final Pattern NON_INLINE_TAG_END_PATTERN = Pattern.compile(nonInlineTagEndPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 	protected static final String ROOT_TAG = "jflex-root";
@@ -115,8 +114,7 @@ class JFlexTagItem {
 		if (this.isRootTag()) {
 			return true;
 		}
-		Matcher matcher = EMPTY_BODY_TAG_PATTERN.matcher(this.tagType);
-		return matcher.matches();
+		return (EMPTY_BODY_TAGS.indexOf(this.tagType) != -1);
 	}
 
 	/**
@@ -128,8 +126,7 @@ class JFlexTagItem {
 		if (this.isRootTag()) {
 			return true;
 		}
-		Matcher matcher = NON_INLINE_TAG_PATTERN.matcher(this.tagType);
-		return !matcher.matches();
+		return (NON_INLINE_TAGS.indexOf(this.tagType) == -1);
 	}
 
 	/**
@@ -137,14 +134,16 @@ class JFlexTagItem {
 	 * another "li" tag.
 	 */
 	protected boolean isNonNestingTag() {
-		Matcher matcher = NON_NESTING_TAG_PATTERN.matcher(this.tagType);
-		return matcher.matches();
+		return (NON_NESTING_TAGS.indexOf(this.tagType) != -1);
 	}
 
 	/**
 	 *
 	 */
 	private boolean isNonInlineTagEnd(String tagText) {
+		if (!tagText.endsWith(">")) {
+			return false;
+		}
 		Matcher matcher = NON_INLINE_TAG_END_PATTERN.matcher(tagText);
 		return matcher.matches();
 	}
@@ -153,6 +152,9 @@ class JFlexTagItem {
 	 *
 	 */
 	private boolean isNonInlineTagStart(String tagText) {
+		if (!tagText.startsWith("<")) {
+			return false;
+		}
 		Matcher matcher = NON_INLINE_TAG_START_PATTERN.matcher(tagText);
 		return matcher.matches();
 	}
@@ -165,8 +167,7 @@ class JFlexTagItem {
 		if (this.isRootTag()) {
 			return true;
 		}
-		Matcher matcher = NON_TEXT_BODY_TAG_PATTERN.matcher(this.tagType);
-		return !matcher.matches();
+		return (NON_TEXT_BODY_TAGS.indexOf(this.tagType) == -1);
 	}
 
 	/**
