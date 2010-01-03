@@ -52,9 +52,8 @@ listdt             = ":"
 nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
 
 /* pre */
-htmlpreattributes  = class|dir|id|lang|style|title
-htmlpreattribute   = ([ ]+) {htmlpreattributes} ([ ]*=[^>\n]+[ ]*)*
-htmlprestart       = (<[ ]*pre ({htmlpreattribute})* [ ]* (\/)? [ ]*>)
+htmlattribute      = ([ ]+) [a-zA-Z:]+ ([ ]*=[^>\n]+[ ]*)*
+htmlprestart       = (<[ ]*pre ({htmlattribute})* [ ]* (\/)? [ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
 wikiprestart       = (" ")+ ([^ \t\n])
 wikiprecontinue    = (" ") ([ \t\n])
@@ -64,7 +63,6 @@ wikipreend         = ([^ ]) | ({newline})
 inlinetag          = abbr|br|b|big|cite|code|del|em|font|i|ins|s|small|span|strike|strong|sub|sup|tt|u|var
 blockleveltag      = blockquote|caption|center|col|colgroup|dd|div|dl|dt|hr|li|ol|p|table|tbody|td|tfoot|th|thead|tr|ul
 htmlkeyword        = {inlinetag}|{blockleveltag}
-htmlattribute      = ([ ]+) [a-zA-Z:]+ ([ ]*=[^>\n]+[ ]*)*
 htmlbr             = <[ ]* (\/)? [ ]* br ({htmlattribute})* [ ]* (\/)? [ ]*>
 htmlparagraphopen  = <[ ]* p ({htmlattribute})* [ ]* (\/)? [ ]*>
 htmlparagraphclose = (<[ ]*\/[ ]*) p ([ ]*>)
