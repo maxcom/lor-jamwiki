@@ -54,7 +54,7 @@ public class BlikiParser extends JFlexParser {
 	public String parseHTML(ParserOutput parserOutput, String raw) throws ParserException {
 		long start = System.currentTimeMillis();
 		String output = null;
-		if (!StringUtils.isBlank(this.isRedirect(parserInput, raw, JFlexParser.MODE_LAYOUT))) {
+		if (!StringUtils.isBlank(this.isRedirect(raw))) {
 			// redirects are parsed differently
 			output = this.parseRedirect(parserOutput, raw);
 		} else {

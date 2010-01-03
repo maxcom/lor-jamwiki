@@ -84,15 +84,14 @@ public class JFlexParser extends AbstractParser {
 	}
 
 	/**
-	 *
+	 * Determine if a string of wikitext is a redirect.  Note that any templates, categories,
+	 * comments, or other syntax should be parsed PRIOR to calling this method.
 	 */
-	protected String isRedirect(ParserInput parserInput, String raw, int mode) throws ParserException {
-		if (StringUtils.isBlank(raw) || mode <= JFlexParser.MODE_PREPROCESS) {
+	protected String isRedirect(String raw) throws ParserException {
+		if (StringUtils.isBlank(raw)) {
 			return null;
 		}
-		// pre-process parse to handle categories, HTML comments, etc.
-		String preprocessed = JFlexParserUtil.parseFragment(parserInput, raw, JFlexParser.MODE_PREPROCESS);
-		Matcher m = REDIRECT_PATTERN.matcher(preprocessed.trim());
+		Matcher m = REDIRECT_PATTERN.matcher(raw.trim());
 		return (m.matches()) ? Utilities.decodeAndEscapeTopicName(m.group(1).trim(), true) : null;
 	}
 
@@ -251,7 +250,7 @@ public class JFlexParser extends AbstractParser {
 	 */
 	private String parseProcess(ParserOutput parserOutput, String raw, int mode) throws ParserException {
 		// if the topic is a redirect store the redirect target
-		String redirect = this.isRedirect(parserInput, raw, mode);
+		String redirect = this.isRedirect(raw);
 		if (!StringUtils.isBlank(redirect)) {
 			boolean colon = (redirect.length() > 1 && redirect.charAt(0) == ':');
 			if (colon) {
@@ -293,7 +292,9 @@ public class JFlexParser extends AbstractParser {
 	 * @throws ParserException Thrown if any error occurs during parsing.
 	 */
 	protected String parseRedirect(ParserOutput parserOutput, String raw) throws ParserException {
-		String redirect = this.isRedirect(parserInput, raw, JFlexParser.MODE_LAYOUT);
+		// pre-process the text to remove comments, categories, etc.
+		String preprocessed = JFlexParserUtil.parseFragment(parserInput, raw, JFlexParser.MODE_PREPROCESS);
+		String redirect = this.isRedirect(preprocessed);
 		WikiLink wikiLink = JFlexParserUtil.parseWikiLink("[[" + redirect + "]]");
 		String style = "redirect";
 		String virtualWiki = this.parserInput.getVirtualWiki();
