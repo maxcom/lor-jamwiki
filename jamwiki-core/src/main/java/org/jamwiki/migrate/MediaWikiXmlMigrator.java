@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
@@ -66,6 +65,8 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 	private static final int MEDIAWIKI_TALK_NAMESPACE_ID = 1;
 	private static final int MEDIAWIKI_USER_NAMESPACE_ID = 2;
 	private static final int MEDIAWIKI_USER_TALK_NAMESPACE_ID = 3;
+	private static final int MEDIAWIKI_SITE_CUSTOM_NAMESPACE_ID = 4;
+	private static final int MEDIAWIKI_SITE_CUSTOM_TALK_NAMESPACE_ID = 5;
 	private static final int MEDIAWIKI_FILE_NAMESPACE_ID = 6;
 	private static final int MEDIAWIKI_FILE_TALK_NAMESPACE_ID = 7;
 	private static final int MEDIAWIKI_MEDIAWIKI_NAMESPACE_ID = 8;
@@ -94,6 +95,8 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_USER_TALK_NAMESPACE_ID, NamespaceHandler.NAMESPACE_USER_COMMENTS);
 		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_FILE_NAMESPACE_ID, NamespaceHandler.NAMESPACE_IMAGE);
 		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_FILE_TALK_NAMESPACE_ID, NamespaceHandler.NAMESPACE_IMAGE_COMMENTS);
+		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_MEDIAWIKI_NAMESPACE_ID, NamespaceHandler.NAMESPACE_JAMWIKI);
+		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_MEDIAWIKI_TALK_NAMESPACE_ID, NamespaceHandler.NAMESPACE_JAMWIKI_COMMENTS);
 		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_TEMPLATE_NAMESPACE_ID, NamespaceHandler.NAMESPACE_TEMPLATE);
 		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_TEMPLATE_TALK_NAMESPACE_ID, NamespaceHandler.NAMESPACE_TEMPLATE_COMMENTS);
 		NAMESPACE_CONVERSION_MAP.put(MEDIAWIKI_CATEGORY_NAMESPACE_ID, NamespaceHandler.NAMESPACE_CATEGORY);
@@ -202,15 +205,18 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 	/**
 	 * Convert all namespaces names from MediaWiki to JAMWiki local representation.
 	 */
-	private String convertToJAMWikiNamespaces(String text) {
-		String ret = text;
+	private void convertToJAMWikiNamespaces(StringBuilder builder) {
 		// convert all namespaces names from MediaWiki to JAMWiki local representation
-		String jamwikiNamespace;
+		String jamwikiNamespace, mediawikiPattern, jamwikiPattern;
+		int start = 0;
 		for (String mediawikiNamespace : mediawikiNamespaceMap.keySet()) {
 			jamwikiNamespace = mediawikiNamespaceMap.get(mediawikiNamespace);
-			ret = Pattern.compile("\\[\\[" + mediawikiNamespace + "\\:", Pattern.CASE_INSENSITIVE).matcher(ret).replaceAll("[[" + jamwikiNamespace + ":");
+			mediawikiPattern = "[[" + mediawikiNamespace + ":";
+			jamwikiPattern = "[[" + jamwikiNamespace + ":";
+			while ((start = builder.indexOf(mediawikiPattern, start + 1)) != -1) {
+				builder.replace(start, start + mediawikiPattern.length(), jamwikiPattern);
+			}
 		}
-		return ret;
 	}
 
 	/**
@@ -287,8 +293,8 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 			currentTopic.setTopicType(WikiUtil.findTopicTypeForNamespace(wikiLink.getNamespace()));
 			currentTopic.setName(topicName);
 		} else if (MEDIAWIKI_ELEMENT_TOPIC_CONTENT.equals(qName)) {
+			this.convertToJAMWikiNamespaces(currentElementBuffer);
 			String topicContent = currentElementBuffer.toString().trim();
-			topicContent = convertToJAMWikiNamespaces(topicContent);
 			currentTopicVersion.setVersionContent(topicContent);
 			currentTopicVersion.setCharactersChanged(StringUtils.length(topicContent) - previousTopicContentLength);
 			previousTopicContentLength = StringUtils.length(topicContent);
@@ -433,18 +439,22 @@ public class MediaWikiXmlMigrator extends DefaultHandler implements Migrator {
 	 * Convert all namespaces names from JAMWiki to MediaWiki local representation.
 	 */
 	private String convertToMediawikiNamespaces(String text) {
-		String ret = text;
-		// convert all namespaces names from JAMWiki to MediaWiki local representation
-		String jamwikiNamespace;
-		String mediawikiNamespace;
+		StringBuilder builder = new StringBuilder(text);
+		String jamwikiNamespace, mediawikiNamespace, mediawikiPattern, jamwikiPattern;
+		int start = 0;
 		for (Integer key : MEDIAWIKI_NAMESPACE_MAP.keySet()) {
 			// use the JAMWiki namespace if one exists
 			jamwikiNamespace = NAMESPACE_CONVERSION_MAP.get(key);
 			mediawikiNamespace = MEDIAWIKI_NAMESPACE_MAP.get(key);
-			if (jamwikiNamespace != null) {
-				ret = Pattern.compile("\\[\\[" + jamwikiNamespace + "\\:", Pattern.CASE_INSENSITIVE).matcher(ret).replaceAll("[[" + mediawikiNamespace + ":");
+			if (jamwikiNamespace == null) {
+				continue;
+			}
+			mediawikiPattern = "[[" + mediawikiNamespace + ":";
+			jamwikiPattern = "[[" + jamwikiNamespace + ":";
+			while ((start = builder.indexOf(jamwikiPattern, start + 1)) != -1) {
+				builder.replace(start, start + jamwikiPattern.length(), mediawikiPattern);
 			}
 		}
-		return ret;
+		return builder.toString();
 	}
 }
