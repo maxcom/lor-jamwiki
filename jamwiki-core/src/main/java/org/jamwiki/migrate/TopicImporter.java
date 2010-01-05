@@ -23,9 +23,9 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 
 /**
- * Interface that controls how topics are imported and exported.
+ * Interface that controls how topics are imported.
  */
-public interface Migrator {
+public interface TopicImporter {
 
 	/**
 	 * Parse the contents of the file, returning a map of topics and the associated topic
@@ -38,15 +38,4 @@ public interface Migrator {
 	 * @throws MigrationException Thrown if any error occurs during import.
 	 */
 	public Map<Topic, List<TopicVersion>> importFromFile(File file) throws MigrationException;
-
-	/**
-	 * Given a map of topics and the associated topic versions, generate a file suitable for
-	 * importing into another wiki.
-	 *
-	 * @param file The file containing all exported topic data.
-	 * @param data A map of topics and all versions for each topic, sorted chronologically
-	 *  from oldest to newest.
-	 * @throws MigrationException Thrown if any error occurs during export.
-	 */
-	public void exportToFile(File file, Map<Topic, List<TopicVersion>> data) throws MigrationException;
 }
