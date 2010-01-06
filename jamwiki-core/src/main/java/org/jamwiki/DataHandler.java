@@ -544,6 +544,17 @@ public interface DataHandler {
 	void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination) throws DataAccessException, WikiException;
 
 	/**
+	 * Utility method used when importing to updating the previous topic version ID field
+	 * of topic versions, as well as the current version ID field for the topic record.
+	 *
+	 * @param topic The topic record to update.
+	 * @param topicVersionIdList A list of all topic version IDs for the topic, sorted
+	 *  chronologically from oldest to newest.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	void orderTopicVersions(Topic topic, List<Integer> topicVersionIdList) throws DataAccessException;
+
+	/**
 	 * Delete all existing log entries and reload the log item table based
 	 * on the most recent topic versions, uploads, and user signups.
 	 *

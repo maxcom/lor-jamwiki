@@ -176,6 +176,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_UPDATE_GROUP = null;
 	protected static String STATEMENT_UPDATE_ROLE = null;
 	protected static String STATEMENT_UPDATE_TOPIC = null;
+	protected static String STATEMENT_UPDATE_TOPIC_VERSION_PREVIOUS_VERSION_ID = null;
 	protected static String STATEMENT_UPDATE_USER = null;
 	protected static String STATEMENT_UPDATE_VIRTUAL_WIKI = null;
 	protected static String STATEMENT_UPDATE_WIKI_FILE = null;
@@ -1088,6 +1089,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_UPDATE_GROUP                   = props.getProperty("STATEMENT_UPDATE_GROUP");
 		STATEMENT_UPDATE_ROLE                    = props.getProperty("STATEMENT_UPDATE_ROLE");
 		STATEMENT_UPDATE_TOPIC                   = props.getProperty("STATEMENT_UPDATE_TOPIC");
+		STATEMENT_UPDATE_TOPIC_VERSION_PREVIOUS_VERSION_ID = props.getProperty("STATEMENT_UPDATE_TOPIC_VERSION_PREVIOUS_VERSION_ID");
 		STATEMENT_UPDATE_USER                    = props.getProperty("STATEMENT_UPDATE_USER");
 		STATEMENT_UPDATE_VIRTUAL_WIKI            = props.getProperty("STATEMENT_UPDATE_VIRTUAL_WIKI");
 		STATEMENT_UPDATE_WIKI_FILE               = props.getProperty("STATEMENT_UPDATE_WIKI_FILE");
@@ -2252,6 +2254,41 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.executeUpdate();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void orderTopicVersions(Topic topic, int virtualWikiId, List<Integer> topicVersionIdList) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			conn.setAutoCommit(false);
+			stmt = conn.prepareStatement(STATEMENT_UPDATE_TOPIC_VERSION_PREVIOUS_VERSION_ID);
+			Integer previousTopicVersionId = null;
+			for (int topicVersionId : topicVersionIdList) {
+				if (previousTopicVersionId != null) {
+					stmt.setInt(1, previousTopicVersionId);
+					stmt.setInt(2, topicVersionId);
+					stmt.addBatch();
+				}
+				previousTopicVersionId = topicVersionId;
+			}
+			stmt.executeUpdate();
+			topic.setCurrentVersionId(previousTopicVersionId);
+			this.updateTopic(topic, virtualWikiId, conn);
+			conn.commit();
+		} catch (SQLException e) {
+			if (conn != null) {
+				try {
+					conn.rollback();
+				} catch (Exception ex) {}
+			}
+			throw e;
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt);
 		}
 	}
 

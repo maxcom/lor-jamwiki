@@ -20,7 +20,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 import org.jamwiki.model.Topic;
-import org.jamwiki.model.TopicVersion;
 
 /**
  * Interface that controls how topics are imported.
@@ -32,10 +31,9 @@ public interface TopicImporter {
 	 * versions for all data contained in the file.
 	 *
 	 * @param file The file containing all topic data to be imported.
-	 * @return A map of topics and all versions for each topic, sorted chronologically from
-	 *  oldest to newest.  Note that the exported topic is not required to have a virtual
-	 *  wiki set, so the code that processes these values should set one.
+	 * @param virtualWiki The virtual wiki into which the topic data will be imported.
+	 * @return A map of imported topics and a list of topic version IDs imported for each topic.
 	 * @throws MigrationException Thrown if any error occurs during import.
 	 */
-	public Map<Topic, List<TopicVersion>> importFromFile(File file) throws MigrationException;
+	public Map<Topic, List<Integer>> importFromFile(File file, String virtualWiki) throws MigrationException;
 }

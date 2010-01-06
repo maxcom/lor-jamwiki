@@ -773,6 +773,18 @@ public interface QueryHandler {
 	List<String> lookupWikiUsers(Pagination pagination) throws SQLException;
 
 	/**
+	 * Utility method used when importing to updating the previous topic version ID field
+	 * of topic versions, as well as the current version ID field for the topic record.
+	 *
+	 * @param topic The topic record to update.
+	 * @param virtualWikiId The virtual wiki id for the record that is being updated.
+	 * @param topicVersionIdList A list of all topic version IDs for the topic, sorted
+	 *  chronologically from oldest to newest.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	public void orderTopicVersions(Topic topic, int virtualWikiId, List<Integer> topicVersionIdList) throws SQLException;
+
+	/**
 	 * Refresh the log entries by rebuilding the data based on topic versions,
 	 * file uploads, and user information.
 	 *

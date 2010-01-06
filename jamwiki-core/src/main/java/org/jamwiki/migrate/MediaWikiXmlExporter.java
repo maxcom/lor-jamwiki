@@ -21,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +29,11 @@ import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiVersion;
+import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -46,14 +49,16 @@ public class MediaWikiXmlExporter implements TopicExporter {
 	/**
 	 *
 	 */
-	public void exportToFile(File file, Map<Topic, List<TopicVersion>> data) throws MigrationException {
+	public void exportToFile(File file, String virtualWiki, List<String> topicNames, boolean excludeHistory) throws MigrationException {
 		FileWriter writer = null;
+		boolean success = false;
 		try {
 			writer = new FileWriter(file);
 			writer.write("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
 			this.writeSiteInfo(writer);
-			this.writePages(writer, data);
+			this.writePages(writer, virtualWiki, topicNames, excludeHistory);
 			writer.write("\n</mediawiki>");
+			success = true;
 		} catch (DataAccessException e) {
 			throw new MigrationException(e);
 		} catch (IOException e) {
@@ -63,6 +68,10 @@ public class MediaWikiXmlExporter implements TopicExporter {
 				try {
 					writer.close();
 				} catch (IOException ignore) {}
+			}
+			if (!success) {
+				// make sure partial files are deleted
+				file.delete();
 			}
 		}
 	}
@@ -102,22 +111,42 @@ public class MediaWikiXmlExporter implements TopicExporter {
 	/**
 	 *
 	 */
-	private void writePages(FileWriter writer, Map<Topic, List<TopicVersion>> data) throws DataAccessException, IOException {
-		List<TopicVersion> topicVersions = null;
-		String versionContent = null;
+	private void writePages(FileWriter writer, String virtualWiki, List<String> topicNames, boolean excludeHistory) throws DataAccessException, IOException, MigrationException {
+		TopicVersion topicVersion;
+		Topic topic;
+		WikiUser user;
+		// choose 100,000 as an arbitrary max
+		Pagination pagination = new Pagination(100000, 0);
+		List<Integer> topicVersionIds;
+		String versionContent;
 		Map<String, String> textAttributes = new HashMap<String, String>();
 		textAttributes.put("xml:space", "preserve");
-		for (Topic topic : data.keySet()) {
+		for (String topicName : topicNames) {
+			topicVersionIds = new ArrayList<Integer>();
+			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+			if (topic == null) {
+				throw new MigrationException("Failure while exporting: topic " + topicName + " does not exist");
+			}
 			writer.write("\n<page>");
 			writer.write('\n' + XMLUtil.buildTag("title", topic.getName(), true));
 			writer.write('\n' + XMLUtil.buildTag("id", topic.getTopicId()));
-			topicVersions = data.get(topic);
-			for (TopicVersion topicVersion : topicVersions) {
+			if (excludeHistory) {
+				// only include the most recent version
+				topicVersionIds.add(topic.getCurrentVersionId());
+			} else {
+				// FIXME - changes sorted newest-to-oldest, should be reverse
+				List<RecentChange> changes = WikiBase.getDataHandler().getTopicHistory(virtualWiki, topicName, pagination, true);
+				for (int i = (changes.size() - 1); i >= 0; i--) {
+					topicVersionIds.add(changes.get(i).getTopicVersionId());
+				}
+			}
+			for (int topicVersionId : topicVersionIds) {
+				topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId);
 				writer.write("\n<revision>");
 				writer.write('\n' + XMLUtil.buildTag("id", topicVersion.getTopicVersionId()));
 				writer.write('\n' + XMLUtil.buildTag("timestamp", this.parseJAMWikiTimestamp(topicVersion.getEditDate()), true));
 				writer.write("\n<contributor>");
-				WikiUser user = (topicVersion.getAuthorId() != null) ? WikiBase.getDataHandler().lookupWikiUser(topicVersion.getAuthorId()) : null;
+				user = (topicVersion.getAuthorId() != null) ? WikiBase.getDataHandler().lookupWikiUser(topicVersion.getAuthorId()) : null;
 				if (user != null) {
 					writer.write('\n' + XMLUtil.buildTag("username", user.getUsername(), true));
 					writer.write('\n' + XMLUtil.buildTag("id", user.getUserId()));

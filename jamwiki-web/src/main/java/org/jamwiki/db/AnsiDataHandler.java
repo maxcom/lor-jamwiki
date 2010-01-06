@@ -940,6 +940,18 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public void orderTopicVersions(Topic topic, List<Integer> topicVersionIdList) throws DataAccessException {
+		try {
+			int virtualWikiId = this.lookupVirtualWikiId(topic.getVirtualWiki());
+			this.queryHandler().orderTopicVersions(topic, virtualWikiId, topicVersionIdList);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		}
+	}
+
+	/**
+	 *
+	 */
 	protected QueryHandler queryHandler() {
 		return this.queryHandler;
 	}
@@ -1468,7 +1480,6 @@ public class AnsiDataHandler implements DataHandler {
 			if (links != null) {
 				WikiBase.getSearchEngine().updateInIndex(topic, links);
 			}
-			logger.fine("Wrote topic " + topic.getName() + " with params [categories is null: " + (categories == null) + "] / [links is null: " + (links == null) + "] in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
@@ -1484,6 +1495,7 @@ public class AnsiDataHandler implements DataHandler {
 		String key = WikiCache.key(topic.getVirtualWiki(), topic.getName());
 		WikiCache.removeFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key);
 		WikiCache.addToCache(CACHE_TOPICS, key, topic);
+		logger.fine("Wrote topic " + topic.getName() + " with params [categories is null: " + (categories == null) + "] / [links is null: " + (links == null) + "] in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 	}
 
 	/**

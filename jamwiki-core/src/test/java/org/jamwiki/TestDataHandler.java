@@ -347,6 +347,14 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public void orderTopicVersions(Topic topic, List<Integer> topicVersionIdList) throws DataAccessException {
+		topic.setCurrentVersionId(topicVersionIdList.get(topicVersionIdList.size() - 1));
+		this.topics.put(topic.getName(), topic);
+	}
+
+	/**
+	 *
+	 */
 	public void reloadLogItems() throws DataAccessException {
 		throw new UnsupportedOperationException();
 	}

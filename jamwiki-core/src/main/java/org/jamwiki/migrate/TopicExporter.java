@@ -18,9 +18,6 @@ package org.jamwiki.migrate;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
-import org.jamwiki.model.Topic;
-import org.jamwiki.model.TopicVersion;
 
 /**
  * Interface that controls how topics are exported.
@@ -32,9 +29,11 @@ public interface TopicExporter {
 	 * importing into another wiki.
 	 *
 	 * @param file The file containing all exported topic data.
-	 * @param data A map of topics and all versions for each topic, sorted chronologically
-	 *  from oldest to newest.
+	 * @param virtualWiki The virtual wiki for which topics will be exported.
+	 * @param topicNames A list of topic names to export.
+	 * @param excludeHistory Set to <code>true</code> if only the most recent topic
+	 *  version, not the full topic history, should be exported.
 	 * @throws MigrationException Thrown if any error occurs during export.
 	 */
-	public void exportToFile(File file, Map<Topic, List<TopicVersion>> data) throws MigrationException;
+	public void exportToFile(File file, String virtualWiki, List<String> topicNames, boolean excludeHistory) throws MigrationException;
 }

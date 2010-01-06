@@ -33,6 +33,10 @@ import javax.xml.parsers.SAXParser;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.jamwiki.DataAccessException;
+import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
+import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.utils.LinkUtil;
@@ -56,15 +60,17 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 	private StringBuilder currentElementBuffer = new StringBuilder();
 	private Topic currentTopic = new Topic();
 	private TopicVersion currentTopicVersion = new TopicVersion();
-	private Map<Date, TopicVersion> currentTopicVersions = new TreeMap<Date, TopicVersion>();
+	private Map<Date, Integer> currentTopicVersions = new TreeMap<Date, Integer>();
 	private final Map<String, String> mediawikiNamespaceMap = new HashMap<String, String>();
-	private Map<Topic, List<TopicVersion>> parsedTopics = new HashMap<Topic, List<TopicVersion>>();
+	private Map<Topic, List<Integer>> parsedTopics = new HashMap<Topic, List<Integer>>();
 	private int previousTopicContentLength = 0;
+	private String virtualWiki;
 
 	/**
 	 *
 	 */
-	public Map<Topic, List<TopicVersion>> importFromFile(File file) throws MigrationException {
+	public Map<Topic, List<Integer>> importFromFile(File file, String virtualWiki) throws MigrationException {
+		this.virtualWiki = virtualWiki;
 		this.importWikiXml(file);
 		return this.parsedTopics;
 	}
@@ -149,6 +155,72 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 		}
 	}
 
+	/**
+	 * Initialize the current topic, validating that it does not yet exist.
+	 */
+	private void initCurrentTopic(String topicName) throws SAXException {
+		Topic existingTopic = null;
+		try {
+			existingTopic = WikiBase.getDataHandler().lookupTopic(this.virtualWiki, topicName, false, null);
+		} catch (DataAccessException e) {
+			throw new SAXException("Failure while validating topic name: " + topicName, e);
+		}
+		if (existingTopic != null) {
+			// FIXME - update so that this merges any new versions instead of throwing an error
+			WikiException e = new WikiException(new WikiMessage("import.error.topicexists", topicName));
+			throw new SAXException("Topic " + topicName + " already exists and cannot be imported", e);
+		}
+		topicName = convertArticleNameFromWikipediaToJAMWiki(topicName);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
+		this.currentTopic.setTopicType(WikiUtil.findTopicTypeForNamespace(wikiLink.getNamespace()));
+		this.currentTopic.setName(topicName);
+	}
+
+	/**
+	 * Write a topic version record to the database.
+	 */
+	private void commitTopicVersion() throws SAXException {
+		// FIXME - support rollback
+		this.currentTopic.setVirtualWiki(this.virtualWiki);
+		this.currentTopic.setTopicContent(currentTopicVersion.getVersionContent());
+		// only the final import version is logged
+		this.currentTopicVersion.setLoggable(false);
+		// no recent change record needed - can be added by reloading all recent changes if desired
+		this.currentTopicVersion.setRecentChangeAllowed(false);
+		try {
+			// metadata is needed only for the final import version, so for performance reasons
+			// do not include category or link data for older versions
+			WikiBase.getDataHandler().writeTopic(this.currentTopic, this.currentTopicVersion, null, null);
+		} catch (DataAccessException e) {
+			throw new SAXException("Failure while writing topic: " + this.currentTopic.getName(), e);
+		} catch (WikiException e) {
+			throw new SAXException("Failure while writing topic: " + this.currentTopic.getName(), e);
+		}
+		this.currentTopicVersions.put(this.currentTopicVersion.getEditDate(), this.currentTopicVersion.getTopicVersionId());
+	}
+
+	/**
+	 * After all topic versions have been created for a topic, go back and set the previous topic version
+	 * ID values for each version.  This must be done after parsing since the XML file may not contain
+	 * version records sorted chronologically from oldest to newest.
+	 */
+	private void orderTopicVersions() throws SAXException {
+		if (this.currentTopicVersions.isEmpty()) {
+			throw new SAXException("No topic versions found for " + this.currentTopic.getName());
+		}
+		List<Integer> currentTopicVersionIdList = new ArrayList<Integer>();
+		// topic versions are stored in a tree map to allow sorting... convert to a list
+		for (Integer topicVersionId : this.currentTopicVersions.values()) {
+			currentTopicVersionIdList.add(topicVersionId);
+		}
+		try {
+			WikiBase.getDataHandler().orderTopicVersions(this.currentTopic, currentTopicVersionIdList);
+		} catch (DataAccessException e) {
+			throw new SAXException("Failure while ordering topic versions for topic: " + this.currentTopic.getName(), e);
+		}
+		this.parsedTopics.put(this.currentTopic, currentTopicVersionIdList);
+	}
+
 	//===========================================================
 	// SAX DocumentHandler methods
 	//===========================================================
@@ -182,7 +254,7 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 			this.currentTopicVersion.setEditType(TopicVersion.EDIT_IMPORT);
 		} else if (MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC.equals(qName)) {
 			this.currentTopic = new Topic();
-			this.currentTopicVersions = new TreeMap<Date, TopicVersion>();
+			this.currentTopicVersions = new TreeMap<Date, Integer>();
 		}
 	}
 
@@ -205,10 +277,7 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 			}
 		} else if (MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC_NAME.equals(qName)) {
 			String topicName = currentElementBuffer.toString().trim();
-			topicName = convertArticleNameFromWikipediaToJAMWiki(topicName);
-			WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-			currentTopic.setTopicType(WikiUtil.findTopicTypeForNamespace(wikiLink.getNamespace()));
-			currentTopic.setName(topicName);
+			this.initCurrentTopic(topicName);
 		} else if (MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC_CONTENT.equals(qName)) {
 			this.convertToJAMWikiNamespaces(currentElementBuffer);
 			String topicContent = currentElementBuffer.toString().trim();
@@ -222,20 +291,9 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 		} else if (MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC_VERSION_IP.equals(qName) || MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC_VERSION_USERNAME.equals(qName)) {
 			this.currentTopicVersion.setAuthorDisplay(currentElementBuffer.toString().trim());
 		} else if (MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC_VERSION.equals(qName)) {
-			this.currentTopicVersions.put(currentTopicVersion.getEditDate(), currentTopicVersion);
+			this.commitTopicVersion();
 		} else if (MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC.equals(qName)) {
-			if (this.currentTopicVersions.isEmpty()) {
-				throw new SAXException("No topic versions found for " + currentTopic.getName());
-			}
-			List<TopicVersion> currentTopicVersionList = new ArrayList<TopicVersion>();
-			// topic versions are stored in a tree map to allow sorting... convert to a list
-			TopicVersion lastTopicVersion = null;
-			for (TopicVersion topicVersion : this.currentTopicVersions.values()) {
-				currentTopicVersionList.add(topicVersion);
-				lastTopicVersion = topicVersion;
-			}
-			currentTopic.setTopicContent(lastTopicVersion.getVersionContent());
-			this.parsedTopics.put(currentTopic, currentTopicVersionList);
+			this.orderTopicVersions();
 		}
 	}
 
