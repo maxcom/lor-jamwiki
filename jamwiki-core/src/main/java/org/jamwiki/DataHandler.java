@@ -717,6 +717,22 @@ public interface DataHandler {
 	void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links) throws DataAccessException, WikiException;
 
 	/**
+	 * This method exists for performance reasons for scenarios such as topic imports where many versions
+	 * may be added without the need to update the topic record.  In general {@link DataHandler.writeTopic}
+	 * should be used instead.
+	 *
+	 * @param topic The Topic to add or update.  If the Topic does not have
+	 *  a topic ID then a new record is created, otherwise an update is
+	 *  performed.
+	 * @param topicVersion A TopicVersion containing the author, date, and
+	 *  other information about the version being added.  If this value is <code>null</code>
+	 *  then no version is saved and no recent change record is created.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the topic version information is invalid.
+	 */
+	public void writeTopicVersion(Topic topic, TopicVersion topicVersion) throws DataAccessException, WikiException;
+
+	/**
 	 * Add or update a VirtualWiki object.  This method will add a new record
 	 * if the VirtualWiki does not have a virtual wiki ID, otherwise it will
 	 * perform an update.

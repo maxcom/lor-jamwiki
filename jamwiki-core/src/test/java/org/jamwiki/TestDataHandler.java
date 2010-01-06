@@ -433,6 +433,14 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public void writeTopicVersion(Topic topic, TopicVersion topicVersion) throws DataAccessException, WikiException {
+		// store topics in a local map.  not very sophisticated, but enough to support testing.
+		this.topics.put(topic.getName(), topic);
+	}
+
+	/**
+	 *
+	 */
 	public void writeVirtualWiki(VirtualWiki virtualWiki) throws DataAccessException, WikiException {
 		throw new UnsupportedOperationException();
 	}

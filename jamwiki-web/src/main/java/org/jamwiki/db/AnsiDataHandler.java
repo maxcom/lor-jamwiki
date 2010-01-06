@@ -142,13 +142,19 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private void addTopicVersion(TopicVersion topicVersion, Connection conn) throws DataAccessException, WikiException {
+	private void addTopicVersion(Topic topic, TopicVersion topicVersion, Connection conn) throws DataAccessException, WikiException {
+		if (topicVersion.getPreviousTopicVersionId() == null && topic.getCurrentVersionId() != null) {
+			topicVersion.setPreviousTopicVersionId(topic.getCurrentVersionId());
+		}
+		topicVersion.setTopicId(topic.getTopicId());
+		topicVersion.initializeVersionParams(topic);
 		try {
 			this.validateTopicVersion(topicVersion);
 			this.queryHandler().insertTopicVersion(topicVersion, conn);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
+		topic.setCurrentVersionId(topicVersion.getTopicVersionId());
 	}
 
 	/**
@@ -1440,14 +1446,8 @@ public class AnsiDataHandler implements DataHandler {
 				this.updateTopic(topic, conn);
 			}
 			if (topicVersion != null) {
-				if (topicVersion.getPreviousTopicVersionId() == null && topic.getCurrentVersionId() != null) {
-					topicVersion.setPreviousTopicVersionId(topic.getCurrentVersionId());
-				}
-				topicVersion.setTopicId(topic.getTopicId());
-				topicVersion.initializeVersionParams(topic);
 				// write version
-				addTopicVersion(topicVersion, conn);
-				topic.setCurrentVersionId(topicVersion.getTopicVersionId());
+				addTopicVersion(topic, topicVersion, conn);
 				// update the topic AFTER creating the version so that the current_topic_version_id parameter is set properly
 				this.updateTopic(topic, conn);
 				String authorName = this.authorName(topicVersion.getAuthorId(), topicVersion.getAuthorDisplay());
@@ -1496,6 +1496,21 @@ public class AnsiDataHandler implements DataHandler {
 		WikiCache.removeFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key);
 		WikiCache.addToCache(CACHE_TOPICS, key, topic);
 		logger.fine("Wrote topic " + topic.getName() + " with params [categories is null: " + (categories == null) + "] / [links is null: " + (links == null) + "] in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
+	}
+
+	/**
+	 *
+	 */
+	public void writeTopicVersion(Topic topic, TopicVersion topicVersion) throws DataAccessException, WikiException {
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			this.addTopicVersion(topic, topicVersion, conn);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
 	}
 
 	/**

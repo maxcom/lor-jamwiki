@@ -188,9 +188,15 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 		// no recent change record needed - can be added by reloading all recent changes if desired
 		this.currentTopicVersion.setRecentChangeAllowed(false);
 		try {
-			// metadata is needed only for the final import version, so for performance reasons
-			// do not include category or link data for older versions
-			WikiBase.getDataHandler().writeTopic(this.currentTopic, this.currentTopicVersion, null, null);
+			// for performance reasons write the topic once to create an initial record, then write
+			// only the version record.
+			if (this.currentTopic.getTopicId() <= 0) {
+				// metadata is needed only for the final import version, so for performance reasons
+				// do not include category or link data for older versions
+				WikiBase.getDataHandler().writeTopic(this.currentTopic, this.currentTopicVersion, null, null);
+			} else {
+				WikiBase.getDataHandler().writeTopicVersion(this.currentTopic, this.currentTopicVersion);
+			}
 		} catch (DataAccessException e) {
 			throw new SAXException("Failure while writing topic: " + this.currentTopic.getName(), e);
 		} catch (WikiException e) {
