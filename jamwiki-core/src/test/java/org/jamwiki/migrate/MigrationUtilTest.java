@@ -25,8 +25,10 @@ import org.jamwiki.TestFileUtil;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
+import org.junit.Rule;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.rules.TemporaryFolder;
 
 /**
  *
@@ -44,12 +46,8 @@ public class MigrationUtilTest {
 	private static final String TOPIC_NAME4 = "Who am i";
 	private static final String TOPIC_NAME5 = "Namespace Test";
 	private static final String VIRTUAL_WIKI_EN = "en";
-	private static final File EXPORT_DIRECTORY = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), "export");
-	static {
-		if (!EXPORT_DIRECTORY.exists()) {
-			EXPORT_DIRECTORY.mkdir();
-		}
-	}
+	@Rule
+	public TemporaryFolder TEMP_FOLDER = new TemporaryFolder();
 
 	/**
 	 *
@@ -60,7 +58,7 @@ public class MigrationUtilTest {
 		List<String> topicNames = new ArrayList<String>();
 		topicNames.add("Bogus Topic Name");
 		boolean excludeHistory = false;
-		File file = new File(EXPORT_DIRECTORY, "export.xml");
+		File file = TEMP_FOLDER.newFile("export.xml");
 		try {
 			MigrationUtil.exportToFile(file, virtualWiki, topicNames, excludeHistory);
 		} catch (MigrationException e) {
@@ -84,7 +82,7 @@ public class MigrationUtilTest {
 		topicNames.add("Example1");
 		topicNames.add("Example2");
 		boolean excludeHistory = false;
-		File file = new File(EXPORT_DIRECTORY, "export.xml");
+		File file = TEMP_FOLDER.newFile("export.xml");
 		try {
 			MigrationUtil.exportToFile(file, virtualWiki, topicNames, excludeHistory);
 		} catch (MigrationException e) {
