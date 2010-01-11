@@ -31,6 +31,8 @@ Bugfixes:
 
 Translation Updates:
 
+  * Updated French translations (Guillaume_FRANCOIS55).
+
 
 0.8.1
 =====
