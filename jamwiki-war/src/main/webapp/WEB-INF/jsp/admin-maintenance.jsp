@@ -25,7 +25,8 @@
 
 <div class="submenu">
 <a href="#virtualwiki"><fmt:message key="admin.title.virtualwiki" /></a> | <a href="#search"><fmt:message key="admin.title.refresh" /></a> | <a href="#recentchanges"><fmt:message key="admin.title.recentchanges" /></a> | <a href="#logitems"><fmt:message key="admin.title.logitems" /></a> | <a href="#cache"><fmt:message key="admin.title.cache" /></a><br />
-<jamwiki:enabled property="PROP_TOPIC_SPAM_FILTER"><a href="#spam"><fmt:message key="admin.title.spamfilter" /></a> | </jamwiki:enabled><a href="#password"><fmt:message key="admin.title.password" /></a> | <c:if test="${allowExport}"><a href="#export"><fmt:message key="admin.title.exportcsv" /></a> | </c:if><a href="#migrate"><fmt:message key="admin.title.migratedatabase" /></a>
+<jamwiki:enabled property="PROP_TOPIC_SPAM_FILTER"><a href="#spam"><fmt:message key="admin.title.spamfilter" /></a> | </jamwiki:enabled><a href="#password"><fmt:message key="admin.title.password" /></a> | <c:if test="${allowExport}"><a href="#export"><fmt:message key="admin.title.exportcsv" /></a> | </c:if><a href="#migrate"><fmt:message key="admin.title.migratedatabase" /></a><br />
+<a href="#adduser"><fmt:message key="admin.title.adduser" /></a>
 </div>
 
 <!-- Virtual Wikis -->
@@ -218,6 +219,51 @@
 <input type="hidden" name="function" value="password" />
 </form>
 </fieldset>
+
+
+<!-- Add User  -->
+<a name="adduser"></a>
+<c:if test="${!empty message && function == 'adduser'}">
+<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+</c:if>
+<c:if test="${!empty errors && function == 'adduser'}">
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+</c:if>
+
+<fieldset>
+<legend><fmt:message key="admin.title.adduser" /></legend>
+<form action="<jamwiki:link value="Special:Maintenance" />#adduser" method="post">
+
+<div class="formentry">
+	<span class="formcaption"><fmt:message key="admin.adduser.caption.login" /></span>
+	<span class="formelement"><input type="text" name="adduserLogin" value="<c:out value="${adduserLogin}" />" id="adduserLogin" size="30" /></span>
+</div>
+<div class="formentry">
+	<span class="formcaption"><fmt:message key="admin.adduser.caption.password" /></span>
+	<span class="formelement"><input type="password" name="adduserPassword" value="<c:out value="${adduserPassword}" />" size="30" /></span>
+</div>
+<div class="formentry">
+	<span class="formcaption"><fmt:message key="admin.adduser.caption.passwordconfirm" /></span>
+	<span class="formelement"><input type="password" name="adduserPasswordConfirm" value="<c:out value="${adduserPasswordConfirm}" />" size="30" /></span>
+</div>
+<div class="formentry">
+	<span class="formcaption"><fmt:message key="admin.adduser.caption.email" /></span>
+	<span class="formelement"><input type="text" name="adduserEmail" value="<c:out value="${adduserEmail}" />" size="50" /></span>
+</div>
+<div class="formentry">
+	<span class="formcaption"><fmt:message key="admin.adduser.caption.displayname" /></span>
+	<span class="formelement"><input type="text" name="adduserdisplayName" value="<c:out value="${adduserdisplayName}" />" size="50" /></span>
+</div>
+<div class="formentry">
+	<span class="formcaption"><fmt:message key="admin.adduser.caption.adduser" /></span>
+	<span class="formelement"><input type="submit" value="<fmt:message key="admin.caption.adduser" />" /></span>
+</div>
+
+<input type="hidden" name="function" value="adduser" />
+</form>
+</fieldset>
+
+
 
 <c:if test="${allowExport}">
 
