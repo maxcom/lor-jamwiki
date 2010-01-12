@@ -39,6 +39,8 @@ import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.servlets.ServletUtil;
+import org.jamwiki.servlets.WikiPageInfo;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.SpamFilter;
 import org.jamwiki.utils.WikiCache;
@@ -92,10 +94,57 @@ public class AdminServlet extends JAMWikiServlet {
 			migrateDatabase(request, next, pageInfo);
 		} else if (function.equals("password")) {
 			password(request, next, pageInfo);
+		} else if (function.equals("adduser")) {
+			adduser(request, next, pageInfo);
 		}
 		return next;
 	}
 
+	/**
+	 * add new user account
+	 */
+	private void adduser(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		List<WikiMessage> errors = new ArrayList<WikiMessage>();
+		
+		String userLogin = request.getParameter("adduserLogin");
+		String password = request.getParameter("adduserPassword");
+		String confirmPassword = request.getParameter("adduserPasswordConfirm");
+		String email = request.getParameter("adduserEmail");
+		String displayName = request.getParameter("adduserdisplayName");
+		try {
+			WikiUser user = WikiBase.getDataHandler().lookupWikiUser(userLogin);
+			if (user != null) {
+				throw new WikiException(new WikiMessage("admin.adduser.message.uidexists", userLogin));
+			}
+			WikiUtil.validatePassword(password, confirmPassword);
+			String encryptedPassword = Encryption.encrypt(password);
+			
+			user = new WikiUser(userLogin);
+			user.setDisplayName(displayName);
+			user.setEmail(email);
+			user.setCreateIpAddress(ServletUtil.getIpAddress(request));
+			user.setLastLoginIpAddress(ServletUtil.getIpAddress(request));
+			
+			WikiBase.getDataHandler().writeWikiUser(user, userLogin, encryptedPassword);
+		} catch (WikiException e) {
+			errors.add(e.getWikiMessage());
+		} catch (Exception e) {
+			logger.severe("Failure while create new user account", e);
+			errors.add(new WikiMessage("admin.message.adduserfail", e.getMessage()));
+		}
+		if (!errors.isEmpty()) {
+			next.addObject("errors", errors);
+			next.addObject("adduserLogin", userLogin);
+			next.addObject("adduserPassword", password);
+			next.addObject("adduserPasswordConfirm", confirmPassword);
+			next.addObject("adduserEmail", email);
+			next.addObject("adduserdisplayName", displayName);
+		} else {
+			next.addObject("message", new WikiMessage("admin.adduser.message.success", userLogin));
+		}
+		viewAdminSystem(request, next, pageInfo);
+	}	
+	
 	/**
 	 *
 	 */

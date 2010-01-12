@@ -6,6 +6,7 @@ New Features:
   * Signficant updates to the syntax parser, including support for additional
     HTML tags and XHTML transitional validation of tag attributes.
   * Support the #if: parser function.  Usage: {{#if: test | true | false}}.
+  * Add the ability for sysadmins to create user accounts (hanspeterklapf).
   * Automatically populate sample JDBC values based on database type on the
     setup and admin pages.
   * Remove all dependencies on Spring from the jamwiki-core project by
