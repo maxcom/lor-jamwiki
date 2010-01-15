@@ -1319,17 +1319,20 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertCategory(Category category, int virtualWikiId, int topicId, Connection conn) throws SQLException {
+	public void insertCategories(List<Category> categoryList, int virtualWikiId, int topicId, Connection conn) throws SQLException {
 		if (topicId == -1) {
-			throw new SQLException("Unable to find child topic " + category.getChildTopicName() + " for category " + category.getName());
+			throw new SQLException("Invalid topicId passed to method AnsiQueryHandler.insertCategories");
 		}
 		PreparedStatement stmt = null;
 		try {
 			stmt = conn.prepareStatement(STATEMENT_INSERT_CATEGORY);
-			stmt.setInt(1, topicId);
-			stmt.setString(2, category.getName());
-			stmt.setString(3, category.getSortKey());
-			stmt.executeUpdate();
+			for (Category category : categoryList) {
+				stmt.setInt(1, topicId);
+				stmt.setString(2, category.getName());
+				stmt.setString(3, category.getSortKey());
+				stmt.addBatch();
+			}
+			stmt.executeBatch();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
 		}
@@ -2276,7 +2279,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				}
 				previousTopicVersionId = topicVersionId;
 			}
-			stmt.executeUpdate();
+			stmt.executeBatch();
 			topic.setCurrentVersionId(previousTopicVersionId);
 			this.updateTopic(topic, virtualWikiId, conn);
 			conn.commit();

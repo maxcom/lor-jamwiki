@@ -79,11 +79,14 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private void addCategory(Category category, int topicId, Connection conn) throws DataAccessException, WikiException {
-		int virtualWikiId = this.lookupVirtualWikiId(category.getVirtualWiki());
-		this.validateCategory(category);
+	private void addCategories(List<Category> categoryList, int topicId, Connection conn) throws DataAccessException, WikiException {
+		int virtualWikiId = -1;
+		for (Category category : categoryList) {
+			virtualWikiId = this.lookupVirtualWikiId(category.getVirtualWiki());
+			this.validateCategory(category);
+		}
 		try {
-			this.queryHandler().insertCategory(category, virtualWikiId, topicId, conn);
+			this.queryHandler().insertCategories(categoryList, virtualWikiId, topicId, conn);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
@@ -1466,15 +1469,17 @@ public class AnsiDataHandler implements DataHandler {
 			if (categories != null) {
 				// add / remove categories associated with the topic
 				this.deleteTopicCategories(topic, conn);
-				if (topic.getDeleteDate() == null) {
+				if (topic.getDeleteDate() == null && !categories.isEmpty()) {
+					List<Category> categoryList = new ArrayList<Category>();
 					for (String categoryName : categories.keySet()) {
 						Category category = new Category();
 						category.setName(categoryName);
 						category.setSortKey(categories.get(categoryName));
 						category.setVirtualWiki(topic.getVirtualWiki());
 						category.setChildTopicName(topic.getName());
-						this.addCategory(category, topic.getTopicId(), conn);
+						categoryList.add(category);
 					}
+					this.addCategories(categoryList, topic.getTopicId(), conn);
 				}
 			}
 			if (links != null) {
