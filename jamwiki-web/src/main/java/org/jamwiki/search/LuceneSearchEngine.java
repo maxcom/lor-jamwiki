@@ -368,7 +368,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	private Searcher retrieveIndexSearcher(String virtualWiki) throws IOException {
 		Searcher searcher = searchers.get(virtualWiki);
 		if (searcher == null) {
-			searcher = new IndexSearcher(FSDirectory.open(getSearchIndexPath(virtualWiki)), true);
+			searcher = new IndexSearcher(this.retrieveIndexWriter(virtualWiki, false).getReader());
 			searchers.put(virtualWiki, searcher);
 		}
 		return searcher;
