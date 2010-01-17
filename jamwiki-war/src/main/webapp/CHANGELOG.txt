@@ -35,6 +35,7 @@ Bugfixes:
 Translation Updates:
 
   * Updated French translations (Guillaume_FRANCOIS55).
+  * Updated German translations (axelclk).
 
 
 0.8.1
