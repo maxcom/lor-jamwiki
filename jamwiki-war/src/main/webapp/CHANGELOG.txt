@@ -30,6 +30,20 @@ Bugfixes:
     "Category: Test" or "Category : Test".
   * Special:Import and Special:Export code refactored to avoid OOM errors with
     topics that have extensive history.
+
+Translation Updates:
+
+
+0.8.2
+=====
+
+New Features:
+
+  * Updated spam filter patterns.
+  * Update the default StartingPoints page with additional help info.
+
+Bugfixes:
+
   * Fix MS SQL error when viewing topic history (hanspeterklapf).
 
 Translation Updates:
