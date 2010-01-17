@@ -1,4 +1,23 @@
-﻿0.8.1
+﻿
+0.8.2
+=====
+
+New Features:
+
+  * Updated spam filter patterns.
+  * Update the default StartingPoints page with additional help info.
+
+Bugfixes:
+
+  * Fix MS SQL error when viewing topic history (hanspeterklapf).
+
+Translation Updates:
+
+  * Updated French translations (Guillaume_FRANCOIS55).
+  * Updated German translations (axelclk).
+
+
+0.8.1
 =====
 
 Bugfixes:

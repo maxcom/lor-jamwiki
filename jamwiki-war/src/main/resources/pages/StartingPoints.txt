@@ -1,18 +1,17 @@
 <div style="text-align:center;font-weight:bold;color:green;font-size:150%">JAMWiki has been successfully installed!</div>
 
-You can edit any page by clicking the "Edit" tab at the top of the page.  Configuration settings for this installation may be modified from the [[Special:Admin]] page.  In addition, these topics can be updated to change the look and feel of your Wiki:
+=== Next steps ===
 
-* [[LeftMenu]] - The left navigation menu that appears on every page.
-* [[BottomArea]] - The footer that appears on every page.
-* [[StyleSheet]] - The stylesheet that contains CSS style information for the site.
+# Customize the look and feel of your wiki by editing the [[LeftMenu|left navigation]], [[BottomArea|footer]] and (for advanced users) [[StyleSheet|CSS styles]].
+# Update configuration settings from the [[Special:Admin]] page.  From this page a vast number of options can be changed, including the site name, description, and default settings.
+# Visit http://jamwiki.org/ for detailed documentation, to report bugs, and to provide feedback.
+# Go to https://lists.sourceforge.net/lists/listinfo/jamwiki-announce and sign up for the jamwiki-announce mailing list to be notified of future JAMWiki releases.
 
-Finally, please contribute to the JAMWiki project by reporting the success or failure of your installation at [http://jamwiki.org/ jamwiki.org].  Feedback, questions and bug reports should also be left at [http://jamwiki.org/ jamiki.org] so that JAMWiki can continue to improve.  In addition, [http://jamwiki.org/ jamwiki.org] also has the latest JAMWiki documentation including instructions for further customizing your installation.
+=== Other useful pages ===
 
-Some other useful functions:
-
+* [[Special:Specialpages]] - An index of wiki "Special" pages.
 * [[Special:RecentChanges]] - A list of recently modified Wiki topics.
 * [[Special:Upload]] - Used to upload files and images to the Wiki.
 * [[Special:Search]] - Search the Wiki.
 * [[Special:Account]] - Create an account so that edits are properly credited.
 * [[Special:Allpages]] - A list of all the topics in the Wiki.
-* [[Special:Specialpages]] - An index of wiki "Special" pages.
