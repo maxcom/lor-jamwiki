@@ -26,7 +26,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -119,41 +118,16 @@ public class LuceneSearchEngine implements SearchEngine {
 	 *  to the current topic.
 	 */
 	private void addToIndex(IndexWriter writer, Topic topic, List<String> links) throws IOException {
-		KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
-		Document standardDocument = createStandardDocument(topic);
+		Document standardDocument = createStandardDocument(topic, links);
 		writer.addDocument(standardDocument);
-		Document keywordDocument = createKeywordDocument(topic, links);
-		writer.addDocument(keywordDocument, keywordAnalyzer);
 		this.resetIndexSearcher(topic.getVirtualWiki());
-	}
-
-	/**
-	 * Create a basic Lucene document to add to the index that does treats
-	 * the topic content as a single keyword and does not tokenize it.
-	 */
-	private Document createKeywordDocument(Topic topic, List<String> links) {
-		String topicContent = topic.getTopicContent();
-		if (topicContent == null) {
-			topicContent = "";
-		}
-		Document doc = new Document();
-		// store topic name for later retrieval
-		doc.add(new Field(ITYPE_TOPIC_PLAIN, topic.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-		if (links == null) {
-			links = new ArrayList<String>();
-		}
-		// index topic links for search purposes
-		for (String linkTopic : links) {
-			doc.add(new Field(ITYPE_TOPIC_LINK, linkTopic, Field.Store.NO, Field.Index.NOT_ANALYZED));
-		}
-		return doc;
 	}
 
 	/**
 	 * Create a basic Lucene document to add to the index.  This document
 	 * is suitable to be parsed with the StandardAnalyzer.
 	 */
-	private Document createStandardDocument(Topic topic) {
+	private Document createStandardDocument(Topic topic, List<String> links) {
 		String topicContent = topic.getTopicContent();
 		if (topicContent == null) {
 			topicContent = "";
@@ -165,6 +139,13 @@ public class LuceneSearchEngine implements SearchEngine {
 		// index topic name and content for search purposes
 		doc.add(new Field(ITYPE_TOPIC, new StringReader(topic.getName())));
 		doc.add(new Field(ITYPE_CONTENT, new StringReader(topicContent)));
+		// index topic links for search purposes
+		if (links == null) {
+			links = new ArrayList<String>();
+		}
+		for (String linkTopic : links) {
+			doc.add(new Field(ITYPE_TOPIC_LINK, linkTopic, Field.Store.NO, Field.Index.NOT_ANALYZED));
+		}
 		return doc;
 	}
 
@@ -311,20 +292,21 @@ public class LuceneSearchEngine implements SearchEngine {
 		for (VirtualWiki virtualWiki : allWikis) {
 			long start = System.currentTimeMillis();
 			int count = 0;
-			KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
 			IndexWriter writer = null;
 			try {
 				writer = this.retrieveIndexWriter(virtualWiki.getName(), true);
 				List<String> topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName());
+				// FIXME - parsing all documents will be intolerably slow with even a
+				// moderately large Wiki
 				for (String topicName : topicNames) {
 					topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
-					Document standardDocument = createStandardDocument(topic);
-					writer.addDocument(standardDocument);
-					// FIXME - parsing all documents will be intolerably slow with even a
-					// moderately large Wiki
+					if (topic == null) {
+						logger.info("Unable to rebuild search index for topic: " + topicName);
+						continue;
+					}
 					ParserOutput parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki.getName(), topicName);
-					Document keywordDocument = createKeywordDocument(topic, parserOutput.getLinks());
-					writer.addDocument(keywordDocument, keywordAnalyzer);
+					// note: no delete is necessary since a new index is being created
+					this.addToIndex(writer, topic, parserOutput.getLinks());
 					count++;
 				}
 			} catch (Exception ex) {

@@ -7,14 +7,16 @@ New Features:
     HTML tags and XHTML transitional validation of tag attributes.
   * Support the #if: parser function.  Usage: {{#if: test | true | false}}.
   * Add the ability for sysadmins to create user accounts (hanspeterklapf).
+  * Topic add/update is now significantly faster due to query refactoring
+    and changes so that the search index is not re-optimized after every
+    add/update.
+  * Search engine optimizations.  Existing JAMWiki installs may want to
+    rebuild their search index.
   * Automatically populate sample JDBC values based on database type on the
     setup and admin pages.
   * Remove all dependencies on Spring from the jamwiki-core project by
     converting org.jamwiki.model.Role to an interface and creating a new
     org.jamwiki.authentication.RoleImpl class.
-  * Topic add/update is now significantly faster due to query refactoring
-    and changes so that the search index is not re-optimized after every
-    add/update.
   * Upgrade to Spring Framework 3.0.0.RC2.
   * Upgrade to Spring Security 3.0.0.RC1.
   * Upgrade to Lucene Search 3.0.0.
