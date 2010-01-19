@@ -24,3 +24,9 @@ content=    test
 {{reprint
 | content=
 test}}
+
+{{reprint|content={{test template}}}}
+
+{{embed|content=test template}}
+
+{{reprint|content={{embed|content=test template}}}}

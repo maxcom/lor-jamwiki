@@ -33,6 +33,8 @@ Bugfixes:
     "Category: Test" or "Category : Test".
   * Special:Import and Special:Export code refactored to avoid OOM errors with
     topics that have extensive history.
+  * Properly parse template parameters that are themselves templates, such as
+    "{{{{{template_name}}}}}".
 
 Translation Updates:
 
