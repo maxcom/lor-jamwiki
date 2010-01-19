@@ -216,8 +216,8 @@ public class Utilities {
 	 * @return -1 if no matching end tag is found, or the index within the string of the first
 	 *  character immediately following the end tag.
 	 */
-	public static int findMatchingEndTag(String content, int start, String startToken, String endToken) {
-		return Utilities.findMatchingTag(content, start, startToken, endToken, false);
+	public static int findMatchingEndTag(CharSequence content, int start, String startToken, String endToken) {
+		return Utilities.findMatchingTag(content.toString(), start, startToken, endToken, false);
 	}
 
 	/**
@@ -236,8 +236,8 @@ public class Utilities {
 	 * @return -1 if no matching start tag is found, or the index within the string of the first
 	 *  character immediately preceding the start tag.
 	 */
-	public static int findMatchingStartTag(String content, int start, String startToken, String endToken) {
-		return Utilities.findMatchingTag(content, start, startToken, endToken, true);
+	public static int findMatchingStartTag(CharSequence content, int start, String startToken, String endToken) {
+		return Utilities.findMatchingTag(content.toString(), start, startToken, endToken, true);
 	}
 
 	/**

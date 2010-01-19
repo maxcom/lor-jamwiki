@@ -17,6 +17,7 @@
 package org.jamwiki.parser.jflex;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class ParserFunctionUtil {
 	private static final String PARSER_FUNCTION_ANCHOR_ENCODE = "anchorencode:";
 	private static final String PARSER_FUNCTION_FILE_PATH = "filepath:";
 	private static final String PARSER_FUNCTION_FULL_URL = "fullurl:";
+	private static final String PARSER_FUNCTION_EXPR = "#expr:";
 	private static final String PARSER_FUNCTION_IF = "#if:";
 	private static final String PARSER_FUNCTION_LOCAL_URL = "localurl:";
 	private static final String PARSER_FUNCTION_LOWER_CASE = "lc:";
@@ -53,6 +55,7 @@ public class ParserFunctionUtil {
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_ANCHOR_ENCODE);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_FILE_PATH);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_FULL_URL);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_EXPR);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_IF);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOCAL_URL);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOWER_CASE);
@@ -96,6 +99,9 @@ public class ParserFunctionUtil {
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_FULL_URL)) {
 			return ParserFunctionUtil.parseFileUrl(parserInput, parserFunctionArgumentArray);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_EXPR)) {
+			return ParserFunctionUtil.parseExpr(parserInput, parserFunctionArgumentArray);
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_IF)) {
 			return ParserFunctionUtil.parseIf(parserInput, parserFunctionArgumentArray);
@@ -149,6 +155,92 @@ public class ParserFunctionUtil {
 			result += "?" + parserFunctionArgumentArray[1];
 		}
 		return result;
+	}
+
+	/**
+	 * Parse the {{#expr:}} parser function.  Usage: {{#expr: expression }}.
+	 */
+	private static String parseExpr(ParserInput parserInput, String[] parserFunctionArgumentArray) throws DataAccessException,  ParserException {
+		String expr = parserFunctionArgumentArray[0];
+		return ParserFunctionUtil.evaluateExpression(expr);
+	}
+
+	/**
+	 *
+	 */
+	private static String evaluateExpression(String expr) {
+		if (StringUtils.isBlank(expr)) {
+			return "";
+		}
+		StringBuilder expression = new StringBuilder(expr);
+		List<BigDecimal> stack = new ArrayList<BigDecimal>();
+		String next = "";
+		char part;
+		int i = 0;
+		while (i < expression.length()) {
+			part = expression.charAt(i);
+			if (Character.isDigit(part) || part == '.') {
+				next += part;
+			} else if (part == ')') {
+				// unmatched closing parentheses
+				return ((i > 0) ? expression.substring(0, i) : "") + "<strong class=\"error\">" + part + "</strong>" + ((i < expression.length() - 1) ? expression.substring(i + 1) : "");
+			} else if (part == '(') {
+				int end = Utilities.findMatchingEndTag(expression, i, "(", ")");
+				if (end == -1) {
+					// unmatched opening parentheses
+					return ((i > 0) ? expression.substring(0, i) : "") + "<strong class=\"error\">" + part + "</strong>" + ((i < expression.length() - 1) ? expression.substring(i + 1) : "");
+				}
+				String result = ParserFunctionUtil.evaluateExpression(expression.substring(i + 1, end - 1));
+				expression = expression.replace(i, end, "");
+				try {
+					stack.add(new BigDecimal(result));
+				} catch (NumberFormatException e) {
+					return result;
+				}
+			} else if (!StringUtils.isBlank(next)) {
+				stack.add(new BigDecimal(next));
+				next = "";
+			}
+			i++;
+		}
+		if (!StringUtils.isBlank(next)) {
+			stack.add(new BigDecimal(next));
+		}
+		BigDecimal a, b;
+		for (i = 0; i < expression.length(); i++) {
+			part = expression.charAt(i);
+			try {
+				switch (part) {
+					case '+':
+						a = stack.remove(0);
+						b = stack.remove(0);
+						stack.add(0, a.add(b));
+						break;
+					case '-':
+						a = stack.remove(0);
+						b = stack.remove(0);
+						stack.add(0, a.subtract(b));
+						break;
+					case '*':
+						a = stack.remove(0);
+						b = stack.remove(0);
+						stack.add(0, a.multiply(b));
+						break;
+					case '/':
+						a = stack.remove(0);
+						b = stack.remove(0);
+						stack.add(0, a.divide(b));
+						break;
+				}
+			} catch (ArithmeticException e) {
+				return "<strong class=\"error\">" + expr + "</strong>";
+			} catch (IndexOutOfBoundsException e) {
+				return "<strong class=\"error\">" + expr + "</strong>";
+			}
+		}
+		double result = stack.get(0).doubleValue();
+		// strip any trailing zeroes
+		return ((Math.round(result) == result) ? Long.toString(Math.round(result)) : Double.toString(result));
 	}
 
 	/**

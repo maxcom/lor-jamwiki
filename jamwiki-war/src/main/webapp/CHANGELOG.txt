@@ -6,6 +6,9 @@ New Features:
   * Signficant updates to the syntax parser, including support for additional
     HTML tags and XHTML transitional validation of tag attributes.
   * Support the #if: parser function.  Usage: {{#if: test | true | false}}.
+  * Basic support for the #expr: parser function.  Only basic operations are
+    supported (+, -, /, *) and parentheses must be used to ensure that the
+    order of operations is followed.
   * Add the ability for sysadmins to create user accounts (hanspeterklapf).
   * Topic add/update is now significantly faster due to query refactoring
     and changes so that the search index is not re-optimized after every
