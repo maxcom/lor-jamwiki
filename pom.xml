@@ -46,15 +46,9 @@
 	</licenses>
 	<properties>
 		<jamwiki.version>0.9.0-SNAPSHOT</jamwiki.version>
-		<dependency.spring.version>3.0.0.RC2</dependency.spring.version>
-		<dependency.spring.security.version>3.0.0.RC1</dependency.spring.security.version>
+		<dependency.spring.version>3.0.0.RELEASE</dependency.spring.version>
+		<dependency.spring.security.version>3.0.1.RELEASE</dependency.spring.security.version>
 	</properties>
-	<repositories>
-		<repository>
-			<id>Springframework milestone</id>
-			<url>http://maven.springframework.org/milestone</url>
-		</repository>
-	</repositories>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -210,11 +204,6 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-core</artifactId>
-				<version>${dependency.spring.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-dao</artifactId>
 				<version>${dependency.spring.version}</version>
 			</dependency>
 			<dependency>
