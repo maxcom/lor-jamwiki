@@ -9,7 +9,7 @@ New Features:
 
 Bugfixes:
 
-  * Fix MS SQL error when viewing topic history (hanspeterklapf).
+  * Fix MS SQL errors (hanspeterklapf).
 
 Translation Updates:
 
