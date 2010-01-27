@@ -52,7 +52,10 @@ listdt             = ":"
 nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
 
 /* pre */
-htmlattribute      = ([ ]+) [a-zA-Z:]+ ([ ]*=[^>\n]+[ ]*)*
+attributeValueInQuotes = "\"" ~"\""
+attributeValueInSingleQuotes = "'" ~"'"
+attributeValueNoQuotes = [^>\n]+
+htmlattribute      = ([ ]+) [a-zA-Z:]+ ([ ]*=[ ]*({attributeValueInQuotes}|{attributeValueInSingleQuotes}|{attributeValueNoQuotes}))*
 htmlprestart       = (<[ ]*pre ({htmlattribute})* [ ]* (\/)? [ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
 wikiprestart       = (" ")+ ([^ \t\n])

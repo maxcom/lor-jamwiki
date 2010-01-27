@@ -121,7 +121,7 @@ public class JFlexParser extends AbstractParser {
 				previous = current;
 			}
 		} catch (Exception e) {
-			throw new ParserException(e);
+			throw new ParserException("Failure while parsing topic " + this.parserInput.getTopicName(), e);
 		}
 		this.parserInput.decrementDepth();
 		return lexer.popAllTags();

@@ -12,6 +12,7 @@ import org.jamwiki.utils.WikiLogger;
 %public
 %class JAMWikiHtmlProcessor
 %extends JFlexLexer
+%char
 %type String
 %unicode
 %ignorecase
@@ -65,6 +66,13 @@ import org.jamwiki.utils.WikiLogger;
     private void initializeCurrentAttribute(String key) {
         this.currentAttributeKey = key.toLowerCase();
         this.attributes.put(this.currentAttributeKey, null);
+    }
+
+    /**
+     *
+     */
+    private boolean isFinished() {
+        return ((yychar + this.yytext().length()) == this.html.length());
     }
 %}
 
@@ -193,7 +201,7 @@ inlineTag          = abbr|b|big|br|cite|code|del|em|font|i|ins|pre|s|small|span|
 blockLevelTag      = blockquote|caption|center|col|colgroup|dd|div|dl|dt|hr|li|ol|p|table|tbody|td|tfoot|th|thead|tr|ul
 htmlTag            = {inlineTag}|{blockLevelTag}
 
-tagContent         = "<" ({whitespace})* ({htmlTag}) ~">"
+tagContent         = "<" ({whitespace})* ({htmlTag}) [^\n]* ">"
 tagClose           = "<" ({whitespace})* "/" ({whitespace})* ({htmlTag}) ({whitespace})* ">"
 tagCloseContent    = ({whitespace})* ">"
 tagCloseNoContent  = "/" ({whitespace})* ">"
@@ -201,7 +209,7 @@ tagAttributeValueInQuotes = "\"" ~"\""
 tagAttributeValueInSingleQuotes = "'" ~"'"
 tagAttributeValueNoQuotes = [^ \t\f\"'>/]+
 /* <script> tags */
-tagScript          = "<" ({whitespace})* "script" ~">"
+tagScript          = "<" ({whitespace})* "script" [^\n]* ">"
 tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespace})* ">"
 
 %state ATTRS_ATTRIBUTE_KEY, ATTRS_TEXTALIGN_ATTRIBUTE_KEY, BLOCKQUOTE_ATTRIBUTE_KEY, BR_ATTRIBUTE_KEY, DL_ATTRIBUTE_KEY, FONT_ATTRIBUTE_KEY, HR_ATTRIBUTE_KEY, HTML_ATTRIBUTE_VALUE, HTML_CLOSE, HTML_OPEN, INS_DEL_ATTRIBUTE_KEY, LI_ATTRIBUTE_KEY, OL_ATTRIBUTE_KEY, PRE_ATTRIBUTE_KEY, SCRIPT_ATTRIBUTE_KEY, TABLE_ATTRIBUTE_KEY, TABLE_CAPTION_ATTRIBUTE_KEY, TABLE_CELL_ATTRIBUTE_KEY, TABLE_COL_ATTRIBUTE_KEY, TABLE_ROW_ATTRIBUTE_KEY, TABLE_SECTION_ATTRIBUTE_KEY, UL_ATTRIBUTE_KEY
@@ -374,11 +382,17 @@ tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespa
 }
 <ATTRS_ATTRIBUTE_KEY, ATTRS_TEXTALIGN_ATTRIBUTE_KEY, BLOCKQUOTE_ATTRIBUTE_KEY, BR_ATTRIBUTE_KEY, DL_ATTRIBUTE_KEY, FONT_ATTRIBUTE_KEY, HR_ATTRIBUTE_KEY, HTML_ATTRIBUTE_VALUE, INS_DEL_ATTRIBUTE_KEY, LI_ATTRIBUTE_KEY, OL_ATTRIBUTE_KEY, PRE_ATTRIBUTE_KEY, SCRIPT_ATTRIBUTE_KEY, TABLE_ATTRIBUTE_KEY, TABLE_CAPTION_ATTRIBUTE_KEY, TABLE_CELL_ATTRIBUTE_KEY, TABLE_COL_ATTRIBUTE_KEY, TABLE_ROW_ATTRIBUTE_KEY, TABLE_SECTION_ATTRIBUTE_KEY, UL_ATTRIBUTE_KEY> {
     {tagCloseNoContent} {
+        if (!this.isFinished()) {
+            return "";
+        }
         // tag close, done
         endState();
         return this.closeTag(" />");
     }
     {tagCloseContent} {
+        if (!this.isFinished()) {
+            return "";
+        }
         // tag close, done
         endState();
         return this.closeTag(">");

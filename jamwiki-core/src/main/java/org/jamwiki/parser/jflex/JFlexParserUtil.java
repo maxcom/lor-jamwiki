@@ -159,7 +159,7 @@ public class JFlexParserUtil {
 				result.append(line);
 			}
 		} catch (Exception e) {
-			throw new ParserException(e);
+			throw new ParserException("Failure while parsing: " + tag, e);
 		}
 		return new HtmlTagItem(JFLEX_HTML_PROCESSOR.getTagType(), result.toString());
 	}
