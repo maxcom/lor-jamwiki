@@ -662,6 +662,25 @@ public class AnsiDataHandler implements DataHandler {
 	}
 
 	/**
+	 *
+	 */
+	public Topic lookupTopicById(String virtualWiki, int topicId) throws DataAccessException {
+		Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPICS, topicId);
+		if (cacheElement != null) {
+			return (Topic)cacheElement.getObjectValue();
+		}
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		Topic result = null;
+		try {
+			result = this.queryHandler().lookupTopicById(virtualWikiId, virtualWiki, topicId);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		}
+		WikiCache.addToCache(CACHE_TOPICS, topicId, result);
+		return result;
+	}
+
+	/**
 	 * Return a count of all topics, including redirects, comments pages and templates,
 	 * currently available on the Wiki.  This method excludes deleted topics.
 	 *

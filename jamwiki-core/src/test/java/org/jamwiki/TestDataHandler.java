@@ -237,6 +237,13 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public Topic lookupTopicById(String virtualWiki, int topicId) throws DataAccessException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
 	public int lookupTopicCount(String virtualWiki) throws DataAccessException {
 		throw new UnsupportedOperationException();
 	}

@@ -145,6 +145,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_LOG_ITEMS_BY_TYPE = null;
 	protected static String STATEMENT_SELECT_RECENT_CHANGES = null;
 	protected static String STATEMENT_SELECT_ROLES = null;
+	protected static String STATEMENT_SELECT_TOPIC_BY_ID = null;
 	protected static String STATEMENT_SELECT_TOPIC_BY_TYPE = null;
 	protected static String STATEMENT_SELECT_TOPIC_COUNT = null;
 	protected static String STATEMENT_SELECT_TOPIC = null;
@@ -1058,6 +1059,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_LOG_ITEMS_BY_TYPE       = props.getProperty("STATEMENT_SELECT_LOG_ITEMS_BY_TYPE");
 		STATEMENT_SELECT_RECENT_CHANGES          = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES");
 		STATEMENT_SELECT_ROLES                   = props.getProperty("STATEMENT_SELECT_ROLES");
+		STATEMENT_SELECT_TOPIC_BY_ID             = props.getProperty("STATEMENT_SELECT_TOPIC_BY_ID");
 		STATEMENT_SELECT_TOPIC_BY_TYPE           = props.getProperty("STATEMENT_SELECT_TOPIC_BY_TYPE");
 		STATEMENT_SELECT_TOPIC_COUNT             = props.getProperty("STATEMENT_SELECT_TOPIC_COUNT");
 		STATEMENT_SELECT_TOPIC                   = props.getProperty("STATEMENT_SELECT_TOPIC");
@@ -1861,6 +1863,25 @@ public class AnsiQueryHandler implements QueryHandler {
 				// close only the statement and result set - leave the connection open for further use
 				DatabaseConnection.closeConnection(null, stmt, rs);
 			}
+		}
+	}
+
+	/**
+	 *
+	 */
+	public Topic lookupTopicById(int virtualWikiId, String virtualWikiName, int topicId) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_BY_ID);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setInt(2, topicId);
+			rs = stmt.executeQuery();
+			return (rs.next()) ? this.initTopic(rs, virtualWikiName) : null;
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}
 	}
 

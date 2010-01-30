@@ -397,6 +397,17 @@ public interface DataHandler {
 	Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Connection conn) throws DataAccessException;
 
 	/**
+	 * Retrieve a Topic object that matches the given topic id and virtual wiki.
+	 *
+	 * @param virtualWiki The virtual wiki for the topic being queried.
+	 * @param topicId The identifier of the topic being queried.
+	 * @return A Topic object that matches the given virtual wiki and topic
+	 * id, or <code>null</code> if no matching topic exists.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	Topic lookupTopicById(String virtualWiki, int topicId) throws DataAccessException;
+
+	/**
 	 * Return a count of all topics, including redirects, comments pages and
 	 * templates, for the given virtual wiki.  Deleted topics are not included
 	 * in the count.
