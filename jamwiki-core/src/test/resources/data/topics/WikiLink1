@@ -36,3 +36,11 @@
 [[WikiLink1|alt text]]
 
 [[WikiLink1|''italic'' text]]
+
+[[en:WikiLink1]]
+
+[[:en:WikiLink1]]
+
+[[test:WikiLink1]]
+
+[[:test:WikiLink1]]

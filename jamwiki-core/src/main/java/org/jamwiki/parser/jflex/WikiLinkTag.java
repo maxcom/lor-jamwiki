@@ -67,8 +67,9 @@ public class WikiLinkTag implements JFlexParserTag {
 				// inter-wiki link
 				return LinkUtil.interWiki(wikiLink);
 			}
-			if (wikiLink.getColon() && !StringUtils.isBlank(wikiLink.getNamespace())) {
+			if (!StringUtils.isBlank(wikiLink.getNamespace())) {
 				if (WikiBase.getDataHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
+					// link to another virtual wiki
 					virtualWiki = wikiLink.getNamespace();
 					wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
 				}
@@ -83,7 +84,7 @@ public class WikiLinkTag implements JFlexParserTag {
 			} else {
 				wikiLink.setText(JFlexParserUtil.parseFragment(parserInput, wikiLink.getText(), mode));
 			}
-			if (StringUtils.equals(wikiLink.getDestination(), parserInput.getTopicName())) {
+			if (StringUtils.equals(wikiLink.getDestination(), parserInput.getTopicName()) && StringUtils.equals(virtualWiki, parserInput.getVirtualWiki())) {
 				// same page, bold the text and return
 				return "<b>" + (StringUtils.isBlank(wikiLink.getText()) ? wikiLink.getDestination() : wikiLink.getText()) + "</b>";
 			}

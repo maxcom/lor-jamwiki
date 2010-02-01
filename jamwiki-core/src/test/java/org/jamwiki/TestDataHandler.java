@@ -266,8 +266,8 @@ public class TestDataHandler implements DataHandler {
 	 *
 	 */
 	public VirtualWiki lookupVirtualWiki(String virtualWikiName) throws DataAccessException {
-		if (!StringUtils.equals(virtualWikiName, "en")) {
-			// test handler, so hard-code "en" as the only valid virtual wiki
+		if (!StringUtils.equals(virtualWikiName, "en") && !StringUtils.equals(virtualWikiName, "test")) {
+			// test handler, so hard-code "en" and "test" as the only valid virtual wikis
 			return null;
 		}
 		VirtualWiki virtualWiki = new VirtualWiki();
