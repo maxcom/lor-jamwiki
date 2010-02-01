@@ -17,3 +17,7 @@
 <p><b>WikiLink1</b></p>
 <p><b>alt text</b></p>
 <p><b><i>italic</i> text</b></p>
+<p><b>WikiLink1</b></p>
+<p><b>WikiLink1</b></p>
+<p><a href="/wiki/test/WikiLink1" title="WikiLink1">WikiLink1</a></p>
+<p><a href="/wiki/test/WikiLink1" title="WikiLink1">WikiLink1</a></p>
