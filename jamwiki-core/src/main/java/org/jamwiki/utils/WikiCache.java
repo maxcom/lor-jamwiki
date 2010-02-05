@@ -168,17 +168,6 @@ public class WikiCache {
 	}
 
 	/**
-	 * Remove a value from the cache with the given key and name.
-	 *
-	 * @param cacheName The name of the cache from which the object is being
-	 *  removed.
-	 * @param key The key for the record that is being removed from the cache.
-	 */
-	public static void removeFromCache(String cacheName, int key) {
-		WikiCache.removeFromCache(cacheName, Integer.valueOf(key));
-	}
-
-	/**
 	 * Retrieve a cached element from the cache.  This method will return
 	 * <code>null</code> if no matching element is cached, an element with
 	 * no value if a <code>null</code> value is cached, or an element with a
@@ -194,22 +183,5 @@ public class WikiCache {
 	public static Element retrieveFromCache(String cacheName, Object key) {
 		Cache cache = WikiCache.getCache(cacheName);
 		return cache.get(key);
-	}
-
-	/**
-	 * Retrieve a cached element from the cache.  This method will return
-	 * <code>null</code> if no matching element is cached, an element with
-	 * no value if a <code>null</code> value is cached, or an element with a
-	 * valid object value if such an element is cached.
-	 *
-	 * @param cacheName The name of the cache from which the object is being
-	 *  retrieved.
-	 * @param key The key for the record that is being retrieved from the
-	 *  cache.
-	 * @return A new <code>Element</code> object containing the key and cached
-	 *  object value.
-	 */
-	public static Element retrieveFromCache(String cacheName, int key) {
-		return WikiCache.retrieveFromCache(cacheName, Integer.valueOf(key));
 	}
 }
