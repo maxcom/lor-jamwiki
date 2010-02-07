@@ -1195,8 +1195,10 @@ public class AnsiQueryHandler implements QueryHandler {
 		// one exists), otherwise the last is the most recently deleted
 		// topic.
 		if (rs.getTimestamp("delete_date") != null) {
-			// go to the last result
-			rs.last();
+			while (!rs.isLast()) {
+				// go to the last result - do not use rs.last() since result set may be FORWARD_ONLY
+				rs.next();
+			}
 		}
 		Topic topic = new Topic();
 		topic.setAdminOnly(rs.getInt("topic_admin_only") != 0);
