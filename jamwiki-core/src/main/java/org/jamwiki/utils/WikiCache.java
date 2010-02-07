@@ -62,19 +62,6 @@ public class WikiCache {
 	}
 
 	/**
-	 * Add an object to the cache.
-	 *
-	 * @param cacheName The name of the cache that the object is being added
-	 *  to.
-	 * @param key An int value to use as the key for storing and retrieving
-	 *  this object from the cache.
-	 * @param value The object that is being stored in the cache.
-	 */
-	public static void addToCache(String cacheName, int key, Object value) {
-		WikiCache.addToCache(cacheName, Integer.valueOf(key), value);
-	}
-
-	/**
 	 * Internal method used to retrieve a cache given the cache name.  If no
 	 * cache exists with the given name then a new cache will be created.
 	 *
