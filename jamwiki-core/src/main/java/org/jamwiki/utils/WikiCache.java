@@ -17,6 +17,7 @@
 package org.jamwiki.utils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -33,11 +34,23 @@ public class WikiCache {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiCache.class.getName());
 	private static CacheManager cacheManager = null;
+	// track whether this instance was instantiated from an ehcache.xml file or using configured properties.
+	private static final boolean USES_XML_CONFIG;
+	private static final String EHCACHE_XML_CONFIG_FILENAME = "ehcache.xml";
 
 	/** Directory for cache files. */
 	private static final String CACHE_DIR = "cache";
 
 	static {
+		boolean xmlConfig = false;
+		try {
+			Utilities.getClassLoaderFile(EHCACHE_XML_CONFIG_FILENAME);
+			logger.info("Initializing cache configuration from " + EHCACHE_XML_CONFIG_FILENAME + " file");
+			xmlConfig = true;
+		} catch (FileNotFoundException e) {
+			logger.info("No " + EHCACHE_XML_CONFIG_FILENAME + " file found, using default cache configuration");
+		}
+		USES_XML_CONFIG = xmlConfig;
 		WikiCache.initialize();
 	}
 
@@ -68,9 +81,15 @@ public class WikiCache {
 	 * @param cacheName The name of the cache to retrieve.
 	 * @return The existing cache with the given name, or a new cache if no
 	 *  existing cache exists.
+	 * @throws IllegalStateException if an attempt is made to retrieve a cache
+	 *  using XML configuration and the cache is not configured.
 	 */
 	private static Cache getCache(String cacheName) {
 		if (!WikiCache.cacheManager.cacheExists(cacheName)) {
+			if (USES_XML_CONFIG) {
+				// all caches should be configured from ehcache.xml
+				throw new IllegalStateException("No cache named " + cacheName + " is configured in the ehcache.xml file");
+			}
 			int maxSize = Environment.getIntValue(Environment.PROP_CACHE_INDIVIDUAL_SIZE);
 			int maxAge = Environment.getIntValue(Environment.PROP_CACHE_MAX_AGE);
 			int maxIdleAge = Environment.getIntValue(Environment.PROP_CACHE_MAX_IDLE_AGE);
@@ -87,29 +106,36 @@ public class WikiCache {
 	public static void initialize() {
 		try {
 			if (WikiCache.cacheManager != null) {
-				WikiCache.cacheManager.removalAll();
+				if (USES_XML_CONFIG) {
+					WikiCache.cacheManager.removalAll();
+				}
 				WikiCache.cacheManager.shutdown();
 			}
 			File directory = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), CACHE_DIR);
 			if (!directory.exists()) {
 				directory.mkdir();
 			}
-			Configuration configuration = new Configuration();
-			CacheConfiguration defaultCacheConfiguration = new CacheConfiguration();
-			defaultCacheConfiguration.setDiskPersistent(false);
-			defaultCacheConfiguration.setEternal(false);
-			defaultCacheConfiguration.setOverflowToDisk(true);
-			defaultCacheConfiguration.setMaxElementsInMemory(Environment.getIntValue(Environment.PROP_CACHE_TOTAL_SIZE));
-			defaultCacheConfiguration.setName("defaultCache");
-			configuration.addDefaultCache(defaultCacheConfiguration);
-			DiskStoreConfiguration diskStoreConfiguration = new DiskStoreConfiguration();
-//			diskStoreConfiguration.addExpiryThreadPool(new ThreadPoolConfiguration("", 5, 5));
-//			diskStoreConfiguration.addSpoolThreadPool(new ThreadPoolConfiguration("", 5, 5));
-			diskStoreConfiguration.setPath(directory.getPath());
-			configuration.addDiskStore(diskStoreConfiguration);
-			WikiCache.cacheManager = new CacheManager(configuration);
-		} catch (Exception e) {
-			logger.severe("Initialization error in WikiCache", e);
+			if (USES_XML_CONFIG) {
+				WikiCache.cacheManager = CacheManager.create();
+			} else {
+				Configuration configuration = new Configuration();
+				CacheConfiguration defaultCacheConfiguration = new CacheConfiguration();
+				defaultCacheConfiguration.setDiskPersistent(false);
+				defaultCacheConfiguration.setEternal(false);
+				defaultCacheConfiguration.setOverflowToDisk(true);
+				defaultCacheConfiguration.setMaxElementsInMemory(Environment.getIntValue(Environment.PROP_CACHE_TOTAL_SIZE));
+				defaultCacheConfiguration.setName("defaultCache");
+				configuration.addDefaultCache(defaultCacheConfiguration);
+				DiskStoreConfiguration diskStoreConfiguration = new DiskStoreConfiguration();
+//				diskStoreConfiguration.addExpiryThreadPool(new ThreadPoolConfiguration("", 5, 5));
+//				diskStoreConfiguration.addSpoolThreadPool(new ThreadPoolConfiguration("", 5, 5));
+				diskStoreConfiguration.setPath(directory.getPath());
+				configuration.addDiskStore(diskStoreConfiguration);
+				WikiCache.cacheManager = new CacheManager(configuration);
+			}
+		} catch (RuntimeException e) {
+			logger.severe("Failure while initializing cache", e);
+			throw e;
 		}
 	}
 

@@ -15,6 +15,7 @@ New Features:
     add/update.
   * Search engine optimizations.  Existing JAMWiki installs may want to
     rebuild their search index.
+  * Support ehcache.xml configuration.  Based on code by Daniel Fisla (dfisla).
   * Automatically populate sample JDBC values based on database type on the
     setup and admin pages.
   * Remove all dependencies on Spring from the jamwiki-core project by
