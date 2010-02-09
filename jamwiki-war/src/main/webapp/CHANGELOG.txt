@@ -22,7 +22,7 @@ New Features:
     converting org.jamwiki.model.Role to an interface and creating a new
     org.jamwiki.authentication.RoleImpl class.
   * Upgrade to Spring Framework 3.0.0.RELEASE.
-  * Upgrade to Spring Security 3.0.1.RELEASE.
+  * Upgrade to Spring Security 3.0.0.RELEASE.
   * Upgrade to Lucene Search 3.0.0.
   * Upgrade to ehcache 1.7.0.
   * Upgrade to commons-pool 1.5.4.
