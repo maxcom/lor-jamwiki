@@ -17,12 +17,8 @@
 package org.jamwiki.db;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.DataHandler;
@@ -30,9 +26,6 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.WikiVersion;
-import org.jamwiki.model.WikiGroup;
-import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -65,196 +58,12 @@ public class DatabaseUpgrades {
 	 * is unchanged, so do not use standard methods.
 	 */
 	public static boolean login(String username, String password) throws WikiException {
-		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
-		if (!oldVersion.before(0, 7, 0)) {
-			try {
-				return (WikiBase.getDataHandler().authenticate(username, password));
-			} catch (DataAccessException e) {
-				logger.severe("Unable to authenticate user during upgrade", e);
-				throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
-			}
-		}
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
 		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement("select 1 from jam_wiki_user_info where login = ? and encoded_password = ?");
-			if (!StringUtils.isBlank(password)) {
-				password = Encryption.encrypt(password);
-			}
-			stmt.setString(1, username);
-			stmt.setString(2, password);
-			rs = stmt.executeQuery();
-			return (rs.next());
-		} catch (SQLException e) {
-			logger.severe("Database failure while authenticating user", e);
-			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
-		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
-		}
-	}
-
-	/**
-	 *
-	 */
-	public static List<WikiMessage> upgrade061(List<WikiMessage> messages) throws WikiException {
-		TransactionStatus status = null;
-		try {
-			status = DatabaseConnection.startTransaction(getTransactionDefinition());
-			Connection conn = DatabaseConnection.getConnection();
-			// delete ROLE_DELETE
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_061_DELETE_ROLE_MAP_ROLE_DELETE", conn);
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_061_DELETE_ROLE_ROLE_DELETE", conn);
-			messages.add(new WikiMessage("upgrade.message.db.data.deleted", "jam_role_map"));
-			messages.add(new WikiMessage("upgrade.message.db.data.deleted", "jam_role"));
-		} catch (SQLException e) {
-			DatabaseConnection.rollbackOnException(status, e);
-			logger.severe("Database failure during upgrade", e);
+			return (WikiBase.getDataHandler().authenticate(username, password));
+		} catch (DataAccessException e) {
+			logger.severe("Unable to authenticate user during upgrade", e);
 			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
 		}
-		DatabaseConnection.commit(status);
-		return messages;
-	}
-
-	/**
-	 *
-	 */
-	public static List<WikiMessage> upgrade063(List<WikiMessage> messages) {
-		TransactionStatus status = null;
-		try {
-			status = DatabaseConnection.startTransaction(getTransactionDefinition());
-			Connection conn = DatabaseConnection.getConnection();
-			// increase the size of ip address columns
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_063_ALTER_USER_CREATE_IP", conn);
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_063_ALTER_USER_LAST_LOGIN_IP", conn);
-			messages.add(new WikiMessage("upgrade.message.db.column.modified", "create_ip_address", "jam_wiki_user"));
-			messages.add(new WikiMessage("upgrade.message.db.column.modified", "last_login_ip_address", "jam_wiki_user"));
-		} catch (SQLException e) {
-			// do not throw this error and halt the upgrade process - changing the column size
-			// is not required for systems that have already been successfully installed, it
-			// is simply being done to keep new installs consistent with existing installs.
-			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
-			logger.warning("Failure while updating database for IPv6 support.  See UPGRADE.txt for instructions on how to manually complete this optional step.", e);
-			DatabaseConnection.rollbackOnException(status, e);
-			status = null;	// so we do not try to commit
-		}
-		if (status != null) {
-			DatabaseConnection.commit(status);
-		}
-		return messages;
-	}
-
-	/**
-	 *
-	 */
-	public static List<WikiMessage> upgrade070(List<WikiMessage> messages) throws WikiException {
-		TransactionStatus status = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			status = DatabaseConnection.startTransaction(getTransactionDefinition());
-			Connection conn = DatabaseConnection.getConnection();
-			// add characters_changed column to jam_topic_version
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_070_ADD_TOPIC_VERSION_CHARACTERS_CHANGED", conn);
-			messages.add(new WikiMessage("upgrade.message.db.column.added", "characters_changed", "jam_topic_version"));
-			// add characters_changed column to jam_recent_change
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_070_ADD_RECENT_CHANGE_CHARACTERS_CHANGED", conn);
-			messages.add(new WikiMessage("upgrade.message.db.column.added", "characters_changed", "jam_recent_change"));
-			// copy columns from jam_wiki_user_info into jam_wiki_user
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_070_ADD_USER_EMAIL", conn);
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_070_UPDATE_USER_EMAIL", conn);
-			messages.add(new WikiMessage("upgrade.message.db.column.added", "email", "jam_wiki_user"));
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_070_ADD_USER_EDITOR", conn);
-			messages.add(new WikiMessage("upgrade.message.db.column.added", "editor", "jam_wiki_user"));
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_070_ADD_USER_SIGNATURE", conn);
-			messages.add(new WikiMessage("upgrade.message.db.column.added", "signature", "jam_wiki_user"));
-			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_USERS_TABLE", conn);
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_070_INSERT_USERS", conn);
-			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_users"));
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_070_DROP_USER_REMEMBER_KEY", conn);
-			messages.add(new WikiMessage("upgrade.message.db.column.dropped", "remember_key", "jam_wiki_user"));
-			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_AUTHORITIES_TABLE", conn);
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_070_INSERT_AUTHORITIES", conn);
-			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_authorities"));
-			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_GROUP_AUTHORITIES_TABLE", conn);
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_070_INSERT_GROUP_AUTHORITIES", conn);
-			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_group_authorities"));
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_070_DROP_ROLE_MAP", conn);
-			messages.add(new WikiMessage("upgrade.message.db.table.dropped", "jam_role_map"));
-			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_GROUP_MEMBERS_TABLE", conn);
-			// FIXME - avoid hard coding
-			String sql = "select group_id from jam_group where group_name = ?";
-			stmt = conn.prepareStatement(sql);
-			stmt.setString(1, WikiGroup.GROUP_REGISTERED_USER);
-			rs = stmt.executeQuery();
-			int groupId = rs.getInt("group_id");
-			// FIXME - avoid hard coding
-			sql = "select username from jam_users ";
-			stmt = conn.prepareStatement(sql);
-			rs = stmt.executeQuery();
-			int id = 1;
-			while (rs.next()) {
-				// FIXME - avoid hard coding
-				sql = "insert into jam_group_members ( "
-				    +   "id, username, group_id "
-				    + ") values ( "
-				    +   id + ", '" + StringEscapeUtils.escapeSql(rs.getString("username")) + "', " + groupId
-				    + ") ";
-				DatabaseConnection.executeUpdate(sql, conn);
-				id++;
-			}
-			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_group_members"));
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_070_DROP_USER_INFO", conn);
-			messages.add(new WikiMessage("upgrade.message.db.table.dropped", "jam_wiki_user_info"));
-		} catch (SQLException e) {
-			DatabaseConnection.rollbackOnException(status, e);
-			try {
-				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_GROUP_MEMBERS_TABLE);
-			} catch (Exception ex) {}
-			try {
-				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_GROUP_AUTHORITIES_TABLE);
-			} catch (Exception ex) {}
-			try {
-				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_AUTHORITIES_TABLE);
-			} catch (Exception ex) {}
-			try {
-				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_USERS_TABLE);
-			} catch (Exception ex) {}
-			logger.severe("Database failure during upgrade", e);
-			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
-		} finally {
-			DatabaseConnection.closeConnection(null, stmt, rs);
-		}
-		DatabaseConnection.commit(status);
-		// for some reason HSQL hangs when populating the characters_changed column.  since this step is
-		// optional just skip it for HSQL.
-		String dbType = Environment.getValue(Environment.PROP_DB_TYPE);
-		if (!StringUtils.equals(dbType, DataHandler.DATA_HANDLER_HSQL)) {
-			try {
-				// perform a second transaction to populate the new columns.  this code is in its own
-				// transaction since if it fails the upgrade can still be considered successful.
-				status = DatabaseConnection.startTransaction(getTransactionDefinition());
-				Connection conn = DatabaseConnection.getConnection();
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_070_UPDATE_TOPIC_VERSION_CHARACTERS_CHANGED", conn);
-				messages.add(new WikiMessage("upgrade.message.db.column.populated", "characters_changed", "jam_topic_version"));
-			} catch (SQLException e) {
-				messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
-				// do not throw this error and halt the upgrade process - populating the field
-				// is not required for existing systems.
-				logger.warning("Failure while populating characters_changed colum in jam_topic_version.  See UPGRADE.txt for instructions on how to manually complete this optional step.", e);
-				try {
-					DatabaseConnection.rollbackOnException(status, e);
-				} catch (Exception ex) {
-					// ignore
-				}
-				status = null; // so we do not try to commit
-			}
-			if (status != null) {
-				DatabaseConnection.commit(status);
-			}
-		}
-		return messages;
 	}
 
 	/**
