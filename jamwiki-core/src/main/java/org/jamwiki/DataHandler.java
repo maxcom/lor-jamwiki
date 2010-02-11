@@ -386,15 +386,26 @@ public interface DataHandler {
 	 * @param topicName The name of the topic being queried.
 	 * @param deleteOK Set to <code>true</code> if deleted topics can be
 	 *  retrieved, <code>false</code> otherwise.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
+	 * @param conn If this method is being called as part of a transaction
+	 *  then this parameter should contain the database connection.  If
+	 *  this method is not part of a transaction then this value should be
+	 *  <code>null</code>.
 	 * @return A Topic object that matches the given virtual wiki and topic
 	 *  name, or <code>null</code> if no matching topic exists.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object transactionObject) throws DataAccessException;
+	Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Connection conn) throws DataAccessException;
+
+	/**
+	 * Retrieve a Topic object that matches the given topic id and virtual wiki.
+	 *
+	 * @param virtualWiki The virtual wiki for the topic being queried.
+	 * @param topicId The identifier of the topic being queried.
+	 * @return A Topic object that matches the given virtual wiki and topic
+	 * id, or <code>null</code> if no matching topic exists.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	Topic lookupTopicById(String virtualWiki, int topicId) throws DataAccessException;
 
 	/**
 	 * Return a count of all topics, including redirects, comments pages and
@@ -415,14 +426,16 @@ public interface DataHandler {
 	 * virtual wiki that match a specific topic type.
 	 *
 	 * @param virtualWiki The virtual wiki for the topics being queried.
-	 * @param topicType The type of topics to return.
+	 * @param topicType1 The type of topics to return.
+	 * @param topicType2 The type of topics to return.  Set to the same value
+	 *  as topicType1 if only one type is needed.
 	 * @param pagination A Pagination object indicating the total number of
 	 *  results and offset for the results to be retrieved.
 	 * @return A List of topic names for all non-deleted topics in the
 	 *  virtual wiki that match a specific topic type.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<String> lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws DataAccessException;
+	List<String> lookupTopicByType(String virtualWiki, int topicType1, int topicType2, Pagination pagination) throws DataAccessException;
 
 	/**
 	 * Retrieve a TopicVersion object for a given topic version ID.
@@ -540,6 +553,17 @@ public interface DataHandler {
 	 * @throws WikiException Thrown if the topic information is invalid.
 	 */
 	void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination) throws DataAccessException, WikiException;
+
+	/**
+	 * Utility method used when importing to updating the previous topic version ID field
+	 * of topic versions, as well as the current version ID field for the topic record.
+	 *
+	 * @param topic The topic record to update.
+	 * @param topicVersionIdList A list of all topic version IDs for the topic, sorted
+	 *  chronologically from oldest to newest.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	void orderTopicVersions(Topic topic, List<Integer> topicVersionIdList) throws DataAccessException;
 
 	/**
 	 * Delete all existing log entries and reload the log item table based
@@ -702,6 +726,22 @@ public interface DataHandler {
 	 * @throws WikiException Thrown if the topic information is invalid.
 	 */
 	void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links) throws DataAccessException, WikiException;
+
+	/**
+	 * This method exists for performance reasons for scenarios such as topic imports where many versions
+	 * may be added without the need to update the topic record.  In general {@link DataHandler.writeTopic}
+	 * should be used instead.
+	 *
+	 * @param topic The Topic to add or update.  If the Topic does not have
+	 *  a topic ID then a new record is created, otherwise an update is
+	 *  performed.
+	 * @param topicVersion A TopicVersion containing the author, date, and
+	 *  other information about the version being added.  If this value is <code>null</code>
+	 *  then no version is saved and no recent change record is created.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the topic version information is invalid.
+	 */
+	public void writeTopicVersion(Topic topic, TopicVersion topicVersion) throws DataAccessException, WikiException;
 
 	/**
 	 * Add or update a VirtualWiki object.  This method will add a new record

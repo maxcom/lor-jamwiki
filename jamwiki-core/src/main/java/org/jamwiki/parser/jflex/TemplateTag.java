@@ -18,6 +18,7 @@ package org.jamwiki.parser.jflex;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
@@ -35,13 +36,11 @@ import org.jamwiki.utils.WikiUtil;
  * <code>TemplateTag</code> parses Mediawiki template syntax, which allows
  * programmatic structures to be embedded in wiki syntax.
  */
-public class TemplateTag {
+public class TemplateTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(TemplateTag.class.getName());
 	protected static final String TEMPLATE_INCLUSION = "template-inclusion";
 	private static Pattern PARAM_NAME_VALUE_PATTERN = Pattern.compile("[\\s]*([A-Za-z0-9_\\ \\-]+)[\\s]*\\=([\\s\\S]*)");
-
-	private final HashMap<String, String> parameterValues = new HashMap<String, String>();
 
 	/**
 	 * Once the template call has been parsed and the template values have been
@@ -50,16 +49,13 @@ public class TemplateTag {
 	 * voodoo magic that happens here to first parse any embedded values, and
 	 * to apply default values when no template value has been set.
 	 */
-	private String applyParameter(ParserInput parserInput, String param) throws ParserException {
-		if (this.parameterValues == null) {
-			return param;
-		}
+	private String applyParameter(ParserInput parserInput, String param, Map<String, String> parameterValues) throws ParserException {
 		String content = param.substring("{{{".length(), param.length() - "}}}".length());
 		// re-parse in case of embedded templates or params
-		content = this.parseTemplateBody(parserInput, content);
+		content = this.parseTemplateBody(parserInput, content, parameterValues);
 		String name = this.parseParamName(content);
 		String defaultValue = this.parseParamDefaultValue(parserInput, content);
-		String value = this.parameterValues.get(name);
+		String value = parameterValues.get(name);
 		if (value == null && defaultValue == null) {
 			return param;
 		}
@@ -70,9 +66,9 @@ public class TemplateTag {
 	 * Parse a call to a Mediawiki template of the form "{{template|param1|param2}}"
 	 * and return the resulting template output.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
+	public String parse(JFlexLexer lexer, String raw, Object... args) {
 		try {
-			parserInput.incrementTemplateDepth();
+			lexer.getParserInput().incrementTemplateDepth();
 			// validate and extract the template content
 			if (StringUtils.isBlank(raw)) {
 				throw new Exception("Empty template text");
@@ -82,21 +78,21 @@ public class TemplateTag {
 			}
 			String templateContent = raw.substring("{{".length(), raw.length() - "}}".length());
 			// parse for nested templates, signatures, etc.
-			templateContent = JFlexParserUtil.parseFragment(parserInput, templateContent, mode);
+			templateContent = JFlexParserUtil.parseFragment(lexer.getParserInput(), templateContent, lexer.getMode());
 			// update the raw value to handle cases such as a signature in the template content
 			raw = "{{" + templateContent + "}}";
 			// check for magic word or parser function
 			String[] parserFunctionInfo = ParserFunctionUtil.parseParserFunctionInfo(templateContent);
 			if (MagicWordUtil.isMagicWord(templateContent) || parserFunctionInfo != null) {
-				if (mode <= JFlexParser.MODE_MINIMAL) {
-					parserInput.decrementTemplateDepth();
+				if (lexer.getMode() <= JFlexParser.MODE_MINIMAL) {
+					lexer.getParserInput().decrementTemplateDepth();
 					return raw;
 				}
-				parserInput.decrementTemplateDepth();
+				lexer.getParserInput().decrementTemplateDepth();
 				if (MagicWordUtil.isMagicWord(templateContent)) {
-					return MagicWordUtil.processMagicWord(parserInput, templateContent);
+					return MagicWordUtil.processMagicWord(lexer.getParserInput(), templateContent);
 				} else {
-					return ParserFunctionUtil.processParserFunction(parserInput, parserFunctionInfo[0], parserFunctionInfo[1]);
+					return ParserFunctionUtil.processParserFunction(lexer.getParserInput(), parserFunctionInfo[0], parserFunctionInfo[1]);
 				}
 			}
 			// extract the template name
@@ -107,10 +103,10 @@ public class TemplateTag {
 				inclusion = true;
 			}
 			// get the parsed template body
-			Topic templateTopic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), name, false, null);
-			this.processTemplateMetadata(parserInput, parserOutput, templateTopic, raw, name);
-			if (mode <= JFlexParser.MODE_MINIMAL) {
-				parserInput.decrementTemplateDepth();
+			Topic templateTopic = WikiBase.getDataHandler().lookupTopic(lexer.getParserInput().getVirtualWiki(), name, false, null);
+			this.processTemplateMetadata(lexer.getParserInput(), lexer.getParserOutput(), templateTopic, raw, name);
+			if (lexer.getMode() <= JFlexParser.MODE_MINIMAL) {
+				lexer.getParserInput().decrementTemplateDepth();
 				return raw;
 			}
 			// make sure template was not redirected
@@ -123,12 +119,12 @@ public class TemplateTag {
 				templateTopic = null;
 			}
 			if (inclusion) {
-				String output = this.processTemplateInclusion(parserInput, parserOutput, mode, templateTopic, raw, name);
-				parserInput.decrementTemplateDepth();
+				String output = this.processTemplateInclusion(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), templateTopic, raw, name);
+				lexer.getParserInput().decrementTemplateDepth();
 				return output;
 			}
-			String output = this.processTemplateContent(parserInput, parserOutput, templateTopic, templateContent, name);
-			parserInput.decrementTemplateDepth();
+			String output = this.processTemplateContent(lexer.getParserInput(), lexer.getParserOutput(), templateTopic, templateContent, name);
+			lexer.getParserInput().decrementTemplateDepth();
 			return output;
 		} catch (Throwable t) {
 			logger.info("Unable to parse " + raw, t);
@@ -171,17 +167,21 @@ public class TemplateTag {
 	 * and replace parameters with parameter values or defaults, processing any
 	 * embedded parameters or templates.
 	 */
-	private String parseTemplateBody(ParserInput parserInput, String content) throws ParserException {
-		StringBuffer output = new StringBuffer();
+	private String parseTemplateBody(ParserInput parserInput, String content, Map<String, String> parameterValues) throws ParserException {
+		StringBuilder output = new StringBuilder();
 		int pos = 0;
 		while (pos < content.length()) {
 			String substring = content.substring(pos);
 			if (substring.startsWith("{{{")) {
-				// template
+				// template - special case for instances of cases like "{{{{{1}}}}}" where the parameter itself is a template reference
+				while (content.substring(pos + 1).startsWith("{{{")) {
+					output.append(content.charAt(pos));
+					pos++;
+				}
 				int endPos = Utilities.findMatchingEndTag(content, pos, "{{{", "}}}");
 				if (endPos != -1) {
 					String param = content.substring(pos, endPos);
-					output.append(this.applyParameter(parserInput, param));
+					output.append(this.applyParameter(parserInput, param, parameterValues));
 				}
 				pos = endPos;
 			} else {
@@ -222,7 +222,8 @@ public class TemplateTag {
 	 * Given a template call of the form "{{name|param=value|param=value}}"
 	 * parse the parameter names and values.
 	 */
-	private void parseTemplateParameterValues(ParserInput parserInput, String templateContent) throws ParserException {
+	private Map<String, String> parseTemplateParameterValues(ParserInput parserInput, String templateContent) throws ParserException {
+		Map<String, String> parameterValues = new HashMap<String, String>();
 		List<String> tokens = JFlexParserUtil.tokenizeParamString(templateContent);
 		if (tokens.isEmpty()) {
 			throw new ParserException("No template name found in " + templateContent);
@@ -237,8 +238,9 @@ public class TemplateTag {
 			String[] nameValue = this.tokenizeNameValue(token);
 			String name = (StringUtils.isBlank(nameValue[0]) ? Integer.toString(count) : nameValue[0].trim());
 			String value = (nameValue[1] == null) ? null : nameValue[1].trim();
-			this.parameterValues.put(name, value);
+			parameterValues.put(name, value);
 		}
+		return parameterValues;
 	}
 
 	/**
@@ -250,8 +252,8 @@ public class TemplateTag {
 			return "[[" + name + "]]";
 		}
 		// set template parameter values
-		this.parseTemplateParameterValues(parserInput, templateContent);
-		return this.parseTemplateBody(parserInput, templateTopic.getTopicContent());
+		Map<String, String> parameterValues = this.parseTemplateParameterValues(parserInput, templateContent);
+		return this.parseTemplateBody(parserInput, templateTopic.getTopicContent(), parameterValues);
 	}
 
 	/**

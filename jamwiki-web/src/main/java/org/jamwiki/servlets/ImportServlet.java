@@ -77,7 +77,7 @@ public class ImportServlet extends JAMWikiServlet {
 				String virtualWiki = pageInfo.getVirtualWikiName();
 				String ipAddress = ServletUtil.getIpAddress(request);
 				Locale locale = request.getLocale();
-				List<String> successfulImports = MigrationUtil.importFromFile(file, virtualWiki, user, ipAddress, locale, errors);
+				List<String> successfulImports = MigrationUtil.importFromFile(file, virtualWiki, user, ipAddress, locale);
 				file.delete();
 				next.addObject("successfulImports", successfulImports);
 				break;

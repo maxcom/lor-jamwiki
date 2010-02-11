@@ -1,0 +1,11 @@
+<p>1: 6</p>
+<p>2: 6.3</p>
+<p>3: 6.15</p>
+<p>4: 5</p>
+<p>5. 8</p>
+<p>6. 8</p>
+<p>7. <strong class="error">3 / 0</strong></p>
+<p>8. 5</p>
+<p>9. <strong class="error">(</strong>3 * 2</p>
+<p>10. 3 * 2<strong class="error">)</strong></p>
+<p>11. <strong class="error">3 *</strong></p>

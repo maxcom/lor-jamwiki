@@ -104,7 +104,7 @@ public class EditCommentTag extends TagSupport {
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
 		WikiLink wikiLink = LinkUtil.parseWikiLink(this.topic + "#" + sectionName);
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		result.append("<span class=\"").append(CSS_SECTION_COMMENT).append("\">");
 		try {
 			result.append(LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, wikiLink, "&rarr;", null, null, false));

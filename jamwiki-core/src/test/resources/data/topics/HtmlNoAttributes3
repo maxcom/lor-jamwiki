@@ -1,2 +1,0 @@
-<!-- verify that basic HTML with no attribute tags will be processed correctly -->
-<strike>text</strike>

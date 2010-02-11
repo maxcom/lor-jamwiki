@@ -28,26 +28,9 @@ import org.jamwiki.utils.WikiLogger;
  * <code>[http://example.com optional text]</code> as well as raw links
  * of the form <code>http://example.com</code>.
  */
-public class HtmlLinkTag {
+public class HtmlLinkTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(HtmlLinkTag.class.getName());
-
-	/**
-	 * Given a String that represents a Wiki HTML link (a URL with an optional
-	 * link text that is enclosed in brackets), return a formatted HTML anchor tag.
-	 *
-	 * @param raw The raw Wiki syntax that is to be converted into an HTML link.
-	 * @return A formatted HTML link for the Wiki syntax.
-	 */
-	private String buildHtmlLink(ParserInput parserInput, int mode, String raw) throws ParserException {
-		if (raw.length() <= 2) {
-			// no link, display the raw text
-			return raw;
-		}
-		// strip the first and last brackets
-		String link = raw.substring(1, raw.length() - 1).trim();
-		return this.buildHtmlLinkRaw(parserInput, mode, link);
-	}
 
 	/**
 	 * Given a String that represents a raw HTML link (a URL link that is
@@ -92,7 +75,7 @@ public class HtmlLinkTag {
 		if (StringUtils.isBlank(text)) {
 			return "";
 		}
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = text.length() - 1; i >= 0; i--) {
 			char c = text.charAt(i);
 			if (c == '.' || c == ';' || c == ',' || c == ':' || c == '(' || c == '[' || c == '{') {
@@ -169,16 +152,16 @@ public class HtmlLinkTag {
 	 * Parse a Mediawiki HTML link of the form "[http://www.site.com/ text]" or
 	 * "http://www.site.com/" and return the resulting HTML output.
 	 */
-	public String parse(ParserInput parserInput, int mode, String raw) {
+	public String parse(JFlexLexer lexer, String raw, Object... args) {
+		if (logger.isFinerEnabled()) {
+			logger.finer("htmllink: " + raw + " (" + lexer.yystate() + ")");
+		}
 		if (raw == null || StringUtils.isBlank(raw)) {
 			// no link to display
 			return raw;
 		}
 		try {
-			if (raw.charAt(0) == '[' && raw.endsWith("]")) {
-				return this.buildHtmlLink(parserInput, mode, raw);
-			}
-			return this.buildHtmlLinkRaw(parserInput, mode, raw);
+			return this.buildHtmlLinkRaw(lexer.getParserInput(), lexer.getMode(), raw);
 		} catch (Throwable t) {
 			logger.info("Unable to parse " + raw, t);
 			return raw;

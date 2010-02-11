@@ -50,7 +50,7 @@ public class TiddlyWikiParser {
 	private static final String MODIFIED = "modified";
 	//private static final String TAGS = "tags";
 	private static final SimpleDateFormat formater = new SimpleDateFormat("yyyyMMddHHmm");
-	private StringBuffer messages = new StringBuffer();
+	private StringBuilder messages = new StringBuilder();
 	private String virtualWiki;
 	private WikiUser user;
 	private String authorDisplay;
@@ -123,7 +123,7 @@ public class TiddlyWikiParser {
 		boolean inTiddler = false;
 		int start = 0;
 		int end = 0;
-		StringBuffer content = new StringBuffer();
+		StringBuilder content = new StringBuilder();
 		while (line != null) {
 			if (inTiddler) {
 				end = line.indexOf(DIV_END);

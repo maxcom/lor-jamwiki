@@ -46,7 +46,7 @@
 				<prop key="/**/Special:Upgrade">Upgrade</prop>
 				<prop key="/**/Special:Upload">Upload</prop>
 				<prop key="/**/Special:Watchlist">Watchlist</prop>
-				<prop key="/**/*.css">Stylesheet</prop>
+				<prop key="/**/jamwiki.css">Stylesheet</prop>
 				<prop key="/**/*">Topic</prop>
 				<prop key="/**/">Topic</prop>
 			</props>

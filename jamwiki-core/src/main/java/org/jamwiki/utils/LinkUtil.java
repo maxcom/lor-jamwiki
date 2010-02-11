@@ -170,7 +170,7 @@ public class LinkUtil {
 		}
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
-		StringBuffer html = new StringBuffer();
+		StringBuilder html = new StringBuilder();
 		if (topic.getTopicType() == Topic.TYPE_FILE) {
 			// file, not an image
 			if (StringUtils.isBlank(caption)) {
@@ -211,7 +211,7 @@ public class LinkUtil {
 				// default alignment
 				html.append("image ");
 			}
-			html = new StringBuffer(html.toString().trim()).append("\">");
+			html = new StringBuilder(html.toString().trim()).append("\">");
 		}
 		if (wikiImage.getWidth() > 0) {
 			html.append("<div style=\"width:").append((wikiImage.getWidth() + 2)).append("px;\">");
@@ -296,7 +296,7 @@ public class LinkUtil {
 		if (StringUtils.isBlank(topic) && !StringUtils.isBlank(wikiLink.getSection())) {
 			topic = wikiLink.getSection();
 		}
-		StringBuffer html = new StringBuffer();
+		StringBuilder html = new StringBuilder();
 		html.append("<a href=\"").append(url).append('\"').append(style);
 		html.append(" title=\"").append(StringEscapeUtils.escapeHtml(topic)).append('\"').append(target).append('>');
 		if (escapeHtml) {
@@ -380,7 +380,7 @@ public class LinkUtil {
 		if (StringUtils.isBlank(topicName) && !StringUtils.isBlank(section)) {
 			return "#" + Utilities.encodeAndEscapeTopicName(section);
 		}
-		StringBuffer url = new StringBuffer();
+		StringBuilder url = new StringBuilder();
 		if (context != null) {
 			url.append(context);
 		}

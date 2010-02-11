@@ -20,8 +20,8 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
-import org.jamwiki.parser.jflex.WikiHeadingTag;
-import org.jamwiki.parser.jflex.WikiSignatureTag;
+import org.jamwiki.parser.jflex.JFlexParser;
+import org.jamwiki.parser.jflex.JFlexParserUtil;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
@@ -33,10 +33,8 @@ import org.jamwiki.utils.WikiLogger;
  * 
  */
 public class JAMWikiModel extends AbstractWikiModel {
-	// see: JFlexParser.MODE_MINIMAL
-	protected static final int MODE_MINIMAL = 3;
 
-	private static final WikiLogger logger = WikiLogger.getLogger(WikiHeadingTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiModel.class.getName());
 
 	protected String fContextPath;
 
@@ -99,19 +97,15 @@ public class JAMWikiModel extends AbstractWikiModel {
 
 	@Override
 	public void appendSignature(Appendable writer, int numberOfTildes) throws IOException {
-		WikiSignatureTag parserTag;
 		switch (numberOfTildes) {
 		case 3:
-			parserTag = new WikiSignatureTag();
-			writer.append(parserTag.parse(fParserInput, fParserOutput, MODE_MINIMAL, "~~~"));
+			writer.append(JFlexParserUtil.parseFragment(fParserInput, "~~~", JFlexParser.MODE_MINIMAL));
 			break;
 		case 4:
-			parserTag = new WikiSignatureTag();
-			writer.append(parserTag.parse(fParserInput, fParserOutput, MODE_MINIMAL, "~~~~"));
+			writer.append(JFlexParserUtil.parseFragment(fParserInput, "~~~~", JFlexParser.MODE_MINIMAL));
 			break;
 		case 5:
-			parserTag = new WikiSignatureTag();
-			writer.append(parserTag.parse(fParserInput, fParserOutput, MODE_MINIMAL, "~~~~~"));
+			writer.append(JFlexParserUtil.parseFragment(fParserInput, "~~~~~", JFlexParser.MODE_MINIMAL));
 			break;
 		}
 	}
@@ -184,7 +178,7 @@ public class JAMWikiModel extends AbstractWikiModel {
 		if (StringUtils.isBlank(topicName) && !StringUtils.isBlank(section)) {
 			return "#" + Utilities.encodeAndEscapeTopicName(section);
 		}
-		StringBuffer url = new StringBuffer();
+		StringBuilder url = new StringBuilder();
 		if (context != null) {
 			url.append(context);
 		}

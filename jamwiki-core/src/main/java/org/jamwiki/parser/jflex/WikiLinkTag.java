@@ -35,7 +35,7 @@ import org.jamwiki.utils.WikiLogger;
 /**
  * This class parses wiki links of the form <code>[[Topic to Link To|Link Text]]</code>.
  */
-public class WikiLinkTag {
+public class WikiLinkTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiLinkTag.class.getName());
 	// look for image size info in image tags
@@ -67,8 +67,9 @@ public class WikiLinkTag {
 				// inter-wiki link
 				return LinkUtil.interWiki(wikiLink);
 			}
-			if (wikiLink.getColon() && !StringUtils.isBlank(wikiLink.getNamespace())) {
+			if (!StringUtils.isBlank(wikiLink.getNamespace())) {
 				if (WikiBase.getDataHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
+					// link to another virtual wiki
 					virtualWiki = wikiLink.getNamespace();
 					wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
 				}
@@ -83,7 +84,7 @@ public class WikiLinkTag {
 			} else {
 				wikiLink.setText(JFlexParserUtil.parseFragment(parserInput, wikiLink.getText(), mode));
 			}
-			if (StringUtils.equals(wikiLink.getDestination(), parserInput.getTopicName())) {
+			if (StringUtils.equals(wikiLink.getDestination(), parserInput.getTopicName()) && StringUtils.equals(virtualWiki, parserInput.getVirtualWiki())) {
 				// same page, bold the text and return
 				return "<b>" + (StringUtils.isBlank(wikiLink.getText()) ? wikiLink.getDestination() : wikiLink.getText()) + "</b>";
 			}
@@ -102,14 +103,14 @@ public class WikiLinkTag {
 	 * Parse a Mediawiki link of the form "[[topic|text]]" and return the
 	 * resulting HTML output.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
+	public String parse(JFlexLexer lexer, String raw, Object... args) {
 		try {
-			raw = this.processLinkMetadata(parserInput, parserOutput, mode, raw);
-			if (mode <= JFlexParser.MODE_PREPROCESS) {
+			raw = this.processLinkMetadata(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), raw);
+			if (lexer.getMode() <= JFlexParser.MODE_PREPROCESS) {
 				// do not parse to HTML when in preprocess mode
 				return raw;
 			}
-			return this.processLinkContent(parserInput, parserOutput, mode, raw);
+			return this.processLinkContent(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), raw);
 		} catch (Throwable t) {
 			logger.info("Unable to parse " + raw, t);
 			return raw;

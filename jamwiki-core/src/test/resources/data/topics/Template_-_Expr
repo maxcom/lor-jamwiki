@@ -1,0 +1,22 @@
+<!-- test usage and rendering of the #expr: parser function -->
+1: {{#expr: 4+2 }}
+
+2: {{#expr: 4.15+2.15 }}
+
+3: {{#expr: 4.15+2 }}
+
+4: {{#expr: 4+2-1 }}
+
+5. {{#expr: 4 + (2*2) }}
+
+6. {{#expr: (2*2) + 4 }}
+
+7. {{#expr: 3 / 0 }}
+
+8. {{#expr: (3 * (6 - (12 / 2)) + 5) }}
+
+9. {{#expr: (3 * 2 }}
+
+10. {{#expr: 3 * 2) }}
+
+11. {{#expr: 3 * }}

@@ -98,14 +98,10 @@ public class Environment {
 	public static final String PROP_SERVER_URL = "server-url";
 	public static final String PROP_SITE_NAME = "site-name";
 	public static final String PROP_TOPIC_EDITOR = "default-editor";
-	// FIXME - this property can be removed once the abilitity to upgrade to 0.6.0 is removed
-	public static final String PROP_TOPIC_FORCE_USERNAME = "force-username";
-	// FIXME - this property can be removed once the abilitity to upgrade to 0.6.0 is removed
-	public static final String PROP_TOPIC_NON_ADMIN_TOPIC_MOVE = "non-admin-redirect";
 	public static final String PROP_TOPIC_SPAM_FILTER = "use-spam-filter";
 	public static final String PROP_TOPIC_USE_PREVIEW = "use-preview";
 	public static final String PROP_TOPIC_USE_SHOW_CHANGES = "use-show-changes";
-	/* Lookup properties file location from system properties first. */
+	// Lookup properties file location from system properties first.
 	private static final String PROPERTY_FILE_NAME = System.getProperty("jamwiki.property.file", "jamwiki.properties");
 
 	private static Properties defaults = null;

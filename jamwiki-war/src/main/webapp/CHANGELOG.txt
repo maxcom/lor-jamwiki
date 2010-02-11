@@ -3,35 +3,92 @@
 
 New Features:
 
+  * Signficant updates to the syntax parser, including support for additional
+    HTML tags and XHTML transitional validation of tag attributes.
   * Support the #if: parser function.  Usage: {{#if: test | true | false}}.
+  * Basic support for the #expr: parser function.  Only basic operations are
+    supported (+, -, /, *) and parentheses must be used to ensure that the
+    order of operations is followed.
+  * Add the ability for sysadmins to create user accounts (hanspeterklapf).
+  * Topic add/update is now significantly faster due to query refactoring
+    and changes so that the search index is not re-optimized after every
+    add/update.
+  * Search engine optimizations.  Existing JAMWiki installs may want to
+    rebuild their search index.
+  * Support ehcache.xml configuration.  Based on code by Daniel Fisla (dfisla).
   * Automatically populate sample JDBC values based on database type on the
     setup and admin pages.
   * Remove all dependencies on Spring from the jamwiki-core project by
     converting org.jamwiki.model.Role to an interface and creating a new
     org.jamwiki.authentication.RoleImpl class.
-  * Topic add/update is now significantly faster due to query refactoring
-    and changes so that the search index is not re-optimized after every
-    add/update.
-    after every update.
-  * Upgrade to Spring Framework 3.0.0.RC2.
-  * Upgrade to Spring Security 3.0.0.RC1.
+  * Remove ability to automatically upgrade from versions prior to 0.7.0.
+  * Upgrade to Spring Framework 3.0.0.RELEASE.
+  * Upgrade to Spring Security 3.0.0.RELEASE.
   * Upgrade to Lucene Search 3.0.0.
   * Upgrade to ehcache 1.7.0.
   * Upgrade to commons-pool 1.5.4.
+  * Upgrade to JUnit 4.7.
+
+Bugfixes:
+
+  * Leading whitespace should be trimmed from category names such as
+    "Category: Test" or "Category : Test".
+  * Special:Import and Special:Export code refactored to avoid OOM errors with
+    topics that have extensive history.
+  * Properly parse template parameters that are themselves templates, such as
+    "{{{{{template_name}}}}}".
+
+Translation Updates:
+
+  * Updated Russian translations (shar).
+
+
+0.8.3
+=====
+
+Bugfixes:
+
+  * Links to a virtual wiki page with the same page name ("[[:test:PageName]]")
+    will now parse correctly again.  Reported by Tom Schueller.
+
+
+0.8.2
+=====
+
+New Features:
+
+  * Updated spam filter patterns.
+  * Update the default StartingPoints page with additional help info.
+
+Bugfixes:
+
+  * Fix MS SQL errors (hanspeterklapf).
+
+Translation Updates:
+
+  * Updated French translations (Guillaume_FRANCOIS55).
+  * Updated German translations (axelclk).
+
+
+0.8.1
+=====
 
 Bugfixes:
 
   * A link from a topic page to itself should be formatted as plain bold text,
     not as a link.  Reported by floatingworld.
   * XML imports of redirect topics were not redirecting properly.
-  * Leading whitespace should be trimmed from category names such as
-    "Category: Test" or "Category : Test".
   * Fix non-fatal MySQL upgrade warnings.  Reported by an anonymous user.
   * Fix code that could potentially leave database connections open during
     authentication.
+  * Fix an issue that caused the Special:Maintenance "database migration"
+    functionality to fail.
+  * Templates will now be listed on Special:Allpages.  Reported by
+    floatingworld.
 
 Translation Updates:
 
+  * Updated Chinese translations (tan9).
   * Updated Polish translations (dlpa).
 
 

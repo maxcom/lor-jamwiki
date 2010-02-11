@@ -23,7 +23,6 @@ import java.util.Locale;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
-import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -52,53 +51,13 @@ public class MigrationUtil {
 	 * @param topicNames A list of topic names to be exported.
 	 * @param excludeHistory Set to <code>true</code> if only the most recent topic
 	 *  version, not the full topic history, should be exported.
-	 * @param errors A list of errors that will be updating if errors are encountered
-	 *  during parsing.
 	 * @throws MigrationException Thrown if a parsing error or data update error is
 	 *  thrown while trying to parse and commit topic data.
 	 * @throws WikiException Thrown if there is no topic data available.
 	 */
-	public static void exportToFile(File file, String virtualWiki, List<String> topicNames, boolean excludeHistory, List<WikiMessage> errors) throws MigrationException, WikiException {
-		Migrator migrator = new MediaWikiXmlMigrator();
-		Map<Topic, List<TopicVersion>> data = new java.util.HashMap<Topic, List<TopicVersion>>();
-		logger.info("topicNames.size(): " + topicNames.size());
-		for (String topicName : topicNames) {
-			logger.info("Parsing topic name: " + topicName);
-			List<TopicVersion> topicVersions = new ArrayList<TopicVersion>();
-			try {
-				Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
-				if (topic == null) {
-					throw new WikiException(new WikiMessage("export.error.topic.does.not.exist", topicName));
-				}
-				int count = 0;
-				Integer topicVersionId = topic.getCurrentVersionId();
-				int maxCount = Environment.getIntValue(Environment.PROP_MAX_TOPIC_VERSION_EXPORT);
-				while (topicVersionId != null) {
-					logger.info("Parsing topic version: " + topicVersionId);
-					TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId);
-					if (topicVersion == null) {
-						logger.info("No topic with the specific version ID exists, this may indicate a data problem in the wiki database: " + topicVersionId);
-						break;
-					}
-					// versions should be sorted earliest to latest, so add to the beginning of the list
-					topicVersions.add(0, topicVersion);
-					if (excludeHistory) {
-						// only include the most recent version
-						break;
-					}
-					topicVersionId = topicVersion.getPreviousTopicVersionId();
-					count++;
-					if (count > maxCount) {
-						logger.info("Maximum number of topic revisions that can be exported (" + maxCount + ") reached for topic: " + topicName);
-						break;
-					}
-				}
-				data.put(topic, topicVersions);
-			} catch (DataAccessException e) {
-				throw new MigrationException("Data access exception while processing topic " + topicName, e);
-			}
-		}
-		migrator.exportToFile(file, data);
+	public static void exportToFile(File file, String virtualWiki, List<String> topicNames, boolean excludeHistory) throws MigrationException, WikiException {
+		TopicExporter exporter = new MediaWikiXmlExporter();
+		exporter.exportToFile(file, virtualWiki, topicNames, excludeHistory);
 	}
 
 	/**
@@ -119,50 +78,41 @@ public class MigrationUtil {
 	 *  thrown while trying to parse and commit topic data.
 	 * @throws WikiException Thrown if there is no topic data available.
 	 */
-	public static List<String> importFromFile(File file, String virtualWiki, WikiUser user, String authorDisplay, Locale locale, List<WikiMessage> errors) throws MigrationException, WikiException {
-		Migrator migrator = new MediaWikiXmlMigrator();
-		Map<Topic, List<TopicVersion>> parsedTopics = migrator.importFromFile(file);
+	public static List<String> importFromFile(File file, String virtualWiki, WikiUser user, String authorDisplay, Locale locale) throws MigrationException, WikiException {
+		TopicImporter importer = new MediaWikiXmlImporter();
+		long start = System.currentTimeMillis();
+		Map<Topic, List<Integer>> parsedTopics = null;
+		try {
+			parsedTopics = importer.importFromFile(file, virtualWiki);
+		} catch (MigrationException e) {
+			if (e.getCause() instanceof WikiException) {
+				throw (MigrationException)(e.getCause());
+			}
+			throw e;
+		}
+		logger.fine("Parsed XML " + file.getAbsolutePath() + " in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 		if (parsedTopics.isEmpty()) {
 			throw new WikiException(new WikiMessage("import.error.notopic"));
 		}
-		List<TopicVersion> topicVersions;
 		List<String> successfulImports = new ArrayList<String>();
 		for (Topic topic : parsedTopics.keySet()) {
+			// create a dummy version to indicate that the topic was imported
+			String importedBy = (user != null && user.getUserId() > 0) ? user.getUsername() : authorDisplay;
+			String editComment = Utilities.formatMessage("import.message.importedby", locale, new Object[]{importedBy});
+			TopicVersion topicVersion = new TopicVersion(user, authorDisplay, editComment, topic.getTopicContent(), 0);
+			topicVersion.setEditType(TopicVersion.EDIT_IMPORT);
+			ParserOutput parserOutput = null;
 			try {
-				Topic existingTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topic.getName(), false, null);
-				if (existingTopic != null) {
-					// FIXME - update so that this merges any new versions instead of throwing an error
-					errors.add(new WikiMessage("import.error.topicexists", topic.getName()));
-					continue;
-				}
-				topic.setVirtualWiki(virtualWiki);
-				topicVersions = parsedTopics.get(topic);
-				if (topicVersions.isEmpty()) {
-					throw new WikiException(new WikiMessage("import.error.notopic"));
-				}
-				for (TopicVersion topicVersion : topicVersions) {
-					// only the final import version is logged
-					topicVersion.setLoggable(false);
-					// metadata is needed only for the final import version, so for performance reasons
-					// do not include category or link data for older versions
-					WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
-				}
-				// create a dummy version to indicate that the topic was imported
-				String importedBy = (user != null && user.getUserId() > 0) ? user.getUsername() : authorDisplay;
-				String editComment = Utilities.formatMessage("import.message.importedby", locale, new Object[]{importedBy});
-				TopicVersion topicVersion = new TopicVersion(user, authorDisplay, editComment, topic.getTopicContent(), 0);
-				topicVersion.setEditType(TopicVersion.EDIT_IMPORT);
-				ParserOutput parserOutput = null;
-				try {
-					parserOutput = ParserUtil.parserOutput(topicVersion.getVersionContent(), virtualWiki, topic.getName());
-				} catch (ParserException e) {
-					throw new MigrationException("Failure while parsing topic version of topic: " + topic.getName(), e);
-				}
-				if (!StringUtils.isBlank(parserOutput.getRedirect())) {
-					// set up a redirect
-					topic.setRedirectTo(parserOutput.getRedirect());
-					topic.setTopicType(Topic.TYPE_REDIRECT);
-				}
+				parserOutput = ParserUtil.parserOutput(topicVersion.getVersionContent(), virtualWiki, topic.getName());
+			} catch (ParserException e) {
+				throw new MigrationException("Failure while parsing topic version of topic: " + topic.getName(), e);
+			}
+			if (!StringUtils.isBlank(parserOutput.getRedirect())) {
+				// set up a redirect
+				topic.setRedirectTo(parserOutput.getRedirect());
+				topic.setTopicType(Topic.TYPE_REDIRECT);
+			}
+			try {
 				WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks());
 			} catch (DataAccessException e) {
 				throw new MigrationException("Data access exception while processing topic " + topic.getName(), e);

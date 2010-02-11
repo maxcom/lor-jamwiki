@@ -433,6 +433,7 @@ FIXME - Email not supported right now, comment this out
 <a name="cache"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.cache" /></legend>
+<blockquote><fmt:message key="admin.cache.help.xmlconfig" /></blockquote>
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="cache" />">
 	<span class="formcaption"><label for="<%= Environment.PROP_CACHE_TOTAL_SIZE %>"><fmt:message key="admin.cache.caption.totalsize" /></label></span>
 	<c:set var="PROP_CACHE_TOTAL_SIZE"><%= Environment.PROP_CACHE_TOTAL_SIZE %></c:set>

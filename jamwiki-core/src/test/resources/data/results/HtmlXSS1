@@ -1,2 +1,3 @@
-<p><u class="x">text</u>
-</p>
+<p><u class="x">text</u></p>
+<div>x</div>
+<div>&lt;SCRIPT&gt;alert("XSS")&lt;/SCRIPT&gt;"&gt;test</div>

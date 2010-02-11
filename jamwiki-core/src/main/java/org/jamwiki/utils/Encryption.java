@@ -131,7 +131,7 @@ public class Encryption {
 	 * @return A String value created from the byte array that was passed to this method.
 	 */
 	private static String bytes2String(byte[] bytes) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < bytes.length; i++) {
 			buffer.append((char)bytes[i]);
 		}

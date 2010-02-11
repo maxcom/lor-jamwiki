@@ -34,8 +34,7 @@ import org.jamwiki.utils.WikiLogger;
         if (inTargetSection && this.sectionDepth >= level) {
             inTargetSection = false;
         } else if (this.targetSection == this.section) {
-            WikiHeadingTag parserTag = new WikiHeadingTag();
-            parserTag.parse(this.parserInput, this.parserOutput, this.mode, headingText);
+            this.parse(TAG_TYPE_WIKI_HEADING, headingText, level);
             inTargetSection = true;
             this.sectionDepth = level;
             if (this.mode == JFlexParser.MODE_SPLICE) return this.replacementText;
@@ -80,6 +79,7 @@ h2                 = "==" [^=\n]+ ~"=="
 h3                 = "===" [^=\n]+ ~"==="
 h4                 = "====" [^=\n]+ ~"===="
 h5                 = "=====" [^=\n]+ ~"====="
+h6                 = "======" [^=\n]+ ~"======"
 
 /* nowiki */
 nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
@@ -100,7 +100,7 @@ htmlcomment        = "<!--" ~"-->"
 /* ----- parsing tags ----- */
 
 <YYINITIAL, PRE>{nowiki} {
-    logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
+    if (logger.isFinerEnabled()) logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
     return returnText(yytext());
 }
 
@@ -145,6 +145,10 @@ htmlcomment        = "<!--" ~"-->"
 
 <YYINITIAL>^{h5} {
     return processHeading(5, yytext());
+}
+
+<YYINITIAL>^{h6} {
+    return processHeading(6, yytext());
 }
 
 /* ----- default ----- */

@@ -213,7 +213,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object transactionObject) throws DataAccessException {
+	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Connection conn) throws DataAccessException {
 		String content = null;
 		if (topics.get(topicName) != null) {
 			// first check the memory store created by writeTopic
@@ -237,6 +237,13 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public Topic lookupTopicById(String virtualWiki, int topicId) throws DataAccessException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
 	public int lookupTopicCount(String virtualWiki) throws DataAccessException {
 		throw new UnsupportedOperationException();
 	}
@@ -244,7 +251,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List<String> lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws DataAccessException {
+	public List<String> lookupTopicByType(String virtualWiki, int topicType1, int topicType2, Pagination pagination) throws DataAccessException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -259,8 +266,8 @@ public class TestDataHandler implements DataHandler {
 	 *
 	 */
 	public VirtualWiki lookupVirtualWiki(String virtualWikiName) throws DataAccessException {
-		if (!StringUtils.equals(virtualWikiName, "en")) {
-			// test handler, so hard-code "en" as the only valid virtual wiki
+		if (!StringUtils.equals(virtualWikiName, "en") && !StringUtils.equals(virtualWikiName, "test")) {
+			// test handler, so hard-code "en" and "test" as the only valid virtual wikis
 			return null;
 		}
 		VirtualWiki virtualWiki = new VirtualWiki();
@@ -347,6 +354,14 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public void orderTopicVersions(Topic topic, List<Integer> topicVersionIdList) throws DataAccessException {
+		topic.setCurrentVersionId(topicVersionIdList.get(topicVersionIdList.size() - 1));
+		this.topics.put(topic.getName(), topic);
+	}
+
+	/**
+	 *
+	 */
 	public void reloadLogItems() throws DataAccessException {
 		throw new UnsupportedOperationException();
 	}
@@ -418,6 +433,14 @@ public class TestDataHandler implements DataHandler {
 	 *
 	 */
 	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links) throws DataAccessException, WikiException {
+		// store topics in a local map.  not very sophisticated, but enough to support testing.
+		this.topics.put(topic.getName(), topic);
+	}
+
+	/**
+	 *
+	 */
+	public void writeTopicVersion(Topic topic, TopicVersion topicVersion) throws DataAccessException, WikiException {
 		// store topics in a local map.  not very sophisticated, but enough to support testing.
 		this.topics.put(topic.getName(), topic);
 	}

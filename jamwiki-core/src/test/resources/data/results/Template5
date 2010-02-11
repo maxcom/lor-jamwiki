@@ -8,3 +8,6 @@
 <p>content = test</p>
 <p>content = test</p>
 <p>content = test</p>
+<p>content = <b>THIS IS A TEST</b></p>
+<p>embedded template: <b>THIS IS A TEST</b></p>
+<p>content = embedded template: <b>THIS IS A TEST</b></p>

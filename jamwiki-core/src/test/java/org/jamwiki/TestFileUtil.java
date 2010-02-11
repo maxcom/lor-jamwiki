@@ -29,6 +29,7 @@ import org.jamwiki.utils.Utilities;
 public class TestFileUtil {
 
 	public static final String TEST_RESULTS_DIR = "data/results/";
+	public static final String TEST_JS_RESULTS_DIR = "data/javascript/";
 	public static final String TEST_TOPICS_DIR = "data/topics/";
 
 	/**
@@ -94,7 +95,7 @@ public class TestFileUtil {
 				return null;
 			}
 			reader = new FileReader(file);
-			StringBuffer output = new StringBuffer();
+			StringBuilder output = new StringBuilder();
 			char[] buf = new char[4096];
 			int c;
 			while ((c = reader.read(buf, 0, buf.length)) != -1) {

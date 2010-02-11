@@ -18,7 +18,6 @@ package org.jamwiki.parser.jflex;
 
 import org.jamwiki.DataAccessException;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
@@ -28,7 +27,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 /**
  * This class parses wiki headings of the form <code>==heading content==</code>.
  */
-public class WikiHeadingTag {
+public class WikiHeadingTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiHeadingTag.class.getName());
 
@@ -55,7 +54,7 @@ public class WikiHeadingTag {
 		} catch (DataAccessException e) {
 			logger.severe("Failure while building link for topic " + parserInput.getVirtualWiki() + " / " + parserInput.getTopicName(), e);
 		}
-		StringBuffer output = new StringBuffer("<span class=\"editsection\">[<a href=\"").append(url).append("\">");
+		StringBuilder output = new StringBuilder("<span class=\"editsection\">[<a href=\"").append(url).append("\">");
 		output.append(Utilities.formatMessage("common.sectionedit", parserInput.getLocale()));
 		output.append("</a>]</span>");
 		return output.toString();
@@ -65,39 +64,38 @@ public class WikiHeadingTag {
 	 * Parse a Mediawiki heading of the form "==heading==" and return the
 	 * resulting HTML output.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
+	public String parse(JFlexLexer lexer, String raw, Object... args) {
+		if (logger.isFinerEnabled()) {
+			logger.finer("wikiheading: " + raw + " (" + lexer.yystate() + ")");
+		}
+		if (args.length == 0) {
+			throw new IllegalArgumentException("Must pass heading depth to WikiHeadingTag.parse");
+		}
+		if (lexer.peekTag().getTagType().equals("p")) {
+			lexer.popTag("p");
+		}
+		if (lexer instanceof JAMWikiProcessor && lexer.yystate() == JAMWikiProcessor.PARAGRAPH) {
+			lexer.endState();
+		}
 		try {
-			int level = 0;
-			if (raw.startsWith("=====") && raw.endsWith("=====")) {
-				level = 5;
-			} else if (raw.startsWith("====") && raw.endsWith("====")) {
-				level = 4;
-			} else if (raw.startsWith("===") && raw.endsWith("===")) {
-				level = 3;
-			} else if (raw.startsWith("==") && raw.endsWith("==")) {
-				level = 2;
-			} else if (raw.charAt(0) == '=' && raw.endsWith("=")) {
-				level = 1;
-			} else {
-				return raw;
-			}
+			int level = (Integer)args[0];
 			String tagText = raw.substring(level, raw.length() - level).trim();
-			ParserInput tmpParserInput = new ParserInput(parserInput);
+			ParserInput tmpParserInput = new ParserInput(lexer.getParserInput());
 			String tocText = JFlexParserUtil.parseFragment(tmpParserInput, tagText, JFlexParser.MODE_PROCESS);
 			tocText = Utilities.stripMarkup(tocText);
-			String tagName = parserInput.getTableOfContents().checkForUniqueName(tocText);
+			String tagName = lexer.getParserInput().getTableOfContents().checkForUniqueName(tocText);
 			// re-convert any &uuml; or other (converted by the parser) entities back
 			tagName = StringEscapeUtils.unescapeHtml(tagName);
-			if (mode <= JFlexParser.MODE_SLICE) {
-				parserOutput.setSectionName(tagName);
+			if (lexer.getMode() <= JFlexParser.MODE_SLICE) {
+				lexer.getParserOutput().setSectionName(tagName);
 				return raw;
 			}
-			StringBuffer output = new StringBuffer(this.updateToc(parserInput, tagName, tocText, level));
-			int nextSection = parserInput.getTableOfContents().size();
+			StringBuilder output = new StringBuilder(this.updateToc(lexer.getParserInput(), tagName, tocText, level));
+			int nextSection = lexer.getParserInput().getTableOfContents().size();
 			output.append("<a name=\"").append(Utilities.encodeAndEscapeTopicName(tagName)).append("\"></a>");
 			output.append("<h").append(level).append('>');
-			output.append(this.buildSectionEditLink(parserInput, nextSection));
-			output.append("<span>").append(JFlexParserUtil.parseFragment(parserInput, tagText, mode)).append("</span>");
+			output.append(this.buildSectionEditLink(lexer.getParserInput(), nextSection));
+			output.append("<span>").append(JFlexParserUtil.parseFragment(lexer.getParserInput(), tagText, lexer.getMode())).append("</span>");
 			output.append("</h").append(level).append('>');
 			return output.toString();
 		} catch (Throwable t) {

@@ -16,6 +16,8 @@
  */
 package org.jamwiki.db;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Properties;
 import org.jamwiki.Environment;
@@ -44,125 +46,121 @@ public class DB2QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getCategories(int virtualWikiId, Pagination pagination) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_CATEGORIES);
+	protected PreparedStatement getCategoriesStatement(Connection conn, int virtualWikiId, String virtualWikiName, Pagination pagination) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_CATEGORIES);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, pagination.getStart());
 		stmt.setInt(3, pagination.getEnd());
-		return stmt.executeQuery();
+		return stmt;
 	}
 
 	/**
 	 *
 	 */
-	public WikiResultSet getLogItems(int virtualWikiId, int logType, Pagination pagination, boolean descending) throws SQLException {
-		WikiPreparedStatement stmt = null;
+	protected PreparedStatement getLogItemsStatement(Connection conn, int virtualWikiId, String virtualWikiName, int logType, Pagination pagination, boolean descending) throws SQLException {
 		int index = 1;
+		PreparedStatement stmt = null;
 		if (logType == -1) {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_LOG_ITEMS);
+			stmt = conn.prepareStatement(STATEMENT_SELECT_LOG_ITEMS);
 		} else {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_LOG_ITEMS_BY_TYPE);
+			stmt = conn.prepareStatement(STATEMENT_SELECT_LOG_ITEMS_BY_TYPE);
 			stmt.setInt(index++, logType);
 		}
 		stmt.setInt(index++, virtualWikiId);
 		stmt.setInt(index++, pagination.getStart());
 		stmt.setInt(index++, pagination.getEnd());
-		// FIXME - sort order ignored
-		return stmt.executeQuery();
+		return stmt;
 	}
 
 	/**
 	 *
 	 */
-	public WikiResultSet getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES);
+	protected PreparedStatement getRecentChangesStatement(Connection conn, String virtualWiki, Pagination pagination, boolean descending) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_RECENT_CHANGES);
 		stmt.setString(1, virtualWiki);
 		stmt.setInt(2, pagination.getStart());
 		stmt.setInt(3, pagination.getEnd());
-		// FIXME - sort order ignored
-		return stmt.executeQuery();
+		return stmt;
 	}
 
 	/**
 	 *
 	 */
-	public WikiResultSet getTopicHistory(int topicId, Pagination pagination, boolean descending) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_HISTORY);
+	protected PreparedStatement getTopicHistoryStatement(Connection conn, int topicId, Pagination pagination, boolean descending) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_HISTORY);
 		stmt.setInt(1, topicId);
 		stmt.setInt(2, pagination.getStart());
 		stmt.setInt(3, pagination.getEnd());
-		// FIXME - sort order ignored
-		return stmt.executeQuery();
+		return stmt;
 	}
 
 	/**
 	 *
 	 */
-	public WikiResultSet getTopicsAdmin(int virtualWikiId, Pagination pagination) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPICS_ADMIN);
+	protected PreparedStatement getTopicsAdminStatement(Connection conn, int virtualWikiId, Pagination pagination) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_TOPICS_ADMIN);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, pagination.getStart());
 		stmt.setInt(3, pagination.getEnd());
-		return stmt.executeQuery();
+		return stmt;
 	}
 
 	/**
 	 *
 	 */
-	public WikiResultSet getUserContributionsByLogin(String virtualWiki, String login, Pagination pagination, boolean descending) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN);
+	protected PreparedStatement getUserContributionsByLoginStatement(Connection conn, String virtualWiki, String login, Pagination pagination, boolean descending) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN);
 		stmt.setString(1, virtualWiki);
 		stmt.setString(2, login);
 		stmt.setInt(3, pagination.getStart());
 		stmt.setInt(4, pagination.getEnd());
-		// FIXME - sort order ignored
-		return stmt.executeQuery();
+		return stmt;
 	}
 
 	/**
 	 *
 	 */
-	public WikiResultSet getUserContributionsByUserDisplay(String virtualWiki, String userDisplay, Pagination pagination, boolean descending) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
+	protected PreparedStatement getUserContributionsByUserDisplayStatement(Connection conn, String virtualWiki, String userDisplay, Pagination pagination, boolean descending) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
 		stmt.setString(1, virtualWiki);
 		stmt.setString(2, userDisplay);
 		stmt.setInt(3, pagination.getStart());
 		stmt.setInt(4, pagination.getEnd());
-		// FIXME - sort order ignored
-		return stmt.executeQuery();
+		return stmt;
 	}
 
 	/**
 	 *
 	 */
-	public WikiResultSet getWatchlist(int virtualWikiId, int userId, Pagination pagination) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WATCHLIST_CHANGES);
+	protected PreparedStatement getWatchlistStatement(Connection conn, int virtualWikiId, int userId, Pagination pagination) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_WATCHLIST_CHANGES);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, userId);
 		stmt.setInt(3, pagination.getStart());
 		stmt.setInt(4, pagination.getEnd());
-		return stmt.executeQuery();
+		return stmt;
 	}
 
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
+	protected PreparedStatement lookupTopicByTypeStatement(Connection conn, int virtualWikiId, int topicType1, int topicType2, Pagination pagination) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
 		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, topicType);
-		stmt.setInt(3, pagination.getStart());
-		stmt.setInt(4, pagination.getEnd());
-		return stmt.executeQuery();
+		stmt.setInt(2, topicType1);
+		stmt.setInt(3, topicType2);
+		stmt.setInt(4, pagination.getStart());
+		stmt.setInt(5, pagination.getEnd());
+		return stmt;
 	}
 
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUsers(Pagination pagination) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USERS);
+	protected PreparedStatement lookupWikiUsersStatement(Connection conn, Pagination pagination) throws SQLException {
+		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USERS);
 		stmt.setInt(1, pagination.getStart());
 		stmt.setInt(2, pagination.getEnd());
-		return stmt.executeQuery();
+		return stmt;
 	}
 }

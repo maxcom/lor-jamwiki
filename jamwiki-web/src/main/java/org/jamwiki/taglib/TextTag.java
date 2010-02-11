@@ -39,7 +39,7 @@ public class TextTag extends TagSupport {
 	 *
 	 */
 	public int doEndTag() throws JspException {
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		output.append("<input type=\"text\"");
 		output.append(" name=\"").append(this.name).append('\"');
 		if (!StringUtils.isBlank(this.id)) {

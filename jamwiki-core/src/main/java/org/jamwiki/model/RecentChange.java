@@ -169,7 +169,7 @@ public class RecentChange {
 	 *
 	 */
 	public String getChangeTypeNotification() {
-		StringBuffer changeTypeNotification = new StringBuffer();
+		StringBuilder changeTypeNotification = new StringBuilder();
 		if (this.previousTopicVersionId == null) {
 			changeTypeNotification.append('n');
 		}
