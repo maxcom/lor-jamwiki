@@ -411,6 +411,20 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public void writeNamespace(Integer namespaceId, String namespace) throws DataAccessException, WikiException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
+	public void writeNamespaceTranslation(int namespaceId, String virtualWiki, String namespaceTranslation) throws DataAccessException, WikiException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
 	public void writeRole(Role role, boolean update) throws DataAccessException, WikiException {
 		throw new UnsupportedOperationException();
 	}

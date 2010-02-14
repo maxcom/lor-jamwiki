@@ -45,6 +45,7 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.Namespace;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -500,6 +501,7 @@ public class WikiDatabase {
 			// set up tables
 			WikiDatabase.queryHandler().createTables(conn);
 			WikiDatabase.setupDefaultVirtualWiki();
+			WikiDatabase.setupDefaultNamespaces();
 			WikiDatabase.setupRoles();
 			WikiDatabase.setupGroups();
 			WikiDatabase.setupAdminUser(user, username, encryptedPassword);
@@ -568,6 +570,16 @@ public class WikiDatabase {
 		}
 		String url = "jdbc:hsqldb:file:" + new File(file.getPath(), "jamwiki").getPath() + ";shutdown=true";
 		props.setProperty(Environment.PROP_DB_URL, url);
+	}
+
+	/**
+	 *
+	 */
+	// FIXME - make this private once the ability to upgrade to 0.9.0 is removed
+	protected static void setupDefaultNamespaces() throws DataAccessException, WikiException {
+		for (Namespace namespace : Namespace.values()) {
+			WikiBase.getDataHandler().writeNamespace(namespace.id(), namespace.label());
+		}
 	}
 
 	/**

@@ -205,4 +205,34 @@ public class DatabaseUpgrades {
 		}
 		return messages;
 	}
+
+	/**
+	 *
+	 */
+	public static List<WikiMessage> upgrade090(List<WikiMessage> messages) throws WikiException {
+		String dbType = Environment.getValue(Environment.PROP_DB_TYPE);
+		TransactionStatus status = null;
+		try {
+			status = DatabaseConnection.startTransaction(getTransactionDefinition());
+			Connection conn = DatabaseConnection.getConnection();
+			// add the namespace tables
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_NAMESPACE_TABLE", conn);
+			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_namespace"));
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_NAMESPACE_TRANSLATION_TABLE", conn);
+			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_namespace_translation"));
+			// populate the namespace table
+			WikiDatabase.setupDefaultNamespaces();
+			messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_namespace"));
+		} catch (SQLException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			logger.severe("Database failure during upgrade", e);
+			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
+		} catch (DataAccessException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			logger.severe("Database failure during upgrade", e);
+			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
+		}
+		DatabaseConnection.commit(status);
+		return messages;
+	}
 }

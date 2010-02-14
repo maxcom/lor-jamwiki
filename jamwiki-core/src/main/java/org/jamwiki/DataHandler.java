@@ -665,6 +665,34 @@ public interface DataHandler {
 	void writeFile(WikiFile wikiFile, WikiFileVersion wikiFileVersion) throws DataAccessException, WikiException;
 
 	/**
+	 * Add or update a namespace.  This method will add a new record if the
+	 * namespace does not already exist, otherwise it will update the existing
+	 * record.
+	 *
+	 * @param namespaceId The ID of the namespace.  May be <code>null</code> ONLY
+	 *  if a namespace is being added, otherwise MUST be specified.
+	 * @param namespace The default label to use for the namespace.  Namespace labels must be
+	 *  unique.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the namespace information is invalid.
+	 */
+	void writeNamespace(Integer namespaceId, String namespace) throws DataAccessException, WikiException;
+
+	/**
+	 * Add or update a virtual-wiki specific label for a namespace.  This method will
+	 * add a new record if the namespace does not already exist, otherwise it will
+	 * update the existing record.
+	 *
+	 * @param namespaceId The ID of the namespace.
+	 * @param virtualWiki The virtual wiki for which a translated namespace is being created.
+	 * @param namespaceTranslation The virtual wiki-specific label to use for the namespace.
+	 *  Namespace labels must be unique within a virtual wiki.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the namespace information is invalid.
+	 */
+	void writeNamespaceTranslation(int namespaceId, String virtualWiki, String namespaceTranslation) throws DataAccessException, WikiException;
+
+	/**
 	 * Add or update a Role object.  This method will add a new record if
 	 * the role does not yet exist, otherwise the role will be updated.
 	 *

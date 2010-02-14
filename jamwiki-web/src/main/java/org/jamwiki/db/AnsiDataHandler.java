@@ -66,6 +66,8 @@ import org.springframework.transaction.TransactionStatus;
  */
 public class AnsiDataHandler implements DataHandler {
 
+	private static final String CACHE_NAMESPACE_BY_ID = "org.jamwiki.db.AnsiDataHandler.CACHE_NAMESPACE_BY_ID";
+	private static final String CACHE_NAMESPACE_BY_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_NAMESPACE_BY_NAME";
 	private static final String CACHE_TOPICS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS";
 	private static final String CACHE_TOPIC_VERSIONS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPIC_VERSIONS";
 	private static final String CACHE_USER_BY_USER_ID = "org.jamwiki.db.AnsiDataHandler.CACHE_USER_BY_USER_ID";
@@ -1231,6 +1233,13 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	protected void validateNamespace(String namespace) throws WikiException {
+		checkLength(namespace, 200);
+	}
+
+	/**
+	 *
+	 */
 	protected void validateRecentChange(RecentChange change) throws WikiException {
 		checkLength(change.getTopicName(), 200);
 		checkLength(change.getAuthorName(), 200);
@@ -1359,6 +1368,43 @@ public class AnsiDataHandler implements DataHandler {
 			throw e;
 		}
 		DatabaseConnection.commit(status);
+	}
+
+	/**
+	 *
+	 */
+	public void writeNamespace(Integer namespaceId, String namespace) throws DataAccessException, WikiException {
+		this.validateNamespace(namespace);
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			this.queryHandler().updateNamespace(namespaceId, namespace, conn);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+		WikiCache.removeAllFromCache(CACHE_NAMESPACE_BY_ID);
+		WikiCache.removeAllFromCache(CACHE_NAMESPACE_BY_NAME);
+	}
+
+	/**
+	 *
+	 */
+	public void writeNamespaceTranslation(int namespaceId, String virtualWiki, String namespaceTranslation) throws DataAccessException, WikiException {
+		this.validateNamespace(namespaceTranslation);
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			this.queryHandler().updateNamespaceTranslation(namespaceId, virtualWikiId, namespaceTranslation, conn);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+		WikiCache.removeAllFromCache(CACHE_NAMESPACE_BY_ID);
+		WikiCache.removeAllFromCache(CACHE_NAMESPACE_BY_NAME);
 	}
 
 	/**

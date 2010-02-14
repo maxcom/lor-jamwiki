@@ -63,6 +63,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_CREATE_GROUP_MEMBERS_TABLE = null;
 	protected static String STATEMENT_CREATE_GROUP_TABLE = null;
 	protected static String STATEMENT_CREATE_LOG_TABLE = null;
+	protected static String STATEMENT_CREATE_NAMESPACE_TABLE = null;
+	protected static String STATEMENT_CREATE_NAMESPACE_TRANSLATION_TABLE = null;
 	protected static String STATEMENT_CREATE_RECENT_CHANGE_TABLE = null;
 	protected static String STATEMENT_CREATE_ROLE_TABLE = null;
 	protected static String STATEMENT_CREATE_TOPIC_CURRENT_VERSION_CONSTRAINT = null;
@@ -78,6 +80,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DELETE_AUTHORITIES = null;
 	protected static String STATEMENT_DELETE_GROUP_AUTHORITIES = null;
 	protected static String STATEMENT_DELETE_LOG_ITEMS = null;
+	protected static String STATEMENT_DELETE_NAMESPACE_TRANSLATION = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES_TOPIC = null;
 	protected static String STATEMENT_DELETE_TOPIC_CATEGORIES = null;
@@ -88,6 +91,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DROP_GROUP_MEMBERS_TABLE = null;
 	protected static String STATEMENT_DROP_GROUP_TABLE = null;
 	protected static String STATEMENT_DROP_LOG_TABLE = null;
+	protected static String STATEMENT_DROP_NAMESPACE_TABLE = null;
+	protected static String STATEMENT_DROP_NAMESPACE_TRANSLATION_TABLE = null;
 	protected static String STATEMENT_DROP_RECENT_CHANGE_TABLE = null;
 	protected static String STATEMENT_DROP_ROLE_TABLE = null;
 	protected static String STATEMENT_DROP_TOPIC_CURRENT_VERSION_CONSTRAINT = null;
@@ -113,6 +118,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_INSERT_LOG_ITEMS_MOVE = null;
 	protected static String STATEMENT_INSERT_LOG_ITEMS_UPLOAD = null;
 	protected static String STATEMENT_INSERT_LOG_ITEMS_USER = null;
+	protected static String STATEMENT_INSERT_NAMESPACE = null;
+	protected static String STATEMENT_INSERT_NAMESPACE_TRANSLATION = null;
 	protected static String STATEMENT_INSERT_RECENT_CHANGE = null;
 	protected static String STATEMENT_INSERT_RECENT_CHANGES_LOGS = null;
 	protected static String STATEMENT_INSERT_RECENT_CHANGES_VERSIONS = null;
@@ -143,6 +150,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_GROUP_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_LOG_ITEMS = null;
 	protected static String STATEMENT_SELECT_LOG_ITEMS_BY_TYPE = null;
+	protected static String STATEMENT_SELECT_NAMESPACE_SEQUENCE = null;
+	protected static String STATEMENT_SELECT_NAMESPACES = null;
 	protected static String STATEMENT_SELECT_RECENT_CHANGES = null;
 	protected static String STATEMENT_SELECT_ROLES = null;
 	protected static String STATEMENT_SELECT_TOPIC_BY_ID = null;
@@ -176,6 +185,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_WIKI_USERS = null;
 	protected static String STATEMENT_UPDATE_GROUP = null;
 	protected static String STATEMENT_UPDATE_ROLE = null;
+	protected static String STATEMENT_UPDATE_NAMESPACE = null;
 	protected static String STATEMENT_UPDATE_TOPIC = null;
 	protected static String STATEMENT_UPDATE_TOPIC_VERSION_PREVIOUS_VERSION_ID = null;
 	protected static String STATEMENT_UPDATE_USER = null;
@@ -229,6 +239,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_USERS_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_LOGIN_INDEX, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_NAMESPACE_TABLE, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_NAMESPACE_TRANSLATION_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_CURRENT_VERSION_CONSTRAINT, conn);
@@ -366,6 +378,12 @@ public class AnsiQueryHandler implements QueryHandler {
 		} catch (SQLException e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_TABLE, conn);
+		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_NAMESPACE_TRANSLATION_TABLE, conn);
+		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_NAMESPACE_TABLE, conn);
 		} catch (SQLException e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_USER_LOGIN_INDEX, conn);
@@ -972,6 +990,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		this.props = properties;
 		STATEMENT_CONNECTION_VALIDATION_QUERY    = props.getProperty("STATEMENT_CONNECTION_VALIDATION_QUERY");
 		STATEMENT_CREATE_GROUP_TABLE             = props.getProperty("STATEMENT_CREATE_GROUP_TABLE");
+		STATEMENT_CREATE_NAMESPACE_TABLE         = props.getProperty("STATEMENT_CREATE_NAMESPACE_TABLE");
+		STATEMENT_CREATE_NAMESPACE_TRANSLATION_TABLE = props.getProperty("STATEMENT_CREATE_NAMESPACE_TRANSLATION_TABLE");
 		STATEMENT_CREATE_ROLE_TABLE              = props.getProperty("STATEMENT_CREATE_ROLE_TABLE");
 		STATEMENT_CREATE_VIRTUAL_WIKI_TABLE      = props.getProperty("STATEMENT_CREATE_VIRTUAL_WIKI_TABLE");
 		STATEMENT_CREATE_WIKI_USER_TABLE         = props.getProperty("STATEMENT_CREATE_WIKI_USER_TABLE");
@@ -992,6 +1012,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_DELETE_AUTHORITIES             = props.getProperty("STATEMENT_DELETE_AUTHORITIES");
 		STATEMENT_DELETE_GROUP_AUTHORITIES       = props.getProperty("STATEMENT_DELETE_GROUP_AUTHORITIES");
 		STATEMENT_DELETE_LOG_ITEMS               = props.getProperty("STATEMENT_DELETE_LOG_ITEMS");
+		STATEMENT_DELETE_NAMESPACE_TRANSLATION   = props.getProperty("STATEMENT_DELETE_NAMESPACE_TRANSLATION");
 		STATEMENT_DELETE_RECENT_CHANGES          = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES");
 		STATEMENT_DELETE_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES_TOPIC");
 		STATEMENT_DELETE_TOPIC_CATEGORIES        = props.getProperty("STATEMENT_DELETE_TOPIC_CATEGORIES");
@@ -1002,6 +1023,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_DROP_GROUP_MEMBERS_TABLE       = props.getProperty("STATEMENT_DROP_GROUP_MEMBERS_TABLE");
 		STATEMENT_DROP_GROUP_TABLE               = props.getProperty("STATEMENT_DROP_GROUP_TABLE");
 		STATEMENT_DROP_LOG_TABLE                 = props.getProperty("STATEMENT_DROP_LOG_TABLE");
+		STATEMENT_DROP_NAMESPACE_TABLE           = props.getProperty("STATEMENT_DROP_NAMESPACE_TABLE");
+		STATEMENT_DROP_NAMESPACE_TRANSLATION_TABLE = props.getProperty("STATEMENT_DROP_NAMESPACE_TRANSLATION_TABLE");
 		STATEMENT_DROP_RECENT_CHANGE_TABLE       = props.getProperty("STATEMENT_DROP_RECENT_CHANGE_TABLE");
 		STATEMENT_DROP_ROLE_TABLE                = props.getProperty("STATEMENT_DROP_ROLE_TABLE");
 		STATEMENT_DROP_TOPIC_CURRENT_VERSION_CONSTRAINT = props.getProperty("STATEMENT_DROP_TOPIC_CURRENT_VERSION_CONSTRAINT");
@@ -1027,6 +1050,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_INSERT_LOG_ITEMS_MOVE          = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_MOVE");
 		STATEMENT_INSERT_LOG_ITEMS_UPLOAD        = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_UPLOAD");
 		STATEMENT_INSERT_LOG_ITEMS_USER          = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_USER");
+		STATEMENT_INSERT_NAMESPACE               = props.getProperty("STATEMENT_INSERT_NAMESPACE");
+		STATEMENT_INSERT_NAMESPACE_TRANSLATION   = props.getProperty("STATEMENT_INSERT_NAMESPACE_TRANSLATION");
 		STATEMENT_INSERT_RECENT_CHANGE           = props.getProperty("STATEMENT_INSERT_RECENT_CHANGE");
 		STATEMENT_INSERT_RECENT_CHANGES_LOGS     = props.getProperty("STATEMENT_INSERT_RECENT_CHANGES_LOGS");
 		STATEMENT_INSERT_RECENT_CHANGES_VERSIONS = props.getProperty("STATEMENT_INSERT_RECENT_CHANGES_VERSIONS");
@@ -1057,6 +1082,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_GROUP_SEQUENCE          = props.getProperty("STATEMENT_SELECT_GROUP_SEQUENCE");
 		STATEMENT_SELECT_LOG_ITEMS               = props.getProperty("STATEMENT_SELECT_LOG_ITEMS");
 		STATEMENT_SELECT_LOG_ITEMS_BY_TYPE       = props.getProperty("STATEMENT_SELECT_LOG_ITEMS_BY_TYPE");
+		STATEMENT_SELECT_NAMESPACE_SEQUENCE      = props.getProperty("STATEMENT_SELECT_NAMESPACE_SEQUENCE");
+		STATEMENT_SELECT_NAMESPACES              = props.getProperty("STATEMENT_SELECT_NAMESPACES");
 		STATEMENT_SELECT_RECENT_CHANGES          = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES");
 		STATEMENT_SELECT_ROLES                   = props.getProperty("STATEMENT_SELECT_ROLES");
 		STATEMENT_SELECT_TOPIC_BY_ID             = props.getProperty("STATEMENT_SELECT_TOPIC_BY_ID");
@@ -1089,6 +1116,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_WIKI_USER_SEQUENCE      = props.getProperty("STATEMENT_SELECT_WIKI_USER_SEQUENCE");
 		STATEMENT_SELECT_WIKI_USERS              = props.getProperty("STATEMENT_SELECT_WIKI_USERS");
 		STATEMENT_UPDATE_GROUP                   = props.getProperty("STATEMENT_UPDATE_GROUP");
+		STATEMENT_UPDATE_NAMESPACE               = props.getProperty("STATEMENT_UPDATE_NAMESPACE");
 		STATEMENT_UPDATE_ROLE                    = props.getProperty("STATEMENT_UPDATE_ROLE");
 		STATEMENT_UPDATE_TOPIC                   = props.getProperty("STATEMENT_UPDATE_TOPIC");
 		STATEMENT_UPDATE_TOPIC_VERSION_PREVIOUS_VERSION_ID = props.getProperty("STATEMENT_UPDATE_TOPIC_VERSION_PREVIOUS_VERSION_ID");
@@ -2325,6 +2353,63 @@ public class AnsiQueryHandler implements QueryHandler {
 		DatabaseConnection.executeUpdate(STATEMENT_DELETE_RECENT_CHANGES, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES_VERSIONS, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES_LOGS, conn);
+	}
+
+	/**
+	 *
+	 */
+	public void updateNamespace(Integer namespaceId, String namespace, Connection conn) throws SQLException {
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			// see if a namespace with the given value exists
+			boolean isUpdate = false;
+			if (namespaceId != null) {
+				stmt = conn.prepareStatement(STATEMENT_SELECT_NAMESPACES);
+				rs = stmt.executeQuery();
+				while (rs.next()) {
+					if (rs.getInt("namespace_id") == namespaceId.intValue()) {
+						isUpdate = true;
+						break;
+					}
+				}
+			}
+			if (isUpdate) {
+				stmt = conn.prepareStatement(STATEMENT_UPDATE_NAMESPACE);
+			} else {
+				namespaceId = DatabaseConnection.executeSequenceQuery(STATEMENT_SELECT_NAMESPACE_SEQUENCE, "namespace_id", conn);
+				// note - this returns the last id in the system, so add one
+				namespaceId++;
+				stmt = conn.prepareStatement(STATEMENT_INSERT_NAMESPACE);
+			}
+			stmt.setString(1, namespace);
+			stmt.setInt(2, namespaceId);
+			stmt.executeUpdate();
+		} finally {
+			// close only the statement and result set - leave the connection open for further use
+			DatabaseConnection.closeConnection(null, stmt, rs);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void updateNamespaceTranslation(int namespaceId, int virtualWikiId, String namespaceTranslation, Connection conn) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			// delete any existing translation then add the new one
+			stmt = conn.prepareStatement(STATEMENT_DELETE_NAMESPACE_TRANSLATION);
+			stmt.setInt(1, namespaceId);
+			stmt.setInt(2, virtualWikiId);
+			stmt.executeUpdate();
+			stmt = conn.prepareStatement(STATEMENT_INSERT_NAMESPACE_TRANSLATION);
+			stmt.setInt(1, namespaceId);
+			stmt.setInt(2, virtualWikiId);
+			stmt.setString(3, namespaceTranslation);
+			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
 	}
 
 	/**

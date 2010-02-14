@@ -820,6 +820,35 @@ public interface QueryHandler {
 	void reloadRecentChanges(Connection conn) throws SQLException;
 
 	/**
+	 * Add or update a namespace.  This method will add a new record if the
+	 * namespace does not already exist, otherwise it will update the existing
+	 * record.
+	 *
+	 * @param namespaceId The ID of the namespace.  May be <code>null</code> ONLY
+	 *  if a namespace is being added, otherwise MUST be specified.
+	 * @param namespace The default label to use for the namespace.  Namespace labels must be
+	 *  unique.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	void updateNamespace(Integer namespaceId, String namespace, Connection conn) throws SQLException;
+
+	/**
+	 * Add or update a virtual-wiki specific label for a namespace.  This method will
+	 * delete any existing record and then add the new record.
+	 *
+	 * @param namespaceId The ID of the namespace.
+	 * @param virtualWikiId The virtual wiki id for the record that is being added/updated.
+	 * @param namespaceTranslation The virtual wiki-specific label to use for the namespace.
+	 *  Namespace labels must be unique within a virtual wiki.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	void updateNamespaceTranslation(int namespaceId, int virtualWikiId, String namespaceTranslation, Connection conn) throws SQLException;
+
+	/**
 	 * Update a role record in the database.
 	 *
 	 * @param role The Role record that is to be updated in the database.
