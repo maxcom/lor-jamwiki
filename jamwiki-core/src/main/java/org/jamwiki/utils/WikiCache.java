@@ -159,6 +159,17 @@ public class WikiCache {
 	}
 
 	/**
+	 * Remove all values from the cache with the given name.
+	 *
+	 * @param cacheName The name of the cache from which objects are being
+	 *  removed.
+	 */
+	public static void removeAllFromCache(String cacheName) {
+		Cache cache = WikiCache.getCache(cacheName);
+		cache.removeAll();
+	}
+
+	/**
 	 * Remove a cache with the given name from the system, freeing any
 	 * resources used by that cache.
 	 *
