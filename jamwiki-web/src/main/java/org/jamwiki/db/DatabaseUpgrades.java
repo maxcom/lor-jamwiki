@@ -223,6 +223,13 @@ public class DatabaseUpgrades {
 			// populate the namespace table
 			WikiDatabase.setupDefaultNamespaces();
 			messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_namespace"));
+			// update jam_topic to add a namespace column, defaulted to the main namespace
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_NAMESPACE_ID", conn);
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_NAMESPACE_ID_CONSTRAINT", conn);
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_DROP_TOPIC_UNIQUE_CONSTRAINT", conn);
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_UNIQUE_CONSTRAINT", conn);
+			messages.add(new WikiMessage("upgrade.message.db.column.added", "namespace_id", "jam_topic"));
+			// get all topic names, split the name into namespace_id and name, and update jam_topic if needed
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			logger.severe("Database failure during upgrade", e);

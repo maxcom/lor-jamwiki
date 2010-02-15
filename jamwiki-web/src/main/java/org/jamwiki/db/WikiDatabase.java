@@ -541,6 +541,7 @@ public class WikiDatabase {
 	 *
 	 */
 	private static void setupAdminUser(WikiUser user, String username, String encryptedPassword) throws DataAccessException, WikiException {
+		logger.info("Creating wiki admin user");
 		if (user == null) {
 			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 		}
@@ -577,6 +578,7 @@ public class WikiDatabase {
 	 */
 	// FIXME - make this private once the ability to upgrade to 0.9.0 is removed
 	protected static void setupDefaultNamespaces() throws DataAccessException, WikiException {
+		logger.info("Creating default wiki namespaces");
 		for (Namespace namespace : Namespace.values()) {
 			WikiBase.getDataHandler().writeNamespace(namespace.id(), namespace.label());
 		}
@@ -586,6 +588,7 @@ public class WikiDatabase {
 	 *
 	 */
 	private static void setupDefaultVirtualWiki() throws DataAccessException, WikiException {
+		logger.info("Creating default virtual wiki");
 		VirtualWiki virtualWiki = new VirtualWiki();
 		virtualWiki.setName(WikiBase.DEFAULT_VWIKI);
 		virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
@@ -596,6 +599,7 @@ public class WikiDatabase {
 	 *
 	 */
 	protected static void setupGroups() throws DataAccessException, WikiException {
+		logger.info("Creating default wiki groups");
 		WikiGroup group = new WikiGroup();
 		group.setName(WikiGroup.GROUP_ANONYMOUS);
 		// FIXME - use message key
@@ -625,6 +629,7 @@ public class WikiDatabase {
 	 *
 	 */
 	protected static void setupRoles() throws DataAccessException, WikiException {
+		logger.info("Creating default wiki roles");
 		Role role = RoleImpl.ROLE_ADMIN;
 		// FIXME - use message key
 		role.setDescription("Provides the ability to perform wiki maintenance tasks not available to normal users.");

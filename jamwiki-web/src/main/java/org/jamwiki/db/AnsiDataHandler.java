@@ -1375,15 +1375,16 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	public void writeNamespace(Integer namespaceId, String namespace) throws DataAccessException, WikiException {
 		this.validateNamespace(namespace);
-		Connection conn = null;
+		TransactionStatus status = null;
 		try {
-			conn = DatabaseConnection.getConnection();
+			status = DatabaseConnection.startTransaction();
+			Connection conn = DatabaseConnection.getConnection();
 			this.queryHandler().updateNamespace(namespaceId, namespace, conn);
 		} catch (SQLException e) {
+			DatabaseConnection.rollbackOnException(status, e);
 			throw new DataAccessException(e);
-		} finally {
-			DatabaseConnection.closeConnection(conn);
 		}
+		DatabaseConnection.commit(status);
 		WikiCache.removeAllFromCache(CACHE_NAMESPACE_BY_ID);
 		WikiCache.removeAllFromCache(CACHE_NAMESPACE_BY_NAME);
 	}
@@ -1394,15 +1395,16 @@ public class AnsiDataHandler implements DataHandler {
 	public void writeNamespaceTranslation(int namespaceId, String virtualWiki, String namespaceTranslation) throws DataAccessException, WikiException {
 		this.validateNamespace(namespaceTranslation);
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		Connection conn = null;
+		TransactionStatus status = null;
 		try {
-			conn = DatabaseConnection.getConnection();
+			status = DatabaseConnection.startTransaction();
+			Connection conn = DatabaseConnection.getConnection();
 			this.queryHandler().updateNamespaceTranslation(namespaceId, virtualWikiId, namespaceTranslation, conn);
 		} catch (SQLException e) {
+			DatabaseConnection.rollbackOnException(status, e);
 			throw new DataAccessException(e);
-		} finally {
-			DatabaseConnection.closeConnection(conn);
 		}
+		DatabaseConnection.commit(status);
 		WikiCache.removeAllFromCache(CACHE_NAMESPACE_BY_ID);
 		WikiCache.removeAllFromCache(CACHE_NAMESPACE_BY_NAME);
 	}

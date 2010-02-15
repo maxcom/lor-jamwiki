@@ -88,6 +88,40 @@ followed by 0.6.3.
   2. The Spring Framework and Spring Security have been updated, so
      the applicationContext-security.xml, jamwiki-servlet.xml and web.xml
      may require modification.
+  3. Update the database schema by executing the following SQL statements:
+       a) Create the jam_namespace table
+              CREATE TABLE jam_namespace ( 
+                namespace_id INTEGER NOT NULL, 
+                namespace VARCHAR(200) NOT NULL, 
+                CONSTRAINT jam_p_namesp PRIMARY KEY (namespace_id), 
+                CONSTRAINT jam_u_namesp_namesp UNIQUE (namespace) 
+              );
+       b) Create the jam_namespace_translation table.
+              CREATE TABLE jam_namespace_translation ( 
+                namespace_id INTEGER NOT NULL, 
+                virtual_wiki_id INTEGER NOT NULL, 
+                namespace VARCHAR(200) NOT NULL, 
+                CONSTRAINT jam_p_namesptr PRIMARY KEY (namespace_id, virtual_wiki_id), 
+                CONSTRAINT jam_f_namesptr_namesp FOREIGN KEY (namespace_id) REFERENCES jam_namespace(namespace_id), 
+                CONSTRAINT jam_f_namesptr_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id), 
+                CONSTRAINT jam_u_namesptr_namesp UNIQUE (virtual_wiki_id, namespace) 
+              );
+       c) Add namespace_id to the jam_topic table
+            Oracle:
+              alter table jam_topic add namespace_id INTEGER DEFAULT 0 NOT NULL;
+              alter table jam_topic add constraint jam_f_topic_namesp FOREIGN KEY (namespace_id) REFERENCES jam_namespace(namespace_id);
+              alter table jam_topic drop constraint jam_u_topic_name;
+              alter table jam_topic add constraint jam_u_topic_name UNIQUE (topic_name, virtual_wiki_id, namespace_id, delete_date);
+            MS SQL:
+              alter table jam_topic add namespace_id INTEGER DEFAULT 0 NOT NULL;
+              alter table jam_topic add constraint jam_f_topic_namesp FOREIGN KEY (namespace_id) REFERENCES jam_namespace(namespace_id);
+              alter table jam_topic drop constraint jam_u_topic_name;
+              alter table jam_topic add constraint jam_u_topic_name UNIQUE (topic_name, virtual_wiki_id, namespace_id, delete_date);
+            Other Databases:
+              alter table jam_topic add column namespace_id INTEGER DEFAULT 0 NOT NULL;
+              alter table jam_topic add constraint jam_f_topic_namesp FOREIGN KEY (namespace_id) REFERENCES jam_namespace(namespace_id);
+              alter table jam_topic drop constraint jam_u_topic_name;
+              alter table jam_topic add constraint jam_u_topic_name UNIQUE (topic_name, virtual_wiki_id, namespace_id, delete_date);
 
 
   JAMWiki 0.8.3
