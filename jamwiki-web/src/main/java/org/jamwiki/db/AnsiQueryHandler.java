@@ -2377,9 +2377,11 @@ public class AnsiQueryHandler implements QueryHandler {
 			if (isUpdate) {
 				stmt = conn.prepareStatement(STATEMENT_UPDATE_NAMESPACE);
 			} else {
-				namespaceId = DatabaseConnection.executeSequenceQuery(STATEMENT_SELECT_NAMESPACE_SEQUENCE, "namespace_id", conn);
-				// note - this returns the last id in the system, so add one
-				namespaceId++;
+				if (namespaceId == null) {
+					namespaceId = DatabaseConnection.executeSequenceQuery(STATEMENT_SELECT_NAMESPACE_SEQUENCE, "namespace_id", conn);
+					// note - this returns the last id in the system, so add one
+					namespaceId++;
+				}
 				stmt = conn.prepareStatement(STATEMENT_INSERT_NAMESPACE);
 			}
 			stmt.setString(1, namespace);
