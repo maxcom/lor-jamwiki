@@ -16,59 +16,74 @@
  */
 package org.jamwiki.utils;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import org.jamwiki.migrate.MediaWikiConstants;
 
 /**
- * Namespace constants. Namespaces allow the organization of wiki topics
- * by dividing topics into groups.  A namespace will precede the topic, such
- * as "Namespace:Topic".  Namespaces can be customized by modifying using
- * configuration tools.
+ * Namespaces allow the organization of wiki topics by dividing topics into
+ * groups.  A namespace will precede the topic, such as "Namespace:Topic".
+ * Namespaces can be customized by modifying using configuration tools, but
+ * the namesapces defined as constants always exist and are required for wiki
+ * operation.
  */
-public enum Namespace {
+public class Namespace {
 
+	public static final String SEPARATOR = ":";
 	// default namespaces, used during setup.  additional namespaces may be added after setup.
 	// namespace IDs should match Mediawiki to maximize compatibility.
-	NAMESPACE_MEDIA_ID                (MediaWikiConstants.MEDIAWIKI_MEDIA_NAMESPACE_ID, "Media:"),
-	NAMESPACE_SPECIAL_ID              (MediaWikiConstants.MEDIAWIKI_SPECIAL_NAMESPACE_ID, "Special"),
-	NAMESPACE_MAIN_ID                 (MediaWikiConstants.MEDIAWIKI_MAIN_NAMESPACE_ID, ""),
-	NAMESPACE_COMMENTS_ID             (MediaWikiConstants.MEDIAWIKI_TALK_NAMESPACE_ID, "Comments"),
-	NAMESPACE_USER_ID                 (MediaWikiConstants.MEDIAWIKI_USER_NAMESPACE_ID, "User"),
-	NAMESPACE_USER_COMMENTS_ID        (MediaWikiConstants.MEDIAWIKI_USER_TALK_NAMESPACE_ID, "User comments"),
-	NAMESPACE_SITE_CUSTOM_ID          (MediaWikiConstants.MEDIAWIKI_SITE_CUSTOM_NAMESPACE_ID, "Project"),
-	NAMESPACE_SITE_CUSTOM_COMMENTS_ID (MediaWikiConstants.MEDIAWIKI_SITE_CUSTOM_TALK_NAMESPACE_ID, "Project comments"),
-	NAMESPACE_FILE_ID                 (MediaWikiConstants.MEDIAWIKI_FILE_NAMESPACE_ID, "Image"),
-	NAMESPACE_FILE_COMMENTS_ID        (MediaWikiConstants.MEDIAWIKI_FILE_TALK_NAMESPACE_ID, "Image comments"),
-	NAMESPACE_JAMWIKI_ID              (MediaWikiConstants.MEDIAWIKI_MEDIAWIKI_NAMESPACE_ID, "JAMWiki"),
-	NAMESPACE_JAMWIKI_COMMENTS_ID     (MediaWikiConstants.MEDIAWIKI_MEDIAWIKI_TALK_NAMESPACE_ID, "JAMWiki comments"),
-	NAMESPACE_TEMPLATE_ID             (MediaWikiConstants.MEDIAWIKI_TEMPLATE_NAMESPACE_ID, "Template"),
-	NAMESPACE_TEMPLATE_COMMENTS_ID    (MediaWikiConstants.MEDIAWIKI_TEMPLATE_TALK_NAMESPACE_ID, "Template comments"),
-	NAMESPACE_HELP_ID                 (MediaWikiConstants.MEDIAWIKI_HELP_NAMESPACE_ID, "Help"),
-	NAMESPACE_HELP_COMMENTS_ID        (MediaWikiConstants.MEDIAWIKI_HELP_TALK_NAMESPACE_ID, "Help comments"),
-	NAMESPACE_CATEGORY_ID             (MediaWikiConstants.MEDIAWIKI_CATEGORY_NAMESPACE_ID, "Category"),
-	NAMESPACE_CATEGORY_COMMENTS_ID    (MediaWikiConstants.MEDIAWIKI_CATEGORY_TALK_NAMESPACE_ID, "Category comments");
-
+	public static final Namespace MEDIA                = new Namespace(MediaWikiConstants.MEDIAWIKI_MEDIA_NAMESPACE_ID, "Media:");
+	public static final Namespace SPECIAL              = new Namespace(MediaWikiConstants.MEDIAWIKI_SPECIAL_NAMESPACE_ID, "Special");
+	public static final Namespace MAIN                 = new Namespace(MediaWikiConstants.MEDIAWIKI_MAIN_NAMESPACE_ID, "");
+	public static final Namespace COMMENTS             = new Namespace(MediaWikiConstants.MEDIAWIKI_TALK_NAMESPACE_ID, "Comments");
+	public static final Namespace USER                 = new Namespace(MediaWikiConstants.MEDIAWIKI_USER_NAMESPACE_ID, "User");
+	public static final Namespace USER_COMMENTS        = new Namespace(MediaWikiConstants.MEDIAWIKI_USER_TALK_NAMESPACE_ID, "User comments");
+	public static final Namespace SITE_CUSTOM          = new Namespace(MediaWikiConstants.MEDIAWIKI_SITE_CUSTOM_NAMESPACE_ID, "Project");
+	public static final Namespace SITE_CUSTOM_COMMENTS = new Namespace(MediaWikiConstants.MEDIAWIKI_SITE_CUSTOM_TALK_NAMESPACE_ID, "Project comments");
+	public static final Namespace FILE                 = new Namespace(MediaWikiConstants.MEDIAWIKI_FILE_NAMESPACE_ID, "Image");
+	public static final Namespace FILE_COMMENTS        = new Namespace(MediaWikiConstants.MEDIAWIKI_FILE_TALK_NAMESPACE_ID, "Image comments");
+	public static final Namespace JAMWIKI              = new Namespace(MediaWikiConstants.MEDIAWIKI_MEDIAWIKI_NAMESPACE_ID, "JAMWiki");
+	public static final Namespace JAMWIKI_COMMENTS     = new Namespace(MediaWikiConstants.MEDIAWIKI_MEDIAWIKI_TALK_NAMESPACE_ID, "JAMWiki comments");
+	public static final Namespace TEMPLATE             = new Namespace(MediaWikiConstants.MEDIAWIKI_TEMPLATE_NAMESPACE_ID, "Template");
+	public static final Namespace TEMPLATE_COMMENTS    = new Namespace(MediaWikiConstants.MEDIAWIKI_TEMPLATE_TALK_NAMESPACE_ID, "Template comments");
+	public static final Namespace HELP                 = new Namespace(MediaWikiConstants.MEDIAWIKI_HELP_NAMESPACE_ID, "Help");
+	public static final Namespace HELP_COMMENTS        = new Namespace(MediaWikiConstants.MEDIAWIKI_HELP_TALK_NAMESPACE_ID, "Help comments");
+	public static final Namespace CATEGORY             = new Namespace(MediaWikiConstants.MEDIAWIKI_CATEGORY_NAMESPACE_ID, "Category");
+	public static final Namespace CATEGORY_COMMENTS    = new Namespace(MediaWikiConstants.MEDIAWIKI_CATEGORY_TALK_NAMESPACE_ID, "Category comments");
+	private static Map<Integer, Namespace> NAMESPACES  = new HashMap<Integer, Namespace>();
 	private final int id;
 	private final String label;
 
 	/**
-	 *
+	 * Create a namespace and add it to the global list of namespaces.
 	 */
 	Namespace(int id, String label) {
 		this.id = id;
 		this.label = label;
+		NAMESPACES.put(id, this);
 	}
 
 	/**
-	 *
+	 * Namespace IDs are unique.
 	 */
-	public int id() {
+	public int getId() {
 		return this.id;
 	}
 
 	/**
 	 *
 	 */
-	public String label() {
+	public String getLabel() {
 		return this.label;
+	}
+
+	/**
+	 * Return a collection of currently created namespaces.  Anytime a namespace
+	 * is created or updated by calling the Namespace constructor then it is added
+	 * to the global namespace list.
+	 */
+	public static Collection<Namespace> values() {
+		return NAMESPACES.values();
 	}
 }

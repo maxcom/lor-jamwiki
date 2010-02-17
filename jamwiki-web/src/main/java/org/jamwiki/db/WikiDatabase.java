@@ -580,7 +580,7 @@ public class WikiDatabase {
 	protected static void setupDefaultNamespaces() throws DataAccessException, WikiException {
 		logger.info("Creating default wiki namespaces");
 		for (Namespace namespace : Namespace.values()) {
-			WikiBase.getDataHandler().writeNamespace(namespace.id(), namespace.label());
+			WikiBase.getDataHandler().writeNamespace(namespace.getId(), namespace.getLabel());
 		}
 	}
 
