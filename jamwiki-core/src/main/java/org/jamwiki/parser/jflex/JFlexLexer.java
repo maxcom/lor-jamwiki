@@ -217,7 +217,12 @@ public abstract class JFlexLexer {
 			default:
 				throw new IllegalArgumentException("Invalid tag type: " + type);
 		}
-		return jflexParserTag.parse(this, raw, args);
+		try {
+			return jflexParserTag.parse(this, raw, args);
+		} catch (Throwable t) {
+			logger.info("Unable to parse " + raw, t);
+			return raw;
+		}
 	}
 
 	/**

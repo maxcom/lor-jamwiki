@@ -67,19 +67,18 @@ public class TemplateTag implements JFlexParserTag {
 	 * Parse a call to a Mediawiki template of the form "{{template|param1|param2}}"
 	 * and return the resulting template output.
 	 */
-	public String parse(JFlexLexer lexer, String raw, Object... args) {
+	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
+		// validate and extract the template content
+		if (StringUtils.isBlank(raw)) {
+			throw new ParserException("Empty template text");
+		}
+		if (!raw.startsWith("{{") || !raw.endsWith("}}")) {
+			throw new ParserException ("Invalid template text: " + raw);
+		}
 		try {
-			// validate and extract the template content
-			if (StringUtils.isBlank(raw)) {
-				throw new Exception("Empty template text");
-			}
-			if (!raw.startsWith("{{") || !raw.endsWith("}}")) {
-				throw new Exception ("Invalid template text: " + raw);
-			}
 			return this.parseTemplateOutput(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), raw, true);
-		} catch (Throwable t) {
-			logger.info("Unable to parse " + raw, t);
-			return (raw != null) ? raw.trim() : raw;
+		} catch (DataAccessException e) {
+			throw new ParserException("Data access exception while parsing: " + raw, e);
 		}
 	}
 

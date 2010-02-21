@@ -103,18 +103,13 @@ public class WikiLinkTag implements JFlexParserTag {
 	 * Parse a Mediawiki link of the form "[[topic|text]]" and return the
 	 * resulting HTML output.
 	 */
-	public String parse(JFlexLexer lexer, String raw, Object... args) {
-		try {
-			raw = this.processLinkMetadata(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), raw);
-			if (lexer.getMode() <= JFlexParser.MODE_PREPROCESS) {
-				// do not parse to HTML when in preprocess mode
-				return raw;
-			}
-			return this.processLinkContent(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), raw);
-		} catch (Throwable t) {
-			logger.info("Unable to parse " + raw, t);
+	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
+		raw = this.processLinkMetadata(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), raw);
+		if (lexer.getMode() <= JFlexParser.MODE_PREPROCESS) {
+			// do not parse to HTML when in preprocess mode
 			return raw;
 		}
+		return this.processLinkContent(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), raw);
 	}
 
 	/**
