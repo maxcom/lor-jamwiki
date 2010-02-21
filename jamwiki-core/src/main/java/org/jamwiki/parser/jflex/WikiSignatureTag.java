@@ -37,7 +37,7 @@ public class WikiSignatureTag implements JFlexParserTag {
 	/**
 	 *
 	 */
-	private String buildWikiSignature(JFlexLexer lexer, boolean includeUser, boolean includeDate) {
+	private String buildWikiSignature(JFlexLexer lexer, boolean includeUser, boolean includeDate) throws ParserException {
 		String signature = "";
 		if (includeUser) {
 			signature = this.retrieveUserSignature(lexer.getParserInput());
@@ -69,7 +69,7 @@ public class WikiSignatureTag implements JFlexParserTag {
 	 * Parse a Mediawiki signature of the form "~~~~" and return the resulting
 	 * HTML output.
 	 */
-	public String parse(JFlexLexer lexer, String raw, Object... args) {
+	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
 		if (raw.equals("~~~")) {
 			return this.buildWikiSignature(lexer, true, false);
 		}

@@ -16,6 +16,8 @@
  */
 package org.jamwiki.parser.jflex;
 
+import org.jamwiki.parser.ParserException;
+
 /**
  * Interace for tag items instantiated during parsing.
  */
@@ -27,5 +29,5 @@ public interface JFlexParserTag {
 	 * @param lexer A reference to the current lexer instance.
 	 * @param raw Raw text to be parsed.
 	 */
-	public String parse(JFlexLexer lexer, String raw, Object... args);
+	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException;
 }

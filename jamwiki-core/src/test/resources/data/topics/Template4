@@ -10,3 +10,17 @@ test
 test
 
 {{:non existent topic}}
+
+{{subst:Test Template}}
+
+{{subst:  Test Template }}
+
+{{subst:Test_Template}}
+
+{{subst: Non-Existent Template}}
+
+{{subst:#expr:2*3}}
+
+{{subst::Example2}}
+
+{{subst:Reprint|content={{subst:PAGENAME}}}}

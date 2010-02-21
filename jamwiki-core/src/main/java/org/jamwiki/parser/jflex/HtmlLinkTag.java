@@ -152,7 +152,7 @@ public class HtmlLinkTag implements JFlexParserTag {
 	 * Parse a Mediawiki HTML link of the form "[http://www.site.com/ text]" or
 	 * "http://www.site.com/" and return the resulting HTML output.
 	 */
-	public String parse(JFlexLexer lexer, String raw, Object... args) {
+	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
 		if (logger.isFinerEnabled()) {
 			logger.finer("htmllink: " + raw + " (" + lexer.yystate() + ")");
 		}
@@ -160,11 +160,6 @@ public class HtmlLinkTag implements JFlexParserTag {
 			// no link to display
 			return raw;
 		}
-		try {
-			return this.buildHtmlLinkRaw(lexer.getParserInput(), lexer.getMode(), raw);
-		} catch (Throwable t) {
-			logger.info("Unable to parse " + raw, t);
-			return raw;
-		}
+		return this.buildHtmlLinkRaw(lexer.getParserInput(), lexer.getMode(), raw);
 	}
 }

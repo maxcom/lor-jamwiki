@@ -33,18 +33,13 @@ public class JavascriptTag implements JFlexParserTag {
 	/**
 	 * Parse a Mediawiki HTML link of the form "<script>...</script>".
 	 */
-	public String parse(JFlexLexer lexer, String raw, Object... args) {
+	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
 		if (logger.isFinerEnabled()) logger.finer("javascript: " + raw + " (" + lexer.yystate() + ")");
 		if (StringUtils.isBlank(raw)) {
 			// no link to display
 			return raw;
 		}
-		try {
-			return this.parseScriptTag(lexer.getParserInput(), raw, lexer.getMode());
-		} catch (Throwable t) {
-			logger.info("Unable to parse " + raw, t);
-			return raw;
-		}
+		return this.parseScriptTag(lexer.getParserInput(), raw, lexer.getMode());
 	}
 
 	/**
