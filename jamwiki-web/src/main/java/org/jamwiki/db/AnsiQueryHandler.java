@@ -43,6 +43,7 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.Namespace;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
 
@@ -1868,6 +1869,25 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	public List<Namespace> lookupNamespaces(Connection conn) throws SQLException {
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		List<Namespace> namespaces = new ArrayList<Namespace>();
+		try {
+			stmt = conn.prepareStatement(STATEMENT_SELECT_NAMESPACES);
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				namespaces.add(new Namespace(rs.getInt("namespace_id"), rs.getString("namespace")));
+			}
+		} finally {
+			DatabaseConnection.closeConnection(null, stmt, rs);
+		}
+		return namespaces;
+	}
+
+	/**
+	 *
+	 */
 	public Topic lookupTopic(int virtualWikiId, String virtualWikiName, String topicName, boolean caseSensitive, Connection conn) throws SQLException {
 		boolean closeConnection = (conn == null);
 		PreparedStatement stmt = null;
@@ -2358,17 +2378,15 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void updateNamespace(Integer namespaceId, String namespace, Connection conn) throws SQLException {
+	public void updateNamespace(Integer namespaceId, String namespaceString, Connection conn) throws SQLException {
 		PreparedStatement stmt = null;
-		ResultSet rs = null;
 		try {
 			// see if a namespace with the given value exists
 			boolean isUpdate = false;
 			if (namespaceId != null) {
-				stmt = conn.prepareStatement(STATEMENT_SELECT_NAMESPACES);
-				rs = stmt.executeQuery();
-				while (rs.next()) {
-					if (rs.getInt("namespace_id") == namespaceId.intValue()) {
+				List<Namespace> namespaces = this.lookupNamespaces(conn);
+				for (Namespace namespace : namespaces) {
+					if (namespace.getId() == namespaceId.intValue()) {
 						isUpdate = true;
 						break;
 					}
@@ -2384,12 +2402,11 @@ public class AnsiQueryHandler implements QueryHandler {
 				}
 				stmt = conn.prepareStatement(STATEMENT_INSERT_NAMESPACE);
 			}
-			stmt.setString(1, namespace);
+			stmt.setString(1, namespaceString);
 			stmt.setInt(2, namespaceId);
 			stmt.executeUpdate();
 		} finally {
-			// close only the statement and result set - leave the connection open for further use
-			DatabaseConnection.closeConnection(null, stmt, rs);
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 

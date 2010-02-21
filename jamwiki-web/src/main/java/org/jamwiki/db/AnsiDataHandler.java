@@ -52,10 +52,10 @@ import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.Namespace;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiCache;
-import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.transaction.TransactionStatus;
@@ -612,6 +612,38 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public Namespace lookupNamespace(String namespaceString) throws DataAccessException {
+		if (namespaceString == null) {
+			return null;
+		}
+		// first, test to see if the cache is alive by checking for a dummy element.  this is faster
+		// and more reliable than checking cache size or any other aspect of the cache.
+		if (WikiCache.retrieveFromCache(CACHE_NAMESPACE_BY_NAME, CACHE_NAMESPACE_BY_NAME) == null) {
+			// cache is dead, reload it
+			Connection conn = null;
+			try {
+				// add the dummy element
+				WikiCache.addToCache(CACHE_NAMESPACE_BY_NAME, CACHE_NAMESPACE_BY_NAME, true);
+				// now add the namespace elements
+				conn = DatabaseConnection.getConnection();
+				List<Namespace> namespaces = this.queryHandler().lookupNamespaces(conn);
+				for (Namespace namespace : namespaces) {
+					WikiCache.addToCache(CACHE_NAMESPACE_BY_NAME, namespace.getLabel(), namespace);
+					WikiCache.addToCache(CACHE_NAMESPACE_BY_ID, namespace.getId(), namespace);
+				}
+			} catch (SQLException e) {
+				throw new DataAccessException(e);
+			} finally {
+				DatabaseConnection.closeConnection(conn);
+			}
+		}
+		Element cacheElement = WikiCache.retrieveFromCache(CACHE_NAMESPACE_BY_NAME, namespaceString);
+		return (cacheElement != null) ? (Namespace)cacheElement.getObjectValue() : null;
+	}
+
+	/**
+	 *
+	 */
 	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Connection conn) throws DataAccessException {
 		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(topicName)) {
 			return null;
@@ -628,8 +660,7 @@ public class AnsiDataHandler implements DataHandler {
 				return (cacheTopic == null || (!deleteOK && cacheTopic.getDeleteDate() != null)) ? null : new Topic(cacheTopic);
 			}
 		}
-		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-		String namespace = wikiLink.getNamespace();
+		String namespace = LinkUtil.parseWikiLink(topicName).getNamespace();
 		boolean caseSensitive = true;
 		if (namespace != null) {
 			if (namespace.equals(NamespaceHandler.NAMESPACE_SPECIAL)) {

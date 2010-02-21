@@ -34,6 +34,7 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.Namespace;
 import org.jamwiki.utils.Pagination;
 
 /**
@@ -377,6 +378,16 @@ public interface DataHandler {
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
 	List<Category> lookupCategoryTopics(String virtualWiki, String categoryName) throws DataAccessException;
+
+	/**
+	 * Given a namespace string, return the namespace that corresponds to that string,
+	 * or <code>null</code> if no match exists.
+	 *
+	 * @param namespaceString The value to query to see if a matching namespace exists.
+	 * @return The matching Namespace object, or <code>null</code> if no match is found.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	Namespace lookupNamespace(String namespaceString) throws DataAccessException;
 
 	/**
 	 * Retrieve a Topic object that matches the given virtual wiki and topic

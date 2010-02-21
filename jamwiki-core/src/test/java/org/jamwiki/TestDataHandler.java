@@ -37,6 +37,7 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.Namespace;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
 
@@ -207,6 +208,13 @@ public class TestDataHandler implements DataHandler {
 	 *
 	 */
 	public List<Category> lookupCategoryTopics(String virtualWiki, String categoryName) throws DataAccessException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
+	public Namespace lookupNamespace(String namespaceString) throws DataAccessException {
 		throw new UnsupportedOperationException();
 	}
 

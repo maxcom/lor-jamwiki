@@ -32,6 +32,7 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.Namespace;
 import org.jamwiki.utils.Pagination;
 
 /**
@@ -631,6 +632,16 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	List<Category> lookupCategoryTopics(int virtualWikiId, String virtualWikiName, String categoryName) throws SQLException;
+
+	/**
+	 * Retrieve a list of all current namespace objects.
+	 *
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @return A list of all current namespace objects, never <code>null</code>.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	List<Namespace> lookupNamespaces(Connection conn) throws SQLException;
 
 	/**
 	 * Retrieve a topic that matches a given name and virtual wiki.

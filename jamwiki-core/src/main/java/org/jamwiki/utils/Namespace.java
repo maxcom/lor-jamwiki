@@ -16,6 +16,7 @@
  */
 package org.jamwiki.utils;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,7 @@ import org.jamwiki.migrate.MediaWikiConstants;
  * the namesapces defined as constants always exist and are required for wiki
  * operation.
  */
-public class Namespace {
+public class Namespace implements Serializable {
 
 	public static final String SEPARATOR = ":";
 	// default namespaces, used during setup.  additional namespaces may be added after setup.
@@ -58,7 +59,7 @@ public class Namespace {
 	/**
 	 * Create a namespace and add it to the global list of namespaces.
 	 */
-	Namespace(int id, String label) {
+	public Namespace(int id, String label) {
 		this.id = id;
 		this.label = label;
 		NAMESPACES.put(id, this);
