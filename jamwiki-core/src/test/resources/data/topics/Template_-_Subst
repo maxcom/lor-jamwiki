@@ -1,0 +1,2 @@
+<!-- test special cases of subst: -->
+1: {{<includeonly>subst:</includeonly>PAGENAME}}

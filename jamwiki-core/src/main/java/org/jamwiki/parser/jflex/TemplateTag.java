@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.parser.ParserException;
@@ -68,7 +69,6 @@ public class TemplateTag implements JFlexParserTag {
 	 */
 	public String parse(JFlexLexer lexer, String raw, Object... args) {
 		try {
-			lexer.getParserInput().incrementTemplateDepth();
 			// validate and extract the template content
 			if (StringUtils.isBlank(raw)) {
 				throw new Exception("Empty template text");
@@ -76,39 +76,59 @@ public class TemplateTag implements JFlexParserTag {
 			if (!raw.startsWith("{{") || !raw.endsWith("}}")) {
 				throw new Exception ("Invalid template text: " + raw);
 			}
-			String templateContent = raw.substring("{{".length(), raw.length() - "}}".length());
-			// parse for nested templates, signatures, etc.
-			templateContent = JFlexParserUtil.parseFragment(lexer.getParserInput(), templateContent, lexer.getMode());
-			// update the raw value to handle cases such as a signature in the template content
-			raw = "{{" + templateContent + "}}";
-			// check for magic word or parser function
-			String[] parserFunctionInfo = ParserFunctionUtil.parseParserFunctionInfo(templateContent);
-			if (MagicWordUtil.isMagicWord(templateContent) || parserFunctionInfo != null) {
-				if (lexer.getMode() <= JFlexParser.MODE_MINIMAL) {
-					lexer.getParserInput().decrementTemplateDepth();
-					return raw;
-				}
-				lexer.getParserInput().decrementTemplateDepth();
-				if (MagicWordUtil.isMagicWord(templateContent)) {
-					return MagicWordUtil.processMagicWord(lexer.getParserInput(), templateContent);
-				} else {
-					return ParserFunctionUtil.processParserFunction(lexer.getParserInput(), parserFunctionInfo[0], parserFunctionInfo[1]);
-				}
-			}
-			// extract the template name
-			String name = this.parseTemplateName(templateContent);
-			boolean inclusion = false;
-			if (name.startsWith(NamespaceHandler.NAMESPACE_SEPARATOR)) {
-				name = name.substring(1);
-				inclusion = true;
-			}
-			// get the parsed template body
-			Topic templateTopic = WikiBase.getDataHandler().lookupTopic(lexer.getParserInput().getVirtualWiki(), name, false, null);
-			this.processTemplateMetadata(lexer.getParserInput(), lexer.getParserOutput(), templateTopic, raw, name);
-			if (lexer.getMode() <= JFlexParser.MODE_MINIMAL) {
-				lexer.getParserInput().decrementTemplateDepth();
+			return this.parseTemplateOutput(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), raw, true);
+		} catch (Throwable t) {
+			logger.info("Unable to parse " + raw, t);
+			return (raw != null) ? raw.trim() : raw;
+		}
+	}
+
+	/**
+	 * Parses the template content and returns the parsed output.  If there is no result (such
+	 * as when a template does not exist) this method will either return an edit link to the
+	 * template topic page, or if allowTemplateEdit is <code>false</code> it will return
+	 * <code>null</code> (used with substitutions, where an edit link should not be shown).
+	 */
+	private String parseTemplateOutput(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw, boolean allowTemplateEdit) throws DataAccessException, ParserException {
+		String templateContent = raw.substring("{{".length(), raw.length() - "}}".length());
+		// parse for nested templates, signatures, etc.
+		parserInput.incrementTemplateDepth();
+		templateContent = JFlexParserUtil.parseFragment(parserInput, templateContent, mode);
+		parserInput.decrementTemplateDepth();
+		// update the raw value to handle cases such as a signature in the template content
+		raw = "{{" + templateContent + "}}";
+		// check for substitution ("{{subst:Template}}")
+		String subst = this.parseSubstitution(parserInput, parserOutput, mode, raw, templateContent);
+		if (subst != null) {
+			return subst;
+		}
+		// check for magic word or parser function
+		String[] parserFunctionInfo = ParserFunctionUtil.parseParserFunctionInfo(templateContent);
+		if (MagicWordUtil.isMagicWord(templateContent) || parserFunctionInfo != null) {
+			if (mode <= JFlexParser.MODE_MINIMAL) {
 				return raw;
 			}
+			if (MagicWordUtil.isMagicWord(templateContent)) {
+				return MagicWordUtil.processMagicWord(parserInput, templateContent);
+			} else {
+				return ParserFunctionUtil.processParserFunction(parserInput, parserFunctionInfo[0], parserFunctionInfo[1]);
+			}
+		}
+		// extract the template name
+		String name = this.parseTemplateName(templateContent);
+		boolean inclusion = false;
+		if (name.startsWith(NamespaceHandler.NAMESPACE_SEPARATOR)) {
+			name = name.substring(1);
+			inclusion = true;
+		}
+		// get the parsed template body
+		parserInput.incrementTemplateDepth();
+		Topic templateTopic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), name, false, null);
+		this.processTemplateMetadata(parserInput, parserOutput, templateTopic, raw, name);
+		String result = null;
+		if (mode <= JFlexParser.MODE_MINIMAL) {
+			result = raw;
+		} else {
 			// make sure template was not redirected
 			if (templateTopic != null && templateTopic.getTopicType() == Topic.TYPE_REDIRECT) {
 				templateTopic = WikiUtil.findRedirectedTopic(templateTopic, 0);
@@ -119,17 +139,15 @@ public class TemplateTag implements JFlexParserTag {
 				templateTopic = null;
 			}
 			if (inclusion) {
-				String output = this.processTemplateInclusion(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), templateTopic, raw, name);
-				lexer.getParserInput().decrementTemplateDepth();
-				return output;
+				result = this.processTemplateInclusion(parserInput, parserOutput, mode, templateTopic, raw, name);
+			} else if (templateTopic == null) {
+				result = ((allowTemplateEdit) ? "[[" + name + "]]" : null);
+			} else {
+				result = this.processTemplateContent(parserInput, parserOutput, templateTopic, templateContent, name);
 			}
-			String output = this.processTemplateContent(lexer.getParserInput(), lexer.getParserOutput(), templateTopic, templateContent, name);
-			lexer.getParserInput().decrementTemplateDepth();
-			return output;
-		} catch (Throwable t) {
-			logger.info("Unable to parse " + raw, t);
-			return raw;
 		}
+		parserInput.decrementTemplateDepth();
+		return result;
 	}
 
 	/**
@@ -160,6 +178,27 @@ public class TemplateTag implements JFlexParserTag {
 			throw new ParserException("No parameter name specified");
 		}
 		return name;
+	}
+
+	/**
+	 * Determine if template content is of the form "subst:XXX".  If it is,
+	 * process it, otherwise return <code>null</code>.
+	 */
+	private String parseSubstitution(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw, String templateContent) throws DataAccessException, ParserException {
+		// is it a substitution?
+		templateContent = templateContent.trim();
+		if (!templateContent.startsWith("subst:") || templateContent.length() <= "subst:".length()) {
+			return null;
+		}
+		// get the substitution content
+		String substContent = templateContent.trim().substring("subst:".length()).trim();
+		if (substContent.length() == 0) {
+			return null;
+		}
+		// re-parse the substitution value.  make sure it is parsed in at least MODE_PREPROCESS
+		// so that values are properly replaced prior to saving.
+		String output = this.parseTemplateOutput(parserInput, parserOutput, JFlexParser.MODE_PREPROCESS, "{{" + substContent + "}}", false);
+		return (output == null) ? raw : output;
 	}
 
 	/**
@@ -248,9 +287,6 @@ public class TemplateTag implements JFlexParserTag {
 	 * parsed output.
 	 */
 	private String processTemplateContent(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String templateContent, String name) throws ParserException {
-		if (templateTopic == null) {
-			return "[[" + name + "]]";
-		}
 		// set template parameter values
 		Map<String, String> parameterValues = this.parseTemplateParameterValues(parserInput, templateContent);
 		return this.parseTemplateBody(parserInput, templateTopic.getTopicContent(), parameterValues);

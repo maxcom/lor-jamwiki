@@ -165,25 +165,28 @@ wikisignature      = ([~]{3,5})
 
 <YYINITIAL>{templateparam} {
     if (logger.isFinerEnabled()) logger.finer("templateparam: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    return raw;
+    return yytext();
 }
 
 <TEMPLATE>{whitespace} {
     // no need to log this
-    String raw = yytext();
-    this.templateString += raw;
+    this.templateString += yytext();
     return "";
 }
 
 <TEMPLATE>. {
     // no need to log this
-    String raw = yytext();
-    this.templateString += raw;
+    this.templateString += yytext();
     return "";
 }
 
-<YYINITIAL, TEMPLATE>{includeonly} {
+<TEMPLATE>{includeonly} {
+    if (logger.isFinerEnabled()) logger.finer("includeonly: " + yytext() + " (" + yystate() + ")");
+    this.templateString += this.parse(TAG_TYPE_INCLUDE_ONLY, yytext());
+    return "";
+}
+
+<YYINITIAL>{includeonly} {
     if (logger.isFinerEnabled()) logger.finer("includeonly: " + yytext() + " (" + yystate() + ")");
     return this.parse(TAG_TYPE_INCLUDE_ONLY, yytext());
 }
