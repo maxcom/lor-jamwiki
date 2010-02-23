@@ -46,8 +46,8 @@
 	</licenses>
 	<properties>
 		<jamwiki.version>0.9.0-SNAPSHOT</jamwiki.version>
-		<dependency.spring.version>3.0.0.RELEASE</dependency.spring.version>
-		<dependency.spring.security.version>3.0.0.RELEASE</dependency.spring.security.version>
+		<dependency.spring.version>3.0.1.RELEASE</dependency.spring.version>
+		<dependency.spring.security.version>3.0.2.RELEASE</dependency.spring.security.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
