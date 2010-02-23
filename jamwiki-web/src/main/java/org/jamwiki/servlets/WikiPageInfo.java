@@ -263,8 +263,7 @@ public class WikiPageInfo {
 	 * @see #getTopicName
 	 */
 	public String getNamespace() {
-		WikiLink wikiLink = LinkUtil.parseWikiLink(this.getTopicName());
-		return wikiLink.getNamespace();
+		return LinkUtil.parseWikiLink(this.getTopicName()).getNamespace().getLabel();
 	}
 
 	/**
@@ -274,8 +273,7 @@ public class WikiPageInfo {
 	 * @return Name of the page.
 	 */
 	public String getPagename() {
-		WikiLink wikiLink = LinkUtil.parseWikiLink(this.getTopicName());
-		return wikiLink.getArticle();
+		return LinkUtil.parseWikiLink(this.getTopicName()).getArticle();
 	}
 
 	/**

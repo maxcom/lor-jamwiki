@@ -32,6 +32,7 @@ import org.jamwiki.migrate.MediaWikiConstants;
 public class Namespace implements Serializable {
 
 	public static final String SEPARATOR = ":";
+	private static Map<Integer, Namespace> NAMESPACES  = new HashMap<Integer, Namespace>();
 	// default namespaces, used during setup.  additional namespaces may be added after setup.
 	// namespace IDs should match Mediawiki to maximize compatibility.
 	public static final Namespace MEDIA                = new Namespace(MediaWikiConstants.MEDIAWIKI_MEDIA_NAMESPACE_ID, "Media:");
@@ -52,7 +53,6 @@ public class Namespace implements Serializable {
 	public static final Namespace HELP_COMMENTS        = new Namespace(MediaWikiConstants.MEDIAWIKI_HELP_TALK_NAMESPACE_ID, "Help comments");
 	public static final Namespace CATEGORY             = new Namespace(MediaWikiConstants.MEDIAWIKI_CATEGORY_NAMESPACE_ID, "Category");
 	public static final Namespace CATEGORY_COMMENTS    = new Namespace(MediaWikiConstants.MEDIAWIKI_CATEGORY_TALK_NAMESPACE_ID, "Category comments");
-	private static Map<Integer, Namespace> NAMESPACES  = new HashMap<Integer, Namespace>();
 	private final int id;
 	private final String label;
 

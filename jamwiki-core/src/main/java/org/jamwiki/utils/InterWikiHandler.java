@@ -64,14 +64,14 @@ public class InterWikiHandler {
 	public static String formatInterWiki(String namespace, String value) {
 		String pattern = InterWikiHandler.mapping.getProperty(namespace.toLowerCase());
 		if (pattern == null) {
-			return namespace + NamespaceHandler.NAMESPACE_SEPARATOR + value;
+			return namespace + Namespace.SEPARATOR + value;
 		}
 		Object[] objects = {Utilities.encodeAndEscapeTopicName(value)};
 		try {
 			return MessageFormat.format(pattern, objects);
 		} catch (IllegalArgumentException e) {
 			logger.warning("Unable to format " + pattern + " with value " + value, e);
-			return namespace + NamespaceHandler.NAMESPACE_SEPARATOR + value;
+			return namespace + Namespace.SEPARATOR + value;
 		}
 	}
 

@@ -35,7 +35,7 @@ import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
+import org.jamwiki.utils.Namespace;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -145,8 +145,7 @@ public class EditServlet extends JAMWikiServlet {
 		pageInfo.setPageTitle(new WikiMessage("edit.title", topicName));
 		pageInfo.setTopicName(topicName);
 		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-		String namespace = wikiLink.getNamespace();
-		if (namespace != null && namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
+		if (wikiLink.getNamespace() == Namespace.CATEGORY) {
 			ServletUtil.loadCategoryContent(next, virtualWiki, topicName);
 		}
 		if (request.getParameter("editComment") != null) {

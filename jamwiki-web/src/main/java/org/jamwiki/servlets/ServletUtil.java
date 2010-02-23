@@ -308,8 +308,7 @@ public class ServletUtil {
 		topic.setName(topicName);
 		topic.setVirtualWiki(virtualWiki);
 		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-		String namespace = wikiLink.getNamespace();
-		topic.setTopicType(WikiUtil.findTopicTypeForNamespace(namespace));
+		topic.setTopicType(WikiUtil.findTopicTypeForNamespace(wikiLink.getNamespace().getLabel()));
 		return topic;
 	}
 

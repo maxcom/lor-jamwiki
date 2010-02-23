@@ -172,7 +172,7 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 		}
 		topicName = convertArticleNameFromWikipediaToJAMWiki(topicName);
 		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-		this.currentTopic.setTopicType(WikiUtil.findTopicTypeForNamespace(wikiLink.getNamespace()));
+		this.currentTopic.setTopicType(WikiUtil.findTopicTypeForNamespace(wikiLink.getNamespace().getLabel()));
 		this.currentTopic.setName(topicName);
 	}
 

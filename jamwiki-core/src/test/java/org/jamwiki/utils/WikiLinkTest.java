@@ -36,7 +36,7 @@ public class WikiLinkTest {
 		assertNull("wikiLink.getSection()", wikiLink.getSection());
 		assertNull("wikiLink.getText()", wikiLink.getText());
 		assertNull("wikiLink.getArticle()", wikiLink.getArticle());
-		assertNull("wikiLink.getNamespace()", wikiLink.getNamespace());
+		assertEquals("wikiLink.getNamespace()", Namespace.MAIN, wikiLink.getNamespace());
 		assertNull("wikiLink.getDestination()", wikiLink.getDestination());
 		assertFalse("wikiLink.getColon()", wikiLink.getColon());
 	}
@@ -77,8 +77,18 @@ public class WikiLinkTest {
 	@Test
 	public void testSetNamespace() throws Throwable {
 		WikiLink wikiLink = new WikiLink();
-		wikiLink.setNamespace("testWikiLinkNamespace");
-		assertEquals("wikiLink.getNamespace()", "testWikiLinkNamespace", wikiLink.getNamespace());
+		wikiLink.setNamespace(Namespace.FILE);
+		assertEquals("wikiLink.getNamespace()", Namespace.FILE, wikiLink.getNamespace());
+	}
+
+	/**
+	 *
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testSetNamespace2() throws Throwable {
+		WikiLink wikiLink = new WikiLink();
+		wikiLink.setNamespace(null);
+		assertEquals("wikiLink.getNamespace()", Namespace.FILE, wikiLink.getNamespace());
 	}
 
 	/**

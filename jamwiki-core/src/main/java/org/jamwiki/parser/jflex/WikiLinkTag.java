@@ -27,7 +27,7 @@ import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
+import org.jamwiki.utils.Namespace;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -59,20 +59,17 @@ public class WikiLinkTag implements JFlexParserTag {
 			return raw;
 		}
 		try {
-			if (!wikiLink.getColon() && !StringUtils.isBlank(wikiLink.getNamespace()) && wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_IMAGE)) {
+			if (!wikiLink.getColon() && wikiLink.getNamespace() == Namespace.FILE) {
 				// parse as an image
 				return this.parseImageLink(parserInput, mode, wikiLink);
 			}
-			if (!StringUtils.isBlank(wikiLink.getNamespace()) && InterWikiHandler.isInterWiki(wikiLink.getNamespace())) {
+			if (!StringUtils.isBlank(wikiLink.getInterWiki())) {
 				// inter-wiki link
 				return LinkUtil.interWiki(wikiLink);
 			}
-			if (!StringUtils.isBlank(wikiLink.getNamespace())) {
-				if (WikiBase.getDataHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
-					// link to another virtual wiki
-					virtualWiki = wikiLink.getNamespace();
-					wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
-				}
+			if (wikiLink.getVirtualWiki() != null) {
+				// link to another virtual wiki
+				virtualWiki = wikiLink.getVirtualWiki().getName();
 			}
 			if (StringUtils.isBlank(wikiLink.getText()) && !StringUtils.isBlank(wikiLink.getDestination())) {
 				wikiLink.setText(wikiLink.getDestination());
@@ -191,7 +188,7 @@ public class WikiLinkTag implements JFlexParserTag {
 			return raw;
 		}
 		String result = raw;
-		if (!wikiLink.getColon() && StringUtils.equals(wikiLink.getNamespace(), NamespaceHandler.NAMESPACE_CATEGORY)) {
+		if (!wikiLink.getColon() && wikiLink.getNamespace() == Namespace.CATEGORY) {
 			String sortKey = wikiLink.getText();
 			if (!StringUtils.isBlank(sortKey)) {
 				sortKey = JFlexParserUtil.parseFragment(parserInput, sortKey, JFlexParser.MODE_PREPROCESS);

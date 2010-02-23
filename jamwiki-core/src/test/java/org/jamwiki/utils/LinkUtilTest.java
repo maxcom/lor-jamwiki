@@ -132,16 +132,5 @@ public class LinkUtilTest {
 	public void testInterWikiThrowsNullPointerException() throws Throwable {
 		LinkUtil.interWiki(null);
 	}
-
-	/**
-	 *
-	 */
-	@Test(expected=StringIndexOutOfBoundsException.class)
-	public void testInterWikiThrowsStringIndexOutOfBoundsException() throws Throwable {
-		WikiLink wikiLink = new WikiLink();
-		wikiLink.setNamespace("testLinkUtilNamespace");
-		wikiLink.setDestination("");
-		LinkUtil.interWiki(wikiLink);
-	}
 }
 

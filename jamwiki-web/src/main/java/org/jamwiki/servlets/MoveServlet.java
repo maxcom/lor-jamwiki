@@ -28,7 +28,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
+import org.jamwiki.utils.Namespace;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -104,20 +104,20 @@ public class MoveServlet extends JAMWikiServlet {
 		}
 		WikiLink fromWikiLink = LinkUtil.parseWikiLink(moveFrom);
 		WikiLink destinationWikiLink = LinkUtil.parseWikiLink(moveDestination);
-		if (!StringUtils.equals(fromWikiLink.getNamespace(), destinationWikiLink.getNamespace())) {
+		if (fromWikiLink.getNamespace() != destinationWikiLink.getNamespace()) {
 			// do not allow moving into or out of image & category namespace
-			if (StringUtils.equals(fromWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_CATEGORY)
-					|| StringUtils.equals(fromWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_CATEGORY_COMMENTS)
-					|| StringUtils.equals(destinationWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_CATEGORY)
-					|| StringUtils.equals(destinationWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_CATEGORY_COMMENTS)
+			if (fromWikiLink.getNamespace() == Namespace.CATEGORY
+					|| fromWikiLink.getNamespace() == Namespace.CATEGORY_COMMENTS
+					|| destinationWikiLink.getNamespace() == Namespace.CATEGORY
+					|| destinationWikiLink.getNamespace() == Namespace.CATEGORY_COMMENTS
 				) {
 				next.addObject("messageObject", new WikiMessage("move.exception.namespacecategory"));
 				this.view(request, next, pageInfo);
 				return false;
-			} else if (StringUtils.equals(fromWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_IMAGE)
-					|| StringUtils.equals(fromWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_IMAGE_COMMENTS)
-					|| StringUtils.equals(destinationWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_IMAGE)
-					|| StringUtils.equals(destinationWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_IMAGE_COMMENTS)
+			} else if (fromWikiLink.getNamespace() == Namespace.FILE
+					|| fromWikiLink.getNamespace() == Namespace.FILE_COMMENTS
+					|| destinationWikiLink.getNamespace() == Namespace.FILE
+					|| destinationWikiLink.getNamespace() == Namespace.FILE_COMMENTS
 				) {
 				next.addObject("messageObject", new WikiMessage("move.exception.namespaceimage"));
 				this.view(request, next, pageInfo);

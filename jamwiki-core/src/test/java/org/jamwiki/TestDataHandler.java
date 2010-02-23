@@ -215,7 +215,12 @@ public class TestDataHandler implements DataHandler {
 	 *
 	 */
 	public Namespace lookupNamespace(String namespaceString) throws DataAccessException {
-		throw new UnsupportedOperationException();
+		for (Namespace namespace : Namespace.values()) {
+			if (namespace.getLabel().equals(namespaceString)) {
+				return namespace;
+			}
+		}
+		return null;
 	}
 
 	/**

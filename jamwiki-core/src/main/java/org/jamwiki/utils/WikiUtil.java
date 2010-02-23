@@ -154,12 +154,11 @@ public class WikiUtil {
 			throw new IllegalArgumentException("Topic name must not be empty in extractCommentsLink");
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
-		if (StringUtils.isBlank(wikiLink.getNamespace())) {
-			return NamespaceHandler.NAMESPACE_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + name;
+		if (wikiLink.getNamespace() == Namespace.MAIN) {
+			return Namespace.COMMENTS.getLabel() + Namespace.SEPARATOR + name;
 		}
-		String namespace = wikiLink.getNamespace();
-		String commentsNamespace = NamespaceHandler.getCommentsNamespace(namespace);
-		return (!StringUtils.isBlank(commentsNamespace)) ? commentsNamespace + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle() : NamespaceHandler.NAMESPACE_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle();
+		String commentsNamespace = NamespaceHandler.getCommentsNamespace(wikiLink.getNamespace().getLabel());
+		return (!StringUtils.isBlank(commentsNamespace)) ? commentsNamespace + Namespace.SEPARATOR + wikiLink.getArticle() : Namespace.COMMENTS.getLabel() + Namespace.SEPARATOR + wikiLink.getArticle();
 	}
 
 	/**
@@ -176,12 +175,8 @@ public class WikiUtil {
 			throw new IllegalArgumentException("Topic name must not be empty in extractTopicLink");
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
-		if (StringUtils.isBlank(wikiLink.getNamespace())) {
-			return name;
-		}
-		String namespace = wikiLink.getNamespace();
-		String mainNamespace = NamespaceHandler.getMainNamespace(namespace);
-		return (!StringUtils.isBlank(mainNamespace)) ? mainNamespace + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle() : wikiLink.getArticle();
+		String mainNamespace = NamespaceHandler.getMainNamespace(wikiLink.getNamespace().getLabel());
+		return (!StringUtils.isBlank(mainNamespace)) ? mainNamespace + Namespace.SEPARATOR + wikiLink.getArticle() : wikiLink.getArticle();
 	}
 
 	/**
@@ -249,9 +244,8 @@ public class WikiUtil {
 		}
 		String virtualWiki = parent.getVirtualWiki();
 		WikiLink wikiLink = LinkUtil.parseWikiLink(target);
-		if (!StringUtils.isBlank(wikiLink.getNamespace()) && WikiBase.getDataHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
-			virtualWiki = wikiLink.getNamespace();
-			wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
+		if (wikiLink.getVirtualWiki() != null) {
+			virtualWiki = wikiLink.getVirtualWiki().getName();
 		}
 		// get the topic that is being redirected to
 		Topic child = WikiBase.getDataHandler().lookupTopic(virtualWiki, wikiLink.getDestination(), false, null);
@@ -472,15 +466,11 @@ public class WikiUtil {
 	 */
 	public static boolean isCommentsPage(String topicName) {
 		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-		if (StringUtils.isBlank(wikiLink.getNamespace())) {
+		if (wikiLink.getNamespace() == Namespace.SPECIAL) {
 			return false;
 		}
-		String namespace = wikiLink.getNamespace();
-		if (namespace.equals(NamespaceHandler.NAMESPACE_SPECIAL)) {
-			return false;
-		}
-		String commentNamespace = NamespaceHandler.getCommentsNamespace(namespace);
-		return namespace.equals(commentNamespace);
+		String commentNamespace = NamespaceHandler.getCommentsNamespace(wikiLink.getNamespace().getLabel());
+		return wikiLink.getNamespace().getLabel().equals(commentNamespace);
 	}
 
 	/**
@@ -714,12 +704,11 @@ public class WikiUtil {
 			throw new WikiException(new WikiMessage("common.exception.pseudotopic", name));
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
-		String namespace = StringUtils.trimToNull(wikiLink.getNamespace());
 		String article = StringUtils.trimToNull(wikiLink.getArticle());
-		if (StringUtils.startsWith(namespace, "/") || StringUtils.startsWith(article, "/")) {
+		if (StringUtils.startsWith(article, "/")) {
 			throw new WikiException(new WikiMessage("common.exception.name", name));
 		}
-		if (namespace != null && namespace.toLowerCase().equals(NamespaceHandler.NAMESPACE_SPECIAL.toLowerCase())) {
+		if (wikiLink.getNamespace() == Namespace.SPECIAL) {
 			throw new WikiException(new WikiMessage("common.exception.name", name));
 		}
 		Matcher m = WikiUtil.INVALID_TOPIC_NAME_PATTERN.matcher(name);

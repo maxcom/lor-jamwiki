@@ -406,26 +406,22 @@ public class MagicWordUtil {
 			return Utilities.encodeAndEscapeTopicName(topic);
 		}
 		if (name.equals(MAGIC_NAMESPACE)) {
-			return wikiLink.getNamespace();
+			return wikiLink.getNamespace().getLabel();
 		}
 		if (name.equals(MAGIC_NAMESPACE_E)) {
-			return Utilities.encodeAndEscapeTopicName(wikiLink.getNamespace());
+			return Utilities.encodeAndEscapeTopicName(wikiLink.getNamespace().getLabel());
 		}
 		if (name.equals(MAGIC_TALK_SPACE)) {
-			String namespace = wikiLink.getNamespace();
-			return NamespaceHandler.getCommentsNamespace(namespace);
+			return NamespaceHandler.getCommentsNamespace(wikiLink.getNamespace().getLabel());
 		}
 		if (name.equals(MAGIC_TALK_SPACE_E)) {
-			String namespace = wikiLink.getNamespace();
-			return Utilities.encodeAndEscapeTopicName(NamespaceHandler.getCommentsNamespace(namespace));
+			return Utilities.encodeAndEscapeTopicName(NamespaceHandler.getCommentsNamespace(wikiLink.getNamespace().getLabel()));
 		}
 		if (name.equals(MAGIC_SUBJECT_SPACE) || name.equals(MAGIC_ARTICLE_SPACE)) {
-			String namespace = wikiLink.getNamespace();
-			return NamespaceHandler.getMainNamespace(namespace);
+			return NamespaceHandler.getMainNamespace(wikiLink.getNamespace().getLabel());
 		}
 		if (name.equals(MAGIC_SUBJECT_SPACE_E) || name.equals(MAGIC_ARTICLE_SPACE_E)) {
-			String namespace = wikiLink.getNamespace();
-			return Utilities.encodeAndEscapeTopicName(NamespaceHandler.getMainNamespace(namespace));
+			return Utilities.encodeAndEscapeTopicName(NamespaceHandler.getMainNamespace(wikiLink.getNamespace().getLabel()));
 		}
 		if (name.equals(MAGIC_TALK_PAGE_NAME)) {
 			return WikiUtil.extractCommentsLink(parserInput.getTopicName());

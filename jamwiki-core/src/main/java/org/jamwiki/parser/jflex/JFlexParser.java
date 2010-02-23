@@ -27,7 +27,6 @@ import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -300,11 +299,8 @@ public class JFlexParser extends AbstractParser {
 		String virtualWiki = this.parserInput.getVirtualWiki();
 		try {
 			// see if the redirect link starts with a virtual wiki
-			if (wikiLink.getColon() && !StringUtils.isBlank(wikiLink.getNamespace())) {
-				if (WikiBase.getDataHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
-					virtualWiki = wikiLink.getNamespace();
-					wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
-				}
+			if (wikiLink.getVirtualWiki() != null) {
+				virtualWiki = wikiLink.getVirtualWiki().getName();
 			}
 			if (!LinkUtil.isExistingArticle(virtualWiki, wikiLink.getDestination())) {
 				style = "edit redirect";

@@ -53,7 +53,6 @@ import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Namespace;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLogger;
@@ -660,17 +659,15 @@ public class AnsiDataHandler implements DataHandler {
 				return (cacheTopic == null || (!deleteOK && cacheTopic.getDeleteDate() != null)) ? null : new Topic(cacheTopic);
 			}
 		}
-		String namespace = LinkUtil.parseWikiLink(topicName).getNamespace();
+		Namespace namespace = LinkUtil.parseWikiLink(topicName).getNamespace();
 		boolean caseSensitive = true;
-		if (namespace != null) {
-			if (namespace.equals(NamespaceHandler.NAMESPACE_SPECIAL)) {
-				// invalid namespace
-				return null;
-			}
-			if (namespace.equals(NamespaceHandler.NAMESPACE_TEMPLATE) || namespace.equals(NamespaceHandler.NAMESPACE_USER) || namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
-				// user/template/category namespaces are case-insensitive
-				caseSensitive = false;
-			}
+		if (namespace == Namespace.SPECIAL) {
+			// invalid namespace
+			return null;
+		}
+		if (namespace == Namespace.TEMPLATE || namespace == Namespace.USER || namespace == Namespace.CATEGORY) {
+			// user/template/category namespaces are case-insensitive
+			caseSensitive = false;
 		}
 		Topic topic = null;
 		try {

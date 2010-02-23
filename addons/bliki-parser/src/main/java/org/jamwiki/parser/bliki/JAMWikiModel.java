@@ -23,7 +23,7 @@ import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.jflex.JFlexParser;
 import org.jamwiki.parser.jflex.JFlexParserUtil;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
+import org.jamwiki.utils.Namespace;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -205,7 +205,7 @@ public class JAMWikiModel extends AbstractWikiModel {
 
 	@Override
 	public void addCategory(String categoryName, String sortKey) {
-		fParserOutput.addCategory(getCategoryNamespace() + NamespaceHandler.NAMESPACE_SEPARATOR + categoryName, sortKey);
+		fParserOutput.addCategory(getCategoryNamespace() + Namespace.SEPARATOR + categoryName, sortKey);
 	}
 
 	@Override
@@ -275,17 +275,17 @@ public class JAMWikiModel extends AbstractWikiModel {
 
 	@Override
 	public String getCategoryNamespace() {
-		return NamespaceHandler.NAMESPACE_CATEGORY;
+		return Namespace.CATEGORY.getLabel();
 	}
 
 	@Override
 	public String getImageNamespace() {
-		return NamespaceHandler.NAMESPACE_IMAGE;
+		return Namespace.FILE.getLabel();
 	}
 
 	@Override
 	public String getTemplateNamespace() {
-		return NamespaceHandler.NAMESPACE_TEMPLATE;
+		return Namespace.TEMPLATE.getLabel();
 	}
 
 	public Set<String> getLinks() {
@@ -296,9 +296,9 @@ public class JAMWikiModel extends AbstractWikiModel {
 	public void appendInterWikiLink(String namespace, String title, String topicDescription) {
 		String hrefLink = getInterwikiMap().get(namespace.toLowerCase());
 		if (hrefLink != null) {
-			WikiLink wikiLink = LinkUtil.parseWikiLink(namespace + NamespaceHandler.NAMESPACE_SEPARATOR + title + "|" + topicDescription);
+			WikiLink wikiLink = LinkUtil.parseWikiLink(namespace + Namespace.SEPARATOR + title + "|" + topicDescription);
 			String destination = wikiLink.getDestination();
-			destination = destination.substring(wikiLink.getNamespace().length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
+			destination = destination.substring(wikiLink.getNamespace().getLabel().length() + Namespace.SEPARATOR.length());
 			hrefLink = hrefLink.replace("${title}", Utilities.encodeAndEscapeTopicName(title));
 			TagNode aTagNode = new TagNode("a");
 			aTagNode.addAttribute("href", hrefLink, true);
