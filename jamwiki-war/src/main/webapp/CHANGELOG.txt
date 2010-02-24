@@ -42,6 +42,7 @@ Bugfixes:
 Translation Updates:
 
   * Updated Chinese translations (hfl).
+  * Updated Dutch translations (Angel).
   * Updated Russian translations (shar).
 
 
