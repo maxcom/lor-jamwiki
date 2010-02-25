@@ -34,22 +34,6 @@ public class NamespaceHandler {
 	/** Logger */
 	private static final WikiLogger logger = WikiLogger.getLogger(NamespaceHandler.class.getName());
 
-	public static final String NAMESPACE_SEPARATOR = ":";
-	public static final String NAMESPACE_SPECIAL = initializeNamespace("special", false);
-	public static final String NAMESPACE_COMMENTS = initializeNamespace("main", true);
-	public static final String NAMESPACE_IMAGE = initializeNamespace("image", false);
-	public static final String NAMESPACE_IMAGE_COMMENTS = initializeNamespace("image", true);
-	public static final String NAMESPACE_CATEGORY = initializeNamespace("category", false);
-	public static final String NAMESPACE_CATEGORY_COMMENTS = initializeNamespace("category", true);
-	public static final String NAMESPACE_JAMWIKI = initializeNamespace("jamwiki", false);
-	public static final String NAMESPACE_JAMWIKI_COMMENTS = initializeNamespace("jamwiki", true);
-	public static final String NAMESPACE_TEMPLATE = initializeNamespace("template", false);
-	public static final String NAMESPACE_TEMPLATE_COMMENTS = initializeNamespace("template", true);
-	public static final String NAMESPACE_USER = initializeNamespace("user", false);
-	public static final String NAMESPACE_USER_COMMENTS = initializeNamespace("user", true);
-	public static final String NAMESPACE_HELP = initializeNamespace("help", false);
-	public static final String NAMESPACE_HELP_COMMENTS = initializeNamespace("help", true);
-
 	/**
 	 *
 	 */
@@ -62,22 +46,22 @@ public class NamespaceHandler {
 	public static String getCommentsNamespace(String namespace) {
 		if (StringUtils.isBlank(namespace)) {
 			// main namespace
-			return NAMESPACE_COMMENTS;
+			return Namespace.COMMENTS.getLabel();
 		}
 		Map<String, String[]> namespaces = WikiConfiguration.getInstance().getNamespaces();
 		for (String key : namespaces.keySet()) {
 			String[] values = namespaces.get(key);
 			String main = values[0];
 			String comments = values[1];
-			if (namespace.equals(NAMESPACE_SPECIAL)) {
-				return NAMESPACE_SPECIAL;
+			if (namespace.equals(Namespace.SPECIAL.getLabel())) {
+				return Namespace.SPECIAL.getLabel();
 			}
 			if (namespace.equals(main) || (comments != null && namespace.equals(comments))) {
 				return comments;
 			}
 		}
 		// unrecognized namespace
-		return NAMESPACE_COMMENTS + NAMESPACE_SEPARATOR + namespace;
+		return Namespace.COMMENTS.getLabel() + Namespace.SEPARATOR + namespace;
 	}
 
 	/**

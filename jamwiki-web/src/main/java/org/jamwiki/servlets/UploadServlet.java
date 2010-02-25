@@ -30,7 +30,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.ImageUtil;
-import org.jamwiki.utils.NamespaceHandler;
+import org.jamwiki.utils.Namespace;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -68,7 +68,7 @@ public class UploadServlet extends JAMWikiServlet {
 			destinationFilename += (!destinationFilename.endsWith(".") ? "." : "") + FilenameUtils.getExtension(filename);
 		}
 		// if the user entered a file name of the form "Image:Foo.jpg" strip the namespace
-		return StringUtils.removeStart(destinationFilename, NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR);
+		return StringUtils.removeStart(destinationFilename, Namespace.FILE.getLabel() + Namespace.SEPARATOR);
 	}
 
 	/**

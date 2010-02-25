@@ -152,7 +152,7 @@ public class ImageUtil {
 	 * Given an image file name, generate the appropriate topic name for the image.
 	 */
 	public static String generateFileTopicName(String filename) {
-		String topicName = NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR;
+		String topicName = Namespace.FILE.getLabel() + Namespace.SEPARATOR;
 		topicName += Utilities.decodeAndEscapeTopicName(filename, true);
 		return topicName;
 	}

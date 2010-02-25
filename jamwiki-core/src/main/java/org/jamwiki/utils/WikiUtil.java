@@ -206,13 +206,13 @@ public class WikiUtil {
 		switch (topicType) {
 			case Topic.TYPE_IMAGE:
 			case Topic.TYPE_FILE:
-				return NamespaceHandler.NAMESPACE_IMAGE;
+				return Namespace.FILE.getLabel();
 			case Topic.TYPE_CATEGORY:
-				return NamespaceHandler.NAMESPACE_CATEGORY;
+				return Namespace.CATEGORY.getLabel();
 			case Topic.TYPE_SYSTEM_FILE:
-				return NamespaceHandler.NAMESPACE_JAMWIKI;
+				return Namespace.JAMWIKI.getLabel();
 			case Topic.TYPE_TEMPLATE:
-				return NamespaceHandler.NAMESPACE_TEMPLATE;
+				return Namespace.TEMPLATE.getLabel();
 			default:
 				return "";
 		}
@@ -269,16 +269,16 @@ public class WikiUtil {
 	 */
 	public static int findTopicTypeForNamespace(String namespace) {
 		if (namespace != null) {
-			if (namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
+			if (namespace.equals(Namespace.CATEGORY.getLabel())) {
 				return Topic.TYPE_CATEGORY;
 			}
-			if (namespace.equals(NamespaceHandler.NAMESPACE_TEMPLATE)) {
+			if (namespace.equals(Namespace.TEMPLATE.getLabel())) {
 				return Topic.TYPE_TEMPLATE;
 			}
-			if (namespace.equals(NamespaceHandler.NAMESPACE_JAMWIKI)) {
+			if (namespace.equals(Namespace.JAMWIKI.getLabel())) {
 				return Topic.TYPE_SYSTEM_FILE;
 			}
-			if (namespace.equals(NamespaceHandler.NAMESPACE_IMAGE)) {
+			if (namespace.equals(Namespace.FILE.getLabel())) {
 				// FIXME - handle TYPE_FILE
 				return Topic.TYPE_IMAGE;
 			}

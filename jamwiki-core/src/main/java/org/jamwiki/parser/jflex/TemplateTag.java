@@ -28,7 +28,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
-import org.jamwiki.utils.NamespaceHandler;
+import org.jamwiki.utils.Namespace;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -116,7 +116,7 @@ public class TemplateTag implements JFlexParserTag {
 		// extract the template name
 		String name = this.parseTemplateName(templateContent);
 		boolean inclusion = false;
-		if (name.startsWith(NamespaceHandler.NAMESPACE_SEPARATOR)) {
+		if (name.startsWith(Namespace.SEPARATOR)) {
 			name = name.substring(1);
 			inclusion = true;
 		}
@@ -245,13 +245,13 @@ public class TemplateTag implements JFlexParserTag {
 			// FIXME - no need for an exception
 			throw new ParserException("No template name specified");
 		}
-		if (name.startsWith(NamespaceHandler.NAMESPACE_SEPARATOR)) {
+		if (name.startsWith(Namespace.SEPARATOR)) {
 			if (name.length() == 1) {
 				// FIXME - no need for an exception
 				throw new ParserException("No template name specified");
 			}
-		} else if (!name.startsWith(NamespaceHandler.NAMESPACE_TEMPLATE + NamespaceHandler.NAMESPACE_SEPARATOR)) {
-			name = NamespaceHandler.NAMESPACE_TEMPLATE + NamespaceHandler.NAMESPACE_SEPARATOR + StringUtils.capitalize(name);
+		} else if (!name.startsWith(Namespace.TEMPLATE.getLabel() + Namespace.SEPARATOR)) {
+			name = Namespace.TEMPLATE.getLabel() + Namespace.SEPARATOR + StringUtils.capitalize(name);
 		}
 		return name;
 	}

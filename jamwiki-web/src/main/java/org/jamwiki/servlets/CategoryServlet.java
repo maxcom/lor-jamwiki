@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Category;
-import org.jamwiki.utils.NamespaceHandler;
+import org.jamwiki.utils.Namespace;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.servlet.ModelAndView;
@@ -57,7 +57,7 @@ public class CategoryServlet extends JAMWikiServlet {
 		LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>();
 		for (Category category : categoryObjects) {
 			String key = category.getName();
-			String value = key.substring(NamespaceHandler.NAMESPACE_CATEGORY.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
+			String value = key.substring(Namespace.CATEGORY.getLabel().length() + Namespace.SEPARATOR.length());
 			categories.put(key, value);
 		}
 		next.addObject("categoryCount", categories.size());

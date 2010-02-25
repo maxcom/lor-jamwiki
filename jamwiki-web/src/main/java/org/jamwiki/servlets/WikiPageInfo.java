@@ -24,7 +24,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
+import org.jamwiki.utils.Namespace;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -373,10 +373,10 @@ public class WikiPageInfo {
 	 */
 	public boolean isUserPage() {
 		WikiLink wikiLink = LinkUtil.parseWikiLink(this.getTopicName());
-		if (wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_USER)) {
+		if (wikiLink.getNamespace().equals(Namespace.USER.getLabel())) {
 			return true;
 		}
-		if (wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_USER_COMMENTS)) {
+		if (wikiLink.getNamespace().equals(Namespace.USER_COMMENTS.getLabel())) {
 			return true;
 		}
 		return false;

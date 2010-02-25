@@ -175,7 +175,7 @@ public class LinkUtil {
 		if (topic.getTopicType() == Topic.TYPE_FILE) {
 			// file, not an image
 			if (StringUtils.isBlank(caption)) {
-				caption = topicName.substring(NamespaceHandler.NAMESPACE_IMAGE.length() + 1);
+				caption = topicName.substring(Namespace.FILE.getLabel().length() + 1);
 			}
 			html.append("<a href=\"").append(url).append("\">");
 			if (escapeHtml) {
