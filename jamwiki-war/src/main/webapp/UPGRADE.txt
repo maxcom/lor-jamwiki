@@ -93,8 +93,10 @@ followed by 0.6.3.
               CREATE TABLE jam_namespace ( 
                 namespace_id INTEGER NOT NULL, 
                 namespace VARCHAR(200) NOT NULL, 
-                CONSTRAINT jam_p_namesp PRIMARY KEY (namespace_id), 
-                CONSTRAINT jam_u_namesp_namesp UNIQUE (namespace) 
+                main_namespace_id INTEGER,
+                CONSTRAINT jam_p_namesp PRIMARY KEY (namespace_id), \
+                CONSTRAINT jam_u_namesp_namesp UNIQUE (namespace), \
+                CONSTRAINT jam_f_namesp_namesp FOREIGN KEY (main_namespace_id) REFERENCES jam_topic(namespace_id) \
               );
        b) Create the jam_namespace_translation table.
               CREATE TABLE jam_namespace_translation ( 

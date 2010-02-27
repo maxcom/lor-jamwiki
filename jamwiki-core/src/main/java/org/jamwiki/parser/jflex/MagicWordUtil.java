@@ -30,7 +30,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
+import org.jamwiki.utils.Namespace;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -412,16 +412,20 @@ public class MagicWordUtil {
 			return Utilities.encodeAndEscapeTopicName(wikiLink.getNamespace().getLabel());
 		}
 		if (name.equals(MAGIC_TALK_SPACE)) {
-			return NamespaceHandler.getCommentsNamespace(wikiLink.getNamespace().getLabel());
+			Namespace result = Namespace.findCommentsNamespace(wikiLink.getNamespace().getLabel());
+			return (result != null) ? result.getLabel() : name;
 		}
 		if (name.equals(MAGIC_TALK_SPACE_E)) {
-			return Utilities.encodeAndEscapeTopicName(NamespaceHandler.getCommentsNamespace(wikiLink.getNamespace().getLabel()));
+			Namespace result = Namespace.findCommentsNamespace(wikiLink.getNamespace().getLabel());
+			return (result != null) ? Utilities.encodeAndEscapeTopicName(result.getLabel()) : Utilities.encodeAndEscapeTopicName(name);
 		}
 		if (name.equals(MAGIC_SUBJECT_SPACE) || name.equals(MAGIC_ARTICLE_SPACE)) {
-			return NamespaceHandler.getMainNamespace(wikiLink.getNamespace().getLabel());
+			Namespace result = Namespace.findMainNamespace(wikiLink.getNamespace().getLabel());
+			return (result != null) ? result.getLabel() : name;
 		}
 		if (name.equals(MAGIC_SUBJECT_SPACE_E) || name.equals(MAGIC_ARTICLE_SPACE_E)) {
-			return Utilities.encodeAndEscapeTopicName(NamespaceHandler.getMainNamespace(wikiLink.getNamespace().getLabel()));
+			Namespace result = Namespace.findMainNamespace(wikiLink.getNamespace().getLabel());
+			return (result != null) ? Utilities.encodeAndEscapeTopicName(result.getLabel()) : Utilities.encodeAndEscapeTopicName(name);
 		}
 		if (name.equals(MAGIC_TALK_PAGE_NAME)) {
 			return WikiUtil.extractCommentsLink(parserInput.getTopicName());

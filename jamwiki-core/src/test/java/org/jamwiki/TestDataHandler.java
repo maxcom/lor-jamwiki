@@ -19,6 +19,7 @@ package org.jamwiki;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -215,12 +216,19 @@ public class TestDataHandler implements DataHandler {
 	 *
 	 */
 	public Namespace lookupNamespace(String namespaceString) throws DataAccessException {
-		for (Namespace namespace : Namespace.values()) {
+		for (Namespace namespace : Namespace.DEFAULT_NAMESPACES.values()) {
 			if (namespace.getLabel().equals(namespaceString)) {
 				return namespace;
 			}
 		}
 		return null;
+	}
+
+	/**
+	 *
+	 */
+	public List<Namespace> lookupNamespaces() throws DataAccessException {
+		return new ArrayList<Namespace>(Namespace.DEFAULT_NAMESPACES.values());
 	}
 
 	/**
@@ -424,7 +432,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeNamespace(Integer namespaceId, String namespace) throws DataAccessException, WikiException {
+	public void writeNamespace(Namespace namespace) throws DataAccessException, WikiException {
 		throw new UnsupportedOperationException();
 	}
 

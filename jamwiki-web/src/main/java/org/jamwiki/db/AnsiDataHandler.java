@@ -619,25 +619,34 @@ public class AnsiDataHandler implements DataHandler {
 		// and more reliable than checking cache size or any other aspect of the cache.
 		if (WikiCache.retrieveFromCache(CACHE_NAMESPACE_BY_NAME, CACHE_NAMESPACE_BY_NAME) == null) {
 			// cache is dead, reload it
-			Connection conn = null;
-			try {
-				// add the dummy element
-				WikiCache.addToCache(CACHE_NAMESPACE_BY_NAME, CACHE_NAMESPACE_BY_NAME, true);
-				// now add the namespace elements
-				conn = DatabaseConnection.getConnection();
-				List<Namespace> namespaces = this.queryHandler().lookupNamespaces(conn);
-				for (Namespace namespace : namespaces) {
-					WikiCache.addToCache(CACHE_NAMESPACE_BY_NAME, namespace.getLabel(), namespace);
-					WikiCache.addToCache(CACHE_NAMESPACE_BY_ID, namespace.getId(), namespace);
-				}
-			} catch (SQLException e) {
-				throw new DataAccessException(e);
-			} finally {
-				DatabaseConnection.closeConnection(conn);
+			// add the dummy element
+			WikiCache.addToCache(CACHE_NAMESPACE_BY_NAME, CACHE_NAMESPACE_BY_NAME, true);
+			// now add the namespace elements
+			List<Namespace> namespaces = this.lookupNamespaces();
+			for (Namespace namespace : namespaces) {
+				WikiCache.addToCache(CACHE_NAMESPACE_BY_NAME, namespace.getLabel(), namespace);
+				WikiCache.addToCache(CACHE_NAMESPACE_BY_ID, namespace.getId(), namespace);
 			}
 		}
 		Element cacheElement = WikiCache.retrieveFromCache(CACHE_NAMESPACE_BY_NAME, namespaceString);
 		return (cacheElement != null) ? (Namespace)cacheElement.getObjectValue() : null;
+	}
+
+	/**
+	 *
+	 */
+	public List<Namespace> lookupNamespaces() throws DataAccessException {
+		// FIXME - implement caching
+		Connection conn = null;
+		try {
+			// now add the namespace elements
+			conn = DatabaseConnection.getConnection();
+			return this.queryHandler().lookupNamespaces(conn);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
 	}
 
 	/**
@@ -661,11 +670,11 @@ public class AnsiDataHandler implements DataHandler {
 		}
 		Namespace namespace = LinkUtil.parseWikiLink(topicName).getNamespace();
 		boolean caseSensitive = true;
-		if (namespace == Namespace.SPECIAL) {
+		if (namespace.equals(Namespace.SPECIAL)) {
 			// invalid namespace
 			return null;
 		}
-		if (namespace == Namespace.TEMPLATE || namespace == Namespace.USER || namespace == Namespace.CATEGORY) {
+		if (namespace.equals(Namespace.TEMPLATE) || namespace.equals(Namespace.USER) || namespace.equals(Namespace.CATEGORY)) {
 			// user/template/category namespaces are case-insensitive
 			caseSensitive = false;
 		}
@@ -1401,13 +1410,13 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeNamespace(Integer namespaceId, String namespace) throws DataAccessException, WikiException {
-		this.validateNamespace(namespace);
+	public void writeNamespace(Namespace namespace) throws DataAccessException, WikiException {
+		this.validateNamespace(namespace.getLabel());
 		TransactionStatus status = null;
 		try {
 			status = DatabaseConnection.startTransaction();
 			Connection conn = DatabaseConnection.getConnection();
-			this.queryHandler().updateNamespace(namespaceId, namespace, conn);
+			this.queryHandler().updateNamespace(namespace, conn);
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw new DataAccessException(e);

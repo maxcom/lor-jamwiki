@@ -145,7 +145,7 @@ public class EditServlet extends JAMWikiServlet {
 		pageInfo.setPageTitle(new WikiMessage("edit.title", topicName));
 		pageInfo.setTopicName(topicName);
 		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-		if (wikiLink.getNamespace() == Namespace.CATEGORY) {
+		if (wikiLink.getNamespace().equals(Namespace.CATEGORY)) {
 			ServletUtil.loadCategoryContent(next, virtualWiki, topicName);
 		}
 		if (request.getParameter("editComment") != null) {

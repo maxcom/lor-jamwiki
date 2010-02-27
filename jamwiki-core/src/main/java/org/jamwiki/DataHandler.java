@@ -390,6 +390,14 @@ public interface DataHandler {
 	Namespace lookupNamespace(String namespaceString) throws DataAccessException;
 
 	/**
+	 * Return all namespaces currently available for the wiki.
+	 *
+	 * @return A list of all Namespace objects currently available for the wiki.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	List<Namespace> lookupNamespaces() throws DataAccessException;
+
+	/**
 	 * Retrieve a Topic object that matches the given virtual wiki and topic
 	 * name.
 	 *
@@ -680,14 +688,11 @@ public interface DataHandler {
 	 * namespace does not already exist, otherwise it will update the existing
 	 * record.
 	 *
-	 * @param namespaceId The ID of the namespace.  May be <code>null</code> ONLY
-	 *  if a namespace is being added, otherwise MUST be specified.
-	 * @param namespace The default label to use for the namespace.  Namespace labels must be
-	 *  unique.
+	 * @param namespace The namespace object to add to the database.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 * @throws WikiException Thrown if the namespace information is invalid.
 	 */
-	void writeNamespace(Integer namespaceId, String namespace) throws DataAccessException, WikiException;
+	void writeNamespace(Namespace namespace) throws DataAccessException, WikiException;
 
 	/**
 	 * Add or update a virtual-wiki specific label for a namespace.  This method will

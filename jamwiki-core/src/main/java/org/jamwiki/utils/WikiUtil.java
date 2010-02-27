@@ -154,11 +154,16 @@ public class WikiUtil {
 			throw new IllegalArgumentException("Topic name must not be empty in extractCommentsLink");
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
-		if (wikiLink.getNamespace() == Namespace.MAIN) {
-			return Namespace.COMMENTS.getLabel() + Namespace.SEPARATOR + name;
+		Namespace commentsNamespace = null;
+		try {
+			commentsNamespace = Namespace.findCommentsNamespace(wikiLink.getNamespace().getLabel());
+		} catch (DataAccessException e) {
+			throw new IllegalStateException("Database error while retrieving comments namespace", e);
 		}
-		String commentsNamespace = NamespaceHandler.getCommentsNamespace(wikiLink.getNamespace().getLabel());
-		return (!StringUtils.isBlank(commentsNamespace)) ? commentsNamespace + Namespace.SEPARATOR + wikiLink.getArticle() : Namespace.COMMENTS.getLabel() + Namespace.SEPARATOR + wikiLink.getArticle();
+		if (commentsNamespace == null) {
+			throw new IllegalArgumentException("Topic " + name + " does not have a comments namespace");
+		}
+		return (!StringUtils.isBlank(commentsNamespace.getLabel())) ? commentsNamespace.getLabel() + Namespace.SEPARATOR + wikiLink.getArticle() : wikiLink.getArticle();
 	}
 
 	/**
@@ -175,8 +180,16 @@ public class WikiUtil {
 			throw new IllegalArgumentException("Topic name must not be empty in extractTopicLink");
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
-		String mainNamespace = NamespaceHandler.getMainNamespace(wikiLink.getNamespace().getLabel());
-		return (!StringUtils.isBlank(mainNamespace)) ? mainNamespace + Namespace.SEPARATOR + wikiLink.getArticle() : wikiLink.getArticle();
+		Namespace mainNamespace = null;
+		try {
+			mainNamespace = Namespace.findMainNamespace(wikiLink.getNamespace().getLabel());
+		} catch (DataAccessException e) {
+			throw new IllegalStateException("Database error while retrieving main namespace", e);
+		}
+		if (mainNamespace == null) {
+			throw new IllegalArgumentException("Topic " + name + " does not have a main namespace");
+		}
+		return (!StringUtils.isBlank(mainNamespace.getLabel())) ? mainNamespace.getLabel() + Namespace.SEPARATOR + wikiLink.getArticle() : wikiLink.getArticle();
 	}
 
 	/**
@@ -466,11 +479,14 @@ public class WikiUtil {
 	 */
 	public static boolean isCommentsPage(String topicName) {
 		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-		if (wikiLink.getNamespace() == Namespace.SPECIAL) {
+		if (wikiLink.getNamespace().equals(Namespace.SPECIAL)) {
 			return false;
 		}
-		String commentNamespace = NamespaceHandler.getCommentsNamespace(wikiLink.getNamespace().getLabel());
-		return wikiLink.getNamespace().getLabel().equals(commentNamespace);
+		try {
+			return (Namespace.findCommentsNamespace(wikiLink.getNamespace().getLabel()) != null);
+		} catch (DataAccessException e) {
+			throw new IllegalStateException("Database error while retrieving comments namespace", e);
+		}
 	}
 
 	/**
@@ -708,7 +724,7 @@ public class WikiUtil {
 		if (StringUtils.startsWith(article, "/")) {
 			throw new WikiException(new WikiMessage("common.exception.name", name));
 		}
-		if (wikiLink.getNamespace() == Namespace.SPECIAL) {
+		if (wikiLink.getNamespace().equals(Namespace.SPECIAL)) {
 			throw new WikiException(new WikiMessage("common.exception.name", name));
 		}
 		Matcher m = WikiUtil.INVALID_TOPIC_NAME_PATTERN.matcher(name);

@@ -579,8 +579,8 @@ public class WikiDatabase {
 	// FIXME - make this private once the ability to upgrade to 0.9.0 is removed
 	protected static void setupDefaultNamespaces() throws DataAccessException, WikiException {
 		logger.info("Creating default wiki namespaces");
-		for (Namespace namespace : Namespace.values()) {
-			WikiBase.getDataHandler().writeNamespace(namespace.getId(), namespace.getLabel());
+		for (Namespace namespace : Namespace.DEFAULT_NAMESPACES.values()) {
+			WikiBase.getDataHandler().writeNamespace(namespace);
 		}
 	}
 

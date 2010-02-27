@@ -24,8 +24,10 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
@@ -1872,17 +1874,43 @@ public class AnsiQueryHandler implements QueryHandler {
 	public List<Namespace> lookupNamespaces(Connection conn) throws SQLException {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		List<Namespace> namespaces = new ArrayList<Namespace>();
+		Map<Integer, Namespace> namespaces = new HashMap<Integer, Namespace>();
 		try {
 			stmt = conn.prepareStatement(STATEMENT_SELECT_NAMESPACES);
 			rs = stmt.executeQuery();
+			// because there is no consistent way to sort null keys, get all data and then
+			// create Namespace objects by initializing main namespaces first, then the talk
+			// namespaces that reference the main namespace.
+			Map<Integer, String> mainNamespaces = new HashMap<Integer, String>();
+			Map<Integer, Object[]> talkNamespaces = new HashMap<Integer, Object[]>();
 			while (rs.next()) {
-				namespaces.add(new Namespace(rs.getInt("namespace_id"), rs.getString("namespace")));
+				int namespaceId = rs.getInt("namespace_id");
+				String namespaceLabel = rs.getString("namespace");
+				int mainNamespaceId = rs.getInt("main_namespace_id");
+				if (rs.wasNull()) {
+					mainNamespaces.put(namespaceId, namespaceLabel);
+				} else {
+					Object[] talkNamespaceParams = {mainNamespaceId, namespaceLabel};
+					talkNamespaces.put(namespaceId, talkNamespaceParams);
+				}
+			}
+			for (int namespaceId : mainNamespaces.keySet()) {
+				String namespaceLabel = mainNamespaces.get(namespaceId);
+				namespaces.put(namespaceId, new Namespace(namespaceId, namespaceLabel, null));
+			}
+			for (int namespaceId : talkNamespaces.keySet()) {
+				int mainNamespaceId = (Integer)talkNamespaces.get(namespaceId)[0];
+				String namespaceLabel = (String)talkNamespaces.get(namespaceId)[1];
+				Namespace mainNamespace = namespaces.get(mainNamespaceId);
+				if (mainNamespace == null) {
+					logger.warning("Invalid namespace reference - bad database data.  Namespace " + namespaceLabel + " references invalid main namespace with ID " + mainNamespaceId);
+				}
+				namespaces.put(namespaceId, new Namespace(namespaceId, namespaceLabel, mainNamespace));
 			}
 		} finally {
 			DatabaseConnection.closeConnection(null, stmt, rs);
 		}
-		return namespaces;
+		return new ArrayList<Namespace>(namespaces.values());
 	}
 
 	/**
@@ -2378,15 +2406,15 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void updateNamespace(Integer namespaceId, String namespaceString, Connection conn) throws SQLException {
+	public void updateNamespace(Namespace namespace, Connection conn) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
 			// see if a namespace with the given value exists
 			boolean isUpdate = false;
-			if (namespaceId != null) {
+			if (namespace.getId() != null) {
 				List<Namespace> namespaces = this.lookupNamespaces(conn);
-				for (Namespace namespace : namespaces) {
-					if (namespace.getId() == namespaceId.intValue()) {
+				for (Namespace candidateNamespace : namespaces) {
+					if (candidateNamespace.equals(namespace)) {
 						isUpdate = true;
 						break;
 					}
@@ -2395,15 +2423,19 @@ public class AnsiQueryHandler implements QueryHandler {
 			if (isUpdate) {
 				stmt = conn.prepareStatement(STATEMENT_UPDATE_NAMESPACE);
 			} else {
-				if (namespaceId == null) {
-					namespaceId = DatabaseConnection.executeSequenceQuery(STATEMENT_SELECT_NAMESPACE_SEQUENCE, "namespace_id", conn);
+				if (namespace.getId() == null) {
 					// note - this returns the last id in the system, so add one
-					namespaceId++;
+					namespace.setId(DatabaseConnection.executeSequenceQuery(STATEMENT_SELECT_NAMESPACE_SEQUENCE, "namespace_id", conn) + 1);
 				}
 				stmt = conn.prepareStatement(STATEMENT_INSERT_NAMESPACE);
 			}
-			stmt.setString(1, namespaceString);
-			stmt.setInt(2, namespaceId);
+			stmt.setString(1, namespace.getLabel());
+			if (namespace.getMainNamespace() == null) {
+				stmt.setNull(2, Types.INTEGER);
+			} else {
+				stmt.setInt(2, namespace.getMainNamespace().getId());
+			}
+			stmt.setInt(3, namespace.getId());
 			stmt.executeUpdate();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);

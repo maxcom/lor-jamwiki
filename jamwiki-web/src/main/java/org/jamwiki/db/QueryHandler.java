@@ -835,15 +835,12 @@ public interface QueryHandler {
 	 * namespace does not already exist, otherwise it will update the existing
 	 * record.
 	 *
-	 * @param namespaceId The ID of the namespace.  May be <code>null</code> ONLY
-	 *  if a namespace is being added, otherwise MUST be specified.
-	 * @param namespace The default label to use for the namespace.  Namespace labels must be
-	 *  unique.
+	 * @param namespace The namespace object to add to the database.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	void updateNamespace(Integer namespaceId, String namespace, Connection conn) throws SQLException;
+	void updateNamespace(Namespace namespace, Connection conn) throws SQLException;
 
 	/**
 	 * Add or update a virtual-wiki specific label for a namespace.  This method will
