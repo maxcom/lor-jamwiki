@@ -97,6 +97,13 @@ followed by 0.6.3.
      "wiki-version" property to "0.8.3".
 
 
+  JAMWiki 0.8.3
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.8.3".
+
+
   JAMWiki 0.8.2
   =============
 
