@@ -72,7 +72,7 @@ public class MoveServlet extends JAMWikiServlet {
 		WikiMessage pageTitle = new WikiMessage("move.title", topicName);
 		pageInfo.setPageTitle(pageTitle);
 		pageInfo.setTopicName(topicName);
-		String moveDestination = request.getParameter("moveDestination");
+		String moveDestination = WikiUtil.getParameterFromRequest(request, "moveDestination", true);
 		if (!movePage(request, next, pageInfo, topicName, moveDestination)) {
 			return;
 		}
@@ -167,7 +167,10 @@ public class MoveServlet extends JAMWikiServlet {
 		pageInfo.setPageTitle(pageTitle);
 		pageInfo.setContentJsp(JSP_MOVE);
 		pageInfo.setTopicName(topicName);
-		String moveDestination = (StringUtils.isBlank(request.getParameter("moveDestination")) ? topicName : request.getParameter("moveDestination"));
+		String moveDestination = WikiUtil.getParameterFromRequest(request, "moveDestination", true);
+		if (StringUtils.isBlank(moveDestination)) {
+			moveDestination = topicName;
+		}
 		next.addObject("moveDestination", moveDestination);
 		next.addObject("moveComment", request.getParameter("moveComment"));
 	}
