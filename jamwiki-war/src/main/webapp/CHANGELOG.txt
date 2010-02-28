@@ -32,6 +32,8 @@ New Features:
 
 Bugfixes:
 
+  * When renaming a topic, the data could be lost if the new topic name
+    included an underscore.  Test case provided by Rudi Wiesmayr.
   * Leading whitespace should be trimmed from category names such as
     "Category: Test" or "Category : Test".
   * Special:Import and Special:Export code refactored to avoid OOM errors with
