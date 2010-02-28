@@ -79,8 +79,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	/** Id stored with the document to indicate the search names of topics linked from the page.  */
 	private static final String ITYPE_TOPIC_LINK = "topic_link";
 	/** Lucene compatibility version. */
-	// NOTE: LUCENE_CURRENT can generate issues when upgrading.  It may be necessary to make this parameter configurable.
-	private static final Version USE_LUCENE_VERSION = Version.LUCENE_CURRENT;
+	private static final Version USE_LUCENE_VERSION = Version.LUCENE_30;
 	/** Maximum number of results to return per search. */
 	// FIXME - make this configurable
 	private static final int MAXIMUM_RESULTS_PER_SEARCH = 200;
