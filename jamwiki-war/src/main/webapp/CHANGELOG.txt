@@ -4,8 +4,9 @@
 
 Bugfixes:
 
-  * When renaming a topic, the data could be lost if the new topic name
-    included an underscore.  Test case provided by Rudi Wiesmayr.
+  * When renaming a topic, the data could be incorrectly stored in the database
+    if the new topic name included an underscore.  Test case provided by Rudi
+    Wiesmayr.
   * Links to a virtual wiki page with the same page name ("[[:test:PageName]]")
     will now parse correctly again.  Reported by Tom Schueller.
 
