@@ -974,7 +974,7 @@ public class AnsiDataHandler implements DataHandler {
 				this.undeleteTopic(toTopic, null);
 			} else {
 				// create a new topic that redirects to the destination
-				toTopic = fromTopic;
+				toTopic = new Topic(fromTopic);
 				toTopic.setTopicId(-1);
 				toTopic.setName(fromTopicName);
 			}
