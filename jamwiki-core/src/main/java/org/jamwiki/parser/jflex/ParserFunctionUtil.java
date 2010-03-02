@@ -22,6 +22,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserException;
@@ -42,6 +43,7 @@ public class ParserFunctionUtil {
 	private static final String PARSER_FUNCTION_FULL_URL = "fullurl:";
 	private static final String PARSER_FUNCTION_EXPR = "#expr:";
 	private static final String PARSER_FUNCTION_IF = "#if:";
+	private static final String PARSER_FUNCTION_IF_EQUAL = "#ifeq:";
 	private static final String PARSER_FUNCTION_LOCAL_URL = "localurl:";
 	private static final String PARSER_FUNCTION_LOWER_CASE = "lc:";
 	private static final String PARSER_FUNCTION_LOWER_CASE_FIRST = "lcfirst:";
@@ -57,6 +59,7 @@ public class ParserFunctionUtil {
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_FULL_URL);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_EXPR);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_IF);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_IF_EQUAL);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOCAL_URL);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOWER_CASE);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOWER_CASE_FIRST);
@@ -105,6 +108,9 @@ public class ParserFunctionUtil {
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_IF)) {
 			return ParserFunctionUtil.parseIf(parserInput, parserFunctionArgumentArray);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_IF_EQUAL)) {
+			return ParserFunctionUtil.parseIfEqual(parserInput, parserFunctionArgumentArray);
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_LOCAL_URL)) {
 			return ParserFunctionUtil.parseLocalUrl(parserInput, parserFunctionArgumentArray);
@@ -253,6 +259,29 @@ public class ParserFunctionUtil {
 			return (parserFunctionArgumentArray.length >= 2) ? JFlexParserUtil.parseFragment(parserInput, parserFunctionArgumentArray[1], JFlexParser.MODE_PREPROCESS) : "";
 		} else {
 			return (parserFunctionArgumentArray.length >= 3) ? JFlexParserUtil.parseFragment(parserInput, parserFunctionArgumentArray[2], JFlexParser.MODE_PREPROCESS) : "";
+		}
+	}
+
+	/**
+	 * Parse the {{#ifeq:}} parser function.  Usage: {{#ifeq: value1 | value2 | true | false}}.
+	 */
+	private static String parseIfEqual(ParserInput parserInput, String[] parserFunctionArgumentArray) throws DataAccessException,  ParserException {
+		String arg1 = ((parserFunctionArgumentArray.length >= 1) ? parserFunctionArgumentArray[0] : "");
+		String arg2 = ((parserFunctionArgumentArray.length >= 2) ? parserFunctionArgumentArray[1] : "");
+		String result1 = ((parserFunctionArgumentArray.length >= 3) ? parserFunctionArgumentArray[2] : "");
+		String result2 = ((parserFunctionArgumentArray.length >= 4) ? parserFunctionArgumentArray[3] : "");
+		boolean equals = StringUtils.equals(arg1, arg2);
+		if (!equals && NumberUtils.isNumber(arg1) && NumberUtils.isNumber(arg2)) {
+			// compare numerically
+			BigDecimal bigDecimal1 = new BigDecimal(arg1);
+			BigDecimal bigDecimal2 = new BigDecimal(arg2);
+			equals = (bigDecimal1.compareTo(bigDecimal2) == 0);
+		}
+		// parse to handle any embedded templates
+		if (equals) {
+			return JFlexParserUtil.parseFragment(parserInput, result1, JFlexParser.MODE_PREPROCESS);
+		} else {
+			return JFlexParserUtil.parseFragment(parserInput, result2, JFlexParser.MODE_PREPROCESS);
 		}
 	}
 
