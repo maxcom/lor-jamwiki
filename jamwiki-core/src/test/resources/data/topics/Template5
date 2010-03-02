@@ -30,3 +30,7 @@ test}}
 {{embed|content=test template}}
 
 {{reprint|content={{embed|content=test template}}}}
+
+{{paramtest}}
+
+{{paramtest|Example1}}

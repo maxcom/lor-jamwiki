@@ -37,7 +37,7 @@ Bugfixes:
   * Special:Import and Special:Export code refactored to avoid OOM errors with
     topics that have extensive history.
   * Properly parse template parameters that are themselves templates, such as
-    "{{{{{template_name}}}}}".
+    "{{{{{template_name}}}}}" or "{{{1|{{PAGENAME}}}}}".
 
 
 0.8.3

@@ -211,13 +211,17 @@ public class TemplateTag implements JFlexParserTag {
 		while (pos < content.length()) {
 			String substring = content.substring(pos);
 			if (substring.startsWith("{{{")) {
-				// template - special case for instances of cases like "{{{{{1}}}}}" where the parameter itself is a template reference
+				// special case for cases like "{{{{{1}}}}}" where the parameter itself is a template reference
 				while (content.substring(pos + 1).startsWith("{{{")) {
 					output.append(content.charAt(pos));
 					pos++;
 				}
 				int endPos = Utilities.findMatchingEndTag(content, pos, "{{{", "}}}");
 				if (endPos != -1) {
+					// handle cases such as {{{1|{{PAGENAME}}}}} where endPos will be two positions too early
+					if (content.substring(pos + 3, endPos).indexOf("{{") != -1 && content.length() > (endPos + 2) && content.substring(endPos, endPos + 2).equals("}}")) {
+						endPos += 2;
+					}
 					String param = content.substring(pos, endPos);
 					output.append(this.applyParameter(parserInput, param, parameterValues));
 				}
