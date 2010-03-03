@@ -72,11 +72,11 @@ public class MoveServlet extends JAMWikiServlet {
 		WikiMessage pageTitle = new WikiMessage("move.title", topicName);
 		pageInfo.setPageTitle(pageTitle);
 		pageInfo.setTopicName(topicName);
-		String moveDestination = WikiUtil.getParameterFromRequest(request, "moveDestination", true);
+		String moveDestination = Utilities.decodeAndEscapeTopicName(request.getParameter("moveDestination"), true);
 		if (!movePage(request, next, pageInfo, topicName, moveDestination)) {
 			return;
 		}
-		String moveCommentsPage = WikiUtil.getParameterFromRequest(request, "moveCommentsPage", true);
+		String moveCommentsPage = Utilities.decodeAndEscapeTopicName(request.getParameter("moveCommentsPage"), true);
 		if (!StringUtils.isBlank(moveCommentsPage)) {
 			String commentsDestination = WikiUtil.extractCommentsLink(moveDestination);
 			if (WikiUtil.isCommentsPage(moveCommentsPage) && !moveCommentsPage.equals(topicName) && !commentsDestination.equals(moveDestination)) {
@@ -167,7 +167,7 @@ public class MoveServlet extends JAMWikiServlet {
 		pageInfo.setPageTitle(pageTitle);
 		pageInfo.setContentJsp(JSP_MOVE);
 		pageInfo.setTopicName(topicName);
-		String moveDestination = WikiUtil.getParameterFromRequest(request, "moveDestination", true);
+		String moveDestination = Utilities.decodeAndEscapeTopicName(request.getParameter("moveDestination"), true);
 		if (StringUtils.isBlank(moveDestination)) {
 			moveDestination = topicName;
 		}
