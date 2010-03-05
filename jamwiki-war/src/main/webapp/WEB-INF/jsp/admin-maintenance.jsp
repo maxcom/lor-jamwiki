@@ -24,53 +24,9 @@
 <%@ include file="page-init.jsp" %>
 
 <div class="submenu">
-<a href="#virtualwiki"><fmt:message key="admin.title.virtualwiki" /></a> | <a href="#search"><fmt:message key="admin.title.refresh" /></a> | <a href="#recentchanges"><fmt:message key="admin.title.recentchanges" /></a> | <a href="#logitems"><fmt:message key="admin.title.logitems" /></a> | <a href="#cache"><fmt:message key="admin.title.cache" /></a><br />
-<jamwiki:enabled property="PROP_TOPIC_SPAM_FILTER"><a href="#spam"><fmt:message key="admin.title.spamfilter" /></a> | </jamwiki:enabled><a href="#password"><fmt:message key="admin.title.password" /></a> | <c:if test="${allowExport}"><a href="#export"><fmt:message key="admin.title.exportcsv" /></a> | </c:if><a href="#migrate"><fmt:message key="admin.title.migratedatabase" /></a><br />
-<a href="#adduser"><fmt:message key="admin.title.adduser" /></a>
+<a href="#search"><fmt:message key="admin.title.refresh" /></a> | <a href="#recentchanges"><fmt:message key="admin.title.recentchanges" /></a> | <a href="#logitems"><fmt:message key="admin.title.logitems" /></a> | <a href="#cache"><fmt:message key="admin.title.cache" /></a><br />
+<jamwiki:enabled property="PROP_TOPIC_SPAM_FILTER"><a href="#spam"><fmt:message key="admin.title.spamfilter" /></a> | </jamwiki:enabled><a href="#password"><fmt:message key="admin.title.password" /></a> | <c:if test="${allowExport}"><a href="#export"><fmt:message key="admin.title.exportcsv" /></a> | </c:if><a href="#adduser"><fmt:message key="admin.title.adduser" /></a> | <a href="#migrate"><fmt:message key="admin.title.migratedatabase" /></a>
 </div>
-
-<!-- Virtual Wikis -->
-<a name="virtualwiki"></a>
-
-<c:if test="${!empty message && function == 'virtualwiki'}">
-<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
-</c:if>
-<c:if test="${!empty errors && function == 'virtualwiki'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
-</c:if>
-
-<fieldset>
-<legend><fmt:message key="admin.title.virtualwiki" /></legend>
-<table border="0" class="contents" width="99%">
-<tr class="darkbg">
-	<th><fmt:message key="common.name" /></th>
-	<th><fmt:message key="admin.caption.defaulttopic" /></th>
-	<th>&#160;</th>
-</tr>
-<c:forEach items="${wikis}" var="wiki">
-<form action="<jamwiki:link value="Special:Maintenance" />#virtualwiki" method="post">
-<input type="hidden" name="function" value="virtualwiki" />
-<input type="hidden" name="virtualWikiId" value="<c:out value="${wiki.virtualWikiId}" />" />
-<input type="hidden" name="name" value="<c:out value="${wiki.name}" />" />
-<tr class="<jamwiki:alternate value1="lightbg" value2="mediumbg" attributeName="virtualwiki" />">
-	<%-- FIXME: need label element --%>
-	<td class="formelement" style="width:150px"><c:out value="${wiki.name}" /></td>
-	<td class="formelement" style="width:200px"><input type="text" name="defaultTopicName" value="<c:out value="${wiki.defaultTopicName}" />" size="30" /></td>
-	<td class="formelement"><input type="submit" value="<fmt:message key="common.update" />" /></td>
-</tr>
-</form>
-</c:forEach>
-<form action="<jamwiki:link value="Special:Maintenance" />#virtualwiki" method="post">
-<input type="hidden" name="function" value="virtualwiki" />
-<tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="virtualwiki" />">
-	<td class="formelement"><input type="text" name="name" /></td>
-	<td class="formelement"><input type="text" name="defaultTopicName" value="<%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>" size="30" /></td>
-	<td class="formelement"><input type="submit" value="<fmt:message key="common.add" />" /></td>
-</tr>
-</form>
-<tr><td colspan="3">&nbsp;</td></tr>
-</table>
-</fieldset>
 
 <!-- Refresh Search Index -->
 <a name="search"></a>

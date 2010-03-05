@@ -62,6 +62,7 @@
 <ul>
 <li><jamwiki:link value="Special:Admin"><fmt:message key="specialpages.caption.admin" /></jamwiki:link></li>
 <li><jamwiki:link value="Special:Maintenance"><fmt:message key="specialpages.caption.maintenance" /></jamwiki:link></li>
+<li><jamwiki:link value="Special:VirtualWiki"><fmt:message key="specialpages.caption.vwiki" /></jamwiki:link></li>
 <li><jamwiki:link value="Special:Roles"><fmt:message key="specialpages.caption.roles" /></jamwiki:link></li>
 <li><jamwiki:link value="Special:Translation"><fmt:message key="specialpages.caption.translation" /></jamwiki:link></li>
 <li><jamwiki:link value="Special:Setup"><fmt:message key="specialpages.caption.setup" /></jamwiki:link></li>

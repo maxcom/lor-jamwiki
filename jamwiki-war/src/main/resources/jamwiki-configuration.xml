@@ -317,6 +317,9 @@
 		<name>Special:Upload</name>
 	</pseudotopic>
 	<pseudotopic>
+		<name>Special:VirtualWiki</name>
+	</pseudotopic>
+	<pseudotopic>
 		<name>Special:Watchlist</name>
 	</pseudotopic>
 </pseudotopics>

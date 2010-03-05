@@ -103,6 +103,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			if (userDetails.hasRole(RoleImpl.ROLE_SYSADMIN)) {
 				links.put("Special:Admin", new WikiMessage("tab.admin.configuration"));
 				links.put("Special:Maintenance", new WikiMessage("tab.admin.maintenance"));
+				links.put("Special:VirtualWiki", new WikiMessage("tab.admin.vwiki"));
 				links.put("Special:Roles", new WikiMessage("tab.admin.roles"));
 			}
 			if (userDetails.hasRole(RoleImpl.ROLE_TRANSLATE)) {

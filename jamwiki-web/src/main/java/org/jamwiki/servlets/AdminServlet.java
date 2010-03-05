@@ -36,7 +36,6 @@ import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
 import org.jamwiki.authentication.RoleImpl;
 import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.db.WikiDatabase;
-import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.servlets.ServletUtil;
@@ -80,8 +79,6 @@ public class AdminServlet extends JAMWikiServlet {
 			refreshIndex(request, next, pageInfo);
 		} else if (function.equals("properties")) {
 			properties(request, next, pageInfo);
-		} else if (function.equals("virtualwiki")) {
-			virtualWiki(request, next, pageInfo);
 		} else if (function.equals("logitems")) {
 			logItems(request, next, pageInfo);
 		} else if (function.equals("recentchanges")) {
@@ -493,36 +490,9 @@ public class AdminServlet extends JAMWikiServlet {
 		pageInfo.setContentJsp(JSP_ADMIN_SYSTEM);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("admin.maintenance.title"));
-		List<VirtualWiki> virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList();
-		next.addObject("wikis", virtualWikiList);
 		boolean allowExport = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals(WikiBase.PERSISTENCE_INTERNAL);
 		next.addObject("allowExport", allowExport);
 		List<WikiConfigurationObject> dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
 		next.addObject("dataHandlers", dataHandlers);
-	}
-
-	/**
-	 *
-	 */
-	private void virtualWiki(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		WikiUser user = ServletUtil.currentWikiUser();
-		try {
-			VirtualWiki virtualWiki = new VirtualWiki();
-			if (!StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
-				virtualWiki.setVirtualWikiId(Integer.valueOf(request.getParameter("virtualWikiId")));
-			}
-			virtualWiki.setName(request.getParameter("name"));
-			String defaultTopicName = WikiUtil.getParameterFromRequest(request, "defaultTopicName", true);
-			virtualWiki.setDefaultTopicName(defaultTopicName);
-			WikiBase.getDataHandler().writeVirtualWiki(virtualWiki);
-			if (StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
-				WikiBase.getDataHandler().setupSpecialPages(request.getLocale(), user, virtualWiki);
-			}
-			next.addObject("message", new WikiMessage("admin.message.virtualwikiadded"));
-		} catch (Exception e) {
-			logger.severe("Failure while adding virtual wiki", e);
-			next.addObject("message", new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
-		}
-		viewAdminSystem(request, next, pageInfo);
 	}
 }
