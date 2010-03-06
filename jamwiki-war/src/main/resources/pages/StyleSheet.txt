@@ -119,8 +119,9 @@ textarea {
 	width: 99%;
 }
 fieldset {
-	padding: 5px;
+	padding: 0 7px 7px;
 	border: 1px solid #D8D8E7;
+	margin-top: 10px;
 }
 legend {
 	padding: 0.5em;
@@ -494,31 +495,6 @@ img.gallery {
 
 /* form styles */
 
-.formentry {
-	width: 99%;
-	padding: 3px 5px;
-	clear: both;
-}
-.formcaption {
-	float: left;
-	width: 250px;
-	font-weight: bold;
-	padding-right: 10px;
-}
-.formcaption-medium {
-	float: left;
-	width: 170px;
-	font-weight: bold;
-	padding-right: 10px;
-}
-.formcaption-small {
-	float: left;
-	width: 90px;
-	font-weight: bold;
-	padding-right: 10px;
-}
-.formelement {
-}
 .formhelp {
 	font-size: 85%;
 	color: #5f5f5f;
@@ -548,4 +524,56 @@ textarea.translation {
 textarea.medium {
 	width: 400px;
 	height: 60px;
+}
+div.row {
+	clear: right;
+	padding: 5px 7px;
+}
+.admin div.row {
+	background-color: #e9e9e9;
+	border-top: 1px solid #fff;
+}
+div.row span {
+	vertical-align: top;
+	text-align: left;
+	padding-left: 5px;
+}
+div.row label {
+	display: inline-block;
+	text-align: left;
+	width: 240px;
+	font-weight: bold;
+}
+div.row span.form-button {
+	margin-left: 240px;
+}
+div.row .formhelp {
+	padding-top: 3px;
+}
+div.row .translationElement label {
+	vertical-align: top;
+	padding: 3px;
+	width: auto;
+	overflow: hidden;
+}
+div.row label.nonblock {
+	display: inherit;
+	text-align: inherit;
+	width: auto;
+	font-weight: inherit;
+}
+#manage div.row label, #move div.row label, #register div.row label {
+	width: 180px;
+}
+#manage div.row span.form-button, #move div.row span.form-button, #register div.row span.form-button {
+	margin-left: 180px;
+}
+#translation div.row label {
+	font-weight: normal;
+}
+#login div.row label {
+	width: 100px;
+}
+#login div.row span.form-button {
+	margin-left: 100px;
 }
