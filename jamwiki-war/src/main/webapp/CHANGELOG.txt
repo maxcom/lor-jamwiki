@@ -17,6 +17,7 @@ New Features:
     add/update.
   * Search engine optimizations.  Existing JAMWiki installs may want to
     rebuild their search index.
+  * Update the CSS & HTML used for forms.  Requires StyleSheet topic update.
   * Support ehcache.xml configuration.  Based on code by Daniel Fisla (dfisla).
   * Automatically populate sample JDBC values based on database type on the
     setup and admin pages.
