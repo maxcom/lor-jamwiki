@@ -85,7 +85,11 @@ followed by 0.6.3.
 
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.9.0".
-  2. The Spring Framework and Spring Security have been updated, so
+  2. CSS styles have changed during this release.  An up-to-date version of
+     the default StyleSheet topic can be found in the
+     /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
+     can only be edited AFTER all other upgrade steps have been completed.
+  3. The Spring Framework and Spring Security have been updated, so
      the applicationContext-security.xml, jamwiki-servlet.xml and web.xml
      may require modification.
   3. Update the database schema by executing the following SQL statements:
