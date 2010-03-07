@@ -615,21 +615,25 @@ public class AnsiDataHandler implements DataHandler {
 		if (namespaceString == null) {
 			return null;
 		}
-		// first, test to see if the cache is alive by checking for a dummy element.  this is faster
-		// and more reliable than checking cache size or any other aspect of the cache.
-		if (WikiCache.retrieveFromCache(CACHE_NAMESPACE_BY_NAME, CACHE_NAMESPACE_BY_NAME) == null) {
-			// cache is dead, reload it
-			// add the dummy element
-			WikiCache.addToCache(CACHE_NAMESPACE_BY_NAME, CACHE_NAMESPACE_BY_NAME, true);
-			// now add the namespace elements
-			List<Namespace> namespaces = this.lookupNamespaces();
-			for (Namespace namespace : namespaces) {
-				WikiCache.addToCache(CACHE_NAMESPACE_BY_NAME, namespace.getLabel(), namespace);
-				WikiCache.addToCache(CACHE_NAMESPACE_BY_ID, namespace.getId(), namespace);
+		// first check the cache
+		Element cacheElement = WikiCache.retrieveFromCache(CACHE_NAMESPACE_BY_NAME, namespaceString);
+		if (cacheElement != null) {
+			return (Namespace)cacheElement.getObjectValue();
+		}
+		// otherwise go to the database
+		Namespace result = null;
+		// FIXME - retrieving all namespaces may not be the most efficient approach
+		List<Namespace> namespaces = this.lookupNamespaces();
+		for (Namespace namespace : namespaces) {
+			WikiCache.addToCache(CACHE_NAMESPACE_BY_NAME, namespace.getLabel(), namespace);
+			WikiCache.addToCache(CACHE_NAMESPACE_BY_ID, namespace.getId(), namespace);
+			if (namespace.getLabel().equals(namespaceString)) {
+				result = namespace;
 			}
 		}
-		Element cacheElement = WikiCache.retrieveFromCache(CACHE_NAMESPACE_BY_NAME, namespaceString);
-		return (cacheElement != null) ? (Namespace)cacheElement.getObjectValue() : null;
+		// make sure the original search term is cached, even if it is null
+		WikiCache.addToCache(CACHE_NAMESPACE_BY_NAME, namespaceString, result);
+		return result;
 	}
 
 	/**
