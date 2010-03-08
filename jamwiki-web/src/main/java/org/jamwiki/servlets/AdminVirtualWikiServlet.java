@@ -21,12 +21,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.VirtualWiki;
-import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.Namespace;
+import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -51,6 +53,8 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 		next.addObject("function", function);
 		if (StringUtils.isBlank(function)) {
 			view(request, next, pageInfo);
+		} else if (function.equals("search")) {
+			search(request, next, pageInfo);
 		} else if (function.equals("virtualwiki")) {
 			virtualWiki(request, next, pageInfo);
 		}
@@ -60,10 +64,31 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private void search(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		try {
+			String searchVirtualWiki = request.getParameter("virtualwiki");
+			if (!StringUtils.isBlank(searchVirtualWiki)) {
+				VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(searchVirtualWiki);
+				if (virtualWiki != null) {
+					next.addObject("selected", virtualWiki);
+				}
+			}
+		} catch (DataAccessException e) {
+			logger.severe("Failure while retrieving virtual wiki", e);
+			next.addObject("message", new WikiMessage("admin.vwiki.message.vwikisearchfail", e.getMessage()));
+		}
+		this.view(request, next, pageInfo);
+	}
+
+	/**
+	 *
+	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		pageInfo.setAdmin(true);
 		List<VirtualWiki> virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList();
 		next.addObject("wikis", virtualWikiList);
+		List<Namespace> namespaces = WikiBase.getDataHandler().lookupNamespaces();
+		next.addObject("namespaces", namespaces);
 		pageInfo.setContentJsp(JSP_ADMIN_VIRTUAL_WIKI);
 		pageInfo.setPageTitle(new WikiMessage("admin.vwiki.title"));
 	}

@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
@@ -1874,7 +1875,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	public List<Namespace> lookupNamespaces(Connection conn) throws SQLException {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		Map<Integer, Namespace> namespaces = new HashMap<Integer, Namespace>();
+		Map<Integer, Namespace> namespaces = new TreeMap<Integer, Namespace>();
 		try {
 			stmt = conn.prepareStatement(STATEMENT_SELECT_NAMESPACES);
 			rs = stmt.executeQuery();

@@ -23,42 +23,91 @@
 
 <%@ include file="page-init.jsp" %>
 
-<c:if test="${!empty message && function == 'virtualwiki'}">
+<div id="virtualwiki" class="admin">
+
+<c:if test="${!empty message}">
 <div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
-<c:if test="${!empty errors && function == 'virtualwiki'}">
+<c:if test="${!empty errors}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
 
+<form action="<jamwiki:link value="Special:VirtualWiki" />" method="get" name="searchVirtualWikiForm">
+<input type="hidden" name="function" value="search" />
+<fieldset>
+<legend><fmt:message key="admin.vwiki.title.select" /></legend>
+<div class="row lightbg">
+	<label for="name"><fmt:message key="common.name" /></label>
+	<span>
+		<select name="virtualwiki" id="searchVirtualWiki" onchange="document.searchVirtualWikiForm.submit()">
+		<option value=""></option>
+		<c:forEach items="${wikis}" var="wiki"><option value="${wiki.name}" <c:if test="${!empty selected && wiki.name == selected.name}">selected="selected"</c:if>>${wiki.name}</option></c:forEach>
+		</select>
+	</span>
+</div>
+</fieldset>
+</form>
+<form action="<jamwiki:link value="Special:VirtualWiki" />#virtualwiki" method="post">
 <fieldset>
 <legend><fmt:message key="admin.title.virtualwiki" /></legend>
-<table border="0" class="contents" width="99%">
-<tr class="darkbg">
-	<th><fmt:message key="common.name" /></th>
-	<th><fmt:message key="admin.caption.defaulttopic" /></th>
-	<th>&#160;</th>
-</tr>
-<c:forEach items="${wikis}" var="wiki">
-<form action="<jamwiki:link value="Special:VirtualWiki" />#virtualwiki" method="post">
 <input type="hidden" name="function" value="virtualwiki" />
-<input type="hidden" name="virtualWikiId" value="<c:out value="${wiki.virtualWikiId}" />" />
-<input type="hidden" name="name" value="<c:out value="${wiki.name}" />" />
-<tr class="<jamwiki:alternate value1="lightbg" value2="mediumbg" attributeName="virtualwiki" />">
-	<%-- FIXME: need label element --%>
-	<td class="formelement" style="width:150px"><c:out value="${wiki.name}" /></td>
-	<td class="formelement" style="width:200px"><input type="text" name="defaultTopicName" value="<c:out value="${wiki.defaultTopicName}" />" size="30" /></td>
-	<td class="formelement"><input type="submit" value="<fmt:message key="common.update" />" /></td>
-</tr>
-</form>
-</c:forEach>
-<form action="<jamwiki:link value="Special:VirtualWiki" />#virtualwiki" method="post">
-<input type="hidden" name="function" value="virtualwiki" />
-<tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="virtualwiki" />">
-	<td class="formelement"><input type="text" name="name" /></td>
-	<td class="formelement"><input type="text" name="defaultTopicName" value="<%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>" size="30" /></td>
-	<td class="formelement"><input type="submit" value="<fmt:message key="common.add" />" /></td>
-</tr>
-</form>
-<tr><td colspan="3">&nbsp;</td></tr>
-</table>
+<c:if test="${!empty selected}">
+	<input type="hidden" name="virtualWikiId" value="${selected.virtualWikiId}" />
+	<input type="hidden" name="name" value="${selected.name}" />
+</c:if>
+<div class="row">
+	<label for="name"><fmt:message key="common.name" /></label>
+	<span>
+		<c:choose>
+			<c:when test="${!empty selected}">${selected.name}</c:when>
+			<c:otherwise><input type="text" name="name" id="name" size="30" /></c:otherwise>
+		</c:choose>
+	</span>
+</div>
+<div class="row">
+	<label for="defaultTopicName"><fmt:message key="admin.caption.defaulttopic" /></label>
+	<span>
+		<c:set var="virtualWikiName"><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %></c:set>
+		<c:if test="${!empty selected}">
+			<c:set var="virtualWikiName" value="${selected.defaultTopicName}" />
+		</c:if>
+		<input type="text" name="defaultTopicName" id="defaultTopicName" value="${virtualWikiName}" size="30" />
+	</span>
+</div>
+<c:set var="buttonLabel"><fmt:message key="common.add" /></c:set>
+<c:if test="${!empty selected}">
+	<c:set var="buttonLabel"><fmt:message key="common.update" /></c:set>
+</c:if>
+<div class="row">
+	<span class="form-button"><input type="submit" value="${buttonLabel}" /></span>
+</div>
 </fieldset>
+</form>
+<c:if test="${!empty selected}">
+	<form action="<jamwiki:link value="Special:VirtualWiki" />#virtualwiki" method="post">
+	<fieldset>
+	<legend><fmt:message key="admin.vwiki.title.namespaces" /></legend>
+	<div class="row">
+		<table width="99%">
+		<tr>
+			<th><fmt:message key="admin.vwiki.caption.namespace.id" /></th>
+			<th><fmt:message key="admin.vwiki.caption.namespace.default" /></th>
+			<th><fmt:message key="admin.vwiki.caption.namespace.virtualwiki" /></th>
+		</tr>
+		<c:forEach items="${namespaces}" var="namespace">
+			<tr>
+				<td>${namespace.id}</td>
+				<td><input type="text" name="${namespace.id}" size="30" value="${namespace.label}" /></td>
+				<td><input type="text" name="vwiki_${namespace.id}" size="30" value="${namespace.label}" /></td>
+			</tr>
+		</c:forEach>
+		</table>
+	</div>
+	<div class="row">
+		<span class="form-button"><input type="submit" value="<fmt:message key="common.update" />" /></span>
+	</div>
+	</fieldset>
+	</form>
+</c:if>
+
+</div>
