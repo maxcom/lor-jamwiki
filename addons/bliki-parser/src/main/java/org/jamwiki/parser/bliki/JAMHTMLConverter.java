@@ -9,9 +9,9 @@ import info.bliki.wiki.model.ImageFormat;
 import java.io.IOException;
 import java.util.Map;
 
+import org.jamwiki.model.Namespace;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.Namespace;
 
 public class JAMHTMLConverter extends HTMLConverter {
 	private static final int DEFAULT_THUMBNAIL_SIZE = 180;

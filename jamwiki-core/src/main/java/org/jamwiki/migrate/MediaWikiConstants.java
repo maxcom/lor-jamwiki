@@ -19,7 +19,7 @@ package org.jamwiki.migrate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-import org.jamwiki.utils.Namespace;
+import org.jamwiki.model.Namespace;
 
 /**
  * Constants needed for Mediawiki import/export functionality.

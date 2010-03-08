@@ -16,6 +16,7 @@
  */
 package org.jamwiki.utils;
 
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.VirtualWiki;
 
 /**

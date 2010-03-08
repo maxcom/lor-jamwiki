@@ -39,7 +39,6 @@ import org.w3c.dom.NodeList;
  * values.
  *
  * @see org.jamwiki.utils.PseudoTopicHandler
- * @see org.jamwiki.utils.NamespaceHandler
  */
 public class WikiConfiguration {
 

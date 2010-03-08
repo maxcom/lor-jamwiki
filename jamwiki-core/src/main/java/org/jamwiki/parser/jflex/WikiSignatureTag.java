@@ -20,10 +20,10 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.utils.Namespace;
 import org.jamwiki.utils.WikiLogger;
 
 /**

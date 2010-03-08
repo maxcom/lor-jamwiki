@@ -20,6 +20,7 @@ package org.jamwiki.utils;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.jamwiki.model.Namespace;
 
 /**
  *

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.LogItem;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.RoleMap;
@@ -34,7 +35,6 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.utils.Namespace;
 import org.jamwiki.utils.Pagination;
 
 /**

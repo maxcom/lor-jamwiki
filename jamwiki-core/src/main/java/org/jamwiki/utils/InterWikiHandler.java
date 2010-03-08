@@ -19,6 +19,7 @@ package org.jamwiki.utils;
 import java.text.MessageFormat;
 import java.util.Properties;
 import org.jamwiki.Environment;
+import org.jamwiki.model.Namespace;
 
 /**
  * Class for controlling inter-wiki links. An interwiki link is a link that is
