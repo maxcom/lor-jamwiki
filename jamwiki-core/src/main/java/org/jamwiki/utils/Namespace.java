@@ -37,7 +37,7 @@ public class Namespace implements Serializable {
 	public static final String SEPARATOR = ":";
 	// default namespaces, used during setup.  additional namespaces may be added after setup.
 	// namespace IDs should match Mediawiki to maximize compatibility.
-	public static final Namespace MEDIA                = new Namespace(MediaWikiConstants.MEDIAWIKI_MEDIA_NAMESPACE_ID, "Media:", null);
+	public static final Namespace MEDIA                = new Namespace(MediaWikiConstants.MEDIAWIKI_MEDIA_NAMESPACE_ID, "Media", null);
 	public static final Namespace SPECIAL              = new Namespace(MediaWikiConstants.MEDIAWIKI_SPECIAL_NAMESPACE_ID, "Special", null);
 	public static final Namespace MAIN                 = new Namespace(MediaWikiConstants.MEDIAWIKI_MAIN_NAMESPACE_ID, "", null);
 	public static final Namespace COMMENTS             = new Namespace(MediaWikiConstants.MEDIAWIKI_TALK_NAMESPACE_ID, "Comments", Namespace.MAIN);
