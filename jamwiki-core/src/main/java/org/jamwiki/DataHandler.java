@@ -695,18 +695,16 @@ public interface DataHandler {
 	void writeNamespace(Namespace namespace) throws DataAccessException, WikiException;
 
 	/**
-	 * Add or update a virtual-wiki specific label for a namespace.  This method will
-	 * add a new record if the namespace does not already exist, otherwise it will
-	 * update the existing record.
+	 * Add or update virtual-wiki specific labels for a namespace.  This method will
+	 * remove existing records for the virtual wiki and add the new ones.
 	 *
-	 * @param namespaceId The ID of the namespace.
-	 * @param virtualWiki The virtual wiki for which a translated namespace is being created.
-	 * @param namespaceTranslation The virtual wiki-specific label to use for the namespace.
-	 *  Namespace labels must be unique within a virtual wiki.
+	 * @param namespaces The namespace translation records to add/update.
+	 * @param virtualWiki The virtual wiki for which namespace translations are
+	 *  being added or updated.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 * @throws WikiException Thrown if the namespace information is invalid.
 	 */
-	void writeNamespaceTranslation(int namespaceId, String virtualWiki, String namespaceTranslation) throws DataAccessException, WikiException;
+	void writeNamespaceTranslations(List<Namespace> namespaces, String virtualWiki) throws DataAccessException, WikiException;
 
 	/**
 	 * Add or update a Role object.  This method will add a new record if

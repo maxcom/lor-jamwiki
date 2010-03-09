@@ -439,7 +439,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeNamespaceTranslation(int namespaceId, String virtualWiki, String namespaceTranslation) throws DataAccessException, WikiException {
+	public void writeNamespaceTranslations(List<Namespace> namespaces, String virtualWiki) throws DataAccessException, WikiException {
 		throw new UnsupportedOperationException();
 	}
 

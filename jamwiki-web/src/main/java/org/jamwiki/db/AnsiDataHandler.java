@@ -65,7 +65,6 @@ import org.springframework.transaction.TransactionStatus;
  */
 public class AnsiDataHandler implements DataHandler {
 
-	private static final String CACHE_NAMESPACE_BY_ID = "org.jamwiki.db.AnsiDataHandler.CACHE_NAMESPACE_BY_ID";
 	private static final String CACHE_NAMESPACE_BY_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_NAMESPACE_BY_NAME";
 	private static final String CACHE_TOPICS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS";
 	private static final String CACHE_TOPIC_VERSIONS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPIC_VERSIONS";
@@ -626,7 +625,6 @@ public class AnsiDataHandler implements DataHandler {
 		List<Namespace> namespaces = this.lookupNamespaces();
 		for (Namespace namespace : namespaces) {
 			WikiCache.addToCache(CACHE_NAMESPACE_BY_NAME, namespace.getLabel(), namespace);
-			WikiCache.addToCache(CACHE_NAMESPACE_BY_ID, namespace.getId(), namespace);
 			if (namespace.getLabel().equals(namespaceString)) {
 				result = namespace;
 			}
@@ -1426,27 +1424,29 @@ public class AnsiDataHandler implements DataHandler {
 			throw new DataAccessException(e);
 		}
 		DatabaseConnection.commit(status);
-		WikiCache.removeAllFromCache(CACHE_NAMESPACE_BY_ID);
 		WikiCache.removeAllFromCache(CACHE_NAMESPACE_BY_NAME);
 	}
 
 	/**
 	 *
 	 */
-	public void writeNamespaceTranslation(int namespaceId, String virtualWiki, String namespaceTranslation) throws DataAccessException, WikiException {
-		this.validateNamespace(namespaceTranslation);
+	public void writeNamespaceTranslations(List<Namespace> namespaces, String virtualWiki) throws DataAccessException, WikiException {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		for (Namespace namespace : namespaces) {
+			if (namespace.getNamespaceTranslations().get(virtualWiki) != null) {
+				this.validateNamespace(namespace.getNamespaceTranslations().get(virtualWiki));
+			}
+		}
 		TransactionStatus status = null;
 		try {
 			status = DatabaseConnection.startTransaction();
 			Connection conn = DatabaseConnection.getConnection();
-			this.queryHandler().updateNamespaceTranslation(namespaceId, virtualWikiId, namespaceTranslation, conn);
+			this.queryHandler().updateNamespaceTranslations(namespaces, virtualWiki, virtualWikiId, conn);
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw new DataAccessException(e);
 		}
 		DatabaseConnection.commit(status);
-		WikiCache.removeAllFromCache(CACHE_NAMESPACE_BY_ID);
 		WikiCache.removeAllFromCache(CACHE_NAMESPACE_BY_NAME);
 	}
 

@@ -57,6 +57,8 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			search(request, next, pageInfo);
 		} else if (function.equals("virtualwiki")) {
 			virtualWiki(request, next, pageInfo);
+		} else if (function.equals("namespaces")) {
+			namespaces(request, next, pageInfo);
 		}
 		return next;
 	}
@@ -64,11 +66,44 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private void namespaces(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		try {
+			String virtualWiki = request.getParameter("selected");
+			VirtualWiki selected = WikiBase.getDataHandler().lookupVirtualWiki(virtualWiki);
+			next.addObject("selected", selected);
+			List<Namespace> namespaces = new ArrayList<Namespace>();
+			String[] namespaceIds = request.getParameterValues("namespace_id");
+			String namespaceLabel;
+			String updatedLabel;
+			String translatedLabel;
+			for (String namespaceId : namespaceIds) {
+				namespaceLabel = request.getParameter(namespaceId + "_label");
+				Namespace namespace = WikiBase.getDataHandler().lookupNamespace(namespaceLabel);
+				updatedLabel = request.getParameter(namespaceId + "_newlabel");
+				translatedLabel = request.getParameter(namespaceId + "_vwiki");
+				if (StringUtils.equals(namespaceLabel, translatedLabel) || StringUtils.isBlank(translatedLabel)) {
+					namespace.getNamespaceTranslations().remove(virtualWiki);
+				} else {
+					namespace.getNamespaceTranslations().put(virtualWiki, translatedLabel);
+				}
+				namespaces.add(namespace);
+			}
+			WikiBase.getDataHandler().writeNamespaceTranslations(namespaces, virtualWiki);
+		} catch (DataAccessException e) {
+			logger.severe("Failure while retrieving virtual wiki", e);
+			next.addObject("message", new WikiMessage("admin.vwiki.message.vwikisearchfail", e.getMessage()));
+		}
+		this.view(request, next, pageInfo);
+	}
+
+	/**
+	 *
+	 */
 	private void search(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		try {
-			String searchVirtualWiki = request.getParameter("virtualwiki");
-			if (!StringUtils.isBlank(searchVirtualWiki)) {
-				VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(searchVirtualWiki);
+			String selected = request.getParameter("selected");
+			if (!StringUtils.isBlank(selected)) {
+				VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(selected);
 				if (virtualWiki != null) {
 					next.addObject("selected", virtualWiki);
 				}
@@ -110,6 +145,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			if (StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
 				WikiBase.getDataHandler().setupSpecialPages(request.getLocale(), user, virtualWiki);
 			}
+			next.addObject("selected", virtualWiki);
 			next.addObject("message", new WikiMessage("admin.message.virtualwikiadded"));
 		} catch (Exception e) {
 			logger.severe("Failure while adding virtual wiki", e);

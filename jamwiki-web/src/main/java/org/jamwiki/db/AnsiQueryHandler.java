@@ -84,7 +84,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DELETE_AUTHORITIES = null;
 	protected static String STATEMENT_DELETE_GROUP_AUTHORITIES = null;
 	protected static String STATEMENT_DELETE_LOG_ITEMS = null;
-	protected static String STATEMENT_DELETE_NAMESPACE_TRANSLATION = null;
+	protected static String STATEMENT_DELETE_NAMESPACE_TRANSLATIONS = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES_TOPIC = null;
 	protected static String STATEMENT_DELETE_TOPIC_CATEGORIES = null;
@@ -1016,7 +1016,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_DELETE_AUTHORITIES             = props.getProperty("STATEMENT_DELETE_AUTHORITIES");
 		STATEMENT_DELETE_GROUP_AUTHORITIES       = props.getProperty("STATEMENT_DELETE_GROUP_AUTHORITIES");
 		STATEMENT_DELETE_LOG_ITEMS               = props.getProperty("STATEMENT_DELETE_LOG_ITEMS");
-		STATEMENT_DELETE_NAMESPACE_TRANSLATION   = props.getProperty("STATEMENT_DELETE_NAMESPACE_TRANSLATION");
+		STATEMENT_DELETE_NAMESPACE_TRANSLATIONS  = props.getProperty("STATEMENT_DELETE_NAMESPACE_TRANSLATIONS");
 		STATEMENT_DELETE_RECENT_CHANGES          = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES");
 		STATEMENT_DELETE_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES_TOPIC");
 		STATEMENT_DELETE_TOPIC_CATEGORIES        = props.getProperty("STATEMENT_DELETE_TOPIC_CATEGORIES");
@@ -1882,31 +1882,33 @@ public class AnsiQueryHandler implements QueryHandler {
 			// because there is no consistent way to sort null keys, get all data and then
 			// create Namespace objects by initializing main namespaces first, then the talk
 			// namespaces that reference the main namespace.
-			Map<Integer, String> mainNamespaces = new HashMap<Integer, String>();
-			Map<Integer, Object[]> talkNamespaces = new HashMap<Integer, Object[]>();
+			Map<Integer, Namespace> talkNamespaces = new HashMap<Integer, Namespace>();
 			while (rs.next()) {
 				int namespaceId = rs.getInt("namespace_id");
-				String namespaceLabel = rs.getString("namespace");
+				Namespace namespace = namespaces.get(namespaceId);
+				if (namespace == null) {
+					String namespaceLabel = rs.getString("namespace");
+					namespace = new Namespace(namespaceId, namespaceLabel);
+				}
+				String virtualWiki = rs.getString("virtual_wiki_name");
+				String namespaceTranslation = rs.getString("namespace_translation");
+				if (virtualWiki != null) {
+					namespace.getNamespaceTranslations().put(virtualWiki, namespaceTranslation);
+				}
+				namespaces.put(namespaceId, namespace);
 				int mainNamespaceId = rs.getInt("main_namespace_id");
-				if (rs.wasNull()) {
-					mainNamespaces.put(namespaceId, namespaceLabel);
-				} else {
-					Object[] talkNamespaceParams = {mainNamespaceId, namespaceLabel};
-					talkNamespaces.put(namespaceId, talkNamespaceParams);
+				if (!rs.wasNull()) {
+					talkNamespaces.put(mainNamespaceId, namespace);
 				}
 			}
-			for (int namespaceId : mainNamespaces.keySet()) {
-				String namespaceLabel = mainNamespaces.get(namespaceId);
-				namespaces.put(namespaceId, new Namespace(namespaceId, namespaceLabel, null));
-			}
-			for (int namespaceId : talkNamespaces.keySet()) {
-				int mainNamespaceId = (Integer)talkNamespaces.get(namespaceId)[0];
-				String namespaceLabel = (String)talkNamespaces.get(namespaceId)[1];
+			for (int mainNamespaceId : talkNamespaces.keySet()) {
 				Namespace mainNamespace = namespaces.get(mainNamespaceId);
 				if (mainNamespace == null) {
-					logger.warning("Invalid namespace reference - bad database data.  Namespace " + namespaceLabel + " references invalid main namespace with ID " + mainNamespaceId);
+					logger.warning("Invalid namespace reference - bad database data.  Namespace references invalid main namespace with ID " + mainNamespaceId);
 				}
-				namespaces.put(namespaceId, new Namespace(namespaceId, namespaceLabel, mainNamespace));
+				Namespace talkNamespace = talkNamespaces.get(mainNamespaceId);
+				talkNamespace.setMainNamespace(mainNamespace);
+				namespaces.put(talkNamespace.getId(), talkNamespace);
 			}
 		} finally {
 			DatabaseConnection.closeConnection(null, stmt, rs);
@@ -2446,19 +2448,26 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void updateNamespaceTranslation(int namespaceId, int virtualWikiId, String namespaceTranslation, Connection conn) throws SQLException {
+	public void updateNamespaceTranslations(List<Namespace> namespaces, String virtualWiki, int virtualWikiId, Connection conn) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
 			// delete any existing translation then add the new one
-			stmt = conn.prepareStatement(STATEMENT_DELETE_NAMESPACE_TRANSLATION);
-			stmt.setInt(1, namespaceId);
-			stmt.setInt(2, virtualWikiId);
+			stmt = conn.prepareStatement(STATEMENT_DELETE_NAMESPACE_TRANSLATIONS);
+			stmt.setInt(1, virtualWikiId);
 			stmt.executeUpdate();
 			stmt = conn.prepareStatement(STATEMENT_INSERT_NAMESPACE_TRANSLATION);
-			stmt.setInt(1, namespaceId);
-			stmt.setInt(2, virtualWikiId);
-			stmt.setString(3, namespaceTranslation);
-			stmt.executeUpdate();
+			String translatedNamespace;
+			for (Namespace namespace : namespaces) {
+				translatedNamespace = namespace.getNamespaceTranslations().get(virtualWiki);
+				if (translatedNamespace == null) {
+					continue;
+				}
+				stmt.setInt(1, namespace.getId());
+				stmt.setInt(2, virtualWikiId);
+				stmt.setString(3, translatedNamespace);
+				stmt.addBatch();
+			}
+			stmt.executeBatch();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
 		}

@@ -18,6 +18,7 @@ package org.jamwiki.model;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,8 @@ public class Namespace implements Serializable {
 	public static Map<Integer, Namespace> DEFAULT_NAMESPACES = new LinkedHashMap<Integer, Namespace>();
 	private Integer id;
 	private final String label;
-	private final Namespace mainNamespace;
+	private Namespace mainNamespace;
+	private Map<String, String> namespaceTranslations = new HashMap<String, String>();
 
 	static {
 		DEFAULT_NAMESPACES.put(Namespace.MEDIA.getId(), Namespace.MEDIA);
@@ -84,7 +86,15 @@ public class Namespace implements Serializable {
 	/**
 	 * Create a namespace and add it to the global list of namespaces.
 	 */
-	public Namespace(Integer id, String label, Namespace mainNamespace) {
+	public Namespace(Integer id, String label) {
+		this.id = id;
+		this.label = label;
+	}
+
+	/**
+	 * Create a namespace and add it to the global list of namespaces.
+	 */
+	private Namespace(Integer id, String label, Namespace mainNamespace) {
 		this.id = id;
 		this.label = label;
 		this.mainNamespace = mainNamespace;
@@ -116,6 +126,20 @@ public class Namespace implements Serializable {
 	 */
 	public Namespace getMainNamespace() {
 		return this.mainNamespace;
+	}
+
+	/**
+	 *
+	 */
+	public void setMainNamespace(Namespace mainNamespace) {
+		this.mainNamespace = mainNamespace;
+	}
+
+	/**
+	 *
+	 */
+	public Map<String, String> getNamespaceTranslations() {
+		return this.namespaceTranslations;
 	}
 
 	/**

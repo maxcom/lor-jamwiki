@@ -846,15 +846,16 @@ public interface QueryHandler {
 	 * Add or update a virtual-wiki specific label for a namespace.  This method will
 	 * delete any existing record and then add the new record.
 	 *
-	 * @param namespaceId The ID of the namespace.
-	 * @param virtualWikiId The virtual wiki id for the record that is being added/updated.
-	 * @param namespaceTranslation The virtual wiki-specific label to use for the namespace.
-	 *  Namespace labels must be unique within a virtual wiki.
+	 * @param namespaces The namespace translation records to add/update.
+	 * @param virtualWiki The virtual wiki for which namespace translations are
+	 *  being added or updated.
+	 * @param virtualWikiId The virtual wiki id for which namespace translations are
+	 *  being added or updated.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	void updateNamespaceTranslation(int namespaceId, int virtualWikiId, String namespaceTranslation, Connection conn) throws SQLException;
+	void updateNamespaceTranslations(List<Namespace> namespaces, String virtualWiki, int virtualWikiId, Connection conn) throws SQLException;
 
 	/**
 	 * Update a role record in the database.

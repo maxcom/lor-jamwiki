@@ -26,20 +26,20 @@
 <div id="virtualwiki" class="admin">
 
 <c:if test="${!empty message}">
-<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
 
-<form action="<jamwiki:link value="Special:VirtualWiki" />" method="get" name="searchVirtualWikiForm">
+<form action="<jamwiki:link value="Special:VirtualWiki" />" method="get" name="search">
 <input type="hidden" name="function" value="search" />
 <fieldset>
 <legend><fmt:message key="admin.vwiki.title.select" /></legend>
 <div class="row lightbg">
 	<label for="name"><fmt:message key="common.name" /></label>
 	<span>
-		<select name="virtualwiki" id="searchVirtualWiki" onchange="document.searchVirtualWikiForm.submit()">
+		<select name="selected" id="searchVirtualWiki" onchange="document.search.submit()">
 		<option value=""></option>
 		<c:forEach items="${wikis}" var="wiki"><option value="${wiki.name}" <c:if test="${!empty selected && wiki.name == selected.name}">selected="selected"</c:if>>${wiki.name}</option></c:forEach>
 		</select>
@@ -47,7 +47,7 @@
 </div>
 </fieldset>
 </form>
-<form action="<jamwiki:link value="Special:VirtualWiki" />#virtualwiki" method="post">
+<form action="<jamwiki:link value="Special:VirtualWiki" />" method="post">
 <fieldset>
 <legend><fmt:message key="admin.title.virtualwiki" /></legend>
 <input type="hidden" name="function" value="virtualwiki" />
@@ -84,7 +84,9 @@
 </fieldset>
 </form>
 <c:if test="${!empty selected}">
-	<form action="<jamwiki:link value="Special:VirtualWiki" />#virtualwiki" method="post">
+	<form action="<jamwiki:link value="Special:VirtualWiki" />" method="post">
+	<input type="hidden" name="function" value="namespaces" />
+	<input type="hidden" name="selected" value="${selected.name}" />
 	<fieldset>
 	<legend><fmt:message key="admin.vwiki.title.namespaces" /></legend>
 	<div class="row">
@@ -96,9 +98,16 @@
 		</tr>
 		<c:forEach items="${namespaces}" var="namespace">
 			<tr>
-				<td>${namespace.id}</td>
-				<td><input type="text" name="${namespace.id}" size="30" value="${namespace.label}" /></td>
-				<td><input type="text" name="vwiki_${namespace.id}" size="30" value="${namespace.label}" /></td>
+				<td>
+					<input type="hidden" name="namespace_id" value="${namespace.id}" />
+					<input type="hidden" name="${namespace.id}_label" value="${namespace.label}" />
+					${namespace.id}
+				</td>
+				<td>
+					<input type="hidden" name="${namespace.id}_newlabel" value="${namespace.label}" />
+					${namespace.label}
+				</td>
+				<td><input type="text" name="${namespace.id}_vwiki" size="30" value="${namespace.namespaceTranslations[selected.name]}" /></td>
 			</tr>
 		</c:forEach>
 		</table>
