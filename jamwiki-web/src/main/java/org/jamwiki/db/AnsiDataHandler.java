@@ -71,7 +71,6 @@ public class AnsiDataHandler implements DataHandler {
 	private static final String CACHE_USER_BY_USER_ID = "org.jamwiki.db.AnsiDataHandler.CACHE_USER_BY_USER_ID";
 	private static final String CACHE_USER_BY_USER_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_USER_BY_USER_NAME";
 	private static final String CACHE_VIRTUAL_WIKI_BY_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_VIRTUAL_WIKI_BY_NAME";
-	private static final String CACHE_VIRTUAL_WIKI_BY_ID = "org.jamwiki.db.AnsiDataHandler.CACHE_VIRTUAL_WIKI_BY_ID";
 	private static final WikiLogger logger = WikiLogger.getLogger(AnsiDataHandler.class.getName());
 
 	private final QueryHandler queryHandler = new AnsiQueryHandler();
@@ -779,7 +778,6 @@ public class AnsiDataHandler implements DataHandler {
 		for (VirtualWiki virtualWiki : virtualWikis) {
 			// add to cache whether it matches or not
 			WikiCache.addToCache(CACHE_VIRTUAL_WIKI_BY_NAME, virtualWiki.getName(), virtualWiki);
-			WikiCache.addToCache(CACHE_VIRTUAL_WIKI_BY_ID, virtualWiki.getVirtualWikiId(), virtualWiki);
 			if (virtualWiki.getName().equals(virtualWikiName)) {
 				return virtualWiki;
 			}
@@ -794,28 +792,6 @@ public class AnsiDataHandler implements DataHandler {
 	private int lookupVirtualWikiId(String virtualWikiName) throws DataAccessException {
 		VirtualWiki virtualWiki = this.lookupVirtualWiki(virtualWikiName);
 		return (virtualWiki == null) ? -1 : virtualWiki.getVirtualWikiId();
-	}
-
-	/**
-	 *
-	 */
-	private String lookupVirtualWikiName(int virtualWikiId) throws DataAccessException {
-		Element cacheElement = WikiCache.retrieveFromCache(CACHE_VIRTUAL_WIKI_BY_ID, virtualWikiId);
-		if (cacheElement != null) {
-			VirtualWiki virtualWiki = (VirtualWiki)cacheElement.getObjectValue();
-			return (virtualWiki == null) ? null : virtualWiki.getName();
-		}
-		List<VirtualWiki> virtualWikis = this.getVirtualWikiList();
-		for (VirtualWiki virtualWiki : virtualWikis) {
-			// add to cache whether it matches or not
-			WikiCache.addToCache(CACHE_VIRTUAL_WIKI_BY_NAME, virtualWiki.getName(), virtualWiki);
-			WikiCache.addToCache(CACHE_VIRTUAL_WIKI_BY_ID, virtualWiki.getVirtualWikiId(), virtualWiki);
-			if (virtualWiki.getVirtualWikiId() == virtualWikiId) {
-				return virtualWiki.getName();
-			}
-		}
-		WikiCache.addToCache(CACHE_VIRTUAL_WIKI_BY_ID, virtualWikiId, null);
-		return null;
 	}
 
 	/**
@@ -1653,7 +1629,6 @@ public class AnsiDataHandler implements DataHandler {
 		DatabaseConnection.commit(status);
 		// update the cache AFTER the commit
 		WikiCache.addToCache(CACHE_VIRTUAL_WIKI_BY_NAME, virtualWiki.getName(), virtualWiki);
-		WikiCache.addToCache(CACHE_VIRTUAL_WIKI_BY_ID, virtualWiki.getVirtualWikiId(), virtualWiki);
 	}
 
 	/**
