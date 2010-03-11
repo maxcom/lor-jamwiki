@@ -150,11 +150,12 @@ public class ItemsServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void viewUsers(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		List<String> items = WikiBase.getDataHandler().lookupWikiUsers(pagination);
 		List<String> links = new ArrayList<String>();
 		for (String link : items) {
-			links.add(Namespace.USER.getLabel() + Namespace.SEPARATOR + link);
+			links.add(Namespace.USER.getLabel(virtualWiki) + Namespace.SEPARATOR + link);
 		}
 		next.addObject("itemCount", items.size());
 		next.addObject("items", links);

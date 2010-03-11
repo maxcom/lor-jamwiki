@@ -45,23 +45,6 @@ public class WikiPageInfoTest {
 	 *
 	 */
 	@Test
-	public void testGetNamespace() {
-		MockHttpServletRequest mockRequest = this.getMockHttpServletRequest("/virtual/Topic");
-		WikiPageInfo p = new WikiPageInfo(mockRequest);
-		assertEquals(p.getTopicName(),"",p.getTopicName());
-		p.setTopicName("Main");
-		assertEquals("Expected empty namespace", "", p.getNamespace());
-		p.setTopicName("User:FooBar");
-		assertEquals("Expected 'User' namespace", "User", p.getNamespace());
-		p.setTopicName("Special:Contributions");
-		p.setSpecial(true);
-		assertEquals("Expected 'Special' namespace", "Special", p.getNamespace());
-	}
-
-	/**
-	 *
-	 */
-	@Test
 	public void testGetPagename() {
 		MockHttpServletRequest mockRequest = this.getMockHttpServletRequest("/virtual/Topic");
 		WikiPageInfo p = new WikiPageInfo(mockRequest);

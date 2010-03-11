@@ -176,7 +176,7 @@ public class LinkUtil {
 		if (topic.getTopicType() == Topic.TYPE_FILE) {
 			// file, not an image
 			if (StringUtils.isBlank(caption)) {
-				caption = topicName.substring(Namespace.FILE.getLabel().length() + 1);
+				caption = topicName.substring(Namespace.FILE.getLabel(virtualWiki).length() + 1);
 			}
 			html.append("<a href=\"").append(url).append("\">");
 			if (escapeHtml) {
@@ -328,7 +328,7 @@ public class LinkUtil {
 		if (StringUtils.isBlank(topic)) {
 			return null;
 		}
-		WikiLink wikiLink = LinkUtil.parseWikiLink(topic);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, topic);
 		if (validateTopic) {
 			return LinkUtil.buildTopicUrl(context, virtualWiki, wikiLink);
 		} else {
@@ -411,7 +411,7 @@ public class LinkUtil {
 	 *
 	 */
 	private static String buildUploadLink(String context, String virtualWiki, String topicName) throws DataAccessException {
-		WikiLink uploadLink = LinkUtil.parseWikiLink("Special:Upload?topic=" + topicName);
+		WikiLink uploadLink = LinkUtil.parseWikiLink(virtualWiki, "Special:Upload?topic=" + topicName);
 		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, uploadLink, topicName, "edit", null, true);
 	}
 
@@ -492,10 +492,11 @@ public class LinkUtil {
 	 * Parse a wiki topic link and return a <code>WikiLink</code> object
 	 * representing the link.  Wiki topic links are of the form "Topic?Query#Section".
 	 *
+	 * @param virtualWiki The current virtual wiki.
 	 * @param raw The raw topic link text.
 	 * @return A WikiLink object that represents the link.
 	 */
-	public static WikiLink parseWikiLink(String raw) {
+	public static WikiLink parseWikiLink(String virtualWiki, String raw) {
 		// note that this functionality was previously handled with a regular
 		// expression, but the expression caused CPU usage to spike to 100%
 		// with topics such as "Urnordisch oder Nordwestgermanisch?"
@@ -532,11 +533,12 @@ public class LinkUtil {
 			if (wikiLink.getVirtualWiki() != null) {
 				// strip the virtual wiki
 				processed = topic;
+				virtualWiki = wikiLink.getVirtualWiki().getName();
 			}
-			topic = LinkUtil.processNamespace(topic, wikiLink);
+			topic = LinkUtil.processNamespace(virtualWiki, topic, wikiLink);
 			if (wikiLink.getNamespace() != Namespace.MAIN) {
 				// update original text in case topic was of the form "xxx: topic"
-				processed = wikiLink.getNamespace().getLabel() + Namespace.SEPARATOR + topic;
+				processed = wikiLink.getNamespace().getLabel(virtualWiki) + Namespace.SEPARATOR + topic;
 			}
 		}
 		wikiLink.setArticle(Utilities.decodeTopicName(topic, true));
@@ -584,14 +586,14 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	private static String processNamespace(String processed, WikiLink wikiLink) {
+	private static String processNamespace(String virtualWiki, String processed, WikiLink wikiLink) {
 		int prefixPosition = LinkUtil.prefixPosition(processed);
 		if (prefixPosition == -1) {
 			return processed;
 		}
 		String linkPrefix = processed.substring(0, prefixPosition).trim();
 		try {
-			Namespace namespace = WikiBase.getDataHandler().lookupNamespace(linkPrefix);
+			Namespace namespace = WikiBase.getDataHandler().lookupNamespace(virtualWiki, linkPrefix);
 			if (namespace != null) {
 				wikiLink.setNamespace(namespace);
 			}

@@ -89,6 +89,9 @@ public class Namespace implements Serializable {
 	public Namespace(Integer id, String label) {
 		this.id = id;
 		this.label = label;
+		if (id != null && DEFAULT_NAMESPACES.get(id) != null) {
+			DEFAULT_NAMESPACES.put(id, this);
+		}
 	}
 
 	/**
@@ -117,8 +120,16 @@ public class Namespace implements Serializable {
 	/**
 	 *
 	 */
-	public String getLabel() {
+	public String getDefaultLabel() {
 		return this.label;
+	}
+
+	/**
+	 * Return the virtual-wiki specific namespace, or if one has not been defined
+	 * return the default namespace label
+	 */
+	public String getLabel(String virtualWiki) {
+		return (virtualWiki != null && this.namespaceTranslations.get(virtualWiki) != null) ? this.namespaceTranslations.get(virtualWiki) : this.label;
 	}
 
 	/**
@@ -143,13 +154,12 @@ public class Namespace implements Serializable {
 	}
 
 	/**
-	 * Given a namespace string, return the Namespace for the "main" (ie, not comments)
+	 * Given a namespace, return the Namespace for the corresponding "comments"
 	 * namespace.  If no match exists return <code>null</code>.  Example: if this
-	 * method is called with "User comments" or "User" as an argument, Namespace.USER_COMMENTS
-	 * will be returned.
+	 * method is called with Namespace.USER_COMMENTS or Namespace.USER as an
+	 * argument, Namespace.USER_COMMENTS will be returned.
 	 */
-	public static Namespace findCommentsNamespace(String namespaceString) throws DataAccessException {
-		Namespace namespace = WikiBase.getDataHandler().lookupNamespace(namespaceString);
+	public static Namespace findCommentsNamespace(Namespace namespace) throws DataAccessException {
 		if (namespace == null) {
 			return null;
 		}
@@ -170,13 +180,12 @@ public class Namespace implements Serializable {
 	}
 
 	/**
-	 * Given a namespace string, return the Namespace for the "main" (ie, not comments)
+	 * Given a namespace, return the Namespace for the "main" (ie, not comments)
 	 * namespace.  If no match exists return <code>null</code>.  Example: if this
-	 * method is called with "User comments" or "User" as an argument, Namespace.USER
-	 * will be returned.
+	 * method is called with Namespace.USER_COMMENTS or Namespace.USER as an
+	 * argument, Namespace.USER will be returned.
 	 */
-	public static Namespace findMainNamespace(String namespaceString) throws DataAccessException {
-		Namespace namespace = WikiBase.getDataHandler().lookupNamespace(namespaceString);
+	public static Namespace findMainNamespace(Namespace namespace) {
 		if (namespace == null) {
 			return null;
 		}

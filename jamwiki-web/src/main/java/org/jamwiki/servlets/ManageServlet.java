@@ -65,7 +65,8 @@ public class ManageServlet extends JAMWikiServlet {
 		deletePage(request, next, pageInfo, topicName);
 		String manageCommentsPage = WikiUtil.getParameterFromRequest(request, "manageCommentsPage", true);
 		if (!StringUtils.isBlank(manageCommentsPage)) {
-			if (WikiUtil.isCommentsPage(manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
+			String virtualWiki = pageInfo.getVirtualWikiName();
+			if (WikiUtil.isCommentsPage(virtualWiki, manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
 				deletePage(request, next, pageInfo, manageCommentsPage);
 			}
 		}
@@ -126,7 +127,8 @@ public class ManageServlet extends JAMWikiServlet {
 		undeletePage(request, next, pageInfo, topicName);
 		String manageCommentsPage = WikiUtil.getParameterFromRequest(request, "manageCommentsPage", true);
 		if (!StringUtils.isBlank(manageCommentsPage)) {
-			if (WikiUtil.isCommentsPage(manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
+			String virtualWiki = pageInfo.getVirtualWikiName();
+			if (WikiUtil.isCommentsPage(virtualWiki, manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
 				undeletePage(request, next, pageInfo, manageCommentsPage);
 			}
 		}
@@ -168,7 +170,7 @@ public class ManageServlet extends JAMWikiServlet {
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		String commentsPage = WikiUtil.extractCommentsLink(topicName);
+		String commentsPage = WikiUtil.extractCommentsLink(virtualWiki, topicName);
 		if (!topicName.equals(commentsPage)) {
 			Topic commentsTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, commentsPage, true, null);
 			if (commentsTopic != null && commentsTopic.getDeleted() == topic.getDeleted()) {

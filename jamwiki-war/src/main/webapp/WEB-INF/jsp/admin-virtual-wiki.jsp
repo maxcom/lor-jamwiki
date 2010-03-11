@@ -100,12 +100,12 @@
 			<tr>
 				<td>
 					<input type="hidden" name="namespace_id" value="${namespace.id}" />
-					<input type="hidden" name="${namespace.id}_label" value="${namespace.label}" />
+					<input type="hidden" name="${namespace.id}_label" value="${namespace.defaultLabel}" />
 					${namespace.id}
 				</td>
 				<td>
-					<input type="hidden" name="${namespace.id}_newlabel" value="${namespace.label}" />
-					${namespace.label}
+					<input type="hidden" name="${namespace.id}_newlabel" value="${namespace.defaultLabel}" />
+					${namespace.defaultLabel}
 				</td>
 				<td><input type="text" name="${namespace.id}_vwiki" size="30" value="${namespace.namespaceTranslations[selected.name]}" /></td>
 			</tr>

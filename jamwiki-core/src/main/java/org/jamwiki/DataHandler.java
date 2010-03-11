@@ -383,11 +383,12 @@ public interface DataHandler {
 	 * Given a namespace string, return the namespace that corresponds to that string,
 	 * or <code>null</code> if no match exists.
 	 *
+	 * @param virtualWiki The virtual wiki for the namespace being queried.
 	 * @param namespaceString The value to query to see if a matching namespace exists.
 	 * @return The matching Namespace object, or <code>null</code> if no match is found.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	Namespace lookupNamespace(String namespaceString) throws DataAccessException;
+	Namespace lookupNamespace(String virtualWiki, String namespaceString) throws DataAccessException;
 
 	/**
 	 * Return all namespaces currently available for the wiki.

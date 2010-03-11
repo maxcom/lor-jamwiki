@@ -49,7 +49,7 @@ public class WikiLinkTag implements JFlexParserTag {
 	private String buildInternalLinkUrl(ParserInput parserInput, int mode, String raw) {
 		String context = parserInput.getContext();
 		String virtualWiki = parserInput.getVirtualWiki();
-		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(raw);
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(virtualWiki, raw);
 		if (wikiLink == null) {
 			// invalid link
 			return raw;
@@ -171,7 +171,8 @@ public class WikiLinkTag implements JFlexParserTag {
 	 *
 	 */
 	private String processLinkContent(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
-		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(raw);
+		String virtualWiki = parserInput.getVirtualWiki();
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(virtualWiki, raw);
 		if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
 			// no destination or section
 			return raw;
@@ -183,7 +184,8 @@ public class WikiLinkTag implements JFlexParserTag {
 	 *
 	 */
 	private String processLinkMetadata(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws ParserException {
-		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(raw);
+		String virtualWiki = parserInput.getVirtualWiki();
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(virtualWiki, raw);
 		if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
 			return raw;
 		}

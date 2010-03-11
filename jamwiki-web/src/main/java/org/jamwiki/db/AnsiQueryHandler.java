@@ -2432,7 +2432,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				}
 				stmt = conn.prepareStatement(STATEMENT_INSERT_NAMESPACE);
 			}
-			stmt.setString(1, namespace.getLabel());
+			stmt.setString(1, namespace.getDefaultLabel());
 			if (namespace.getMainNamespace() == null) {
 				stmt.setNull(2, Types.INTEGER);
 			} else {
@@ -2458,8 +2458,8 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt = conn.prepareStatement(STATEMENT_INSERT_NAMESPACE_TRANSLATION);
 			String translatedNamespace;
 			for (Namespace namespace : namespaces) {
-				translatedNamespace = namespace.getNamespaceTranslations().get(virtualWiki);
-				if (translatedNamespace == null) {
+				translatedNamespace = namespace.getLabel(virtualWiki);
+				if (translatedNamespace.equals(namespace.getDefaultLabel())) {
 					continue;
 				}
 				stmt.setInt(1, namespace.getId());

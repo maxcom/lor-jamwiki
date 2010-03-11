@@ -114,7 +114,7 @@ public class TemplateTag implements JFlexParserTag {
 			}
 		}
 		// extract the template name
-		String name = this.parseTemplateName(templateContent);
+		String name = this.parseTemplateName(parserInput.getVirtualWiki(), templateContent);
 		boolean inclusion = false;
 		if (name.startsWith(Namespace.SEPARATOR)) {
 			name = name.substring(1);
@@ -238,7 +238,7 @@ public class TemplateTag implements JFlexParserTag {
 	 * Given a template call of the form "{{template|param|param}}", return
 	 * the template name.
 	 */
-	private String parseTemplateName(String raw) throws ParserException {
+	private String parseTemplateName(String virtualWiki, String raw) throws ParserException {
 		String name = raw;
 		int pos = raw.indexOf('|');
 		if (pos != -1) {
@@ -254,8 +254,8 @@ public class TemplateTag implements JFlexParserTag {
 				// FIXME - no need for an exception
 				throw new ParserException("No template name specified");
 			}
-		} else if (!name.startsWith(Namespace.TEMPLATE.getLabel() + Namespace.SEPARATOR)) {
-			name = Namespace.TEMPLATE.getLabel() + Namespace.SEPARATOR + StringUtils.capitalize(name);
+		} else if (!name.startsWith(Namespace.TEMPLATE.getLabel(virtualWiki) + Namespace.SEPARATOR)) {
+			name = Namespace.TEMPLATE.getLabel(virtualWiki) + Namespace.SEPARATOR + StringUtils.capitalize(name);
 		}
 		return name;
 	}

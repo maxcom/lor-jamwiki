@@ -57,7 +57,7 @@ public class CategoryServlet extends JAMWikiServlet {
 		LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>();
 		for (Category category : categoryObjects) {
 			String key = category.getName();
-			String value = key.substring(Namespace.CATEGORY.getLabel().length() + Namespace.SEPARATOR.length());
+			String value = key.substring(Namespace.CATEGORY.getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
 			categories.put(key, value);
 		}
 		next.addObject("categoryCount", categories.size());

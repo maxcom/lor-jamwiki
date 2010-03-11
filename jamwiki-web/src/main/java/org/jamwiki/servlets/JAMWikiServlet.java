@@ -118,8 +118,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 			links.put(specialUrl, new WikiMessage("tab.common.special"));
 		} else {
 			try {
-				String article = WikiUtil.extractTopicLink(pageName);
-				String comments = WikiUtil.extractCommentsLink(pageName);
+				String article = WikiUtil.extractTopicLink(virtualWiki, pageName);
+				String comments = WikiUtil.extractCommentsLink(virtualWiki, pageName);
 				links.put(article, new WikiMessage("tab.common.article"));
 				links.put(comments, new WikiMessage("tab.common.comments"));
 				if (ServletUtil.isEditable(virtualWiki, pageName, userDetails)) {
@@ -143,7 +143,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 					links.put(watchlistLink, new WikiMessage(watchlistLabel));
 				}
 				if (pageInfo.isUserPage()) {
-					WikiLink wikiLink = LinkUtil.parseWikiLink(pageName);
+					WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, pageName);
 					String contributionsLink = "Special:Contributions?contributor=" + Utilities.encodeAndEscapeTopicName(wikiLink.getArticle());
 					links.put(contributionsLink, new WikiMessage("tab.common.contributions"));
 				}
@@ -167,6 +167,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * user menu links for the WikiPageInfo object.
 	 */
 	private LinkedHashMap buildUserMenu(WikiPageInfo pageInfo) {
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		LinkedHashMap<String, WikiMessage> links = new LinkedHashMap<String, WikiMessage>();
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
 		if (userDetails.hasRole(RoleImpl.ROLE_ANONYMOUS) && !userDetails.hasRole(RoleImpl.ROLE_EMBEDDED)) {
@@ -180,8 +181,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 		}
 		if (!userDetails.hasRole(RoleImpl.ROLE_ANONYMOUS)) {
 			WikiUser user = ServletUtil.currentWikiUser();
-			String userPage = Namespace.USER.getLabel() + Namespace.SEPARATOR + user.getUsername();
-			String userCommentsPage = Namespace.USER_COMMENTS.getLabel() + Namespace.SEPARATOR + user.getUsername();
+			String userPage = Namespace.USER.getLabel(virtualWiki) + Namespace.SEPARATOR + user.getUsername();
+			String userCommentsPage = Namespace.USER_COMMENTS.getLabel(virtualWiki) + Namespace.SEPARATOR + user.getUsername();
 			String username = user.getUsername();
 			if (!StringUtils.isBlank(user.getDisplayName())) {
 				username = user.getDisplayName();

@@ -113,14 +113,14 @@ public class JAMWikiModel extends AbstractWikiModel {
 	@Override
 	public void appendInternalLink(String topic, String hashSection, String topicDescription, String cssClass, boolean parseRecursive) {
 		try {
+			String virtualWiki = fParserInput.getVirtualWiki();
 			WikiLink wikiLink;
 			if (hashSection != null) {
-				wikiLink = LinkUtil.parseWikiLink(topic + "#" + hashSection);
+				wikiLink = LinkUtil.parseWikiLink(virtualWiki, topic + "#" + hashSection);
 			} else {
-				wikiLink = LinkUtil.parseWikiLink(topic);
+				wikiLink = LinkUtil.parseWikiLink(virtualWiki, topic);
 			}
 			String destination = wikiLink.getDestination();
-			String virtualWiki = fParserInput.getVirtualWiki();
 			String section = wikiLink.getSection();
 			String query = wikiLink.getQuery();
 			String href = buildTopicUrlNoEdit(fContextPath, virtualWiki, destination, section, query);
@@ -275,17 +275,20 @@ public class JAMWikiModel extends AbstractWikiModel {
 
 	@Override
 	public String getCategoryNamespace() {
-		return Namespace.CATEGORY.getLabel();
+		// FIXME - this does not return the virtual wiki specific namespace
+		return Namespace.CATEGORY.getDefaultLabel();
 	}
 
 	@Override
 	public String getImageNamespace() {
-		return Namespace.FILE.getLabel();
+		// FIXME - this does not return the virtual wiki specific namespace
+		return Namespace.FILE.getDefaultLabel();
 	}
 
 	@Override
 	public String getTemplateNamespace() {
-		return Namespace.TEMPLATE.getLabel();
+		// FIXME - this does not return the virtual wiki specific namespace
+		return Namespace.TEMPLATE.getDefaultLabel();
 	}
 
 	public Set<String> getLinks() {
@@ -296,9 +299,10 @@ public class JAMWikiModel extends AbstractWikiModel {
 	public void appendInterWikiLink(String namespace, String title, String topicDescription) {
 		String hrefLink = getInterwikiMap().get(namespace.toLowerCase());
 		if (hrefLink != null) {
-			WikiLink wikiLink = LinkUtil.parseWikiLink(namespace + Namespace.SEPARATOR + title + "|" + topicDescription);
+			String virtualWiki = fParserInput.getVirtualWiki();
+			WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, namespace + Namespace.SEPARATOR + title + "|" + topicDescription);
 			String destination = wikiLink.getDestination();
-			destination = destination.substring(wikiLink.getNamespace().getLabel().length() + Namespace.SEPARATOR.length());
+			destination = destination.substring(wikiLink.getNamespace().getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
 			hrefLink = hrefLink.replace("${title}", Utilities.encodeAndEscapeTopicName(title));
 			TagNode aTagNode = new TagNode("a");
 			aTagNode.addAttribute("href", hrefLink, true);

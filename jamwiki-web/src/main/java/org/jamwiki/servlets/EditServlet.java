@@ -144,7 +144,7 @@ public class EditServlet extends JAMWikiServlet {
 	private void loadEdit(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String contents, String virtualWiki, String topicName, boolean useSection) throws Exception {
 		pageInfo.setPageTitle(new WikiMessage("edit.title", topicName));
 		pageInfo.setTopicName(topicName);
-		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, topicName);
 		if (wikiLink.getNamespace().equals(Namespace.CATEGORY)) {
 			ServletUtil.loadCategoryContent(next, virtualWiki, topicName);
 		}

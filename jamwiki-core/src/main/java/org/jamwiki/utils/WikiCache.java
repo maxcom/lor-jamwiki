@@ -155,6 +155,15 @@ public class WikiCache {
 	 * @return The generated key value.
 	 */
 	public static String key(String value1, String value2) {
+		if (value1 == null && value2 == null) {
+			throw new IllegalArgumentException("WikiCache.key cannot be called with two null values");
+		}
+		if (value1 == null) {
+			value1 = "";
+		}
+		if (value2 == null) {
+			value2 = "";
+		}
 		return value1 + "/" + value2;
 	}
 

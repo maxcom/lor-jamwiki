@@ -50,6 +50,20 @@ public class TestDataHandler implements DataHandler {
 	private static final WikiLogger logger = WikiLogger.getLogger(TestDataHandler.class.getName());
 	/** Keep a map of topic name and topic object in memory to support the writeTopic method. */
 	private Map<String, Topic> topics = new LinkedHashMap<String, Topic>();
+	/** Create a list of namespaces for lookup purposes. */
+	private static List<Namespace> TEST_NAMESPACES = new ArrayList<Namespace>();
+
+	static {
+		for (Namespace namespace : Namespace.DEFAULT_NAMESPACES.values()) {
+			// test handler, so hard code translations for the "test" virtual wiki
+			if (namespace == Namespace.USER) {
+				namespace.getNamespaceTranslations().put("test", "UserTest");
+			} else if (namespace == Namespace.USER_COMMENTS) {
+				namespace.getNamespaceTranslations().put("test", "UserTest comments");
+			}
+			TEST_NAMESPACES.add(namespace);
+		}
+	}
 
 	/**
 	 *
@@ -215,9 +229,9 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Namespace lookupNamespace(String namespaceString) throws DataAccessException {
-		for (Namespace namespace : Namespace.DEFAULT_NAMESPACES.values()) {
-			if (namespace.getLabel().equals(namespaceString)) {
+	public Namespace lookupNamespace(String virtualWiki, String namespaceString) throws DataAccessException {
+		for (Namespace namespace : TEST_NAMESPACES) {
+			if (namespace.getLabel(virtualWiki).equals(namespaceString)) {
 				return namespace;
 			}
 		}
@@ -228,7 +242,7 @@ public class TestDataHandler implements DataHandler {
 	 *
 	 */
 	public List<Namespace> lookupNamespaces() throws DataAccessException {
-		return new ArrayList<Namespace>(Namespace.DEFAULT_NAMESPACES.values());
+		return new ArrayList<Namespace>(TEST_NAMESPACES);
 	}
 
 	/**

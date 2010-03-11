@@ -62,10 +62,11 @@ public class JFlexParserUtil {
 	 * Parse a raw Wiki link of the form "[[link|text]]", and return a WikiLink
 	 * object representing the link.
 	 *
+	 * @param virtualWiki The current virtual wiki.
 	 * @param raw The raw Wiki link text.
 	 * @return A WikiLink object that represents the link.
 	 */
-	protected static WikiLink parseWikiLink(String raw) {
+	protected static WikiLink parseWikiLink(String virtualWiki, String raw) {
 		if (StringUtils.isBlank(raw)) {
 			return new WikiLink();
 		}
@@ -85,7 +86,7 @@ public class JFlexParserUtil {
 			text = raw.substring(pos + 1).trim();
 			raw = raw.substring(0, pos).trim();
 		}
-		WikiLink wikiLink = LinkUtil.parseWikiLink(raw);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, raw);
 		wikiLink.setColon(colon);
 		wikiLink.setText(text);
 		if (!StringUtils.isBlank(suffix)) {

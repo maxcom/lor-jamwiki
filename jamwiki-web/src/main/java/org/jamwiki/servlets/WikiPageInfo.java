@@ -251,29 +251,13 @@ public class WikiPageInfo {
 	}
 
 	/**
-	 * Return the namespace of the topic displayed by the current page.  The
-	 * namespace is the part of topic name, up to the colon.  For regular
-	 * articles the namespace is an empty string.
-	 *
-	 * The namespace cannot be set directly, only the topic name can be set.
-	 *
-	 * @return The wiki namespace of this page, or an empty string for pages
-	 *  in the main namespace.
-	 * @see #getPagename
-	 * @see #getTopicName
-	 */
-	public String getNamespace() {
-		return LinkUtil.parseWikiLink(this.getTopicName()).getNamespace().getLabel();
-	}
-
-	/**
 	 * Return the name of the current page, which is the name of the topic
 	 * being viewed (without the namespace).
 	 *
 	 * @return Name of the page.
 	 */
 	public String getPagename() {
-		return LinkUtil.parseWikiLink(this.getTopicName()).getArticle();
+		return LinkUtil.parseWikiLink(this.virtualWikiName, this.getTopicName()).getArticle();
 	}
 
 	/**
@@ -372,13 +356,7 @@ public class WikiPageInfo {
 	 *  user page, otherwise <code>false</code>.
 	 */
 	public boolean isUserPage() {
-		WikiLink wikiLink = LinkUtil.parseWikiLink(this.getTopicName());
-		if (wikiLink.getNamespace().equals(Namespace.USER.getLabel())) {
-			return true;
-		}
-		if (wikiLink.getNamespace().equals(Namespace.USER_COMMENTS.getLabel())) {
-			return true;
-		}
-		return false;
+		WikiLink wikiLink = LinkUtil.parseWikiLink(this.virtualWikiName, this.getTopicName());
+		return (wikiLink.getNamespace().equals(Namespace.USER) || wikiLink.getNamespace().equals(Namespace.USER_COMMENTS));
 	}
 }

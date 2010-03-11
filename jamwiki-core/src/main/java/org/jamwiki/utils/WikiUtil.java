@@ -146,25 +146,26 @@ public class WikiUtil {
 	 * For example, if the article name is "Topic" then the return value is
 	 * "Comments:Topic".
 	 *
+	 * @param virtualWiki The current virtual wiki.
 	 * @param name The article name from which a comments article name is to
 	 *  be constructed.
 	 * @return The comments article name for the article name.
 	 */
-	public static String extractCommentsLink(String name) {
+	public static String extractCommentsLink(String virtualWiki, String name) {
 		if (StringUtils.isBlank(name)) {
 			throw new IllegalArgumentException("Topic name must not be empty in extractCommentsLink");
 		}
-		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, name);
 		Namespace commentsNamespace = null;
 		try {
-			commentsNamespace = Namespace.findCommentsNamespace(wikiLink.getNamespace().getLabel());
+			commentsNamespace = Namespace.findCommentsNamespace(wikiLink.getNamespace());
 		} catch (DataAccessException e) {
 			throw new IllegalStateException("Database error while retrieving comments namespace", e);
 		}
 		if (commentsNamespace == null) {
 			throw new IllegalArgumentException("Topic " + name + " does not have a comments namespace");
 		}
-		return (!StringUtils.isBlank(commentsNamespace.getLabel())) ? commentsNamespace.getLabel() + Namespace.SEPARATOR + wikiLink.getArticle() : wikiLink.getArticle();
+		return (!StringUtils.isBlank(commentsNamespace.getLabel(virtualWiki))) ? commentsNamespace.getLabel(virtualWiki) + Namespace.SEPARATOR + wikiLink.getArticle() : wikiLink.getArticle();
 	}
 
 	/**
@@ -172,25 +173,21 @@ public class WikiUtil {
 	 * example, if the article name is "Comments:Topic" then the return value
 	 * is "Topic".
 	 *
+	 * @param virtualWiki The current virtual wiki.
 	 * @param name The article name from which a topic article name is to be
 	 *  constructed.
 	 * @return The topic article name for the article name.
 	 */
-	public static String extractTopicLink(String name) {
+	public static String extractTopicLink(String virtualWiki, String name) {
 		if (StringUtils.isBlank(name)) {
 			throw new IllegalArgumentException("Topic name must not be empty in extractTopicLink");
 		}
-		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
-		Namespace mainNamespace = null;
-		try {
-			mainNamespace = Namespace.findMainNamespace(wikiLink.getNamespace().getLabel());
-		} catch (DataAccessException e) {
-			throw new IllegalStateException("Database error while retrieving main namespace", e);
-		}
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, name);
+		Namespace mainNamespace = Namespace.findMainNamespace(wikiLink.getNamespace());
 		if (mainNamespace == null) {
 			throw new IllegalArgumentException("Topic " + name + " does not have a main namespace");
 		}
-		return (!StringUtils.isBlank(mainNamespace.getLabel())) ? mainNamespace.getLabel() + Namespace.SEPARATOR + wikiLink.getArticle() : wikiLink.getArticle();
+		return (!StringUtils.isBlank(mainNamespace.getLabel(virtualWiki))) ? mainNamespace.getLabel(virtualWiki) + Namespace.SEPARATOR + wikiLink.getArticle() : wikiLink.getArticle();
 	}
 
 	/**
@@ -208,28 +205,6 @@ public class WikiUtil {
 			logger.warning("Unable to retrieve default topic for virtual wiki", e);
 		}
 		return "/" + virtualWikiName + "/" + target;
-	}
-
-	/**
-	 * Given a topic type, determine the namespace name.
-	 *
-	 * @param topicType The topic type.
-	 * @return The namespace that matches the topic type.
-	 */
-	public static String findNamespaceForTopicType(int topicType) {
-		switch (topicType) {
-			case Topic.TYPE_IMAGE:
-			case Topic.TYPE_FILE:
-				return Namespace.FILE.getLabel();
-			case Topic.TYPE_CATEGORY:
-				return Namespace.CATEGORY.getLabel();
-			case Topic.TYPE_SYSTEM_FILE:
-				return Namespace.JAMWIKI.getLabel();
-			case Topic.TYPE_TEMPLATE:
-				return Namespace.TEMPLATE.getLabel();
-			default:
-				return "";
-		}
 	}
 
 	/**
@@ -257,7 +232,7 @@ public class WikiUtil {
 			return parent;
 		}
 		String virtualWiki = parent.getVirtualWiki();
-		WikiLink wikiLink = LinkUtil.parseWikiLink(target);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, target);
 		if (wikiLink.getVirtualWiki() != null) {
 			virtualWiki = wikiLink.getVirtualWiki().getName();
 		}
@@ -278,21 +253,21 @@ public class WikiUtil {
 	/**
 	 * Given a namespace name, determine the topic type.
 	 *
-	 * @param namespace The namespace name.
+	 * @param namespace The namespace.
 	 * @return The topic type that matches the namespace.
 	 */
-	public static int findTopicTypeForNamespace(String namespace) {
+	public static int findTopicTypeForNamespace(Namespace namespace) {
 		if (namespace != null) {
-			if (namespace.equals(Namespace.CATEGORY.getLabel())) {
+			if (namespace.equals(Namespace.CATEGORY)) {
 				return Topic.TYPE_CATEGORY;
 			}
-			if (namespace.equals(Namespace.TEMPLATE.getLabel())) {
+			if (namespace.equals(Namespace.TEMPLATE)) {
 				return Topic.TYPE_TEMPLATE;
 			}
-			if (namespace.equals(Namespace.JAMWIKI.getLabel())) {
+			if (namespace.equals(Namespace.JAMWIKI)) {
 				return Topic.TYPE_SYSTEM_FILE;
 			}
-			if (namespace.equals(Namespace.FILE.getLabel())) {
+			if (namespace.equals(Namespace.FILE)) {
 				// FIXME - handle TYPE_FILE
 				return Topic.TYPE_IMAGE;
 			}
@@ -473,18 +448,19 @@ public class WikiUtil {
 	 * Given a topic name, determine if that name corresponds to a comments
 	 * page.
 	 *
+	 * @param virtualWiki The current virtual wiki.
 	 * @param topicName The topic name (non-null) to examine to determine if it
 	 *  is a comments page or not.
 	 * @return <code>true</code> if the page is a comments page, <code>false</code>
 	 *  otherwise.
 	 */
-	public static boolean isCommentsPage(String topicName) {
-		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
+	public static boolean isCommentsPage(String virtualWiki, String topicName) {
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, topicName);
 		if (wikiLink.getNamespace().equals(Namespace.SPECIAL)) {
 			return false;
 		}
 		try {
-			return (Namespace.findCommentsNamespace(wikiLink.getNamespace().getLabel()) != null);
+			return (Namespace.findCommentsNamespace(wikiLink.getNamespace()) != null);
 		} catch (DataAccessException e) {
 			throw new IllegalStateException("Database error while retrieving comments namespace", e);
 		}
@@ -710,17 +686,18 @@ public class WikiUtil {
 	 * Utility method for determining if a topic name is valid for use on the Wiki,
 	 * meaning that it is not empty and does not contain any invalid characters.
 	 *
+	 * @param virtualWiki The current virtual wiki.
 	 * @param name The topic name to validate.
 	 * @throws WikiException Thrown if the user name is invalid.
 	 */
-	public static void validateTopicName(String name) throws WikiException {
+	public static void validateTopicName(String virtualWiki, String name) throws WikiException {
 		if (StringUtils.isBlank(name)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		if (PseudoTopicHandler.isPseudoTopic(name)) {
 			throw new WikiException(new WikiMessage("common.exception.pseudotopic", name));
 		}
-		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, name);
 		String article = StringUtils.trimToNull(wikiLink.getArticle());
 		if (StringUtils.startsWith(article, "/")) {
 			throw new WikiException(new WikiMessage("common.exception.name", name));

@@ -37,6 +37,7 @@ import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.utils.LinkUtil;
@@ -171,8 +172,8 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 			throw new SAXException("Topic " + topicName + " already exists and cannot be imported", e);
 		}
 		topicName = convertArticleNameFromWikipediaToJAMWiki(topicName);
-		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-		this.currentTopic.setTopicType(WikiUtil.findTopicTypeForNamespace(wikiLink.getNamespace().getLabel()));
+		WikiLink wikiLink = LinkUtil.parseWikiLink(this.virtualWiki, topicName);
+		this.currentTopic.setTopicType(WikiUtil.findTopicTypeForNamespace(wikiLink.getNamespace()));
 		this.currentTopic.setName(topicName);
 	}
 
@@ -276,10 +277,10 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (StringUtils.equals(MediaWikiConstants.MEDIAWIKI_ELEMENT_NAMESPACE, qName)) {
 			int key = NumberUtils.toInt(this.currentAttributeMap.get("key"));
-			String jamwikiNamespace = MediaWikiConstants.NAMESPACE_CONVERSION_MAP.get(key);
-			if (!StringUtils.isBlank(jamwikiNamespace)) {
+			Namespace jamwikiNamespace = MediaWikiConstants.NAMESPACE_CONVERSION_MAP.get(key);
+			if (jamwikiNamespace != null) {
 				String mediawikiNamespace = currentElementBuffer.toString().trim();
-				mediawikiNamespaceMap.put(mediawikiNamespace, jamwikiNamespace);
+				mediawikiNamespaceMap.put(mediawikiNamespace, jamwikiNamespace.getLabel(this.virtualWiki));
 			}
 		} else if (MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC_NAME.equals(qName)) {
 			String topicName = currentElementBuffer.toString().trim();

@@ -294,7 +294,7 @@ public class ServletUtil {
 	 *  initializing the topic object.
 	 */
 	protected static Topic initializeTopic(String virtualWiki, String topicName) throws WikiException {
-		WikiUtil.validateTopicName(topicName);
+		WikiUtil.validateTopicName(virtualWiki, topicName);
 		Topic topic = null;
 		try {
 			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
@@ -307,8 +307,8 @@ public class ServletUtil {
 		topic = new Topic();
 		topic.setName(topicName);
 		topic.setVirtualWiki(virtualWiki);
-		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-		topic.setTopicType(WikiUtil.findTopicTypeForNamespace(wikiLink.getNamespace().getLabel()));
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, topicName);
+		topic.setTopicType(WikiUtil.findTopicTypeForNamespace(wikiLink.getNamespace()));
 		return topic;
 	}
 
@@ -419,7 +419,7 @@ public class ServletUtil {
 	 * @throws WikiException Thrown if any error occurs during processing.
 	 */
 	protected static void loadCategoryContent(ModelAndView next, String virtualWiki, String topicName) throws WikiException {
-		String categoryName = topicName.substring(Namespace.CATEGORY.getLabel().length() + Namespace.SEPARATOR.length());
+		String categoryName = topicName.substring(Namespace.CATEGORY.getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
 		next.addObject("categoryName", categoryName);
 		List<Category> categoryTopics = null;
 		try {
@@ -440,7 +440,7 @@ public class ServletUtil {
 			}
 			if (category.getTopicType() == Topic.TYPE_CATEGORY) {
 				categoryTopics.remove(i);
-				String value = category.getChildTopicName().substring(Namespace.CATEGORY.getLabel().length() + Namespace.SEPARATOR.length());
+				String value = category.getChildTopicName().substring(Namespace.CATEGORY.getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
 				subCategories.put(category.getChildTopicName(), value);
 				continue;
 			}
@@ -722,7 +722,7 @@ public class ServletUtil {
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		WikiUtil.validateTopicName(topic.getName());
+		WikiUtil.validateTopicName(topic.getVirtualWiki(), topic.getName());
 		if (allowRedirect && topic.getTopicType() == Topic.TYPE_REDIRECT && (request.getParameter("redirect") == null || !request.getParameter("redirect").equalsIgnoreCase("no"))) {
 			Topic child = null;
 			try {
@@ -772,7 +772,7 @@ public class ServletUtil {
 		if (parserOutput.getCategories().size() > 0) {
 			LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>();
 			for (String key : parserOutput.getCategories().keySet()) {
-				String value = key.substring(Namespace.CATEGORY.getLabel().length() + Namespace.SEPARATOR.length());
+				String value = key.substring(Namespace.CATEGORY.getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
 				categories.put(key, value);
 			}
 			next.addObject("categories", categories);
