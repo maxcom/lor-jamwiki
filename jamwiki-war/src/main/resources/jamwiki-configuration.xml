@@ -141,68 +141,6 @@
 <!--
    ====================================================================
 
-   Namespaces that can be used with JAMWiki:
-
-   name     - The internal-use-only name for the namespace.  WARNING: Do not
-              change existing namespace name values as there are hard-coded
-              dependencies for them!
-   main     - The value of the "main" namespace.  For example, "Help" is the
-              main-namespace value for "Help:Topic".  This value can be
-              modified, but doing so will affect any existing topics already
-              created in the namespace.
-   comments - The value of the "comments" namespace.  For example, the "Help"
-              namespace has a comments namespace of "Help comments".  This
-              value can be modified, but doing so will affect any existing
-              topics already created in the namespace.
-
-   ======================================================================
--->
-<namespaces>
-	<namespace>
-		<name>special</name>
-		<main>Special</main>
-		<comments></comments>
-	</namespace>
-	<namespace>
-		<name>main</name>
-		<main></main>
-		<comments>Comments</comments>
-	</namespace>
-	<namespace>
-		<name>image</name>
-		<main>Image</main>
-		<comments>Image comments</comments>
-	</namespace>
-	<namespace>
-		<name>category</name>
-		<main>Category</main>
-		<comments>Category comments</comments>
-	</namespace>
-	<namespace>
-		<name>jamwiki</name>
-		<main>JAMWiki</main>
-		<comments>JAMWiki comments</comments>
-	</namespace>
-	<namespace>
-		<name>template</name>
-		<main>Template</main>
-		<comments>Template comments</comments>
-	</namespace>
-	<namespace>
-		<name>user</name>
-		<main>User</main>
-		<comments>User comments</comments>
-	</namespace>
-	<namespace>
-		<name>help</name>
-		<main>Help</main>
-		<comments>Help comments</comments>
-	</namespace>
-</namespaces>
-
-<!--
-   ====================================================================
-
    JAMWiki reserved topic names.  These topics are handled specially and
    treated differently from normal topics.
 

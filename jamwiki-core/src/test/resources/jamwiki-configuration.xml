@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 
 <configuration>
 
@@ -59,10 +59,6 @@
 		<class>org.jamwiki.db.HSqlDataHandler</class>
 	</data-handler>
 	<data-handler>
-		<name>mssql</name>
-		<class>org.jamwiki.db.MSSqlDataHandler</class>
-	</data-handler>
-	<data-handler>
 		<name>mysql</name>
 		<class>org.jamwiki.db.MySqlDataHandler</class>
 	</data-handler>
@@ -77,6 +73,7 @@
 	<data-handler>
 		<name>asa</name>
 		<class>org.jamwiki.db.SybaseASADataHandler</class>
+		<state>experimental</state>
 	</data-handler>
 	<data-handler>
 		<name>db2</name>
@@ -86,6 +83,11 @@
 	<data-handler>
 		<name>db2/400</name>
 		<class>org.jamwiki.db.DB2400DataHandler</class>
+		<state>experimental</state>
+	</data-handler>
+	<data-handler>
+		<name>mssql</name>
+		<class>org.jamwiki.db.MSSqlDataHandler</class>
 		<state>experimental</state>
 	</data-handler>
 </data-handlers>
@@ -111,10 +113,6 @@
 		<name>Toolbar</name>
 		<key>toolbar</key>
 	</editor>
-	<editor>
-		<name>FCKEditor (WYSIWYG)</name>
-		<key>fckeditor</key>
-	</editor>
 </editors>
 
 <!--
@@ -139,68 +137,6 @@
 		<key>admin.searchengine.lucene</key>
 	</search-engine>
 </search-engines>
-
-<!--
-   ====================================================================
-
-   Namespaces that can be used with JAMWiki:
-
-   name     - The internal-use-only name for the namespace.  WARNING: Do not
-              change existing namespace name values as there are hard-coded
-              dependencies for them!
-   main     - The value of the "main" namespace.  For example, "Help" is the
-              main-namespace value for "Help:Topic".  This value can be
-              modified, but doing so will affect any existing topics already
-              created in the namespace.
-   comments - The value of the "comments" namespace.  For example, the "Help"
-              namespace has a comments namespace of "Help comments".  This
-              value can be modified, but doing so will affect any existing
-              topics already created in the namespace.
-
-   ======================================================================
--->
-<namespaces>
-	<namespace>
-		<name>special</name>
-		<main>Special</main>
-		<comments></comments>
-	</namespace>
-	<namespace>
-		<name>main</name>
-		<main></main>
-		<comments>Comments</comments>
-	</namespace>
-	<namespace>
-		<name>image</name>
-		<main>Image</main>
-		<comments>Image comments</comments>
-	</namespace>
-	<namespace>
-		<name>category</name>
-		<main>Category</main>
-		<comments>Category comments</comments>
-	</namespace>
-	<namespace>
-		<name>jamwiki</name>
-		<main>JAMWiki</main>
-		<comments>JAMWiki comments</comments>
-	</namespace>
-	<namespace>
-		<name>template</name>
-		<main>Template</main>
-		<comments>Template comments</comments>
-	</namespace>
-	<namespace>
-		<name>user</name>
-		<main>User</main>
-		<comments>User comments</comments>
-	</namespace>
-	<namespace>
-		<name>help</name>
-		<main>Help</main>
-		<comments>Help comments</comments>
-	</namespace>
-</namespaces>
 
 <!--
    ====================================================================
@@ -266,6 +202,12 @@
 	</pseudotopic>
 	<pseudotopic>
 		<name>Special:Logout</name>
+	</pseudotopic>
+	<pseudotopic>
+		<name>Special:Log</name>
+	</pseudotopic>
+	<pseudotopic>
+		<name>Special:Logs</name>
 	</pseudotopic>
 	<pseudotopic>
 		<name>Special:Maintenance</name>

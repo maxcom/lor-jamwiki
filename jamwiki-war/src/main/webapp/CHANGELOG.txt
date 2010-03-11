@@ -12,6 +12,7 @@ New Features:
     order of operations is followed.
   * Support Mediawiki's {{subst:}} syntax.  Usage: {{subst:template}}.
   * New Special:VirtualWiki page for administering virtual wikis and
+    namespaces, including the ability to configure translated / alternate
     namespaces.
   * Add the ability for sysadmins to create user accounts (hanspeterklapf).
   * Topic add/update is now significantly faster due to query refactoring
