@@ -157,6 +157,7 @@
 <fieldset>
 <legend><fmt:message key="admin.title.password" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />#password" method="post">
+<div class="rowhelp"><fmt:message key="admin.password.help.reset" /></div>
 <div class="row">
 	<label for="passwordLogin"><fmt:message key="admin.password.caption.login" /></label>
 	<span><input type="text" name="passwordLogin" id="passwordLogin" value="<c:out value="${passwordLogin}" />" size="30" /></span>
@@ -172,7 +173,6 @@
 <div class="row">
 	<label><fmt:message key="admin.password.caption.reset" /></label>
 	<span><input type="submit" value="<fmt:message key="admin.caption.reset" />" /></span>
-	<div class="formhelp"><fmt:message key="admin.password.help.reset" /></div>
 </div>
 <input type="hidden" name="function" value="password" />
 </form>
@@ -191,6 +191,7 @@
 <fieldset>
 <legend><fmt:message key="admin.title.adduser" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />#adduser" method="post">
+<div class="rowhelp"><fmt:message key="admin.help.adduser" /></div>
 <div class="row">
 	<label for="adduserLogin"><fmt:message key="admin.adduser.caption.login" /></label>
 	<span><input type="text" name="adduserLogin" id="adduserLogin" value="<c:out value="${adduserLogin}" />" size="30" /></span>
@@ -231,9 +232,9 @@
 <fieldset>
 <legend><fmt:message key="admin.title.exportcsv" /> (<fmt:message key="common.caption.experimental" />)</legend>
 <form action="<jamwiki:link value="Special:Maintenance" />#export" method="post">
-	<div class="row">
-		<label><fmt:message key="admin.caption.exportcsv" /></label>
-		<span><input type="submit" value="<fmt:message key="common.export" />" /></span>
+<div class="row">
+	<label><fmt:message key="admin.caption.exportcsv" /></label>
+	<span><input type="submit" value="<fmt:message key="common.export" />" /></span>
 	<div class="formhelp"><fmt:message key="admin.help.exportcsv" /></div>
 </div>
 <input type="hidden" name="function" value="export" />
@@ -254,7 +255,7 @@
 <fieldset>
 <legend><fmt:message key="admin.title.migratedatabase" /> (<fmt:message key="common.caption.experimental" />)</legend>
 <form action="<jamwiki:link value="Special:Maintenance" />#migrate" method="post">
-<div class="formhelp"><fmt:message key="admin.help.migratedatabase" /></div>
+<div class="rowhelp"><fmt:message key="admin.help.migratedatabase" /></div>
 <div class="row">
 	<label for="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>"><fmt:message key="admin.persistence.caption" /></label>
 	<span>

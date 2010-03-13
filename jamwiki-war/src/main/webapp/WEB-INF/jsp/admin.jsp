@@ -435,7 +435,9 @@ FIXME - Email not supported right now, comment this out
 <a name="cache"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.cache" /></legend>
-<blockquote><fmt:message key="admin.cache.help.xmlconfig" /></blockquote>
+<div class="rowhelp">
+	<fmt:message key="admin.cache.help.xmlconfig" />
+</div>
 <div class="row">
 	<label for="<%= Environment.PROP_CACHE_TOTAL_SIZE %>"><fmt:message key="admin.cache.caption.totalsize" /></label>
 	<c:set var="PROP_CACHE_TOTAL_SIZE"><%= Environment.PROP_CACHE_TOTAL_SIZE %></c:set>

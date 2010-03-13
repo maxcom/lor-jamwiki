@@ -43,6 +43,7 @@
 <a name="group"></a>
 <fieldset>
 <legend><fmt:message key="roles.header.group" /></legend>
+<div class="rowhelp"><fmt:message key="roles.help.grouproles" /></div>
 <table border="0" class="contents" width="99%">
 <tr class="darkbg">
 	<th><fmt:message key="roles.caption.groupname" /></th>
@@ -64,7 +65,6 @@
 	</c:if>
 </c:forEach>
 <tr><td colspan="4">&nbsp;</td></tr>
-<tr><td colspan="4" class="formhelp"><fmt:message key="roles.help.grouproles" /></td></tr>
 </table>
 <div align="center" style="padding:10px"><input type="submit" name="Submit" value="<fmt:message key="common.save" />" /></div>
 </fieldset>
@@ -76,6 +76,7 @@
 <legend><fmt:message key="roles.header.user" /></legend>
 <form action="<jamwiki:link value="Special:Roles" />" method="post" name="searchRoleForm">
 <input type="hidden" name="function" value="searchRole" />
+<div class="rowhelp"><fmt:message key="roles.help.userroles" /></div>
 <div class="row">
 	<label><fmt:message key="roles.caption.searchlogin" />:</label>
 	<span><input type="text" name="searchLogin" value="<c:out value="${searchLogin}" />" size="30" /></span>
@@ -91,7 +92,6 @@
 </div>
 <div class="row">
 	<span class="form-button"><input type="submit" name="search" value="<fmt:message key="search.search" />" /></span>
-	<div class="formhelp"><fmt:message key="roles.help.userroles" /></div>
 </div>
 </form>
 <c:if test="${!empty roleMapUsers}">
@@ -119,7 +119,9 @@
 	</c:if>
 </c:forEach>
 </table>
-<div align="center" style="padding:10px"><input type="submit" name="Submit" value="<fmt:message key="common.save" />" /></div>
+<div class="row">
+	<span class="form-button"><input type="submit" name="Submit" value="<fmt:message key="common.save" />" /></span>
+</div>
 </form>
 </c:if>
 </fieldset>

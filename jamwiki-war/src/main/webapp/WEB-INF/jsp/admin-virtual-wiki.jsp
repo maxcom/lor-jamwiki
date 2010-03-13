@@ -49,7 +49,7 @@
 </form>
 <form action="<jamwiki:link value="Special:VirtualWiki" />" method="post">
 <fieldset>
-<legend><fmt:message key="admin.title.virtualwiki" /></legend>
+<legend><fmt:message key="admin.vwiki.title.virtualwiki" /></legend>
 <input type="hidden" name="function" value="virtualwiki" />
 <c:if test="${!empty selected}">
 	<input type="hidden" name="virtualWikiId" value="${selected.virtualWikiId}" />
@@ -88,30 +88,23 @@
 	<input type="hidden" name="function" value="namespaces" />
 	<input type="hidden" name="selected" value="${selected.name}" />
 	<fieldset>
-	<legend><fmt:message key="admin.vwiki.title.namespaces" /></legend>
-	<div class="row">
-		<table width="99%">
-		<tr>
-			<th><fmt:message key="admin.vwiki.caption.namespace.id" /></th>
-			<th><fmt:message key="admin.vwiki.caption.namespace.default" /></th>
-			<th><fmt:message key="admin.vwiki.caption.namespace.virtualwiki" /></th>
-		</tr>
-		<c:forEach items="${namespaces}" var="namespace">
-			<tr>
-				<td>
-					<input type="hidden" name="namespace_id" value="${namespace.id}" />
-					<input type="hidden" name="${namespace.id}_label" value="${namespace.defaultLabel}" />
-					${namespace.id}
-				</td>
-				<td>
-					<input type="hidden" name="${namespace.id}_newlabel" value="${namespace.defaultLabel}" />
-					${namespace.defaultLabel}
-				</td>
-				<td><input type="text" name="${namespace.id}_vwiki" size="30" value="${namespace.namespaceTranslations[selected.name]}" /></td>
-			</tr>
-		</c:forEach>
-		</table>
+	<legend><fmt:message key="admin.vwiki.title.namespace.translations"><fmt:param value="${selected.name}" /></fmt:message></legend>
+	<div class="rowhelp">
+		<p>
+		<fmt:message key="admin.vwiki.help.namespace.translations" />
+		<fmt:message key="admin.vwiki.help.namespace.translations.special" />
+		</p>
+		<p><fmt:message key="admin.vwiki.help.namespace.translations.warning" /></p>
 	</div>
+	<c:forEach items="${namespaces}" var="namespace">
+		<div class="row">
+			<input type="hidden" name="namespace_id" value="${namespace.id}" />
+			<input type="hidden" name="${namespace.id}_label" value="${namespace.defaultLabel}" />
+			<input type="hidden" name="${namespace.id}_newlabel" value="${namespace.defaultLabel}" />
+			<label>${namespace.defaultLabel} [${namespace.id}]</label>
+			<span><input type="text" name="${namespace.id}_vwiki" size="30" value="${namespace.namespaceTranslations[selected.name]}" /></span>
+		</div>
+	</c:forEach>
 	<div class="row">
 		<span class="form-button"><input type="submit" value="<fmt:message key="common.update" />" /></span>
 	</div>
