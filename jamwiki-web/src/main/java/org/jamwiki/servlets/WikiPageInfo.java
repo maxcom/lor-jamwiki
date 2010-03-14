@@ -251,16 +251,6 @@ public class WikiPageInfo {
 	}
 
 	/**
-	 * Return the name of the current page, which is the name of the topic
-	 * being viewed (without the namespace).
-	 *
-	 * @return Name of the page.
-	 */
-	public String getPagename() {
-		return LinkUtil.parseWikiLink(this.virtualWikiName, this.getTopicName()).getArticle();
-	}
-
-	/**
 	 * Return a LinkedHashMap containing the topic and text for all links
 	 * that should appear for the tab menu.
 	 *

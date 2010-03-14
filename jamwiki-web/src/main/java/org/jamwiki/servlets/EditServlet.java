@@ -220,10 +220,8 @@ public class EditServlet extends JAMWikiServlet {
 		String topicName = WikiUtil.getTopicFromRequest(request);
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		String contents = (String)request.getParameter("contents");
-		Topic previewTopic = new Topic();
-		previewTopic.setName(topicName);
+		Topic previewTopic = new Topic(virtualWiki, topicName);
 		previewTopic.setTopicContent(contents);
-		previewTopic.setVirtualWiki(virtualWiki);
 		next.addObject("editPreview", "true");
 		ServletUtil.viewTopic(request, next, pageInfo, null, previewTopic, false, false);
 	}

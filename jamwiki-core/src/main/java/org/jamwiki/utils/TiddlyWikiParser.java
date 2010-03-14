@@ -200,9 +200,7 @@ public class TiddlyWikiParser {
 	 *
 	 */
 	private void saveTopic(String name, Date lastMod, String content) throws DataAccessException, WikiException {
-		Topic topic = new Topic();
-		topic.setName(name);
-		topic.setVirtualWiki(virtualWiki);
+		Topic topic = new Topic(virtualWiki, name);
 		topic.setTopicContent(content);
 		int charactersChanged = StringUtils.length(content);
 		TopicVersion topicVersion = new TopicVersion(user, authorDisplay, "imported", content, charactersChanged);

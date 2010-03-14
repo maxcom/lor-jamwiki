@@ -44,23 +44,6 @@ public class WikiPageInfoTest {
 	/**
 	 *
 	 */
-	@Test
-	public void testGetPagename() {
-		MockHttpServletRequest mockRequest = this.getMockHttpServletRequest("/virtual/Topic");
-		WikiPageInfo p = new WikiPageInfo(mockRequest);
-		assertEquals(p.getTopicName(),null,p.getPagename());
-		p.setTopicName("Main");
-		assertEquals("Expected page name of 'Main'", "Main", p.getPagename());
-		p.setTopicName("User:FooBar");
-		assertEquals("Expected page name of 'FooBar'", "FooBar", p.getPagename());
-		p.setTopicName("Special:Contributions");
-		p.setSpecial(true);
-		assertEquals("Expected page name of 'Contributions'", "Contributions", p.getPagename());
-	}
-	
-	/**
-	 *
-	 */
 	private MockHttpServletRequest getMockHttpServletRequest(String url) {
 		MockServletContext mockContext = new MockServletContext("context");
 		return new MockHttpServletRequest(mockContext, "GET", url);

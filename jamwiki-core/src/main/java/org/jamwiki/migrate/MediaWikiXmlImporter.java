@@ -59,7 +59,7 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 	private Map<String, String> currentAttributeMap = new HashMap<String, String>();
 	/** This buffer holds the content of the current element during parsing.  It will be flushed after an end-element tag is reached. */
 	private StringBuilder currentElementBuffer = new StringBuilder();
-	private Topic currentTopic = new Topic();
+	private Topic currentTopic = null;
 	private TopicVersion currentTopicVersion = new TopicVersion();
 	private Map<Date, Integer> currentTopicVersions = new TreeMap<Date, Integer>();
 	private final Map<String, String> mediawikiNamespaceMap = new HashMap<String, String>();
@@ -173,8 +173,8 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 		}
 		topicName = convertArticleNameFromWikipediaToJAMWiki(topicName);
 		WikiLink wikiLink = LinkUtil.parseWikiLink(this.virtualWiki, topicName);
+		this.currentTopic = new Topic(this.virtualWiki, topicName);
 		this.currentTopic.setTopicType(WikiUtil.findTopicTypeForNamespace(wikiLink.getNamespace()));
-		this.currentTopic.setName(topicName);
 	}
 
 	/**
@@ -182,7 +182,6 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 	 */
 	private void commitTopicVersion() throws SAXException {
 		// FIXME - support rollback
-		this.currentTopic.setVirtualWiki(this.virtualWiki);
 		this.currentTopic.setTopicContent(currentTopicVersion.getVersionContent());
 		// only the final import version is logged
 		this.currentTopicVersion.setLoggable(false);
@@ -260,7 +259,6 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 			this.currentTopicVersion = new TopicVersion();
 			this.currentTopicVersion.setEditType(TopicVersion.EDIT_IMPORT);
 		} else if (MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC.equals(qName)) {
-			this.currentTopic = new Topic();
 			this.currentTopicVersions = new TreeMap<Date, Integer>();
 		}
 	}

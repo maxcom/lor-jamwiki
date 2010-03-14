@@ -404,9 +404,7 @@ public class ImageUtil {
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		int charactersChanged = 0;
 		if (topic == null) {
-			topic = new Topic();
-			topic.setVirtualWiki(virtualWiki);
-			topic.setName(topicName);
+			topic = new Topic(virtualWiki, topicName);
 			topic.setTopicContent(contents);
 			charactersChanged = StringUtils.length(contents);
 		}

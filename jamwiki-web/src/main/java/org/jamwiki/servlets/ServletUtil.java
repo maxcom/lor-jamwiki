@@ -304,9 +304,7 @@ public class ServletUtil {
 		if (topic != null) {
 			return topic;
 		}
-		topic = new Topic();
-		topic.setName(topicName);
-		topic.setVirtualWiki(virtualWiki);
+		topic = new Topic(virtualWiki, topicName);
 		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, topicName);
 		topic.setTopicType(WikiUtil.findTopicTypeForNamespace(wikiLink.getNamespace()));
 		return topic;

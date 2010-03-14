@@ -696,9 +696,7 @@ public class WikiDatabase {
 		} catch (IOException e) {
 			throw new DataAccessException(e);
 		}
-		Topic topic = new Topic();
-		topic.setName(topicName);
-		topic.setVirtualWiki(virtualWiki);
+		Topic topic = new Topic(virtualWiki, topicName);
 		topic.setTopicContent(contents);
 		topic.setAdminOnly(adminOnly);
 		int charactersChanged = StringUtils.length(contents);

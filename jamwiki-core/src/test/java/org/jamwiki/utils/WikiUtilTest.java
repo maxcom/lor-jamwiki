@@ -69,8 +69,8 @@ public class WikiUtilTest {
 	 */
 	@Test
 	public void testFindRedirectedTopic1() throws Throwable {
-		Topic parent = new Topic();
-		parent.setTopicType(2);
+		Topic parent = new Topic("en", "Test");
+		parent.setTopicType(Topic.TYPE_REDIRECT);
 		Topic result = WikiUtil.findRedirectedTopic(parent, 100);
 		assertSame("result", parent, result);
 	}

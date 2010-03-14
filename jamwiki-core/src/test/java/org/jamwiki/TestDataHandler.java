@@ -262,9 +262,7 @@ public class TestDataHandler implements DataHandler {
 		if (content == null) {
 			return null;
 		}
-		Topic topic = new Topic();
-		topic.setName(topicName);
-		topic.setVirtualWiki(virtualWiki);
+		Topic topic = new Topic(virtualWiki, topicName);
 		topic.setTopicContent(content);
 		return topic;
 	}

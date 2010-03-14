@@ -192,9 +192,7 @@ public class TranslationServlet extends JAMWikiServlet {
 		String contents = "<pre><nowiki>\n" + Utilities.readFile(filename(language)) + "\n</nowiki></pre>";
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null) {
-			topic = new Topic();
-			topic.setVirtualWiki(virtualWiki);
-			topic.setName(topicName);
+			topic = new Topic(virtualWiki, topicName);
 		}
 		int charactersChanged = StringUtils.length(contents) - StringUtils.length(topic.getTopicContent());
 		topic.setTopicContent(contents);

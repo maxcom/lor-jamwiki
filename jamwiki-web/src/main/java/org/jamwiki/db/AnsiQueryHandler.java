@@ -1232,10 +1232,8 @@ public class AnsiQueryHandler implements QueryHandler {
 				rs.next();
 			}
 		}
-		Topic topic = new Topic();
+		Topic topic = new Topic(virtualWikiName, rs.getString("topic_name"));
 		topic.setAdminOnly(rs.getInt("topic_admin_only") != 0);
-		topic.setName(rs.getString("topic_name"));
-		topic.setVirtualWiki(virtualWikiName);
 		int currentVersionId = rs.getInt("current_version_id");
 		if (currentVersionId > 0) {
 			topic.setCurrentVersionId(currentVersionId);
