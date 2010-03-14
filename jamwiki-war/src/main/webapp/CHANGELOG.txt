@@ -43,6 +43,10 @@ Bugfixes:
     topics that have extensive history.
   * Properly parse template parameters that are themselves templates, such as
     "{{{{{template_name}}}}}" or "{{{1|{{PAGENAME}}}}}".
+  * Process interwiki links only if the link does not contain a virtual wiki
+    or namespace.  Thus if a wiki has a namespace of "Test" and an interwiki
+    of "Test", the link "Test:Topic" will parse as an internal link rather than
+    an interwiki link.
 
 
 0.8.3

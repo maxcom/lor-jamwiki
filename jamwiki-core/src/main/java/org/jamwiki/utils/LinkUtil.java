@@ -523,22 +523,24 @@ public class LinkUtil {
 			wikiLink.setQuery(queryString);
 			processed = processed.substring(0, queryPos);
 		}
-		// search for an interwiki link, namespace or virtual wiki
-		String topic = LinkUtil.processInterWiki(processed, wikiLink);
-		if (wikiLink.getInterWiki() != null) {
-			// strip the interwiki
+		// search for a namespace or virtual wiki
+		String topic = LinkUtil.processVirtualWiki(processed, wikiLink);
+		if (wikiLink.getVirtualWiki() != null) {
+			// strip the virtual wiki
 			processed = topic;
-		} else {
-			topic = LinkUtil.processVirtualWiki(processed, wikiLink);
-			if (wikiLink.getVirtualWiki() != null) {
-				// strip the virtual wiki
+			virtualWiki = wikiLink.getVirtualWiki().getName();
+		}
+		topic = LinkUtil.processNamespace(virtualWiki, topic, wikiLink);
+		if (wikiLink.getNamespace() != Namespace.MAIN) {
+			// update original text in case topic was of the form "xxx: topic"
+			processed = wikiLink.getNamespace().getLabel(virtualWiki) + Namespace.SEPARATOR + topic;
+		}
+		// if no namespace or virtual wiki, see if there's an interwiki link
+		if (wikiLink.getNamespace() == Namespace.MAIN && wikiLink.getVirtualWiki() == null) {
+			topic = LinkUtil.processInterWiki(processed, wikiLink);
+			if (wikiLink.getInterWiki() != null) {
+				// strip the interwiki
 				processed = topic;
-				virtualWiki = wikiLink.getVirtualWiki().getName();
-			}
-			topic = LinkUtil.processNamespace(virtualWiki, topic, wikiLink);
-			if (wikiLink.getNamespace() != Namespace.MAIN) {
-				// update original text in case topic was of the form "xxx: topic"
-				processed = wikiLink.getNamespace().getLabel(virtualWiki) + Namespace.SEPARATOR + topic;
 			}
 		}
 		wikiLink.setArticle(Utilities.decodeTopicName(topic, true));
