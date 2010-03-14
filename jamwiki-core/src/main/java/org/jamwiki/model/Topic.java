@@ -18,6 +18,8 @@ package org.jamwiki.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -50,6 +52,7 @@ public class Topic implements Serializable {
 	private int topicId = -1;
 	private int topicType = TYPE_ARTICLE;
 	private String virtualWiki = null;
+	private Namespace namespace = Namespace.MAIN;
 	private static final WikiLogger logger = WikiLogger.getLogger(Topic.class.getName());
 
 	/**
@@ -72,6 +75,7 @@ public class Topic implements Serializable {
 		this.topicId = topic.topicId;
 		this.topicType = topic.topicType;
 		this.virtualWiki = topic.virtualWiki;
+		this.namespace = topic.namespace;
 	}
 
 	/**
@@ -135,6 +139,22 @@ public class Topic implements Serializable {
 	 */
 	public void setName(String name) {
 		this.name = name;
+		WikiLink wikiLink = LinkUtil.parseWikiLink(this.virtualWiki, this.name);
+		this.setNamespace(wikiLink.getNamespace());
+	}
+
+	/**
+	 *
+	 */
+	public Namespace getNamespace() {
+		return this.namespace;
+	}
+
+	/**
+	 *
+	 */
+	public void setNamespace(Namespace namespace) {
+		this.namespace = namespace;
 	}
 
 	/**

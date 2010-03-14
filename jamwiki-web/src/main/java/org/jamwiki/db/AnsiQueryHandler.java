@@ -1543,6 +1543,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setTimestamp(index++, topic.getDeleteDate());
 			stmt.setInt(index++, (topic.getAdminOnly() ? 1 : 0));
 			stmt.setString(index++, topic.getRedirectTo());
+			stmt.setInt(index++, topic.getNamespace().getId());
 			stmt.executeUpdate();
 			if (this.autoIncrementPrimaryKeys()) {
 				rs = stmt.getGeneratedKeys();
@@ -2507,7 +2508,8 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setTimestamp(6, topic.getDeleteDate());
 			stmt.setInt(7, (topic.getAdminOnly() ? 1 : 0));
 			stmt.setString(8, topic.getRedirectTo());
-			stmt.setInt(9, topic.getTopicId());
+			stmt.setInt(9, topic.getNamespace().getId());
+			stmt.setInt(10, topic.getTopicId());
 			stmt.executeUpdate();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
