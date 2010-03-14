@@ -70,7 +70,7 @@ public class AnsiDataHandler implements DataHandler {
 	private static final String CACHE_TOPIC_VERSIONS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPIC_VERSIONS";
 	private static final String CACHE_USER_BY_USER_ID = "org.jamwiki.db.AnsiDataHandler.CACHE_USER_BY_USER_ID";
 	private static final String CACHE_USER_BY_USER_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_USER_BY_USER_NAME";
-	private static final String CACHE_VIRTUAL_WIKI_BY_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_VIRTUAL_WIKI_BY_NAME";
+	private static final String CACHE_VIRTUAL_WIKI_LIST = "org.jamwiki.db.AnsiDataHandler.CACHE_VIRTUAL_WIKI_LIST";
 	private static final WikiLogger logger = WikiLogger.getLogger(AnsiDataHandler.class.getName());
 
 	private final QueryHandler queryHandler = new AnsiQueryHandler();
@@ -552,18 +552,23 @@ public class AnsiDataHandler implements DataHandler {
 	 * Return a List of all VirtualWiki objects that exist for the Wiki.
 	 */
 	public List<VirtualWiki> getVirtualWikiList() throws DataAccessException {
-		List<VirtualWiki> results = new ArrayList<VirtualWiki>();
+		Element cacheElement = WikiCache.retrieveFromCache(CACHE_VIRTUAL_WIKI_LIST, CACHE_VIRTUAL_WIKI_LIST);
+		if (cacheElement != null) {
+			return (List<VirtualWiki>)cacheElement.getObjectValue();
+		}
+		List<VirtualWiki> virtualWikis = new ArrayList<VirtualWiki>();
 		TransactionStatus status = null;
 		try {
 			status = DatabaseConnection.startTransaction();
 			Connection conn = DatabaseConnection.getConnection();
-			results = this.queryHandler().getVirtualWikis(conn);
+			virtualWikis = this.queryHandler().getVirtualWikis(conn);
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw new DataAccessException(e);
 		}
 		DatabaseConnection.commit(status);
-		return results;
+		WikiCache.addToCache(CACHE_VIRTUAL_WIKI_LIST, CACHE_VIRTUAL_WIKI_LIST, virtualWikis);
+		return virtualWikis;
 	}
 
 	/**
@@ -768,19 +773,14 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public VirtualWiki lookupVirtualWiki(String virtualWikiName) throws DataAccessException {
-		Element cacheElement = WikiCache.retrieveFromCache(CACHE_VIRTUAL_WIKI_BY_NAME, virtualWikiName);
-		if (cacheElement != null) {
-			return (VirtualWiki)cacheElement.getObjectValue();
-		}
 		List<VirtualWiki> virtualWikis = this.getVirtualWikiList();
 		for (VirtualWiki virtualWiki : virtualWikis) {
-			// add to cache whether it matches or not
-			WikiCache.addToCache(CACHE_VIRTUAL_WIKI_BY_NAME, virtualWiki.getName(), virtualWiki);
 			if (virtualWiki.getName().equals(virtualWikiName)) {
+				// found a match, return it
 				return virtualWiki;
 			}
 		}
-		WikiCache.addToCache(CACHE_VIRTUAL_WIKI_BY_NAME, virtualWikiName, null);
+		// no result found
 		return null;
 	}
 
@@ -1636,8 +1636,8 @@ public class AnsiDataHandler implements DataHandler {
 			throw e;
 		}
 		DatabaseConnection.commit(status);
-		// update the cache AFTER the commit
-		WikiCache.addToCache(CACHE_VIRTUAL_WIKI_BY_NAME, virtualWiki.getName(), virtualWiki);
+		// flush the cache
+		WikiCache.removeAllFromCache(CACHE_VIRTUAL_WIKI_LIST);
 	}
 
 	/**
