@@ -147,7 +147,8 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
+		List<WikiMessage> errors = (next.getModel().get("errors") != null) ? (List<WikiMessage>)next.getModel().get("errors") : new ArrayList<WikiMessage>();
 		// find the current virtual wiki
 		String selected = request.getParameter("selected");
 		if (!StringUtils.isBlank(selected)) {
@@ -156,9 +157,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 				virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(selected);
 			} catch (DataAccessException e) {
 				logger.severe("Failure while retrieving virtual wiki", e);
-				List<WikiMessage> errors = new ArrayList<WikiMessage>();
 				errors.add(new WikiMessage("error.unknown", e.getMessage()));
-				next.addObject("errors", errors);
 			}
 			if (virtualWiki != null) {
 				next.addObject("selected", virtualWiki);
@@ -166,12 +165,18 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 		}
 		// initialize page defaults
 		pageInfo.setAdmin(true);
-		List<VirtualWiki> virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList();
-		next.addObject("wikis", virtualWikiList);
-		List<Namespace> namespaces = WikiBase.getDataHandler().lookupNamespaces();
-		next.addObject("namespaces", namespaces);
+		try {
+			List<VirtualWiki> virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList();
+			next.addObject("wikis", virtualWikiList);
+			List<Namespace> namespaces = WikiBase.getDataHandler().lookupNamespaces();
+			next.addObject("namespaces", namespaces);
+		} catch (DataAccessException e) {
+			logger.severe("Failure while retrieving database records", e);
+			errors.add(new WikiMessage("error.unknown", e.getMessage()));
+		}
 		pageInfo.setContentJsp(JSP_ADMIN_VIRTUAL_WIKI);
 		pageInfo.setPageTitle(new WikiMessage("admin.vwiki.title"));
+		next.addObject("errors", errors);
 	}
 
 	/**

@@ -127,13 +127,16 @@
 		<p><fmt:message key="admin.vwiki.help.namespace.translations.warning" /></p>
 	</div>
 	<c:forEach items="${namespaces}" var="namespace">
-		<div class="row">
-			<input type="hidden" name="namespace_id" value="${namespace.id}" />
-			<input type="hidden" name="${namespace.id}_label" value="${namespace.defaultLabel}" />
-			<input type="hidden" name="${namespace.id}_newlabel" value="${namespace.defaultLabel}" />
-			<label>${namespace.defaultLabel} [${namespace.id}]</label>
-			<span><input type="text" name="${namespace.id}_vwiki" size="30" value="${namespace.namespaceTranslations[selected.name]}" /></span>
-		</div>
+		<%-- suppress display of namespaces that cannot be translated --%>
+		<c:if test="${namespace.id >= 0}">
+			<div class="row">
+				<input type="hidden" name="namespace_id" value="${namespace.id}" />
+				<input type="hidden" name="${namespace.id}_label" value="${namespace.defaultLabel}" />
+				<input type="hidden" name="${namespace.id}_newlabel" value="${namespace.defaultLabel}" />
+				<label>${namespace.defaultLabel} [${namespace.id}]</label>
+				<span><input type="text" name="${namespace.id}_vwiki" size="30" value="${namespace.namespaceTranslations[selected.name]}" /></span>
+			</div>
+		</c:if>
 	</c:forEach>
 	<div class="row">
 		<span class="form-button"><input type="submit" value="<fmt:message key="common.update" />" /></span>
