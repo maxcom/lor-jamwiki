@@ -65,7 +65,7 @@ import org.springframework.transaction.TransactionStatus;
  */
 public class AnsiDataHandler implements DataHandler {
 
-	private static final String CACHE_NAMESPACE_BY_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_NAMESPACE_BY_NAME";
+	private static final String CACHE_NAMESPACE_LIST = "org.jamwiki.db.AnsiDataHandler.CACHE_NAMESPACE_LIST";
 	private static final String CACHE_TOPICS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS";
 	private static final String CACHE_TOPIC_VERSIONS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPIC_VERSIONS";
 	private static final String CACHE_USER_BY_USER_ID = "org.jamwiki.db.AnsiDataHandler.CACHE_USER_BY_USER_ID";
@@ -613,42 +613,39 @@ public class AnsiDataHandler implements DataHandler {
 		if (namespaceString == null) {
 			return null;
 		}
-		String key = WikiCache.key(virtualWiki, namespaceString);
-		// first check the cache
-		Element cacheElement = WikiCache.retrieveFromCache(CACHE_NAMESPACE_BY_NAME, key);
-		if (cacheElement != null) {
-			return (Namespace)cacheElement.getObjectValue();
-		}
-		// otherwise go to the database
-		Namespace result = null;
-		// FIXME - retrieving all namespaces may not be the most efficient approach
 		List<Namespace> namespaces = this.lookupNamespaces();
 		for (Namespace namespace : namespaces) {
-			WikiCache.addToCache(CACHE_NAMESPACE_BY_NAME, key, namespace);
 			if (namespace.getLabel(virtualWiki).equals(namespaceString)) {
-				result = namespace;
+				// found a match, return it
+				return namespace;
 			}
 		}
-		// make sure the original search term is cached, even if it is null
-		WikiCache.addToCache(CACHE_NAMESPACE_BY_NAME, key, result);
-		return result;
+		// no result found
+		return null;
 	}
 
 	/**
 	 *
 	 */
 	public List<Namespace> lookupNamespaces() throws DataAccessException {
-		// FIXME - implement caching
+		// first check the cache
+		Element cacheElement = WikiCache.retrieveFromCache(CACHE_NAMESPACE_LIST, CACHE_NAMESPACE_LIST);
+		if (cacheElement != null) {
+			return (List<Namespace>)cacheElement.getObjectValue();
+		}
+		// if not in the cache, go to the database
+		List<Namespace> namespaces = null;
 		Connection conn = null;
 		try {
-			// now add the namespace elements
 			conn = DatabaseConnection.getConnection();
-			return this.queryHandler().lookupNamespaces(conn);
+			namespaces = this.queryHandler().lookupNamespaces(conn);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		} finally {
 			DatabaseConnection.closeConnection(conn);
 		}
+		WikiCache.addToCache(CACHE_NAMESPACE_LIST, CACHE_NAMESPACE_LIST, namespaces);
+		return namespaces;
 	}
 
 	/**
@@ -1414,7 +1411,7 @@ public class AnsiDataHandler implements DataHandler {
 			throw new DataAccessException(e);
 		}
 		DatabaseConnection.commit(status);
-		WikiCache.removeAllFromCache(CACHE_NAMESPACE_BY_NAME);
+		WikiCache.removeAllFromCache(CACHE_NAMESPACE_LIST);
 	}
 
 	/**
@@ -1435,7 +1432,7 @@ public class AnsiDataHandler implements DataHandler {
 			throw new DataAccessException(e);
 		}
 		DatabaseConnection.commit(status);
-		WikiCache.removeAllFromCache(CACHE_NAMESPACE_BY_NAME);
+		WikiCache.removeAllFromCache(CACHE_NAMESPACE_LIST);
 	}
 
 	/**
