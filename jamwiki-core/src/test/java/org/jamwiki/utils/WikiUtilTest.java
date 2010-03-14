@@ -135,6 +135,121 @@ public class WikiUtilTest {
 	/**
 	 *
 	 */
+	@Test
+	public void testValidateNamespaceName1() throws Throwable {
+		WikiUtil.validateNamespaceName("New Namespace");
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateNamespaceName2() throws Throwable {
+		WikiUtil.validateNamespaceName("New-Namespace");
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateNamespaceName3() throws Throwable {
+		WikiUtil.validateNamespaceName("什么意思");
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateNamespaceName4() throws Throwable {
+		try {
+			WikiUtil.validateNamespaceName(" ");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("Expected error message key", "admin.vwiki.error.namespace.whitespace", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateNamespaceName5() throws Throwable {
+		try {
+			WikiUtil.validateNamespaceName("");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("Expected error message key", "admin.vwiki.error.namespace.unique", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateNamespaceName6() throws Throwable {
+		try {
+			WikiUtil.validateNamespaceName("Special");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("Expected error message key", "admin.vwiki.error.namespace.unique", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateNamespaceName7() throws Throwable {
+		try {
+			WikiUtil.validateNamespaceName("Name/Space");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("Expected error message key", "admin.vwiki.error.namespace.characters", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateNamespaceName8() throws Throwable {
+		try {
+			WikiUtil.validateNamespaceName(" Name space");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("Expected error message key", "admin.vwiki.error.namespace.whitespace", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateNamespaceName9() throws Throwable {
+		try {
+			WikiUtil.validateNamespaceName("My: Namespace");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("Expected error message key", "admin.vwiki.error.namespace.characters", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateNamespaceName10() throws Throwable {
+		try {
+			WikiUtil.validateNamespaceName("UserTest");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("Expected error message key", "admin.vwiki.error.namespace.unique", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
 	@Test(expected=WikiException.class)
 	public void testValidateTopicNameThrowsNullPointerException() throws Throwable {
 		WikiUtil.validateTopicName(null, null);

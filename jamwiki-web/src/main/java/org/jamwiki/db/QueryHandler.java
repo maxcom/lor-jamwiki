@@ -835,12 +835,15 @@ public interface QueryHandler {
 	 * namespace does not already exist, otherwise it will update the existing
 	 * record.
 	 *
-	 * @param namespace The namespace object to add to the database.
+	 * @param mainNamespace The namespace object to add to the database.
+	 * @param commentsNamespace The comments namespace object to add to the database
+	 *  for the corresponding main namespace.  This argument can be <code>null</code>
+	 *  if there is no comments namespace.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	void updateNamespace(Namespace namespace, Connection conn) throws SQLException;
+	void updateNamespace(Namespace mainNamespace, Namespace commentsNamespace, Connection conn) throws SQLException;
 
 	/**
 	 * Add or update a virtual-wiki specific label for a namespace.  This method will

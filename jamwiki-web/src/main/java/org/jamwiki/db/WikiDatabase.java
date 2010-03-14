@@ -579,8 +579,22 @@ public class WikiDatabase {
 	// FIXME - make this private once the ability to upgrade to 0.9.0 is removed
 	protected static void setupDefaultNamespaces() throws DataAccessException, WikiException {
 		logger.info("Creating default wiki namespaces");
-		for (Namespace namespace : Namespace.DEFAULT_NAMESPACES.values()) {
-			WikiBase.getDataHandler().writeNamespace(namespace);
+		List<Namespace> defaultNamespaces = new ArrayList<Namespace>(Namespace.DEFAULT_NAMESPACES.values());
+		Namespace commentsNamespace, mainNamespace;
+		// namespaces are ordered with main first, then comments, so loop through and get each
+		for (int i = 0; i < defaultNamespaces.size(); i++) {
+			mainNamespace = defaultNamespaces.get(i);
+			// some namespaces do not have a comments namespace, so verify one is present
+			commentsNamespace = null;
+			if (defaultNamespaces.size() > (i + 1)) {
+				commentsNamespace = defaultNamespaces.get(i + 1);
+				if (mainNamespace.equals(commentsNamespace.getMainNamespace())) {
+					i++;
+				} else {
+					commentsNamespace = null;
+				}
+			}
+			WikiBase.getDataHandler().writeNamespace(mainNamespace, commentsNamespace);
 		}
 	}
 

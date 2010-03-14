@@ -446,7 +446,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeNamespace(Namespace namespace) throws DataAccessException, WikiException {
+	public void writeNamespace(Namespace mainNamespace, Namespace commentsNamespace) throws DataAccessException, WikiException {
 		throw new UnsupportedOperationException();
 	}
 

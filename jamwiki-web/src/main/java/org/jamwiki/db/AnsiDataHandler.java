@@ -1249,8 +1249,21 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	protected void validateNamespace(String namespace) throws WikiException {
-		checkLength(namespace, 200);
+	protected void validateNamespace(Namespace mainNamespace, Namespace commentsNamespace) throws WikiException {
+		checkLength(mainNamespace.getDefaultLabel(), 200);
+		if (commentsNamespace != null) {
+			checkLength(commentsNamespace.getDefaultLabel(), 200);
+			if (commentsNamespace == null || !commentsNamespace.equals(mainNamespace)) {
+				throw new WikiException(new WikiMessage("error.commentsnamespace", commentsNamespace.getDefaultLabel(), mainNamespace.getDefaultLabel()));
+			}
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected void validateNamespaceTranslation(Namespace namespace, String virtualWiki) throws WikiException {
+		checkLength(namespace.getLabel(virtualWiki), 200);
 	}
 
 	/**
@@ -1389,13 +1402,13 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeNamespace(Namespace namespace) throws DataAccessException, WikiException {
-		this.validateNamespace(namespace.getDefaultLabel());
+	public void writeNamespace(Namespace mainNamespace, Namespace commentsNamespace) throws DataAccessException, WikiException {
+		this.validateNamespace(mainNamespace, commentsNamespace);
 		TransactionStatus status = null;
 		try {
 			status = DatabaseConnection.startTransaction();
 			Connection conn = DatabaseConnection.getConnection();
-			this.queryHandler().updateNamespace(namespace, conn);
+			this.queryHandler().updateNamespace(mainNamespace, commentsNamespace, conn);
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw new DataAccessException(e);
@@ -1410,7 +1423,7 @@ public class AnsiDataHandler implements DataHandler {
 	public void writeNamespaceTranslations(List<Namespace> namespaces, String virtualWiki) throws DataAccessException, WikiException {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		for (Namespace namespace : namespaces) {
-			this.validateNamespace(namespace.getLabel(virtualWiki));
+			this.validateNamespaceTranslation(namespace, virtualWiki);
 		}
 		TransactionStatus status = null;
 		try {

@@ -52,6 +52,7 @@ public class WikiUtil {
 
 	/** webapp context path, initialized from JAMWikiFilter. */
 	public static String WEBAPP_CONTEXT_PATH = null;
+	private static Pattern INVALID_NAMESPACE_NAME_PATTERN = null;
 	private static Pattern INVALID_ROLE_NAME_PATTERN = null;
 	private static Pattern INVALID_TOPIC_NAME_PATTERN = null;
 	private static Pattern VALID_USER_LOGIN_PATTERN = null;
@@ -61,6 +62,7 @@ public class WikiUtil {
 
 	static {
 		try {
+			INVALID_NAMESPACE_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_NAMESPACE_NAME));
 			INVALID_ROLE_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_ROLE_NAME));
 			INVALID_TOPIC_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_TOPIC_NAME));
 			VALID_USER_LOGIN_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_VALID_USER_LOGIN));
@@ -662,6 +664,42 @@ public class WikiUtil {
 			return new WikiMessage("error.directorydelete", name, e.getMessage());
 		}
 		return null;
+	}
+
+	/**
+	 * Utility method for determining if a namespace name is valid for use on the Wiki,
+	 * meaning that it is not empty and does not contain any invalid characters.
+	 *
+	 * @param name The namespace name to validate.
+	 * @throws WikiException Thrown if the user name is invalid.
+	 */
+	public static void validateNamespaceName(String name) throws WikiException {
+		if (name == null || (name.length() != 0 && StringUtils.isBlank(name)) || name.length() != name.trim().length()) {
+			// name cannot be null, contain only whitespace, or have trailing whitespace
+			throw new WikiException(new WikiMessage("admin.vwiki.error.namespace.whitespace", name));
+		}
+		Matcher m = WikiUtil.INVALID_NAMESPACE_NAME_PATTERN.matcher(name);
+		if (m.find()) {
+			throw new WikiException(new WikiMessage("admin.vwiki.error.namespace.characters", name));
+		}
+		List<Namespace> namespaces = null;
+		try {
+			namespaces = WikiBase.getDataHandler().lookupNamespaces();
+		} catch (DataAccessException e) {
+			throw new WikiException(new WikiMessage("error.unknown", e.getMessage()));
+		}
+		for (Namespace namespace : namespaces) {
+			// verify that the namespace name is unique
+			if (name.equals(namespace.getDefaultLabel())) {
+				throw new WikiException(new WikiMessage("admin.vwiki.error.namespace.unique", name));
+			}
+			// verify that there are no translated namespaces with the same name
+			for (String namespaceTranslation : namespace.getNamespaceTranslations().values()) {
+				if (name.equals(namespaceTranslation)) {
+					throw new WikiException(new WikiMessage("admin.vwiki.error.namespace.unique", name));
+				}
+			}
+		}
 	}
 
 	/**

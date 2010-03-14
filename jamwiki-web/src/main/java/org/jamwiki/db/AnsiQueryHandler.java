@@ -2409,37 +2409,37 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void updateNamespace(Namespace namespace, Connection conn) throws SQLException {
+	public void updateNamespace(Namespace mainNamespace, Namespace commentsNamespace, Connection conn) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			// see if a namespace with the given value exists
-			boolean isUpdate = false;
-			if (namespace.getId() != null) {
-				List<Namespace> namespaces = this.lookupNamespaces(conn);
-				for (Namespace candidateNamespace : namespaces) {
-					if (candidateNamespace.equals(namespace)) {
-						isUpdate = true;
-						break;
-					}
+			// update if the ID is specified AND a namespace with the same ID already exists
+			boolean isUpdate = (mainNamespace.getId() != null && this.lookupNamespaces(conn).indexOf(mainNamespace) != -1);
+			// if adding determing the namespace ID(s)
+			if (!isUpdate && mainNamespace.getId() == null) {
+				// note - this returns the last id in the system, so add one
+				int nextId = DatabaseConnection.executeSequenceQuery(STATEMENT_SELECT_NAMESPACE_SEQUENCE, "namespace_id", conn);
+				if (nextId < 200) {
+					// for custom namespaces start with IDs of 200 or more to leave room for future expansion
+					nextId = 199;
+				}
+				mainNamespace.setId(nextId + 1);
+				if (commentsNamespace != null) {
+					commentsNamespace.setId(nextId + 2);
 				}
 			}
-			if (isUpdate) {
-				stmt = conn.prepareStatement(STATEMENT_UPDATE_NAMESPACE);
-			} else {
-				if (namespace.getId() == null) {
-					// note - this returns the last id in the system, so add one
-					namespace.setId(DatabaseConnection.executeSequenceQuery(STATEMENT_SELECT_NAMESPACE_SEQUENCE, "namespace_id", conn) + 1);
-				}
-				stmt = conn.prepareStatement(STATEMENT_INSERT_NAMESPACE);
+			// execute the adds/updates
+			stmt = (isUpdate) ? conn.prepareStatement(STATEMENT_UPDATE_NAMESPACE) : conn.prepareStatement(STATEMENT_INSERT_NAMESPACE);
+			stmt.setString(1, mainNamespace.getDefaultLabel());
+			stmt.setNull(2, Types.INTEGER);
+			stmt.setInt(3, mainNamespace.getId());
+			stmt.addBatch();
+			if (commentsNamespace != null) {
+				stmt.setString(1, commentsNamespace.getDefaultLabel());
+				stmt.setInt(2, commentsNamespace.getMainNamespace().getId());
+				stmt.setInt(3, commentsNamespace.getId());
+				stmt.addBatch();
 			}
-			stmt.setString(1, namespace.getDefaultLabel());
-			if (namespace.getMainNamespace() == null) {
-				stmt.setNull(2, Types.INTEGER);
-			} else {
-				stmt.setInt(2, namespace.getMainNamespace().getId());
-			}
-			stmt.setInt(3, namespace.getId());
-			stmt.executeUpdate();
+			stmt.executeBatch();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
 		}

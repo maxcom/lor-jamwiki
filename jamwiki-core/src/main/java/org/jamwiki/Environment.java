@@ -88,6 +88,7 @@ public class Environment {
 	public static final String PROP_PARSER_SIGNATURE_USER_PATTERN = "signature-user";
 	public static final String PROP_PARSER_TOC = "allow-toc";
 	public static final String PROP_PARSER_TOC_DEPTH = "toc-depth";
+	public static final String PROP_PATTERN_INVALID_NAMESPACE_NAME = "pattern-namespace-name-invalid";
 	public static final String PROP_PATTERN_INVALID_ROLE_NAME = "pattern-role-name-invalid";
 	public static final String PROP_PATTERN_INVALID_TOPIC_NAME = "pattern-topic-name-invalid";
 	public static final String PROP_PATTERN_VALID_USER_LOGIN = "pattern-login-valid";
@@ -222,6 +223,7 @@ public class Environment {
 		defaults.setProperty(PROP_PARSER_SIGNATURE_USER_PATTERN, "[[{0}|{4}]]");
 		defaults.setProperty(PROP_PARSER_TOC, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_PARSER_TOC_DEPTH, "5");
+		defaults.setProperty(PROP_PATTERN_INVALID_NAMESPACE_NAME, "([\\n\\r\\\\<>\\[\\]\\:_%/?&#]+)");
 		defaults.setProperty(PROP_PATTERN_INVALID_ROLE_NAME, "([A-Za-z0-9_]+)");
 		defaults.setProperty(PROP_PATTERN_INVALID_TOPIC_NAME, "([\\n\\r\\\\<>\\[\\]?#]+)");
 		defaults.setProperty(PROP_PATTERN_VALID_USER_LOGIN, "([A-Za-z0-9_]+)");

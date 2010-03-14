@@ -47,6 +47,7 @@
 </div>
 </fieldset>
 </form>
+
 <form action="<jamwiki:link value="Special:VirtualWiki" />" method="post">
 <fieldset>
 <legend><fmt:message key="admin.vwiki.title.virtualwiki" /></legend>
@@ -83,6 +84,35 @@
 </div>
 </fieldset>
 </form>
+
+<form action="<jamwiki:link value="Special:VirtualWiki" />" method="post">
+<fieldset>
+<legend><fmt:message key="admin.vwiki.title.namespace.add" /></legend>
+<input type="hidden" name="function" value="addnamespace" />
+<c:if test="${!empty selected}">
+	<input type="hidden" name="selected" value="${selected.name}" />
+</c:if>
+<div class="rowhelp">
+	<fmt:message key="admin.vwiki.help.namespace.add" />
+</div>
+<div class="row">
+	<label for="name"><fmt:message key="admin.vwiki.caption.namespace.main" /></label>
+	<span>
+		<input type="text" name="mainNamespace" size="30" value="${mainNamespace}" />
+	</span>
+</div>
+<div class="row lightbg">
+	<label for="name"><fmt:message key="admin.vwiki.caption.namespace.comments" /></label>
+	<span>
+		<input type="text" name="commentsNamespace" size="30" value="${commentsNamespace}" />
+	</span>
+</div>
+<div class="row">
+	<span class="form-button"><input type="submit" value="<fmt:message key="common.add" />" /></span>
+</div>
+</fieldset>
+</form>
+
 <c:if test="${!empty selected}">
 	<form action="<jamwiki:link value="Special:VirtualWiki" />" method="post">
 	<input type="hidden" name="function" value="namespaces" />
