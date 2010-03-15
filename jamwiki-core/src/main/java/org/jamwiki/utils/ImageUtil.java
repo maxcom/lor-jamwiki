@@ -38,6 +38,7 @@ import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiImage;
 import org.jamwiki.model.WikiFile;
@@ -409,9 +410,9 @@ public class ImageUtil {
 			charactersChanged = StringUtils.length(contents);
 		}
 		if (isImage) {
-			topic.setTopicType(Topic.TYPE_IMAGE);
+			topic.setTopicType(TopicType.IMAGE);
 		} else {
-			topic.setTopicType(Topic.TYPE_FILE);
+			topic.setTopicType(TopicType.FILE);
 		}
 		TopicVersion topicVersion = new TopicVersion(user, ipAddress, contents, topic.getTopicContent(), charactersChanged);
 		topicVersion.setEditType(TopicVersion.EDIT_UPLOAD);

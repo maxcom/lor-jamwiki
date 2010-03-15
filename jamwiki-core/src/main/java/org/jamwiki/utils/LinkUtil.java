@@ -26,6 +26,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiImage;
@@ -173,7 +174,7 @@ public class LinkUtil {
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		StringBuilder html = new StringBuilder();
-		if (topic.getTopicType() == Topic.TYPE_FILE) {
+		if (topic.getTopicType() == TopicType.FILE) {
 			// file, not an image
 			if (StringUtils.isBlank(caption)) {
 				caption = topicName.substring(Namespace.FILE.getLabel(virtualWiki).length() + 1);

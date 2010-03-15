@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
@@ -41,6 +42,7 @@ import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.RoleMap;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
@@ -742,7 +744,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List<String> lookupTopicByType(String virtualWiki, int topicType1, int topicType2, Pagination pagination) throws DataAccessException {
+	public Map<Integer, String> lookupTopicByType(String virtualWiki, TopicType topicType1, TopicType topicType2, Pagination pagination) throws DataAccessException {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		try {
 			return this.queryHandler().lookupTopicByType(virtualWikiId, topicType1, topicType2, pagination);
@@ -956,7 +958,7 @@ public class AnsiDataHandler implements DataHandler {
 			}
 			String content = ParserUtil.parserRedirectContent(destination);
 			toTopic.setRedirectTo(destination);
-			toTopic.setTopicType(Topic.TYPE_REDIRECT);
+			toTopic.setTopicType(TopicType.REDIRECT);
 			toTopic.setTopicContent(content);
 			TopicVersion toVersion = fromVersion;
 			toVersion.setTopicVersionId(-1);

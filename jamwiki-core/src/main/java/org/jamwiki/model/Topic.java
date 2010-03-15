@@ -27,20 +27,6 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class Topic implements Serializable {
 
-	/* Standard topic type. */
-	public static final int TYPE_ARTICLE = 1;
-	/* Topic redirects to another topic. */
-	public static final int TYPE_REDIRECT = 2;
-	/* Topic is an image. */
-	public static final int TYPE_IMAGE = 4;
-	/* Topic is a category. */
-	public static final int TYPE_CATEGORY = 5;
-	/* Topic is a non-image file. */
-	public static final int TYPE_FILE = 6;
-	/* Internal files, do not display on Special:Allpages */
-	public static final int TYPE_SYSTEM_FILE = 7;
-	/* Wiki templates. */
-	public static final int TYPE_TEMPLATE = 8;
 	// FIXME - consider making this an ACL (more flexible)
 	private boolean adminOnly = false;
 	private Integer currentVersionId = null;
@@ -52,7 +38,7 @@ public class Topic implements Serializable {
 	private String redirectTo = null;
 	private String topicContent = null;
 	private int topicId = -1;
-	private int topicType = TYPE_ARTICLE;
+	private TopicType topicType = TopicType.ARTICLE;
 	private String virtualWiki = null;
 	private static final WikiLogger logger = WikiLogger.getLogger(Topic.class.getName());
 
@@ -235,14 +221,14 @@ public class Topic implements Serializable {
 	/**
 	 *
 	 */
-	public int getTopicType() {
+	public TopicType getTopicType() {
 		return this.topicType;
 	}
 
 	/**
 	 *
 	 */
-	public void setTopicType(int topicType) {
+	public void setTopicType(TopicType topicType) {
 		this.topicType = topicType;
 	}
 

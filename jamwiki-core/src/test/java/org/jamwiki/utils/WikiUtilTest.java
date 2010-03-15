@@ -23,6 +23,7 @@ import java.util.Locale;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -70,7 +71,7 @@ public class WikiUtilTest {
 	@Test
 	public void testFindRedirectedTopic1() throws Throwable {
 		Topic parent = new Topic("en", "Test");
-		parent.setTopicType(Topic.TYPE_REDIRECT);
+		parent.setTopicType(TopicType.REDIRECT);
 		Topic result = WikiUtil.findRedirectedTopic(parent, 100);
 		assertSame("result", parent, result);
 	}

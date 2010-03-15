@@ -40,6 +40,7 @@ import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.VirtualWiki;
 
 /**
@@ -223,7 +224,7 @@ public class WikiUtil {
 	public static Topic findRedirectedTopic(Topic parent, int attempts) throws DataAccessException {
 		int count = attempts;
 		String target = parent.getRedirectTo();
-		if (parent.getTopicType() != Topic.TYPE_REDIRECT || StringUtils.isBlank(target)) {
+		if (parent.getTopicType() != TopicType.REDIRECT || StringUtils.isBlank(target)) {
 			logger.severe("getRedirectTarget() called for non-redirect topic " + parent.getName());
 			return parent;
 		}
@@ -258,23 +259,23 @@ public class WikiUtil {
 	 * @param namespace The namespace.
 	 * @return The topic type that matches the namespace.
 	 */
-	public static int findTopicTypeForNamespace(Namespace namespace) {
+	public static TopicType findTopicTypeForNamespace(Namespace namespace) {
 		if (namespace != null) {
 			if (namespace.equals(Namespace.CATEGORY)) {
-				return Topic.TYPE_CATEGORY;
+				return TopicType.CATEGORY;
 			}
 			if (namespace.equals(Namespace.TEMPLATE)) {
-				return Topic.TYPE_TEMPLATE;
+				return TopicType.TEMPLATE;
 			}
 			if (namespace.equals(Namespace.JAMWIKI)) {
-				return Topic.TYPE_SYSTEM_FILE;
+				return TopicType.SYSTEM_FILE;
 			}
 			if (namespace.equals(Namespace.FILE)) {
 				// FIXME - handle TYPE_FILE
-				return Topic.TYPE_IMAGE;
+				return TopicType.IMAGE;
 			}
 		}
-		return Topic.TYPE_ARTICLE;
+		return TopicType.ARTICLE;
 	}
 
 	/**

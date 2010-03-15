@@ -27,6 +27,7 @@ import org.jamwiki.authentication.RoleImpl;
 import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiDiff;
@@ -304,11 +305,11 @@ public class EditServlet extends JAMWikiServlet {
 		if (!StringUtils.isBlank(parserOutput.getRedirect())) {
 			// set up a redirect
 			topic.setRedirectTo(parserOutput.getRedirect());
-			topic.setTopicType(Topic.TYPE_REDIRECT);
-		} else if (topic.getTopicType() == Topic.TYPE_REDIRECT) {
+			topic.setTopicType(TopicType.REDIRECT);
+		} else if (topic.getTopicType() == TopicType.REDIRECT) {
 			// no longer a redirect
 			topic.setRedirectTo(null);
-			topic.setTopicType(Topic.TYPE_ARTICLE);
+			topic.setTopicType(TopicType.ARTICLE);
 		}
 		int charactersChanged = StringUtils.length(contents) - StringUtils.length(lastTopicContent);
 		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), request.getParameter("editComment"), contents, charactersChanged);

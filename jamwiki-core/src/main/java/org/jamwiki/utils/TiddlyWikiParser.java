@@ -32,6 +32,7 @@ import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 
@@ -206,7 +207,7 @@ public class TiddlyWikiParser {
 		TopicVersion topicVersion = new TopicVersion(user, authorDisplay, "imported", content, charactersChanged);
 		topicVersion.setEditDate(new Timestamp(lastMod.getTime()));
 		// manage mapping bitween MediaWiki and JAMWiki namespaces
-		topic.setTopicType(Topic.TYPE_ARTICLE);
+		topic.setTopicType(TopicType.ARTICLE);
 		// Store topic in database
 		wikiBase.writeTopic(topic, topicVersion, null, null, null);
 	}

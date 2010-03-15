@@ -47,6 +47,7 @@ import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiFileVersion;
@@ -431,12 +432,12 @@ public class ServletUtil {
 		// loop through the results and split out images and sub-categories
 		while (i < categoryTopics.size()) {
 			Category category = categoryTopics.get(i);
-			if (category.getTopicType() == Topic.TYPE_IMAGE) {
+			if (category.getTopicType() == TopicType.IMAGE) {
 				categoryTopics.remove(i);
 				categoryImages.add(category);
 				continue;
 			}
-			if (category.getTopicType() == Topic.TYPE_CATEGORY) {
+			if (category.getTopicType() == TopicType.CATEGORY) {
 				categoryTopics.remove(i);
 				String value = category.getChildTopicName().substring(Namespace.CATEGORY.getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
 				subCategories.put(category.getChildTopicName(), value);
@@ -721,7 +722,7 @@ public class ServletUtil {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		WikiUtil.validateTopicName(topic.getVirtualWiki(), topic.getName());
-		if (allowRedirect && topic.getTopicType() == Topic.TYPE_REDIRECT && (request.getParameter("redirect") == null || !request.getParameter("redirect").equalsIgnoreCase("no"))) {
+		if (allowRedirect && topic.getTopicType() == TopicType.REDIRECT && (request.getParameter("redirect") == null || !request.getParameter("redirect").equalsIgnoreCase("no"))) {
 			Topic child = null;
 			try {
 				child = WikiUtil.findRedirectedTopic(topic, 0);
@@ -776,10 +777,10 @@ public class ServletUtil {
 			next.addObject("categories", categories);
 		}
 		topic.setTopicContent(content);
-		if (topic.getTopicType() == Topic.TYPE_CATEGORY) {
+		if (topic.getTopicType() == TopicType.CATEGORY) {
 			loadCategoryContent(next, virtualWiki, topic.getName());
 		}
-		if (topic.getTopicType() == Topic.TYPE_IMAGE || topic.getTopicType() == Topic.TYPE_FILE) {
+		if (topic.getTopicType() == TopicType.IMAGE || topic.getTopicType() == TopicType.FILE) {
 			List<WikiFileVersion> fileVersions = null;
 			try {
 				fileVersions = WikiBase.getDataHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
@@ -806,7 +807,7 @@ public class ServletUtil {
 				}
 			}
 			next.addObject("fileVersions", fileVersions);
-			if (topic.getTopicType() == Topic.TYPE_IMAGE) {
+			if (topic.getTopicType() == TopicType.IMAGE) {
 				next.addObject("topicImage", true);
 			} else {
 				next.addObject("topicFile", true);

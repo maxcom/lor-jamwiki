@@ -41,12 +41,16 @@ import org.jamwiki.authentication.RoleImpl;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.transaction.TransactionStatus;
@@ -154,6 +158,53 @@ public class WikiDatabase {
 		}
 		logger.fine("Using NEW data handler: " + handlerClassName);
 		return (DataHandler)Utilities.instantiateClass(handlerClassName);
+	}
+
+	/**
+	 * Utility method for validating that all topics are currently pointing to the correct
+	 * namespace ID.  This method is required for updating data when upgrading to JAMWiki 0.9.0,
+	 * and is also available for use to resolve data issues after creating or updating
+	 * namespace names.
+	 */
+	public static int fixIncorrectTopicNamespaces() throws DataAccessException {
+		Pagination pagination;
+		int numResults = 100;
+		int offset = 0;
+		int count = 0;
+		Map<Integer, String> topicNames;
+		List<Topic> topics;
+		WikiLink wikiLink;
+		List<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			for (VirtualWiki virtualWiki : virtualWikis) {
+				for (TopicType topicType : TopicType.values()) {
+					offset = 0;
+					while (true) {
+						pagination = new Pagination(numResults, offset);
+						topicNames = WikiBase.getDataHandler().lookupTopicByType(virtualWiki.getName(), topicType, topicType, pagination);
+						if (topicNames.isEmpty()) {
+							break;
+						}
+						topics = new ArrayList<Topic>();
+						for (int topicId : topicNames.keySet()) {
+							Topic topic = new Topic(virtualWiki.getName(), topicNames.get(topicId));
+							topic.setTopicId(topicId);
+							topics.add(topic);
+						}
+						WikiDatabase.queryHandler().updateTopicNamespaces(topics, conn);
+						count += topicNames.size();
+						offset += numResults;
+					}
+				}
+			}
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+		return count;
 	}
 
 	/**

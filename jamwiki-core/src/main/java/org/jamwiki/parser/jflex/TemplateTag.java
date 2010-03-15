@@ -26,6 +26,7 @@ import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
@@ -129,11 +130,11 @@ public class TemplateTag implements JFlexParserTag {
 			result = raw;
 		} else {
 			// make sure template was not redirected
-			if (templateTopic != null && templateTopic.getTopicType() == Topic.TYPE_REDIRECT) {
+			if (templateTopic != null && templateTopic.getTopicType() == TopicType.REDIRECT) {
 				templateTopic = WikiUtil.findRedirectedTopic(templateTopic, 0);
 				name = templateTopic.getName();
 			}
-			if (templateTopic != null && templateTopic.getTopicType() == Topic.TYPE_REDIRECT) {
+			if (templateTopic != null && templateTopic.getTopicType() == TopicType.REDIRECT) {
 				// redirection target does not exist
 				templateTopic = null;
 			}

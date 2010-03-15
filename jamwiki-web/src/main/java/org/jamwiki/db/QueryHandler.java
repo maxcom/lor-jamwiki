@@ -19,6 +19,7 @@ package org.jamwiki.db;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.LogItem;
@@ -27,6 +28,7 @@ import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.RoleMap;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
@@ -688,12 +690,12 @@ public interface QueryHandler {
 	 *  needed.
 	 * @param pagination A Pagination object that specifies the number of results
 	 *  and starting result offset for the result set to be retrieved.
-	 * @return A list of all topic names of a given type within a virtual wiki, and
-	 *  within the bounds specified by the pagination object.  If no results are
-	 *  found then an empty list is returned.
+	 * @return A map of topic id and topic name for all topic names of a given
+	 *  type within a virtual wiki, and within the bounds specified by the
+	 *  pagination object.  If no results are found then an empty list is returned.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	List<String> lookupTopicByType(int virtualWikiId, int topicType1, int topicType2, Pagination pagination) throws SQLException;
+	Map<Integer, String> lookupTopicByType(int virtualWikiId, TopicType topicType1, TopicType topicType2, Pagination pagination) throws SQLException;
 
 	/**
 	 * Return a count of all topics, including redirects, comments pages and templates,
@@ -880,6 +882,16 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	void updateTopic(Topic topic, int virtualWikiId, Connection conn) throws SQLException;
+
+	/**
+	 * Update the namespace IDs for the provided topics.
+	 *
+	 * @param topics A list of topic objects to update.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	public void updateTopicNamespaces(List<Topic> topics, Connection conn) throws SQLException;
 
 	/**
 	 * Update user authentication credentials.

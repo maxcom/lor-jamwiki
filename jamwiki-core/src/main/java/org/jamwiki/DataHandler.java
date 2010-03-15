@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.LogItem;
 import org.jamwiki.model.Namespace;
@@ -28,6 +29,7 @@ import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.RoleMap;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
@@ -451,11 +453,11 @@ public interface DataHandler {
 	 *  as topicType1 if only one type is needed.
 	 * @param pagination A Pagination object indicating the total number of
 	 *  results and offset for the results to be retrieved.
-	 * @return A List of topic names for all non-deleted topics in the
+	 * @return A map of topic id and topic name for all non-deleted topics in the
 	 *  virtual wiki that match a specific topic type.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<String> lookupTopicByType(String virtualWiki, int topicType1, int topicType2, Pagination pagination) throws DataAccessException;
+	Map<Integer, String> lookupTopicByType(String virtualWiki, TopicType topicType1, TopicType topicType2, Pagination pagination) throws DataAccessException;
 
 	/**
 	 * Retrieve a TopicVersion object for a given topic version ID.

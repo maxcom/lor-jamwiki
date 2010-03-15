@@ -41,6 +41,7 @@ import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.RoleMap;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
@@ -191,6 +192,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_UPDATE_ROLE = null;
 	protected static String STATEMENT_UPDATE_NAMESPACE = null;
 	protected static String STATEMENT_UPDATE_TOPIC = null;
+	protected static String STATEMENT_UPDATE_TOPIC_NAMESPACE = null;
 	protected static String STATEMENT_UPDATE_TOPIC_VERSION_PREVIOUS_VERSION_ID = null;
 	protected static String STATEMENT_UPDATE_USER = null;
 	protected static String STATEMENT_UPDATE_VIRTUAL_WIKI = null;
@@ -1121,6 +1123,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_WIKI_USERS              = props.getProperty("STATEMENT_SELECT_WIKI_USERS");
 		STATEMENT_UPDATE_GROUP                   = props.getProperty("STATEMENT_UPDATE_GROUP");
 		STATEMENT_UPDATE_NAMESPACE               = props.getProperty("STATEMENT_UPDATE_NAMESPACE");
+		STATEMENT_UPDATE_TOPIC_NAMESPACE         = props.getProperty("STATEMENT_UPDATE_TOPIC_NAMESPACE");
 		STATEMENT_UPDATE_ROLE                    = props.getProperty("STATEMENT_UPDATE_ROLE");
 		STATEMENT_UPDATE_TOPIC                   = props.getProperty("STATEMENT_UPDATE_TOPIC");
 		STATEMENT_UPDATE_TOPIC_VERSION_PREVIOUS_VERSION_ID = props.getProperty("STATEMENT_UPDATE_TOPIC_VERSION_PREVIOUS_VERSION_ID");
@@ -1139,7 +1142,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		category.setVirtualWiki(virtualWikiName);
 		category.setChildTopicName(rs.getString("topic_name"));
 		category.setSortKey(rs.getString("sort_key"));
-		category.setTopicType(rs.getInt("topic_type"));
+		category.setTopicType(TopicType.findTopicType(rs.getInt("topic_type")));
 		return category;
 	}
 
@@ -1247,7 +1250,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		topic.setTopicId(rs.getInt("topic_id"));
 		topic.setReadOnly(rs.getInt("topic_read_only") != 0);
 		topic.setDeleteDate(rs.getTimestamp("delete_date"));
-		topic.setTopicType(rs.getInt("topic_type"));
+		topic.setTopicType(TopicType.findTopicType(rs.getInt("topic_type")));
 		topic.setRedirectTo(rs.getString("redirect_to"));
 		return topic;
 	}
@@ -1531,7 +1534,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			}
 			stmt.setInt(index++, virtualWikiId);
 			stmt.setString(index++, topic.getName());
-			stmt.setInt(index++, topic.getTopicType());
+			stmt.setInt(index++, topic.getTopicType().id());
 			stmt.setInt(index++, (topic.getReadOnly() ? 1 : 0));
 			if (topic.getCurrentVersionId() == null) {
 				stmt.setNull(index++, Types.INTEGER);
@@ -1968,7 +1971,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public List<String> lookupTopicByType(int virtualWikiId, int topicType1, int topicType2, Pagination pagination) throws SQLException {
+	public Map<Integer, String> lookupTopicByType(int virtualWikiId, TopicType topicType1, TopicType topicType2, Pagination pagination) throws SQLException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -1976,9 +1979,9 @@ public class AnsiQueryHandler implements QueryHandler {
 			conn = DatabaseConnection.getConnection();
 			stmt = this.lookupTopicByTypeStatement(conn, virtualWikiId, topicType1, topicType2, pagination);
 			rs = stmt.executeQuery();
-			List<String> results = new ArrayList<String>();
+			Map<Integer, String> results = new HashMap<Integer, String>();
 			while (rs.next()) {
-				results.add(rs.getString("topic_name"));
+				results.put(rs.getInt("topic_id"), rs.getString("topic_name"));
 			}
 			return results;
 		} finally {
@@ -1989,11 +1992,11 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	protected PreparedStatement lookupTopicByTypeStatement(Connection conn, int virtualWikiId, int topicType1, int topicType2, Pagination pagination) throws SQLException {
+	protected PreparedStatement lookupTopicByTypeStatement(Connection conn, int virtualWikiId, TopicType topicType1, TopicType topicType2, Pagination pagination) throws SQLException {
 		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
 		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, topicType1);
-		stmt.setInt(3, topicType2);
+		stmt.setInt(2, topicType1.id());
+		stmt.setInt(3, topicType2.id());
 		stmt.setInt(4, pagination.getNumResults());
 		stmt.setInt(5, pagination.getOffset());
 		return stmt;
@@ -2496,7 +2499,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt = conn.prepareStatement(STATEMENT_UPDATE_TOPIC);
 			stmt.setInt(1, virtualWikiId);
 			stmt.setString(2, topic.getName());
-			stmt.setInt(3, topic.getTopicType());
+			stmt.setInt(3, topic.getTopicType().id());
 			stmt.setInt(4, (topic.getReadOnly() ? 1 : 0));
 			if (topic.getCurrentVersionId() == null) {
 				stmt.setNull(5, Types.INTEGER);
@@ -2509,6 +2512,24 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(9, topic.getNamespace().getId());
 			stmt.setInt(10, topic.getTopicId());
 			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void updateTopicNamespaces(List<Topic> topics, Connection conn) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_UPDATE_TOPIC_NAMESPACE);
+			for (Topic topic : topics) {
+				stmt.setInt(1, topic.getNamespace().getId());
+				stmt.setInt(2, topic.getTopicId());
+				stmt.addBatch();
+			}
+			stmt.executeBatch();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
 		}

@@ -26,15 +26,24 @@
 <div id="maintenance" class="admin">
 
 <div class="submenu">
-<a href="#search"><fmt:message key="admin.title.refresh" /></a> | <a href="#recentchanges"><fmt:message key="admin.title.recentchanges" /></a> | <a href="#logitems"><fmt:message key="admin.title.logitems" /></a> | <a href="#cache"><fmt:message key="admin.title.cache" /></a><br />
-<jamwiki:enabled property="PROP_TOPIC_SPAM_FILTER"><a href="#spam"><fmt:message key="admin.title.spamfilter" /></a> | </jamwiki:enabled><a href="#password"><fmt:message key="admin.title.password" /></a> | <c:if test="${allowExport}"><a href="#export"><fmt:message key="admin.title.exportcsv" /></a> | </c:if><a href="#adduser"><fmt:message key="admin.title.adduser" /></a> | <a href="#migrate"><fmt:message key="admin.title.migratedatabase" /></a>
+<a href="#search"><fmt:message key="admin.title.refresh" /></a>
+| <a href="#recentchanges"><fmt:message key="admin.title.recentchanges" /></a>
+| <a href="#logitems"><fmt:message key="admin.title.logitems" /></a>
+| <a href="#cache"><fmt:message key="admin.title.cache" /></a>
+<jamwiki:enabled property="PROP_TOPIC_SPAM_FILTER"> | <a href="#spam"><fmt:message key="admin.title.spamfilter" /></a></jamwiki:enabled>
+<br />
+<a href="#namespaces"><fmt:message key="admin.maintenance.title.namespaces" /></a>
+| <a href="#password"><fmt:message key="admin.title.password" /></a>
+<c:if test="${allowExport}"> | <a href="#export"><fmt:message key="admin.title.exportcsv" /></a></c:if>
+| <a href="#adduser"><fmt:message key="admin.title.adduser" /></a>
+| <a href="#migrate"><fmt:message key="admin.title.migratedatabase" /></a>
 </div>
 
 <!-- Refresh Search Index -->
 <a name="search"></a>
 
 <c:if test="${!empty message && function == 'search'}">
-<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'search'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
@@ -56,7 +65,7 @@
 <a name="recentchanges"></a>
 
 <c:if test="${!empty message && function == 'recentchanges'}">
-<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'recentchanges'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
@@ -78,7 +87,7 @@
 <a name="logitems"></a>
 
 <c:if test="${!empty message && function == 'logitems'}">
-<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'logitems'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
@@ -100,7 +109,7 @@
 <a name="cache"></a>
 
 <c:if test="${!empty message && function == 'cache'}">
-<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'cache'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
@@ -124,7 +133,7 @@
 <a name="spam"></a>
 
 <c:if test="${!empty message && function == 'spam'}">
-<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'spam'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
@@ -144,11 +153,33 @@
 
 </jamwiki:enabled>
 
+<!-- Namespaces -->
+<a name="namespaces"></a>
+
+<c:if test="${!empty message && function == 'namespaces'}">
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+</c:if>
+<c:if test="${!empty errors && function == 'namespaces'}">
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+</c:if>
+
+<fieldset>
+<legend><fmt:message key="admin.maintenance.title.namespaces" /></legend>
+<form action="<jamwiki:link value="Special:Maintenance" />#namespaces" method="post">
+<div class="row">
+	<label><fmt:message key="admin.maintenance.caption.namespaces" /></label>
+	<span><input type="submit" value="<fmt:message key="common.update" />" /></span>
+	<div class="formhelp"><fmt:message key="admin.maintenance.help.namespaces" /></div>
+</div>
+<input type="hidden" name="function" value="namespaces" />
+</form>
+</fieldset>
+
 <!-- Password Reset -->
 <a name="password"></a>
 
 <c:if test="${!empty message && function == 'password'}">
-<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'password'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
@@ -182,7 +213,7 @@
 <!-- Add User  -->
 <a name="adduser"></a>
 <c:if test="${!empty message && function == 'adduser'}">
-<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'adduser'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
@@ -224,7 +255,7 @@
 <!-- Export to CSV -->
 <a name="export"></a>
 <c:if test="${!empty message && function == 'export'}">
-<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'export'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
@@ -246,7 +277,7 @@
 <!-- Migrate Database -->
 <a name="migrate"></a>
 <c:if test="${!empty message && function == 'migrate'}">
-<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'migrate'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>

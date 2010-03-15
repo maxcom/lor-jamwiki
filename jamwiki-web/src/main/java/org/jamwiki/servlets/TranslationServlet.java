@@ -30,6 +30,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.SortedProperties;
@@ -197,7 +198,7 @@ public class TranslationServlet extends JAMWikiServlet {
 		int charactersChanged = StringUtils.length(contents) - StringUtils.length(topic.getTopicContent());
 		topic.setTopicContent(contents);
 		topic.setReadOnly(true);
-		topic.setTopicType(Topic.TYPE_SYSTEM_FILE);
+		topic.setTopicType(TopicType.SYSTEM_FILE);
 		WikiUser user = ServletUtil.currentWikiUser();
 		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), null, contents, charactersChanged);
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);

@@ -27,6 +27,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserException;
@@ -110,7 +111,7 @@ public class MigrationUtil {
 			if (!StringUtils.isBlank(parserOutput.getRedirect())) {
 				// set up a redirect
 				topic.setRedirectTo(parserOutput.getRedirect());
-				topic.setTopicType(Topic.TYPE_REDIRECT);
+				topic.setTopicType(TopicType.REDIRECT);
 			}
 			try {
 				WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks());
