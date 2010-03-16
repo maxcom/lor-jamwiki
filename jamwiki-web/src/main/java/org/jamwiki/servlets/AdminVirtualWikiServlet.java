@@ -182,28 +182,34 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void virtualWiki(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	private void virtualWiki(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
 		WikiUser user = ServletUtil.currentWikiUser();
+		List<WikiMessage> errors = new ArrayList<WikiMessage>();
+		VirtualWiki virtualWiki = new VirtualWiki();
+		if (!StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
+			virtualWiki.setVirtualWikiId(Integer.valueOf(request.getParameter("virtualWikiId")));
+		}
+		virtualWiki.setName(request.getParameter("name"));
+		String defaultTopicName = WikiUtil.getParameterFromRequest(request, "defaultTopicName", true);
+		virtualWiki.setDefaultTopicName(defaultTopicName);
 		try {
-			VirtualWiki virtualWiki = new VirtualWiki();
-			if (!StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
-				virtualWiki.setVirtualWikiId(Integer.valueOf(request.getParameter("virtualWikiId")));
-			}
-			virtualWiki.setName(request.getParameter("name"));
-			String defaultTopicName = WikiUtil.getParameterFromRequest(request, "defaultTopicName", true);
-			virtualWiki.setDefaultTopicName(defaultTopicName);
 			WikiBase.getDataHandler().writeVirtualWiki(virtualWiki);
 			if (StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
+				// add
 				WikiBase.getDataHandler().setupSpecialPages(request.getLocale(), user, virtualWiki);
+				next.addObject("message", new WikiMessage("admin.message.virtualwikiadded", virtualWiki.getName()));
+			} else {
+				// update
+				next.addObject("message", new WikiMessage("admin.message.virtualwikiupdated", virtualWiki.getName()));
 			}
-			next.addObject("selected", virtualWiki);
-			next.addObject("message", new WikiMessage("admin.message.virtualwikiadded"));
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			logger.severe("Failure while adding virtual wiki", e);
-			List<WikiMessage> errors = new ArrayList<WikiMessage>();
 			errors.add(new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
-			next.addObject("errors", errors);
+		} catch (WikiException e) {
+			errors.add(e.getWikiMessage());
 		}
+		next.addObject("errors", errors);
+		next.addObject("selected", virtualWiki);
 		view(request, next, pageInfo);
 	}
 }

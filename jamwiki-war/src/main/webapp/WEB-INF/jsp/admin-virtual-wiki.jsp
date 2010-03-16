@@ -25,14 +25,24 @@
 
 <div id="virtualwiki" class="admin">
 
-<c:if test="${!empty message}">
+<div class="submenu">
+<a href="#search"><fmt:message key="admin.vwiki.title.select" /></a>
+| <a href="#vwiki"><fmt:message key="admin.vwiki.title.virtualwiki" /></a>
+| <a href="#addnamespace"><fmt:message key="admin.vwiki.title.namespace.add" /></a>
+<c:if test="${!empty selected}">| <a href="#namespaces"><fmt:message key="admin.vwiki.title.namespace.translations"><fmt:param value="${selected.name}" /></fmt:message></a></c:if>
+</div>
+
+<!-- Select Virtual Wiki -->
+<a name="search"></a>
+
+<c:if test="${!empty message && function == 'search'}">
 <div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
-<c:if test="${!empty errors}">
+<c:if test="${!empty errors && function == 'search'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
 
-<form action="<jamwiki:link value="Special:VirtualWiki" />" method="get" name="search">
+<form action="<jamwiki:link value="Special:VirtualWiki" />#search" method="get" name="search">
 <input type="hidden" name="function" value="search" />
 <fieldset>
 <legend><fmt:message key="admin.vwiki.title.select" /></legend>
@@ -44,11 +54,22 @@
 		<c:forEach items="${wikis}" var="wiki"><option value="${wiki.name}" <c:if test="${!empty selected && wiki.name == selected.name}">selected="selected"</c:if>>${wiki.name}</option></c:forEach>
 		</select>
 	</span>
+	<div class="formhelp"><fmt:message key="admin.vwiki.help.search" /></div>
 </div>
 </fieldset>
 </form>
 
-<form action="<jamwiki:link value="Special:VirtualWiki" />" method="post">
+<!-- Add/Update Virtual Wiki -->
+<a name="vwiki"></a>
+
+<c:if test="${!empty message && function == 'virtualwiki'}">
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+</c:if>
+<c:if test="${!empty errors && function == 'virtualwiki'}">
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+</c:if>
+
+<form action="<jamwiki:link value="Special:VirtualWiki" />#vwiki" method="post">
 <fieldset>
 <legend><fmt:message key="admin.vwiki.title.virtualwiki" /></legend>
 <input type="hidden" name="function" value="virtualwiki" />
@@ -85,7 +106,17 @@
 </fieldset>
 </form>
 
-<form action="<jamwiki:link value="Special:VirtualWiki" />" method="post">
+<!-- Add Namesapce -->
+<a name="addnamespace"></a>
+
+<c:if test="${!empty message && function == 'addnamespace'}">
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+</c:if>
+<c:if test="${!empty errors && function == 'addnamespace'}">
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+</c:if>
+
+<form action="<jamwiki:link value="Special:VirtualWiki" />#addnamespace" method="post">
 <fieldset>
 <legend><fmt:message key="admin.vwiki.title.namespace.add" /></legend>
 <input type="hidden" name="function" value="addnamespace" />
@@ -114,29 +145,43 @@
 </form>
 
 <c:if test="${!empty selected}">
-	<form action="<jamwiki:link value="Special:VirtualWiki" />" method="post">
+
+	<!-- Add/Update Namesapce Translations -->
+	<a name="namespaces"></a>
+
+	<c:if test="${!empty message && function == 'namespaces'}">
+	<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+	</c:if>
+	<c:if test="${!empty errors && function == 'namespaces'}">
+	<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+	</c:if>
+
+	<form action="<jamwiki:link value="Special:VirtualWiki" />#namespaces" method="post">
 	<input type="hidden" name="function" value="namespaces" />
 	<input type="hidden" name="selected" value="${selected.name}" />
 	<fieldset>
 	<legend><fmt:message key="admin.vwiki.title.namespace.translations"><fmt:param value="${selected.name}" /></fmt:message></legend>
 	<div class="rowhelp">
-		<p>
-		<fmt:message key="admin.vwiki.help.namespace.translations" />
-		<fmt:message key="admin.vwiki.help.namespace.translations.special" />
-		</p>
+		<p><fmt:message key="admin.vwiki.help.namespace.translations" /></p>
 		<p><fmt:message key="admin.vwiki.help.namespace.translations.warning" /></p>
 	</div>
 	<c:forEach items="${namespaces}" var="namespace">
 		<%-- suppress display of namespaces that cannot be translated --%>
-		<c:if test="${namespace.id >= 0}">
-			<div class="row">
-				<input type="hidden" name="namespace_id" value="${namespace.id}" />
-				<input type="hidden" name="${namespace.id}_label" value="${namespace.defaultLabel}" />
-				<input type="hidden" name="${namespace.id}_newlabel" value="${namespace.defaultLabel}" />
-				<label>${namespace.defaultLabel} [${namespace.id}]</label>
-				<span><input type="text" name="${namespace.id}_vwiki" size="30" value="${namespace.namespaceTranslations[selected.name]}" /></span>
-			</div>
-		</c:if>
+		<div class="row">
+			<label>${namespace.defaultLabel} [${namespace.id}]</label>
+			<%-- do not allow translations of the Special: and JAMWiki: namespaces --%>
+			<c:choose>
+				<c:when test="${namespace.id >= 0 && namespace.id != 8}">
+					<input type="hidden" name="namespace_id" value="${namespace.id}" />
+					<input type="hidden" name="${namespace.id}_label" value="${namespace.defaultLabel}" />
+					<input type="hidden" name="${namespace.id}_newlabel" value="${namespace.defaultLabel}" />
+					<span><input type="text" name="${namespace.id}_vwiki" size="30" value="${namespace.namespaceTranslations[selected.name]}" /></span>
+				</c:when>
+				<c:otherwise>
+					<span><fmt:message key="admin.vwiki.caption.namespace.notallowed" /></span>
+				</c:otherwise>
+			</c:choose>
+		</div>
 	</c:forEach>
 	<div class="row">
 		<span class="form-button"><input type="submit" value="<fmt:message key="common.update" />" /></span>
