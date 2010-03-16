@@ -1252,7 +1252,7 @@ public class AnsiDataHandler implements DataHandler {
 		checkLength(mainNamespace.getDefaultLabel(), 200);
 		if (commentsNamespace != null) {
 			checkLength(commentsNamespace.getDefaultLabel(), 200);
-			if (commentsNamespace == null || !commentsNamespace.equals(mainNamespace)) {
+			if (commentsNamespace.getMainNamespace() == null || !commentsNamespace.getMainNamespace().equals(mainNamespace)) {
 				throw new WikiException(new WikiMessage("error.commentsnamespace", commentsNamespace.getDefaultLabel(), mainNamespace.getDefaultLabel()));
 			}
 		}
