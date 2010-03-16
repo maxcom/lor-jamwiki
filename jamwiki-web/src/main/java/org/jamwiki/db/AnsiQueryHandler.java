@@ -1545,6 +1545,8 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(index++, (topic.getAdminOnly() ? 1 : 0));
 			stmt.setString(index++, topic.getRedirectTo());
 			stmt.setInt(index++, topic.getNamespace().getId());
+			stmt.setString(index++, topic.getPageName());
+			stmt.setString(index++, topic.getPageName().toLowerCase());
 			stmt.executeUpdate();
 			if (this.autoIncrementPrimaryKeys()) {
 				rs = stmt.getGeneratedKeys();
@@ -2510,7 +2512,9 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(7, (topic.getAdminOnly() ? 1 : 0));
 			stmt.setString(8, topic.getRedirectTo());
 			stmt.setInt(9, topic.getNamespace().getId());
-			stmt.setInt(10, topic.getTopicId());
+			stmt.setString(10, topic.getPageName());
+			stmt.setString(11, topic.getPageName().toLowerCase());
+			stmt.setInt(12, topic.getTopicId());
 			stmt.executeUpdate();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
@@ -2526,7 +2530,9 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt = conn.prepareStatement(STATEMENT_UPDATE_TOPIC_NAMESPACE);
 			for (Topic topic : topics) {
 				stmt.setInt(1, topic.getNamespace().getId());
-				stmt.setInt(2, topic.getTopicId());
+				stmt.setString(2, topic.getPageName());
+				stmt.setString(3, topic.getPageName().toLowerCase());
+				stmt.setInt(4, topic.getTopicId());
 				stmt.addBatch();
 			}
 			stmt.executeBatch();

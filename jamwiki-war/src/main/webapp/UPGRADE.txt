@@ -116,22 +116,26 @@ followed by 0.6.3.
                 CONSTRAINT jam_f_namesptr_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id), 
                 CONSTRAINT jam_u_namesptr_namesp UNIQUE (virtual_wiki_id, namespace) 
               );
-       c) Add namespace_id to the jam_topic table
+       c) Update the jam_topic table with namespace-related values
             Oracle:
               alter table jam_topic add namespace_id INTEGER DEFAULT 0 NOT NULL;
               alter table jam_topic add constraint jam_f_topic_namesp FOREIGN KEY (namespace_id) REFERENCES jam_namespace(namespace_id);
-              alter table jam_topic drop constraint jam_u_topic_name;
-              alter table jam_topic add constraint jam_u_topic_name UNIQUE (topic_name, virtual_wiki_id, namespace_id, delete_date);
+              alter table jam_topic add page_name VARCHAR(200);
+              alter table jam_topic add page_name_lower VARCHAR(200);
             MS SQL:
               alter table jam_topic add namespace_id INTEGER DEFAULT 0 NOT NULL;
               alter table jam_topic add constraint jam_f_topic_namesp FOREIGN KEY (namespace_id) REFERENCES jam_namespace(namespace_id);
-              alter table jam_topic drop constraint jam_u_topic_name;
-              alter table jam_topic add constraint jam_u_topic_name UNIQUE (topic_name, virtual_wiki_id, namespace_id, delete_date);
+              alter table jam_topic add page_name VARCHAR(200);
+              alter table jam_topic add page_name_lower VARCHAR(200);
             Other Databases:
               alter table jam_topic add column namespace_id INTEGER DEFAULT 0 NOT NULL;
               alter table jam_topic add constraint jam_f_topic_namesp FOREIGN KEY (namespace_id) REFERENCES jam_namespace(namespace_id);
-              alter table jam_topic drop constraint jam_u_topic_name;
-              alter table jam_topic add constraint jam_u_topic_name UNIQUE (topic_name, virtual_wiki_id, namespace_id, delete_date);
+              alter table jam_topic add column page_name VARCHAR(200);
+              alter table jam_topic add column page_name_lower VARCHAR(200);
+  6. Once the database upgrades are complete the "Fix Incorrect Topic Namespaces"
+     tool should be invoked from the Special:Maintenance page.  Provided that tool
+     runs successfully then "NOT NULL" constraints should be added to the page_name
+     and page_name_lower columns in the jam_topic table.
 
 
   JAMWiki 0.8.3

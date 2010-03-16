@@ -226,10 +226,12 @@ public class DatabaseUpgrades {
 			// update jam_topic to add a namespace column, defaulted to the main namespace
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_NAMESPACE_ID", conn);
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_NAMESPACE_ID_CONSTRAINT", conn);
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_DROP_TOPIC_UNIQUE_CONSTRAINT", conn);
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_UNIQUE_CONSTRAINT", conn);
 			messages.add(new WikiMessage("upgrade.message.db.column.added", "namespace_id", "jam_topic"));
-			// get all topic names, split the name into namespace_id and name, and update jam_topic if needed
+			// update jam_topic to add page_name and page_name_lower
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_PAGE_NAME", conn);
+			messages.add(new WikiMessage("upgrade.message.db.column.added", "page_name", "jam_topic"));
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_PAGE_NAME_LOWER", conn);
+			messages.add(new WikiMessage("upgrade.message.db.column.added", "page_name_lower", "jam_topic"));
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			logger.severe("Database failure during upgrade", e);
@@ -240,6 +242,43 @@ public class DatabaseUpgrades {
 			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
 		}
 		DatabaseConnection.commit(status);
+		try {
+			status = DatabaseConnection.startTransaction(getTransactionDefinition());
+			Connection conn = DatabaseConnection.getConnection();
+			// populate jam_topic.namespace_id, jam_topic.page_name and jam_topic.page_name_lower
+			int numUpdated = WikiDatabase.fixIncorrectTopicNamespaces();
+			messages.add(new WikiMessage("admin.maintenance.message.namespaces", Integer.toString(numUpdated)));
+			// add not null constraints for jam_topic.page_name and jam_topic.page_name_lower
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_PAGE_NAME_NOT_NULL_CONSTRAINT", conn);
+			messages.add(new WikiMessage("upgrade.message.db.column.modified", "page_name", "jam_topic"));
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_PAGE_NAME_LOWER_NOT_NULL_CONSTRAINT", conn);
+			messages.add(new WikiMessage("upgrade.message.db.column.modified", "page_name_lower", "jam_topic"));
+		} catch (SQLException e) {
+			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
+			// do not throw this error and halt the upgrade process - populating the field
+			// is not required for existing systems.
+			logger.warning("Failure while populating correct namespace_id values in the jam_topic table.  Try running the 'Fix Incorrect Topic Namespaces' from Special:Maintenance to complete this step.", e);
+			try {
+				DatabaseConnection.rollbackOnException(status, e);
+			} catch (Exception ex) {
+				// ignore
+			}
+			status = null; // so we do not try to commit
+		} catch (DataAccessException e) {
+			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
+			// do not throw this error and halt the upgrade process - populating the field
+			// is not required for existing systems.
+			logger.warning("Failure while populating correct namespace_id values in the jam_topic table.  Try running the 'Fix Incorrect Topic Namespaces' from Special:Maintenance to complete this step.", e);
+			try {
+				DatabaseConnection.rollbackOnException(status, e);
+			} catch (Exception ex) {
+				// ignore
+			}
+			status = null; // so we do not try to commit
+		}
+		if (status != null) {
+			DatabaseConnection.commit(status);
+		}
 		return messages;
 	}
 }
