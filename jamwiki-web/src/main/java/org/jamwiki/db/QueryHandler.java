@@ -653,8 +653,6 @@ public interface QueryHandler {
 	 * @param virtualWikiName The name of the virtual wiki for the virtual wiki of
 	 *  the topic being retrieved.
 	 * @param topicName The name of the topic being retrieved.
-	 * @param caseSensitive Set to <code>true</code> if the topic name should be
-	 *  searched for in a case-sensitive manner.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @return A topic containing all topic information for the given topic
@@ -662,7 +660,7 @@ public interface QueryHandler {
 	 *  returned.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	Topic lookupTopic(int virtualWikiId, String virtualWikiName, String topicName, boolean caseSensitive, Connection conn) throws SQLException;
+	Topic lookupTopic(int virtualWikiId, String virtualWikiName, String topicName, Connection conn) throws SQLException;
 
 	/**
 	 * Retrieve a topic that matches a given topic ID and virtual wiki.

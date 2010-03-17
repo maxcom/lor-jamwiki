@@ -229,8 +229,10 @@ public class DatabaseUpgrades {
 			messages.add(new WikiMessage("upgrade.message.db.column.added", "namespace_id", "jam_topic"));
 			// update jam_topic to add page_name and page_name_lower
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_PAGE_NAME", conn);
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_PAGE_NAME_INDEX", conn);
 			messages.add(new WikiMessage("upgrade.message.db.column.added", "page_name", "jam_topic"));
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_PAGE_NAME_LOWER", conn);
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_PAGE_NAME_LOWER_INDEX", conn);
 			messages.add(new WikiMessage("upgrade.message.db.column.added", "page_name_lower", "jam_topic"));
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);

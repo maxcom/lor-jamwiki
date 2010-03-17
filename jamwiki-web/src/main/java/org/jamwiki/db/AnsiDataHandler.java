@@ -674,20 +674,10 @@ public class AnsiDataHandler implements DataHandler {
 				return (cacheTopic == null || (!deleteOK && cacheTopic.getDeleteDate() != null)) ? null : new Topic(cacheTopic);
 			}
 		}
-		Namespace namespace = LinkUtil.parseWikiLink(virtualWiki, topicName).getNamespace();
-		boolean caseSensitive = true;
-		if (namespace.equals(Namespace.SPECIAL)) {
-			// invalid namespace
-			return null;
-		}
-		if (namespace.equals(Namespace.TEMPLATE) || namespace.equals(Namespace.USER) || namespace.equals(Namespace.CATEGORY)) {
-			// user/template/category namespaces are case-insensitive
-			caseSensitive = false;
-		}
 		Topic topic = null;
 		try {
 			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-			topic = this.queryHandler().lookupTopic(virtualWikiId, virtualWiki, topicName, caseSensitive, conn);
+			topic = this.queryHandler().lookupTopic(virtualWikiId, virtualWiki, topicName, conn);
 			if (conn == null) {
 				// add topic to the cache only if it is not currently a part of a transaction
 				// to avoid caching something that might need to be rolled back
