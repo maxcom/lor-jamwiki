@@ -287,7 +287,8 @@ public class EditServlet extends JAMWikiServlet {
 			ServletUtil.redirect(next, virtualWiki, topic.getName());
 			return;
 		}
-		if (handleSpam(request, next, topicName, contents)) {
+		String editComment = request.getParameter("editComment");
+		if (handleSpam(request, next, topicName, contents, editComment)) {
 			this.loadEdit(request, next, pageInfo, contents, virtualWiki, topicName, false);
 			return;
 		}
@@ -314,7 +315,7 @@ public class EditServlet extends JAMWikiServlet {
 			topic.setTopicType(Topic.TYPE_ARTICLE);
 		}
 		int charactersChanged = StringUtils.length(contents) - StringUtils.length(lastTopicContent);
-		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), request.getParameter("editComment"), contents, charactersChanged);
+		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), editComment, contents, charactersChanged);
 		if (request.getParameter("minorEdit") != null) {
 			topicVersion.setEditType(TopicVersion.EDIT_MINOR);
 		}

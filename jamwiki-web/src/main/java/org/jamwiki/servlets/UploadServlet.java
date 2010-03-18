@@ -124,7 +124,7 @@ public class UploadServlet extends JAMWikiServlet {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		destinationFilename = processDestinationFilename(destinationFilename, filename);
 		String topicName = ImageUtil.generateFileTopicName((!StringUtils.isEmpty(destinationFilename) ? destinationFilename : filename));
-		if (this.handleSpam(request, next, topicName, contents)) {
+		if (this.handleSpam(request, next, topicName, contents, null)) {
 			// delete the spam file
 			uploadedFile.delete();
 			this.view(request, next, pageInfo);

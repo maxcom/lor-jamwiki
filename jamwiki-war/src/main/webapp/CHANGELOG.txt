@@ -24,6 +24,8 @@ New Features:
   * Remove all dependencies on Spring from the jamwiki-core project by
     converting org.jamwiki.model.Role to an interface and creating a new
     org.jamwiki.authentication.RoleImpl class.
+  * Run the spam filter against edit comments as well as topic content to
+    thwart spam attempts.
   * Remove ability to automatically upgrade from versions prior to 0.7.0.
   * Upgrade to Spring Framework 3.0.1.RELEASE.
   * Upgrade to Spring Security 3.0.2.RELEASE.

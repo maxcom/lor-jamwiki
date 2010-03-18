@@ -268,10 +268,12 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * @param next The current ModelAndView object.
 	 * @param topicName The name of the topic being examined for spam.
 	 * @param contents The contents of the topic being examined for spam.
+	 * @param editComment (Optional) The topic edit comment, which has also been a
+	 *  target for spambots.
 	 * @return <code>true</code> if the topic in question matches any spam pattern.
 	 */
-	protected boolean handleSpam(HttpServletRequest request, ModelAndView next, String topicName, String contents) throws DataAccessException {
-		String result = ServletUtil.checkForSpam(request, topicName, contents);
+	protected boolean handleSpam(HttpServletRequest request, ModelAndView next, String topicName, String contents, String editComment) throws DataAccessException {
+		String result = ServletUtil.checkForSpam(request, topicName, contents, editComment);
 		if (result == null) {
 			return false;
 		}
