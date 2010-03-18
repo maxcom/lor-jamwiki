@@ -43,6 +43,10 @@ Bugfixes:
   * Properly parse template parameters that are themselves templates, such as
     "{{{{{template_name}}}}}" or "{{{1|{{PAGENAME}}}}}".
 
+Translation Updates:
+
+  * Updated German translations (axelclk).
+
 
 0.8.3
 =====
