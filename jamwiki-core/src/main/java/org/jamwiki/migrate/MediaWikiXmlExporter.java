@@ -29,6 +29,7 @@ import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiVersion;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -157,7 +158,7 @@ public class MediaWikiXmlExporter implements TopicExporter {
 				}
 				writer.write("\n</contributor>");
 				writer.write('\n' + XMLUtil.buildTag("comment", topicVersion.getEditComment(), true));
-				versionContent = this.convertToMediawikiNamespaces(topicVersion.getVersionContent());
+				versionContent = this.convertToMediawikiNamespaces(virtualWiki, topicVersion.getVersionContent());
 				writer.write('\n' + XMLUtil.buildTag("text", versionContent, textAttributes, true));
 				writer.write("\n</revision>");
 			}
@@ -176,9 +177,10 @@ public class MediaWikiXmlExporter implements TopicExporter {
 	/**
 	 * Convert all namespaces names from JAMWiki to MediaWiki local representation.
 	 */
-	private String convertToMediawikiNamespaces(String text) {
+	private String convertToMediawikiNamespaces(String virtualWiki, String text) {
 		StringBuilder builder = new StringBuilder(text);
-		String jamwikiNamespace, mediawikiNamespace, mediawikiPattern, jamwikiPattern;
+		Namespace jamwikiNamespace;
+		String mediawikiNamespace, mediawikiPattern, jamwikiPattern;
 		int start = 0;
 		for (Integer key : MediaWikiConstants.MEDIAWIKI_NAMESPACE_MAP.keySet()) {
 			// use the JAMWiki namespace if one exists
@@ -188,7 +190,7 @@ public class MediaWikiXmlExporter implements TopicExporter {
 				continue;
 			}
 			mediawikiPattern = "[[" + mediawikiNamespace + ":";
-			jamwikiPattern = "[[" + jamwikiNamespace + ":";
+			jamwikiPattern = "[[" + jamwikiNamespace.getLabel(virtualWiki) + ":";
 			while ((start = builder.indexOf(jamwikiPattern, start + 1)) != -1) {
 				builder.replace(start, start + jamwikiPattern.length(), mediawikiPattern);
 			}

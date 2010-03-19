@@ -19,13 +19,16 @@ package org.jamwiki.db;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.LogItem;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.RoleMap;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
@@ -633,6 +636,16 @@ public interface QueryHandler {
 	List<Category> lookupCategoryTopics(int virtualWikiId, String virtualWikiName, String categoryName) throws SQLException;
 
 	/**
+	 * Retrieve a list of all current namespace objects.
+	 *
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @return A list of all current namespace objects, never <code>null</code>.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	List<Namespace> lookupNamespaces(Connection conn) throws SQLException;
+
+	/**
 	 * Retrieve a topic that matches a given name and virtual wiki.
 	 *
 	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the topic
@@ -640,8 +653,6 @@ public interface QueryHandler {
 	 * @param virtualWikiName The name of the virtual wiki for the virtual wiki of
 	 *  the topic being retrieved.
 	 * @param topicName The name of the topic being retrieved.
-	 * @param caseSensitive Set to <code>true</code> if the topic name should be
-	 *  searched for in a case-sensitive manner.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @return A topic containing all topic information for the given topic
@@ -649,7 +660,7 @@ public interface QueryHandler {
 	 *  returned.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	Topic lookupTopic(int virtualWikiId, String virtualWikiName, String topicName, boolean caseSensitive, Connection conn) throws SQLException;
+	Topic lookupTopic(int virtualWikiId, String virtualWikiName, String topicName, Connection conn) throws SQLException;
 
 	/**
 	 * Retrieve a topic that matches a given topic ID and virtual wiki.
@@ -677,12 +688,12 @@ public interface QueryHandler {
 	 *  needed.
 	 * @param pagination A Pagination object that specifies the number of results
 	 *  and starting result offset for the result set to be retrieved.
-	 * @return A list of all topic names of a given type within a virtual wiki, and
-	 *  within the bounds specified by the pagination object.  If no results are
-	 *  found then an empty list is returned.
+	 * @return A map of topic id and topic name for all topic names of a given
+	 *  type within a virtual wiki, and within the bounds specified by the
+	 *  pagination object.  If no results are found then an empty list is returned.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	List<String> lookupTopicByType(int virtualWikiId, int topicType1, int topicType2, Pagination pagination) throws SQLException;
+	Map<Integer, String> lookupTopicByType(int virtualWikiId, TopicType topicType1, TopicType topicType2, Pagination pagination) throws SQLException;
 
 	/**
 	 * Return a count of all topics, including redirects, comments pages and templates,
@@ -820,6 +831,36 @@ public interface QueryHandler {
 	void reloadRecentChanges(Connection conn) throws SQLException;
 
 	/**
+	 * Add or update a namespace.  This method will add a new record if the
+	 * namespace does not already exist, otherwise it will update the existing
+	 * record.
+	 *
+	 * @param mainNamespace The namespace object to add to the database.
+	 * @param commentsNamespace The comments namespace object to add to the database
+	 *  for the corresponding main namespace.  This argument can be <code>null</code>
+	 *  if there is no comments namespace.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	void updateNamespace(Namespace mainNamespace, Namespace commentsNamespace, Connection conn) throws SQLException;
+
+	/**
+	 * Add or update a virtual-wiki specific label for a namespace.  This method will
+	 * delete any existing record and then add the new record.
+	 *
+	 * @param namespaces The namespace translation records to add/update.
+	 * @param virtualWiki The virtual wiki for which namespace translations are
+	 *  being added or updated.
+	 * @param virtualWikiId The virtual wiki id for which namespace translations are
+	 *  being added or updated.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	void updateNamespaceTranslations(List<Namespace> namespaces, String virtualWiki, int virtualWikiId, Connection conn) throws SQLException;
+
+	/**
 	 * Update a role record in the database.
 	 *
 	 * @param role The Role record that is to be updated in the database.
@@ -839,6 +880,16 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	void updateTopic(Topic topic, int virtualWikiId, Connection conn) throws SQLException;
+
+	/**
+	 * Update the namespace IDs for the provided topics.
+	 *
+	 * @param topics A list of topic objects to update.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	public void updateTopicNamespaces(List<Topic> topics, Connection conn) throws SQLException;
 
 	/**
 	 * Update user authentication credentials.

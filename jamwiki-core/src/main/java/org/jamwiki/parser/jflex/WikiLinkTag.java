@@ -22,12 +22,12 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -49,7 +49,7 @@ public class WikiLinkTag implements JFlexParserTag {
 	private String buildInternalLinkUrl(ParserInput parserInput, int mode, String raw) {
 		String context = parserInput.getContext();
 		String virtualWiki = parserInput.getVirtualWiki();
-		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(raw);
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(virtualWiki, raw);
 		if (wikiLink == null) {
 			// invalid link
 			return raw;
@@ -59,20 +59,17 @@ public class WikiLinkTag implements JFlexParserTag {
 			return raw;
 		}
 		try {
-			if (!wikiLink.getColon() && !StringUtils.isBlank(wikiLink.getNamespace()) && wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_IMAGE)) {
+			if (!wikiLink.getColon() && wikiLink.getNamespace().equals(Namespace.FILE)) {
 				// parse as an image
 				return this.parseImageLink(parserInput, mode, wikiLink);
 			}
-			if (!StringUtils.isBlank(wikiLink.getNamespace()) && InterWikiHandler.isInterWiki(wikiLink.getNamespace())) {
+			if (!StringUtils.isBlank(wikiLink.getInterWiki())) {
 				// inter-wiki link
 				return LinkUtil.interWiki(wikiLink);
 			}
-			if (!StringUtils.isBlank(wikiLink.getNamespace())) {
-				if (WikiBase.getDataHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
-					// link to another virtual wiki
-					virtualWiki = wikiLink.getNamespace();
-					wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
-				}
+			if (wikiLink.getVirtualWiki() != null) {
+				// link to another virtual wiki
+				virtualWiki = wikiLink.getVirtualWiki().getName();
 			}
 			if (StringUtils.isBlank(wikiLink.getText()) && !StringUtils.isBlank(wikiLink.getDestination())) {
 				wikiLink.setText(wikiLink.getDestination());
@@ -174,7 +171,8 @@ public class WikiLinkTag implements JFlexParserTag {
 	 *
 	 */
 	private String processLinkContent(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
-		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(raw);
+		String virtualWiki = parserInput.getVirtualWiki();
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(virtualWiki, raw);
 		if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
 			// no destination or section
 			return raw;
@@ -186,12 +184,13 @@ public class WikiLinkTag implements JFlexParserTag {
 	 *
 	 */
 	private String processLinkMetadata(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws ParserException {
-		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(raw);
+		String virtualWiki = parserInput.getVirtualWiki();
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(virtualWiki, raw);
 		if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
 			return raw;
 		}
 		String result = raw;
-		if (!wikiLink.getColon() && StringUtils.equals(wikiLink.getNamespace(), NamespaceHandler.NAMESPACE_CATEGORY)) {
+		if (!wikiLink.getColon() && wikiLink.getNamespace().equals(Namespace.CATEGORY)) {
 			String sortKey = wikiLink.getText();
 			if (!StringUtils.isBlank(sortKey)) {
 				sortKey = JFlexParserUtil.parseFragment(parserInput, sortKey, JFlexParser.MODE_PREPROCESS);

@@ -49,11 +49,11 @@ public class LinkTag extends BodyTagSupport {
 		if (!StringUtils.isBlank(this.target)) {
 			tagTarget = this.target;
 		}
-		WikiLink wikiLink = LinkUtil.parseWikiLink(this.value);
 		String tagText = buildLinkText();
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		String url = null;
 		String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, this.value);
 		if (!StringUtils.isBlank(this.queryParams)) {
 			wikiLink.setQuery(this.queryParams);
 		}

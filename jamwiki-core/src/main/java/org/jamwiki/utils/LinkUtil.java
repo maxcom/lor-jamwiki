@@ -24,7 +24,10 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiImage;
 
@@ -171,10 +174,10 @@ public class LinkUtil {
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		StringBuilder html = new StringBuilder();
-		if (topic.getTopicType() == Topic.TYPE_FILE) {
+		if (topic.getTopicType() == TopicType.FILE) {
 			// file, not an image
 			if (StringUtils.isBlank(caption)) {
-				caption = topicName.substring(NamespaceHandler.NAMESPACE_IMAGE.length() + 1);
+				caption = topicName.substring(Namespace.FILE.getLabel(virtualWiki).length() + 1);
 			}
 			html.append("<a href=\"").append(url).append("\">");
 			if (escapeHtml) {
@@ -326,7 +329,7 @@ public class LinkUtil {
 		if (StringUtils.isBlank(topic)) {
 			return null;
 		}
-		WikiLink wikiLink = LinkUtil.parseWikiLink(topic);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, topic);
 		if (validateTopic) {
 			return LinkUtil.buildTopicUrl(context, virtualWiki, wikiLink);
 		} else {
@@ -409,7 +412,7 @@ public class LinkUtil {
 	 *
 	 */
 	private static String buildUploadLink(String context, String virtualWiki, String topicName) throws DataAccessException {
-		WikiLink uploadLink = LinkUtil.parseWikiLink("Special:Upload?topic=" + topicName);
+		WikiLink uploadLink = LinkUtil.parseWikiLink(virtualWiki, "Special:Upload?topic=" + topicName);
 		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, uploadLink, topicName, "edit", null, true);
 	}
 
@@ -421,11 +424,7 @@ public class LinkUtil {
 	 * @return The HTML anchor tag for the interwiki link.
 	 */
 	public static String interWiki(WikiLink wikiLink) {
-		// remove namespace from link destination
-		String destination = wikiLink.getDestination();
-		String namespace = wikiLink.getNamespace();
-		destination = destination.substring(wikiLink.getNamespace().length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
-		String url = InterWikiHandler.formatInterWiki(namespace, destination);
+		String url = InterWikiHandler.formatInterWiki(wikiLink.getInterWiki(), wikiLink.getDestination());
 		String text = (!StringUtils.isBlank(wikiLink.getText())) ? wikiLink.getText() : wikiLink.getDestination();
 		return "<a class=\"interwiki\" rel=\"nofollow\" title=\"" + text + "\" href=\"" + url + "\">" + text + "</a>";
 	}
@@ -461,6 +460,15 @@ public class LinkUtil {
 	}
 
 	/**
+	 *
+	 */
+	private static int prefixPosition(String topicName) {
+		int prefixPosition = topicName.indexOf(Namespace.SEPARATOR, 1);
+		// if a match is found and it's not the last character of the name, it's a prefix.
+		return (prefixPosition != -1 && (prefixPosition + 1) < topicName.length()) ? prefixPosition : -1;
+	}
+
+	/**
 	 * Make sure a URL does not contain any extraneous characters such as "//" in
 	 * places where it should not.
 	 *
@@ -485,10 +493,11 @@ public class LinkUtil {
 	 * Parse a wiki topic link and return a <code>WikiLink</code> object
 	 * representing the link.  Wiki topic links are of the form "Topic?Query#Section".
 	 *
+	 * @param virtualWiki The current virtual wiki.
 	 * @param raw The raw topic link text.
 	 * @return A WikiLink object that represents the link.
 	 */
-	public static WikiLink parseWikiLink(String raw) {
+	public static WikiLink parseWikiLink(String virtualWiki, String raw) {
 		// note that this functionality was previously handled with a regular
 		// expression, but the expression caused CPU usage to spike to 100%
 		// with topics such as "Urnordisch oder Nordwestgermanisch?"
@@ -515,23 +524,86 @@ public class LinkUtil {
 			wikiLink.setQuery(queryString);
 			processed = processed.substring(0, queryPos);
 		}
-		// since we're having so much fun, let's find a namespace (default empty).
-		String namespaceString = "";
-		int namespacePos = processed.indexOf(':', 1);
-		if (namespacePos != -1 && namespacePos < processed.length()) {
-			namespaceString = processed.substring(0, namespacePos).trim();
+		// search for a namespace or virtual wiki
+		String topic = LinkUtil.processVirtualWiki(processed, wikiLink);
+		if (wikiLink.getVirtualWiki() != null) {
+			// strip the virtual wiki
+			processed = topic;
+			virtualWiki = wikiLink.getVirtualWiki().getName();
 		}
-		wikiLink.setNamespace(namespaceString);
-		String topic = processed;
-		if (namespacePos > 0 && (namespacePos + 1) < processed.length()) {
-			// get namespace, unless topic ends with a colon
-			topic = processed.substring(namespacePos + 1).trim();
-			// update original text in case topic was of the form "namespace: topic"
-			processed = namespaceString + ':' + topic;
+		topic = LinkUtil.processNamespace(virtualWiki, topic, wikiLink);
+		if (wikiLink.getNamespace() != Namespace.MAIN) {
+			// update original text in case topic was of the form "xxx: topic"
+			processed = wikiLink.getNamespace().getLabel(virtualWiki) + Namespace.SEPARATOR + topic;
+		}
+		// if no namespace or virtual wiki, see if there's an interwiki link
+		if (wikiLink.getNamespace() == Namespace.MAIN && wikiLink.getVirtualWiki() == null) {
+			topic = LinkUtil.processInterWiki(processed, wikiLink);
+			if (wikiLink.getInterWiki() != null) {
+				// strip the interwiki
+				processed = topic;
+			}
 		}
 		wikiLink.setArticle(Utilities.decodeTopicName(topic, true));
 		// destination is namespace + topic
 		wikiLink.setDestination(Utilities.decodeTopicName(processed, true));
 		return wikiLink;
+	}
+
+	/**
+	 *
+	 */
+	private static String processInterWiki(String processed, WikiLink wikiLink) {
+		int prefixPosition = LinkUtil.prefixPosition(processed);
+		if (prefixPosition == -1) {
+			return processed;
+		}
+		String linkPrefix = processed.substring(0, prefixPosition).trim();
+		if (InterWikiHandler.isInterWiki(linkPrefix)) {
+			wikiLink.setInterWiki(linkPrefix);
+		}
+		return (wikiLink.getInterWiki() != null) ? processed.substring(prefixPosition + Namespace.SEPARATOR.length()).trim(): processed;
+	}
+
+	/**
+	 *
+	 */
+	private static String processVirtualWiki(String processed, WikiLink wikiLink) {
+		int prefixPosition = LinkUtil.prefixPosition(processed);
+		if (prefixPosition == -1) {
+			return processed;
+		}
+		String linkPrefix = processed.substring(0, prefixPosition).trim();
+		try {
+			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(linkPrefix);
+			if (virtualWiki != null) {
+				wikiLink.setVirtualWiki(virtualWiki);
+			}
+		} catch (DataAccessException e) {
+			// this should not happen, if it does then swallow the error
+			logger.warning("Failure while trying to lookup virtual wiki: " + linkPrefix, e);
+		}
+		return (wikiLink.getVirtualWiki() != null) ? processed.substring(prefixPosition + Namespace.SEPARATOR.length()).trim(): processed;
+	}
+
+	/**
+	 *
+	 */
+	private static String processNamespace(String virtualWiki, String processed, WikiLink wikiLink) {
+		int prefixPosition = LinkUtil.prefixPosition(processed);
+		if (prefixPosition == -1) {
+			return processed;
+		}
+		String linkPrefix = processed.substring(0, prefixPosition).trim();
+		try {
+			Namespace namespace = WikiBase.getDataHandler().lookupNamespace(virtualWiki, linkPrefix);
+			if (namespace != null) {
+				wikiLink.setNamespace(namespace);
+			}
+		} catch (DataAccessException e) {
+			// this should not happen, if it does then swallow the error
+			logger.warning("Failure while trying to lookup namespace: " + linkPrefix, e);
+		}
+		return (wikiLink.getNamespace() != Namespace.MAIN) ? processed.substring(prefixPosition + Namespace.SEPARATOR.length()).trim(): processed;
 	}
 }

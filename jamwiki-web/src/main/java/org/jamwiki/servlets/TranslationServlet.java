@@ -28,10 +28,11 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
@@ -188,18 +189,16 @@ public class TranslationServlet extends JAMWikiServlet {
 	private void writeTopic(HttpServletRequest request, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		String language = request.getParameter("language");
-		String topicName = NamespaceHandler.NAMESPACE_JAMWIKI + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeTopicName(filename(language), true);
+		String topicName = Namespace.JAMWIKI.getLabel(virtualWiki) + Namespace.SEPARATOR + Utilities.decodeTopicName(filename(language), true);
 		String contents = "<pre><nowiki>\n" + Utilities.readFile(filename(language)) + "\n</nowiki></pre>";
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null) {
-			topic = new Topic();
-			topic.setVirtualWiki(virtualWiki);
-			topic.setName(topicName);
+			topic = new Topic(virtualWiki, topicName);
 		}
 		int charactersChanged = StringUtils.length(contents) - StringUtils.length(topic.getTopicContent());
 		topic.setTopicContent(contents);
 		topic.setReadOnly(true);
-		topic.setTopicType(Topic.TYPE_SYSTEM_FILE);
+		topic.setTopicType(TopicType.SYSTEM_FILE);
 		WikiUser user = ServletUtil.currentWikiUser();
 		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), null, contents, charactersChanged);
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);

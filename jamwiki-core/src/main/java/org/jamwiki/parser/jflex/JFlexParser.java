@@ -27,7 +27,6 @@ import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -295,16 +294,13 @@ public class JFlexParser extends AbstractParser {
 		// pre-process the text to remove comments, categories, etc.
 		String preprocessed = JFlexParserUtil.parseFragment(parserInput, raw, JFlexParser.MODE_PREPROCESS);
 		String redirect = this.isRedirect(preprocessed);
-		WikiLink wikiLink = JFlexParserUtil.parseWikiLink("[[" + redirect + "]]");
-		String style = "redirect";
 		String virtualWiki = this.parserInput.getVirtualWiki();
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(virtualWiki, "[[" + redirect + "]]");
+		String style = "redirect";
 		try {
 			// see if the redirect link starts with a virtual wiki
-			if (wikiLink.getColon() && !StringUtils.isBlank(wikiLink.getNamespace())) {
-				if (WikiBase.getDataHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
-					virtualWiki = wikiLink.getNamespace();
-					wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
-				}
+			if (wikiLink.getVirtualWiki() != null) {
+				virtualWiki = wikiLink.getVirtualWiki().getName();
 			}
 			if (!LinkUtil.isExistingArticle(virtualWiki, wikiLink.getDestination())) {
 				style = "edit redirect";

@@ -21,12 +21,15 @@ import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.LogItem;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.RoleMap;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
@@ -379,6 +382,25 @@ public interface DataHandler {
 	List<Category> lookupCategoryTopics(String virtualWiki, String categoryName) throws DataAccessException;
 
 	/**
+	 * Given a namespace string, return the namespace that corresponds to that string,
+	 * or <code>null</code> if no match exists.
+	 *
+	 * @param virtualWiki The virtual wiki for the namespace being queried.
+	 * @param namespaceString The value to query to see if a matching namespace exists.
+	 * @return The matching Namespace object, or <code>null</code> if no match is found.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	Namespace lookupNamespace(String virtualWiki, String namespaceString) throws DataAccessException;
+
+	/**
+	 * Return all namespaces currently available for the wiki.
+	 *
+	 * @return A list of all Namespace objects currently available for the wiki.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	List<Namespace> lookupNamespaces() throws DataAccessException;
+
+	/**
 	 * Retrieve a Topic object that matches the given virtual wiki and topic
 	 * name.
 	 *
@@ -431,11 +453,11 @@ public interface DataHandler {
 	 *  as topicType1 if only one type is needed.
 	 * @param pagination A Pagination object indicating the total number of
 	 *  results and offset for the results to be retrieved.
-	 * @return A List of topic names for all non-deleted topics in the
+	 * @return A map of topic id and topic name for all non-deleted topics in the
 	 *  virtual wiki that match a specific topic type.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<String> lookupTopicByType(String virtualWiki, int topicType1, int topicType2, Pagination pagination) throws DataAccessException;
+	Map<Integer, String> lookupTopicByType(String virtualWiki, TopicType topicType1, TopicType topicType2, Pagination pagination) throws DataAccessException;
 
 	/**
 	 * Retrieve a TopicVersion object for a given topic version ID.
@@ -663,6 +685,32 @@ public interface DataHandler {
 	 * @throws WikiException Thrown if the file information is invalid.
 	 */
 	void writeFile(WikiFile wikiFile, WikiFileVersion wikiFileVersion) throws DataAccessException, WikiException;
+
+	/**
+	 * Add or update a namespace.  This method will add a new record if the
+	 * namespace does not already exist, otherwise it will update the existing
+	 * record.
+	 *
+	 * @param mainNamespace The namespace object to add to the database.
+	 * @param commentsNamespace The comments namespace object to add to the database
+	 *  for the corresponding main namespace.  This argument can be <code>null</code>
+	 *  if there is no comments namespace.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the namespace information is invalid.
+	 */
+	void writeNamespace(Namespace mainNamespace, Namespace commentsNamespace) throws DataAccessException, WikiException;
+
+	/**
+	 * Add or update virtual-wiki specific labels for a namespace.  This method will
+	 * remove existing records for the virtual wiki and add the new ones.
+	 *
+	 * @param namespaces The namespace translation records to add/update.
+	 * @param virtualWiki The virtual wiki for which namespace translations are
+	 *  being added or updated.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the namespace information is invalid.
+	 */
+	void writeNamespaceTranslations(List<Namespace> namespaces, String virtualWiki) throws DataAccessException, WikiException;
 
 	/**
 	 * Add or update a Role object.  This method will add a new record if

@@ -36,7 +36,9 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiImage;
 import org.jamwiki.model.WikiFile;
@@ -151,8 +153,8 @@ public class ImageUtil {
 	/**
 	 * Given an image file name, generate the appropriate topic name for the image.
 	 */
-	public static String generateFileTopicName(String filename) {
-		String topicName = NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR;
+	public static String generateFileTopicName(String virtualWiki, String filename) {
+		String topicName = Namespace.FILE.getLabel(virtualWiki) + Namespace.SEPARATOR;
 		topicName += Utilities.decodeAndEscapeTopicName(filename, true);
 		return topicName;
 	}
@@ -403,16 +405,14 @@ public class ImageUtil {
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		int charactersChanged = 0;
 		if (topic == null) {
-			topic = new Topic();
-			topic.setVirtualWiki(virtualWiki);
-			topic.setName(topicName);
+			topic = new Topic(virtualWiki, topicName);
 			topic.setTopicContent(contents);
 			charactersChanged = StringUtils.length(contents);
 		}
 		if (isImage) {
-			topic.setTopicType(Topic.TYPE_IMAGE);
+			topic.setTopicType(TopicType.IMAGE);
 		} else {
-			topic.setTopicType(Topic.TYPE_FILE);
+			topic.setTopicType(TopicType.FILE);
 		}
 		TopicVersion topicVersion = new TopicVersion(user, ipAddress, contents, topic.getTopicContent(), charactersChanged);
 		topicVersion.setEditType(TopicVersion.EDIT_UPLOAD);

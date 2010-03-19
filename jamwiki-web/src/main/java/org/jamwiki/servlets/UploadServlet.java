@@ -26,11 +26,11 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.ImageUtil;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -59,7 +59,7 @@ public class UploadServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private String processDestinationFilename(String destinationFilename, String filename) {
+	private String processDestinationFilename(String virtualWiki, String destinationFilename, String filename) {
 		if (StringUtils.isBlank(destinationFilename)) {
 			return destinationFilename;
 		}
@@ -68,7 +68,7 @@ public class UploadServlet extends JAMWikiServlet {
 			destinationFilename += (!destinationFilename.endsWith(".") ? "." : "") + FilenameUtils.getExtension(filename);
 		}
 		// if the user entered a file name of the form "Image:Foo.jpg" strip the namespace
-		return StringUtils.removeStart(destinationFilename, NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR);
+		return StringUtils.removeStart(destinationFilename, Namespace.FILE.getLabel(virtualWiki) + Namespace.SEPARATOR);
 	}
 
 	/**
@@ -122,8 +122,8 @@ public class UploadServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("upload.error.filenotfound"));
 		}
 		String virtualWiki = pageInfo.getVirtualWikiName();
-		destinationFilename = processDestinationFilename(destinationFilename, filename);
-		String topicName = ImageUtil.generateFileTopicName((!StringUtils.isEmpty(destinationFilename) ? destinationFilename : filename));
+		destinationFilename = processDestinationFilename(virtualWiki, destinationFilename, filename);
+		String topicName = ImageUtil.generateFileTopicName(virtualWiki, (!StringUtils.isEmpty(destinationFilename) ? destinationFilename : filename));
 		if (this.handleSpam(request, next, topicName, contents, null)) {
 			// delete the spam file
 			uploadedFile.delete();

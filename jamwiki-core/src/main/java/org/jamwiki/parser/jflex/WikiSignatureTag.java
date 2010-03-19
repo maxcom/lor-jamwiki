@@ -20,10 +20,10 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -106,10 +106,10 @@ public class WikiSignatureTag implements JFlexParserTag {
 		}
 		MessageFormat formatter = new MessageFormat(Environment.getValue(Environment.PROP_PARSER_SIGNATURE_USER_PATTERN));
 		Object params[] = new Object[7];
-		params[0] = NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + login;
+		params[0] = Namespace.USER.getLabel(parserInput.getVirtualWiki()) + Namespace.SEPARATOR + login;
 		// FIXME - hard coding
-		params[1] = NamespaceHandler.NAMESPACE_SPECIAL + NamespaceHandler.NAMESPACE_SEPARATOR + "Contributions?contributor=" + login;
-		params[2] = NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + login;
+		params[1] = Namespace.SPECIAL.getLabel(parserInput.getVirtualWiki()) + Namespace.SEPARATOR + "Contributions?contributor=" + login;
+		params[2] = Namespace.USER_COMMENTS.getLabel(parserInput.getVirtualWiki()) + Namespace.SEPARATOR + login;
 		params[3] = login;
 		params[4] = displayName;
 		params[5] = email!=null ? email : "";

@@ -23,8 +23,8 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -251,34 +251,6 @@ public class WikiPageInfo {
 	}
 
 	/**
-	 * Return the namespace of the topic displayed by the current page.  The
-	 * namespace is the part of topic name, up to the colon.  For regular
-	 * articles the namespace is an empty string.
-	 *
-	 * The namespace cannot be set directly, only the topic name can be set.
-	 *
-	 * @return The wiki namespace of this page, or an empty string for pages
-	 *  in the main namespace.
-	 * @see #getPagename
-	 * @see #getTopicName
-	 */
-	public String getNamespace() {
-		WikiLink wikiLink = LinkUtil.parseWikiLink(this.getTopicName());
-		return wikiLink.getNamespace();
-	}
-
-	/**
-	 * Return the name of the current page, which is the name of the topic
-	 * being viewed (without the namespace).
-	 *
-	 * @return Name of the page.
-	 */
-	public String getPagename() {
-		WikiLink wikiLink = LinkUtil.parseWikiLink(this.getTopicName());
-		return wikiLink.getArticle();
-	}
-
-	/**
 	 * Return a LinkedHashMap containing the topic and text for all links
 	 * that should appear for the tab menu.
 	 *
@@ -374,13 +346,7 @@ public class WikiPageInfo {
 	 *  user page, otherwise <code>false</code>.
 	 */
 	public boolean isUserPage() {
-		WikiLink wikiLink = LinkUtil.parseWikiLink(this.getTopicName());
-		if (wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_USER)) {
-			return true;
-		}
-		if (wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_USER_COMMENTS)) {
-			return true;
-		}
-		return false;
+		WikiLink wikiLink = LinkUtil.parseWikiLink(this.virtualWikiName, this.getTopicName());
+		return (wikiLink.getNamespace().equals(Namespace.USER) || wikiLink.getNamespace().equals(Namespace.USER_COMMENTS));
 	}
 }

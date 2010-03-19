@@ -45,7 +45,9 @@ import org.jamwiki.authentication.RoleImpl;
 import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.model.Category;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiFileVersion;
@@ -56,7 +58,6 @@ import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.SpamFilter;
 import org.jamwiki.utils.Utilities;
@@ -299,7 +300,7 @@ public class ServletUtil {
 	 *  initializing the topic object.
 	 */
 	protected static Topic initializeTopic(String virtualWiki, String topicName) throws WikiException {
-		WikiUtil.validateTopicName(topicName);
+		WikiUtil.validateTopicName(virtualWiki, topicName);
 		Topic topic = null;
 		try {
 			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
@@ -309,12 +310,9 @@ public class ServletUtil {
 		if (topic != null) {
 			return topic;
 		}
-		topic = new Topic();
-		topic.setName(topicName);
-		topic.setVirtualWiki(virtualWiki);
-		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-		String namespace = wikiLink.getNamespace();
-		topic.setTopicType(WikiUtil.findTopicTypeForNamespace(namespace));
+		topic = new Topic(virtualWiki, topicName);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, topicName);
+		topic.setTopicType(WikiUtil.findTopicTypeForNamespace(wikiLink.getNamespace()));
 		return topic;
 	}
 
@@ -425,7 +423,7 @@ public class ServletUtil {
 	 * @throws WikiException Thrown if any error occurs during processing.
 	 */
 	protected static void loadCategoryContent(ModelAndView next, String virtualWiki, String topicName) throws WikiException {
-		String categoryName = topicName.substring(NamespaceHandler.NAMESPACE_CATEGORY.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
+		String categoryName = topicName.substring(Namespace.CATEGORY.getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
 		next.addObject("categoryName", categoryName);
 		List<Category> categoryTopics = null;
 		try {
@@ -439,14 +437,14 @@ public class ServletUtil {
 		// loop through the results and split out images and sub-categories
 		while (i < categoryTopics.size()) {
 			Category category = categoryTopics.get(i);
-			if (category.getTopicType() == Topic.TYPE_IMAGE) {
+			if (category.getTopicType() == TopicType.IMAGE) {
 				categoryTopics.remove(i);
 				categoryImages.add(category);
 				continue;
 			}
-			if (category.getTopicType() == Topic.TYPE_CATEGORY) {
+			if (category.getTopicType() == TopicType.CATEGORY) {
 				categoryTopics.remove(i);
-				String value = category.getChildTopicName().substring(NamespaceHandler.NAMESPACE_CATEGORY.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
+				String value = category.getChildTopicName().substring(Namespace.CATEGORY.getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
 				subCategories.put(category.getChildTopicName(), value);
 				continue;
 			}
@@ -728,8 +726,8 @@ public class ServletUtil {
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		WikiUtil.validateTopicName(topic.getName());
-		if (allowRedirect && topic.getTopicType() == Topic.TYPE_REDIRECT && (request.getParameter("redirect") == null || !request.getParameter("redirect").equalsIgnoreCase("no"))) {
+		WikiUtil.validateTopicName(topic.getVirtualWiki(), topic.getName());
+		if (allowRedirect && topic.getTopicType() == TopicType.REDIRECT && (request.getParameter("redirect") == null || !request.getParameter("redirect").equalsIgnoreCase("no"))) {
 			Topic child = null;
 			try {
 				child = WikiUtil.findRedirectedTopic(topic, 0);
@@ -778,16 +776,16 @@ public class ServletUtil {
 		if (parserOutput.getCategories().size() > 0) {
 			LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>();
 			for (String key : parserOutput.getCategories().keySet()) {
-				String value = key.substring(NamespaceHandler.NAMESPACE_CATEGORY.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
+				String value = key.substring(Namespace.CATEGORY.getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
 				categories.put(key, value);
 			}
 			next.addObject("categories", categories);
 		}
 		topic.setTopicContent(content);
-		if (topic.getTopicType() == Topic.TYPE_CATEGORY) {
+		if (topic.getTopicType() == TopicType.CATEGORY) {
 			loadCategoryContent(next, virtualWiki, topic.getName());
 		}
-		if (topic.getTopicType() == Topic.TYPE_IMAGE || topic.getTopicType() == Topic.TYPE_FILE) {
+		if (topic.getTopicType() == TopicType.IMAGE || topic.getTopicType() == TopicType.FILE) {
 			List<WikiFileVersion> fileVersions = null;
 			try {
 				fileVersions = WikiBase.getDataHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
@@ -814,7 +812,7 @@ public class ServletUtil {
 				}
 			}
 			next.addObject("fileVersions", fileVersions);
-			if (topic.getTopicType() == Topic.TYPE_IMAGE) {
+			if (topic.getTopicType() == TopicType.IMAGE) {
 				next.addObject("topicImage", true);
 			} else {
 				next.addObject("topicFile", true);

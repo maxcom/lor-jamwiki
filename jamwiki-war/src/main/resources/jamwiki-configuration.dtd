@@ -13,8 +13,6 @@
 <!ELEMENT search-engines (search-engine*)>
 <!ELEMENT search-engine (name, class, key?, state?)>
 
-<!ELEMENT namespaces (namespace*)>
-<!ELEMENT namespace (name, main, comments)>
 <!ELEMENT main (#PCDATA)>
 <!ELEMENT comments (#PCDATA)>
 

@@ -18,18 +18,20 @@ package org.jamwiki.servlets;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.servlet.ModelAndView;
@@ -76,9 +78,9 @@ public class ItemsServlet extends JAMWikiServlet {
 	private void viewFiles(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		List<String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_FILE, Topic.TYPE_FILE, pagination);
+		Map<Integer, String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, TopicType.FILE, TopicType.FILE, pagination);
 		next.addObject("itemCount", items.size());
-		next.addObject("items", items);
+		next.addObject("items", items.values());
 		next.addObject("rootUrl", "Special:Filelist");
 		pageInfo.setPageTitle(new WikiMessage("allfiles.title"));
 		pageInfo.setContentJsp(JSP_ITEMS);
@@ -103,7 +105,7 @@ public class ItemsServlet extends JAMWikiServlet {
 				logger.warning("No topic found: " + virtualWiki + " / " + topicName);
 				continue;
 			}
-			if (topic.getTopicType() != Topic.TYPE_ARTICLE) {
+			if (topic.getTopicType() != TopicType.ARTICLE) {
 				continue;
 			}
 			// only mark them orphaned if there is neither category defined in it, nor a link to it!
@@ -150,11 +152,12 @@ public class ItemsServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void viewUsers(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		List<String> items = WikiBase.getDataHandler().lookupWikiUsers(pagination);
 		List<String> links = new ArrayList<String>();
 		for (String link : items) {
-			links.add(NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + link);
+			links.add(Namespace.USER.getLabel(virtualWiki) + Namespace.SEPARATOR + link);
 		}
 		next.addObject("itemCount", items.size());
 		next.addObject("items", links);
@@ -170,9 +173,9 @@ public class ItemsServlet extends JAMWikiServlet {
 	private void viewImages(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		List<String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_IMAGE, Topic.TYPE_IMAGE, pagination);
+		Map<Integer, String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, TopicType.IMAGE, TopicType.IMAGE, pagination);
 		next.addObject("itemCount", items.size());
-		next.addObject("items", items);
+		next.addObject("items", items.values());
 		next.addObject("rootUrl", "Special:Imagelist");
 		pageInfo.setPageTitle(new WikiMessage("allimages.title"));
 		pageInfo.setContentJsp(JSP_ITEMS);
@@ -185,9 +188,9 @@ public class ItemsServlet extends JAMWikiServlet {
 	private void viewTopics(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		List<String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_ARTICLE, Topic.TYPE_TEMPLATE, pagination);
+		Map<Integer, String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, TopicType.ARTICLE, TopicType.TEMPLATE, pagination);
 		next.addObject("itemCount", items.size());
-		next.addObject("items", items);
+		next.addObject("items", items.values());
 		next.addObject("rootUrl", "Special:Allpages");
 		pageInfo.setPageTitle(new WikiMessage("alltopics.title"));
 		pageInfo.setContentJsp(JSP_ITEMS);

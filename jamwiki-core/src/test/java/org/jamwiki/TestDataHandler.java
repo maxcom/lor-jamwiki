@@ -19,6 +19,7 @@ package org.jamwiki;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -26,10 +27,12 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.LogItem;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.RoleMap;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
@@ -48,6 +51,20 @@ public class TestDataHandler implements DataHandler {
 	private static final WikiLogger logger = WikiLogger.getLogger(TestDataHandler.class.getName());
 	/** Keep a map of topic name and topic object in memory to support the writeTopic method. */
 	private Map<String, Topic> topics = new LinkedHashMap<String, Topic>();
+	/** Create a list of namespaces for lookup purposes. */
+	private static List<Namespace> TEST_NAMESPACES = new ArrayList<Namespace>();
+
+	static {
+		for (Namespace namespace : Namespace.DEFAULT_NAMESPACES.values()) {
+			// test handler, so hard code translations for the "test" virtual wiki
+			if (namespace == Namespace.USER) {
+				namespace.getNamespaceTranslations().put("test", "UserTest");
+			} else if (namespace == Namespace.USER_COMMENTS) {
+				namespace.getNamespaceTranslations().put("test", "UserTest comments");
+			}
+			TEST_NAMESPACES.add(namespace);
+		}
+	}
 
 	/**
 	 *
@@ -213,6 +230,25 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public Namespace lookupNamespace(String virtualWiki, String namespaceString) throws DataAccessException {
+		for (Namespace namespace : TEST_NAMESPACES) {
+			if (namespace.getLabel(virtualWiki).equals(namespaceString)) {
+				return namespace;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 *
+	 */
+	public List<Namespace> lookupNamespaces() throws DataAccessException {
+		return new ArrayList<Namespace>(TEST_NAMESPACES);
+	}
+
+	/**
+	 *
+	 */
 	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Connection conn) throws DataAccessException {
 		String content = null;
 		if (topics.get(topicName) != null) {
@@ -227,9 +263,7 @@ public class TestDataHandler implements DataHandler {
 		if (content == null) {
 			return null;
 		}
-		Topic topic = new Topic();
-		topic.setName(topicName);
-		topic.setVirtualWiki(virtualWiki);
+		Topic topic = new Topic(virtualWiki, topicName);
 		topic.setTopicContent(content);
 		return topic;
 	}
@@ -251,7 +285,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List<String> lookupTopicByType(String virtualWiki, int topicType1, int topicType2, Pagination pagination) throws DataAccessException {
+	public Map<Integer, String> lookupTopicByType(String virtualWiki, TopicType topicType1, TopicType topicType2, Pagination pagination) throws DataAccessException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -405,6 +439,20 @@ public class TestDataHandler implements DataHandler {
 	 *
 	 */
 	public void writeFile(WikiFile wikiFile, WikiFileVersion wikiFileVersion) throws DataAccessException, WikiException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
+	public void writeNamespace(Namespace mainNamespace, Namespace commentsNamespace) throws DataAccessException, WikiException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
+	public void writeNamespaceTranslations(List<Namespace> namespaces, String virtualWiki) throws DataAccessException, WikiException {
 		throw new UnsupportedOperationException();
 	}
 

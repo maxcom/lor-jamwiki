@@ -38,14 +38,19 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.RoleImpl;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.transaction.TransactionStatus;
@@ -153,6 +158,53 @@ public class WikiDatabase {
 		}
 		logger.fine("Using NEW data handler: " + handlerClassName);
 		return (DataHandler)Utilities.instantiateClass(handlerClassName);
+	}
+
+	/**
+	 * Utility method for validating that all topics are currently pointing to the correct
+	 * namespace ID.  This method is required for updating data when upgrading to JAMWiki 0.9.0,
+	 * and is also available for use to resolve data issues after creating or updating
+	 * namespace names.
+	 */
+	public static int fixIncorrectTopicNamespaces() throws DataAccessException {
+		Pagination pagination;
+		int numResults = 100;
+		int offset = 0;
+		int count = 0;
+		Map<Integer, String> topicNames;
+		List<Topic> topics;
+		WikiLink wikiLink;
+		List<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			for (VirtualWiki virtualWiki : virtualWikis) {
+				for (TopicType topicType : TopicType.values()) {
+					offset = 0;
+					while (true) {
+						pagination = new Pagination(numResults, offset);
+						topicNames = WikiBase.getDataHandler().lookupTopicByType(virtualWiki.getName(), topicType, topicType, pagination);
+						if (topicNames.isEmpty()) {
+							break;
+						}
+						topics = new ArrayList<Topic>();
+						for (int topicId : topicNames.keySet()) {
+							Topic topic = new Topic(virtualWiki.getName(), topicNames.get(topicId));
+							topic.setTopicId(topicId);
+							topics.add(topic);
+						}
+						WikiDatabase.queryHandler().updateTopicNamespaces(topics, conn);
+						count += topicNames.size();
+						offset += numResults;
+					}
+				}
+			}
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+		return count;
 	}
 
 	/**
@@ -500,6 +552,7 @@ public class WikiDatabase {
 			// set up tables
 			WikiDatabase.queryHandler().createTables(conn);
 			WikiDatabase.setupDefaultVirtualWiki();
+			WikiDatabase.setupDefaultNamespaces();
 			WikiDatabase.setupRoles();
 			WikiDatabase.setupGroups();
 			WikiDatabase.setupAdminUser(user, username, encryptedPassword);
@@ -539,6 +592,7 @@ public class WikiDatabase {
 	 *
 	 */
 	private static void setupAdminUser(WikiUser user, String username, String encryptedPassword) throws DataAccessException, WikiException {
+		logger.info("Creating wiki admin user");
 		if (user == null) {
 			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 		}
@@ -573,7 +627,33 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
+	// FIXME - make this private once the ability to upgrade to 0.9.0 is removed
+	protected static void setupDefaultNamespaces() throws DataAccessException, WikiException {
+		logger.info("Creating default wiki namespaces");
+		List<Namespace> defaultNamespaces = new ArrayList<Namespace>(Namespace.DEFAULT_NAMESPACES.values());
+		Namespace commentsNamespace, mainNamespace;
+		// namespaces are ordered with main first, then comments, so loop through and get each
+		for (int i = 0; i < defaultNamespaces.size(); i++) {
+			mainNamespace = defaultNamespaces.get(i);
+			// some namespaces do not have a comments namespace, so verify one is present
+			commentsNamespace = null;
+			if (defaultNamespaces.size() > (i + 1)) {
+				commentsNamespace = defaultNamespaces.get(i + 1);
+				if (mainNamespace.equals(commentsNamespace.getMainNamespace())) {
+					i++;
+				} else {
+					commentsNamespace = null;
+				}
+			}
+			WikiBase.getDataHandler().writeNamespace(mainNamespace, commentsNamespace);
+		}
+	}
+
+	/**
+	 *
+	 */
 	private static void setupDefaultVirtualWiki() throws DataAccessException, WikiException {
+		logger.info("Creating default virtual wiki");
 		VirtualWiki virtualWiki = new VirtualWiki();
 		virtualWiki.setName(WikiBase.DEFAULT_VWIKI);
 		virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
@@ -584,6 +664,7 @@ public class WikiDatabase {
 	 *
 	 */
 	protected static void setupGroups() throws DataAccessException, WikiException {
+		logger.info("Creating default wiki groups");
 		WikiGroup group = new WikiGroup();
 		group.setName(WikiGroup.GROUP_ANONYMOUS);
 		// FIXME - use message key
@@ -613,6 +694,7 @@ public class WikiDatabase {
 	 *
 	 */
 	protected static void setupRoles() throws DataAccessException, WikiException {
+		logger.info("Creating default wiki roles");
 		Role role = RoleImpl.ROLE_ADMIN;
 		// FIXME - use message key
 		role.setDescription("Provides the ability to perform wiki maintenance tasks not available to normal users.");
@@ -665,9 +747,7 @@ public class WikiDatabase {
 		} catch (IOException e) {
 			throw new DataAccessException(e);
 		}
-		Topic topic = new Topic();
-		topic.setName(topicName);
-		topic.setVirtualWiki(virtualWiki);
+		Topic topic = new Topic(virtualWiki, topicName);
 		topic.setTopicContent(contents);
 		topic.setAdminOnly(adminOnly);
 		int charactersChanged = StringUtils.length(contents);

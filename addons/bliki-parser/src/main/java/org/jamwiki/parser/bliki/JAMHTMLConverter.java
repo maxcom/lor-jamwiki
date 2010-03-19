@@ -9,9 +9,9 @@ import info.bliki.wiki.model.ImageFormat;
 import java.io.IOException;
 import java.util.Map;
 
+import org.jamwiki.model.Namespace;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
 
 public class JAMHTMLConverter extends HTMLConverter {
 	private static final int DEFAULT_THUMBNAIL_SIZE = 180;
@@ -52,7 +52,7 @@ public class JAMHTMLConverter extends HTMLConverter {
 		try {
 			resultBuffer.append(LinkUtil.buildImageLinkHtml(fParserInput.getContext(), fParserInput.getVirtualWiki(), model
 					.getImageNamespace()
-					+ NamespaceHandler.NAMESPACE_SEPARATOR + imageName, frame, thumb, imageFormat.getLocation(), imageFormat.getCaption(),
+					+ Namespace.SEPARATOR + imageName, frame, thumb, imageFormat.getLocation(), imageFormat.getCaption(),
 					pxWidth, false, null, false));
 		} catch (Exception e) {
 			e.printStackTrace();

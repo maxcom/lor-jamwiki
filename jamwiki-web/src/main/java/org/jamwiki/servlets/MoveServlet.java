@@ -24,11 +24,11 @@ import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.RoleImpl;
 import org.jamwiki.authentication.WikiUserDetails;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -78,8 +78,9 @@ public class MoveServlet extends JAMWikiServlet {
 		}
 		String moveCommentsPage = Utilities.decodeAndEscapeTopicName(request.getParameter("moveCommentsPage"), true);
 		if (!StringUtils.isBlank(moveCommentsPage)) {
-			String commentsDestination = WikiUtil.extractCommentsLink(moveDestination);
-			if (WikiUtil.isCommentsPage(moveCommentsPage) && !moveCommentsPage.equals(topicName) && !commentsDestination.equals(moveDestination)) {
+			String virtualWiki = pageInfo.getVirtualWikiName();
+			String commentsDestination = WikiUtil.extractCommentsLink(virtualWiki, moveDestination);
+			if (WikiUtil.isCommentsPage(virtualWiki, moveCommentsPage) && !moveCommentsPage.equals(topicName) && !commentsDestination.equals(moveDestination)) {
 				if (!movePage(request, next, pageInfo, moveCommentsPage, commentsDestination)) {
 					return;
 				}
@@ -103,22 +104,22 @@ public class MoveServlet extends JAMWikiServlet {
 			this.view(request, next, pageInfo);
 			return false;
 		}
-		WikiLink fromWikiLink = LinkUtil.parseWikiLink(moveFrom);
-		WikiLink destinationWikiLink = LinkUtil.parseWikiLink(moveDestination);
-		if (!StringUtils.equals(fromWikiLink.getNamespace(), destinationWikiLink.getNamespace())) {
+		WikiLink fromWikiLink = LinkUtil.parseWikiLink(virtualWiki, moveFrom);
+		WikiLink destinationWikiLink = LinkUtil.parseWikiLink(virtualWiki, moveDestination);
+		if (fromWikiLink.getNamespace() != destinationWikiLink.getNamespace()) {
 			// do not allow moving into or out of image & category namespace
-			if (StringUtils.equals(fromWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_CATEGORY)
-					|| StringUtils.equals(fromWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_CATEGORY_COMMENTS)
-					|| StringUtils.equals(destinationWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_CATEGORY)
-					|| StringUtils.equals(destinationWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_CATEGORY_COMMENTS)
+			if (fromWikiLink.getNamespace().equals(Namespace.CATEGORY)
+					|| fromWikiLink.getNamespace().equals(Namespace.CATEGORY_COMMENTS)
+					|| destinationWikiLink.getNamespace().equals(Namespace.CATEGORY)
+					|| destinationWikiLink.getNamespace().equals(Namespace.CATEGORY_COMMENTS)
 				) {
 				next.addObject("messageObject", new WikiMessage("move.exception.namespacecategory"));
 				this.view(request, next, pageInfo);
 				return false;
-			} else if (StringUtils.equals(fromWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_IMAGE)
-					|| StringUtils.equals(fromWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_IMAGE_COMMENTS)
-					|| StringUtils.equals(destinationWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_IMAGE)
-					|| StringUtils.equals(destinationWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_IMAGE_COMMENTS)
+			} else if (fromWikiLink.getNamespace().equals(Namespace.FILE)
+					|| fromWikiLink.getNamespace().equals(Namespace.FILE_COMMENTS)
+					|| destinationWikiLink.getNamespace().equals(Namespace.FILE)
+					|| destinationWikiLink.getNamespace().equals(Namespace.FILE_COMMENTS)
 				) {
 				next.addObject("messageObject", new WikiMessage("move.exception.namespaceimage"));
 				this.view(request, next, pageInfo);
@@ -157,7 +158,7 @@ public class MoveServlet extends JAMWikiServlet {
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		String commentsPage = WikiUtil.extractCommentsLink(topicName);
+		String commentsPage = WikiUtil.extractCommentsLink(virtualWiki, topicName);
 		Topic commentsTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, commentsPage, false, null);
 		if (commentsTopic != null) {
 			// add option to also move comments page

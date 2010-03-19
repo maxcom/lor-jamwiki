@@ -11,6 +11,9 @@ New Features:
     supported (+, -, /, *) and parentheses must be used to ensure that the
     order of operations is followed.
   * Support Mediawiki's {{subst:}} syntax.  Usage: {{subst:template}}.
+  * New Special:VirtualWiki page for administering virtual wikis and
+    namespaces, including the ability to configure translated / alternate
+    namespaces.
   * Add the ability for sysadmins to create user accounts (hanspeterklapf).
   * Topic add/update is now significantly faster due to query refactoring
     and changes so that the search index is not re-optimized after every
@@ -42,6 +45,10 @@ Bugfixes:
     topics that have extensive history.
   * Properly parse template parameters that are themselves templates, such as
     "{{{{{template_name}}}}}" or "{{{1|{{PAGENAME}}}}}".
+  * Process interwiki links only if the link does not contain a virtual wiki
+    or namespace.  Thus if a wiki has a namespace of "Test" and an interwiki
+    of "Test", the link "Test:Topic" will parse as an internal link rather than
+    an interwiki link.
 
 Translation Updates:
 

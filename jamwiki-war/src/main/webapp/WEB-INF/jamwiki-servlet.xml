@@ -45,6 +45,7 @@
 				<prop key="/**/Special:Translation">Translation</prop>
 				<prop key="/**/Special:Upgrade">Upgrade</prop>
 				<prop key="/**/Special:Upload">Upload</prop>
+				<prop key="/**/Special:VirtualWiki">VirtualWiki</prop>
 				<prop key="/**/Special:Watchlist">Watchlist</prop>
 				<prop key="/**/jamwiki.css">Stylesheet</prop>
 				<prop key="/**/*">Topic</prop>
@@ -84,6 +85,7 @@
 	<bean id="Translation" class="org.jamwiki.servlets.TranslationServlet" />
 	<bean id="Upgrade" class="org.jamwiki.servlets.UpgradeServlet" />
 	<bean id="Upload" class="org.jamwiki.servlets.UploadServlet" />
+	<bean id="VirtualWiki" class="org.jamwiki.servlets.AdminVirtualWikiServlet" />
 	<bean id="Watchlist" class="org.jamwiki.servlets.WatchlistServlet" />
 
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">

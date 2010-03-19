@@ -39,7 +39,6 @@ import org.w3c.dom.NodeList;
  * values.
  *
  * @see org.jamwiki.utils.PseudoTopicHandler
- * @see org.jamwiki.utils.NamespaceHandler
  */
 public class WikiConfiguration {
 
@@ -50,7 +49,6 @@ public class WikiConfiguration {
 
 	private List<WikiConfigurationObject> dataHandlers = null;
 	private Map<String, String> editors = null;
-	private Map<String, String[]> namespaces = null;
 	private List<WikiConfigurationObject> parsers = null;
 	private List<String> pseudotopics = null;
 	private List<WikiConfigurationObject> searchEngines = null;
@@ -63,10 +61,6 @@ public class WikiConfiguration {
 	private static final String XML_DATA_HANDLER_ROOT = "data-handlers";
 	private static final String XML_EDITOR = "editor";
 	private static final String XML_EDITOR_ROOT = "editors";
-	private static final String XML_NAMESPACE = "namespace";
-	private static final String XML_NAMESPACE_COMMENTS = "comments";
-	private static final String XML_NAMESPACE_MAIN = "main";
-	private static final String XML_NAMESPACE_ROOT = "namespaces";
 	private static final String XML_PARAM_CLASS = "class";
 	private static final String XML_PARAM_KEY = "key";
 	private static final String XML_PARAM_NAME = "name";
@@ -114,13 +108,6 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
-	public Map<String, String[]> getNamespaces() {
-		return this.namespaces;
-	}
-
-	/**
-	 *
-	 */
 	public List<WikiConfigurationObject> getParsers() {
 		return this.parsers;
 	}
@@ -152,7 +139,6 @@ public class WikiConfiguration {
 	private void initialize() {
 		this.dataHandlers = new ArrayList<WikiConfigurationObject>();
 		this.editors = new LinkedHashMap<String, String>();
-		this.namespaces = new LinkedHashMap<String, String[]>();
 		this.parsers = new ArrayList<WikiConfigurationObject>();
 		this.pseudotopics = new ArrayList<String>();
 		this.searchEngines = new ArrayList<WikiConfigurationObject>();
@@ -182,8 +168,6 @@ public class WikiConfiguration {
 				this.parseMapNodes(child, this.editors, XML_EDITOR);
 			} else if (child.getNodeName().equals(XML_SEARCH_ENGINE_ROOT)) {
 				this.searchEngines = this.parseConfigurationObjects(child, XML_SEARCH_ENGINE);
-			} else if (child.getNodeName().equals(XML_NAMESPACE_ROOT)) {
-				this.parseNamespaces(child);
 			} else if (child.getNodeName().equals(XML_PSEUDOTOPIC_ROOT)) {
 				this.parsePseudotopics(child);
 			} else if (child.getNodeName().equals(XML_TRANSLATION_ROOT)) {
@@ -264,44 +248,6 @@ public class WikiConfiguration {
 			Node child = children.item(j);
 			if (child.getNodeName().equals(childNodeName)) {
 				this.parseMapNode(child, resultsMap);
-			} else {
-				logUnknownChild(node, child);
-			}
-		}
-	}
-
-	/**
-	 *
-	 */
-	private void parseNamespace(Node node) {
-		NodeList children = node.getChildNodes();
-		String name = "";
-		String main = "";
-		String comments = "";
-		for (int j = 0; j < children.getLength(); j++) {
-			Node child = children.item(j);
-			if (child.getNodeName().equals(XML_PARAM_NAME)) {
-				name = XMLUtil.getTextContent(child);
-			} else if (child.getNodeName().equals(XML_NAMESPACE_MAIN)) {
-				main = XMLUtil.getTextContent(child);
-			} else if (child.getNodeName().equals(XML_NAMESPACE_COMMENTS)) {
-				comments = XMLUtil.getTextContent(child);
-			} else {
-				logUnknownChild(node, child);
-			}
-		}
-		this.namespaces.put(name, new String[]{main, comments});
-	}
-
-	/**
-	 *
-	 */
-	private void parseNamespaces(Node node) {
-		NodeList children = node.getChildNodes();
-		for (int j = 0; j < children.getLength(); j++) {
-			Node child = children.item(j);
-			if (child.getNodeName().equals(XML_NAMESPACE)) {
-				this.parseNamespace(child);
 			} else {
 				logUnknownChild(node, child);
 			}

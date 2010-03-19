@@ -24,11 +24,12 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -114,9 +115,9 @@ public class TemplateTag implements JFlexParserTag {
 			}
 		}
 		// extract the template name
-		String name = this.parseTemplateName(templateContent);
+		String name = this.parseTemplateName(parserInput.getVirtualWiki(), templateContent);
 		boolean inclusion = false;
-		if (name.startsWith(NamespaceHandler.NAMESPACE_SEPARATOR)) {
+		if (name.startsWith(Namespace.SEPARATOR)) {
 			name = name.substring(1);
 			inclusion = true;
 		}
@@ -129,11 +130,11 @@ public class TemplateTag implements JFlexParserTag {
 			result = raw;
 		} else {
 			// make sure template was not redirected
-			if (templateTopic != null && templateTopic.getTopicType() == Topic.TYPE_REDIRECT) {
+			if (templateTopic != null && templateTopic.getTopicType() == TopicType.REDIRECT) {
 				templateTopic = WikiUtil.findRedirectedTopic(templateTopic, 0);
 				name = templateTopic.getName();
 			}
-			if (templateTopic != null && templateTopic.getTopicType() == Topic.TYPE_REDIRECT) {
+			if (templateTopic != null && templateTopic.getTopicType() == TopicType.REDIRECT) {
 				// redirection target does not exist
 				templateTopic = null;
 			}
@@ -238,7 +239,7 @@ public class TemplateTag implements JFlexParserTag {
 	 * Given a template call of the form "{{template|param|param}}", return
 	 * the template name.
 	 */
-	private String parseTemplateName(String raw) throws ParserException {
+	private String parseTemplateName(String virtualWiki, String raw) throws ParserException {
 		String name = raw;
 		int pos = raw.indexOf('|');
 		if (pos != -1) {
@@ -249,13 +250,13 @@ public class TemplateTag implements JFlexParserTag {
 			// FIXME - no need for an exception
 			throw new ParserException("No template name specified");
 		}
-		if (name.startsWith(NamespaceHandler.NAMESPACE_SEPARATOR)) {
+		if (name.startsWith(Namespace.SEPARATOR)) {
 			if (name.length() == 1) {
 				// FIXME - no need for an exception
 				throw new ParserException("No template name specified");
 			}
-		} else if (!name.startsWith(NamespaceHandler.NAMESPACE_TEMPLATE + NamespaceHandler.NAMESPACE_SEPARATOR)) {
-			name = NamespaceHandler.NAMESPACE_TEMPLATE + NamespaceHandler.NAMESPACE_SEPARATOR + StringUtils.capitalize(name);
+		} else if (!name.startsWith(Namespace.TEMPLATE.getLabel(virtualWiki) + Namespace.SEPARATOR)) {
+			name = Namespace.TEMPLATE.getLabel(virtualWiki) + Namespace.SEPARATOR + StringUtils.capitalize(name);
 		}
 		return name;
 	}

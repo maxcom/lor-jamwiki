@@ -21,6 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Properties;
 import org.jamwiki.Environment;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
 
@@ -144,11 +145,11 @@ public class DB2QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	protected PreparedStatement lookupTopicByTypeStatement(Connection conn, int virtualWikiId, int topicType1, int topicType2, Pagination pagination) throws SQLException {
+	protected PreparedStatement lookupTopicByTypeStatement(Connection conn, int virtualWikiId, TopicType topicType1, TopicType topicType2, Pagination pagination) throws SQLException {
 		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
 		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, topicType1);
-		stmt.setInt(3, topicType2);
+		stmt.setInt(2, topicType1.id());
+		stmt.setInt(3, topicType2.id());
 		stmt.setInt(4, pagination.getStart());
 		stmt.setInt(5, pagination.getEnd());
 		return stmt;

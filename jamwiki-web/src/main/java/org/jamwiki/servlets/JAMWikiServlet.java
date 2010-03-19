@@ -27,11 +27,11 @@ import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.RoleImpl;
 import org.jamwiki.authentication.WikiUserDetails;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -103,6 +103,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			if (userDetails.hasRole(RoleImpl.ROLE_SYSADMIN)) {
 				links.put("Special:Admin", new WikiMessage("tab.admin.configuration"));
 				links.put("Special:Maintenance", new WikiMessage("tab.admin.maintenance"));
+				links.put("Special:VirtualWiki", new WikiMessage("tab.admin.vwiki"));
 				links.put("Special:Roles", new WikiMessage("tab.admin.roles"));
 			}
 			if (userDetails.hasRole(RoleImpl.ROLE_TRANSLATE)) {
@@ -117,8 +118,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 			links.put(specialUrl, new WikiMessage("tab.common.special"));
 		} else {
 			try {
-				String article = WikiUtil.extractTopicLink(pageName);
-				String comments = WikiUtil.extractCommentsLink(pageName);
+				String article = WikiUtil.extractTopicLink(virtualWiki, pageName);
+				String comments = WikiUtil.extractCommentsLink(virtualWiki, pageName);
 				links.put(article, new WikiMessage("tab.common.article"));
 				links.put(comments, new WikiMessage("tab.common.comments"));
 				if (ServletUtil.isEditable(virtualWiki, pageName, userDetails)) {
@@ -142,7 +143,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 					links.put(watchlistLink, new WikiMessage(watchlistLabel));
 				}
 				if (pageInfo.isUserPage()) {
-					WikiLink wikiLink = LinkUtil.parseWikiLink(pageName);
+					WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, pageName);
 					String contributionsLink = "Special:Contributions?contributor=" + Utilities.encodeAndEscapeTopicName(wikiLink.getArticle());
 					links.put(contributionsLink, new WikiMessage("tab.common.contributions"));
 				}
@@ -166,6 +167,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * user menu links for the WikiPageInfo object.
 	 */
 	private LinkedHashMap buildUserMenu(WikiPageInfo pageInfo) {
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		LinkedHashMap<String, WikiMessage> links = new LinkedHashMap<String, WikiMessage>();
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
 		if (userDetails.hasRole(RoleImpl.ROLE_ANONYMOUS) && !userDetails.hasRole(RoleImpl.ROLE_EMBEDDED)) {
@@ -179,8 +181,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 		}
 		if (!userDetails.hasRole(RoleImpl.ROLE_ANONYMOUS)) {
 			WikiUser user = ServletUtil.currentWikiUser();
-			String userPage = NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername();
-			String userCommentsPage = NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername();
+			String userPage = Namespace.USER.getLabel(virtualWiki) + Namespace.SEPARATOR + user.getUsername();
+			String userCommentsPage = Namespace.USER_COMMENTS.getLabel(virtualWiki) + Namespace.SEPARATOR + user.getUsername();
 			String username = user.getUsername();
 			if (!StringUtils.isBlank(user.getDisplayName())) {
 				username = user.getDisplayName();
