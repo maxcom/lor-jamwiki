@@ -27,6 +27,8 @@ New Features:
   * Remove all dependencies on Spring from the jamwiki-core project by
     converting org.jamwiki.model.Role to an interface and creating a new
     org.jamwiki.authentication.RoleImpl class.
+  * Run the spam filter against edit comments as well as topic content to
+    thwart spam attempts.
   * Remove ability to automatically upgrade from versions prior to 0.7.0.
   * Upgrade to Spring Framework 3.0.1.RELEASE.
   * Upgrade to Spring Security 3.0.2.RELEASE.
@@ -47,6 +49,10 @@ Bugfixes:
     or namespace.  Thus if a wiki has a namespace of "Test" and an interwiki
     of "Test", the link "Test:Topic" will parse as an internal link rather than
     an interwiki link.
+
+Translation Updates:
+
+  * Updated German translations (axelclk).
 
 
 0.8.3

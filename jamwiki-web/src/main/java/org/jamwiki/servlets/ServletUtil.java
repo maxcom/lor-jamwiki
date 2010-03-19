@@ -146,11 +146,16 @@ public class ServletUtil {
 	 * @param topicName The name of the current topic being edited.
 	 * @param contents The text for the current topic that the user is trying to
 	 *  add.
+	 * @param editComment (Optional) The topic edit comment, which has also been a
+	 *  target for spambots.
 	 * @return <code>null</code> if nothing in the topic content matches a current
 	 *  spam pattern, or the text that matches a spam pattern if one is found.
 	 */
-	protected static String checkForSpam(HttpServletRequest request, String topicName, String contents) throws DataAccessException {
+	protected static String checkForSpam(HttpServletRequest request, String topicName, String contents, String editComment) throws DataAccessException {
 		String result = SpamFilter.containsSpam(contents);
+		if (StringUtils.isBlank(result) && !StringUtils.isBlank(editComment)) {
+			result = SpamFilter.containsSpam(editComment);
+		}
 		if (StringUtils.isBlank(result)) {
 			return null;
 		}
