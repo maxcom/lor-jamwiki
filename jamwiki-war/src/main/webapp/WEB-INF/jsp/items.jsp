@@ -42,6 +42,7 @@
 		&#160;&#160;
 		<input type="submit" value="<fmt:message key="common.go" />" />
 	</div>
+	</fieldset>
 	</form>
 </div>
 </c:if>
