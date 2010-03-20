@@ -196,6 +196,6 @@ public class Namespace implements Serializable {
 	 * Standard equals method.  Two namespaces are equal if they have the same ID.
 	 */
 	public boolean equals(Namespace namespace) {
-		return (namespace != null && this.id.equals(namespace.getId()));
+		return (namespace != null && this.label.equals(namespace.getDefaultLabel()));
 	}
 }
