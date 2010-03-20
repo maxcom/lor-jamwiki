@@ -23,10 +23,33 @@
 
 <%@ include file="page-init.jsp" %>
 
+<div id="items">
+
 <div class="message"><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${itemCount}" rootUrl="${rootUrl}" /></div>
+
+<c:if test="${!empty namespaces}">
+<div class="message">
+	<form method="get" action="<jamwiki:link value="${rootUrl}" />">
+	<input type="hidden" name="num" value="${param.num}" />
+	<fieldset>
+	<legend><fmt:message key="common.namespace" /></legend>
+	<div class="row">
+		<select name="namespace">
+		<c:forEach items="${namespaces}" var="namespace">
+			<option value="${namespace.key}"<c:if test="${namespace.key == param.namespace}"> selected="selected"</c:if>>${namespace.value}</option>
+		</c:forEach>
+		</select>
+		&#160;&#160;
+		<input type="submit" value="<fmt:message key="common.go" />" />
+	</div>
+	</form>
+</div>
+</c:if>
 
 <ol start="<c:out value="${offset + 1}" />">
 <c:forEach items="${items}" var="item">
 <li><jamwiki:link value="${item}" text="${item}" /></li>
 </c:forEach>
 </ol>
+
+</div>

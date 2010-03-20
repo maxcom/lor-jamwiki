@@ -285,7 +285,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Map<Integer, String> lookupTopicByType(String virtualWiki, TopicType topicType1, TopicType topicType2, Pagination pagination) throws DataAccessException {
+	public Map<Integer, String> lookupTopicByType(String virtualWiki, TopicType topicType1, TopicType topicType2, Integer namespaceId, Pagination pagination) throws DataAccessException {
 		throw new UnsupportedOperationException();
 	}
 

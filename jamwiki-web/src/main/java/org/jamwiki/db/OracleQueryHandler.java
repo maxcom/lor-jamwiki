@@ -145,13 +145,15 @@ public class OracleQueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	protected PreparedStatement lookupTopicByTypeStatement(Connection conn, int virtualWikiId, TopicType topicType1, TopicType topicType2, Pagination pagination) throws SQLException {
+	protected PreparedStatement lookupTopicByTypeStatement(Connection conn, int virtualWikiId, TopicType topicType1, TopicType topicType2, int namespaceStart, int namespaceEnd, Pagination pagination) throws SQLException {
 		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, topicType1.id());
 		stmt.setInt(3, topicType2.id());
-		stmt.setInt(4, pagination.getEnd());
-		stmt.setInt(5, pagination.getStart());
+		stmt.setInt(4, namespaceStart);
+		stmt.setInt(5, namespaceEnd);
+		stmt.setInt(6, pagination.getEnd());
+		stmt.setInt(7, pagination.getStart());
 		return stmt;
 	}
 

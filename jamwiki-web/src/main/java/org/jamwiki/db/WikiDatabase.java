@@ -183,7 +183,7 @@ public class WikiDatabase {
 					offset = 0;
 					while (true) {
 						pagination = new Pagination(numResults, offset);
-						topicNames = WikiBase.getDataHandler().lookupTopicByType(virtualWiki.getName(), topicType, topicType, pagination);
+						topicNames = WikiBase.getDataHandler().lookupTopicByType(virtualWiki.getName(), topicType, topicType, null, pagination);
 						if (topicNames.isEmpty()) {
 							break;
 						}

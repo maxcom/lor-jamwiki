@@ -451,13 +451,16 @@ public interface DataHandler {
 	 * @param topicType1 The type of topics to return.
 	 * @param topicType2 The type of topics to return.  Set to the same value
 	 *  as topicType1 if only one type is needed.
+	 * @param namespaceId An optional parameter to specify that results should only
+	 *  be from the specified namespace.  If this value is <code>null</code> then
+	 *  results will be returned from all namespaces.
 	 * @param pagination A Pagination object indicating the total number of
 	 *  results and offset for the results to be retrieved.
 	 * @return A map of topic id and topic name for all non-deleted topics in the
 	 *  virtual wiki that match a specific topic type.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	Map<Integer, String> lookupTopicByType(String virtualWiki, TopicType topicType1, TopicType topicType2, Pagination pagination) throws DataAccessException;
+	Map<Integer, String> lookupTopicByType(String virtualWiki, TopicType topicType1, TopicType topicType2, Integer namespaceId, Pagination pagination) throws DataAccessException;
 
 	/**
 	 * Retrieve a TopicVersion object for a given topic version ID.

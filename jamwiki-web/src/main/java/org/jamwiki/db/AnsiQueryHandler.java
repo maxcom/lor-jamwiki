@@ -2004,13 +2004,13 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public Map<Integer, String> lookupTopicByType(int virtualWikiId, TopicType topicType1, TopicType topicType2, Pagination pagination) throws SQLException {
+	public Map<Integer, String> lookupTopicByType(int virtualWikiId, TopicType topicType1, TopicType topicType2, int namespaceStart, int namespaceEnd, Pagination pagination) throws SQLException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			stmt = this.lookupTopicByTypeStatement(conn, virtualWikiId, topicType1, topicType2, pagination);
+			stmt = this.lookupTopicByTypeStatement(conn, virtualWikiId, topicType1, topicType2, namespaceStart, namespaceEnd, pagination);
 			rs = stmt.executeQuery();
 			Map<Integer, String> results = new HashMap<Integer, String>();
 			while (rs.next()) {
@@ -2025,13 +2025,15 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	protected PreparedStatement lookupTopicByTypeStatement(Connection conn, int virtualWikiId, TopicType topicType1, TopicType topicType2, Pagination pagination) throws SQLException {
+	protected PreparedStatement lookupTopicByTypeStatement(Connection conn, int virtualWikiId, TopicType topicType1, TopicType topicType2, int namespaceStart, int namespaceEnd, Pagination pagination) throws SQLException {
 		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, topicType1.id());
 		stmt.setInt(3, topicType2.id());
-		stmt.setInt(4, pagination.getNumResults());
-		stmt.setInt(5, pagination.getOffset());
+		stmt.setInt(4, namespaceStart);
+		stmt.setInt(5, namespaceEnd);
+		stmt.setInt(6, pagination.getNumResults());
+		stmt.setInt(7, pagination.getOffset());
 		return stmt;
 	}
 

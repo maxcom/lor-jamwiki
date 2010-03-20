@@ -686,6 +686,12 @@ public interface QueryHandler {
 	 * @param topicType2 The topic type (image, normal, etc) for the topics to be
 	 *  retrieved.  Set to the same value as topicType1 if only one topic type is
 	 *  needed.
+	 * @param namespaceStart The minimum namespace ID value for the result set.  This
+	 *  parameter provides a way to use the same queries to return results from all
+	 *  namespaces or from only a single namespace.
+	 * @param namespaceEnd The maximum namespace ID value for the result set.  This
+	 *  parameter provides a way to use the same queries to return results from all
+	 *  namespaces or from only a single namespace.
 	 * @param pagination A Pagination object that specifies the number of results
 	 *  and starting result offset for the result set to be retrieved.
 	 * @return A map of topic id and topic name for all topic names of a given
@@ -693,7 +699,7 @@ public interface QueryHandler {
 	 *  pagination object.  If no results are found then an empty list is returned.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	Map<Integer, String> lookupTopicByType(int virtualWikiId, TopicType topicType1, TopicType topicType2, Pagination pagination) throws SQLException;
+	Map<Integer, String> lookupTopicByType(int virtualWikiId, TopicType topicType1, TopicType topicType2, int namespaceStart, int namespaceEnd, Pagination pagination) throws SQLException;
 
 	/**
 	 * Return a count of all topics, including redirects, comments pages and templates,

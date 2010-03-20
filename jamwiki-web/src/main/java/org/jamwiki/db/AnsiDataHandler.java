@@ -734,10 +734,19 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Map<Integer, String> lookupTopicByType(String virtualWiki, TopicType topicType1, TopicType topicType2, Pagination pagination) throws DataAccessException {
+	public Map<Integer, String> lookupTopicByType(String virtualWiki, TopicType topicType1, TopicType topicType2, Integer namespaceId, Pagination pagination) throws DataAccessException {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		int namespaceStart = (namespaceId != null) ? namespaceId : 0;
+		int namespaceEnd = (namespaceId != null) ? namespaceId : 0;
 		try {
-			return this.queryHandler().lookupTopicByType(virtualWikiId, topicType1, topicType2, pagination);
+			if (namespaceId == null) {
+				// find the largest namespace ID
+				List<Namespace> namespaces = this.lookupNamespaces();
+				for (Namespace namespace : namespaces) {
+					namespaceEnd = (namespace.getId() > namespaceEnd) ? namespace.getId() : namespaceEnd;
+				}
+			}
+			return this.queryHandler().lookupTopicByType(virtualWikiId, topicType1, topicType2, namespaceStart, namespaceEnd, pagination);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}

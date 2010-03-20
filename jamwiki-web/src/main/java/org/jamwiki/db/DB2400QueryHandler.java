@@ -161,12 +161,14 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	protected PreparedStatement lookupTopicByTypeStatement(Connection conn, int virtualWikiId, TopicType topicType1, TopicType topicType2, Pagination pagination) throws SQLException {
+	protected PreparedStatement lookupTopicByTypeStatement(Connection conn, int virtualWikiId, TopicType topicType1, TopicType topicType2, int namespaceStart, int namespaceEnd, Pagination pagination) throws SQLException {
 		String sql = formatStatement(STATEMENT_SELECT_TOPIC_BY_TYPE, pagination);
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, topicType1.id());
 		stmt.setInt(3, topicType2.id());
+		stmt.setInt(4, namespaceStart);
+		stmt.setInt(5, namespaceEnd);
 		return stmt;
 	}
 
