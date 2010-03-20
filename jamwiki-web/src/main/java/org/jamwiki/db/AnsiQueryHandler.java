@@ -2012,7 +2012,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			conn = DatabaseConnection.getConnection();
 			stmt = this.lookupTopicByTypeStatement(conn, virtualWikiId, topicType1, topicType2, namespaceStart, namespaceEnd, pagination);
 			rs = stmt.executeQuery();
-			Map<Integer, String> results = new HashMap<Integer, String>();
+			Map<Integer, String> results = new LinkedHashMap<Integer, String>();
 			while (rs.next()) {
 				results.put(rs.getInt("topic_id"), rs.getString("topic_name"));
 			}
