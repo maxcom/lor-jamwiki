@@ -192,18 +192,9 @@ public class ItemsServlet extends JAMWikiServlet {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		List<Namespace> namespaces = WikiBase.getDataHandler().lookupNamespaces();
-		Map<Integer, String> namespaceMap = new TreeMap<Integer, String>();
 		// find the current namespace and topic type
 		Integer namespaceId = (request.getParameter("namespace") == null) ? Namespace.MAIN.getId() : new Integer(request.getParameter("namespace"));
-		TopicType topicType = TopicType.ARTICLE;
-		for (Namespace namespace : namespaces) {
-			if (namespace.getId() >= 0) {
-				namespaceMap.put(namespace.getId(), namespace.getLabel(virtualWiki));
-			}
-			if (namespace.getId() == namespaceId.intValue()) {
-				topicType = WikiUtil.findTopicTypeForNamespace(namespace);
-			}
-		}
+		TopicType topicType = WikiUtil.findTopicTypeForNamespace(WikiBase.getDataHandler().lookupNamespaceById(namespaceId.intValue()));
 		// retrieve a list of topics for the namespace
 		Map<Integer, String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, TopicType.ARTICLE, topicType, namespaceId, pagination);
 		next.addObject("itemCount", items.size());
@@ -213,6 +204,13 @@ public class ItemsServlet extends JAMWikiServlet {
 			rootUrl += "?namespace=" + namespaceId;
 		}
 		next.addObject("rootUrl", rootUrl);
+		// add a map of namespace id & label for display on the front end.
+		Map<Integer, String> namespaceMap = new TreeMap<Integer, String>();
+		for (Namespace namespace : namespaces) {
+			if (namespace.getId() >= 0) {
+				namespaceMap.put(namespace.getId(), namespace.getLabel(virtualWiki));
+			}
+		}
 		next.addObject("namespaces", namespaceMap);
 		pageInfo.setPageTitle(new WikiMessage("alltopics.title"));
 		pageInfo.setContentJsp(JSP_ITEMS);

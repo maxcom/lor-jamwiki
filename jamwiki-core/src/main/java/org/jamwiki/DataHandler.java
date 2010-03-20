@@ -393,6 +393,16 @@ public interface DataHandler {
 	Namespace lookupNamespace(String virtualWiki, String namespaceString) throws DataAccessException;
 
 	/**
+	 * Given a namespace ID return the corresponding namespace, or <code>null</code>
+	 * if no match exists.
+	 *
+	 * @param namespaceId The ID for the namespace being retrieved.
+	 * @return The matching Namespace object, or <code>null</code> if no match is found.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	Namespace lookupNamespaceById(int namespaceId) throws DataAccessException;
+
+	/**
 	 * Return all namespaces currently available for the wiki.
 	 *
 	 * @return A list of all Namespace objects currently available for the wiki.

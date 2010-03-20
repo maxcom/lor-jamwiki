@@ -634,6 +634,21 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public Namespace lookupNamespaceById(int namespaceId) throws DataAccessException {
+		List<Namespace> namespaces = this.lookupNamespaces();
+		for (Namespace namespace : namespaces) {
+			if (namespace.getId() != null && namespace.getId().intValue() == namespaceId) {
+				// found a match, return it
+				return namespace;
+			}
+		}
+		// no result found
+		return null;
+	}
+
+	/**
+	 *
+	 */
 	public List<Namespace> lookupNamespaces() throws DataAccessException {
 		// first check the cache
 		Element cacheElement = WikiCache.retrieveFromCache(CACHE_NAMESPACE_LIST, CACHE_NAMESPACE_LIST);

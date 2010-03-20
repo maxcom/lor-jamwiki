@@ -242,6 +242,18 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public Namespace lookupNamespaceById(int namespaceId) throws DataAccessException {
+		for (Namespace namespace : TEST_NAMESPACES) {
+			if (namespace.getId().intValue() == namespaceId) {
+				return namespace;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 *
+	 */
 	public List<Namespace> lookupNamespaces() throws DataAccessException {
 		return new ArrayList<Namespace>(TEST_NAMESPACES);
 	}
