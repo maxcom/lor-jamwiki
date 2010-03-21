@@ -68,7 +68,8 @@ import org.springframework.transaction.TransactionStatus;
 public class AnsiDataHandler implements DataHandler {
 
 	private static final String CACHE_NAMESPACE_LIST = "org.jamwiki.db.AnsiDataHandler.CACHE_NAMESPACE_LIST";
-	private static final String CACHE_TOPICS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS";
+	private static final String CACHE_TOPICS_BY_ID = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS_BY_ID";
+	private static final String CACHE_TOPICS_BY_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS_BY_NAME";
 	private static final String CACHE_TOPIC_VERSIONS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPIC_VERSIONS";
 	private static final String CACHE_USER_BY_USER_ID = "org.jamwiki.db.AnsiDataHandler.CACHE_USER_BY_USER_ID";
 	private static final String CACHE_USER_BY_USER_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_USER_BY_USER_NAME";
@@ -683,7 +684,7 @@ public class AnsiDataHandler implements DataHandler {
 			// retrieve topic from the cache only if this call is not currently a part
 			// of a transaction to avoid retrieving data that might have been updated
 			// as part of this transaction and would thus now be out of date
-			Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPICS, key);
+			Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPICS_BY_NAME, key);
 			if (cacheElement != null) {
 				Topic cacheTopic = (Topic)cacheElement.getObjectValue();
 				return (cacheTopic == null || (!deleteOK && cacheTopic.getDeleteDate() != null)) ? null : new Topic(cacheTopic);
@@ -697,7 +698,7 @@ public class AnsiDataHandler implements DataHandler {
 				// add topic to the cache only if it is not currently a part of a transaction
 				// to avoid caching something that might need to be rolled back
 				Topic cacheTopic = (topic == null) ? null : new Topic(topic);
-				WikiCache.addToCache(CACHE_TOPICS, key, cacheTopic);
+				WikiCache.addToCache(CACHE_TOPICS_BY_NAME, key, cacheTopic);
 			}
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
@@ -715,7 +716,7 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public Topic lookupTopicById(String virtualWiki, int topicId) throws DataAccessException {
-		Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPICS, topicId);
+		Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPICS_BY_ID, topicId);
 		if (cacheElement != null) {
 			return (Topic)cacheElement.getObjectValue();
 		}
@@ -726,7 +727,7 @@ public class AnsiDataHandler implements DataHandler {
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
-		WikiCache.addToCache(CACHE_TOPICS, topicId, result);
+		WikiCache.addToCache(CACHE_TOPICS_BY_ID, topicId, result);
 		return result;
 	}
 
@@ -1608,7 +1609,8 @@ public class AnsiDataHandler implements DataHandler {
 		// update the cache AFTER the commit
 		String key = WikiCache.key(topic.getVirtualWiki(), topic.getName());
 		WikiCache.removeFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key);
-		WikiCache.addToCache(CACHE_TOPICS, key, topic);
+		WikiCache.addToCache(CACHE_TOPICS_BY_NAME, key, topic);
+		WikiCache.addToCache(CACHE_TOPICS_BY_ID, topic.getTopicId(), topic);
 		logger.fine("Wrote topic " + topic.getName() + " with params [categories is null: " + (categories == null) + "] / [links is null: " + (links == null) + "] in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 	}
 
