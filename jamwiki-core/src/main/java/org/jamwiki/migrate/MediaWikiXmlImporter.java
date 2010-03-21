@@ -275,10 +275,14 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (StringUtils.equals(MediaWikiConstants.MEDIAWIKI_ELEMENT_NAMESPACE, qName)) {
 			int key = NumberUtils.toInt(this.currentAttributeMap.get("key"));
-			Namespace jamwikiNamespace = MediaWikiConstants.NAMESPACE_CONVERSION_MAP.get(key);
-			if (jamwikiNamespace != null) {
-				String mediawikiNamespace = currentElementBuffer.toString().trim();
-				mediawikiNamespaceMap.put(mediawikiNamespace, jamwikiNamespace.getLabel(this.virtualWiki));
+			try {
+				Namespace jamwikiNamespace = WikiBase.getDataHandler().lookupNamespaceById(key);
+				if (jamwikiNamespace != null) {
+					String mediawikiNamespace = currentElementBuffer.toString().trim();
+					mediawikiNamespaceMap.put(mediawikiNamespace, jamwikiNamespace.getLabel(this.virtualWiki));
+				}
+			} catch (DataAccessException e) {
+				throw new SAXException("Failure while processing namespace with ID: " + key, e);
 			}
 		} else if (MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC_NAME.equals(qName)) {
 			String topicName = currentElementBuffer.toString().trim();
