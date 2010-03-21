@@ -708,8 +708,25 @@ public interface QueryHandler {
 	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the topics
 	 *  being retrieved.
 	 * @return The total number of topics for the virtual wiki.
+	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	int lookupTopicCount(int virtualWikiId) throws SQLException;
+
+	/**
+	 * Given a topic name and virtual wiki, return the corresponding topic ID, or
+	 * <code>null</code> if no matching topic exists.  This method will return only
+	 * non-deleted topics and performs better for cases where a caller only needs to
+	 * know if a topic exists, but does not need a full Topic object.
+	 *
+	 * @param virtualWikiId The ID of the virtual wiki for the topic being queried.
+	 * @param virtualWikiName The name of the virtual wiki for the virtual wiki of
+	 *  the topic being retrieved.
+	 * @param topicName The name of the topic being queried.
+	 * @return The ID of the Topic object that matches the given virtual wiki and topic
+	 * name, or <code>null</code> if no matching topic exists.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	Integer lookupTopicId(int virtualWikiId, String virtualWikiName, String topicName) throws SQLException;
 
 	/**
 	 * Retrieve a result set containing a specific topic version.

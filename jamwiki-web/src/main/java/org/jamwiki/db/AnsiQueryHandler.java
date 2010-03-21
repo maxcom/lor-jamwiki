@@ -170,6 +170,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_TOPIC_COUNT = null;
 	protected static String STATEMENT_SELECT_TOPIC = null;
 	protected static String STATEMENT_SELECT_TOPIC_HISTORY = null;
+	protected static String STATEMENT_SELECT_TOPIC_ID = null;
+	protected static String STATEMENT_SELECT_TOPIC_ID_LOWER = null;
 	protected static String STATEMENT_SELECT_TOPIC_LOWER = null;
 	protected static String STATEMENT_SELECT_TOPICS = null;
 	protected static String STATEMENT_SELECT_TOPICS_ADMIN = null;
@@ -1115,6 +1117,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_TOPIC_COUNT             = props.getProperty("STATEMENT_SELECT_TOPIC_COUNT");
 		STATEMENT_SELECT_TOPIC                   = props.getProperty("STATEMENT_SELECT_TOPIC");
 		STATEMENT_SELECT_TOPIC_HISTORY           = props.getProperty("STATEMENT_SELECT_TOPIC_HISTORY");
+		STATEMENT_SELECT_TOPIC_ID                = props.getProperty("STATEMENT_SELECT_TOPIC_ID");
+		STATEMENT_SELECT_TOPIC_ID_LOWER          = props.getProperty("STATEMENT_SELECT_TOPIC_ID_LOWER");
 		STATEMENT_SELECT_TOPIC_LOWER             = props.getProperty("STATEMENT_SELECT_TOPIC_LOWER");
 		STATEMENT_SELECT_TOPICS                  = props.getProperty("STATEMENT_SELECT_TOPICS");
 		STATEMENT_SELECT_TOPICS_ADMIN            = props.getProperty("STATEMENT_SELECT_TOPICS_ADMIN");
@@ -1942,26 +1946,20 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public Topic lookupTopic(int virtualWikiId, String virtualWikiName, String topicName, Connection conn) throws SQLException {
-		boolean closeConnection = (conn == null);
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
 		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWikiName, topicName);
-		Namespace namespace = wikiLink.getNamespace();
-		boolean caseSensitive = true;
-		if (namespace.equals(Namespace.SPECIAL)) {
+		if (wikiLink.getNamespace().equals(Namespace.SPECIAL)) {
 			// invalid namespace
 			return null;
 		}
-		if (namespace.equals(Namespace.TEMPLATE) || namespace.equals(Namespace.USER) || namespace.equals(Namespace.CATEGORY)) {
-			// user/template/category namespaces are case-insensitive
-			caseSensitive = false;
-		}
+		boolean closeConnection = (conn == null);
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
 		try {
 			if (conn == null) {
 				conn = DatabaseConnection.getConnection();
 			}
 			String pageName = wikiLink.getArticle();
-			if (caseSensitive) {
+			if (wikiLink.isCaseSensitive()) {
 				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC);
 			} else {
 				pageName = pageName.toLowerCase();
@@ -2050,6 +2048,37 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(1, virtualWikiId);
 			rs = stmt.executeQuery();
 			return (rs.next()) ? rs.getInt("topic_count") : 0;
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public Integer lookupTopicId(int virtualWikiId, String virtualWikiName, String topicName) throws SQLException {
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWikiName, topicName);
+		if (wikiLink.getNamespace().equals(Namespace.SPECIAL)) {
+			// invalid namespace
+			return null;
+		}
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			String pageName = wikiLink.getArticle();
+			if (wikiLink.isCaseSensitive()) {
+				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_ID);
+			} else {
+				pageName = pageName.toLowerCase();
+				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_ID_LOWER);
+			}
+			stmt.setString(1, pageName);
+			stmt.setInt(2, virtualWikiId);
+			stmt.setInt(3, wikiLink.getNamespace().getId());
+			rs = stmt.executeQuery();
+			return (rs.next()) ? Integer.valueOf(rs.getInt("topic_id")) : null;
 		} finally {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}

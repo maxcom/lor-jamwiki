@@ -456,7 +456,7 @@ public class LinkUtil {
 			// not initialized yet
 			return false;
 		}
-		return (WikiBase.getDataHandler().lookupTopic(virtualWiki, articleName, false, null) != null);
+		return (WikiBase.getDataHandler().lookupTopicId(virtualWiki, articleName) != null);
 	}
 
 	/**

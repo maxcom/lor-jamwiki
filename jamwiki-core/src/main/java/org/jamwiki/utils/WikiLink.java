@@ -59,6 +59,15 @@ public class WikiLink {
 	}
 
 	/**
+	 * Certain namespaces are case sensitive (such as the main namespace) while
+	 * others (such as the user namespace) are not.
+	 */
+	public boolean isCaseSensitive() {
+		// user/template/category namespaces are case-insensitive
+		return (!this.namespace.equals(Namespace.SPECIAL) && !this.namespace.equals(Namespace.TEMPLATE) && !this.namespace.equals(Namespace.USER) && !this.namespace.equals(Namespace.CATEGORY));
+	}
+
+	/**
 	 *
 	 */
 	public boolean getColon() {

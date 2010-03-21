@@ -68,6 +68,7 @@ import org.springframework.transaction.TransactionStatus;
 public class AnsiDataHandler implements DataHandler {
 
 	private static final String CACHE_NAMESPACE_LIST = "org.jamwiki.db.AnsiDataHandler.CACHE_NAMESPACE_LIST";
+	private static final String CACHE_TOPIC_IDS_BY_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPIC_IDS_BY_NAME";
 	private static final String CACHE_TOPICS_BY_ID = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS_BY_ID";
 	private static final String CACHE_TOPICS_BY_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS_BY_NAME";
 	private static final String CACHE_TOPIC_VERSIONS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPIC_VERSIONS";
@@ -699,6 +700,7 @@ public class AnsiDataHandler implements DataHandler {
 				// to avoid caching something that might need to be rolled back
 				Topic cacheTopic = (topic == null) ? null : new Topic(topic);
 				WikiCache.addToCache(CACHE_TOPICS_BY_NAME, key, cacheTopic);
+				WikiCache.addToCache(CACHE_TOPIC_IDS_BY_NAME, key, (cacheTopic == null) ? null : cacheTopic.getTopicId());
 			}
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
@@ -766,6 +768,36 @@ public class AnsiDataHandler implements DataHandler {
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
+	}
+
+	/**
+	 *
+	 */
+	public Integer lookupTopicId(String virtualWiki, String topicName) throws DataAccessException {
+		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(topicName)) {
+			return null;
+		}
+		long start = System.currentTimeMillis();
+		String key = WikiCache.key(virtualWiki, topicName);
+		Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPIC_IDS_BY_NAME, key);
+		if (cacheElement != null) {
+			return (Integer)cacheElement.getObjectValue();
+		}
+		Integer topicId = null;
+		try {
+			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+			topicId = this.queryHandler().lookupTopicId(virtualWikiId, virtualWiki, topicName);
+			WikiCache.addToCache(CACHE_TOPIC_IDS_BY_NAME, key, topicId);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		}
+		if (logger.isFineEnabled()) {
+			double execution = ((System.currentTimeMillis() - start) / 1000.000);
+			if (execution > 0.005) {
+				logger.fine("WARNING: slow topic existence lookup for: " + topicName + " (" + execution + " s)");
+			}
+		}
+		return topicId;
 	}
 
 	/**
@@ -1610,6 +1642,7 @@ public class AnsiDataHandler implements DataHandler {
 		String key = WikiCache.key(topic.getVirtualWiki(), topic.getName());
 		WikiCache.removeFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key);
 		WikiCache.addToCache(CACHE_TOPICS_BY_NAME, key, topic);
+		WikiCache.addToCache(CACHE_TOPIC_IDS_BY_NAME, key, topic.getTopicId());
 		WikiCache.addToCache(CACHE_TOPICS_BY_ID, topic.getTopicId(), topic);
 		logger.fine("Wrote topic " + topic.getName() + " with params [categories is null: " + (categories == null) + "] / [links is null: " + (links == null) + "] in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 	}

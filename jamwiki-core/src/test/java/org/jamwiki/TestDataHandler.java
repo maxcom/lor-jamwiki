@@ -304,6 +304,14 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public Integer lookupTopicId(String virtualWiki, String topicName) throws DataAccessException {
+		Topic topic = this.lookupTopic(virtualWiki, topicName, false, null);
+		return (topic == null) ? null : topic.getTopicId();
+	}
+
+	/**
+	 *
+	 */
 	public TopicVersion lookupTopicVersion(int topicVersionId) throws DataAccessException {
 		throw new UnsupportedOperationException();
 	}
