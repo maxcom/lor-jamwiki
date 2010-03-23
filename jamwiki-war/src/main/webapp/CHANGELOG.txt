@@ -4,6 +4,9 @@
 
 Bugfixes:
 
+  * Wiki tables placed after lists were being incorrectly indented.  Reported
+    by Rudi Wiesmayr.
+
 
 0.8.3
 =====

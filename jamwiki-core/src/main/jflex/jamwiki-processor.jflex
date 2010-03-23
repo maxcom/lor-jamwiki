@@ -220,7 +220,7 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 /* ----- tables ----- */
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>^{tablestart} {
+<YYINITIAL, TABLE, PARAGRAPH>^{tablestart} {
     logger.finer("tablestart: " + yytext() + " (" + yystate() + ")");
     if (this.peekTag().getTagType().equals("p")) {
         popTag("p");
