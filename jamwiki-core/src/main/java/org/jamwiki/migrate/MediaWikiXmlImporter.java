@@ -111,14 +111,14 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 	 */
 	private String convertArticleNameFromWikipediaToJAMWiki(String fullName) {
 		String ret = fullName;
-		int pos = fullName.indexOf(':');
+		int pos = fullName.indexOf(Namespace.SEPARATOR);
 		if (pos > 0) {
 			String namespace = fullName.substring(0, pos);
 			String title = fullName.substring(pos+1);
 			String jamwikiNamespace = mediawikiNamespaceMap.get(namespace);
 			if (!StringUtils.isBlank(jamwikiNamespace)) {
 				// matching JAMWiki namespace found
-				ret = jamwikiNamespace + ":" + title;
+				ret = jamwikiNamespace + Namespace.SEPARATOR + title;
 			}
 		}
 		// remove any characters that are valid for Mediawiki but not JAMWiki
@@ -135,8 +135,11 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 		int start = 0;
 		for (String mediawikiNamespace : mediawikiNamespaceMap.keySet()) {
 			jamwikiNamespace = mediawikiNamespaceMap.get(mediawikiNamespace);
-			mediawikiPattern = "[[" + mediawikiNamespace + ":";
-			jamwikiPattern = "[[" + jamwikiNamespace + ":";
+			if (jamwikiNamespace == null || StringUtils.equals(jamwikiNamespace, mediawikiNamespace)) {
+				continue;
+			}
+			mediawikiPattern = "[[" + mediawikiNamespace + Namespace.SEPARATOR;
+			jamwikiPattern = "[[" + jamwikiNamespace + Namespace.SEPARATOR;
 			while ((start = builder.indexOf(mediawikiPattern, start + 1)) != -1) {
 				builder.replace(start, start + mediawikiPattern.length(), jamwikiPattern);
 			}
