@@ -56,6 +56,12 @@ Translation Updates:
   * Updated German translations (axelclk).
 
 
+0.8.4
+=====
+
+Bugfixes:
+
+
 0.8.3
 =====
 
