@@ -8,6 +8,8 @@ Bugfixes:
     by Rudi Wiesmayr.
   * Fix incorrect parsing when inine tags (such as wiki bold) are left unclosed
     before or after list tags.  Reported by Rudi Wiesmayr.
+  * Parsing of the <references /> tag produced an unclosed ordered list.
+    Reported by Rudi Wiesmayr and an anonymous user.
 
 
 0.8.3
