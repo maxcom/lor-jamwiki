@@ -44,14 +44,14 @@ public class WikiReferencesTag implements JFlexParserTag {
 		// reference list for display.  While looping, if there are multiple citations
 		// for the same reference then include those in the output as well.
 		List<WikiReference> references = JFlexParserUtil.retrieveReferences(lexer.getParserInput());
-		StringBuilder html = new StringBuilder();
-		if (!references.isEmpty()) {
-			html.append("<ol class=\"references\">");
+		if (references.isEmpty()) {
+			return "";
 		}
+		StringBuffer html = new StringBuffer("<ol class=\"references\">");
 		while (!references.isEmpty()) {
 			WikiReference reference = references.get(0);
 			references.remove(0);
-			html.append("<li id=\"").append(reference.getNotationName()).append("\">");
+			html.append("\n<li id=\"").append(reference.getNotationName()).append("\">");
 			html.append("<sup>");
 			int pos = 0;
 			List<WikiReference> citations = new ArrayList<WikiReference>();
@@ -68,25 +68,23 @@ public class WikiReferencesTag implements JFlexParserTag {
 				pos++;
 			}
 			if (!citations.isEmpty()) {
-				html.append("<a href=\"#").append(reference.getReferenceName()).append("\" title=\"\">");
+				html.append("<a href=\"#").append(reference.getReferenceName()).append("\">");
 				html.append(reference.getCitation()).append('.').append(reference.getCount()).append("</a>&#160;");
 				while (!citations.isEmpty()) {
 					WikiReference citation = citations.get(0);
-					html.append("&#160;<a href=\"#").append(citation.getReferenceName()).append("\" title=\"\">");
+					html.append("&#160;<a href=\"#").append(citation.getReferenceName()).append("\">");
 					html.append(citation.getCitation()).append('.').append(citation.getCount()).append("</a>&#160;");
 					citations.remove(0);
 				}
 			} else {
-				html.append("<a href=\"#").append(reference.getReferenceName()).append("\" title=\"\">");
+				html.append("<a href=\"#").append(reference.getReferenceName()).append("\">");
 				html.append(reference.getCitation()).append("</a>&#160;");
 			}
 			html.append("</sup>");
 			html.append(JFlexParserUtil.parseFragment(lexer.getParserInput(), reference.getContent(), JFlexParser.MODE_PROCESS));
 			html.append("</li>");
 		}
-		if (!references.isEmpty()) {
-			html.append("</ol>");
-		}
+		html.append("\n</ol>");
 		return html.toString();
 	}
 }

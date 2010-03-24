@@ -77,7 +77,7 @@ public class WikiReferenceTag implements JFlexParserTag {
 		html.append(reference.getReferenceName());
 		html.append("\" class=\"reference\"><a href=\"#");
 		html.append(reference.getNotationName());
-		html.append("\" title=\"\">[" + reference.getCitation() + "]</a></sup>");
+		html.append("\">[" + reference.getCitation() + "]</a></sup>");
 		return html.toString();
 	}
 
