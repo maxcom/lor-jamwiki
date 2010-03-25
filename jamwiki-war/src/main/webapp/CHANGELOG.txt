@@ -10,6 +10,8 @@ Bugfixes:
     before or after list tags.  Reported by Rudi Wiesmayr.
   * Parsing of the <references /> tag produced an unclosed ordered list.
     Reported by Rudi Wiesmayr and an anonymous user.
+  * Fix potential XSS attack with URLs of the form Special:Login?message=XSS.
+    Reported by frafu.
 
 
 0.8.3
