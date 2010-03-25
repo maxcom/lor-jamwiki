@@ -12,6 +12,8 @@ Bugfixes:
     Reported by Rudi Wiesmayr and an anonymous user.
   * Fix potential XSS attack with URLs of the form Special:Login?message=XSS.
     Reported by frafu.
+  * Fix the manual upgrade steps for MS SQL in the UPGRADE.txt document.
+    Reported by Angel.
 
 
 0.8.3
