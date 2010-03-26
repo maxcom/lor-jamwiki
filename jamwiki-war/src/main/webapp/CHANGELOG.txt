@@ -14,6 +14,8 @@ Bugfixes:
     Reported by frafu.
   * Fix the manual upgrade steps for MS SQL in the UPGRADE.txt document.
     Reported by Angel.
+  * Very large values for max upload file size could result in
+    NumberFormatException being thrown on the Special:Admin page.
 
 
 0.8.3
