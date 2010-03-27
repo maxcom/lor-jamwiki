@@ -96,7 +96,11 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 		} catch (IOException e) {
 			throw new MigrationException(e);
 		} catch (SAXException e) {
-			throw new MigrationException(e);
+			if (e.getCause() instanceof DataAccessException || e.getCause() instanceof WikiException) {
+				throw new MigrationException(e.getCause());
+			} else {
+				throw new MigrationException(e);
+			}
 		} finally {
 			if (fis != null) {
 				try {

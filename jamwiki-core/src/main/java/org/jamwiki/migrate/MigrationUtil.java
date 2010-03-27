@@ -87,7 +87,7 @@ public class MigrationUtil {
 			parsedTopics = importer.importFromFile(file, virtualWiki);
 		} catch (MigrationException e) {
 			if (e.getCause() instanceof WikiException) {
-				throw (MigrationException)(e.getCause());
+				throw (WikiException)(e.getCause());
 			}
 			throw e;
 		}
