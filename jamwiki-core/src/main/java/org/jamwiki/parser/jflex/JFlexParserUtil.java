@@ -148,6 +148,8 @@ public class JFlexParserUtil {
 		if (StringUtils.isBlank(tag)) {
 			return null;
 		}
+		// strip any newlines from the tag
+		tag = tag.replace('\n', ' ');
 		if (JFLEX_HTML_PROCESSOR == null) {
 			JFLEX_HTML_PROCESSOR = new JAMWikiHtmlProcessor(new StringReader(tag));
 		} else {
