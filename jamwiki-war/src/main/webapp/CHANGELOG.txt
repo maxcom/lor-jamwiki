@@ -18,6 +18,8 @@ New Features:
   * Topic add/update is now significantly faster due to query refactoring
     and changes so that the search index is not re-optimized after every
     add/update.
+  * Topic history retrieval speed improved by a factor of up to 100x for
+    large data sets by adding an additional database index.
   * Search engine optimizations.  Existing JAMWiki installs may want to
     rebuild their search index.
   * Filter results by namespace added to Special:Allpages.

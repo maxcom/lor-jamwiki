@@ -234,6 +234,9 @@ public class DatabaseUpgrades {
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_PAGE_NAME_LOWER", conn);
 			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_PAGE_NAME_LOWER_INDEX", conn);
 			messages.add(new WikiMessage("upgrade.message.db.column.added", "page_name_lower", "jam_topic"));
+			// add an index for topic_id on the jam_topic_version table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_VERSION_TOPIC_INDEX", conn);
+			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic_version"));
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			logger.severe("Database failure during upgrade", e);
