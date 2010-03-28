@@ -2046,7 +2046,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public int lookupTopicCount(int virtualWikiId) throws SQLException {
+	public int lookupTopicCount(int virtualWikiId, int namespaceStart, int namespaceEnd) throws SQLException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -2054,6 +2054,8 @@ public class AnsiQueryHandler implements QueryHandler {
 			conn = DatabaseConnection.getConnection();
 			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_COUNT);
 			stmt.setInt(1, virtualWikiId);
+			stmt.setInt(2, namespaceStart);
+			stmt.setInt(3, namespaceEnd);
 			rs = stmt.executeQuery();
 			return (rs.next()) ? rs.getInt("topic_count") : 0;
 		} finally {

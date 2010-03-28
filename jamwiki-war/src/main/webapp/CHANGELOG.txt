@@ -12,6 +12,8 @@ New Features:
     order of operations is followed.
   * Support Mediawiki's {{subst:}} syntax.  Usage: {{subst:template}}.
   * Support added for the __NOEDITSECTION__ behavior switch.
+  * Support added for the {{NUMBEROFARTICLES}} and {{REVISIONUSER}} magic
+    words.
   * New Special:VirtualWiki page for administering virtual wikis and
     namespaces, including the ability to configure translated / alternate
     namespaces.

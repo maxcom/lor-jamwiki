@@ -290,7 +290,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public int lookupTopicCount(String virtualWiki) throws DataAccessException {
+	public int lookupTopicCount(String virtualWiki, Integer namespaceId) throws DataAccessException {
 		throw new UnsupportedOperationException();
 	}
 

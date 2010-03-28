@@ -707,10 +707,16 @@ public interface QueryHandler {
 	 *
 	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the topics
 	 *  being retrieved.
-	 * @return The total number of topics for the virtual wiki.
+	 * @param namespaceStart The minimum namespace ID value for the result set.  This
+	 *  parameter provides a way to use the same queries to return results from all
+	 *  namespaces or from only a single namespace.
+	 * @param namespaceEnd The maximum namespace ID value for the result set.  This
+	 *  parameter provides a way to use the same queries to return results from all
+	 *  namespaces or from only a single namespace.
+	 * @return The total number of topics for the virtual wiki and (optionally) namespace.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	int lookupTopicCount(int virtualWikiId) throws SQLException;
+	int lookupTopicCount(int virtualWikiId, int namespaceStart, int namespaceEnd) throws SQLException;
 
 	/**
 	 * Given a topic name and virtual wiki, return the corresponding topic ID, or

@@ -446,12 +446,15 @@ public interface DataHandler {
 	 *
 	 * @param virtualWiki The virtual wiki for which the total topic count is
 	 *  being returned.
+	 * @param namespaceId An optional parameter to specify that results should only
+	 *  be from the specified namespace.  If this value is <code>null</code> then
+	 *  results will be returned from all namespaces.
 	 * @return A count of all topics, including redirects, comments pages and
-	 *  templates, for the given virtual wiki.  Deleted topics are not included
-	 *  in the count.
+	 *  templates, for the given virtual wiki and (optionally) namespace.  Deleted
+	 *  topics are not included in the count.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	int lookupTopicCount(String virtualWiki) throws DataAccessException;
+	int lookupTopicCount(String virtualWiki, Integer namespaceId) throws DataAccessException;
 
 	/**
 	 * Return a List of topic names for all non-deleted topics in the

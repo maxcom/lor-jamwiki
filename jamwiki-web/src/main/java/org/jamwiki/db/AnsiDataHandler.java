@@ -382,6 +382,18 @@ public class AnsiDataHandler implements DataHandler {
 	}
 
 	/**
+	 * Determine the largest namespace ID for all current defined namespaces.
+	 */
+	private int findMaxNamespaceId() throws DataAccessException {
+		List<Namespace> namespaces = this.lookupNamespaces();
+		int namespaceEnd = 0;
+		for (Namespace namespace : namespaces) {
+			namespaceEnd = (namespace.getId() > namespaceEnd) ? namespace.getId() : namespaceEnd;
+		}
+		return namespaceEnd;
+	}
+
+	/**
 	 *
 	 */
 	public List<Category> getAllCategories(String virtualWiki, Pagination pagination) throws DataAccessException {
@@ -740,10 +752,12 @@ public class AnsiDataHandler implements DataHandler {
 	 * @param virtualWiki The virtual wiki for which the total topic count is being returned
 	 *  for.
 	 */
-	public int lookupTopicCount(String virtualWiki) throws DataAccessException {
+	public int lookupTopicCount(String virtualWiki, Integer namespaceId) throws DataAccessException {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		int namespaceStart = (namespaceId != null) ? namespaceId : 0;
+		int namespaceEnd = (namespaceId != null) ? namespaceId : this.findMaxNamespaceId();
 		try {
-			return this.queryHandler().lookupTopicCount(virtualWikiId);
+			return this.queryHandler().lookupTopicCount(virtualWikiId, namespaceStart, namespaceEnd);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
@@ -755,15 +769,8 @@ public class AnsiDataHandler implements DataHandler {
 	public Map<Integer, String> lookupTopicByType(String virtualWiki, TopicType topicType1, TopicType topicType2, Integer namespaceId, Pagination pagination) throws DataAccessException {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		int namespaceStart = (namespaceId != null) ? namespaceId : 0;
-		int namespaceEnd = (namespaceId != null) ? namespaceId : 0;
+		int namespaceEnd = (namespaceId != null) ? namespaceId : this.findMaxNamespaceId();
 		try {
-			if (namespaceId == null) {
-				// find the largest namespace ID
-				List<Namespace> namespaces = this.lookupNamespaces();
-				for (Namespace namespace : namespaces) {
-					namespaceEnd = (namespace.getId() > namespaceEnd) ? namespace.getId() : namespaceEnd;
-				}
-			}
 			return this.queryHandler().lookupTopicByType(virtualWikiId, topicType1, topicType2, namespaceStart, namespaceEnd, pagination);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
