@@ -53,6 +53,9 @@ wikipreend         = ([^ ]) | ({newline})
 /* comments */
 htmlcomment        = "<!--" ~"-->"
 
+/* processing commands */
+noeditsection      = ({newline})? "__NOEDITSECTION__"
+
 /* wiki links */
 wikilink           = "[[" [^\]\n]+ "]]"
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
@@ -194,6 +197,14 @@ wikisignature      = ([~]{3,5})
 <YYINITIAL, TEMPLATE>{noinclude} {
     if (logger.isFinerEnabled()) logger.finer("noinclude: " + yytext() + " (" + yystate() + ")");
     return this.parse(TAG_TYPE_NO_INCLUDE, yytext());
+}
+
+/* ----- processing commands ----- */
+
+<YYINITIAL>{noeditsection} {
+    if (logger.isFinerEnabled()) logger.finer("noeditsection: " + yytext() + " (" + yystate() + ")");
+    this.parserInput.setAllowSectionEdit(false);
+    return "";
 }
 
 /* ----- wiki links ----- */

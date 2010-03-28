@@ -1,0 +1,14 @@
+<!-- test standard heading parsing with __NOEDITSECTION__ -->
+== Section 1 ==
+
+test 1
+
+== Section 2 ==
+
+test 2
+
+== Section 3 ==
+
+test 3
+
+__NOEDITSECTION__

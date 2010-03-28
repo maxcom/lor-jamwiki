@@ -11,6 +11,7 @@ New Features:
     supported (+, -, /, *) and parentheses must be used to ensure that the
     order of operations is followed.
   * Support Mediawiki's {{subst:}} syntax.  Usage: {{subst:template}}.
+  * Support added for the __NOEDITSECTION__ behavior switch.
   * New Special:VirtualWiki page for administering virtual wikis and
     namespaces, including the ability to configure translated / alternate
     namespaces.
