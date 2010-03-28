@@ -52,6 +52,8 @@ Bugfixes:
     or namespace.  Thus if a wiki has a namespace of "Test" and an interwiki
     of "Test", the link "Test:Topic" will parse as an internal link rather than
     an interwiki link.
+  * Trim leading and trailing whitespace during parsing when a template is
+    included to fix breakage of wiki table syntax such as "!{{Hl2}}| Word".
 
 Translation Updates:
 

@@ -232,7 +232,7 @@ public class TemplateTag implements JFlexParserTag {
 				pos++;
 			}
 		}
-		return JFlexParserUtil.parseFragment(parserInput, output.toString(), JFlexParser.MODE_PREPROCESS);
+		return JFlexParserUtil.parseFragment(parserInput, output.toString().trim(), JFlexParser.MODE_PREPROCESS);
 	}
 
 	/**
