@@ -5,6 +5,9 @@ New Features:
 
   * Signficant updates to the syntax parser, including support for additional
     HTML tags and XHTML transitional validation of tag attributes.
+  * New Special:VirtualWiki page for administering virtual wikis and
+    namespaces, including the ability to configure translated / alternate
+    namespaces and to change the default virtual wiki from "en".
   * Support the #if: and the #ifeq parser functions.  Usage:
     "{{#if: test | true | false}}" and "{{#ifeq: 1 | 2 | true | false}}".
   * Basic support for the #expr: parser function.  Only basic operations are
@@ -14,9 +17,6 @@ New Features:
   * Support added for the __NOEDITSECTION__ behavior switch.
   * Support added for the {{NUMBEROFARTICLES}} and {{REVISIONUSER}} magic
     words.
-  * New Special:VirtualWiki page for administering virtual wikis and
-    namespaces, including the ability to configure translated / alternate
-    namespaces.
   * Add the ability for sysadmins to create user accounts (hanspeterklapf).
   * Topic add/update is now significantly faster due to query refactoring
     and changes so that the search index is not re-optimized after every

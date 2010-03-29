@@ -562,7 +562,7 @@ public class ServletUtil {
 	public static VirtualWiki retrieveVirtualWiki(String virtualWikiName) {
 		VirtualWiki virtualWiki = null;
 		if (virtualWikiName == null) {
-			virtualWikiName = WikiBase.DEFAULT_VWIKI;
+			virtualWikiName = Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT);
 		}
 		// FIXME - the check here for initialized properties is due to this
 		// change being made late in a release cycle.  Revisit in a future
@@ -575,7 +575,7 @@ public class ServletUtil {
 		if (virtualWiki == null) {
 			logger.severe("No virtual wiki found for " + virtualWikiName);
 			virtualWiki = new VirtualWiki();
-			virtualWiki.setName(WikiBase.DEFAULT_VWIKI);
+			virtualWiki.setName(Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT));
 			virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
 		}
 		return virtualWiki;

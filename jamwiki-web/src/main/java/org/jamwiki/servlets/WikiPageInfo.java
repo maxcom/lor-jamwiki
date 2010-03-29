@@ -21,7 +21,6 @@ import java.util.LinkedHashMap;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.utils.LinkUtil;
@@ -56,7 +55,7 @@ public class WikiPageInfo {
 		this.virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
 		if (this.virtualWikiName == null) {
 			logger.severe("No virtual wiki available for page request " + request.getRequestURI());
-			this.virtualWikiName = WikiBase.DEFAULT_VWIKI;
+			this.virtualWikiName = Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT);
 		}
 	}
 

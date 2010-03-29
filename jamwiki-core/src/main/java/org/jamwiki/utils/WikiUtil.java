@@ -198,7 +198,7 @@ public class WikiUtil {
 	 */
 	public static String findDefaultVirtualWikiUrl(String virtualWikiName) {
 		if (StringUtils.isBlank(virtualWikiName)) {
-			virtualWikiName = WikiBase.DEFAULT_VWIKI;
+			virtualWikiName = Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT);
 		}
 		String target = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
 		try {
@@ -285,7 +285,7 @@ public class WikiUtil {
 	 */
 	public static String getBaseUrl() throws DataAccessException {
 		String url = Environment.getValue(Environment.PROP_SERVER_URL);
-		url += LinkUtil.buildTopicUrl(WEBAPP_CONTEXT_PATH, WikiBase.DEFAULT_VWIKI, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC), true);
+		url += LinkUtil.buildTopicUrl(WEBAPP_CONTEXT_PATH, Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT), Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC), true);
 		return url;
 	}
 

@@ -16,12 +16,14 @@
  */
 package org.jamwiki.servlets;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -202,6 +204,13 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 				// update
 				next.addObject("message", new WikiMessage("admin.message.virtualwikiupdated", virtualWiki.getName()));
 			}
+			if (StringUtils.equals(request.getParameter("defaultVirtualWiki"), "true")) {
+				Environment.setValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT, virtualWiki.getName());
+				Environment.saveProperties();
+			}
+		} catch (IOException e) {
+			logger.severe("Failure while adding virtual wiki", e);
+			errors.add(new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
 		} catch (DataAccessException e) {
 			logger.severe("Failure while adding virtual wiki", e);
 			errors.add(new WikiMessage("admin.message.virtualwikifail", e.getMessage()));

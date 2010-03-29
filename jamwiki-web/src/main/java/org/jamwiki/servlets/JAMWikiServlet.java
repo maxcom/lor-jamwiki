@@ -71,7 +71,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		String virtualWikiName = pageInfo.getVirtualWikiName();
 		if (virtualWikiName == null) {
 			logger.severe("No virtual wiki available for page request " + request.getRequestURI());
-			virtualWikiName = WikiBase.DEFAULT_VWIKI;
+			virtualWikiName = Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT);
 		}
 		VirtualWiki virtualWiki = ServletUtil.retrieveVirtualWiki(virtualWikiName);
 		// build the layout contents

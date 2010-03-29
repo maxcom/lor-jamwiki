@@ -19,6 +19,7 @@ package org.jamwiki.servlets;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
@@ -60,7 +61,7 @@ public class TopicServlet extends JAMWikiServlet {
 		}
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		if (StringUtils.isBlank(virtualWiki)) {
-			virtualWiki = WikiBase.DEFAULT_VWIKI;
+			virtualWiki = Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT);
 		}
 		Topic topic = ServletUtil.initializeTopic(virtualWiki, topicName);
 		if (topic.getTopicId() <= 0) {

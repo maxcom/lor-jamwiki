@@ -25,7 +25,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jamwiki.WikiBase;
+import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 
@@ -88,13 +88,13 @@ public class JAMWikiFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse)servletResponse;
 		if (redirectSetup(request)) {
 			// redirect to setup page
-			String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Setup";
+			String url = request.getContextPath() + "/" + Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT) + "/Special:Setup";
 			redirect(request, response, url);
 			return true;
 		}
 		if (redirectUpgrade(request)) {
 			// redirect to upgrade page
-			String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Upgrade";
+			String url = request.getContextPath() + "/" + Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT) + "/Special:Upgrade";
 			redirect(request, response, url);
 			return true;
 		}
