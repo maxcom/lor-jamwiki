@@ -313,19 +313,29 @@ followed by 0.6.3.
             Other Databases:
               alter table jam_topic_version add column version_params VARCHAR(500);
        g) Update the edit type for topic versions created for uploads:
+            MS SQL:
               update jam_topic_version set edit_type = 9
-                    where jam_topic_version.topic_version_id in (
-                      select jam_topic_version.topic_version_id
-                      from jam_topic_version, jam_file, jam_file_version
-                      where jam_topic_version.topic_id = jam_file.topic_id
-                      and jam_file.file_id = jam_file_version.file_id
-                      and extract(year from jam_topic_version.edit_date) = extract(year from jam_file_version.upload_date)
-                      and extract(month from jam_topic_version.edit_date) = extract(month from jam_file_version.upload_date)
-                      and extract(day from jam_topic_version.edit_date) = extract(day from jam_file_version.upload_date)
-                      and extract(hour from jam_topic_version.edit_date) = extract(hour from jam_file_version.upload_date)
-                      and extract(minute from jam_topic_version.edit_date) = extract(minute from jam_file_version.upload_date)
-                      and (abs(extract(second from jam_topic_version.edit_date) - extract(second from jam_file_version.upload_date)) < 3)
-                    );
+              where jam_topic_version.topic_version_id in (
+                select jam_topic_version.topic_version_id
+                from jam_topic_version, jam_file, jam_file_version
+                where jam_topic_version.topic_id = jam_file.topic_id
+                and jam_file.file_id = jam_file_version.file_id
+                and DATEDIFF(s, jam_topic_version.edit_date, jam_file_version.upload_date) < 3
+              );
+            Other Databases:
+              update jam_topic_version set edit_type = 9
+              where jam_topic_version.topic_version_id in (
+                select jam_topic_version.topic_version_id
+                from jam_topic_version, jam_file, jam_file_version
+                where jam_topic_version.topic_id = jam_file.topic_id
+                and jam_file.file_id = jam_file_version.file_id
+                and extract(year from jam_topic_version.edit_date) = extract(year from jam_file_version.upload_date)
+                and extract(month from jam_topic_version.edit_date) = extract(month from jam_file_version.upload_date)
+                and extract(day from jam_topic_version.edit_date) = extract(day from jam_file_version.upload_date)
+                and extract(hour from jam_topic_version.edit_date) = extract(hour from jam_file_version.upload_date)
+                and extract(minute from jam_topic_version.edit_date) = extract(minute from jam_file_version.upload_date)
+                and (abs(extract(second from jam_topic_version.edit_date) - extract(second from jam_file_version.upload_date)) < 3)
+              );
        h) Add the new ROLE_IMPORT:
               INSERT into jam_role (role_name) values ('ROLE_IMPORT');
        i) Assign ROLE_IMPORT to all users with ROLE_ADMIN:
@@ -351,6 +361,28 @@ followed by 0.6.3.
                 virtual_wiki_id INTEGER NOT NULL,
                 virtual_wiki_name VARCHAR(100) NOT NULL,
                 characters_changed INTEGER NULL,
+                CONSTRAINT jam_f_rc_topic_ver FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version(topic_version_id),
+                CONSTRAINT jam_f_rc_p_topic_v FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id),
+                CONSTRAINT jam_f_rc_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id),
+                CONSTRAINT jam_f_rc_wuser FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_rc_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id)
+              )
+            MS SQL:
+              CREATE TABLE jam_recent_change (
+                topic_version_id INTEGER,
+                previous_topic_version_id INTEGER,
+                topic_id INTEGER,
+                topic_name VARCHAR(200),
+                change_date DATETIME DEFAULT GETDATE() NOT NULL,
+                change_comment VARCHAR(200),
+                wiki_user_id INTEGER,
+                display_name VARCHAR(200) NOT NULL,
+                edit_type INTEGER,
+                log_type INTEGER,
+                log_params VARCHAR(500),
+                virtual_wiki_id INTEGER NOT NULL,
+                virtual_wiki_name VARCHAR(100) NOT NULL,
+                characters_changed INTEGER,
                 CONSTRAINT jam_f_rc_topic_ver FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version(topic_version_id),
                 CONSTRAINT jam_f_rc_p_topic_v FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id),
                 CONSTRAINT jam_f_rc_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id),

@@ -326,8 +326,8 @@ public class AdminServlet extends JAMWikiServlet {
 			if (StringUtils.isBlank(maxFileSizeString) || !StringUtils.isNumeric(maxFileSizeString)) {
 				errors.add(new WikiMessage("admin.message.nonnumeric", Environment.PROP_FILE_MAX_FILE_SIZE, maxFileSizeString));
 			} else {
-				int maxFileSizeInKB = Integer.parseInt(maxFileSizeString);
-				props.setProperty(Environment.PROP_FILE_MAX_FILE_SIZE, Integer.toString(maxFileSizeInKB * 1000));
+				long maxFileSizeInKB = Long.parseLong(maxFileSizeString);
+				props.setProperty(Environment.PROP_FILE_MAX_FILE_SIZE, Long.toString(maxFileSizeInKB * 1000));
 			}
 			setProperty(props, request, Environment.PROP_FILE_DIR_FULL_PATH);
 			setProperty(props, request, Environment.PROP_FILE_DIR_RELATIVE_PATH);
@@ -507,7 +507,7 @@ public class AdminServlet extends JAMWikiServlet {
 		if (props == null) {
 			props = Environment.getInstance();
 		}
-		int maximumFileSize = Integer.valueOf(props.getProperty(Environment.PROP_FILE_MAX_FILE_SIZE))/1000;
+		long maximumFileSize = Long.valueOf(props.getProperty(Environment.PROP_FILE_MAX_FILE_SIZE))/1000;
 		next.addObject("maximumFileSize", maximumFileSize);
 		next.addObject("props", props);
 	}
