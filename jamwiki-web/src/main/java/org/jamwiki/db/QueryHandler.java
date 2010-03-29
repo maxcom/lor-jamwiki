@@ -744,6 +744,18 @@ public interface QueryHandler {
 	TopicVersion lookupTopicVersion(int topicVersionId) throws SQLException;
 
 	/**
+	 * Retrieve a list of all topic names within a virtual wiki, including
+	 * deleted topics.
+	 *
+	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the topics
+	 *  being retrieved.
+	 * @return A map of topic id and topic name for all topic names within a
+	 *  virtual wiki.  If no results are found then an empty list is returned.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	Map<Integer, String> lookupTopicNames(int virtualWikiId, Connection conn) throws SQLException;
+
+	/**
 	 * Retrieve a result set containing all wiki file information for a given WikiFile.
 	 *
 	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the wiki file

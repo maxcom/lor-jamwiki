@@ -48,9 +48,7 @@ import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
-import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.transaction.TransactionStatus;
@@ -167,37 +165,26 @@ public class WikiDatabase {
 	 * namespace names.
 	 */
 	public static int fixIncorrectTopicNamespaces() throws DataAccessException {
-		Pagination pagination;
-		int numResults = 100;
-		int offset = 0;
 		int count = 0;
 		Map<Integer, String> topicNames;
 		List<Topic> topics;
-		WikiLink wikiLink;
 		List<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
 			for (VirtualWiki virtualWiki : virtualWikis) {
-				for (TopicType topicType : TopicType.values()) {
-					offset = 0;
-					while (true) {
-						pagination = new Pagination(numResults, offset);
-						topicNames = WikiBase.getDataHandler().lookupTopicByType(virtualWiki.getName(), topicType, topicType, null, pagination);
-						if (topicNames.isEmpty()) {
-							break;
-						}
-						topics = new ArrayList<Topic>();
-						for (int topicId : topicNames.keySet()) {
-							Topic topic = new Topic(virtualWiki.getName(), topicNames.get(topicId));
-							topic.setTopicId(topicId);
-							topics.add(topic);
-						}
-						WikiDatabase.queryHandler().updateTopicNamespaces(topics, conn);
-						count += topicNames.size();
-						offset += numResults;
-					}
+				topicNames = WikiDatabase.queryHandler().lookupTopicNames(virtualWiki.getVirtualWikiId(), conn);
+				if (topicNames.isEmpty()) {
+					continue;
 				}
+				topics = new ArrayList<Topic>();
+				for (int topicId : topicNames.keySet()) {
+					Topic topic = new Topic(virtualWiki.getName(), topicNames.get(topicId));
+					topic.setTopicId(topicId);
+					topics.add(topic);
+				}
+				WikiDatabase.queryHandler().updateTopicNamespaces(topics, conn);
+				count += topicNames.size();
 			}
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
