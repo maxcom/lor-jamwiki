@@ -17,10 +17,15 @@
 package org.jamwiki.servlets;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.utils.LinkUtil;
@@ -43,9 +48,9 @@ public class WikiPageInfo {
 	private String redirectName = null;
 	private String redirectUrl = null;
 	private boolean special = false;
-	private LinkedHashMap tabMenu = new LinkedHashMap();
+	private LinkedHashMap<String, WikiMessage> tabMenu = new LinkedHashMap<String, WikiMessage>();
 	private String topicName = "";
-	private LinkedHashMap userMenu = new LinkedHashMap();
+	private LinkedHashMap<String, WikiMessage> userMenu = new LinkedHashMap<String, WikiMessage>();
 	private String virtualWikiName = null;
 
 	/**
@@ -69,9 +74,9 @@ public class WikiPageInfo {
 		this.pageTitle = null;
 		this.redirectName = null;
 		this.special = false;
-		this.tabMenu = new LinkedHashMap();
+		this.tabMenu = new LinkedHashMap<String, WikiMessage>();
 		this.topicName = "";
-		this.userMenu = new LinkedHashMap();
+		this.userMenu = new LinkedHashMap<String, WikiMessage>();
 	}
 
 	/**
@@ -135,6 +140,19 @@ public class WikiPageInfo {
 		Object params[] = new Object[1];
 		params[0] = (this.topicName == null) ? "" : this.topicName;
 		return formatter.format(params);
+	}
+
+	/**
+	 * Return a map of default namespace name and the virtual wiki translation for the
+	 * namespace.
+	 */
+	public Map<String, String> getNamespaces() throws DataAccessException {
+		List<Namespace> namespaces = WikiBase.getDataHandler().lookupNamespaces();
+		Map<String, String> results = new HashMap<String, String>();
+		for (Namespace namespace : namespaces) {
+			results.put(namespace.getDefaultLabel(), namespace.getLabel(this.virtualWikiName));
+		}
+		return results;
 	}
 
 	/**
@@ -256,7 +274,7 @@ public class WikiPageInfo {
 	 * @return A LinkedHashMap containing the topic and text for all links
 	 *  that should appear for the tab menu.
 	 */
-	public LinkedHashMap getTabMenu() {
+	public LinkedHashMap<String, WikiMessage> getTabMenu() {
 		return this.tabMenu;
 	}
 
@@ -267,7 +285,7 @@ public class WikiPageInfo {
 	 * @param tabMenu A LinkedHashMap containing the topic and text for all
 	 *  links that should appear for the tab menu.
 	 */
-	public void setTabMenu(LinkedHashMap tabMenu) {
+	public void setTabMenu(LinkedHashMap<String, WikiMessage> tabMenu) {
 		this.tabMenu = tabMenu;
 	}
 
@@ -297,7 +315,7 @@ public class WikiPageInfo {
 	 * @return A LinkedHashMap containing the topic and text for all links
 	 *  that should appear for the user menu.
 	 */
-	public LinkedHashMap getUserMenu() {
+	public LinkedHashMap<String, WikiMessage> getUserMenu() {
 		return this.userMenu;
 	}
 
@@ -308,7 +326,7 @@ public class WikiPageInfo {
 	 * @param userMenu A LinkedHashMap containing the topic and text for all
 	 *  links that should appear for the user menu.
 	 */
-	public void setUserMenu(LinkedHashMap userMenu) {
+	public void setUserMenu(LinkedHashMap<String, WikiMessage> userMenu) {
 		this.userMenu = userMenu;
 	}
 

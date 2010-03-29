@@ -94,7 +94,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * Build a map of links and the corresponding link text to be used as the
 	 * tab menu links for the WikiPageInfo object.
 	 */
-	private LinkedHashMap buildTabMenu(HttpServletRequest request, WikiPageInfo pageInfo) {
+	private LinkedHashMap<String, WikiMessage> buildTabMenu(HttpServletRequest request, WikiPageInfo pageInfo) {
 		LinkedHashMap<String, WikiMessage> links = new LinkedHashMap<String, WikiMessage>();
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
 		String pageName = pageInfo.getTopicName();
@@ -166,7 +166,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * Build a map of links and the corresponding link text to be used as the
 	 * user menu links for the WikiPageInfo object.
 	 */
-	private LinkedHashMap buildUserMenu(WikiPageInfo pageInfo) {
+	private LinkedHashMap<String, WikiMessage> buildUserMenu(WikiPageInfo pageInfo) {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		LinkedHashMap<String, WikiMessage> links = new LinkedHashMap<String, WikiMessage>();
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
