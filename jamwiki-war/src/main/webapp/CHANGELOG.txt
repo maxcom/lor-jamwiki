@@ -13,6 +13,7 @@ New Features:
   * Basic support for the #expr: parser function.  Only basic operations are
     supported (+, -, /, *) and parentheses must be used to ensure that the
     order of operations is followed.
+  * Support added for the {{ns:}} and {{nse:}} parser functions.
   * Support Mediawiki's {{subst:}} syntax.  Usage: {{subst:template}}.
   * Support added for the __NOEDITSECTION__ behavior switch.
   * Support added for the {{NUMBEROFARTICLES}} and {{REVISIONUSER}} magic
@@ -314,7 +315,7 @@ New Features:
   * Initial implementation of Mediawiki parser functions including
     anchorencode, filepath, fullurl, localurl, lc, lcfirst, uc, ucfirst and
     urlencode.
-  * Add support for the {{SITENAME}} and {{SERVER}} magic words.
+  * Add support for the {{SERVERNAME}} and {{SERVER}} magic words.
   * Allow nesting of templates ("{{template1|content={{template2}}}}").
   * Support categories on #REDIRECT pages to match Mediawiki.
   * Add "H2" as a database configuration option.

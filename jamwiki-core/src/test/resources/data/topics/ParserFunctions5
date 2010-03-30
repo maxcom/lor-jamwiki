@@ -1,0 +1,16 @@
+<!-- parsing of {{ns:}} and {{nse:}} -->
+1. {{ns:3}}
+
+2. {{nse:3}}
+
+3. {{ns:-2}}
+
+4. {{ns:-4}}
+
+5. {{ns:Image comments}}
+
+6. {{ns:Image_comments}}
+
+7. {{ns:Invalid}}
+
+8. {{ns:  3  }}

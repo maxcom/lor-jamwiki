@@ -25,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
@@ -47,6 +48,8 @@ public class ParserFunctionUtil {
 	private static final String PARSER_FUNCTION_LOCAL_URL = "localurl:";
 	private static final String PARSER_FUNCTION_LOWER_CASE = "lc:";
 	private static final String PARSER_FUNCTION_LOWER_CASE_FIRST = "lcfirst:";
+	private static final String PARSER_FUNCTION_NAMESPACE = "ns:";
+	private static final String PARSER_FUNCTION_NAMESPACE_ESCAPED = "nse:";
 	private static final String PARSER_FUNCTION_UPPER_CASE = "uc:";
 	private static final String PARSER_FUNCTION_UPPER_CASE_FIRST = "ucfirst:";
 	private static final String PARSER_FUNCTION_URL_ENCODE = "urlencode:";
@@ -63,6 +66,8 @@ public class ParserFunctionUtil {
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOCAL_URL);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOWER_CASE);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOWER_CASE_FIRST);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_NAMESPACE);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_NAMESPACE_ESCAPED);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_UPPER_CASE);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_UPPER_CASE_FIRST);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_URL_ENCODE);
@@ -120,6 +125,12 @@ public class ParserFunctionUtil {
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_LOWER_CASE_FIRST)) {
 			return ParserFunctionUtil.parseLowerCaseFirst(parserInput, parserFunctionArgumentArray);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_NAMESPACE)) {
+			return ParserFunctionUtil.parseNamespace(parserInput, parserFunctionArgumentArray, false);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_NAMESPACE_ESCAPED)) {
+			return ParserFunctionUtil.parseNamespace(parserInput, parserFunctionArgumentArray, true);
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_UPPER_CASE)) {
 			return ParserFunctionUtil.parseUpperCase(parserInput, parserFunctionArgumentArray);
@@ -308,6 +319,24 @@ public class ParserFunctionUtil {
 	 */
 	private static String parseLowerCaseFirst(ParserInput parserInput, String[] parserFunctionArgumentArray) {
 		return StringUtils.uncapitalize(parserFunctionArgumentArray[0]);
+	}
+
+	/**
+	 * Parse the {{ns:}} and {{nse:}} parser functions.
+	 */
+	private static String parseNamespace(ParserInput parserInput, String[] parserFunctionArgumentArray, boolean escape) throws DataAccessException {
+		int namespaceId = NumberUtils.toInt(parserFunctionArgumentArray[0], -10);
+		Namespace namespace = null;
+		if (namespaceId != -10) {
+			namespace = WikiBase.getDataHandler().lookupNamespaceById(namespaceId);
+		} else {
+			namespace = WikiBase.getDataHandler().lookupNamespace(parserInput.getVirtualWiki(), Utilities.decodeAndEscapeTopicName(parserFunctionArgumentArray[0], true));
+		}
+		String result = ((namespace == null) ? "" : namespace.getLabel(parserInput.getVirtualWiki()));
+		if (StringUtils.isBlank(result)) {
+			return "";
+		}
+		return (escape) ? Utilities.encodeAndEscapeTopicName(result) : result;
 	}
 
 	/**
