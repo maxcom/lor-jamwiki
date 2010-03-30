@@ -118,9 +118,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			links.put(specialUrl, new WikiMessage("tab.common.special"));
 		} else {
 			try {
-				logger.info("RYAN: " + pageName);
 				String article = WikiUtil.extractTopicLink(virtualWiki, pageName);
-				logger.info("RYAN: " + article);
 				String comments = WikiUtil.extractCommentsLink(virtualWiki, pageName);
 				links.put(article, new WikiMessage("tab.common.article"));
 				links.put(comments, new WikiMessage("tab.common.comments"));
