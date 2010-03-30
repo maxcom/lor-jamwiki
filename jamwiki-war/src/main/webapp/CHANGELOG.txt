@@ -58,6 +58,8 @@ Bugfixes:
     an interwiki link.
   * Trim leading and trailing whitespace during parsing when a template is
     included to fix breakage of wiki table syntax such as "!{{Hl2}}| Word".
+  * The {{SITENAME}} magic word was not fully implemented, and returned
+    "SITENAME" instead of the actual site name.
 
 Translation Updates:
 

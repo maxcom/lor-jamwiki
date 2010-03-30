@@ -498,10 +498,9 @@ public class MagicWordUtil {
 		if (name.equals(MAGIC_REVISION_ID)) {
 			return (topicVersion == null) ? "" : Integer.toString(topicVersion.getTopicVersionId());
 		}
-		/*
 		if (name.equals(MAGIC_SITE_NAME)) {
+			return Environment.getValue(Environment.PROP_SITE_NAME);
 		}
-		*/
 		if (name.equals(MAGIC_SERVER)) {
 			return Environment.getValue(Environment.PROP_SERVER_URL);
 		}
