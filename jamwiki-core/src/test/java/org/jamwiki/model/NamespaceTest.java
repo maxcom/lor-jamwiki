@@ -39,8 +39,8 @@ public class NamespaceTest {
 	 */
 	@Test
 	public void testFindMainNamespace1() {
-		Namespace result = Namespace.findMainNamespace(Namespace.MAIN);
-		assertEquals("result", Namespace.MAIN, result);
+		Namespace result = Namespace.findMainNamespace(Namespace.namespace(Namespace.MAIN_ID));
+		assertEquals("result", Namespace.namespace(Namespace.MAIN_ID), result);
 	}
 
 	/**
@@ -48,8 +48,8 @@ public class NamespaceTest {
 	 */
 	@Test
 	public void testFindMainNamespace2() {
-		Namespace result = Namespace.findMainNamespace(Namespace.USER);
-		assertEquals("result", Namespace.USER, result);
+		Namespace result = Namespace.findMainNamespace(Namespace.namespace(Namespace.USER_ID));
+		assertEquals("result", Namespace.namespace(Namespace.USER_ID), result);
 	}
 
 	/**
@@ -57,8 +57,8 @@ public class NamespaceTest {
 	 */
 	@Test
 	public void testFindMainNamespace3() {
-		Namespace result = Namespace.findMainNamespace(Namespace.USER_COMMENTS);
-		assertEquals("result", Namespace.USER, result);
+		Namespace result = Namespace.findMainNamespace(Namespace.namespace(Namespace.USER_COMMENTS_ID));
+		assertEquals("result", Namespace.namespace(Namespace.USER_ID), result);
 	}
 
 	/**
@@ -66,8 +66,8 @@ public class NamespaceTest {
 	 */
 	@Test
 	public void testFindMainNamespace4() {
-		Namespace result = Namespace.findMainNamespace(Namespace.SPECIAL);
-		assertEquals("result", Namespace.SPECIAL, result);
+		Namespace result = Namespace.findMainNamespace(Namespace.namespace(Namespace.SPECIAL_ID));
+		assertEquals("result", Namespace.namespace(Namespace.SPECIAL_ID), result);
 	}
 
 	/**
@@ -75,8 +75,8 @@ public class NamespaceTest {
 	 */
 	@Test
 	public void testFindCommentsNamespace1() throws DataAccessException {
-		Namespace result = Namespace.findCommentsNamespace(Namespace.MAIN);
-		assertEquals("result", Namespace.COMMENTS, result);
+		Namespace result = Namespace.findCommentsNamespace(Namespace.namespace(Namespace.MAIN_ID));
+		assertEquals("result", Namespace.namespace(Namespace.COMMENTS_ID), result);
 	}
 
 	/**
@@ -84,8 +84,8 @@ public class NamespaceTest {
 	 */
 	@Test
 	public void testFindCommentsNamespace2() throws DataAccessException {
-		Namespace result = Namespace.findCommentsNamespace(Namespace.USER);
-		assertEquals("result", Namespace.USER_COMMENTS, result);
+		Namespace result = Namespace.findCommentsNamespace(Namespace.namespace(Namespace.USER_ID));
+		assertEquals("result", Namespace.namespace(Namespace.USER_COMMENTS_ID), result);
 	}
 
 	/**
@@ -93,8 +93,8 @@ public class NamespaceTest {
 	 */
 	@Test
 	public void testFindCommentsNamespace3() throws DataAccessException {
-		Namespace result = Namespace.findCommentsNamespace(Namespace.USER_COMMENTS);
-		assertEquals("result", Namespace.USER_COMMENTS, result);
+		Namespace result = Namespace.findCommentsNamespace(Namespace.namespace(Namespace.USER_COMMENTS_ID));
+		assertEquals("result", Namespace.namespace(Namespace.USER_COMMENTS_ID), result);
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class NamespaceTest {
 	 */
 	@Test
 	public void testFindCommentsNamespace4() throws DataAccessException {
-		Namespace result = Namespace.findCommentsNamespace(Namespace.SPECIAL);
+		Namespace result = Namespace.findCommentsNamespace(Namespace.namespace(Namespace.SPECIAL_ID));
 		assertNull("result", result);
 	}
 }

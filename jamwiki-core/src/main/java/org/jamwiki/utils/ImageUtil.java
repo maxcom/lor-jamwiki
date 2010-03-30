@@ -154,7 +154,7 @@ public class ImageUtil {
 	 * Given an image file name, generate the appropriate topic name for the image.
 	 */
 	public static String generateFileTopicName(String virtualWiki, String filename) {
-		String topicName = Namespace.FILE.getLabel(virtualWiki) + Namespace.SEPARATOR;
+		String topicName = Namespace.namespace(Namespace.FILE_ID).getLabel(virtualWiki) + Namespace.SEPARATOR;
 		topicName += Utilities.decodeAndEscapeTopicName(filename, true);
 		return topicName;
 	}

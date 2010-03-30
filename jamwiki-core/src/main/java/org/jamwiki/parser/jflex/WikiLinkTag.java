@@ -59,7 +59,7 @@ public class WikiLinkTag implements JFlexParserTag {
 			return raw;
 		}
 		try {
-			if (!wikiLink.getColon() && wikiLink.getNamespace().equals(Namespace.FILE)) {
+			if (!wikiLink.getColon() && wikiLink.getNamespace().getId().equals(Namespace.FILE_ID)) {
 				// parse as an image
 				return this.parseImageLink(parserInput, mode, wikiLink);
 			}
@@ -190,7 +190,7 @@ public class WikiLinkTag implements JFlexParserTag {
 			return raw;
 		}
 		String result = raw;
-		if (!wikiLink.getColon() && wikiLink.getNamespace().equals(Namespace.CATEGORY)) {
+		if (!wikiLink.getColon() && wikiLink.getNamespace().getId().equals(Namespace.CATEGORY_ID)) {
 			String sortKey = wikiLink.getText();
 			if (!StringUtils.isBlank(sortKey)) {
 				sortKey = JFlexParserUtil.parseFragment(parserInput, sortKey, JFlexParser.MODE_PREPROCESS);

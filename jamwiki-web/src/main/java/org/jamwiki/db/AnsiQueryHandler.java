@@ -1957,7 +1957,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public Topic lookupTopic(int virtualWikiId, String virtualWikiName, String topicName, Connection conn) throws SQLException {
 		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWikiName, topicName);
-		if (wikiLink.getNamespace().equals(Namespace.SPECIAL)) {
+		if (wikiLink.getNamespace().getId().equals(Namespace.SPECIAL_ID)) {
 			// invalid namespace
 			return null;
 		}
@@ -2070,7 +2070,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public Integer lookupTopicId(int virtualWikiId, String virtualWikiName, String topicName) throws SQLException {
 		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWikiName, topicName);
-		if (wikiLink.getNamespace().equals(Namespace.SPECIAL)) {
+		if (wikiLink.getNamespace().getId().equals(Namespace.SPECIAL_ID)) {
 			// invalid namespace
 			return null;
 		}

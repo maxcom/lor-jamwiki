@@ -37,7 +37,7 @@ public class WikiLinkTest {
 		assertNull("wikiLink.getSection()", wikiLink.getSection());
 		assertNull("wikiLink.getText()", wikiLink.getText());
 		assertNull("wikiLink.getArticle()", wikiLink.getArticle());
-		assertEquals("wikiLink.getNamespace()", Namespace.MAIN, wikiLink.getNamespace());
+		assertEquals("wikiLink.getNamespace()", Namespace.namespace(Namespace.MAIN_ID), wikiLink.getNamespace());
 		assertNull("wikiLink.getDestination()", wikiLink.getDestination());
 		assertFalse("wikiLink.getColon()", wikiLink.getColon());
 	}
@@ -78,8 +78,8 @@ public class WikiLinkTest {
 	@Test
 	public void testSetNamespace() throws Throwable {
 		WikiLink wikiLink = new WikiLink();
-		wikiLink.setNamespace(Namespace.FILE);
-		assertEquals("wikiLink.getNamespace()", Namespace.FILE, wikiLink.getNamespace());
+		wikiLink.setNamespace(Namespace.namespace(Namespace.FILE_ID));
+		assertEquals("wikiLink.getNamespace()", Namespace.namespace(Namespace.FILE_ID), wikiLink.getNamespace());
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class WikiLinkTest {
 	public void testSetNamespace2() throws Throwable {
 		WikiLink wikiLink = new WikiLink();
 		wikiLink.setNamespace(null);
-		assertEquals("wikiLink.getNamespace()", Namespace.FILE, wikiLink.getNamespace());
+		assertEquals("wikiLink.getNamespace()", Namespace.namespace(Namespace.FILE_ID), wikiLink.getNamespace());
 	}
 
 	/**

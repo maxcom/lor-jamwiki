@@ -177,7 +177,7 @@ public class LinkUtil {
 		if (topic.getTopicType() == TopicType.FILE) {
 			// file, not an image
 			if (StringUtils.isBlank(caption)) {
-				caption = topicName.substring(Namespace.FILE.getLabel(virtualWiki).length() + 1);
+				caption = topicName.substring(Namespace.namespace(Namespace.FILE_ID).getLabel(virtualWiki).length() + 1);
 			}
 			html.append("<a href=\"").append(url).append("\">");
 			if (escapeHtml) {
@@ -532,12 +532,12 @@ public class LinkUtil {
 			virtualWiki = wikiLink.getVirtualWiki().getName();
 		}
 		topic = LinkUtil.processNamespace(virtualWiki, topic, wikiLink);
-		if (wikiLink.getNamespace() != Namespace.MAIN) {
+		if (!wikiLink.getNamespace().getId().equals(Namespace.MAIN_ID)) {
 			// update original text in case topic was of the form "xxx: topic"
 			processed = wikiLink.getNamespace().getLabel(virtualWiki) + Namespace.SEPARATOR + topic;
 		}
 		// if no namespace or virtual wiki, see if there's an interwiki link
-		if (wikiLink.getNamespace() == Namespace.MAIN && wikiLink.getVirtualWiki() == null) {
+		if (wikiLink.getNamespace().getId().equals(Namespace.MAIN_ID) && wikiLink.getVirtualWiki() == null) {
 			topic = LinkUtil.processInterWiki(processed, wikiLink);
 			if (wikiLink.getInterWiki() != null) {
 				// strip the interwiki
@@ -604,6 +604,6 @@ public class LinkUtil {
 			// this should not happen, if it does then swallow the error
 			logger.warning("Failure while trying to lookup namespace: " + linkPrefix, e);
 		}
-		return (wikiLink.getNamespace() != Namespace.MAIN) ? processed.substring(prefixPosition + Namespace.SEPARATOR.length()).trim(): processed;
+		return (!wikiLink.getNamespace().getId().equals(Namespace.MAIN_ID)) ? processed.substring(prefixPosition + Namespace.SEPARATOR.length()).trim(): processed;
 	}
 }

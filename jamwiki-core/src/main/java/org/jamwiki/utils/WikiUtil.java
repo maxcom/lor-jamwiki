@@ -261,16 +261,16 @@ public class WikiUtil {
 	 */
 	public static TopicType findTopicTypeForNamespace(Namespace namespace) {
 		if (namespace != null) {
-			if (namespace.equals(Namespace.CATEGORY)) {
+			if (namespace.getId().equals(Namespace.CATEGORY_ID)) {
 				return TopicType.CATEGORY;
 			}
-			if (namespace.equals(Namespace.TEMPLATE)) {
+			if (namespace.getId().equals(Namespace.TEMPLATE_ID)) {
 				return TopicType.TEMPLATE;
 			}
-			if (namespace.equals(Namespace.JAMWIKI)) {
+			if (namespace.getId().equals(Namespace.JAMWIKI_ID)) {
 				return TopicType.SYSTEM_FILE;
 			}
-			if (namespace.equals(Namespace.FILE)) {
+			if (namespace.getId().equals(Namespace.FILE_ID)) {
 				// FIXME - handle TYPE_FILE
 				return TopicType.IMAGE;
 			}
@@ -459,7 +459,7 @@ public class WikiUtil {
 	 */
 	public static boolean isCommentsPage(String virtualWiki, String topicName) {
 		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, topicName);
-		if (wikiLink.getNamespace().equals(Namespace.SPECIAL)) {
+		if (wikiLink.getNamespace().getId().equals(Namespace.SPECIAL_ID)) {
 			return false;
 		}
 		try {
@@ -741,7 +741,7 @@ public class WikiUtil {
 		if (StringUtils.startsWith(article, "/")) {
 			throw new WikiException(new WikiMessage("common.exception.name", name));
 		}
-		if (wikiLink.getNamespace().equals(Namespace.SPECIAL)) {
+		if (wikiLink.getNamespace().getId().equals(Namespace.SPECIAL_ID)) {
 			throw new WikiException(new WikiMessage("common.exception.name", name));
 		}
 		Matcher m = WikiUtil.INVALID_TOPIC_NAME_PATTERN.matcher(name);

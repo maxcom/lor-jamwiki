@@ -34,7 +34,7 @@ public class WikiLink {
 	/** Interwiki link prefix. */
 	private String interWiki = null;
 	/** Namespace prefix for the link. */
-	private Namespace namespace = Namespace.MAIN;
+	private Namespace namespace = Namespace.namespace(Namespace.MAIN_ID);
 	/** Link query paramters. */
 	private String query = null;
 	/** Link section (ie #section). */
@@ -64,7 +64,7 @@ public class WikiLink {
 	 */
 	public boolean isCaseSensitive() {
 		// user/template/category namespaces are case-insensitive
-		return (!this.namespace.equals(Namespace.SPECIAL) && !this.namespace.equals(Namespace.TEMPLATE) && !this.namespace.equals(Namespace.USER) && !this.namespace.equals(Namespace.CATEGORY));
+		return (!this.namespace.getId().equals(Namespace.SPECIAL_ID) && !this.namespace.getId().equals(Namespace.TEMPLATE_ID) && !this.namespace.getId().equals(Namespace.USER_ID) && !this.namespace.getId().equals(Namespace.CATEGORY_ID));
 	}
 
 	/**

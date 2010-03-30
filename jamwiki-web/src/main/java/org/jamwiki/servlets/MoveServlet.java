@@ -108,18 +108,18 @@ public class MoveServlet extends JAMWikiServlet {
 		WikiLink destinationWikiLink = LinkUtil.parseWikiLink(virtualWiki, moveDestination);
 		if (fromWikiLink.getNamespace() != destinationWikiLink.getNamespace()) {
 			// do not allow moving into or out of image & category namespace
-			if (fromWikiLink.getNamespace().equals(Namespace.CATEGORY)
-					|| fromWikiLink.getNamespace().equals(Namespace.CATEGORY_COMMENTS)
-					|| destinationWikiLink.getNamespace().equals(Namespace.CATEGORY)
-					|| destinationWikiLink.getNamespace().equals(Namespace.CATEGORY_COMMENTS)
+			if (fromWikiLink.getNamespace().getId().equals(Namespace.CATEGORY_ID)
+					|| fromWikiLink.getNamespace().getId().equals(Namespace.CATEGORY_COMMENTS_ID)
+					|| destinationWikiLink.getNamespace().getId().equals(Namespace.CATEGORY_ID)
+					|| destinationWikiLink.getNamespace().getId().equals(Namespace.CATEGORY_COMMENTS_ID)
 				) {
 				next.addObject("messageObject", new WikiMessage("move.exception.namespacecategory"));
 				this.view(request, next, pageInfo);
 				return false;
-			} else if (fromWikiLink.getNamespace().equals(Namespace.FILE)
-					|| fromWikiLink.getNamespace().equals(Namespace.FILE_COMMENTS)
-					|| destinationWikiLink.getNamespace().equals(Namespace.FILE)
-					|| destinationWikiLink.getNamespace().equals(Namespace.FILE_COMMENTS)
+			} else if (fromWikiLink.getNamespace().getId().equals(Namespace.FILE_ID)
+					|| fromWikiLink.getNamespace().getId().equals(Namespace.FILE_COMMENTS_ID)
+					|| destinationWikiLink.getNamespace().getId().equals(Namespace.FILE_ID)
+					|| destinationWikiLink.getNamespace().getId().equals(Namespace.FILE_COMMENTS_ID)
 				) {
 				next.addObject("messageObject", new WikiMessage("move.exception.namespaceimage"));
 				this.view(request, next, pageInfo);

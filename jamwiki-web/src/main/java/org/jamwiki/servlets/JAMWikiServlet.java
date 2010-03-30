@@ -118,7 +118,9 @@ public abstract class JAMWikiServlet extends AbstractController {
 			links.put(specialUrl, new WikiMessage("tab.common.special"));
 		} else {
 			try {
+				logger.info("RYAN: " + pageName);
 				String article = WikiUtil.extractTopicLink(virtualWiki, pageName);
+				logger.info("RYAN: " + article);
 				String comments = WikiUtil.extractCommentsLink(virtualWiki, pageName);
 				links.put(article, new WikiMessage("tab.common.article"));
 				links.put(comments, new WikiMessage("tab.common.comments"));
@@ -181,8 +183,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 		}
 		if (!userDetails.hasRole(RoleImpl.ROLE_ANONYMOUS)) {
 			WikiUser user = ServletUtil.currentWikiUser();
-			String userPage = Namespace.USER.getLabel(virtualWiki) + Namespace.SEPARATOR + user.getUsername();
-			String userCommentsPage = Namespace.USER_COMMENTS.getLabel(virtualWiki) + Namespace.SEPARATOR + user.getUsername();
+			String userPage = Namespace.namespace(Namespace.USER_ID).getLabel(virtualWiki) + Namespace.SEPARATOR + user.getUsername();
+			String userCommentsPage = Namespace.namespace(Namespace.USER_COMMENTS_ID).getLabel(virtualWiki) + Namespace.SEPARATOR + user.getUsername();
 			String username = user.getUsername();
 			if (!StringUtils.isBlank(user.getDisplayName())) {
 				username = user.getDisplayName();

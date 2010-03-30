@@ -423,7 +423,7 @@ public class ServletUtil {
 	 * @throws WikiException Thrown if any error occurs during processing.
 	 */
 	protected static void loadCategoryContent(ModelAndView next, String virtualWiki, String topicName) throws WikiException {
-		String categoryName = topicName.substring(Namespace.CATEGORY.getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
+		String categoryName = topicName.substring(Namespace.namespace(Namespace.CATEGORY_ID).getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
 		next.addObject("categoryName", categoryName);
 		List<Category> categoryTopics = null;
 		try {
@@ -444,7 +444,7 @@ public class ServletUtil {
 			}
 			if (category.getTopicType() == TopicType.CATEGORY) {
 				categoryTopics.remove(i);
-				String value = category.getChildTopicName().substring(Namespace.CATEGORY.getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
+				String value = category.getChildTopicName().substring(Namespace.namespace(Namespace.CATEGORY_ID).getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
 				subCategories.put(category.getChildTopicName(), value);
 				continue;
 			}
@@ -776,7 +776,7 @@ public class ServletUtil {
 		if (parserOutput.getCategories().size() > 0) {
 			LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>();
 			for (String key : parserOutput.getCategories().keySet()) {
-				String value = key.substring(Namespace.CATEGORY.getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
+				String value = key.substring(Namespace.namespace(Namespace.CATEGORY_ID).getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
 				categories.put(key, value);
 			}
 			next.addObject("categories", categories);

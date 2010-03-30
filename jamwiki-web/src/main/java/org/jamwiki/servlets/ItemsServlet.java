@@ -160,7 +160,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		List<String> items = WikiBase.getDataHandler().lookupWikiUsers(pagination);
 		List<String> links = new ArrayList<String>();
 		for (String link : items) {
-			links.add(Namespace.USER.getLabel(virtualWiki) + Namespace.SEPARATOR + link);
+			links.add(Namespace.namespace(Namespace.USER_ID).getLabel(virtualWiki) + Namespace.SEPARATOR + link);
 		}
 		next.addObject("itemCount", items.size());
 		next.addObject("items", links);
@@ -193,7 +193,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		List<Namespace> namespaces = WikiBase.getDataHandler().lookupNamespaces();
 		// find the current namespace and topic type
-		Integer namespaceId = (request.getParameter("namespace") == null) ? Namespace.MAIN.getId() : new Integer(request.getParameter("namespace"));
+		Integer namespaceId = (request.getParameter("namespace") == null) ? Namespace.MAIN_ID : new Integer(request.getParameter("namespace"));
 		TopicType topicType = WikiUtil.findTopicTypeForNamespace(WikiBase.getDataHandler().lookupNamespaceById(namespaceId.intValue()));
 		// retrieve a list of topics for the namespace
 		Map<Integer, String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, TopicType.ARTICLE, topicType, namespaceId, pagination);

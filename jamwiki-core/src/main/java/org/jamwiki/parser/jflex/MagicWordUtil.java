@@ -321,11 +321,11 @@ public class MagicWordUtil {
 			return WikiVersion.CURRENT_WIKI_VERSION;
 		}
 		if (name.equals(MAGIC_NUMBER_ARTICLES)) {
-			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki(), Namespace.MAIN.getId());
+			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki(), Namespace.MAIN_ID);
 			return numFormatter.format(results);
 		}
 		if (name.equals(MAGIC_NUMBER_ARTICLES_R)) {
-			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki(), Namespace.MAIN.getId());
+			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki(), Namespace.MAIN_ID);
 			return Integer.toString(results);
 		}
 		if (name.equals(MAGIC_NUMBER_PAGES)) {

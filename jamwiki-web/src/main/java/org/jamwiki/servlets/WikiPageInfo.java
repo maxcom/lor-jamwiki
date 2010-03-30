@@ -364,6 +364,6 @@ public class WikiPageInfo {
 	 */
 	public boolean isUserPage() {
 		WikiLink wikiLink = LinkUtil.parseWikiLink(this.virtualWikiName, this.getTopicName());
-		return (wikiLink.getNamespace().equals(Namespace.USER) || wikiLink.getNamespace().equals(Namespace.USER_COMMENTS));
+		return (wikiLink.getNamespace().getId().equals(Namespace.USER_ID) || wikiLink.getNamespace().getId().equals(Namespace.USER_COMMENTS_ID));
 	}
 }

@@ -68,7 +68,7 @@ public class UploadServlet extends JAMWikiServlet {
 			destinationFilename += (!destinationFilename.endsWith(".") ? "." : "") + FilenameUtils.getExtension(filename);
 		}
 		// if the user entered a file name of the form "Image:Foo.jpg" strip the namespace
-		return StringUtils.removeStart(destinationFilename, Namespace.FILE.getLabel(virtualWiki) + Namespace.SEPARATOR);
+		return StringUtils.removeStart(destinationFilename, Namespace.namespace(Namespace.FILE_ID).getLabel(virtualWiki) + Namespace.SEPARATOR);
 	}
 
 	/**

@@ -57,9 +57,9 @@ public class TestDataHandler implements DataHandler {
 	static {
 		for (Namespace namespace : Namespace.DEFAULT_NAMESPACES.values()) {
 			// test handler, so hard code translations for the "test" virtual wiki
-			if (namespace == Namespace.USER) {
+			if (namespace.getId().equals(Namespace.USER_ID)) {
 				namespace.getNamespaceTranslations().put("test", "UserTest");
-			} else if (namespace == Namespace.USER_COMMENTS) {
+			} else if (namespace.getId().equals(Namespace.USER_COMMENTS_ID)) {
 				namespace.getNamespaceTranslations().put("test", "UserTest comments");
 			}
 			TEST_NAMESPACES.add(namespace);

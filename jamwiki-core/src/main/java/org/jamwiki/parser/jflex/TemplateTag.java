@@ -255,8 +255,8 @@ public class TemplateTag implements JFlexParserTag {
 				// FIXME - no need for an exception
 				throw new ParserException("No template name specified");
 			}
-		} else if (!name.startsWith(Namespace.TEMPLATE.getLabel(virtualWiki) + Namespace.SEPARATOR)) {
-			name = Namespace.TEMPLATE.getLabel(virtualWiki) + Namespace.SEPARATOR + StringUtils.capitalize(name);
+		} else if (!name.startsWith(Namespace.namespace(Namespace.TEMPLATE_ID).getLabel(virtualWiki) + Namespace.SEPARATOR)) {
+			name = Namespace.namespace(Namespace.TEMPLATE_ID).getLabel(virtualWiki) + Namespace.SEPARATOR + StringUtils.capitalize(name);
 		}
 		return name;
 	}

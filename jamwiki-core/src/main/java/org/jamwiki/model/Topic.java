@@ -18,6 +18,7 @@ package org.jamwiki.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -31,7 +32,7 @@ public class Topic implements Serializable {
 	private boolean adminOnly = false;
 	private Integer currentVersionId = null;
 	private Timestamp deleteDate = null;
-	private Namespace namespace = Namespace.MAIN;
+	private Namespace namespace = Namespace.namespace(Namespace.MAIN_ID);
 	/** Page name is the topic name without the namespace.  For example, if the topic name is "Help:Help Page" the page name is "Help Page". */
 	private String pageName = null;
 	private boolean readOnly = false;
@@ -133,7 +134,7 @@ public class Topic implements Serializable {
 	 */
 	public String getName() {
 		String name = this.pageName;
-		if (this.namespace.getLabel(this.virtualWiki) != "") {
+		if (!StringUtils.isBlank(this.namespace.getLabel(this.virtualWiki))) {
 			name = this.namespace.getLabel(this.virtualWiki) + Namespace.SEPARATOR + this.pageName;
 		}
 		return name;
