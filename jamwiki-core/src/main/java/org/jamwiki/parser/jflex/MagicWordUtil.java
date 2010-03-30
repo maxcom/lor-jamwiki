@@ -495,9 +495,10 @@ public class MagicWordUtil {
 			WikiUser wikiUser = (topicVersion.getAuthorId() != null) ? WikiBase.getDataHandler().lookupWikiUser(topicVersion.getAuthorId()) : null;
 			return (wikiUser != null) ? wikiUser.getUsername() : topicVersion.getAuthorDisplay();
 		}
-		/*
 		if (name.equals(MAGIC_REVISION_ID)) {
+			return (topicVersion == null) ? "" : Integer.toString(topicVersion.getTopicVersionId());
 		}
+		/*
 		if (name.equals(MAGIC_SITE_NAME)) {
 		}
 		*/

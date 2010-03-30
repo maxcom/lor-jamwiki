@@ -16,8 +16,8 @@ New Features:
   * Support added for the {{ns:}} and {{nse:}} parser functions.
   * Support Mediawiki's {{subst:}} syntax.  Usage: {{subst:template}}.
   * Support added for the __NOEDITSECTION__ behavior switch.
-  * Support added for the {{NUMBEROFARTICLES}} and {{REVISIONUSER}} magic
-    words.
+  * Support added for the {{NUMBEROFARTICLES}}, {{REVISIONUSER}} and
+    {{REVISIONID}} magic words.
   * Add the ability for sysadmins to create user accounts (hanspeterklapf).
   * Topic add/update is now significantly faster due to query refactoring
     and changes so that the search index is not re-optimized after every
