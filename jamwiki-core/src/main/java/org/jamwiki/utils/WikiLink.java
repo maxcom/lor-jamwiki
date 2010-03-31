@@ -63,8 +63,20 @@ public class WikiLink {
 	 * others (such as the user namespace) are not.
 	 */
 	public boolean isCaseSensitive() {
-		// user/template/category namespaces are case-insensitive
-		return (!this.namespace.getId().equals(Namespace.SPECIAL_ID) && !this.namespace.getId().equals(Namespace.TEMPLATE_ID) && !this.namespace.getId().equals(Namespace.USER_ID) && !this.namespace.getId().equals(Namespace.CATEGORY_ID));
+		// user/template/category namespaces are not case-insensitive
+		if (this.namespace.getId().equals(Namespace.SPECIAL_ID)) {
+			return false;
+		}
+		if (this.namespace.getId().equals(Namespace.TEMPLATE_ID) || this.namespace.getId().equals(Namespace.TEMPLATE_COMMENTS_ID)) {
+			return false;
+		}
+		if (this.namespace.getId().equals(Namespace.USER_ID) || this.namespace.getId().equals(Namespace.USER_COMMENTS_ID)) {
+			return false;
+		}
+		if (this.namespace.getId().equals(Namespace.CATEGORY_ID) || this.namespace.getId().equals(Namespace.CATEGORY_COMMENTS_ID)) {
+			return false;
+		}
+		return true;
 	}
 
 	/**

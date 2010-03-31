@@ -62,6 +62,8 @@ Bugfixes:
     "SITENAME" instead of the actual site name.
   * Links containing templates or magic words of the form "[[{{PAGENAME}}]]"
     should properly resolve the template/magic word.
+  * If a namespace is not case-sensitive (user, template, category) then the
+    associated comments namespace should not be case-sensitive either.
 
 Translation Updates:
 
