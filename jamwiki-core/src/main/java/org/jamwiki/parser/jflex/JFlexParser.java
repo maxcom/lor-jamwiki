@@ -294,10 +294,10 @@ public class JFlexParser extends AbstractParser {
 		// pre-process the text to remove comments, categories, etc.
 		String preprocessed = JFlexParserUtil.parseFragment(parserInput, raw, JFlexParser.MODE_PREPROCESS);
 		String redirect = this.isRedirect(preprocessed);
-		String virtualWiki = this.parserInput.getVirtualWiki();
-		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(virtualWiki, "[[" + redirect + "]]");
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(this.parserInput, "[[" + redirect + "]]");
 		String style = "redirect";
 		try {
+			String virtualWiki = this.parserInput.getVirtualWiki();
 			// see if the redirect link starts with a virtual wiki
 			if (wikiLink.getVirtualWiki() != null) {
 				virtualWiki = wikiLink.getVirtualWiki().getName();

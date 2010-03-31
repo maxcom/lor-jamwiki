@@ -44,3 +44,9 @@
 [[test:WikiLink1]]
 
 [[:test:WikiLink1]]
+
+[[{{PAGENAME}}]]
+
+[[Help:{{PAGENAME}}]]
+
+[[Help:  {{PAGENAME}}  ]]

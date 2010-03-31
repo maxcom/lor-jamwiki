@@ -62,11 +62,11 @@ public class JFlexParserUtil {
 	 * Parse a raw Wiki link of the form "[[link|text]]", and return a WikiLink
 	 * object representing the link.
 	 *
-	 * @param virtualWiki The current virtual wiki.
+	 * @param parserInput Input configuration settings for this parser instance.
 	 * @param raw The raw Wiki link text.
 	 * @return A WikiLink object that represents the link.
 	 */
-	protected static WikiLink parseWikiLink(String virtualWiki, String raw) {
+	protected static WikiLink parseWikiLink(ParserInput parserInput, String raw) throws ParserException {
 		if (StringUtils.isBlank(raw)) {
 			return new WikiLink();
 		}
@@ -75,6 +75,8 @@ public class JFlexParserUtil {
 		// for performance reasons use String methods rather than regex
 		// private static final Pattern WIKI_LINK_PATTERN = Pattern.compile("\\[\\[\\s*(\\:\\s*)?\\s*(.+?)(\\s*\\|\\s*(.+))?\\s*\\]\\]([a-z]*)");
 		raw = raw.substring(raw.indexOf("[[") + 2, raw.lastIndexOf("]]")).trim();
+		// parse in case there is a template or magic word - [[{{PAGENAME}}]]
+		raw = JFlexParserUtil.parseFragment(parserInput, raw, JFlexParser.MODE_PREPROCESS);
 		boolean colon = false;
 		if (raw.startsWith(":")) {
 			colon = true;
@@ -86,6 +88,7 @@ public class JFlexParserUtil {
 			text = raw.substring(pos + 1).trim();
 			raw = raw.substring(0, pos).trim();
 		}
+		String virtualWiki = parserInput.getVirtualWiki();
 		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, raw);
 		wikiLink.setColon(colon);
 		wikiLink.setText(text);

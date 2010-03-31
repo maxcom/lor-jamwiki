@@ -60,6 +60,8 @@ Bugfixes:
     included to fix breakage of wiki table syntax such as "!{{Hl2}}| Word".
   * The {{SITENAME}} magic word was not fully implemented, and returned
     "SITENAME" instead of the actual site name.
+  * Links containing templates or magic words of the form "[[{{PAGENAME}}]]"
+    should properly resolve the template/magic word.
 
 Translation Updates:
 
