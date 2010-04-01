@@ -43,6 +43,7 @@ New Features:
   * Upgrade to ehcache 1.7.0.
   * Upgrade to commons-pool 1.5.4.
   * Upgrade to JUnit 4.7.
+  * Upgrade to HSQLDB 1.8.0.10.
 
 Bugfixes:
 
