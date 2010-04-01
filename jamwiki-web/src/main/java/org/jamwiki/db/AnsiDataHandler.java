@@ -1677,7 +1677,7 @@ public class AnsiDataHandler implements DataHandler {
 		try {
 			status = DatabaseConnection.startTransaction();
 			Connection conn = DatabaseConnection.getConnection();
-			WikiUtil.validateTopicName(null, virtualWiki.getName());
+			WikiUtil.validateVirtualWikiName(virtualWiki.getName());
 			if (virtualWiki.getVirtualWikiId() <= 0) {
 				this.addVirtualWiki(virtualWiki, conn);
 			} else {

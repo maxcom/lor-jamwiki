@@ -108,7 +108,7 @@ public class WikiUtil {
 	 *  instantiated.
 	 */
 	public static DataHandler dataHandlerInstance() throws IOException {
-		if (Environment.getValue(Environment.PROP_DB_TYPE) == null) {
+		if (StringUtils.isBlank(Environment.getValue(Environment.PROP_DB_TYPE))) {
 			// this is a problem, but it should never occur
 			logger.warning("WikiUtil.dataHandlerInstance called without a valid PROP_DB_TYPE value");
 		}
@@ -783,6 +783,23 @@ public class WikiUtil {
 		Matcher m = WikiUtil.VALID_USER_LOGIN_PATTERN.matcher(name);
 		if (!m.matches()) {
 			throw new WikiException(new WikiMessage("common.exception.name", name));
+		}
+	}
+
+	/**
+	 * Utility method for determining if a virtual wiki name is valid for use on the Wiki,
+	 * meaning that it is not empty and does not contain any invalid characters.
+	 *
+	 * @param virtualWikiName The virtual wiki name to validate.
+	 * @throws WikiException Thrown if the user name is invalid.
+	 */
+	public static void validateVirtualWikiName(String virtualWikiName) throws WikiException {
+		if (StringUtils.isBlank(virtualWikiName)) {
+			throw new WikiException(new WikiMessage("common.exception.notopic"));
+		}
+		Matcher m = WikiUtil.INVALID_TOPIC_NAME_PATTERN.matcher(virtualWikiName);
+		if (m.find()) {
+			throw new WikiException(new WikiMessage("common.exception.name", virtualWikiName));
 		}
 	}
 }
