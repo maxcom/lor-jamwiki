@@ -546,6 +546,10 @@ public class LinkUtil {
 				wikiLink.setText(processed);
 			}
 		}
+		if (wikiLink.getNamespace().getId().equals(Namespace.FILE_ID)) {
+			// captions are handled differently for images, so clear the link text value.
+			wikiLink.setText(null);
+		}
 		wikiLink.setArticle(Utilities.decodeTopicName(topic, true));
 		// destination is namespace + topic
 		wikiLink.setDestination(Utilities.decodeTopicName(processed, true));
