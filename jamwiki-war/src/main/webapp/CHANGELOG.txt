@@ -65,6 +65,7 @@ Bugfixes:
     should properly resolve the template/magic word.
   * If a namespace is not case-sensitive (user, template, category) then the
     associated comments namespace should not be case-sensitive either.
+  * Interwiki links should not be rel="nofollow".
 
 Translation Updates:
 

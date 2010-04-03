@@ -307,7 +307,6 @@ public class JAMWikiModel extends AbstractWikiModel {
 			TagNode aTagNode = new TagNode("a");
 			aTagNode.addAttribute("href", hrefLink, true);
 			aTagNode.addAttribute("class", "interwiki", false);
-			aTagNode.addAttribute("rel", "nofollow", false);
 
 			pushNode(aTagNode);
 			WikipediaParser.parseRecursive(topicDescription.trim(), this, false, true);
