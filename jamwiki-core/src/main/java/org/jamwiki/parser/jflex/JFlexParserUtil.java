@@ -91,7 +91,9 @@ public class JFlexParserUtil {
 		String virtualWiki = parserInput.getVirtualWiki();
 		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, raw);
 		wikiLink.setColon(colon);
-		wikiLink.setText(text);
+		if (text != null) {
+			wikiLink.setText(text);
+		}
 		if (!StringUtils.isBlank(suffix)) {
 			wikiLink.setText((StringUtils.isBlank(text) ? wikiLink.getDestination() : text) + suffix);
 		}

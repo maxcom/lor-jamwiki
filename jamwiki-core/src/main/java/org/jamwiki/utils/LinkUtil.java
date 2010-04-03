@@ -196,9 +196,6 @@ public class LinkUtil {
 			logger.warning("File not found while parsing image link for topic: " + virtualWiki + " / " + topicName + ".  Make sure that the following file exists and is readable by the JAMWiki installation: " + e.getMessage());
 			return LinkUtil.buildUploadLink(context, virtualWiki, topicName);
 		}
-		if (caption == null) {
-			caption = "";
-		}
 		if (frame || thumb || !StringUtils.isBlank(align)) {
 			html.append("<div class=\"");
 			if (thumb || frame) {
@@ -230,7 +227,8 @@ public class LinkUtil {
 		html.append('\"');
 		html.append(" width=\"").append(wikiImage.getWidth()).append('\"');
 		html.append(" height=\"").append(wikiImage.getHeight()).append('\"');
-		html.append(" alt=\"").append(StringEscapeUtils.escapeHtml(caption)).append('\"');
+		String alt = (caption != null) ? caption : topic.getPageName();
+		html.append(" alt=\"").append(StringEscapeUtils.escapeHtml(alt)).append('\"');
 		html.append(" />");
 		if (!suppressLink) {
 			html.append("</a>");
@@ -531,8 +529,11 @@ public class LinkUtil {
 			processed = topic;
 			virtualWiki = wikiLink.getVirtualWiki().getName();
 		}
+		wikiLink.setText(processed);
 		topic = LinkUtil.processNamespace(virtualWiki, topic, wikiLink);
 		if (!wikiLink.getNamespace().getId().equals(Namespace.MAIN_ID)) {
+			// store the display name WITH any extra spaces
+			wikiLink.setText(processed);
 			// update original text in case topic was of the form "xxx: topic"
 			processed = wikiLink.getNamespace().getLabel(virtualWiki) + Namespace.SEPARATOR + topic;
 		}
@@ -542,6 +543,7 @@ public class LinkUtil {
 			if (wikiLink.getInterWiki() != null) {
 				// strip the interwiki
 				processed = topic;
+				wikiLink.setText(processed);
 			}
 		}
 		wikiLink.setArticle(Utilities.decodeTopicName(topic, true));

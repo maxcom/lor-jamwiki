@@ -115,6 +115,8 @@ public class WikiLinkTag implements JFlexParserTag {
 	private String parseImageLink(ParserInput parserInput, int mode, WikiLink wikiLink) throws DataAccessException, ParserException {
 		String context = parserInput.getContext();
 		String virtualWiki = parserInput.getVirtualWiki();
+		// captions are handled differently for images, so clear the link text value.
+		wikiLink.setText(null);
 		boolean thumb = false;
 		boolean frame = false;
 		String caption = null;

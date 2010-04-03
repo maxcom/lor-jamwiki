@@ -23,4 +23,10 @@
 <p><a href="/wiki/test/WikiLink1" title="WikiLink1">WikiLink1</a></p>
 <p><b>WikiLink1</b></p>
 <p><a href="/wiki/en/Special:Edit?topic=Help:WikiLink1" class="edit" title="Help:WikiLink1">Help:WikiLink1</a></p>
-<p><a href="/wiki/en/Special:Edit?topic=Help:WikiLink1" class="edit" title="Help:WikiLink1">Help:WikiLink1</a></p>
+<p><a href="/wiki/en/Special:Edit?topic=Help:WikiLink1" class="edit" title="Help:WikiLink1">Help:  WikiLink1</a></p>
+<p><a href="/wiki/en/Help:Test" title="Help:Test">Help:Test</a></p>
+<p><a href="/wiki/en/Help:Test" title="Help:Test">Help: Test</a></p>
+<p><a href="/wiki/en/Help:Test" title="Help:Test">Help : Test</a></p>
+<p><a href="/wiki/en/Special:Edit?topic=Invalid:Test" class="edit" title="Invalid:Test">Invalid:Test</a></p>
+<p><a href="/wiki/en/Special:Edit?topic=Invalid:_Test" class="edit" title="Invalid: Test">Invalid: Test</a></p>
+<p><a href="/wiki/en/Special:Edit?topic=Invalid_:_Test" class="edit" title="Invalid : Test">Invalid : Test</a></p>
