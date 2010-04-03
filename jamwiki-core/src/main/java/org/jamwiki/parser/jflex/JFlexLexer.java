@@ -449,7 +449,19 @@ public abstract class JFlexLexer {
 	/**
 	 *
 	 */
-	protected void popListTags(int depth) {
+	protected void popAllListTags() {
+		// before clearing a list, first make sure that any open inline tags or paragraph tags
+		// have been closed (example: "<i><ul>" is invalid.  close the <i> first).
+		while (!this.peekTag().isRootTag() && (this.peekTag().getTagType().equals("p") || this.peekTag().isInlineTag())) {
+			this.popTag(this.peekTag().getTagType());
+		}
+		this.popListTags(this.currentListDepth());
+	}
+
+	/**
+	 *
+	 */
+	private void popListTags(int depth) {
 		if (depth < 0) {
 			throw new IllegalArgumentException("Cannot pop a negative number: " + depth);
 		}
@@ -493,6 +505,11 @@ public abstract class JFlexLexer {
 	 * Make sure any open table tags that need to be closed are closed.
 	 */
 	protected void processTableStack() {
+		// before updating the table make sure that any open inline tags or paragraph tags
+		// have been closed (example: "<td><b></td>" won't work.
+		while (!this.peekTag().isRootTag() && (this.peekTag().getTagType().equals("p") || this.peekTag().isInlineTag())) {
+			this.popTag(this.peekTag().getTagType());
+		}
 		String previousTagType = this.peekTag().getTagType();
 		if (!previousTagType.equals("caption") && !previousTagType.equals("th") && !previousTagType.equals("td")) {
 			// no table cell was open, so nothing to close

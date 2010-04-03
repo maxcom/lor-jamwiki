@@ -383,9 +383,7 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     // roll back any matches to allow re-parsing
     yypushback(raw.length());
     endState();
-    // pop list tags currently on the stack
-    int depth = this.currentListDepth();
-    this.popListTags(depth);
+    this.popAllListTags();
     return "";
 }
 
