@@ -47,7 +47,7 @@
 <fieldset>
 <legend><fmt:message key="topic.caption.editlegend" /></legend>
 
-<form method="post" name="editform" action="<jamwiki:link value="Special:Edit" />">
+<form method="post" name="editForm" id="editForm" action="<jamwiki:link value="Special:Edit" />">
 <input type="hidden" name="topic" value="<c:out value="${pageInfo.topicName}" />" />
 <input type="hidden" name="lastTopicVersionId" value="<c:out value="${lastTopicVersionId}" />" />
 <input type="hidden" name="section" value="<c:out value="${section}" />" />
