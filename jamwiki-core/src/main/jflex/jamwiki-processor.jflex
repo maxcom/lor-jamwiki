@@ -422,15 +422,15 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 /* ----- bold / italic ----- */
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{bold} {
+<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{bold} {
     return this.parse(TAG_TYPE_WIKI_BOLD_ITALIC, yytext(), "b");
 }
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{bolditalic} {
+<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{bolditalic} {
     return this.parse(TAG_TYPE_WIKI_BOLD_ITALIC, yytext(), (String)null);
 }
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{italic} {
+<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{italic} {
     return this.parse(TAG_TYPE_WIKI_BOLD_ITALIC, yytext(), "i");
 }
 
@@ -509,13 +509,13 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     return "";
 }
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmltagnocontent} {
+<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{htmltagnocontent} {
     if (logger.isFinerEnabled()) logger.finer("htmltagnocontent: " + yytext() + " (" + yystate() + ")");
     HtmlTagItem tagItem = JFlexParserUtil.sanitizeHtmlTag(yytext());
     return ((tagItem == null) ? "" : tagItem.getHtml());
 }
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmltagopen} {
+<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{htmltagopen} {
     if (logger.isFinerEnabled()) logger.finer("htmltagopen: " + yytext() + " (" + yystate() + ")");
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
@@ -524,7 +524,7 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     return "";
 }
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmltagclose} {
+<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{htmltagclose} {
     if (logger.isFinerEnabled()) logger.finer("htmltagclose: " + yytext() + " (" + yystate() + ")");
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());

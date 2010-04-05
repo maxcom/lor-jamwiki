@@ -68,6 +68,8 @@ Bugfixes:
   * Interwiki links should not be rel="nofollow".
   * Links of the form "[[Help : Test]]" should link to the "Help:Test" page
     but output "Help : Test" as the link text, as per Mediawiki.
+  * Wiki pre syntax (" pre <span>HTML</span") should allow HTML, although
+    HTML pre ("<pre>pre <span>HTML</span></pre>") should not.
 
 Translation Updates:
 
