@@ -56,7 +56,7 @@ public class JFlexParser extends AbstractParser {
 	public static final int MODE_POSTPROCESS = 7;
 
 	/** Pattern to determine if the topic is a redirect. */
-	private static final Pattern REDIRECT_PATTERN = Pattern.compile("#REDIRECT[ ]+\\[\\[([^\\n\\r\\]]+)\\]\\]", Pattern.CASE_INSENSITIVE);
+	private static final Pattern REDIRECT_PATTERN = Pattern.compile("#REDIRECT[ ]*\\[\\[([^\\n\\r\\]]+)\\]\\]", Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * The constructor creates a parser instance, initialized with the
