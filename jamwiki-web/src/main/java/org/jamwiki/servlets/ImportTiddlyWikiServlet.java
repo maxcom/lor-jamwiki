@@ -26,8 +26,8 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.RoleImpl;
 import org.jamwiki.authentication.WikiUserDetails;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.TiddlyWikiParser;
 import org.jamwiki.utils.WikiLogger;
@@ -72,7 +72,7 @@ public class ImportTiddlyWikiServlet extends JAMWikiServlet {
 		Iterator iterator = ServletUtil.processMultipartRequest(request, Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
 		WikiUser user = ServletUtil.currentWikiUser();
-		if (userDetails.hasRole(RoleImpl.ROLE_ANONYMOUS)) {
+		if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 			// FIXME - setting the user to null may not be necessary, but it is
 			// consistent with how the code behaved when ServletUtil.currentUserDetails()
 			// returned null for non-logged-in users

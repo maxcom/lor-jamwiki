@@ -104,7 +104,7 @@ public class JAMWikiAuthenticationConfiguration {
 		}
 		Collection<GrantedAuthority> results = new ArrayList<GrantedAuthority>();
 		for (Role role : roles) {
-			results.add((RoleImpl)role);
+			results.add(new RoleImpl(role));
 		}
 		return results;
 	}

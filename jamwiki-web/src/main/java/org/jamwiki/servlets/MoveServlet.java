@@ -22,9 +22,9 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.RoleImpl;
 import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Namespace;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
@@ -49,7 +49,7 @@ public class MoveServlet extends JAMWikiServlet {
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
-		if (!userDetails.hasRole(RoleImpl.ROLE_MOVE)) {
+		if (!userDetails.hasRole(Role.ROLE_MOVE)) {
 			WikiMessage messageObject = new WikiMessage("login.message.move");
 			return ServletUtil.viewLogin(request, pageInfo, WikiUtil.getTopicFromURI(request), messageObject);
 		}

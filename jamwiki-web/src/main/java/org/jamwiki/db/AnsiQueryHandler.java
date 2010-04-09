@@ -32,7 +32,6 @@ import java.util.TreeMap;
 import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
-import org.jamwiki.authentication.RoleImpl;
 import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.LogItem;
@@ -1248,7 +1247,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	private Role initRole(ResultSet rs) throws SQLException {
-		Role role = new RoleImpl(rs.getString("role_name"));
+		Role role = new Role(rs.getString("role_name"));
 		role.setDescription(rs.getString("role_description"));
 		return role;
 	}

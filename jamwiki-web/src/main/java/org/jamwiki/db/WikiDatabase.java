@@ -37,7 +37,6 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.RoleImpl;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
@@ -588,10 +587,10 @@ public class WikiDatabase {
 		}
 		WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword);
 		List<String> roles = new ArrayList<String>();
-		roles.add(RoleImpl.ROLE_ADMIN.getAuthority());
-		roles.add(RoleImpl.ROLE_IMPORT.getAuthority());
-		roles.add(RoleImpl.ROLE_SYSADMIN.getAuthority());
-		roles.add(RoleImpl.ROLE_TRANSLATE.getAuthority());
+		roles.add(Role.ROLE_ADMIN.getAuthority());
+		roles.add(Role.ROLE_IMPORT.getAuthority());
+		roles.add(Role.ROLE_SYSADMIN.getAuthority());
+		roles.add(Role.ROLE_TRANSLATE.getAuthority());
 		WikiBase.getDataHandler().writeRoleMapUser(user.getUsername(), roles);
 	}
 
@@ -658,10 +657,10 @@ public class WikiDatabase {
 		group.setDescription("All non-logged in users are automatically assigned to the anonymous group.");
 		WikiBase.getDataHandler().writeWikiGroup(group);
 		List<String> anonymousRoles = new ArrayList<String>();
-		anonymousRoles.add(RoleImpl.ROLE_EDIT_EXISTING.getAuthority());
-		anonymousRoles.add(RoleImpl.ROLE_EDIT_NEW.getAuthority());
-		anonymousRoles.add(RoleImpl.ROLE_UPLOAD.getAuthority());
-		anonymousRoles.add(RoleImpl.ROLE_VIEW.getAuthority());
+		anonymousRoles.add(Role.ROLE_EDIT_EXISTING.getAuthority());
+		anonymousRoles.add(Role.ROLE_EDIT_NEW.getAuthority());
+		anonymousRoles.add(Role.ROLE_UPLOAD.getAuthority());
+		anonymousRoles.add(Role.ROLE_VIEW.getAuthority());
 		WikiBase.getDataHandler().writeRoleMapGroup(group.getGroupId(), anonymousRoles);
 		group = new WikiGroup();
 		group.setName(WikiGroup.GROUP_REGISTERED_USER);
@@ -669,11 +668,11 @@ public class WikiDatabase {
 		group.setDescription("All logged in users are automatically assigned to the registered user group.");
 		WikiBase.getDataHandler().writeWikiGroup(group);
 		List<String> userRoles = new ArrayList<String>();
-		userRoles.add(RoleImpl.ROLE_EDIT_EXISTING.getAuthority());
-		userRoles.add(RoleImpl.ROLE_EDIT_NEW.getAuthority());
-		userRoles.add(RoleImpl.ROLE_MOVE.getAuthority());
-		userRoles.add(RoleImpl.ROLE_UPLOAD.getAuthority());
-		userRoles.add(RoleImpl.ROLE_VIEW.getAuthority());
+		userRoles.add(Role.ROLE_EDIT_EXISTING.getAuthority());
+		userRoles.add(Role.ROLE_EDIT_NEW.getAuthority());
+		userRoles.add(Role.ROLE_MOVE.getAuthority());
+		userRoles.add(Role.ROLE_UPLOAD.getAuthority());
+		userRoles.add(Role.ROLE_VIEW.getAuthority());
 		WikiBase.getDataHandler().writeRoleMapGroup(group.getGroupId(), userRoles);
 	}
 
@@ -682,39 +681,39 @@ public class WikiDatabase {
 	 */
 	protected static void setupRoles() throws DataAccessException, WikiException {
 		logger.info("Creating default wiki roles");
-		Role role = RoleImpl.ROLE_ADMIN;
+		Role role = Role.ROLE_ADMIN;
 		// FIXME - use message key
 		role.setDescription("Provides the ability to perform wiki maintenance tasks not available to normal users.");
 		WikiBase.getDataHandler().writeRole(role, false);
-		role = RoleImpl.ROLE_EDIT_EXISTING;
+		role = Role.ROLE_EDIT_EXISTING;
 		// FIXME - use message key
 		role.setDescription("Allows a user to edit an existing topic.");
 		WikiBase.getDataHandler().writeRole(role, false);
-		role = RoleImpl.ROLE_EDIT_NEW;
+		role = Role.ROLE_EDIT_NEW;
 		// FIXME - use message key
 		role.setDescription("Allows a user to create a new topic.");
 		WikiBase.getDataHandler().writeRole(role, false);
-		role = RoleImpl.ROLE_IMPORT;
+		role = Role.ROLE_IMPORT;
 		// FIXME - use message key
 		role.setDescription("Allows a user to import data from a file.");
 		WikiBase.getDataHandler().writeRole(role, false);
-		role = RoleImpl.ROLE_MOVE;
+		role = Role.ROLE_MOVE;
 		// FIXME - use message key
 		role.setDescription("Allows a user to move a topic to a different name.");
 		WikiBase.getDataHandler().writeRole(role, false);
-		role = RoleImpl.ROLE_SYSADMIN;
+		role = Role.ROLE_SYSADMIN;
 		// FIXME - use message key
 		role.setDescription("Allows access to set database parameters, modify parser settings, and set other wiki system settings.");
 		WikiBase.getDataHandler().writeRole(role, false);
-		role = RoleImpl.ROLE_TRANSLATE;
+		role = Role.ROLE_TRANSLATE;
 		// FIXME - use message key
 		role.setDescription("Allows access to the translation tool used for modifying the values of message keys used to display text on the wiki.");
 		WikiBase.getDataHandler().writeRole(role, false);
-		role = RoleImpl.ROLE_UPLOAD;
+		role = Role.ROLE_UPLOAD;
 		// FIXME - use message key
 		role.setDescription("Allows a user to upload a file to the wiki.");
 		WikiBase.getDataHandler().writeRole(role, false);
-		role = RoleImpl.ROLE_VIEW;
+		role = Role.ROLE_VIEW;
 		// FIXME - use message key
 		role.setDescription("Allows a user to view topics on the wiki.");
 		WikiBase.getDataHandler().writeRole(role, false);

@@ -41,11 +41,11 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.JAMWikiAuthenticationConstants;
-import org.jamwiki.authentication.RoleImpl;
 import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.Namespace;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicType;
 import org.jamwiki.model.VirtualWiki;
@@ -161,7 +161,7 @@ public class ServletUtil {
 		}
 		String message = "SPAM found in topic " + topicName + " (";
 		WikiUserDetails user = ServletUtil.currentUserDetails();
-		if (!user.hasRole(RoleImpl.ROLE_ANONYMOUS)) {
+		if (!user.hasRole(Role.ROLE_ANONYMOUS)) {
 			message += user.getUsername() + " / ";
 		}
 		message += ServletUtil.getIpAddress(request) + "): " + result;
@@ -242,7 +242,7 @@ public class ServletUtil {
 		// no watchlist in session, retrieve from database
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
 		Watchlist watchlist = new Watchlist();
-		if (userDetails.hasRole(RoleImpl.ROLE_ANONYMOUS)) {
+		if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 			return watchlist;
 		}
 		WikiUser user = ServletUtil.currentWikiUser();
@@ -328,13 +328,13 @@ public class ServletUtil {
 	 * @throws WikiException Thrown if any error occurs during processing.
 	 */
 	protected static boolean isEditable(String virtualWiki, String topicName, WikiUserDetails user) throws WikiException {
-		if (user == null || !user.hasRole(RoleImpl.ROLE_EDIT_EXISTING)) {
+		if (user == null || !user.hasRole(Role.ROLE_EDIT_EXISTING)) {
 			// user does not have appropriate permissions
 			return false;
 		}
 		Topic topic = null;
 		try {
-			if (!user.hasRole(RoleImpl.ROLE_EDIT_NEW) && WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null) == null) {
+			if (!user.hasRole(Role.ROLE_EDIT_NEW) && WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null) == null) {
 				// user does not have appropriate permissions
 				return false;
 			}
@@ -346,7 +346,7 @@ public class ServletUtil {
 			// new topic, edit away...
 			return true;
 		}
-		if (topic.getAdminOnly() && !user.hasRole(RoleImpl.ROLE_ADMIN)) {
+		if (topic.getAdminOnly() && !user.hasRole(Role.ROLE_ADMIN)) {
 			return false;
 		}
 		if (topic.getReadOnly()) {
@@ -367,7 +367,7 @@ public class ServletUtil {
 	 * @throws WikiException Thrown if any error occurs during processing.
 	 */
 	protected static boolean isMoveable(String virtualWiki, String topicName, WikiUserDetails user) throws WikiException {
-		if (user == null || !user.hasRole(RoleImpl.ROLE_MOVE)) {
+		if (user == null || !user.hasRole(Role.ROLE_MOVE)) {
 			// no permission granted to move pages
 			return false;
 		}
@@ -384,7 +384,7 @@ public class ServletUtil {
 		if (topic.getReadOnly()) {
 			return false;
 		}
-		if (topic.getAdminOnly() && !user.hasRole(RoleImpl.ROLE_ADMIN)) {
+		if (topic.getAdminOnly() && !user.hasRole(Role.ROLE_ADMIN)) {
 			return false;
 		}
 		return true;

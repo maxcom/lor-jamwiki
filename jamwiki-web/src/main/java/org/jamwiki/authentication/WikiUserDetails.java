@@ -19,6 +19,7 @@ package org.jamwiki.authentication;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.model.Role;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -171,6 +172,19 @@ public class WikiUserDetails implements UserDetails {
 	 */
 	public String getUsername() {
 		return this.username;
+	}
+
+	/**
+	 * Convenience method for determining if a user has been assigned a role
+	 * without the need to examine an array of Role objects.
+	 *
+	 * @param role If the user has been assigned this role then the method will
+	 *  return <code>true</code>.
+	 * @return <code>true</code> if the user has been assigned the specified
+	 *  role, <code>false</code> otherwise.
+	 */
+	public boolean hasRole(Role role) {
+		return this.hasRole(new RoleImpl(role));
 	}
 
 	/**

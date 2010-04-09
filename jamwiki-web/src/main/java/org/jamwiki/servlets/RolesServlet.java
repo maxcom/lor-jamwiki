@@ -24,7 +24,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.RoleImpl;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.RoleMap;
 import org.jamwiki.utils.WikiLogger;
@@ -124,9 +123,9 @@ public class RolesServlet extends JAMWikiServlet {
 					int userId = Integer.parseInt(candidateUsers[i]);
 					String username = candidateUsernames[i];
 					List<String> roles = buildRoleArray(userId, -1, userRoles);
-					if (userId == ServletUtil.currentWikiUser().getUserId() && !roles.contains(RoleImpl.ROLE_SYSADMIN)) {
+					if (userId == ServletUtil.currentWikiUser().getUserId() && !roles.contains(Role.ROLE_SYSADMIN)) {
 						errors.add(new WikiMessage("roles.message.sysadminremove"));
-						roles.add(RoleImpl.ROLE_SYSADMIN.getAuthority());
+						roles.add(Role.ROLE_SYSADMIN.getAuthority());
 					}
 					WikiBase.getDataHandler().writeRoleMapUser(username, roles);
 				}
@@ -156,7 +155,7 @@ public class RolesServlet extends JAMWikiServlet {
 				// will be disabled in the form.
 				boolean update = StringUtils.isBlank(request.getParameter("roleName"));
 				String roleName = (update) ? updateRole : request.getParameter("roleName");
-				role = new RoleImpl(roleName);
+				role = new Role(roleName);
 				role.setDescription(request.getParameter("roleDescription"));
 				WikiUtil.validateRole(role);
 				WikiBase.getDataHandler().writeRole(role, update);

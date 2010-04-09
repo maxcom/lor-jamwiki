@@ -80,7 +80,7 @@ public class JAMWikiDaoImpl implements UserDetailsService {
 				List<Role> roles = WikiBase.getDataHandler().getRoleMapUser(username);
 				if (roles != null) {
 					for (Role role : roles) {
-						results.add((RoleImpl)role);
+						results.add(new RoleImpl(role));
 					}
 				}
 			} catch (org.jamwiki.DataAccessException e) {

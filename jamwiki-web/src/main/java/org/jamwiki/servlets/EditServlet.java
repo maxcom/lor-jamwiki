@@ -23,9 +23,9 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.RoleImpl;
 import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Namespace;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
@@ -190,11 +190,11 @@ public class EditServlet extends JAMWikiServlet {
 		if (ServletUtil.isEditable(virtualWiki, topicName, user)) {
 			return null;
 		}
-		if (!user.hasRole(RoleImpl.ROLE_EDIT_EXISTING)) {
+		if (!user.hasRole(Role.ROLE_EDIT_EXISTING)) {
 			WikiMessage messageObject = new WikiMessage("login.message.edit");
 			return ServletUtil.viewLogin(request, pageInfo, WikiUtil.getTopicFromURI(request), messageObject);
 		}
-		if (!user.hasRole(RoleImpl.ROLE_EDIT_NEW) && WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null) == null) {
+		if (!user.hasRole(Role.ROLE_EDIT_NEW) && WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null) == null) {
 			WikiMessage messageObject = new WikiMessage("login.message.editnew");
 			return ServletUtil.viewLogin(request, pageInfo, WikiUtil.getTopicFromURI(request), messageObject);
 		}
@@ -320,7 +320,7 @@ public class EditServlet extends JAMWikiServlet {
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks());
 		// update watchlist
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
-		if (!userDetails.hasRole(RoleImpl.ROLE_ANONYMOUS)) {
+		if (!userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 			Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
 			boolean watchTopic = (request.getParameter("watchTopic") != null);
 			if (watchlist.containsTopic(topicName) != watchTopic) {
