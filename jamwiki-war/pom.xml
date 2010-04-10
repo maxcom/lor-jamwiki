@@ -37,6 +37,35 @@
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>maven-jetty-plugin</artifactId>
 			</plugin>
+			<!--
+			Currently the sql.*.properties files are in the jamwiki-db.jar file.  To make it easy
+			for sites to customize SQL (for bug fixing and such), unpack the sql.*.properties
+			files from the JAR and place them into the WEB-INF/classes folder.
+			-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>unpack</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.jamwiki</groupId>
+									<artifactId>jamwiki-db</artifactId>
+									<type>jar</type>
+									<includes>**/sql.*.properties</includes>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin> 
 		</plugins>
 	</build>
 </project>
