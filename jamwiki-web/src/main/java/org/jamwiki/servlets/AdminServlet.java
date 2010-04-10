@@ -34,7 +34,7 @@ import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
-import org.jamwiki.authentication.WikiUserDetails;
+import org.jamwiki.authentication.WikiUserDetailsImpl;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiConfigurationObject;
@@ -408,7 +408,7 @@ public class AdminServlet extends JAMWikiServlet {
 		}
 		Environment.saveProperties();
 		// re-initialize to reset database settings (if needed)
-		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 		}

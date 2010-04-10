@@ -25,7 +25,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.WikiUserDetails;
+import org.jamwiki.authentication.WikiUserDetailsImpl;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
@@ -96,7 +96,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 */
 	private LinkedHashMap<String, WikiMessage> buildTabMenu(HttpServletRequest request, WikiPageInfo pageInfo) {
 		LinkedHashMap<String, WikiMessage> links = new LinkedHashMap<String, WikiMessage>();
-		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		String pageName = pageInfo.getTopicName();
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		if (pageInfo.getAdmin()) {
@@ -169,7 +169,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	private LinkedHashMap<String, WikiMessage> buildUserMenu(WikiPageInfo pageInfo) {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		LinkedHashMap<String, WikiMessage> links = new LinkedHashMap<String, WikiMessage>();
-		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		if (userDetails.hasRole(Role.ROLE_ANONYMOUS) && !userDetails.hasRole(Role.ROLE_EMBEDDED)) {
 			// include the current page in the login link 
 			String loginLink = "Special:Login";

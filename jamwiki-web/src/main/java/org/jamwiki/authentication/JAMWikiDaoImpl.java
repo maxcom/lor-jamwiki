@@ -58,7 +58,7 @@ public class JAMWikiDaoImpl implements UserDetailsService {
 			throw new UsernameNotFoundException("Failure retrieving user information for " + username);
 		}
 		Collection<GrantedAuthority> authorities = this.retrieveUserAuthorities(username);
-		return new WikiUserDetails(username, encryptedPassword, true, true, true, true, authorities);
+		return new WikiUserDetailsImpl(username, encryptedPassword, true, true, true, true, authorities);
 	}
 
 	/**

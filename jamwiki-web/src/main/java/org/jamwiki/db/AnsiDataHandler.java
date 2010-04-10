@@ -34,7 +34,6 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
-import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.LogItem;
 import org.jamwiki.model.Namespace;
@@ -50,6 +49,7 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.model.WikiUserDetails;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
@@ -1771,7 +1771,7 @@ public class AnsiDataHandler implements DataHandler {
 			status = DatabaseConnection.startTransaction();
 			Connection conn = DatabaseConnection.getConnection();
 			if (user.getUserId() <= 0) {
-				WikiUserDetails userDetails = new WikiUserDetails(username, encryptedPassword, true, true, true, true, JAMWikiAuthenticationConfiguration.getDefaultGroupRoles());
+				WikiUserDetails userDetails = new WikiUserDetails(username, encryptedPassword);
 				this.addUserDetails(userDetails, conn);
 				this.addWikiUser(user, conn);
 				// add all users to the registered user group
@@ -1786,7 +1786,7 @@ public class AnsiDataHandler implements DataHandler {
 				}
 			} else {
 				if (!StringUtils.isBlank(encryptedPassword)) {
-					WikiUserDetails userDetails = new WikiUserDetails(username, encryptedPassword, true, true, true, true, JAMWikiAuthenticationConfiguration.getDefaultGroupRoles());
+					WikiUserDetails userDetails = new WikiUserDetails(username, encryptedPassword);
 					this.updateUserDetails(userDetails, conn);
 				}
 				this.updateWikiUser(user, conn);

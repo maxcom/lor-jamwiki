@@ -23,7 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.WikiUserDetails;
+import org.jamwiki.authentication.WikiUserDetailsImpl;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
@@ -186,7 +186,7 @@ public class EditServlet extends JAMWikiServlet {
 	private ModelAndView loginRequired(HttpServletRequest request, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
 		String virtualWiki = pageInfo.getVirtualWikiName();
-		WikiUserDetails user = ServletUtil.currentUserDetails();
+		WikiUserDetailsImpl user = ServletUtil.currentUserDetails();
 		if (ServletUtil.isEditable(virtualWiki, topicName, user)) {
 			return null;
 		}
@@ -319,7 +319,7 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks());
 		// update watchlist
-		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		if (!userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 			Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
 			boolean watchTopic = (request.getParameter("watchTopic") != null);

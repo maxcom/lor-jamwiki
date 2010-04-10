@@ -41,7 +41,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.JAMWikiAuthenticationConstants;
-import org.jamwiki.authentication.WikiUserDetails;
+import org.jamwiki.authentication.WikiUserDetailsImpl;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.Namespace;
@@ -160,7 +160,7 @@ public class ServletUtil {
 			return null;
 		}
 		String message = "SPAM found in topic " + topicName + " (";
-		WikiUserDetails user = ServletUtil.currentUserDetails();
+		WikiUserDetailsImpl user = ServletUtil.currentUserDetails();
 		if (!user.hasRole(Role.ROLE_ANONYMOUS)) {
 			message += user.getUsername() + " / ";
 		}
@@ -170,24 +170,24 @@ public class ServletUtil {
 	}
 
 	/**
-	 * Retrieve the current <code>WikiUserDetails</code> from Spring Security
+	 * Retrieve the current <code>WikiUserDetailsImpl</code> from Spring Security
 	 * <code>SecurityContextHolder</code>.  If the current user is not
-	 * logged-in then this method will return an empty <code>WikiUserDetails</code>
+	 * logged-in then this method will return an empty <code>WikiUserDetailsImpl</code>
 	 * object.
 	 *
-	 * @return The current logged-in <code>WikiUserDetails</code>, or an empty
-	 *  <code>WikiUserDetails</code> if there is no user currently logged in.
+	 * @return The current logged-in <code>WikiUserDetailsImpl</code>, or an empty
+	 *  <code>WikiUserDetailsImpl</code> if there is no user currently logged in.
 	 *  This method will never return <code>null</code>.
 	 * @throws AuthenticationCredentialsNotFoundException If authentication
 	 *  credentials are unavailable.
 	 */
-	public static WikiUserDetails currentUserDetails() throws AuthenticationCredentialsNotFoundException {
+	public static WikiUserDetailsImpl currentUserDetails() throws AuthenticationCredentialsNotFoundException {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		return WikiUserDetails.initWikiUserDetails(auth);
+		return WikiUserDetailsImpl.initWikiUserDetailsImpl(auth);
 	}
 
 	/**
-	 * Retrieve the current <code>WikiUser</code> using the <code>WikiUserDetails</code>
+	 * Retrieve the current <code>WikiUser</code> using the <code>WikiUserDetailsImpl</code>
 	 * from Spring Security <code>SecurityContextHolder</code>.  If there is no current
 	 * user (the user is not logged in) then this method will return an empty WikiUser.
 	 * The method will never return <code>null</code>.
@@ -196,10 +196,10 @@ public class ServletUtil {
 	 *  there is no user currently logged in.
 	 */
 	public static WikiUser currentWikiUser() throws AuthenticationCredentialsNotFoundException {
-		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		WikiUser user = new WikiUser();
 		String username = userDetails.getUsername();
-		if (username.equals(WikiUserDetails.ANONYMOUS_USER_USERNAME)) {
+		if (username.equals(WikiUserDetailsImpl.ANONYMOUS_USER_USERNAME)) {
 			return user;
 		}
 		if (!WikiUtil.isFirstUse() && !WikiUtil.isUpgrade()) {
@@ -240,7 +240,7 @@ public class ServletUtil {
 			}
 		}
 		// no watchlist in session, retrieve from database
-		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		Watchlist watchlist = new Watchlist();
 		if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 			return watchlist;
@@ -327,7 +327,7 @@ public class ServletUtil {
 	 *  <code>false</code> otherwise.
 	 * @throws WikiException Thrown if any error occurs during processing.
 	 */
-	protected static boolean isEditable(String virtualWiki, String topicName, WikiUserDetails user) throws WikiException {
+	protected static boolean isEditable(String virtualWiki, String topicName, WikiUserDetailsImpl user) throws WikiException {
 		if (user == null || !user.hasRole(Role.ROLE_EDIT_EXISTING)) {
 			// user does not have appropriate permissions
 			return false;
@@ -366,7 +366,7 @@ public class ServletUtil {
 	 *  <code>false</code> otherwise.
 	 * @throws WikiException Thrown if any error occurs during processing.
 	 */
-	protected static boolean isMoveable(String virtualWiki, String topicName, WikiUserDetails user) throws WikiException {
+	protected static boolean isMoveable(String virtualWiki, String topicName, WikiUserDetailsImpl user) throws WikiException {
 		if (user == null || !user.hasRole(Role.ROLE_MOVE)) {
 			// no permission granted to move pages
 			return false;
@@ -753,7 +753,7 @@ public class ServletUtil {
 		}
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
-		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		if (sectionEdit && !ServletUtil.isEditable(virtualWiki, topicName, userDetails)) {
 			sectionEdit = false;
 		}

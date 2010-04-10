@@ -33,9 +33,9 @@ import org.springframework.security.core.userdetails.UserDetails;
  * verifying user credentials.  Spring Security will use this object to determine
  * access rights.
  */
-public class WikiUserDetails implements UserDetails {
+public class WikiUserDetailsImpl implements UserDetails {
 
-	private static final WikiLogger logger = WikiLogger.getLogger(WikiUserDetails.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiUserDetailsImpl.class.getName());
 	/** The default anonymous username.  This value should match the Spring Security <code>AnonymousBeanDefinitionParser.DEF_USERNAME</code> value, which unfortunately is not public. */
 	public static final String ANONYMOUS_USER_USERNAME = "roleAnonymous";
 	private static final long serialVersionUID = -2818435399240684581L;
@@ -77,7 +77,7 @@ public class WikiUserDetails implements UserDetails {
 	 *  either as a parameter or as an element in the
 	 *  <code>GrantedAuthority[]</code> array.
 	 */
-	public WikiUserDetails(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<GrantedAuthority> authorities) {
+	public WikiUserDetailsImpl(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<GrantedAuthority> authorities) {
 		if (StringUtils.isBlank(username) || password == null) {
 			throw new IllegalArgumentException("Cannot pass null or empty values to constructor");
 		}
@@ -96,7 +96,7 @@ public class WikiUserDetails implements UserDetails {
 	/**
 	 * Private copy constructor.
 	 */
-	private WikiUserDetails(UserDetails userDetails) {
+	private WikiUserDetailsImpl(UserDetails userDetails) {
 		this.username = userDetails.getUsername();
 		this.password = userDetails.getPassword();
 		this.enabled = userDetails.isEnabled();
@@ -206,34 +206,34 @@ public class WikiUserDetails implements UserDetails {
 
 	/**
 	 * Utility method for converting a Spring Security <code>Authentication</code>
-	 * object into a <code>WikiUserDetails</code>.  If the user is logged-in then the
-	 * <code>Authentication</code> object will have the <code>WikiUserDetails</code>
+	 * object into a <code>WikiUserDetailsImpl</code>.  If the user is logged-in then the
+	 * <code>Authentication</code> object will have the <code>WikiUserDetailsImpl</code>
 	 * as its principal.  If the user is not logged in then create an empty
-	 * <code>WikiUserDetails</code> object and assign it the same authorities as the
+	 * <code>WikiUserDetailsImpl</code> object and assign it the same authorities as the
 	 * <code>Authentication</code> object.
 	 *
 	 * @param auth The Spring Security <code>Authentication</code> object that is being
-	 *  converted into a <code>WikiUserDetails</code> object.
-	 * @return Returns a <code>WikiUserDetails</code> object that corresponds to the
+	 *  converted into a <code>WikiUserDetailsImpl</code> object.
+	 * @return Returns a <code>WikiUserDetailsImpl</code> object that corresponds to the
 	 *  Spring Security <code>Authentication</code> object.  If the user is not currently
-	 *  logged-in then an empty <code>WikiUserDetails</code> with the same authorities
+	 *  logged-in then an empty <code>WikiUserDetailsImpl</code> with the same authorities
 	 *  as the <code>Authentication</code> object is returned.  This method
 	 *  will never return <code>null</code>.
 	 * @throws AuthenticationCredentialsNotFoundException If authentication
 	 *  credentials are unavailable.
 	 */
-	public static WikiUserDetails initWikiUserDetails(Authentication auth) throws AuthenticationCredentialsNotFoundException {
+	public static WikiUserDetailsImpl initWikiUserDetailsImpl(Authentication auth) throws AuthenticationCredentialsNotFoundException {
 		if (auth == null) {
 			throw new AuthenticationCredentialsNotFoundException("No authentication credential available");
 		}
 		if (auth instanceof AnonymousAuthenticationToken || !(auth.getPrincipal() instanceof UserDetails)) {
 			// anonymous user
-			return new WikiUserDetails(ANONYMOUS_USER_USERNAME, "", true, true, true, true, auth.getAuthorities());
+			return new WikiUserDetailsImpl(ANONYMOUS_USER_USERNAME, "", true, true, true, true, auth.getAuthorities());
 		}
 		// logged-in (or remembered) user
-		if (auth.getPrincipal() instanceof WikiUserDetails) {
-			return (WikiUserDetails)auth.getPrincipal();
+		if (auth.getPrincipal() instanceof WikiUserDetailsImpl) {
+			return (WikiUserDetailsImpl)auth.getPrincipal();
 		}
-		return new WikiUserDetails((UserDetails)auth.getPrincipal());
+		return new WikiUserDetailsImpl((UserDetails)auth.getPrincipal());
 	}
 }
