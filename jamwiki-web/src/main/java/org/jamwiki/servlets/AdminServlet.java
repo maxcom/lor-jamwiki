@@ -33,7 +33,6 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
 import org.jamwiki.authentication.WikiUserDetailsImpl;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.Role;
@@ -414,8 +413,6 @@ public class AdminServlet extends JAMWikiServlet {
 		}
 		WikiUser user = ServletUtil.currentWikiUser();
 		WikiBase.reset(request.getLocale(), user, user.getUsername(), null);
-		JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
-		JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
 		return true;
 	}
 

@@ -28,7 +28,6 @@ import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
-import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.WikiConfigurationObject;
@@ -141,8 +140,6 @@ public class SetupServlet extends JAMWikiServlet {
 		String newPassword = request.getParameter("newPassword");
 		String encryptedPassword = Encryption.encrypt(newPassword);
 		WikiBase.reset(request.getLocale(), user, username, encryptedPassword);
-		JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
-		JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
 		Environment.saveProperties();
 		// the setup process does not add new topics to the index (currently)
 		// TODO - remove this once setup uses safe connection handling

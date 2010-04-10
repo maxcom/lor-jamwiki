@@ -28,7 +28,6 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
-import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
 import org.jamwiki.db.DatabaseUpgrades;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.LinkUtil;
@@ -170,9 +169,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 		// force logout to ensure current user will be re-validated.  this is
 		// necessary because the upgrade may have changed underlying data structures.
 		SecurityContextHolder.clearContext();
-		// force group permissions to reset
-		JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
-		JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
 	}
 
 	/**

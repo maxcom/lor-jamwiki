@@ -33,7 +33,6 @@ import org.jamwiki.DataHandler;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.LogItem;
 import org.jamwiki.model.Namespace;
@@ -68,6 +67,7 @@ import org.springframework.transaction.TransactionStatus;
 public class AnsiDataHandler implements DataHandler {
 
 	private static final String CACHE_NAMESPACE_LIST = "org.jamwiki.db.AnsiDataHandler.CACHE_NAMESPACE_LIST";
+	private static final String CACHE_ROLE_MAP_GROUP = "org.jamwiki.db.AnsiDataHandler.CACHE_ROLE_MAP_GROUP";
 	private static final String CACHE_TOPIC_IDS_BY_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPIC_IDS_BY_NAME";
 	private static final String CACHE_TOPICS_BY_ID = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS_BY_ID";
 	private static final String CACHE_TOPICS_BY_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS_BY_NAME";
@@ -482,11 +482,20 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public List<RoleMap> getRoleMapByRole(String authority) throws DataAccessException {
+		// first check the cache
+		Element cacheElement = WikiCache.retrieveFromCache(CACHE_ROLE_MAP_GROUP, authority);
+		if (cacheElement != null) {
+			return (List<RoleMap>)cacheElement.getObjectValue();
+		}
+		// if not in the cache, go to the database
+		List<RoleMap> roleMapList = null;
 		try {
-			return this.queryHandler().getRoleMapByRole(authority);
+			roleMapList = this.queryHandler().getRoleMapByRole(authority);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
+		WikiCache.addToCache(CACHE_ROLE_MAP_GROUP, authority, roleMapList);
+		return roleMapList;
 	}
 
 	/**
@@ -1529,9 +1538,8 @@ public class AnsiDataHandler implements DataHandler {
 				this.validateAuthority(authority);
 				this.queryHandler().insertGroupAuthority(groupId, authority, conn);
 			}
-			// refresh the current role requirements
-			JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
-			JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
+			// flush the cache
+			WikiCache.removeAllFromCache(CACHE_ROLE_MAP_GROUP);
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw new DataAccessException(e);
