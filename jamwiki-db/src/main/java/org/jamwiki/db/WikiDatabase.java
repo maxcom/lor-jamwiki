@@ -481,6 +481,54 @@ public class WikiDatabase {
 	}
 
 	/**
+	 * Utility method for reading special topic values from files and returning
+	 * the file contents.
+	 *
+	 * @param locale The locale for the user viewing the special page.
+	 * @param pageName The name of the special page being retrieved.
+	 */
+	protected static String readSpecialPage(Locale locale, String pageName) throws IOException {
+		String contents = null;
+		String filename = null;
+		String language = null;
+		String country = null;
+		if (locale != null) {
+			language = locale.getLanguage();
+			country = locale.getCountry();
+		}
+		String subdirectory = "";
+		if (!StringUtils.isBlank(language) && !StringUtils.isBlank(country)) {
+			try {
+				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language + "_" + country).getPath();
+				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
+				contents = Utilities.readFile(filename);
+			} catch (IOException e) {
+				logger.info("File " + filename + " does not exist");
+			}
+		}
+		if (contents == null && !StringUtils.isBlank(language)) {
+			try {
+				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language).getPath();
+				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
+				contents = Utilities.readFile(filename);
+			} catch (IOException e) {
+				logger.info("File " + filename + " does not exist");
+			}
+		}
+		if (contents == null) {
+			try {
+				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR).getPath();
+				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
+				contents = Utilities.readFile(filename);
+			} catch (IOException e) {
+				logger.warning("File " + filename + " could not be read", e);
+				throw e;
+			}
+		}
+		return contents;
+	}
+
+	/**
 	 *
 	 */
 	protected static void releaseConnection(Connection conn, Object transactionObject) throws SQLException {
@@ -729,7 +777,7 @@ public class WikiDatabase {
 		}
 		String contents = null;
 		try {
-			contents = WikiUtil.readSpecialPage(locale, topicName);
+			contents = WikiDatabase.readSpecialPage(locale, topicName);
 		} catch (IOException e) {
 			throw new DataAccessException(e);
 		}

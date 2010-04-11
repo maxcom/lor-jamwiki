@@ -104,30 +104,6 @@ public class WikiUtilTest {
 	/**
 	 *
 	 */
-	@Test(expected=FileNotFoundException.class)
-	public void testReadSpecialPageThrowsFileNotFoundException() throws Throwable {
-		WikiUtil.readSpecialPage(null, "testWikiUtilPageName");
-	}
-
-	/**
-	 *
-	 */
-	@Test(expected=FileNotFoundException.class)
-	public void testReadSpecialPageThrowsFileNotFoundException1() throws Throwable {
-		WikiUtil.readSpecialPage(Locale.GERMAN, "testWikiUtilPageName");
-	}
-
-	/**
-	 *
-	 */
-	@Test(expected=FileNotFoundException.class)
-	public void testReadSpecialPageThrowsFileNotFoundException2() throws Throwable {
-		WikiUtil.readSpecialPage(Locale.SIMPLIFIED_CHINESE, "testWikiUtilPageName");
-	}
-
-	/**
-	 *
-	 */
 	@Test(expected=NullPointerException.class)
 	public void testValidateDirectoryThrowsNullPointerException() throws Throwable {
 		WikiUtil.validateDirectory(null);
