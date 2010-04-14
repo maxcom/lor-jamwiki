@@ -37,6 +37,8 @@ New Features:
   * Run the spam filter against edit comments as well as topic content to
     thwart spam attempts.
   * Remove ability to automatically upgrade from versions prior to 0.7.0.
+  * Re-organize the project layout and create two new modules for database
+    and parser code: jamwiki-db and jamwiki-parser.
   * Upgrade to Spring Framework 3.0.1.RELEASE.
   * Upgrade to Spring Security 3.0.2.RELEASE.
   * Upgrade to Lucene Search 3.0.1.

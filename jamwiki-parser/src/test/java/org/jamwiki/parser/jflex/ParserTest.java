@@ -14,7 +14,7 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki.parser;
+package org.jamwiki.parser.jflex;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +25,10 @@ import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.TestFileUtil;
+import org.jamwiki.parser.ParserException;
+import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.WikiLogger;
 
 /**

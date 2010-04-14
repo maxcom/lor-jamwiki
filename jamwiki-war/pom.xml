@@ -19,6 +19,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jamwiki</groupId>
+			<artifactId>jamwiki-parser</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jamwiki</groupId>
 			<artifactId>jamwiki-web</artifactId>
 		</dependency>
 		<dependency>

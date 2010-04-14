@@ -9,30 +9,13 @@
 		<artifactId>jamwiki</artifactId>
 		<version>0.9.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>jamwiki-core</artifactId>
+	<artifactId>jamwiki-parser</artifactId>
 	<packaging>jar</packaging>
-	<name>JAMWiki Core</name>
+	<name>JAMWiki Parser</name>
 	<dependencies>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-pool</groupId>
-			<artifactId>commons-pool</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -40,12 +23,14 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache-core</artifactId>
+			<groupId>org.jamwiki</groupId>
+			<artifactId>jamwiki-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.incava</groupId>
-			<artifactId>javadiff</artifactId>
+			<groupId>org.jamwiki</groupId>
+			<artifactId>jamwiki-core</artifactId>
+			<scope>test</scope>
+			<classifier>tests</classifier>
 		</dependency>
 	</dependencies>
 	<build>
@@ -84,6 +69,18 @@
 						<exclude>**/TestDataHandler.java</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>de.jflex</groupId>
+				<artifactId>maven-jflex-plugin</artifactId>
+				<version>1.4.3</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
