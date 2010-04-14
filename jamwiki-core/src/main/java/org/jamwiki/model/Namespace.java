@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
-import org.jamwiki.migrate.MediaWikiConstants;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -37,24 +36,25 @@ import org.jamwiki.utils.WikiLogger;
 public class Namespace implements Serializable {
 
 	public static final String SEPARATOR = ":";
-	public static final int MEDIA_ID                = MediaWikiConstants.MEDIAWIKI_MEDIA_NAMESPACE_ID;
-	public static final int SPECIAL_ID              = MediaWikiConstants.MEDIAWIKI_SPECIAL_NAMESPACE_ID;
-	public static final int MAIN_ID                 = MediaWikiConstants.MEDIAWIKI_MAIN_NAMESPACE_ID;
-	public static final int COMMENTS_ID             = MediaWikiConstants.MEDIAWIKI_TALK_NAMESPACE_ID;
-	public static final int USER_ID                 = MediaWikiConstants.MEDIAWIKI_USER_NAMESPACE_ID;
-	public static final int USER_COMMENTS_ID        = MediaWikiConstants.MEDIAWIKI_USER_TALK_NAMESPACE_ID;
-	public static final int SITE_CUSTOM_ID          = MediaWikiConstants.MEDIAWIKI_SITE_CUSTOM_NAMESPACE_ID;
-	public static final int SITE_CUSTOM_COMMENTS_ID = MediaWikiConstants.MEDIAWIKI_SITE_CUSTOM_TALK_NAMESPACE_ID;
-	public static final int FILE_ID                 = MediaWikiConstants.MEDIAWIKI_FILE_NAMESPACE_ID;
-	public static final int FILE_COMMENTS_ID        = MediaWikiConstants.MEDIAWIKI_FILE_TALK_NAMESPACE_ID;
-	public static final int JAMWIKI_ID              = MediaWikiConstants.MEDIAWIKI_MEDIAWIKI_NAMESPACE_ID;
-	public static final int JAMWIKI_COMMENTS_ID     = MediaWikiConstants.MEDIAWIKI_MEDIAWIKI_TALK_NAMESPACE_ID;
-	public static final int TEMPLATE_ID             = MediaWikiConstants.MEDIAWIKI_TEMPLATE_NAMESPACE_ID;
-	public static final int TEMPLATE_COMMENTS_ID    = MediaWikiConstants.MEDIAWIKI_TEMPLATE_TALK_NAMESPACE_ID;
-	public static final int HELP_ID                 = MediaWikiConstants.MEDIAWIKI_HELP_NAMESPACE_ID;
-	public static final int HELP_COMMENTS_ID        = MediaWikiConstants.MEDIAWIKI_HELP_TALK_NAMESPACE_ID;
-	public static final int CATEGORY_ID             = MediaWikiConstants.MEDIAWIKI_CATEGORY_NAMESPACE_ID;
-	public static final int CATEGORY_COMMENTS_ID    = MediaWikiConstants.MEDIAWIKI_CATEGORY_TALK_NAMESPACE_ID;
+	// IDs must match Mediawiki - see http://www.mediawiki.org/wiki/Help:Namespaces
+	public static final int MEDIA_ID                = -2;
+	public static final int SPECIAL_ID              = -1;
+	public static final int MAIN_ID                 = 0;
+	public static final int COMMENTS_ID             = 1;
+	public static final int USER_ID                 = 2;
+	public static final int USER_COMMENTS_ID        = 3;
+	public static final int SITE_CUSTOM_ID          = 4;
+	public static final int SITE_CUSTOM_COMMENTS_ID = 5;
+	public static final int FILE_ID                 = 6;
+	public static final int FILE_COMMENTS_ID        = 7;
+	public static final int JAMWIKI_ID              = 8;
+	public static final int JAMWIKI_COMMENTS_ID     = 9;
+	public static final int TEMPLATE_ID             = 10;
+	public static final int TEMPLATE_COMMENTS_ID    = 11;
+	public static final int HELP_ID                 = 12;
+	public static final int HELP_COMMENTS_ID        = 13;
+	public static final int CATEGORY_ID             = 14;
+	public static final int CATEGORY_COMMENTS_ID    = 15;
 	// default namespaces, used during setup.  additional namespaces may be added after setup.
 	// namespace IDs should match Mediawiki to maximize compatibility.
 	private static final Namespace MEDIA                = new Namespace(MEDIA_ID, "Media", null);
