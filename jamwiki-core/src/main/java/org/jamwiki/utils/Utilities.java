@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -356,7 +357,10 @@ public class Utilities {
 	 *
 	 * @param filename The name of the file (relative to the classpath) that is
 	 *  to be retrieved.
-	 * @return A file object representing the requested filename
+	 * @return A file object representing the requested filename.  Note that the
+	 *  file name is not guaranteed to match the filename passed to this method
+	 *  since (for example) the file might be found in a JAR file and thus will
+	 *  need to be copied to a temporary location for reading.
 	 * @throws FileNotFoundException Thrown if the classloader can not be found or if
 	 *  the file can not be found in the classpath.
 	 */
@@ -365,6 +369,8 @@ public class Utilities {
 		// not attempt to log anything.
 		File file = null;
 		ClassLoader loader = Utilities.getClassLoader();
+		// Windows machines will have "\" in the path, convert to "/"
+		filename = filename.replace('\\', '/');
 		URL url = loader.getResource(filename);
 		if (url == null) {
 			url = ClassLoader.getSystemResource(filename);
@@ -378,7 +384,8 @@ public class Utilities {
 				// url exists but file cannot be read, so perhaps it's not a "file:" url (an example
 				// would be a "jar:" url).  as a workaround, copy the file to a temp file and return
 				// the temp file.
-				file = File.createTempFile(filename, null);
+				String tempFilename = RandomStringUtils.random(20);
+				file = File.createTempFile(tempFilename, null);
 				FileUtils.copyURLToFile(url, file);
 			} catch (IOException e) {
 				throw new FileNotFoundException("Unable to load file with URL " + url);
@@ -553,12 +560,7 @@ public class Utilities {
 			return FileUtils.readFileToString(file, "UTF-8");
 		}
 		// look for file in resource directories
-		ClassLoader loader = Utilities.getClassLoader();
-		URL url = loader.getResource(filename);
-		file = FileUtils.toFile(url);
-		if (file == null || !file.exists()) {
-			throw new FileNotFoundException("File " + filename + " is not available for reading");
-		}
+		file = getClassLoaderFile(filename);
 		return FileUtils.readFileToString(file, "UTF-8");
 	}
 

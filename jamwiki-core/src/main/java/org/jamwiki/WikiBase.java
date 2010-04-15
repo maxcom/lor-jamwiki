@@ -51,8 +51,6 @@ public class WikiBase {
 	public static final String PERSISTENCE_EXTERNAL = "DATABASE";
 	/** Data stored using an internal copy of the HSQL database */
 	public static final String PERSISTENCE_INTERNAL = "INTERNAL";
-	/** Root directory within the WAR distribution that contains the default topic pages. */
-	public static final String SPECIAL_PAGE_DIR = "pages";
 	/** Name of the default starting points topic. */
 	public static final String SPECIAL_PAGE_STARTING_POINTS = "StartingPoints";
 	/** Name of the default left menu topic. */

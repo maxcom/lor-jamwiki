@@ -61,6 +61,8 @@ public class WikiDatabase {
 	private static String CONNECTION_VALIDATION_QUERY = null;
 	private static String EXISTENCE_VALIDATION_QUERY = null;
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiDatabase.class.getName());
+	/** Root directory within the WAR distribution that contains the default topic pages. */
+	public static final String SPECIAL_PAGE_DIR = "pages";
 	private static final String[][] JAMWIKI_DB_TABLE_INFO = {
 		{"jam_virtual_wiki", "virtual_wiki_id"},
 		{"jam_users", null},
@@ -499,8 +501,8 @@ public class WikiDatabase {
 		String subdirectory = "";
 		if (!StringUtils.isBlank(language) && !StringUtils.isBlank(country)) {
 			try {
-				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language + "_" + country).getPath();
-				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
+				subdirectory = WikiDatabase.SPECIAL_PAGE_DIR + File.separator + language + "_" + country;
+				filename = subdirectory + File.separator + WikiUtil.encodeForFilename(pageName) + ".txt";
 				contents = Utilities.readFile(filename);
 			} catch (IOException e) {
 				logger.info("File " + filename + " does not exist");
@@ -508,8 +510,8 @@ public class WikiDatabase {
 		}
 		if (contents == null && !StringUtils.isBlank(language)) {
 			try {
-				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language).getPath();
-				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
+				subdirectory = WikiDatabase.SPECIAL_PAGE_DIR + File.separator + language;
+				filename = subdirectory + File.separator + WikiUtil.encodeForFilename(pageName) + ".txt";
 				contents = Utilities.readFile(filename);
 			} catch (IOException e) {
 				logger.info("File " + filename + " does not exist");
@@ -517,8 +519,8 @@ public class WikiDatabase {
 		}
 		if (contents == null) {
 			try {
-				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR).getPath();
-				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
+				subdirectory = WikiDatabase.SPECIAL_PAGE_DIR;
+				filename = subdirectory + File.separator + WikiUtil.encodeForFilename(pageName) + ".txt";
 				contents = Utilities.readFile(filename);
 			} catch (IOException e) {
 				logger.warning("File " + filename + " could not be read", e);
