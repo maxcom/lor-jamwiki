@@ -110,6 +110,7 @@
 						<!-- these two files are utility classes used for testing and do not contain any unit tests -->
 						<exclude>**/TestFileUtil.java</exclude>
 						<exclude>**/TestDataHandler.java</exclude>
+						<exclude>**/TestSearchEngine.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
