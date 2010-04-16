@@ -19,10 +19,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jamwiki</groupId>
-			<artifactId>jamwiki-parser</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jamwiki</groupId>
 			<artifactId>jamwiki-web</artifactId>
 		</dependency>
 		<dependency>
@@ -43,7 +39,7 @@
 			</plugin>
 			<!--
 			Currently the sql.*.properties files and default topic files are in the
-			jamwiki-db.jar file.  To make it easy for sites to customize SQL (for bug
+			jamwiki-core.jar file.  To make it easy for sites to customize SQL (for bug
 			fixing and such) and to create new translations, unpack these files
 			from the JAR and place them into the WEB-INF/classes folder.
 			
@@ -63,7 +59,7 @@
 							<artifactItems>
 								<artifactItem>
 									<groupId>org.jamwiki</groupId>
-									<artifactId>jamwiki-db</artifactId>
+									<artifactId>jamwiki-core</artifactId>
 									<type>jar</type>
 									<includes>**/sql.*.properties,pages/**</includes>
 									<outputDirectory>${project.build.directory}/classes</outputDirectory>

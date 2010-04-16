@@ -17,8 +17,6 @@
 	<modules>
 		<module>javadiff</module>
 		<module>jamwiki-core</module>
-		<module>jamwiki-db</module>
-		<module>jamwiki-parser</module>
 		<module>jamwiki-web</module>
 		<module>addons</module>
 		<module>jamwiki-war</module>
@@ -63,16 +61,6 @@
 				<artifactId>jamwiki-core</artifactId>
 				<scope>test</scope>
 				<classifier>tests</classifier>
-				<version>${jamwiki.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jamwiki</groupId>
-				<artifactId>jamwiki-parser</artifactId>
-				<version>${jamwiki.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jamwiki</groupId>
-				<artifactId>jamwiki-db</artifactId>
 				<version>${jamwiki.version}</version>
 			</dependency>
 			<dependency>

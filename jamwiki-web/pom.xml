@@ -111,14 +111,6 @@
 			<scope>test</scope>
 			<classifier>tests</classifier>
 		</dependency>
-		<dependency>
-			<groupId>org.jamwiki</groupId>
-			<artifactId>jamwiki-db</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jamwiki</groupId>
-			<artifactId>jamwiki-parser</artifactId>
-		</dependency>
 		<!--
 		<dependency>
 			<groupId>org.apache.directory.server</groupId>
