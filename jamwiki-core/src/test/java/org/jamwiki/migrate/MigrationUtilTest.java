@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import org.jamwiki.Environment;
+import org.jamwiki.JAMWikiUnitTest;
 import org.jamwiki.TestFileUtil;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
@@ -33,7 +34,7 @@ import org.junit.rules.TemporaryFolder;
 /**
  *
  */
-public class MigrationUtilTest {
+public class MigrationUtilTest extends JAMWikiUnitTest {
 
 	private static final String FILE_TEST_TWO_TOPICS_WITH_HISTORY = "mediawiki-export-two-topics-with-history.xml";
 	private static final String FILE_ONE_TOPIC_WITH_UNSORTED_HISTORY = "mediawiki-export-one-topic-with-unsorted-history.xml";

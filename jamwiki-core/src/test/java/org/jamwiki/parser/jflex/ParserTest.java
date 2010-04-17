@@ -19,32 +19,99 @@ package org.jamwiki.parser.jflex;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import junit.framework.TestCase;
-import junit.framework.TestResult;
+import java.util.List;
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
+import org.jamwiki.JAMWikiUnitTest;
+import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
 import org.jamwiki.TestFileUtil;
+import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
+import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
-import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.ImageUtil;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * This class will first get a list of all parser result files in the /data/results
  * directory and then retrieve the corresponding /data/topics file, parse it, and
  * compare the parser output to the results file.
  */
-public class ParserTest extends TestCase {
+public class ParserTest extends JAMWikiUnitTest {
 
-	private static final WikiLogger logger = WikiLogger.getLogger(ParserTest.class.getName());
+	private static boolean INITIALIZED = false;
 
 	/**
 	 *
 	 */
-	public ParserTest(String name) {
-		super(name);
+	@Before
+	public void setup() throws Exception {
+		super.setup();
+		if (!INITIALIZED) {
+			this.setupTopics();
+			INITIALIZED = true;
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testParserNoJavascript() throws IOException {
+		// test with JS disabled
+		Environment.setBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT, false);
+		this.parseAllResults(TestFileUtil.TEST_RESULTS_DIR);
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testParserWithJavascript() throws IOException {
+		// test with JS enabled
+		Environment.setBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT, true);
+		this.parseAllResults(TestFileUtil.TEST_JS_RESULTS_DIR);
+	}
+
+	/**
+	 * Read and load default topics from the file system.
+	 */
+	private void setupTopics() throws DataAccessException, IOException, WikiException {
+		File topicDir = TestFileUtil.getClassLoaderFile(TestFileUtil.TEST_TOPICS_DIR);
+		File[] topicFiles = topicDir.listFiles();
+		List<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
+		for (VirtualWiki virtualWiki : virtualWikis) {
+			for (File topicFile : topicFiles) {
+				String fileName = topicFile.getName();
+				String contents = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_TOPICS_DIR, fileName);
+				String topicName = TestFileUtil.decodeTopicName(fileName);
+				Topic topic = new Topic(virtualWiki.getName(), topicName);
+				topic.setTopicContent(contents);
+				int charactersChanged = (contents == null) ? 0 : contents.length();
+				TopicVersion topicVersion = new TopicVersion(null, "127.0.0.1", null, contents, charactersChanged);
+				if (topicName.toLowerCase().startsWith("image:") && !virtualWiki.getName().equals("en")) {
+					continue;
+				}
+				if (topicName.toLowerCase().startsWith("image:")) {
+					topic.setTopicType(TopicType.IMAGE);
+					topicVersion.setEditType(TopicVersion.EDIT_UPLOAD);
+				}
+				WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
+				if (topicName.toLowerCase().startsWith("image:")) {
+					// hard-coding for now since there is only one test image
+					ImageUtil.writeWikiFile(topic, null, "127.0.0.1", "test_image.gif", "/test_image.gif", "image/gif", 61);
+				}
+			}
+		}
 	}
 
 	/**
@@ -70,7 +137,7 @@ public class ParserTest extends TestCase {
 	private void executeParserTest(String fileName, String resultDirName) throws IOException, ParserException {
 		String parserResult = this.parserResult(fileName);
 		String expectedResult = this.expectedResult(fileName, resultDirName);
-		assertEquals("Testing file " + fileName,expectedResult, parserResult);
+		assertEquals("Testing file " + fileName, expectedResult, parserResult);
 	}
 
 	/**
@@ -106,23 +173,15 @@ public class ParserTest extends TestCase {
 	/**
 	 *
 	 */
-	private void parseAllResults(TestResult result, String resultDirName) {
-		try {
-			File resultDir = TestFileUtil.getClassLoaderFile(resultDirName);
-			File[] resultFiles = resultDir.listFiles();
-			String fileName = null;
-			for (int i = 0; i < resultFiles.length; i++) {
-				fileName = resultFiles[i].getName();
-				try {
-					executeParserTest(fileName, resultDirName);
-				} catch (Throwable t) {
-					if (!knownFailure(fileName)) {
-						result.addError(new ParserTest(fileName), t);
-					}
-				}
+	private void parseAllResults(String resultDirName) throws IOException {
+		File resultDir = TestFileUtil.getClassLoaderFile(resultDirName);
+		File[] resultFiles = resultDir.listFiles();
+		String fileName = null;
+		for (int i = 0; i < resultFiles.length; i++) {
+			fileName = resultFiles[i].getName();
+			if (!knownFailure(fileName)) {
+				executeParserTest(fileName, resultDirName);
 			}
-		} catch (Exception e) {
-			result.addError(this, e);
 		}
 	}
 
@@ -138,28 +197,7 @@ public class ParserTest extends TestCase {
 	/**
 	 *
 	 */
-	public void run(TestResult result) {
-		// test with JS disabled
-		Environment.setBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT, false);
-		this.parseAllResults(result, TestFileUtil.TEST_RESULTS_DIR);
-		// test with JS enabled
-		Environment.setBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT, true);
-		this.parseAllResults(result, TestFileUtil.TEST_JS_RESULTS_DIR);
-	}
-
-	/**
-	 *
-	 */
 	private String sanitize(String value) {
 		return StringUtils.remove(value, '\r').trim();
-	}
-
-	/**
-	 * Surefire requires at least one method whose name starts with 'test', so create
-	 * this dummy method and then overwrite the JUnit run() method to run the actual
-	 * unit tests.
-	 */
-	public void testSuiteSurefireHack() {
-		// empty method, causes run() to be called
 	}
 }

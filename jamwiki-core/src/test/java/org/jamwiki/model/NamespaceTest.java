@@ -17,13 +17,14 @@
 package org.jamwiki.model;
 
 import org.jamwiki.DataAccessException;
+import org.jamwiki.JAMWikiUnitTest;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
  *
  */
-public class NamespaceTest {
+public class NamespaceTest extends JAMWikiUnitTest {
 
 	/**
 	 *

@@ -38,6 +38,8 @@ New Features:
     thwart spam attempts.
   * Remove ability to automatically upgrade from versions prior to 0.7.0.
   * Move the database code into the jamwiki-core project.
+  * All unit tests now use HSQL as a test database, rather than the dummy
+    TestDataHandler.
   * Upgrade to Spring Framework 3.0.1.RELEASE.
   * Upgrade to Spring Security 3.0.2.RELEASE.
   * Upgrade to Lucene Search 3.0.1.

@@ -18,6 +18,7 @@
  */
 package org.jamwiki.utils;
 
+import org.jamwiki.JAMWikiUnitTest;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.jamwiki.model.Namespace;
@@ -25,7 +26,7 @@ import org.jamwiki.model.Namespace;
 /**
  *
  */
-public class WikiLinkTest {
+public class WikiLinkTest extends JAMWikiUnitTest {
 
 	/**
 	 *

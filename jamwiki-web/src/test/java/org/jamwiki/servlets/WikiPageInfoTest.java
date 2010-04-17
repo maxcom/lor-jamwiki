@@ -19,12 +19,13 @@
 package org.jamwiki.servlets;
 
 import org.jamwiki.Environment;
+import org.jamwiki.JAMWikiUnitTest;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockServletContext;
 import static org.junit.Assert.*;
 
-public class WikiPageInfoTest {
+public class WikiPageInfoTest extends JAMWikiUnitTest {
 
 	/**
 	 *

@@ -19,13 +19,14 @@
 package org.jamwiki.utils;
 
 import java.util.Properties;
+import org.jamwiki.JAMWikiUnitTest;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
  *
  */
-public class SortedPropertiesTest {
+public class SortedPropertiesTest extends JAMWikiUnitTest {
 
 	/**
 	 *
