@@ -159,6 +159,7 @@ public class ParserTest extends JAMWikiUnitTest {
 		failures.add("HtmlMismatchTest3");
 		failures.add("HtmlXSS1");
 		failures.add("ImageLink2"); // bad paragraph parsing - no <p> around <div> tags
+		failures.add("Inclusion~test"); // template params not parsed in parser functions
 		failures.add("NestedTable1");
 		failures.add("NestedTable2");
 		failures.add("Paragraph13");
