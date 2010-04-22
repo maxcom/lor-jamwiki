@@ -13,3 +13,9 @@ Test topic.</p>
 <p><br />
 Test topic.</p>
 <p>content = Template4</p>
+<table>
+<tr>
+<td>no arg1</td>
+<td>test</td>
+</tr>
+</table>

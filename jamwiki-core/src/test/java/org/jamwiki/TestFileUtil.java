@@ -38,7 +38,10 @@ public class TestFileUtil {
 	public static String decodeTopicName(String fileName) {
 		// files containing colons aren't allowed, so they are replaced with "_-_"
 		String result = StringUtils.replace(fileName, "_-_", ":");
-		return StringUtils.replace(result, "_", " ");
+		result = StringUtils.replace(result, "_", " ");
+		// files containing slashes aren't allowed, so they are replaced with "~"
+		result = StringUtils.replace(result, "~", "/");
+		return result;
 	}
 
 	/**

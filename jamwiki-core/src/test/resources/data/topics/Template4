@@ -24,3 +24,7 @@ test
 {{subst::Example2}}
 
 {{subst:Reprint|content={{subst:PAGENAME}}}}
+
+{|
+{{Inclusion/test|arg1=|arg2=test}}
+|}
