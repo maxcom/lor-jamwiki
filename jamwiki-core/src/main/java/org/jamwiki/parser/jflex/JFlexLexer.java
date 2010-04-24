@@ -44,17 +44,19 @@ public abstract class JFlexLexer {
 	private Stack<JFlexTagItem> tagStack = new Stack<JFlexTagItem>();
 
 	protected static final int TAG_TYPE_HTML_LINK = 1;
-	protected static final int TAG_TYPE_INCLUDE_ONLY = 2;
-	protected static final int TAG_TYPE_JAVASCRIPT = 3;
-	protected static final int TAG_TYPE_NO_INCLUDE = 4;
-	protected static final int TAG_TYPE_TEMPLATE = 5;
-	protected static final int TAG_TYPE_WIKI_BOLD_ITALIC = 6;
-	protected static final int TAG_TYPE_WIKI_HEADING = 7;
-	protected static final int TAG_TYPE_WIKI_LINK = 8;
-	protected static final int TAG_TYPE_WIKI_REFERENCE = 9;
-	protected static final int TAG_TYPE_WIKI_REFERENCES = 10;
-	protected static final int TAG_TYPE_WIKI_SIGNATURE = 11;
+	protected static final int TAG_TYPE_IMAGE_LINK = 2;
+	protected static final int TAG_TYPE_INCLUDE_ONLY = 3;
+	protected static final int TAG_TYPE_JAVASCRIPT = 4;
+	protected static final int TAG_TYPE_NO_INCLUDE = 5;
+	protected static final int TAG_TYPE_TEMPLATE = 6;
+	protected static final int TAG_TYPE_WIKI_BOLD_ITALIC = 7;
+	protected static final int TAG_TYPE_WIKI_HEADING = 8;
+	protected static final int TAG_TYPE_WIKI_LINK = 9;
+	protected static final int TAG_TYPE_WIKI_REFERENCE = 10;
+	protected static final int TAG_TYPE_WIKI_REFERENCES = 11;
+	protected static final int TAG_TYPE_WIKI_SIGNATURE = 12;
 	private static final HtmlLinkTag TAG_HTML_LINK = new HtmlLinkTag();
+	private static final ImageLinkTag TAG_IMAGE_LINK = new ImageLinkTag();
 	private static final IncludeOnlyTag TAG_INCLUDE_ONLY = new IncludeOnlyTag();
 	private static final JavascriptTag TAG_JAVASCRIPT = new JavascriptTag();
 	private static final NoIncludeTag TAG_NO_INCLUDE = new NoIncludeTag();
@@ -183,6 +185,9 @@ public abstract class JFlexLexer {
 		switch (type) {
 			case TAG_TYPE_HTML_LINK:
 				jflexParserTag = TAG_HTML_LINK;
+				break;
+			case TAG_TYPE_IMAGE_LINK:
+				jflexParserTag = TAG_IMAGE_LINK;
 				break;
 			case TAG_TYPE_INCLUDE_ONLY:
 				jflexParserTag = TAG_INCLUDE_ONLY;
