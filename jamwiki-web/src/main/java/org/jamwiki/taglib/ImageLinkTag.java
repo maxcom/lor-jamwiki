@@ -21,8 +21,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.jamwiki.DataAccessException;
-import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.ImageMetadata;
 import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 
 /**
@@ -47,9 +48,12 @@ public class ImageLinkTag extends TagSupport {
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		String virtualWiki = retrieveVirtualWiki(request);
 		String html = null;
+		ImageMetadata imageMetadata = new ImageMetadata();
+		imageMetadata.setMaxDimension(linkDimension);
+		imageMetadata.setSuppressLink(true);
 		try {
 			try {
-				html = LinkUtil.buildImageLinkHtml(request.getContextPath(), virtualWiki, this.value, false, false, null, null, linkDimension, true, this.style, true);
+				html = LinkUtil.buildImageLinkHtml(request.getContextPath(), virtualWiki, this.value, imageMetadata, this.style, true);
 			} catch (DataAccessException e) {
 				logger.severe("Failure while building url " + html + " with value " + this.value, e);
 				throw new JspException(e);

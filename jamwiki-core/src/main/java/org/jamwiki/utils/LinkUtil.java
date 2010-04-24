@@ -139,21 +139,8 @@ public class LinkUtil {
 	 * @param virtualWiki The virtual wiki for the link that is being created.
 	 * @param topicName The name of the image for which a link is being
 	 *  created.
-	 * @param frame Set to <code>true</code> if the image should display with
-	 *  a frame border.
-	 * @param thumb Set to <code>true</code> if the image should display as a
-	 *  thumbnail.
-	 * @param align Indicates how the image should horizontally align on the
-	 *  page.  Valid values are "left", "right" and "center".
-	 * @param caption An optional text caption to display for the image.  If
-	 *  no caption is used then this value should be either empty or
-	 *  <code>null</code>.
-	 * @param maxDimension A value in pixels indicating the maximum width or
-	 *  height value allowed for the image.  Images will be resized so that
-	 *  neither the width or height exceeds this value.
-	 * @param suppressLink If this value is <code>true</code> then the
-	 *  generated HTML will include the image tag without a link to the image
-	 *  topic page.
+	 * @param imageMetadata A container for the image display params, such as
+	 *  border, alignment, caption, etc.
 	 * @param style The CSS class to use with the img HTML tag.  This value
 	 *  can be <code>null</code> or empty if no custom style is used.
 	 * @param escapeHtml Set to <code>true</code> if the caption should be
@@ -166,7 +153,7 @@ public class LinkUtil {
 	 *  information.
 	 * @throws IOException Thrown if any error occurs while reading image information.
 	 */
-	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, int maxDimension, boolean suppressLink, String style, boolean escapeHtml) throws DataAccessException, IOException {
+	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, ImageMetadata imageMetadata, String style, boolean escapeHtml) throws DataAccessException, IOException {
 		String url = LinkUtil.buildImageFileUrl(context, virtualWiki, topicName);
 		if (url == null) {
 			return LinkUtil.buildUploadLink(context, virtualWiki, topicName);
@@ -174,6 +161,12 @@ public class LinkUtil {
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		StringBuilder html = new StringBuilder();
+		boolean thumb = (imageMetadata.getBorder() == ImageBorderEnum.THUMB);
+		boolean frame = (imageMetadata.getBorder() == ImageBorderEnum.FRAME);
+		String align = ((imageMetadata.getHorizontalAlignment() == ImageHorizontalAlignmentEnum.NOT_SPECIFIED) ? null : imageMetadata.getHorizontalAlignment().toString().toLowerCase());
+		String caption = imageMetadata.getCaption();
+		int maxDimension = imageMetadata.getMaxDimension();
+		boolean suppressLink = imageMetadata.getSuppressLink();
 		if (topic.getTopicType() == TopicType.FILE) {
 			// file, not an image
 			if (StringUtils.isBlank(caption)) {
