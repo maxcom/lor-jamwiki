@@ -108,7 +108,7 @@ public class ParserTest extends JAMWikiUnitTest {
 				WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
 				if (topicName.toLowerCase().startsWith("image:")) {
 					// hard-coding for now since there is only one test image
-					ImageUtil.writeWikiFile(topic, null, "127.0.0.1", "test_image.gif", "/test_image.gif", "image/gif", 61);
+					ImageUtil.writeWikiFile(topic, null, "127.0.0.1", "test_image.jpg", "/test_image.jpg", "image/jpeg", 61);
 				}
 			}
 		}

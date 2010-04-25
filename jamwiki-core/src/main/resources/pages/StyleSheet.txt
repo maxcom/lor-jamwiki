@@ -419,25 +419,54 @@ img.wikiimg {
 a.wikiimg {
 	border: 0;
 }
-div.imgcaption {
-	padding: 0.3em 0em 0.2em 0em;
+div.thumbcaption {
+	text-align:left;
+	border: none;
+	font-size:94%;
+	line-height:1.4em;
+	padding:3px !important;
 }
-div.imgleft {
-	float: left;
-	margin: 0.3em 0.3em 0.3em 0em;
+div.floatleft {
+	border: none;
+	clear:left;
+	float:left;
+	margin: 0 0.5em 0.5em 0;
+	position:relative;
 }
-div.imgright {
-	float: right;
-	margin: 0.3em 0em 0.3em 0.3em;
+div.floatright {
+	border: none;
+	clear:right;
+	float:right;
+	margin: 0 0 0.5em 0.5em;
+	position:relative;
 }
-div.imgcenter {
-	text-align: center;
-	margin: 0.3em 0em 0.3em 0em;
+div.center {
+	text-align:center;
+	width:100%;
 }
-div.imgthumb {
-	border: 1px solid #bbbbbb;
-	padding: 0.3em;
-	position: relative;
+div.center * {
+	margin-left:auto;
+	margin-right:auto;
+}
+div.tright {
+	border: none;
+	margin: 0.5em 0 0.8em 1.4em;
+	clear:right;
+	float:right;
+}
+div.thumb {
+	border: none;
+	margin-bottom:0.5em;
+	width:auto;
+}
+div.thumbinner  {
+	background-color:#F9F9F9;
+	border: 1px solid #ccc;
+	font-size:94%;
+	overflow:hidden;
+	padding: 3px !important;
+	text-align:center;
+	min-width:100px;
 }
 table.gallery {
 	border: 1px solid #ccc;

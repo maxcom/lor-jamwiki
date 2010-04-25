@@ -20,6 +20,7 @@ package org.jamwiki;
 
 import java.io.File;
 import java.util.Locale;
+import org.apache.commons.io.FileUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.db.WikiDatabase;
@@ -45,6 +46,12 @@ public abstract class JAMWikiUnitTest {
 			File databaseDirectory = new File(rootDirectory, "database");
 			if (!databaseDirectory.exists()) {
 				this.setupDatabase();
+			}
+			File filesDirectory = new File(rootDirectory, "files");
+			File testFilesDirectory = new File("src/test/resources/data/files");
+			if (!filesDirectory.exists() && testFilesDirectory.exists()) {
+				// copy everything from src/test/resources/data/files to this directory
+				FileUtils.copyDirectory(testFilesDirectory, filesDirectory);
 			}
 		}
 	}

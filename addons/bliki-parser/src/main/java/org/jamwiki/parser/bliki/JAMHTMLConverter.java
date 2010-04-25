@@ -14,7 +14,7 @@ import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.ImageBorderEnum;
 import org.jamwiki.utils.ImageHorizontalAlignmentEnum;
 import org.jamwiki.utils.ImageMetadata;
-import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.ImageUtil;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -69,7 +69,7 @@ public class JAMHTMLConverter extends HTMLConverter {
 			imageMetadata.setHorizontalAlignment(ImageHorizontalAlignmentEnum.CENTER);
 		}
 		try {
-			resultBuffer.append(LinkUtil.buildImageLinkHtml(fParserInput.getContext(), fParserInput.getVirtualWiki(), model
+			resultBuffer.append(ImageUtil.buildImageLinkHtml(fParserInput.getContext(), fParserInput.getVirtualWiki(), model
 					.getImageNamespace() + Namespace.SEPARATOR + imageName, imageMetadata, null, false));
 		} catch (Exception e) {
 			e.printStackTrace();

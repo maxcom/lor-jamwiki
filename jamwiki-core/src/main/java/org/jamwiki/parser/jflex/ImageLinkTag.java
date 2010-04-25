@@ -29,7 +29,7 @@ import org.jamwiki.utils.ImageBorderEnum;
 import org.jamwiki.utils.ImageHorizontalAlignmentEnum;
 import org.jamwiki.utils.ImageVerticalAlignmentEnum;
 import org.jamwiki.utils.ImageMetadata;
-import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.ImageUtil;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 
@@ -42,7 +42,7 @@ public class ImageLinkTag implements JFlexParserTag {
 	// look for image size info in image tags
 	private static Pattern IMAGE_SIZE_PATTERN = Pattern.compile("([0-9]+)[ ]*px", Pattern.CASE_INSENSITIVE);
 	// FIXME - make configurable
-	private static final int DEFAULT_THUMBNAIL_SIZE = 180;
+	private static final int DEFAULT_THUMBNAIL_SIZE = 220;
 
 	/**
 	 * Parse a Mediawiki link of the form "[[topic|text]]" and return the
@@ -79,16 +79,16 @@ public class ImageLinkTag implements JFlexParserTag {
 	private String parseImageLink(ParserInput parserInput, int mode, WikiLink wikiLink) throws DataAccessException, ParserException {
 		String context = parserInput.getContext();
 		String virtualWiki = parserInput.getVirtualWiki();
-		ImageMetadata imageParams = parseImageParams(wikiLink.getText());
-		if (imageParams.getBorder() == ImageBorderEnum.THUMB && imageParams.getMaxDimension() <= 0) {
-			imageParams.setMaxDimension(DEFAULT_THUMBNAIL_SIZE);
+		ImageMetadata imageMetadata = parseImageParams(wikiLink.getText());
+		if ((imageMetadata.getBorder() == ImageBorderEnum.THUMB || imageMetadata.getBorder() == ImageBorderEnum.FRAMELESS)&& imageMetadata.getMaxDimension() <= 0) {
+			imageMetadata.setMaxDimension(DEFAULT_THUMBNAIL_SIZE);
 		}
-		if (!StringUtils.isBlank(imageParams.getCaption())) {
-			imageParams.setCaption(JFlexParserUtil.parseFragment(parserInput, imageParams.getCaption(), mode));
+		if (!StringUtils.isBlank(imageMetadata.getCaption())) {
+			imageMetadata.setCaption(JFlexParserUtil.parseFragment(parserInput, imageMetadata.getCaption(), mode));
 		}
 		// do not escape html for caption since parser does it above
 		try {
-			return LinkUtil.buildImageLinkHtml(context, virtualWiki, wikiLink.getDestination(), imageParams, null, false);
+			return ImageUtil.buildImageLinkHtml(context, virtualWiki, wikiLink.getDestination(), imageMetadata, null, false);
 		} catch (IOException e) {
 			throw new ParserException("I/O Failure while parsing image link", e);
 		}
@@ -98,9 +98,9 @@ public class ImageLinkTag implements JFlexParserTag {
 	 *
 	 */
 	private ImageMetadata parseImageParams(String paramText) {
-		ImageMetadata imageParams = new ImageMetadata();
+		ImageMetadata imageMetadata = new ImageMetadata();
 		if (StringUtils.isBlank(paramText)) {
-			return imageParams;
+			return imageMetadata;
 		}
 		String[] tokens = paramText.split("\\|");
 		tokenLoop: for (int i = 0; i < tokens.length; i++) {
@@ -111,36 +111,36 @@ public class ImageLinkTag implements JFlexParserTag {
 			token = token.trim();
 			for (ImageBorderEnum border : EnumSet.allOf(ImageBorderEnum.class)) {
 				if (border.toString().equalsIgnoreCase(token)) {
-					imageParams.setBorder(border);
+					imageMetadata.setBorder(border);
 					continue tokenLoop;
 				}
 			}
 			for (ImageHorizontalAlignmentEnum horizontalAlignment : EnumSet.allOf(ImageHorizontalAlignmentEnum.class)) {
 				if (horizontalAlignment.toString().equalsIgnoreCase(token)) {
-					imageParams.setHorizontalAlignment(horizontalAlignment);
+					imageMetadata.setHorizontalAlignment(horizontalAlignment);
 					continue tokenLoop;
 				}
 			}
 			for (ImageVerticalAlignmentEnum verticalAlignment : EnumSet.allOf(ImageVerticalAlignmentEnum.class)) {
 				if (verticalAlignment.toString().equalsIgnoreCase(token)) {
-					imageParams.setVerticalAlignment(verticalAlignment);
+					imageMetadata.setVerticalAlignment(verticalAlignment);
 					continue tokenLoop;
 				}
 			}
 			// if none of the above tokens matched then check for size or caption
 			Matcher m = IMAGE_SIZE_PATTERN.matcher(token);
 			if (m.find()) {
-				imageParams.setMaxDimension(Integer.valueOf(m.group(1)));
+				imageMetadata.setMaxDimension(Integer.valueOf(m.group(1)));
 			} else {
 				// FIXME - this is a hack.  images may contain piped links, so if
 				// there was previous caption info append the new info.
-				if (StringUtils.isBlank(imageParams.getCaption())) {
-					imageParams.setCaption(token);
+				if (StringUtils.isBlank(imageMetadata.getCaption())) {
+					imageMetadata.setCaption(token);
 				} else {
-					imageParams.setCaption(imageParams.getCaption() + "|" + token);
+					imageMetadata.setCaption(imageMetadata.getCaption() + "|" + token);
 				}
 			}
 		}
-		return imageParams;
+		return imageMetadata;
 	}
 }

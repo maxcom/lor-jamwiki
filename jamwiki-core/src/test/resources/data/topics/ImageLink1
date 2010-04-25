@@ -1,6 +1,92 @@
 <!-- test basic image links -->
-[[Image:Test Image.gif]]
+plain image
 
-[[:Image:Test Image.gif]]
+[[Image:Test Image.jpg]]
 
-[[:Image:Test Image.gif|Caption for link]]
+image link
+
+[[:Image:Test Image.jpg]]
+
+image link with caption
+
+[[:Image:Test Image.jpg|Caption for link]]
+
+non-existent image with caption
+
+[[Image:Non Existent Image.jpg|Caption for link]]
+
+left-aligned image
+
+[[Image:Test Image.jpg|left]]
+
+right-aligned image
+
+[[Image:Test Image.jpg|right]]
+
+centered image
+
+[[Image:Test Image.jpg|center]]
+
+unformatted image
+
+[[Image:Test Image.jpg|none]]
+
+thumbnail image
+
+[[Image:Test Image.jpg|thumb]]
+
+bordered image
+
+[[Image:Test Image.jpg|border]]
+
+framed image
+
+[[Image:Test Image.jpg|frame]]
+
+frameless image
+
+[[Image:Test Image.jpg|frameless]]
+
+centered thumbnail
+
+[[Image:Test Image.jpg|thumb|center]]
+
+right-aligned thumbnail
+
+[[Image:Test Image.jpg|thumb|right]]
+
+left-aligned thumbnail
+
+[[Image:Test Image.jpg|thumb|left]]
+
+plain image with caption
+
+[[Image:Test Image.jpg|this is a caption blah blah blah blah blah blah blah blah blah blah blah]]
+
+left-aligned image with caption
+
+[[Image:Test Image.jpg|left|this is a caption blah blah blah blah blah blah blah blah blah blah blah]]
+
+unformatted image with caption
+
+[[Image:Test Image.jpg|none|this is a caption blah blah blah blah blah blah blah blah blah blah blah]]
+
+thumbnail with caption
+
+[[Image:Test Image.jpg|thumb|this is a caption blah blah blah blah blah blah blah blah blah blah blah]]
+
+bordered image with caption
+
+[[Image:Test Image.jpg|border|this is a caption blah blah blah blah blah blah blah blah blah blah blah]]
+
+framed image with caption
+
+[[Image:Test Image.jpg|frame|this is a caption blah blah blah blah blah blah blah blah blah blah blah]]
+
+frameless image with caption
+
+[[Image:Test Image.jpg|frameless|this is a caption blah blah blah blah blah blah blah blah blah blah blah]]
+
+left-aligned thumbnail with caption
+
+[[Image:Test Image.jpg|thumb|left|this is a caption blah blah blah blah blah blah blah blah blah blah blah]]

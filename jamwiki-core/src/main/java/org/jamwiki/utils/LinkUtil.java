@@ -16,9 +16,6 @@
  */
 package org.jamwiki.utils;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
@@ -28,8 +25,6 @@ import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicType;
 import org.jamwiki.model.VirtualWiki;
-import org.jamwiki.model.WikiFile;
-import org.jamwiki.model.WikiImage;
 
 /**
  * General utility methods for handling both wiki topic links and HTML links.
@@ -108,140 +103,6 @@ public class LinkUtil {
 		wikiLink.setDestination("Special:Edit");
 		wikiLink.setQuery(query);
 		return LinkUtil.buildTopicUrl(context, virtualWiki, wikiLink);
-	}
-
-	/**
-	 * Utility method for building the URL to an image file (NOT the image topic
-	 * page).  If the file does not exist then this method will return
-	 * <code>null</code>.
-	 *
-	 * @param context The current servlet context.
-	 * @param virtualWiki The virtual wiki for the URL that is being created.
-	 * @param topicName The name of the image for which a link is being created.
-	 * @return The URL to an image file (not the image topic) or <code>null</code>
-	 *  if the file does not exist.
-	 * @throws DataAccessException Thrown if any error occurs while retrieving file info.
-	 */
-	public static String buildImageFileUrl(String context, String virtualWiki, String topicName) throws DataAccessException {
-		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
-		if (wikiFile == null) {
-			return null;
-		}
-		String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + wikiFile.getUrl());
-		return FilenameUtils.separatorsToUnix(url);
-	}
-
-	/**
-	 * Utility method for building an anchor tag that links to an image page
-	 * and includes the HTML image tag to display the image.
-	 *
-	 * @param context The servlet context for the link that is being created.
-	 * @param virtualWiki The virtual wiki for the link that is being created.
-	 * @param topicName The name of the image for which a link is being
-	 *  created.
-	 * @param imageMetadata A container for the image display params, such as
-	 *  border, alignment, caption, etc.
-	 * @param style The CSS class to use with the img HTML tag.  This value
-	 *  can be <code>null</code> or empty if no custom style is used.
-	 * @param escapeHtml Set to <code>true</code> if the caption should be
-	 *  HTML escaped.  This value should be <code>true</code> in any case
-	 *  where the caption is not guaranteed to be free from potentially
-	 *  malicious HTML code.
-	 * @return The full HTML required to display an image enclosed within an
-	 *  HTML anchor tag that links to the image topic page.
-	 * @throws DataAccessException Thrown if any error occurs while retrieving image
-	 *  information.
-	 * @throws IOException Thrown if any error occurs while reading image information.
-	 */
-	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, ImageMetadata imageMetadata, String style, boolean escapeHtml) throws DataAccessException, IOException {
-		String url = LinkUtil.buildImageFileUrl(context, virtualWiki, topicName);
-		if (url == null) {
-			return LinkUtil.buildUploadLink(context, virtualWiki, topicName);
-		}
-		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
-		StringBuilder html = new StringBuilder();
-		boolean thumb = (imageMetadata.getBorder() == ImageBorderEnum.THUMB);
-		boolean frame = (imageMetadata.getBorder() == ImageBorderEnum.FRAME);
-		String align = ((imageMetadata.getHorizontalAlignment() == ImageHorizontalAlignmentEnum.NOT_SPECIFIED) ? null : imageMetadata.getHorizontalAlignment().toString().toLowerCase());
-		String caption = imageMetadata.getCaption();
-		int maxDimension = imageMetadata.getMaxDimension();
-		boolean suppressLink = imageMetadata.getSuppressLink();
-		if (topic.getTopicType() == TopicType.FILE) {
-			// file, not an image
-			if (StringUtils.isBlank(caption)) {
-				caption = topicName.substring(Namespace.namespace(Namespace.FILE_ID).getLabel(virtualWiki).length() + 1);
-			}
-			html.append("<a href=\"").append(url).append("\">");
-			if (escapeHtml) {
-				html.append(StringEscapeUtils.escapeHtml(caption));
-			} else {
-				html.append(caption);
-			}
-			html.append("</a>");
-			return html.toString();
-		}
-		WikiImage wikiImage = null;
-		try {
-			wikiImage = ImageUtil.initializeImage(wikiFile, maxDimension);
-		} catch (FileNotFoundException e) {
-			// do not log the full exception as the logs can fill up very for this sort of error, and it is generally due to a bad configuration.  instead log a warning message so that the administrator can try to fix the problem
-			logger.warning("File not found while parsing image link for topic: " + virtualWiki + " / " + topicName + ".  Make sure that the following file exists and is readable by the JAMWiki installation: " + e.getMessage());
-			return LinkUtil.buildUploadLink(context, virtualWiki, topicName);
-		}
-		if (frame || thumb || !StringUtils.isBlank(align)) {
-			html.append("<div class=\"");
-			if (thumb || frame) {
-				html.append("imgthumb ");
-			}
-			if (align != null && align.equalsIgnoreCase("left")) {
-				html.append("imgleft ");
-			} else if (align != null && align.equalsIgnoreCase("center")) {
-				html.append("imgcenter ");
-			} else if ((align != null && align.equalsIgnoreCase("right")) || thumb || frame) {
-				html.append("imgright ");
-			} else {
-				// default alignment
-				html.append("image ");
-			}
-			html = new StringBuilder(html.toString().trim()).append("\">");
-		}
-		if (wikiImage.getWidth() > 0) {
-			html.append("<div style=\"width:").append((wikiImage.getWidth() + 2)).append("px;\">");
-		}
-		if (!suppressLink) {
-			html.append("<a class=\"wikiimg\" href=\"").append(LinkUtil.buildTopicUrl(context, virtualWiki, topicName, true)).append("\">");
-		}
-		if (StringUtils.isBlank(style)) {
-			style = "wikiimg";
-		}
-		html.append("<img class=\"").append(style).append("\" src=\"");
-		html.append(url);
-		html.append('\"');
-		html.append(" width=\"").append(wikiImage.getWidth()).append('\"');
-		html.append(" height=\"").append(wikiImage.getHeight()).append('\"');
-		String alt = (caption != null) ? caption : topic.getPageName();
-		html.append(" alt=\"").append(StringEscapeUtils.escapeHtml(alt)).append('\"');
-		html.append(" />");
-		if (!suppressLink) {
-			html.append("</a>");
-		}
-		if (!StringUtils.isBlank(caption)) {
-			html.append("<div class=\"imgcaption\">");
-			if (escapeHtml) {
-				html.append(StringEscapeUtils.escapeHtml(caption));
-			} else {
-				html.append(caption);
-			}
-			html.append("</div>");
-		}
-		if (wikiImage.getWidth() > 0) {
-			html.append("</div>");
-		}
-		if (frame || thumb || !StringUtils.isBlank(align)) {
-			html.append("</div>");
-		}
-		return html.toString();
 	}
 
 	/**
@@ -397,14 +258,6 @@ public class LinkUtil {
 			url.append(Utilities.encodeAndEscapeTopicName(section));
 		}
 		return url.toString();
-	}
-
-	/**
-	 *
-	 */
-	private static String buildUploadLink(String context, String virtualWiki, String topicName) throws DataAccessException {
-		WikiLink uploadLink = LinkUtil.parseWikiLink(virtualWiki, "Special:Upload?topic=" + topicName);
-		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, uploadLink, topicName, "edit", null, true);
 	}
 
 	/**
