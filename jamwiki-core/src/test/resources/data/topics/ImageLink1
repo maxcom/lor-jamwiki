@@ -94,3 +94,11 @@ left-aligned thumbnail with caption
 image within a paragraph [[Image:Test Image.jpg|220px]] test to make sure text flows
 
 thumbnail within a paragraph [[Image:Test Image.jpg|thumb]] test to make sure text breaks
+
+vertical align standard [[Image:Test Image.jpg|220px|baseline]]
+
+vertical align thumbnail [[Image:Test Image.jpg|220px|baseline|thumb]]
+
+vertical align frame [[Image:Test Image.jpg|220px|baseline|frame]]
+
+vertical align left [[Image:Test Image.jpg|220px|baseline|left]]

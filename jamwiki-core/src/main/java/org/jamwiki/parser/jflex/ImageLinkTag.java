@@ -158,6 +158,14 @@ public class ImageLinkTag implements JFlexParserTag {
 				}
 			}
 		}
+		if (imageMetadata.getVerticalAlignment() != ImageVerticalAlignmentEnum.NOT_SPECIFIED && (imageMetadata.getBorder() == ImageBorderEnum.THUMB || imageMetadata.getBorder() == ImageBorderEnum.FRAME)) {
+			// per spec, vertical alignment can only be set for non-thumb and non-frame
+			imageMetadata.setVerticalAlignment(ImageVerticalAlignmentEnum.NOT_SPECIFIED);
+		}
+		if (imageMetadata.getMaxDimension() != -1 && imageMetadata.getBorder() == ImageBorderEnum.FRAME) {
+			// per spec, frame cannot be resized
+			imageMetadata.setMaxDimension(-1);
+		}
 		return imageMetadata;
 	}
 }

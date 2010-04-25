@@ -76,3 +76,14 @@
 <div class="thumbinner" style="width:222px"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image.jpg" width="220" height="146" alt="Test Image.jpg" /></a></div>
 </div>
 <p>test to make sure text breaks</p>
+<p>vertical align standard <a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image.jpg" width="220" height="146" alt="Test Image.jpg" style="vertical-align: baseline" /></a></p>
+<p>vertical align thumbnail</p>
+<div class="thumb tright">
+<div class="thumbinner" style="width:222px"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image.jpg" width="220" height="146" alt="Test Image.jpg" /></a></div>
+</div>
+<p>vertical align frame</p>
+<div class="thumb tright">
+<div class="thumbinner" style="width:402px"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image.jpg" width="400" height="267" alt="Test Image.jpg" /></a></div>
+</div>
+<p>vertical align left</p>
+<div class="floatleft"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image.jpg" width="220" height="146" alt="Test Image.jpg" style="vertical-align: baseline" /></a></div>
