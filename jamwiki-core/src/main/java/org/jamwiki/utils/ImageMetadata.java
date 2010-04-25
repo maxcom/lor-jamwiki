@@ -22,6 +22,7 @@ package org.jamwiki.utils;
 public class ImageMetadata {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(ImageMetadata.class.getName());
+	private String alt = null;
 	private ImageBorderEnum border = ImageBorderEnum.NOT_SPECIFIED;
 	private String caption = null;
 	private ImageHorizontalAlignmentEnum horizontalAlignment = ImageHorizontalAlignmentEnum.NOT_SPECIFIED;
@@ -36,6 +37,20 @@ public class ImageMetadata {
 	 */
 	boolean suppressLink = false;
 	private ImageVerticalAlignmentEnum verticalAlignment = ImageVerticalAlignmentEnum.NOT_SPECIFIED;
+
+	/**
+	 *
+	 */
+	public String getAlt() {
+		return this.alt;
+	}
+
+	/**
+	 *
+	 */
+	public void setAlt(String alt) {
+		this.alt = alt;
+	}
 
 	/**
 	 *

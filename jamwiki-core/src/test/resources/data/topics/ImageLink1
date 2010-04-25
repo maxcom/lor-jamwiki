@@ -102,3 +102,11 @@ vertical align thumbnail [[Image:Test Image.jpg|220px|baseline|thumb]]
 vertical align frame [[Image:Test Image.jpg|220px|baseline|frame]]
 
 vertical align left [[Image:Test Image.jpg|220px|baseline|left]]
+
+alt tag standard [[Image:Test Image.jpg|alt=alternate text|caption]]
+
+[[Image:Test Image.jpg|thumb|alt=alternate text|caption]]
+
+blank alt #1 [[Image:Test Image.jpg|alt=]]
+
+blank alt #2 [[Image:Test Image.jpg|alt= ]]

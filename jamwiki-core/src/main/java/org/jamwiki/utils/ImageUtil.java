@@ -176,7 +176,10 @@ public class ImageUtil {
 		html.append('\"');
 		html.append(" width=\"").append(wikiImage.getWidth()).append('\"');
 		html.append(" height=\"").append(wikiImage.getHeight()).append('\"');
-		String alt = (caption != null) ? caption : topic.getPageName();
+		String alt = imageMetadata.getAlt();
+		if (alt == null) {
+			alt = (!StringUtils.isBlank(caption)) ? caption : topic.getPageName();
+		}
 		html.append(" alt=\"").append(StringEscapeUtils.escapeHtml(alt)).append('\"');
 		if (imageMetadata.getVerticalAlignment() != ImageVerticalAlignmentEnum.NOT_SPECIFIED) {
 			html.append(" style=\"vertical-align: ").append(imageMetadata.getVerticalAlignment().toString()).append('\"');

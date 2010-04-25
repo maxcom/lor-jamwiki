@@ -87,3 +87,11 @@
 </div>
 <p>vertical align left</p>
 <div class="floatleft"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image.jpg" width="220" height="146" alt="Test Image.jpg" style="vertical-align: baseline" /></a></div>
+<p>alt tag standard <a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image.jpg" width="400" height="267" alt="alternate text" /></a></p>
+<div class="thumb tright">
+<div class="thumbinner" style="width:222px"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image.jpg" width="220" height="146" alt="alternate text" /></a>
+<div class="thumbcaption">caption</div>
+</div>
+</div>
+<p>blank alt #1 <a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image.jpg" width="400" height="267" alt="" /></a></p>
+<p>blank alt #2 <a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image.jpg" width="400" height="267" alt="" /></a></p>

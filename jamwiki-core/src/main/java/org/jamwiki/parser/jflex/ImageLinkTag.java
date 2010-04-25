@@ -41,6 +41,8 @@ public class ImageLinkTag implements JFlexParserTag {
 	private static final WikiLogger logger = WikiLogger.getLogger(ImageLinkTag.class.getName());
 	// look for image size info in image tags
 	private static Pattern IMAGE_SIZE_PATTERN = Pattern.compile("([0-9]+)[ ]*px", Pattern.CASE_INSENSITIVE);
+	// look for alt info in image tags
+	private static Pattern IMAGE_ALT_PATTERN = Pattern.compile("alt[ ]*=[ ]*(.*)", Pattern.CASE_INSENSITIVE);
 	// FIXME - make configurable
 	private static final int DEFAULT_THUMBNAIL_SIZE = 220;
 
@@ -120,6 +122,7 @@ public class ImageLinkTag implements JFlexParserTag {
 			return imageMetadata;
 		}
 		String[] tokens = paramText.split("\\|");
+		Matcher matcher;
 		tokenLoop: for (int i = 0; i < tokens.length; i++) {
 			String token = tokens[i];
 			if (StringUtils.isBlank(token)) {
@@ -145,17 +148,22 @@ public class ImageLinkTag implements JFlexParserTag {
 				}
 			}
 			// if none of the above tokens matched then check for size or caption
-			Matcher m = IMAGE_SIZE_PATTERN.matcher(token);
-			if (m.find()) {
-				imageMetadata.setMaxDimension(Integer.valueOf(m.group(1)));
+			matcher = IMAGE_SIZE_PATTERN.matcher(token);
+			if (matcher.find()) {
+				imageMetadata.setMaxDimension(Integer.valueOf(matcher.group(1)));
+				continue tokenLoop;
+			}
+			matcher = IMAGE_ALT_PATTERN.matcher(token);
+			if (matcher.find()) {
+				imageMetadata.setAlt(matcher.group(1).trim());
+				continue tokenLoop;
+			}
+			// FIXME - this is a hack.  images may contain piped links, so if
+			// there was previous caption info append the new info.
+			if (StringUtils.isBlank(imageMetadata.getCaption())) {
+				imageMetadata.setCaption(token);
 			} else {
-				// FIXME - this is a hack.  images may contain piped links, so if
-				// there was previous caption info append the new info.
-				if (StringUtils.isBlank(imageMetadata.getCaption())) {
-					imageMetadata.setCaption(token);
-				} else {
-					imageMetadata.setCaption(imageMetadata.getCaption() + "|" + token);
-				}
+				imageMetadata.setCaption(imageMetadata.getCaption() + "|" + token);
 			}
 		}
 		if (imageMetadata.getVerticalAlignment() != ImageVerticalAlignmentEnum.NOT_SPECIFIED && (imageMetadata.getBorder() == ImageBorderEnum.THUMB || imageMetadata.getBorder() == ImageBorderEnum.FRAME)) {
