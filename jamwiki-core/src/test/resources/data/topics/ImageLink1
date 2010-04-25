@@ -90,3 +90,7 @@ frameless image with caption
 left-aligned thumbnail with caption
 
 [[Image:Test Image.jpg|thumb|left|this is a caption blah blah blah blah blah blah blah blah blah blah blah]]
+
+image within a paragraph [[Image:Test Image.jpg|220px]] test to make sure text flows
+
+thumbnail within a paragraph [[Image:Test Image.jpg|thumb]] test to make sure text breaks
