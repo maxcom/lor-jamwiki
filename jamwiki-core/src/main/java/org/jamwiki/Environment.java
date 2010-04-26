@@ -395,16 +395,13 @@ public class Environment {
 	 *  the file cannot be found.
 	 */
 	private static File retrievePropertyFile(String filename) {
-		File file = null;
 		try {
-			file = Utilities.getClassLoaderFile(filename);
-			return file;
+			return Utilities.getClassLoaderFile(filename);
 		} catch (FileNotFoundException e) {
 			// NOPMD file might not exist
 		}
 		try {
-			file = new File(Utilities.getClassLoaderRoot(), filename);
-			return file;
+			return new File(Utilities.getClassLoaderRoot(), filename);
 		} catch (FileNotFoundException e) {
 			logger.severe("Error while searching for resource " + filename, e);
 		}

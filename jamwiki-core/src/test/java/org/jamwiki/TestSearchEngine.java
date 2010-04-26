@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.model.Topic;
-import org.jamwiki.model.VirtualWiki;
 
 /**
  * Empty search engine implementation for use in unit tests.

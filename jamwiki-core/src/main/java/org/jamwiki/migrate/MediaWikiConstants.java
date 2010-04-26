@@ -16,7 +16,6 @@
  */
 package org.jamwiki.migrate;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import org.jamwiki.model.Namespace;

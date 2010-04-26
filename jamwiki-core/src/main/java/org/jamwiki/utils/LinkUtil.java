@@ -22,8 +22,6 @@ import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Namespace;
-import org.jamwiki.model.Topic;
-import org.jamwiki.model.TopicType;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.parser.ParserException;
 

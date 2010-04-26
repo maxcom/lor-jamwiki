@@ -18,8 +18,6 @@
  */
 package org.jamwiki.utils;
 
-import java.io.FileNotFoundException;
-import java.util.Locale;
 import org.jamwiki.JAMWikiUnitTest;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;

@@ -21,7 +21,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
-import org.jamwiki.WikiBase;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;

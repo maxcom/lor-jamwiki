@@ -20,7 +20,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
-import org.jamwiki.Environment;
 import org.jamwiki.model.WikiReference;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
