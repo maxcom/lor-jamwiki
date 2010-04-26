@@ -122,3 +122,11 @@ internal link #4 [[Image:Test Image.jpg|link= ]]
 internal link #5 [[Image:Test Image.jpg|link=test:StartingPoints]]
 
 internal link #6 [[Image:Test Image.jpg|thumb|link=StartingPoints]]
+
+[[Media:Test Image.jpg]]
+
+[[Media:Test Image.jpg|test image caption]]
+
+[[Media:Non-existent image.jpg]]
+
+[[Media:Non-existent image.jpg|non-existent image caption]]

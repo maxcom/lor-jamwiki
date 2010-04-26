@@ -178,7 +178,7 @@ public class LinkUtil {
 		if (StringUtils.isBlank(text)) {
 			text = topic;
 		}
-		if (!StringUtils.isBlank(topic) && StringUtils.isBlank(style)) {
+		if (!wikiLink.getNamespace().getId().equals(Namespace.MEDIA_ID) && !StringUtils.isBlank(topic) && StringUtils.isBlank(style)) {
 			if (InterWikiHandler.isInterWiki(virtualWiki)) {
 				style = "interwiki";
 			} else if (!LinkUtil.isExistingArticle(virtualWiki, topic)) {
@@ -249,16 +249,26 @@ public class LinkUtil {
 	 *  information.
 	 */
 	public static String buildTopicUrl(String context, String virtualWiki, WikiLink wikiLink) throws DataAccessException {
-		String topic = wikiLink.getDestination();
-		String section = wikiLink.getSection();
-		String query = wikiLink.getQuery();
-		String url = LinkUtil.buildTopicUrlNoEdit(context, virtualWiki, topic, section, query);
-		if (StringUtils.isBlank(topic) && !StringUtils.isBlank(section)) {
-			// do not check existence for section links
-			return url;
-		}
-		if (!LinkUtil.isExistingArticle(virtualWiki, topic)) {
-			url = LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, -1);
+		String url = null;
+		if (wikiLink.getNamespace().getId().equals(Namespace.MEDIA_ID)) {
+			// for the "Media:" namespace, link directly to the file
+			String filename = Namespace.namespace(Namespace.FILE_ID).getLabel(virtualWiki) + Namespace.SEPARATOR + wikiLink.getArticle();
+			url = ImageUtil.buildImageFileUrl(context, virtualWiki, filename);
+			if (url == null) {
+				url = LinkUtil.buildTopicUrlNoEdit(context, virtualWiki, "Special:Upload", null, "?topic=" + filename);
+			}
+		} else {
+			String topic = wikiLink.getDestination();
+			String section = wikiLink.getSection();
+			String query = wikiLink.getQuery();
+			url = LinkUtil.buildTopicUrlNoEdit(context, virtualWiki, topic, section, query);
+			if (StringUtils.isBlank(topic) && !StringUtils.isBlank(section)) {
+				// do not check existence for section links
+				return url;
+			}
+			if (!LinkUtil.isExistingArticle(virtualWiki, topic)) {
+				url = LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, -1);
+			}
 		}
 		return url;
 	}

@@ -58,7 +58,7 @@ public class ImageLinkTag implements JFlexParserTag {
 			return lexer.parse(JFlexLexer.TAG_TYPE_WIKI_LINK, raw);
 		}
 		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(lexer.getParserInput(), raw);
-		if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
+		if (StringUtils.isBlank(wikiLink.getDestination())) {
 			// no destination or section
 			return raw;
 		}

@@ -104,3 +104,7 @@
 <div class="thumb tright">
 <div class="thumbinner" style="width:222px"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image.jpg" width="220" height="146" alt="Test Image.jpg" /></a></div>
 </div>
+<p><a href="/files/test_image.jpg" title="Media:Test Image.jpg">Media:Test Image.jpg</a></p>
+<p><a href="/files/test_image.jpg" title="Media:Test Image.jpg">test image caption</a></p>
+<p><a href="/wiki/en/Special:Upload?topic=Image:Non-existent image.jpg" title="Media:Non-existent image.jpg">Media:Non-existent image.jpg</a></p>
+<p><a href="/wiki/en/Special:Upload?topic=Image:Non-existent image.jpg" title="Media:Non-existent image.jpg">non-existent image caption</a></p>
