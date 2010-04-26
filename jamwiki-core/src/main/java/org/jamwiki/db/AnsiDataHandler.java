@@ -645,7 +645,7 @@ public class AnsiDataHandler implements DataHandler {
 		}
 		List<Namespace> namespaces = this.lookupNamespaces();
 		for (Namespace namespace : namespaces) {
-			if (namespace.getLabel(virtualWiki).equals(namespaceString)) {
+			if (namespace.getLabel(virtualWiki).equalsIgnoreCase(namespaceString)) {
 				// found a match, return it
 				return namespace;
 			}
