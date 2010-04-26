@@ -50,7 +50,8 @@ public class ImageLinkTag extends TagSupport {
 		String html = null;
 		ImageMetadata imageMetadata = new ImageMetadata();
 		imageMetadata.setMaxDimension(linkDimension);
-		imageMetadata.setSuppressLink(true);
+		// set the link field empty to prevent the image from being clickable
+		imageMetadata.setLink("");
 		try {
 			try {
 				html = ImageUtil.buildImageLinkHtml(request.getContextPath(), virtualWiki, this.value, imageMetadata, this.style, true);

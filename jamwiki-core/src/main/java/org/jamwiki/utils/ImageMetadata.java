@@ -27,15 +27,15 @@ public class ImageMetadata {
 	private String caption = null;
 	private ImageHorizontalAlignmentEnum horizontalAlignment = ImageHorizontalAlignmentEnum.NOT_SPECIFIED;
 	/**
+	 * Destination to link to when the image is clicked.  May be either a topic or a URL.  If
+	 * this value is an empty string then no link is generated.
+	 */
+	private String link = null;
+	/**
 	 * A value in pixels indicating the maximum width or height value allowed for the image.
 	 * Images will be resized so that neither the width or height exceeds this value.
 	 */
 	private int maxDimension = -1;
-	/**
-	 * If this value is <code>true</code> then the generated HTML will include the image tag
-	 * without a link to the image topic page.
-	 */
-	boolean suppressLink = false;
 	private ImageVerticalAlignmentEnum verticalAlignment = ImageVerticalAlignmentEnum.NOT_SPECIFIED;
 
 	/**
@@ -97,6 +97,20 @@ public class ImageMetadata {
 	/**
 	 *
 	 */
+	public String getLink() {
+		return this.link;
+	}
+
+	/**
+	 *
+	 */
+	public void setLink(String link) {
+		this.link = link;
+	}
+
+	/**
+	 *
+	 */
 	public int getMaxDimension() {
 		return this.maxDimension;
 	}
@@ -106,20 +120,6 @@ public class ImageMetadata {
 	 */
 	public void setMaxDimension(int maxDimension) {
 		this.maxDimension = maxDimension;
-	}
-
-	/**
-	 *
-	 */
-	public boolean getSuppressLink() {
-		return this.suppressLink;
-	}
-
-	/**
-	 *
-	 */
-	public void setSuppressLink(boolean suppressLink) {
-		this.suppressLink = suppressLink;
 	}
 
 	/**

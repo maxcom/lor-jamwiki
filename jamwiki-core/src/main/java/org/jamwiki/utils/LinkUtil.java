@@ -25,6 +25,7 @@ import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicType;
 import org.jamwiki.model.VirtualWiki;
+import org.jamwiki.parser.ParserException;
 
 /**
  * General utility methods for handling both wiki topic links and HTML links.
@@ -103,6 +104,52 @@ public class LinkUtil {
 		wikiLink.setDestination("Special:Edit");
 		wikiLink.setQuery(query);
 		return LinkUtil.buildTopicUrl(context, virtualWiki, wikiLink);
+	}
+
+	/**
+	 * Parse a link of the form http://example.com and return the opening tag of the
+	 * form <a href="http://example.com">.
+	 */
+	public static String buildHtmlLinkOpenTag(String link, String cssClass, String title) throws ParserException {
+		String linkLower = link.toLowerCase();
+		if (linkLower.startsWith("mailto://")) {
+			// fix bad mailto syntax
+			link = "mailto:" + link.substring("mailto://".length());
+		}
+		String protocol = "";
+		if (linkLower.startsWith("http://")) {
+			protocol = "http://";
+		} else if  (linkLower.startsWith("https://")) {
+			protocol = "https://";
+		} else if (linkLower.startsWith("ftp://")) {
+			protocol = "ftp://";
+		} else if (linkLower.startsWith("mailto:")) {
+			protocol = "mailto:";
+		} else if (linkLower.startsWith("news://")) {
+			protocol = "news://";
+		} else if (linkLower.startsWith("telnet://")) {
+			protocol = "telnet://";
+		} else if (linkLower.startsWith("file://")) {
+			protocol = "file://";
+		} else {
+			throw new ParserException("Invalid protocol in link " + link);
+		}
+		link = link.substring(protocol.length());
+		// make sure link values are properly escaped.
+		link = StringUtils.replace(link, "<", "%3C");
+		link = StringUtils.replace(link, ">", "%3E");
+		link = StringUtils.replace(link, "\"", "%22");
+		link = StringUtils.replace(link, "\'", "%27");
+		String target = (Environment.getBooleanValue(Environment.PROP_EXTERNAL_LINK_NEW_WINDOW)) ? " target=\"_blank\"" : "";
+		if (cssClass == null) {
+			cssClass = "externallink";
+		}
+		String html = "<a class=\"" + cssClass + "\" rel=\"nofollow\"";
+		if (title != null) {
+			html += " title=\"" + title + "\"";
+		}
+		html += " href=\"" + protocol + link + "\"" + target + ">";
+		return html;
 	}
 
 	/**

@@ -43,6 +43,8 @@ public class ImageLinkTag implements JFlexParserTag {
 	private static Pattern IMAGE_SIZE_PATTERN = Pattern.compile("([0-9]+)[ ]*px", Pattern.CASE_INSENSITIVE);
 	// look for alt info in image tags
 	private static Pattern IMAGE_ALT_PATTERN = Pattern.compile("alt[ ]*=[ ]*(.*)", Pattern.CASE_INSENSITIVE);
+	// look for link info in image tags
+	private static Pattern IMAGE_LINK_PATTERN = Pattern.compile("link[ ]*=[ ]*(.*)", Pattern.CASE_INSENSITIVE);
 	// FIXME - make configurable
 	private static final int DEFAULT_THUMBNAIL_SIZE = 220;
 
@@ -158,6 +160,11 @@ public class ImageLinkTag implements JFlexParserTag {
 				imageMetadata.setAlt(matcher.group(1).trim());
 				continue tokenLoop;
 			}
+			matcher = IMAGE_LINK_PATTERN.matcher(token);
+			if (matcher.find()) {
+				imageMetadata.setLink(matcher.group(1).trim());
+				continue tokenLoop;
+			}
 			// FIXME - this is a hack.  images may contain piped links, so if
 			// there was previous caption info append the new info.
 			if (StringUtils.isBlank(imageMetadata.getCaption())) {
@@ -169,6 +176,10 @@ public class ImageLinkTag implements JFlexParserTag {
 		if (imageMetadata.getVerticalAlignment() != ImageVerticalAlignmentEnum.NOT_SPECIFIED && (imageMetadata.getBorder() == ImageBorderEnum.THUMB || imageMetadata.getBorder() == ImageBorderEnum.FRAME)) {
 			// per spec, vertical alignment can only be set for non-thumb and non-frame
 			imageMetadata.setVerticalAlignment(ImageVerticalAlignmentEnum.NOT_SPECIFIED);
+		}
+		if (imageMetadata.getLink() != null && (imageMetadata.getBorder() == ImageBorderEnum.THUMB || imageMetadata.getBorder() == ImageBorderEnum.FRAME)) {
+			// per spec, link can only be set for non-thumb and non-frame
+			imageMetadata.setLink(null);
 		}
 		if (imageMetadata.getMaxDimension() != -1 && imageMetadata.getBorder() == ImageBorderEnum.FRAME) {
 			// per spec, frame cannot be resized

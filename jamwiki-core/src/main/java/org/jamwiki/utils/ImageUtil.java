@@ -165,8 +165,24 @@ public class ImageUtil {
 			return ImageUtil.buildUploadLink(context, virtualWiki, topicName);
 		}
 		String imageWrapperDiv = ImageUtil.buildImageWrapperDivs(imageMetadata, wikiImage.getWidth());
-		if (!imageMetadata.getSuppressLink()) {
-			html.append("<a class=\"wikiimg\" href=\"").append(LinkUtil.buildTopicUrl(context, virtualWiki, topicName, true)).append("\">");
+		if (!StringUtils.isWhitespace(imageMetadata.getLink())) {
+			if (imageMetadata.getLink() == null) {
+				// no link set, link to the image topic page
+				String link = LinkUtil.buildTopicUrl(context, virtualWiki, topicName, true);
+				html.append("<a class=\"wikiimg\" href=\"").append(link).append("\">");
+			} else {
+				try {
+					// try to parse as an external link
+					String openTag = LinkUtil.buildHtmlLinkOpenTag(imageMetadata.getLink(), "wikiimg", null);
+					html.append(openTag);
+				} catch (ParserException e) {
+					// not an external link, but an internal link
+					WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, imageMetadata.getLink());
+					String linkVirtualWiki = ((wikiLink.getVirtualWiki() != null) ? wikiLink.getVirtualWiki().getName() : virtualWiki);
+					String link = LinkUtil.buildTopicUrl(context, linkVirtualWiki, wikiLink);
+					html.append("<a class=\"wikiimg\" href=\"").append(link).append("\">");
+				}
+			}
 		}
 		if (StringUtils.isBlank(style)) {
 			style = "wikiimg";
@@ -185,7 +201,7 @@ public class ImageUtil {
 			html.append(" style=\"vertical-align: ").append(imageMetadata.getVerticalAlignment().toString()).append('\"');
 		}
 		html.append(" />");
-		if (!imageMetadata.getSuppressLink()) {
+		if (!StringUtils.isWhitespace(imageMetadata.getLink())) {
 			html.append("</a>");
 		}
 		if (!StringUtils.isBlank(caption)) {

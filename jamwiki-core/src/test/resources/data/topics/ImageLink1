@@ -110,3 +110,15 @@ alt tag standard [[Image:Test Image.jpg|alt=alternate text|caption]]
 blank alt #1 [[Image:Test Image.jpg|alt=]]
 
 blank alt #2 [[Image:Test Image.jpg|alt= ]]
+
+internal link #1 [[Image:Test Image.jpg|link=StartingPoints]]
+
+internal link #2 [[Image:Test Image.jpg|  link  =  StartingPoints  ]]
+
+internal link #3 [[Image:Test Image.jpg|link=http://www.example.com/]]
+
+internal link #4 [[Image:Test Image.jpg|link= ]]
+
+internal link #5 [[Image:Test Image.jpg|link=test:StartingPoints]]
+
+internal link #6 [[Image:Test Image.jpg|thumb|link=StartingPoints]]

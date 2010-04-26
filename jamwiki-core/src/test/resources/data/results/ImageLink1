@@ -95,3 +95,12 @@
 </div>
 <p>blank alt #1 <a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image.jpg" width="400" height="267" alt="" /></a></p>
 <p>blank alt #2 <a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image.jpg" width="400" height="267" alt="" /></a></p>
+<p>internal link #1 <a class="wikiimg" href="/wiki/en/StartingPoints"><img class="wikiimg" src="/files/test_image.jpg" width="400" height="267" alt="Test Image.jpg" /></a></p>
+<p>internal link #2 <a class="wikiimg" href="/wiki/en/StartingPoints"><img class="wikiimg" src="/files/test_image.jpg" width="400" height="267" alt="Test Image.jpg" /></a></p>
+<p>internal link #3 <a class="wikiimg" rel="nofollow" href="http://www.example.com/"><img class="wikiimg" src="/files/test_image.jpg" width="400" height="267" alt="Test Image.jpg" /></a></p>
+<p>internal link #4 <img class="wikiimg" src="/files/test_image.jpg" width="400" height="267" alt="Test Image.jpg" /></p>
+<p>internal link #5 <a class="wikiimg" href="/wiki/test/StartingPoints"><img class="wikiimg" src="/files/test_image.jpg" width="400" height="267" alt="Test Image.jpg" /></a></p>
+<p>internal link #6</p>
+<div class="thumb tright">
+<div class="thumbinner" style="width:222px"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image.jpg" width="220" height="146" alt="Test Image.jpg" /></a></div>
+</div>
