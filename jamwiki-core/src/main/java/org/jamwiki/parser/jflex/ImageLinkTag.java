@@ -40,13 +40,13 @@ public class ImageLinkTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(ImageLinkTag.class.getName());
 	// look for image size info in image tags
-	private static Pattern IMAGE_SIZE_PATTERN = Pattern.compile("([0-9]+)[ ]*px", Pattern.CASE_INSENSITIVE);
+	private static Pattern IMAGE_SIZE_PATTERN = Pattern.compile("([0-9]+)?([ ]*x[ ]*([0-9]+))?[ ]*px", Pattern.CASE_INSENSITIVE);
 	// look for alt info in image tags
 	private static Pattern IMAGE_ALT_PATTERN = Pattern.compile("alt[ ]*=[ ]*(.*)", Pattern.CASE_INSENSITIVE);
 	// look for link info in image tags
 	private static Pattern IMAGE_LINK_PATTERN = Pattern.compile("link[ ]*=[ ]*(.*)", Pattern.CASE_INSENSITIVE);
 	// FIXME - make configurable
-	private static final int DEFAULT_THUMBNAIL_SIZE = 220;
+	private static final int DEFAULT_THUMBNAIL_WIDTH = 220;
 
 	/**
 	 * Parse a Mediawiki link of the form "[[topic|text]]" and return the
@@ -101,8 +101,8 @@ public class ImageLinkTag implements JFlexParserTag {
 		String context = parserInput.getContext();
 		String virtualWiki = parserInput.getVirtualWiki();
 		ImageMetadata imageMetadata = parseImageParams(wikiLink.getText());
-		if ((imageMetadata.getBorder() == ImageBorderEnum.THUMB || imageMetadata.getBorder() == ImageBorderEnum.FRAMELESS)&& imageMetadata.getMaxDimension() <= 0) {
-			imageMetadata.setMaxDimension(DEFAULT_THUMBNAIL_SIZE);
+		if ((imageMetadata.getBorder() == ImageBorderEnum.THUMB || imageMetadata.getBorder() == ImageBorderEnum.FRAMELESS)&& imageMetadata.getMaxWidth() <= 0) {
+			imageMetadata.setMaxWidth(DEFAULT_THUMBNAIL_WIDTH);
 		}
 		if (!StringUtils.isBlank(imageMetadata.getCaption())) {
 			imageMetadata.setCaption(JFlexParserUtil.parseFragment(parserInput, imageMetadata.getCaption(), mode));
@@ -152,7 +152,14 @@ public class ImageLinkTag implements JFlexParserTag {
 			// if none of the above tokens matched then check for size or caption
 			matcher = IMAGE_SIZE_PATTERN.matcher(token);
 			if (matcher.find()) {
-				imageMetadata.setMaxDimension(Integer.valueOf(matcher.group(1)));
+				String maxWidth = matcher.group(1);
+				if (!StringUtils.isBlank(maxWidth)) {
+					imageMetadata.setMaxWidth(Integer.valueOf(maxWidth));
+				}
+				String maxHeight = matcher.group(3);
+				if (!StringUtils.isBlank(maxHeight)) {
+					imageMetadata.setMaxHeight(Integer.valueOf(maxHeight));
+				}
 				continue tokenLoop;
 			}
 			matcher = IMAGE_ALT_PATTERN.matcher(token);
@@ -181,9 +188,10 @@ public class ImageLinkTag implements JFlexParserTag {
 			// per spec, link can only be set for non-thumb and non-frame
 			imageMetadata.setLink(null);
 		}
-		if (imageMetadata.getMaxDimension() != -1 && imageMetadata.getBorder() == ImageBorderEnum.FRAME) {
+		if ((imageMetadata.getMaxHeight() != -1 || imageMetadata.getMaxWidth() != -1) && imageMetadata.getBorder() == ImageBorderEnum.FRAME) {
 			// per spec, frame cannot be resized
-			imageMetadata.setMaxDimension(-1);
+			imageMetadata.setMaxHeight(-1);
+			imageMetadata.setMaxWidth(-1);
 		}
 		return imageMetadata;
 	}

@@ -137,7 +137,6 @@ public class ImageUtil {
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		StringBuilder html = new StringBuilder();
 		String caption = imageMetadata.getCaption();
-		int maxDimension = imageMetadata.getMaxDimension();
 		if (topic.getTopicType() == TopicType.FILE) {
 			// file, not an image
 			if (StringUtils.isBlank(caption)) {
@@ -158,7 +157,7 @@ public class ImageUtil {
 		}
 		WikiImage wikiImage = null;
 		try {
-			wikiImage = ImageUtil.initializeImage(wikiFile, maxDimension);
+			wikiImage = ImageUtil.initializeImage(wikiFile, imageMetadata);
 		} catch (FileNotFoundException e) {
 			// do not log the full exception as the logs can fill up very for this sort of error, and it is generally due to a bad configuration.  instead log a warning message so that the administrator can try to fix the problem
 			logger.warning("File not found while parsing image link for topic: " + virtualWiki + " / " + topicName + ".  Make sure that the following file exists and is readable by the JAMWiki installation: " + e.getMessage());
@@ -220,13 +219,24 @@ public class ImageUtil {
 	/**
 	 * Given a file URL and a maximum dimension, return a path for the file.
 	 */
-	private static String buildImagePath(String currentUrl, int maxDimension) {
+	private static String buildImagePath(String currentUrl, ImageMetadata imageMetadata) {
+		if (imageMetadata.getMaxWidth() <= 0 && imageMetadata.getMaxHeight() <= 0) {
+			return currentUrl;
+		}
 		String path = currentUrl;
+		String dimensionInfo = "-";
+		if (imageMetadata.getMaxWidth() > 0) {
+			dimensionInfo += imageMetadata.getMaxWidth();
+		}
+		if (imageMetadata.getMaxHeight() > 0) {
+			dimensionInfo += "x" + imageMetadata.getMaxHeight();
+		}
+		dimensionInfo += "px";
 		int pos = path.lastIndexOf('.');
 		if (pos != -1) {
-			path = path.substring(0, pos) + "-" + maxDimension + "px" + path.substring(pos);
+			path = path.substring(0, pos) + dimensionInfo + path.substring(pos);
 		} else {
-			path += "-" + maxDimension + "px";
+			path += dimensionInfo;
 		}
 		return path;
 	}
@@ -272,10 +282,44 @@ public class ImageUtil {
 	/**
 	 *
 	 */
-	private static int calculateImageIncrement(int maxDimension) {
+	private static int calculateImageIncrement(int dimension) {
 		int increment = Environment.getIntValue(Environment.PROP_IMAGE_RESIZE_INCREMENT);
-		double result = Math.ceil((double)maxDimension / (double)increment) * increment;
+		double result = Math.ceil((double)dimension / (double)increment) * increment;
 		return (int)result;
+	}
+
+
+	/**
+	 * Determine the scaled dimensions, given a max width and height.  For example, if
+	 * the original dimensions are 800x400 and the max width height are 200, the result
+	 * is 200x100.  Note that if ignoreSmaller is true then the non-critical dimension
+	 * will return as -1, allowing the JVM to resize (in the former example the result
+	 * would be 200x-1).
+	 */
+	private static int[] calculateScaledDimensions(int originalWidth, int originalHeight, int maxWidth, int maxHeight, boolean ignoreSmaller) {
+		int[] results = new int[2];
+		if (maxWidth <= 0 && maxHeight <=0) {
+			results[0] = originalWidth;
+			results[1] = originalHeight;
+			return results;
+		}
+		double heightScalingFactor = ((double)maxHeight / (double)originalHeight);
+		double widthScalingFactor = ((double)maxWidth / (double)originalWidth);
+		// scale by whichever is proportionally smaller
+		if (maxWidth <= 0) {
+			results[0] = (ignoreSmaller) ? -1 : (int)Math.round(heightScalingFactor * (double)originalWidth);
+			results[1] = (int)Math.round(heightScalingFactor * (double)originalHeight);
+		} else if (maxHeight <= 0) {
+			results[0] = (int)Math.round(widthScalingFactor * (double)originalWidth);
+			results[1] = (ignoreSmaller) ? -1 : (int)Math.round(widthScalingFactor * (double)originalHeight);
+		} else if (heightScalingFactor < widthScalingFactor) {
+			results[0] = (ignoreSmaller) ? -1 : (int)Math.round(heightScalingFactor * (double)originalWidth);
+			results[1] = (int)Math.round(heightScalingFactor * (double)originalHeight);
+		} else {
+			results[0] = (int)Math.round(widthScalingFactor * (double)originalWidth);
+			results[1] = (ignoreSmaller) ? -1 : (int)Math.round(widthScalingFactor * (double)originalHeight);
+		}
+		return results;
 	}
 
 	/**
@@ -344,27 +388,29 @@ public class ImageUtil {
 
 	/**
 	 * Given a virtualWiki and WikiFIle that correspond to an existing image,
-	 * return the WikiImage object.  In addition, an optional maxDimension
-	 * parameter may be specified, in which case a resized version of the image
-	 * may be created.
+	 * return the WikiImage object.  In addition, if the image metadata specifies
+	 * a max width or max height greater than zero then a resized version of the
+	 * image may be created.
 	 *
 	 * @param wikiFile Given a WikiFile object, use it to initialize a
 	 *  WikiImage object.
-	 * @param maxDimension The maximum width or height for the initialized
+	 * @param imageMetadata The maximum width or height for the initialized
 	 *  WikiImage object.  Setting this value to 0 or less will cause the
 	 *  value to be ignored.
 	 * @return An initialized WikiImage object.
 	 * @throws IOException Thrown if an error occurs while initializing the
 	 *  WikiImage object.
 	 */
-	public static WikiImage initializeImage(WikiFile wikiFile, int maxDimension) throws IOException {
+	public static WikiImage initializeImage(WikiFile wikiFile, ImageMetadata imageMetadata) throws IOException {
 		if (wikiFile == null) {
 			throw new IllegalArgumentException("wikiFile may not be null");
 		}
 		WikiImage wikiImage = new WikiImage(wikiFile);
-		if (maxDimension > 0) {
-			ImageDimensions dimensions = ImageUtil.resizeImage(wikiImage, maxDimension);
-			setScaledDimensions(dimensions.getWidth(), dimensions.getHeight(), wikiImage, maxDimension);
+		if (imageMetadata.getMaxWidth() > 0 || imageMetadata.getMaxHeight() > 0) {
+			ImageDimensions dimensions = ImageUtil.resizeImage(wikiImage, imageMetadata);
+			int[] scaledDimensions = calculateScaledDimensions(dimensions.getWidth(), dimensions.getHeight(), imageMetadata.getMaxWidth(), imageMetadata.getMaxHeight(), false);
+			wikiImage.setWidth(scaledDimensions[0]);
+			wikiImage.setHeight(scaledDimensions[1]);
 		} else {
 			File file = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
 			ImageDimensions dimensions = retrieveFromCache(file);
@@ -455,8 +501,8 @@ public class ImageUtil {
 	 * be constrained so that the proportions are the same, but neither the width
 	 * or height exceeds the value specified.
 	 */
-	private static ImageDimensions resizeImage(WikiImage wikiImage, int maxDimension) throws IOException {
-		String newUrl = buildImagePath(wikiImage.getUrl(), maxDimension);
+	private static ImageDimensions resizeImage(WikiImage wikiImage, ImageMetadata imageMetadata) throws IOException {
+		String newUrl = buildImagePath(wikiImage.getUrl(), imageMetadata);
 		File newImageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), newUrl);
 		ImageDimensions dimensions = retrieveFromCache(newImageFile);
 		if (dimensions != null) {
@@ -464,9 +510,9 @@ public class ImageUtil {
 		}
 		File imageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
 		BufferedImage original = ImageUtil.loadImage(imageFile);
-		maxDimension = calculateImageIncrement(maxDimension);
+		int maxWidth = calculateImageIncrement(imageMetadata.getMaxWidth());
 		int increment = Environment.getIntValue(Environment.PROP_IMAGE_RESIZE_INCREMENT);
-		if (increment <= 0 || (maxDimension > original.getWidth() && maxDimension > original.getHeight())) {
+		if (increment <= 0 || maxWidth >= original.getWidth()) {
 			// let the browser scale the image
 			addToCache(imageFile, original.getWidth(), original.getHeight());
 			return new ImageDimensions(original.getWidth(), original.getHeight());
@@ -477,16 +523,11 @@ public class ImageUtil {
 			addToCache(newImageFile, result.getWidth(), result.getHeight());
 			return new ImageDimensions(result.getWidth(), result.getHeight());
 		}
-		int width = -1;
-		int height = -1;
-		if (original.getWidth() >= original.getHeight()) {
-			width = maxDimension;
-		} else {
-			height = maxDimension;
-		}
+		// calculate the scaled width and height
+		int[] scaledDimensions = calculateScaledDimensions(original.getWidth(), original.getHeight(), maxWidth, imageMetadata.getMaxHeight(), true);
 		Image resized = null;
 		try {
-			resized = original.getScaledInstance(width, height, Image.SCALE_AREA_AVERAGING);
+			resized = original.getScaledInstance(scaledDimensions[0], scaledDimensions[1], Image.SCALE_AREA_AVERAGING);
 		} catch (Throwable t) {
 			logger.severe("Unable to resize image.  This problem sometimes occurs due to dependencies between Java and X on UNIX systems.  Consider enabling an X server or setting the java.awt.headless parameter to true for your JVM.", t);
 			resized = original;
@@ -544,23 +585,6 @@ public class ImageUtil {
 		if (!result) {
 			throw new IOException("No appropriate writer found when writing image: " + filename);
 		}
-	}
-
-	/**
-	 * Set the width and height of a WikiImage to match the specified dimensions, with a
-	 * maximum width/height value specified by maxDimension.  Thus if an image is
-	 * 800x400 and maxDimension is 200 the result will be 200x100.
-	 */
-	private static void setScaledDimensions(int width, int height, WikiImage wikiImage, int maxDimension) {
-		if (width >= height) {
-			height = (int)Math.floor(((double)maxDimension / (double)width) * (double)height);
-			width = maxDimension;
-		} else {
-			width = (int)Math.floor(((double)maxDimension / (double)height) * (double)width);
-			height = maxDimension;
-		}
-		wikiImage.setWidth(width);
-		wikiImage.setHeight(height);
 	}
 
 	/**

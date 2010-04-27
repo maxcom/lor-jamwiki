@@ -54,7 +54,7 @@ public class JAMHTMLConverter extends HTMLConverter {
 			pxWidth = DEFAULT_THUMBNAIL_SIZE;
 		}
 		ImageMetadata imageMetadata = new ImageMetadata();
-		imageMetadata.setMaxDimension(pxWidth);
+		imageMetadata.setMaxWidth(pxWidth);
 		imageMetadata.setCaption(imageFormat.getCaption());
 		if (frame) {
 			imageMetadata.setBorder(ImageBorderEnum.FRAME);

@@ -130,3 +130,13 @@ internal link #6 [[Image:Test Image.jpg|thumb|link=StartingPoints]]
 [[Media:Non-existent image.jpg]]
 
 [[Media:Non-existent image.jpg|non-existent image caption]]
+
+resize #1 [[Image:Test Image.jpg|220x400px|link=]]
+
+resize #2 [[Image:Test Image.jpg|400x147px|link=]]
+
+resize #3 [[Image:Test Image.jpg|x147px|link=]]
+
+resize #4 [[Image:Test Image.jpg|0px|link=]]
+
+resize #5 [[Image:Test Image.jpg| x 147 px|link=]]

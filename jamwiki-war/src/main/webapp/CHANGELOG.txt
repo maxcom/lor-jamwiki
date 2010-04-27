@@ -37,7 +37,8 @@ New Features:
   * Run the spam filter against edit comments as well as topic content to
     thwart spam attempts.
   * Update image parsing to match the latest Mediawiki standards, including
-    support for "frameless", "link=", "alt=" and the "Media:" namespace.
+    support for "frameless", "link=", "alt=", "{width}x{height}" and the
+    "Media:" namespace.
   * Allow parameters to be used when topics not in the template namespace are
     are utilized as templates.  Example: "{{myTopic|arg1=test1|arg2=test2}}".
   * Remove ability to automatically upgrade from versions prior to 0.7.0.

@@ -49,7 +49,7 @@ public class ImageLinkTag extends TagSupport {
 		String virtualWiki = retrieveVirtualWiki(request);
 		String html = null;
 		ImageMetadata imageMetadata = new ImageMetadata();
-		imageMetadata.setMaxDimension(linkDimension);
+		imageMetadata.setMaxWidth(linkDimension);
 		// set the link field empty to prevent the image from being clickable
 		imageMetadata.setLink("");
 		try {

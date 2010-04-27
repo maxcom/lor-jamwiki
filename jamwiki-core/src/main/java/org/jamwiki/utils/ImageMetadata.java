@@ -32,10 +32,17 @@ public class ImageMetadata {
 	 */
 	private String link = null;
 	/**
-	 * A value in pixels indicating the maximum width or height value allowed for the image.
-	 * Images will be resized so that neither the width or height exceeds this value.
+	 * A value in pixels indicating the maximum height value allowed for the image.  If this
+	 * value is greater than zero then the image will be resized so that the height does not
+	 * exceed this value.
 	 */
-	private int maxDimension = -1;
+	private int maxHeight = -1;
+	/**
+	 * A value in pixels indicating the maximum width value allowed for the image.  If this
+	 * value is greater than zero then the image will be resized so that the width does not
+	 * exceed this value.
+	 */
+	private int maxWidth = -1;
 	private ImageVerticalAlignmentEnum verticalAlignment = ImageVerticalAlignmentEnum.NOT_SPECIFIED;
 
 	/**
@@ -111,15 +118,29 @@ public class ImageMetadata {
 	/**
 	 *
 	 */
-	public int getMaxDimension() {
-		return this.maxDimension;
+	public int getMaxHeight() {
+		return this.maxHeight;
 	}
 
 	/**
 	 *
 	 */
-	public void setMaxDimension(int maxDimension) {
-		this.maxDimension = maxDimension;
+	public void setMaxHeight(int maxHeight) {
+		this.maxHeight = maxHeight;
+	}
+
+	/**
+	 *
+	 */
+	public int getMaxWidth() {
+		return this.maxWidth;
+	}
+
+	/**
+	 *
+	 */
+	public void setMaxWidth(int maxWidth) {
+		this.maxWidth = maxWidth;
 	}
 
 	/**

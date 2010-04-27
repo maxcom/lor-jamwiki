@@ -32,7 +32,8 @@ public class ImageUtilTest extends JAMWikiUnitTest {
 	 */
 	@Test(expected=IllegalArgumentException.class)
 	public void testInitializeImageThrowsNullPointerException() throws Throwable {
-		ImageUtil.initializeImage(null, 0);
+		ImageMetadata imageMetadata = new ImageMetadata();
+		ImageUtil.initializeImage(null, imageMetadata);
 	}
 
 	/**
