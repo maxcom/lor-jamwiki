@@ -17,7 +17,9 @@
 package org.jamwiki.utils;
 
 import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.GraphicsConfiguration;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -302,20 +304,25 @@ public class ImageUtil {
 			// let the browser scale the image
 			return originalDimensions;
 		}
+		int incrementalHeight = (int)Math.round(((double)incrementalWidth / (double)originalDimensions.getWidth()) * (double)originalDimensions.getHeight());
 		File imageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
 		BufferedImage original = ImageUtil.loadImage(imageFile);
-		Image resized = null;
+		BufferedImage bufferedImage = null;
 		try {
-			resized = original.getScaledInstance(incrementalWidth, -1, Image.SCALE_AREA_AVERAGING);
+			Graphics2D g2dIn = original.createGraphics();
+			GraphicsConfiguration gc = g2dIn.getDeviceConfiguration();
+			g2dIn.dispose();
+			bufferedImage = gc.createCompatibleImage(incrementalWidth, incrementalHeight, original.getColorModel().getTransparency());
+			Graphics2D g2dOut = bufferedImage.createGraphics();
+			g2dOut.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+			double xScale = ((double)incrementalWidth) / (double)originalDimensions.getWidth();
+			double yScale = ((double)incrementalHeight) / (double)originalDimensions.getHeight();
+			AffineTransform at = AffineTransform.getScaleInstance(xScale, yScale);
+			g2dOut.drawRenderedImage(original, at);
+			g2dOut.dispose();
 		} catch (Throwable t) {
 			logger.severe("Unable to resize image.  This problem sometimes occurs due to dependencies between Java and X on UNIX systems.  Consider enabling an X server or setting the java.awt.headless parameter to true for your JVM.", t);
-			resized = original;
-		}
-		BufferedImage bufferedImage = null;
-		if (resized instanceof BufferedImage) {
-			bufferedImage = (BufferedImage)resized;
-		} else {
-			bufferedImage = ImageUtil.imageToBufferedImage(resized);
+			bufferedImage = original;
 		}
 		String newUrl = buildImagePath(wikiImage.getUrl(), originalDimensions.getWidth(), bufferedImage.getWidth());
 		File newImageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), newUrl);
@@ -404,17 +411,6 @@ public class ImageUtil {
 		String topicName = Namespace.namespace(Namespace.FILE_ID).getLabel(virtualWiki) + Namespace.SEPARATOR;
 		topicName += Utilities.decodeAndEscapeTopicName(filename, true);
 		return topicName;
-	}
-
-	/**
-	 * Convert a Java Image object to a Java BufferedImage object.
-	 */
-	private static BufferedImage imageToBufferedImage(Image image) {
-		BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB );
-		Graphics2D graphics = bufferedImage.createGraphics();
-		graphics.drawImage(image, 0, 0, null);
-		graphics.dispose();
-		return bufferedImage;
 	}
 
 	/**
