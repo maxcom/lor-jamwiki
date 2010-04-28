@@ -79,6 +79,8 @@ Bugfixes:
     but output "Help : Test" as the link text, as per Mediawiki.
   * Wiki pre syntax (" pre <span>HTML</span") should allow HTML, although
     HTML pre ("<pre>pre <span>HTML</span></pre>") should not.
+  * Return the resized image URL when images of the form
+    "[[Image:Example.jpg|200px]]" are used.
 
 Translation Updates:
 

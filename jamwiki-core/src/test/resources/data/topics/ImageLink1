@@ -140,3 +140,7 @@ resize #3 [[Image:Test Image.jpg|x147px|link=]]
 resize #4 [[Image:Test Image.jpg|0px|link=]]
 
 resize #5 [[Image:Test Image.jpg| x 147 px|link=]]
+
+resize #6 [[Image:Test Image.jpg|800px|link=]]
+
+resize #7 [[Image:Test Image.jpg|800x147px|link=]]
