@@ -30,3 +30,6 @@
 <p><a href="/wiki/en/Special:Edit?topic=Invalid:Test" class="edit" title="Invalid:Test">Invalid:Test</a></p>
 <p><a href="/wiki/en/Special:Edit?topic=Invalid:_Test" class="edit" title="Invalid: Test">Invalid: Test</a></p>
 <p><a href="/wiki/en/Special:Edit?topic=Invalid_:_Test" class="edit" title="Invalid : Test">Invalid : Test</a></p>
+<p>[[StartingPoints|Caption with a <a href="/wiki/en/StartingPoints" title="StartingPoints">StartingPoints</a> link]]</p>
+<p>[[StartingPoints|Caption with a <a href="/wiki/en/StartingPoints" title="StartingPoints">alt text</a> link]]</p>
+<p><a href="/wiki/en/StartingPoints" title="StartingPoints">two links</a> on the <a href="/wiki/en/StartingPoints" title="StartingPoints">same line</a></p>

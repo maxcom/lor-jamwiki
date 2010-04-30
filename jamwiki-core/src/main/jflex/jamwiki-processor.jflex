@@ -96,13 +96,13 @@ tablerow           = "|-" [ ]* ({tableattribute})* {newline}
 tablecaption       = "|+" | "|+" ({tableattribute})+ "|" [^\|]
 
 /* wiki links */
-wikilink           = "[[" [^\]\n]+ "]]" [a-z]*
+wikilinkcontent    = [^\n\]\[] | "]" [^\n\]] | "[" [^\n\[]
+wikilink           = "[[" ({wikilinkcontent})+ "]]" [a-z]*
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
 htmllinkwiki       = "[" ({protocol}) ([^\]\n]+) "]"
 htmllinkraw        = ({protocol}) ([^ <'\n\t]+)
 htmllink           = ({htmllinkwiki}) | ({htmllinkraw})
-/* FIXME - hard-coding of image namespace */
-imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\]\[]* ({wikilink} | {htmllinkwiki}) [^\n\]\[]*)+ "]]"
+nestedwikilink     = "[[" ({wikilinkcontent})+ "|" ({wikilinkcontent} | {wikilink} | {htmllinkwiki})+ "]]"
 
 /* references */
 reference          = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\/\n]+[ ]*)? ([ ]*>) ~(<[ ]*\/[ ]*ref[ ]*>)
@@ -111,7 +111,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* paragraphs */
 /* TODO: this pattern does not match text such as "< is a less than sign" */
-startparagraph     = ({emptyline})? ({emptyline})? ([^< \n])|{inlinetagopen}|{imagelinkcaption}|{wikilink}|{htmllink}|{bold}|{bolditalic}|{italic}|{entity}|{nowiki}
+startparagraph     = ({emptyline})? ({emptyline})? ([^< \n])|{inlinetagopen}|{wikilink}|{nestedwikilink}|{htmllink}|{bold}|{bolditalic}|{italic}|{entity}|{nowiki}
 paragraphempty     = ({emptyline}) ({emptyline})+
 endparagraph1      = ({newline}){1,2} ({hr}|{wikiheading}|{listitem}|{wikiprestart}|{tablestart})
 endparagraph2      = (({newline})([ \t]*)){2}
@@ -400,14 +400,14 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 /* ----- wiki links ----- */
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{imagelinkcaption} {
-    if (logger.isFinerEnabled()) logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
-    return this.parse(TAG_TYPE_WIKI_LINK, yytext());
-}
-
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{wikilink} {
     if (logger.isFinerEnabled()) logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
     return this.parse(TAG_TYPE_WIKI_LINK, yytext());
+}
+
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{nestedwikilink} {
+    if (logger.isFinerEnabled()) logger.finer("nestedwikilink: " + yytext() + " (" + yystate() + ")");
+    return this.parse(TAG_TYPE_WIKI_LINK, yytext(), "nested");
 }
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{htmllinkraw} {

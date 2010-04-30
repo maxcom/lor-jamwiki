@@ -39,10 +39,20 @@ public class WikiLinkTag implements JFlexParserTag {
 	 * resulting HTML output.
 	 */
 	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
+		boolean containsNestedLinks = (args.length > 0 && StringUtils.equals(args[0].toString(), "nested"));
 		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(lexer.getParserInput(), raw);
 		if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
 			// no destination or section
 			return raw;
+		}
+		if (containsNestedLinks) {
+			// if there is a nested link it must be an image, otherwise the syntax is invalid.
+			if (wikiLink.getColon() || !wikiLink.getNamespace().getId().equals(Namespace.FILE_ID)) {
+				int start = raw.indexOf("[[");
+				int end = raw.lastIndexOf("]]");
+				String content = raw.substring(start + "[[".length(), end);
+				return "[[" + JFlexParserUtil.parseFragment(lexer.getParserInput(), content, lexer.getMode()) + "]]";
+			}
 		}
 		raw = this.processLinkMetadata(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), raw, wikiLink);
 		if (lexer.getMode() <= JFlexParser.MODE_PREPROCESS) {

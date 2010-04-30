@@ -144,3 +144,13 @@ resize #5 [[Image:Test Image.jpg| x 147 px|link=]]
 resize #6 [[Image:Test Image.jpg|800px|link=]]
 
 resize #7 [[Image:Test Image.jpg|800x147px|link=]]
+
+caption test #1 [[Image:Test Image.jpg|thumb|Caption with a [[StartingPoints]] link]]
+
+caption test #2 [[Image:Test Image.jpg|thumb|Caption with a [[StartingPoints|alt text]] link]]
+
+caption test #3 [[Image:Test Image.jpg|thumb|Caption with a [http://example.com/] link]]
+
+caption test #4 [[Image:Test Image.jpg|thumb|Caption with a [http://example.com/ example] link]]
+
+caption test #5 [[Image:Test Image.jpg|thumb|Caption with a http://example.com/ link]]

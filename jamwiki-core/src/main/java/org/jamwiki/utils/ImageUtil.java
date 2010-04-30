@@ -160,10 +160,6 @@ public class ImageUtil {
 			html.append("</a>");
 			return html.toString();
 		}
-		if (imageMetadata.getBorder() != ImageBorderEnum.THUMB && imageMetadata.getBorder() != ImageBorderEnum.FRAME) {
-			// captions are only displayed for thumbnails and framed images
-			caption = null;
-		}
 		WikiImage wikiImage = null;
 		try {
 			wikiImage = ImageUtil.initializeImage(wikiFile, imageMetadata);
@@ -201,9 +197,6 @@ public class ImageUtil {
 		html.append(" width=\"").append(wikiImage.getWidth()).append('\"');
 		html.append(" height=\"").append(wikiImage.getHeight()).append('\"');
 		String alt = imageMetadata.getAlt();
-		if (alt == null) {
-			alt = (!StringUtils.isBlank(caption)) ? caption : topic.getPageName();
-		}
 		html.append(" alt=\"").append(StringEscapeUtils.escapeHtml(alt)).append('\"');
 		if (imageMetadata.getVerticalAlignment() != ImageVerticalAlignmentEnum.NOT_SPECIFIED) {
 			html.append(" style=\"vertical-align: ").append(imageMetadata.getVerticalAlignment().toString()).append('\"');

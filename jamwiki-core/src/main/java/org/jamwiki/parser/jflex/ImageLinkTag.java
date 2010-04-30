@@ -101,11 +101,12 @@ public class ImageLinkTag implements JFlexParserTag {
 		String context = parserInput.getContext();
 		String virtualWiki = parserInput.getVirtualWiki();
 		ImageMetadata imageMetadata = parseImageParams(wikiLink.getText());
-		if ((imageMetadata.getBorder() == ImageBorderEnum.THUMB || imageMetadata.getBorder() == ImageBorderEnum.FRAMELESS)&& imageMetadata.getMaxWidth() <= 0) {
-			imageMetadata.setMaxWidth(DEFAULT_THUMBNAIL_WIDTH);
-		}
 		if (!StringUtils.isBlank(imageMetadata.getCaption())) {
 			imageMetadata.setCaption(JFlexParserUtil.parseFragment(parserInput, imageMetadata.getCaption(), mode));
+		}
+		if (imageMetadata.getAlt() == null) {
+			// use the image name as the alt tag if no other value has been set
+			imageMetadata.setAlt(wikiLink.getArticle());
 		}
 		// do not escape html for caption since parser does it above
 		try {
@@ -184,14 +185,21 @@ public class ImageLinkTag implements JFlexParserTag {
 			// per spec, vertical alignment can only be set for non-thumb and non-frame
 			imageMetadata.setVerticalAlignment(ImageVerticalAlignmentEnum.NOT_SPECIFIED);
 		}
-		if (imageMetadata.getLink() != null && (imageMetadata.getBorder() == ImageBorderEnum.THUMB || imageMetadata.getBorder() == ImageBorderEnum.FRAME)) {
+		if (imageMetadata.getBorder() == ImageBorderEnum.THUMB || imageMetadata.getBorder() == ImageBorderEnum.FRAME) {
 			// per spec, link can only be set for non-thumb and non-frame
 			imageMetadata.setLink(null);
 		}
-		if ((imageMetadata.getMaxHeight() != -1 || imageMetadata.getMaxWidth() != -1) && imageMetadata.getBorder() == ImageBorderEnum.FRAME) {
+		if (imageMetadata.getBorder() != ImageBorderEnum.THUMB && imageMetadata.getBorder() != ImageBorderEnum.FRAME) {
+			// per spec, captions are only displayed for thumbnails and framed images
+			imageMetadata.setCaption(null);
+		}
+		if (imageMetadata.getBorder() == ImageBorderEnum.FRAME) {
 			// per spec, frame cannot be resized
 			imageMetadata.setMaxHeight(-1);
 			imageMetadata.setMaxWidth(-1);
+		}
+		if ((imageMetadata.getBorder() == ImageBorderEnum.THUMB || imageMetadata.getBorder() == ImageBorderEnum.FRAMELESS)&& imageMetadata.getMaxWidth() <= 0) {
+			imageMetadata.setMaxWidth(DEFAULT_THUMBNAIL_WIDTH);
 		}
 		return imageMetadata;
 	}

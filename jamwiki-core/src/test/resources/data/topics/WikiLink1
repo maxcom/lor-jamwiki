@@ -62,3 +62,9 @@
 [[  Invalid: Test]]
 
 [[  :Invalid : Test ]]
+
+[[StartingPoints|Caption with a [[StartingPoints]] link]]
+
+[[StartingPoints|Caption with a [[StartingPoints|alt text]] link]]
+
+[[StartingPoints|two links]] on the [[StartingPoints|same line]]
