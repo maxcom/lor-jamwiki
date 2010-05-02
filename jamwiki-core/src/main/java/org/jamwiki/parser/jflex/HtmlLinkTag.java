@@ -31,6 +31,8 @@ import org.jamwiki.utils.WikiLogger;
 public class HtmlLinkTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(HtmlLinkTag.class.getName());
+	// temporary parameter passed to indicate that the fragment being parsed is a link caption
+	private static final String HTML_LINK_CAPTION = "html-link-caption";
 
 	/**
 	 * Given a String that represents a raw HTML link (a URL link that is
@@ -112,10 +114,12 @@ public class HtmlLinkTag implements JFlexParserTag {
 		}
 		String caption = link;
 		if (!StringUtils.isBlank(text)) {
+			// pass a parameter via the parserInput to prevent nested links from being generated
+			parserInput.getTempParams().put(HTML_LINK_CAPTION, "true");
 			caption = JFlexParserUtil.parseFragment(parserInput, text, mode);
+			parserInput.getTempParams().remove(HTML_LINK_CAPTION);
 		}
-		String title = Utilities.stripMarkup(caption);
-		String openTag = LinkUtil.buildHtmlLinkOpenTag(link, "externallink", title);
+		String openTag = LinkUtil.buildHtmlLinkOpenTag(link, "externallink");
 		return openTag + caption + "</a>" + punctuation;
 	}
 
@@ -132,7 +136,8 @@ public class HtmlLinkTag implements JFlexParserTag {
 			return raw;
 		}
 		Boolean linkCaption = (Boolean)lexer.getParserInput().getTempParams().get(WikiLinkTag.LINK_CAPTION);
-		if (linkCaption != null && linkCaption.booleanValue()) {
+		Boolean htmlLinkCaption = (Boolean)lexer.getParserInput().getTempParams().get(HTML_LINK_CAPTION);
+		if ((linkCaption != null && linkCaption.booleanValue()) || (htmlLinkCaption != null && htmlLinkCaption.booleanValue())) {
 			// do not parse HTML tags in link captions as that would result in HTML of the form
 			// "<a href="">this is the <a href="">link caption</a></a>"
 			return raw;

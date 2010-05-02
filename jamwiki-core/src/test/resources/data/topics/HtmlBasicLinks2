@@ -22,3 +22,11 @@ http://www.google.com/page_()
 http://www.google.com/<br />
 
 http://www.google.com/'''bold'''
+
+[http://www.google.com Caption with http://example.com nested link]
+
+[http://www.google.com Caption with [http://example.com nested captioned] link]
+
+[http://www.google.com Caption with [[StartingPoints]] nested wiki link]
+
+[http://www.google.com Caption with [[StartingPoints|nested captioned]] wiki link]

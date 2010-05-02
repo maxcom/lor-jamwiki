@@ -130,31 +130,31 @@
 <p>caption test #3</p>
 <div class="thumb tright">
 <div class="thumbinner" style="width:222px"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image-300px.jpg" width="220" height="147" alt="Test Image.jpg" /></a>
-<div class="thumbcaption">Caption with a <a class="externallink" rel="nofollow" title="http://example.com/" href="http://example.com/">http://example.com/</a> link</div>
+<div class="thumbcaption">Caption with a <a class="externallink" rel="nofollow" href="http://example.com/">http://example.com/</a> link</div>
 </div>
 </div>
 <p>caption test #4</p>
 <div class="thumb tright">
 <div class="thumbinner" style="width:222px"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image-300px.jpg" width="220" height="147" alt="Test Image.jpg" /></a>
-<div class="thumbcaption">Caption with a <a class="externallink" rel="nofollow" title="example" href="http://example.com/">example</a> link</div>
+<div class="thumbcaption">Caption with a <a class="externallink" rel="nofollow" href="http://example.com/">example</a> link</div>
 </div>
 </div>
 <p>caption test #5</p>
 <div class="thumb tright">
 <div class="thumbinner" style="width:222px"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image-300px.jpg" width="220" height="147" alt="Test Image.jpg" /></a>
-<div class="thumbcaption">Caption with a <a class="externallink" rel="nofollow" title="http://example.com/" href="http://example.com/">http://example.com/</a> link</div>
+<div class="thumbcaption">Caption with a <a class="externallink" rel="nofollow" href="http://example.com/">http://example.com/</a> link</div>
 </div>
 </div>
 <p>caption test #6</p>
 <div class="thumb tright">
 <div class="thumbinner" style="width:222px"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image-300px.jpg" width="220" height="147" alt="Test Image.jpg" /></a>
-<div class="thumbcaption">Caption with a <a class="externallink" rel="nofollow" title="http://example.com/" href="http://example.com/">http://example.com/</a></div>
+<div class="thumbcaption">Caption with a <a class="externallink" rel="nofollow" href="http://example.com/">http://example.com/</a></div>
 </div>
 </div>
 <p>caption test #7</p>
 <div class="thumb tright">
 <div class="thumbinner" style="width:222px"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image-300px.jpg" width="220" height="147" alt="Test Image.jpg" /></a>
-<div class="thumbcaption">Caption with a <a class="externallink" rel="nofollow" title="link" href="http://example.com/">link</a></div>
+<div class="thumbcaption">Caption with a <a class="externallink" rel="nofollow" href="http://example.com/">link</a></div>
 </div>
 </div>
 <p>caption test #8</p>

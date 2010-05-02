@@ -108,7 +108,7 @@ public class LinkUtil {
 	 * Parse a link of the form http://example.com and return the opening tag of the
 	 * form <a href="http://example.com">.
 	 */
-	public static String buildHtmlLinkOpenTag(String link, String cssClass, String title) throws ParserException {
+	public static String buildHtmlLinkOpenTag(String link, String cssClass) throws ParserException {
 		String linkLower = link.toLowerCase();
 		if (linkLower.startsWith("mailto://")) {
 			// fix bad mailto syntax
@@ -143,9 +143,6 @@ public class LinkUtil {
 			cssClass = "externallink";
 		}
 		String html = "<a class=\"" + cssClass + "\" rel=\"nofollow\"";
-		if (title != null) {
-			html += " title=\"" + title + "\"";
-		}
 		html += " href=\"" + protocol + link + "\"" + target + ">";
 		return html;
 	}

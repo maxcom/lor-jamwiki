@@ -177,7 +177,7 @@ public class ImageUtil {
 			} else {
 				try {
 					// try to parse as an external link
-					String openTag = LinkUtil.buildHtmlLinkOpenTag(imageMetadata.getLink(), "wikiimg", null);
+					String openTag = LinkUtil.buildHtmlLinkOpenTag(imageMetadata.getLink(), "wikiimg");
 					html.append(openTag);
 				} catch (ParserException e) {
 					// not an external link, but an internal link
