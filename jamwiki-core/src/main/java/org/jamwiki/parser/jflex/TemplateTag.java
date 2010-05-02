@@ -297,9 +297,13 @@ public class TemplateTag implements JFlexParserTag {
 				continue;
 			}
 			String[] nameValue = this.tokenizeNameValue(token);
-			String name = (StringUtils.isBlank(nameValue[0]) ? Integer.toString(count) : nameValue[0].trim());
 			String value = (nameValue[1] == null) ? null : nameValue[1].trim();
-			parameterValues.put(name, value);
+			parameterValues.put(Integer.toString(count), value);
+			// if there is a named parameter store it as well as a count-based parameter, just in
+			// case the template specifies both
+			if (!StringUtils.isBlank(nameValue[0])) {
+				parameterValues.put(nameValue[0].trim(), value);
+			}
 		}
 		return parameterValues;
 	}
