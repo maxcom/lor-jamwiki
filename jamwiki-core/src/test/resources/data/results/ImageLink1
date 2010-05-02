@@ -28,6 +28,8 @@
 </div>
 <p>frameless image</p>
 <p><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image-300px.jpg" width="220" height="147" alt="Test Image.jpg" /></a></p>
+<p>frameless bordered image</p>
+<p><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg thumbborder" src="/files/test_image-300px.jpg" width="220" height="147" alt="Test Image.jpg" /></a></p>
 <p>centered thumbnail</p>
 <div class="center">
 <div class="thumb tnone">

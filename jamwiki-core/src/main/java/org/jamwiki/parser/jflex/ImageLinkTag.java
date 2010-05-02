@@ -134,11 +134,14 @@ public class ImageLinkTag implements JFlexParserTag {
 			token = token.trim();
 			for (ImageBorderEnum border : EnumSet.allOf(ImageBorderEnum.class)) {
 				if (border.toString().equalsIgnoreCase(token)) {
-					imageMetadata.setBorder(border);
 					if (border == ImageBorderEnum.BORDER) {
 						// border can be combined with frameless, so set a second attribute to track it
 						imageMetadata.setBordered(true);
+						if (imageMetadata.getBorder() == ImageBorderEnum.FRAMELESS) {
+							continue tokenLoop;
+						}
 					}
+					imageMetadata.setBorder(border);
 					continue tokenLoop;
 				}
 			}

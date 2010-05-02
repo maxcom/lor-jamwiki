@@ -47,6 +47,10 @@ frameless image
 
 [[Image:Test Image.jpg|frameless]]
 
+frameless bordered image
+
+[[Image:Test Image.jpg|frameless|border]]
+
 centered thumbnail
 
 [[Image:Test Image.jpg|thumb|center]]
