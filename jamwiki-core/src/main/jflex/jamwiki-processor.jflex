@@ -96,13 +96,13 @@ tablerow           = "|-" [ ]* ({tableattribute})* {newline}
 tablecaption       = "|+" | "|+" ({tableattribute})+ "|" [^\|]
 
 /* wiki links */
-wikilinkcontent    = [^\n\]\[] | "]" [^\n\]] | "[" [^\n\[]
-wikilink           = "[[" ({wikilinkcontent})+ "]]" [a-z]*
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
 htmllinkwiki       = "[" ({protocol}) ([^\]\n]+) "]"
 htmllinkraw        = ({protocol}) ([^ <'\n\t]+)
 htmllink           = ({htmllinkwiki}) | ({htmllinkraw})
-nestedwikilink     = "[[" ({wikilinkcontent})+ "|" ({wikilinkcontent} | {wikilink} | {htmllinkwiki})+ "]]"
+wikilinkcontent    = [^\n\]] | "]" [^\n\]] | {htmllink}
+wikilink           = "[[" ({wikilinkcontent})+ "]]" [a-z]*
+nestedwikilink     = "[[" ({wikilinkcontent})+ "|" ({wikilinkcontent} | {wikilink})+ "]]"
 
 /* references */
 reference          = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\/\n]+[ ]*)? ([ ]*>) ~(<[ ]*\/[ ]*ref[ ]*>)

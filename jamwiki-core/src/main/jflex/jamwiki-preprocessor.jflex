@@ -57,11 +57,13 @@ htmlcomment        = "<!--" ~"-->"
 noeditsection      = ({newline})? "__NOEDITSECTION__"
 
 /* wiki links */
-wikilinkcontent    = [^\n\]\[] | "]" [^\n\]] | "[" [^\n\[]
-wikilink           = "[[" ({wikilinkcontent})+ "]]" [a-z]*
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
 htmllinkwiki       = "[" ({protocol}) ([^\]\n]+) "]"
-nestedwikilink     = "[[" ({wikilinkcontent})+ "|" ({wikilinkcontent} | {wikilink} | {htmllinkwiki})+ "]]"
+htmllinkraw        = ({protocol}) ([^ <'\n\t]+)
+htmllink           = ({htmllinkwiki}) | ({htmllinkraw})
+wikilinkcontent    = [^\n\]] | "]" [^\n\]] | {htmllink}
+wikilink           = "[[" ({wikilinkcontent})+ "]]" [a-z]*
+nestedwikilink     = "[[" ({wikilinkcontent})+ "|" ({wikilinkcontent} | {wikilink})+ "]]"
 
 /* templates */
 templatestart      = "{{"

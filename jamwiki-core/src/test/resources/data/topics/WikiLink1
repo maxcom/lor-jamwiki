@@ -68,3 +68,13 @@
 [[StartingPoints|Caption with a [[StartingPoints|alt text]] link]]
 
 [[StartingPoints|two links]] on the [[StartingPoints|same line]]
+
+[[StartingPoints|test ]] link]]
+
+[[StartingPoints|test [[ link]]
+
+[[StartingPoints|test http://example.com link]]
+
+[[StartingPoints|test [http://example.com link]]]
+
+[[StartingPoints|test [http://example.com link] test]]

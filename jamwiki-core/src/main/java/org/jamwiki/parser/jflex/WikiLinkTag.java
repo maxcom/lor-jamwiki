@@ -33,6 +33,8 @@ import org.jamwiki.utils.WikiLogger;
 public class WikiLinkTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiLinkTag.class.getName());
+	// temporary parameter passed to indicate that the fragment being parsed is a link caption
+	protected static final String LINK_CAPTION = "link-caption";
 
 	/**
 	 * Parse a Mediawiki link of the form "[[topic|text]]" and return the
@@ -81,7 +83,10 @@ public class WikiLinkTag implements JFlexParserTag {
 			} else if (StringUtils.isBlank(wikiLink.getText()) && !StringUtils.isBlank(wikiLink.getSection())) {
 				wikiLink.setText(Utilities.decodeAndEscapeTopicName("#" + wikiLink.getSection(), true));
 			} else {
+				// pass a parameter via the parserInput to prevent nested links from being generated
+				lexer.getParserInput().getTempParams().put(LINK_CAPTION, "true");
 				wikiLink.setText(JFlexParserUtil.parseFragment(lexer.getParserInput(), wikiLink.getText(), lexer.getMode()));
+				lexer.getParserInput().getTempParams().remove(LINK_CAPTION);
 			}
 			if (StringUtils.equals(wikiLink.getDestination(), lexer.getParserInput().getTopicName()) && StringUtils.equals(virtualWiki, lexer.getParserInput().getVirtualWiki())) {
 				// same page, bold the text and return

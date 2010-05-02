@@ -154,3 +154,11 @@ caption test #3 [[Image:Test Image.jpg|thumb|Caption with a [http://example.com/
 caption test #4 [[Image:Test Image.jpg|thumb|Caption with a [http://example.com/ example] link]]
 
 caption test #5 [[Image:Test Image.jpg|thumb|Caption with a http://example.com/ link]]
+
+caption test #6 [[Image:Test Image.jpg|thumb|Caption with a [http://example.com/]]]
+
+caption test #7 [[Image:Test Image.jpg|thumb|Caption with a [http://example.com/ link]]]
+
+caption test #8 [[Image:Test Image.jpg|thumb|Test [[ Caption]]
+
+caption test #9 [[Image:Test Image.jpg|thumb|Test ]] Caption]]

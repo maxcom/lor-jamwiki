@@ -33,3 +33,8 @@
 <p>[[StartingPoints|Caption with a <a href="/wiki/en/StartingPoints" title="StartingPoints">StartingPoints</a> link]]</p>
 <p>[[StartingPoints|Caption with a <a href="/wiki/en/StartingPoints" title="StartingPoints">alt text</a> link]]</p>
 <p><a href="/wiki/en/StartingPoints" title="StartingPoints">two links</a> on the <a href="/wiki/en/StartingPoints" title="StartingPoints">same line</a></p>
+<p><a href="/wiki/en/StartingPoints" title="StartingPoints">test</a> link]]</p>
+<p><a href="/wiki/en/StartingPoints" title="StartingPoints">test [[ link</a></p>
+<p><a href="/wiki/en/StartingPoints" title="StartingPoints">test http://example.com link</a></p>
+<p><a href="/wiki/en/StartingPoints" title="StartingPoints">test http://example.com link</a></p>
+<p><a href="/wiki/en/StartingPoints" title="StartingPoints">test http://example.com link test</a></p>

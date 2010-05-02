@@ -131,6 +131,12 @@ public class HtmlLinkTag implements JFlexParserTag {
 			// no link to display
 			return raw;
 		}
+		Boolean linkCaption = (Boolean)lexer.getParserInput().getTempParams().get(WikiLinkTag.LINK_CAPTION);
+		if (linkCaption != null && linkCaption.booleanValue()) {
+			// do not parse HTML tags in link captions as that would result in HTML of the form
+			// "<a href="">this is the <a href="">link caption</a></a>"
+			return raw;
+		}
 		return this.buildHtmlLinkRaw(lexer.getParserInput(), lexer.getMode(), raw);
 	}
 }
