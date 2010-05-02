@@ -135,6 +135,10 @@ public class ImageLinkTag implements JFlexParserTag {
 			for (ImageBorderEnum border : EnumSet.allOf(ImageBorderEnum.class)) {
 				if (border.toString().equalsIgnoreCase(token)) {
 					imageMetadata.setBorder(border);
+					if (border == ImageBorderEnum.BORDER) {
+						// border can be combined with frameless, so set a second attribute to track it
+						imageMetadata.setBordered(true);
+					}
 					continue tokenLoop;
 				}
 			}
@@ -200,6 +204,10 @@ public class ImageLinkTag implements JFlexParserTag {
 		}
 		if ((imageMetadata.getBorder() == ImageBorderEnum.THUMB || imageMetadata.getBorder() == ImageBorderEnum.FRAMELESS)&& imageMetadata.getMaxWidth() <= 0) {
 			imageMetadata.setMaxWidth(DEFAULT_THUMBNAIL_WIDTH);
+		}
+		if (imageMetadata.getBordered() && (imageMetadata.getBorder() != ImageBorderEnum.BORDER && imageMetadata.getBorder() != ImageBorderEnum.FRAMELESS)) {
+			// thumb, frame, etc handle borders differently
+			imageMetadata.setBordered(false);
 		}
 		return imageMetadata;
 	}

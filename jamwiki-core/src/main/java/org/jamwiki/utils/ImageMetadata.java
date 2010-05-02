@@ -23,6 +23,7 @@ public class ImageMetadata {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(ImageMetadata.class.getName());
 	private String alt = null;
+	private boolean bordered = false;
 	private ImageBorderEnum border = ImageBorderEnum.NOT_SPECIFIED;
 	private String caption = null;
 	private ImageHorizontalAlignmentEnum horizontalAlignment = ImageHorizontalAlignmentEnum.NOT_SPECIFIED;
@@ -57,6 +58,22 @@ public class ImageMetadata {
 	 */
 	public void setAlt(String alt) {
 		this.alt = alt;
+	}
+
+	/**
+	 * An image can be both frameless and bordered, so add an additional field
+	 * to hold the bordered property.
+	 */
+	public boolean getBordered() {
+		return this.bordered;
+	}
+
+	/**
+	 * An image can be both frameless and bordered, so add an additional field
+	 * to hold the bordered property.
+	 */
+	public void setBordered(boolean bordered) {
+		this.bordered = bordered;
 	}
 
 	/**

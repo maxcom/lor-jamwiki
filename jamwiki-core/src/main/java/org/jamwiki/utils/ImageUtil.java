@@ -191,6 +191,9 @@ public class ImageUtil {
 		if (StringUtils.isBlank(style)) {
 			style = "wikiimg";
 		}
+		if (imageMetadata.getBordered()) {
+			style += " thumbborder";
+		}
 		html.append("<img class=\"").append(style).append("\" src=\"");
 		html.append(buildRelativeImageUrl(context, virtualWiki, wikiImage.getUrl()));
 		html.append('\"');

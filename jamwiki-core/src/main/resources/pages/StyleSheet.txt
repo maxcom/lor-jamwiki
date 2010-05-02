@@ -419,6 +419,9 @@ img.wikiimg {
 a.wikiimg {
 	border: 0;
 }
+img.thumbborder {
+	border: 1px solid #ddd;
+}
 div.thumbcaption {
 	text-align:left;
 	border: none;
