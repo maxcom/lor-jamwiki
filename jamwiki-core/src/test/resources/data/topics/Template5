@@ -38,3 +38,5 @@ test}}
 {{paramtest|param=Example1}}
 
 {{paramtest|StartingPoints|param=Example1}}
+
+{{paramtest|2=optional|param=param|1=Example1}}
