@@ -246,7 +246,7 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 	 * @param localName The local name (without prefix), or the empty string if Namespace processing
 	 *  is not being performed.
 	 * @param qName The qualified name (with prefix), or the empty string if qualified names are not available.
-	 * @param attributes The attributes attached to the element. If there are no attributes, it shall be an
+	 * @param attrs The attributes attached to the element. If there are no attributes, it shall be an
 	 *  empty Attributes object.
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {

@@ -103,7 +103,7 @@ public class WikiMessage {
 	 *
 	 * @param key The ApplicationResources key that corresponds to the message
 	 *  to display.
-	 * @param params An list of parameters that correspond to the {0}, {1}, etc
+	 * @param paramList An list of parameters that correspond to the {0}, {1}, etc
 	 *  params in the specified message key value.  Note that these parameters are
 	 *  automatically HTML escaped to prevent erorrs in display.
 	 */

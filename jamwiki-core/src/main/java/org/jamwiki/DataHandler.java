@@ -803,7 +803,7 @@ public interface DataHandler {
 
 	/**
 	 * This method exists for performance reasons for scenarios such as topic imports where many versions
-	 * may be added without the need to update the topic record.  In general {@link DataHandler.writeTopic}
+	 * may be added without the need to update the topic record.  In general {@link #writeTopic}
 	 * should be used instead.
 	 *
 	 * @param topic The Topic to add or update.  If the Topic does not have
