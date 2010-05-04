@@ -45,17 +45,12 @@ public class WikiBase {
 
 	/** Cache name for the cache of parsed topic content. */
 	public static final String CACHE_PARSED_TOPIC_CONTENT = "org.jamwiki.WikiBase.CACHE_PARSED_TOPIC_CONTENT";
-	/** Name of the default wiki */
-	// FIXME - make this configurable
-	public static final String DEFAULT_VWIKI = "en";
 	/** Default group for registered users. */
 	private static WikiGroup GROUP_REGISTERED_USER = null;
 	/** Data stored using an external database */
 	public static final String PERSISTENCE_EXTERNAL = "DATABASE";
 	/** Data stored using an internal copy of the HSQL database */
 	public static final String PERSISTENCE_INTERNAL = "INTERNAL";
-	/** Root directory within the WAR distribution that contains the default topic pages. */
-	public static final String SPECIAL_PAGE_DIR = "pages";
 	/** Name of the default starting points topic. */
 	public static final String SPECIAL_PAGE_STARTING_POINTS = "StartingPoints";
 	/** Name of the default left menu topic. */

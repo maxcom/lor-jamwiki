@@ -245,9 +245,7 @@ public interface DataHandler {
 	List<RoleMap> getRoleMapByRole(String roleName) throws DataAccessException;
 
 	/**
-	 * Retrieve all roles assigned to a given group.  Note that for an implementation
-	 * to work with Spring Security this method MUST return an array of {@link
-	 * org.jamwiki.authentication.RoleMapImpl} objects.
+	 * Retrieve all roles assigned to a given group.
 	 *
 	 * @param groupName The name of the group for whom roles are being retrieved.
 	 * @return An array of Role objects for the given group, or an empty
@@ -268,9 +266,7 @@ public interface DataHandler {
 	List<RoleMap> getRoleMapGroups() throws DataAccessException;
 
 	/**
-	 * Retrieve all roles assigned to a given user.  Note that for an implementation
-	 * to work with Spring Security this method MUST return an array of {@link
-	 * org.jamwiki.authentication.RoleMapImpl} objects.
+	 * Retrieve all roles assigned to a given user.
 	 *
 	 * @param login The login of the user for whom roles are being retrieved.
 	 * @return A list of Role objects for the given user, or an empty
@@ -393,6 +389,16 @@ public interface DataHandler {
 	Namespace lookupNamespace(String virtualWiki, String namespaceString) throws DataAccessException;
 
 	/**
+	 * Given a namespace ID return the corresponding namespace, or <code>null</code>
+	 * if no match exists.
+	 *
+	 * @param namespaceId The ID for the namespace being retrieved.
+	 * @return The matching Namespace object, or <code>null</code> if no match is found.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	Namespace lookupNamespaceById(int namespaceId) throws DataAccessException;
+
+	/**
 	 * Return all namespaces currently available for the wiki.
 	 *
 	 * @return A list of all Namespace objects currently available for the wiki.
@@ -436,12 +442,15 @@ public interface DataHandler {
 	 *
 	 * @param virtualWiki The virtual wiki for which the total topic count is
 	 *  being returned.
+	 * @param namespaceId An optional parameter to specify that results should only
+	 *  be from the specified namespace.  If this value is <code>null</code> then
+	 *  results will be returned from all namespaces.
 	 * @return A count of all topics, including redirects, comments pages and
-	 *  templates, for the given virtual wiki.  Deleted topics are not included
-	 *  in the count.
+	 *  templates, for the given virtual wiki and (optionally) namespace.  Deleted
+	 *  topics are not included in the count.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	int lookupTopicCount(String virtualWiki) throws DataAccessException;
+	int lookupTopicCount(String virtualWiki, Integer namespaceId) throws DataAccessException;
 
 	/**
 	 * Return a List of topic names for all non-deleted topics in the
@@ -451,13 +460,30 @@ public interface DataHandler {
 	 * @param topicType1 The type of topics to return.
 	 * @param topicType2 The type of topics to return.  Set to the same value
 	 *  as topicType1 if only one type is needed.
+	 * @param namespaceId An optional parameter to specify that results should only
+	 *  be from the specified namespace.  If this value is <code>null</code> then
+	 *  results will be returned from all namespaces.
 	 * @param pagination A Pagination object indicating the total number of
 	 *  results and offset for the results to be retrieved.
 	 * @return A map of topic id and topic name for all non-deleted topics in the
 	 *  virtual wiki that match a specific topic type.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	Map<Integer, String> lookupTopicByType(String virtualWiki, TopicType topicType1, TopicType topicType2, Pagination pagination) throws DataAccessException;
+	Map<Integer, String> lookupTopicByType(String virtualWiki, TopicType topicType1, TopicType topicType2, Integer namespaceId, Pagination pagination) throws DataAccessException;
+
+	/**
+	 * Given a topic name and virtual wiki, return the corresponding topic ID, or
+	 * <code>null</code> if no matching topic exists.  This method will return only
+	 * non-deleted topics and performs better for cases where a caller only needs to
+	 * know if a topic exists, but does not need a full Topic object.
+	 *
+	 * @param virtualWiki The virtual wiki for the topic being queried.
+	 * @param topicName The name of the topic being queried.
+	 * @return The ID of the Topic object that matches the given virtual wiki and topic
+	 * name, or <code>null</code> if no matching topic exists.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	Integer lookupTopicId(String virtualWiki, String topicName) throws DataAccessException;
 
 	/**
 	 * Retrieve a TopicVersion object for a given topic version ID.
@@ -777,7 +803,7 @@ public interface DataHandler {
 
 	/**
 	 * This method exists for performance reasons for scenarios such as topic imports where many versions
-	 * may be added without the need to update the topic record.  In general {@link DataHandler.writeTopic}
+	 * may be added without the need to update the topic record.  In general {@link #writeTopic}
 	 * should be used instead.
 	 *
 	 * @param topic The Topic to add or update.  If the Topic does not have

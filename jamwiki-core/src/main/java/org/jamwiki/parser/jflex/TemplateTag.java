@@ -30,7 +30,9 @@ import org.jamwiki.model.TopicType;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 
@@ -115,15 +117,28 @@ public class TemplateTag implements JFlexParserTag {
 			}
 		}
 		// extract the template name
-		String name = this.parseTemplateName(parserInput.getVirtualWiki(), templateContent);
-		boolean inclusion = false;
-		if (name.startsWith(Namespace.SEPARATOR)) {
-			name = name.substring(1);
-			inclusion = true;
+		WikiLink wikiLink = this.parseTemplateName(parserInput.getVirtualWiki(), templateContent);
+		String name = wikiLink.getDestination();
+		// now see if a template with that name exists or if this is an inclusion
+		Topic templateTopic = null;
+		boolean inclusion = wikiLink.getColon();
+		String templateName = name;
+		if (!wikiLink.getColon()) {
+			if (!wikiLink.getNamespace().equals(Namespace.namespace(Namespace.TEMPLATE_ID))) {
+				templateName = Namespace.namespace(Namespace.TEMPLATE_ID).getLabel(parserInput.getVirtualWiki()) + Namespace.SEPARATOR + StringUtils.capitalize(name);
+			}
+			templateTopic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), templateName, false, null);
+		}
+		if (templateTopic != null) {
+			name = templateName;
+		} else {
+			// otherwise see if it's an inclusion
+			templateTopic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), name, false, null);
+			name = ((templateTopic == null && !wikiLink.getColon()) ? templateName : name);
+			inclusion = (templateTopic != null || wikiLink.getColon());
 		}
 		// get the parsed template body
 		parserInput.incrementTemplateDepth();
-		Topic templateTopic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), name, false, null);
 		this.processTemplateMetadata(parserInput, parserOutput, templateTopic, raw, name);
 		String result = null;
 		if (mode <= JFlexParser.MODE_MINIMAL) {
@@ -139,7 +154,7 @@ public class TemplateTag implements JFlexParserTag {
 				templateTopic = null;
 			}
 			if (inclusion) {
-				result = this.processTemplateInclusion(parserInput, parserOutput, mode, templateTopic, raw, name);
+				result = this.processTemplateInclusion(parserInput, parserOutput, mode, templateTopic, templateContent, raw, name);
 			} else if (templateTopic == null) {
 				result = ((allowTemplateEdit) ? "[[" + name + "]]" : null);
 			} else {
@@ -232,14 +247,14 @@ public class TemplateTag implements JFlexParserTag {
 				pos++;
 			}
 		}
-		return JFlexParserUtil.parseFragment(parserInput, output.toString(), JFlexParser.MODE_PREPROCESS);
+		return JFlexParserUtil.parseFragment(parserInput, output.toString().trim(), JFlexParser.MODE_PREPROCESS);
 	}
 
 	/**
 	 * Given a template call of the form "{{template|param|param}}", return
 	 * the template name.
 	 */
-	private String parseTemplateName(String virtualWiki, String raw) throws ParserException {
+	private WikiLink parseTemplateName(String virtualWiki, String raw) throws ParserException {
 		String name = raw;
 		int pos = raw.indexOf('|');
 		if (pos != -1) {
@@ -250,15 +265,18 @@ public class TemplateTag implements JFlexParserTag {
 			// FIXME - no need for an exception
 			throw new ParserException("No template name specified");
 		}
+		boolean inclusion = false;
 		if (name.startsWith(Namespace.SEPARATOR)) {
 			if (name.length() == 1) {
 				// FIXME - no need for an exception
 				throw new ParserException("No template name specified");
 			}
-		} else if (!name.startsWith(Namespace.TEMPLATE.getLabel(virtualWiki) + Namespace.SEPARATOR)) {
-			name = Namespace.TEMPLATE.getLabel(virtualWiki) + Namespace.SEPARATOR + StringUtils.capitalize(name);
+			inclusion = true;
+			name = name.substring(1).trim();
 		}
-		return name;
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, name);
+		wikiLink.setColon(inclusion);
+		return wikiLink;
 	}
 
 	/**
@@ -279,9 +297,17 @@ public class TemplateTag implements JFlexParserTag {
 				continue;
 			}
 			String[] nameValue = this.tokenizeNameValue(token);
-			String name = (StringUtils.isBlank(nameValue[0]) ? Integer.toString(count) : nameValue[0].trim());
 			String value = (nameValue[1] == null) ? null : nameValue[1].trim();
-			parameterValues.put(name, value);
+			// the user can specify params of the form "2=first|1=second", so check to make
+			// sure an index value hasn't already been used.
+			if (!parameterValues.containsKey(Integer.toString(count))) {
+				parameterValues.put(Integer.toString(count), value);
+			}
+			// if there is a named parameter store it as well as a count-based parameter, just in
+			// case the template specifies both
+			if (!StringUtils.isBlank(nameValue[0])) {
+				parameterValues.put(nameValue[0].trim(), value);
+			}
 		}
 		return parameterValues;
 	}
@@ -300,13 +326,13 @@ public class TemplateTag implements JFlexParserTag {
 	 * Given a template call of the form "{{:name}}" parse the template
 	 * inclusion.
 	 */
-	private String processTemplateInclusion(ParserInput parserInput, ParserOutput parserOutput, int mode, Topic templateTopic, String raw, String name) throws ParserException {
+	private String processTemplateInclusion(ParserInput parserInput, ParserOutput parserOutput, int mode, Topic templateTopic, String templateContent, String raw, String name) throws ParserException {
 		if (templateTopic == null) {
 			return "[[" + name + "]]";
 		}
 		// FIXME - disable section editing
 		parserInput.getTempParams().put(TEMPLATE_INCLUSION, "true");
-		return (StringUtils.isBlank(templateTopic.getTopicContent())) ? templateTopic.getTopicContent() : JFlexParserUtil.parseFragment(parserInput, templateTopic.getTopicContent(), mode);
+		return this.processTemplateContent(parserInput, parserOutput, templateTopic, templateContent, name);
 	}
 
 	/**

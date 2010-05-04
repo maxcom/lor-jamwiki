@@ -16,20 +16,14 @@
  */
 package org.jamwiki.utils;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Namespace;
-import org.jamwiki.model.Topic;
-import org.jamwiki.model.TopicType;
 import org.jamwiki.model.VirtualWiki;
-import org.jamwiki.model.WikiFile;
-import org.jamwiki.model.WikiImage;
+import org.jamwiki.parser.ParserException;
 
 /**
  * General utility methods for handling both wiki topic links and HTML links.
@@ -111,146 +105,46 @@ public class LinkUtil {
 	}
 
 	/**
-	 * Utility method for building the URL to an image file (NOT the image topic
-	 * page).  If the file does not exist then this method will return
-	 * <code>null</code>.
-	 *
-	 * @param context The current servlet context.
-	 * @param virtualWiki The virtual wiki for the URL that is being created.
-	 * @param topicName The name of the image for which a link is being created.
-	 * @return The URL to an image file (not the image topic) or <code>null</code>
-	 *  if the file does not exist.
-	 * @throws DataAccessException Thrown if any error occurs while retrieving file info.
+	 * Parse a link of the form http://example.com and return the opening tag of the
+	 * form <a href="http://example.com">.
 	 */
-	public static String buildImageFileUrl(String context, String virtualWiki, String topicName) throws DataAccessException {
-		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
-		if (wikiFile == null) {
-			return null;
+	public static String buildHtmlLinkOpenTag(String link, String cssClass) throws ParserException {
+		String linkLower = link.toLowerCase();
+		if (linkLower.startsWith("mailto://")) {
+			// fix bad mailto syntax
+			link = "mailto:" + link.substring("mailto://".length());
 		}
-		String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + wikiFile.getUrl());
-		return FilenameUtils.separatorsToUnix(url);
-	}
-
-	/**
-	 * Utility method for building an anchor tag that links to an image page
-	 * and includes the HTML image tag to display the image.
-	 *
-	 * @param context The servlet context for the link that is being created.
-	 * @param virtualWiki The virtual wiki for the link that is being created.
-	 * @param topicName The name of the image for which a link is being
-	 *  created.
-	 * @param frame Set to <code>true</code> if the image should display with
-	 *  a frame border.
-	 * @param thumb Set to <code>true</code> if the image should display as a
-	 *  thumbnail.
-	 * @param align Indicates how the image should horizontally align on the
-	 *  page.  Valid values are "left", "right" and "center".
-	 * @param caption An optional text caption to display for the image.  If
-	 *  no caption is used then this value should be either empty or
-	 *  <code>null</code>.
-	 * @param maxDimension A value in pixels indicating the maximum width or
-	 *  height value allowed for the image.  Images will be resized so that
-	 *  neither the width or height exceeds this value.
-	 * @param suppressLink If this value is <code>true</code> then the
-	 *  generated HTML will include the image tag without a link to the image
-	 *  topic page.
-	 * @param style The CSS class to use with the img HTML tag.  This value
-	 *  can be <code>null</code> or empty if no custom style is used.
-	 * @param escapeHtml Set to <code>true</code> if the caption should be
-	 *  HTML escaped.  This value should be <code>true</code> in any case
-	 *  where the caption is not guaranteed to be free from potentially
-	 *  malicious HTML code.
-	 * @return The full HTML required to display an image enclosed within an
-	 *  HTML anchor tag that links to the image topic page.
-	 * @throws DataAccessException Thrown if any error occurs while retrieving image
-	 *  information.
-	 * @throws IOException Thrown if any error occurs while reading image information.
-	 */
-	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, int maxDimension, boolean suppressLink, String style, boolean escapeHtml) throws DataAccessException, IOException {
-		String url = LinkUtil.buildImageFileUrl(context, virtualWiki, topicName);
-		if (url == null) {
-			return LinkUtil.buildUploadLink(context, virtualWiki, topicName);
+		String protocol = "";
+		if (linkLower.startsWith("http://")) {
+			protocol = "http://";
+		} else if  (linkLower.startsWith("https://")) {
+			protocol = "https://";
+		} else if (linkLower.startsWith("ftp://")) {
+			protocol = "ftp://";
+		} else if (linkLower.startsWith("mailto:")) {
+			protocol = "mailto:";
+		} else if (linkLower.startsWith("news://")) {
+			protocol = "news://";
+		} else if (linkLower.startsWith("telnet://")) {
+			protocol = "telnet://";
+		} else if (linkLower.startsWith("file://")) {
+			protocol = "file://";
+		} else {
+			throw new ParserException("Invalid protocol in link " + link);
 		}
-		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
-		StringBuilder html = new StringBuilder();
-		if (topic.getTopicType() == TopicType.FILE) {
-			// file, not an image
-			if (StringUtils.isBlank(caption)) {
-				caption = topicName.substring(Namespace.FILE.getLabel(virtualWiki).length() + 1);
-			}
-			html.append("<a href=\"").append(url).append("\">");
-			if (escapeHtml) {
-				html.append(StringEscapeUtils.escapeHtml(caption));
-			} else {
-				html.append(caption);
-			}
-			html.append("</a>");
-			return html.toString();
+		link = link.substring(protocol.length());
+		// make sure link values are properly escaped.
+		link = StringUtils.replace(link, "<", "%3C");
+		link = StringUtils.replace(link, ">", "%3E");
+		link = StringUtils.replace(link, "\"", "%22");
+		link = StringUtils.replace(link, "\'", "%27");
+		String target = (Environment.getBooleanValue(Environment.PROP_EXTERNAL_LINK_NEW_WINDOW)) ? " target=\"_blank\"" : "";
+		if (cssClass == null) {
+			cssClass = "externallink";
 		}
-		WikiImage wikiImage = null;
-		try {
-			wikiImage = ImageUtil.initializeImage(wikiFile, maxDimension);
-		} catch (FileNotFoundException e) {
-			// do not log the full exception as the logs can fill up very for this sort of error, and it is generally due to a bad configuration.  instead log a warning message so that the administrator can try to fix the problem
-			logger.warning("File not found while parsing image link for topic: " + virtualWiki + " / " + topicName + ".  Make sure that the following file exists and is readable by the JAMWiki installation: " + e.getMessage());
-			return LinkUtil.buildUploadLink(context, virtualWiki, topicName);
-		}
-		if (caption == null) {
-			caption = "";
-		}
-		if (frame || thumb || !StringUtils.isBlank(align)) {
-			html.append("<div class=\"");
-			if (thumb || frame) {
-				html.append("imgthumb ");
-			}
-			if (align != null && align.equalsIgnoreCase("left")) {
-				html.append("imgleft ");
-			} else if (align != null && align.equalsIgnoreCase("center")) {
-				html.append("imgcenter ");
-			} else if ((align != null && align.equalsIgnoreCase("right")) || thumb || frame) {
-				html.append("imgright ");
-			} else {
-				// default alignment
-				html.append("image ");
-			}
-			html = new StringBuilder(html.toString().trim()).append("\">");
-		}
-		if (wikiImage.getWidth() > 0) {
-			html.append("<div style=\"width:").append((wikiImage.getWidth() + 2)).append("px;\">");
-		}
-		if (!suppressLink) {
-			html.append("<a class=\"wikiimg\" href=\"").append(LinkUtil.buildTopicUrl(context, virtualWiki, topicName, true)).append("\">");
-		}
-		if (StringUtils.isBlank(style)) {
-			style = "wikiimg";
-		}
-		html.append("<img class=\"").append(style).append("\" src=\"");
-		html.append(url);
-		html.append('\"');
-		html.append(" width=\"").append(wikiImage.getWidth()).append('\"');
-		html.append(" height=\"").append(wikiImage.getHeight()).append('\"');
-		html.append(" alt=\"").append(StringEscapeUtils.escapeHtml(caption)).append('\"');
-		html.append(" />");
-		if (!suppressLink) {
-			html.append("</a>");
-		}
-		if (!StringUtils.isBlank(caption)) {
-			html.append("<div class=\"imgcaption\">");
-			if (escapeHtml) {
-				html.append(StringEscapeUtils.escapeHtml(caption));
-			} else {
-				html.append(caption);
-			}
-			html.append("</div>");
-		}
-		if (wikiImage.getWidth() > 0) {
-			html.append("</div>");
-		}
-		if (frame || thumb || !StringUtils.isBlank(align)) {
-			html.append("</div>");
-		}
-		return html.toString();
+		String html = "<a class=\"" + cssClass + "\" rel=\"nofollow\"";
+		html += " href=\"" + protocol + link + "\"" + target + ">";
+		return html;
 	}
 
 	/**
@@ -279,7 +173,7 @@ public class LinkUtil {
 		if (StringUtils.isBlank(text)) {
 			text = topic;
 		}
-		if (!StringUtils.isBlank(topic) && StringUtils.isBlank(style)) {
+		if (!wikiLink.getNamespace().getId().equals(Namespace.MEDIA_ID) && !StringUtils.isBlank(topic) && StringUtils.isBlank(style)) {
 			if (InterWikiHandler.isInterWiki(virtualWiki)) {
 				style = "interwiki";
 			} else if (!LinkUtil.isExistingArticle(virtualWiki, topic)) {
@@ -350,16 +244,26 @@ public class LinkUtil {
 	 *  information.
 	 */
 	public static String buildTopicUrl(String context, String virtualWiki, WikiLink wikiLink) throws DataAccessException {
-		String topic = wikiLink.getDestination();
-		String section = wikiLink.getSection();
-		String query = wikiLink.getQuery();
-		String url = LinkUtil.buildTopicUrlNoEdit(context, virtualWiki, topic, section, query);
-		if (StringUtils.isBlank(topic) && !StringUtils.isBlank(section)) {
-			// do not check existence for section links
-			return url;
-		}
-		if (!LinkUtil.isExistingArticle(virtualWiki, topic)) {
-			url = LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, -1);
+		String url = null;
+		if (wikiLink.getNamespace().getId().equals(Namespace.MEDIA_ID)) {
+			// for the "Media:" namespace, link directly to the file
+			String filename = Namespace.namespace(Namespace.FILE_ID).getLabel(virtualWiki) + Namespace.SEPARATOR + wikiLink.getArticle();
+			url = ImageUtil.buildImageFileUrl(context, virtualWiki, filename);
+			if (url == null) {
+				url = LinkUtil.buildTopicUrlNoEdit(context, virtualWiki, "Special:Upload", null, "?topic=" + filename);
+			}
+		} else {
+			String topic = wikiLink.getDestination();
+			String section = wikiLink.getSection();
+			String query = wikiLink.getQuery();
+			url = LinkUtil.buildTopicUrlNoEdit(context, virtualWiki, topic, section, query);
+			if (StringUtils.isBlank(topic) && !StringUtils.isBlank(section)) {
+				// do not check existence for section links
+				return url;
+			}
+			if (!LinkUtil.isExistingArticle(virtualWiki, topic)) {
+				url = LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, -1);
+			}
 		}
 		return url;
 	}
@@ -409,14 +313,6 @@ public class LinkUtil {
 	}
 
 	/**
-	 *
-	 */
-	private static String buildUploadLink(String context, String virtualWiki, String topicName) throws DataAccessException {
-		WikiLink uploadLink = LinkUtil.parseWikiLink(virtualWiki, "Special:Upload?topic=" + topicName);
-		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, uploadLink, topicName, "edit", null, true);
-	}
-
-	/**
 	 * Generate the HTML for an interwiki anchor link.
 	 *
 	 * @param wikiLink The WikiLink object containing all relevant information
@@ -426,7 +322,7 @@ public class LinkUtil {
 	public static String interWiki(WikiLink wikiLink) {
 		String url = InterWikiHandler.formatInterWiki(wikiLink.getInterWiki(), wikiLink.getDestination());
 		String text = (!StringUtils.isBlank(wikiLink.getText())) ? wikiLink.getText() : wikiLink.getDestination();
-		return "<a class=\"interwiki\" rel=\"nofollow\" title=\"" + text + "\" href=\"" + url + "\">" + text + "</a>";
+		return "<a class=\"interwiki\" title=\"" + text + "\" href=\"" + url + "\">" + text + "</a>";
 	}
 
 	/**
@@ -456,7 +352,7 @@ public class LinkUtil {
 			// not initialized yet
 			return false;
 		}
-		return (WikiBase.getDataHandler().lookupTopic(virtualWiki, articleName, false, null) != null);
+		return (WikiBase.getDataHandler().lookupTopicId(virtualWiki, articleName) != null);
 	}
 
 	/**
@@ -531,18 +427,26 @@ public class LinkUtil {
 			processed = topic;
 			virtualWiki = wikiLink.getVirtualWiki().getName();
 		}
+		wikiLink.setText(processed);
 		topic = LinkUtil.processNamespace(virtualWiki, topic, wikiLink);
-		if (wikiLink.getNamespace() != Namespace.MAIN) {
+		if (!wikiLink.getNamespace().getId().equals(Namespace.MAIN_ID)) {
+			// store the display name WITH any extra spaces
+			wikiLink.setText(processed);
 			// update original text in case topic was of the form "xxx: topic"
 			processed = wikiLink.getNamespace().getLabel(virtualWiki) + Namespace.SEPARATOR + topic;
 		}
 		// if no namespace or virtual wiki, see if there's an interwiki link
-		if (wikiLink.getNamespace() == Namespace.MAIN && wikiLink.getVirtualWiki() == null) {
+		if (wikiLink.getNamespace().getId().equals(Namespace.MAIN_ID) && wikiLink.getVirtualWiki() == null) {
 			topic = LinkUtil.processInterWiki(processed, wikiLink);
 			if (wikiLink.getInterWiki() != null) {
 				// strip the interwiki
 				processed = topic;
+				wikiLink.setText(processed);
 			}
+		}
+		if (wikiLink.getNamespace().getId().equals(Namespace.FILE_ID)) {
+			// captions are handled differently for images, so clear the link text value.
+			wikiLink.setText(null);
 		}
 		wikiLink.setArticle(Utilities.decodeTopicName(topic, true));
 		// destination is namespace + topic
@@ -604,6 +508,6 @@ public class LinkUtil {
 			// this should not happen, if it does then swallow the error
 			logger.warning("Failure while trying to lookup namespace: " + linkPrefix, e);
 		}
-		return (wikiLink.getNamespace() != Namespace.MAIN) ? processed.substring(prefixPosition + Namespace.SEPARATOR.length()).trim(): processed;
+		return (!wikiLink.getNamespace().getId().equals(Namespace.MAIN_ID)) ? processed.substring(prefixPosition + Namespace.SEPARATOR.length()).trim(): processed;
 	}
 }

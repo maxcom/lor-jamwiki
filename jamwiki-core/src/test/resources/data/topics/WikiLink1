@@ -44,3 +44,37 @@
 [[test:WikiLink1]]
 
 [[:test:WikiLink1]]
+
+[[{{PAGENAME}}]]
+
+[[Help:{{PAGENAME}}]]
+
+[[Help:  {{PAGENAME}}  ]]
+
+[[Help:Test]]
+
+[[  Help: Test]]
+
+[[  :Help : Test ]]
+
+[[Invalid:Test]]
+
+[[  Invalid: Test]]
+
+[[  :Invalid : Test ]]
+
+[[StartingPoints|Caption with a [[StartingPoints]] link]]
+
+[[StartingPoints|Caption with a [[StartingPoints|alt text]] link]]
+
+[[StartingPoints|two links]] on the [[StartingPoints|same line]]
+
+[[StartingPoints|test ]] link]]
+
+[[StartingPoints|test [[ link]]
+
+[[StartingPoints|test http://example.com link]]
+
+[[StartingPoints|test [http://example.com link]]]
+
+[[StartingPoints|test [http://example.com link] test]]

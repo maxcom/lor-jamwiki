@@ -102,6 +102,7 @@ public class Environment {
 	public static final String PROP_TOPIC_SPAM_FILTER = "use-spam-filter";
 	public static final String PROP_TOPIC_USE_PREVIEW = "use-preview";
 	public static final String PROP_TOPIC_USE_SHOW_CHANGES = "use-show-changes";
+	public static final String PROP_VIRTUAL_WIKI_DEFAULT = "virtual-wiki-default";
 	// Lookup properties file location from system properties first.
 	private static final String PROPERTY_FILE_NAME = System.getProperty("jamwiki.property.file", "jamwiki.properties");
 
@@ -238,6 +239,7 @@ public class Environment {
 		defaults.setProperty(PROP_TOPIC_SPAM_FILTER, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_TOPIC_USE_PREVIEW, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_TOPIC_USE_SHOW_CHANGES, Boolean.TRUE.toString());
+		defaults.setProperty(PROP_VIRTUAL_WIKI_DEFAULT, "en");
 	}
 
 	/**
@@ -393,16 +395,13 @@ public class Environment {
 	 *  the file cannot be found.
 	 */
 	private static File retrievePropertyFile(String filename) {
-		File file = null;
 		try {
-			file = Utilities.getClassLoaderFile(filename);
-			return file;
+			return Utilities.getClassLoaderFile(filename);
 		} catch (FileNotFoundException e) {
 			// NOPMD file might not exist
 		}
 		try {
-			file = new File(Utilities.getClassLoaderRoot(), filename);
-			return file;
+			return new File(Utilities.getClassLoaderRoot(), filename);
 		} catch (FileNotFoundException e) {
 			logger.severe("Error while searching for resource " + filename, e);
 		}

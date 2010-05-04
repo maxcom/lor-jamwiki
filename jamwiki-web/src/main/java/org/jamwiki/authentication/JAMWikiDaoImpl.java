@@ -58,7 +58,7 @@ public class JAMWikiDaoImpl implements UserDetailsService {
 			throw new UsernameNotFoundException("Failure retrieving user information for " + username);
 		}
 		Collection<GrantedAuthority> authorities = this.retrieveUserAuthorities(username);
-		return new WikiUserDetails(username, encryptedPassword, true, true, true, true, authorities);
+		return new WikiUserDetailsImpl(username, encryptedPassword, true, true, true, true, authorities);
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class JAMWikiDaoImpl implements UserDetailsService {
 				List<Role> roles = WikiBase.getDataHandler().getRoleMapUser(username);
 				if (roles != null) {
 					for (Role role : roles) {
-						results.add((RoleImpl)role);
+						results.add(new RoleImpl(role));
 					}
 				}
 			} catch (org.jamwiki.DataAccessException e) {

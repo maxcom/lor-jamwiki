@@ -18,8 +18,7 @@
  */
 package org.jamwiki.utils;
 
-import java.io.FileNotFoundException;
-import java.util.Locale;
+import org.jamwiki.JAMWikiUnitTest;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
@@ -27,7 +26,7 @@ import org.jamwiki.model.TopicType;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class WikiUtilTest {
+public class WikiUtilTest extends JAMWikiUnitTest {
 
 	/**
 	 *
@@ -99,30 +98,6 @@ public class WikiUtilTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void testExtractTopicLinkThrowsException() throws Throwable {
 		WikiUtil.extractTopicLink("en", "");
-	}
-
-	/**
-	 *
-	 */
-	@Test(expected=FileNotFoundException.class)
-	public void testReadSpecialPageThrowsFileNotFoundException() throws Throwable {
-		WikiUtil.readSpecialPage(null, "testWikiUtilPageName");
-	}
-
-	/**
-	 *
-	 */
-	@Test(expected=FileNotFoundException.class)
-	public void testReadSpecialPageThrowsFileNotFoundException1() throws Throwable {
-		WikiUtil.readSpecialPage(Locale.GERMAN, "testWikiUtilPageName");
-	}
-
-	/**
-	 *
-	 */
-	@Test(expected=FileNotFoundException.class)
-	public void testReadSpecialPageThrowsFileNotFoundException2() throws Throwable {
-		WikiUtil.readSpecialPage(Locale.SIMPLIFIED_CHINESE, "testWikiUtilPageName");
 	}
 
 	/**
@@ -241,7 +216,7 @@ public class WikiUtilTest {
 	@Test
 	public void testValidateNamespaceName10() throws Throwable {
 		try {
-			WikiUtil.validateNamespaceName("UserTest");
+			WikiUtil.validateNamespaceName("User");
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertEquals("Expected error message key", "admin.vwiki.error.namespace.unique", ex.getWikiMessage().getKey());

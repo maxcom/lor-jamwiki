@@ -18,13 +18,14 @@
  */
 package org.jamwiki.servlets;
 
-import org.jamwiki.WikiBase;
+import org.jamwiki.Environment;
+import org.jamwiki.JAMWikiUnitTest;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockServletContext;
 import static org.junit.Assert.*;
 
-public class WikiPageInfoTest {
+public class WikiPageInfoTest extends JAMWikiUnitTest {
 
 	/**
 	 *
@@ -38,7 +39,7 @@ public class WikiPageInfoTest {
 		assertEquals(p.getVirtualWikiName(), "en", p.getVirtualWikiName());
 		mockRequest = this.getMockHttpServletRequest("/");
 		p = new WikiPageInfo(mockRequest);
-		assertEquals(p.getVirtualWikiName(), WikiBase.DEFAULT_VWIKI, p.getVirtualWikiName());
+		assertEquals(p.getVirtualWikiName(), Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT), p.getVirtualWikiName());
 	}
 
 	/**

@@ -96,13 +96,13 @@ tablerow           = "|-" [ ]* ({tableattribute})* {newline}
 tablecaption       = "|+" | "|+" ({tableattribute})+ "|" [^\|]
 
 /* wiki links */
-wikilink           = "[[" [^\]\n]+ "]]" [a-z]*
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
 htmllinkwiki       = "[" ({protocol}) ([^\]\n]+) "]"
 htmllinkraw        = ({protocol}) ([^ <'\n\t]+)
 htmllink           = ({htmllinkwiki}) | ({htmllinkraw})
-/* FIXME - hard-coding of image namespace */
-imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\]\[]* ({wikilink} | {htmllinkwiki}) [^\n\]\[]*)+ "]]"
+wikilinkcontent    = [^\n\]] | "]" [^\n\]] | {htmllink}
+wikilink           = "[[" ({wikilinkcontent})+ "]]" [a-z]*
+nestedwikilink     = "[[" ({wikilinkcontent})+ "|" ({wikilinkcontent} | {wikilink})+ "]]"
 
 /* references */
 reference          = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\/\n]+[ ]*)? ([ ]*>) ~(<[ ]*\/[ ]*ref[ ]*>)
@@ -111,7 +111,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* paragraphs */
 /* TODO: this pattern does not match text such as "< is a less than sign" */
-startparagraph     = ({emptyline})? ({emptyline})? ([^< \n])|{inlinetagopen}|{imagelinkcaption}|{wikilink}|{htmllink}|{bold}|{bolditalic}|{italic}|{entity}|{nowiki}
+startparagraph     = ({emptyline})? ({emptyline})? ([^< \n])|{inlinetagopen}|{wikilink}|{nestedwikilink}|{htmllink}|{bold}|{bolditalic}|{italic}|{entity}|{nowiki}
 paragraphempty     = ({emptyline}) ({emptyline})+
 endparagraph1      = ({newline}){1,2} ({hr}|{wikiheading}|{listitem}|{wikiprestart}|{tablestart})
 endparagraph2      = (({newline})([ \t]*)){2}
@@ -222,7 +222,7 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 /* ----- tables ----- */
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>^{tablestart} {
+<YYINITIAL, TABLE, PARAGRAPH>^{tablestart} {
     if (logger.isFinerEnabled()) logger.finer("tablestart: " + yytext() + " (" + yystate() + ")");
     if (this.peekTag().getTagType().equals("p")) {
         popTag("p");
@@ -383,9 +383,7 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     // roll back any matches to allow re-parsing
     yypushback(raw.length());
     endState();
-    // pop list tags currently on the stack
-    int depth = this.currentListDepth();
-    this.popListTags(depth);
+    this.popAllListTags();
     return "";
 }
 
@@ -402,14 +400,14 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 /* ----- wiki links ----- */
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{imagelinkcaption} {
-    if (logger.isFinerEnabled()) logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
-    return this.parse(TAG_TYPE_WIKI_LINK, yytext());
-}
-
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{wikilink} {
     if (logger.isFinerEnabled()) logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
     return this.parse(TAG_TYPE_WIKI_LINK, yytext());
+}
+
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{nestedwikilink} {
+    if (logger.isFinerEnabled()) logger.finer("nestedwikilink: " + yytext() + " (" + yystate() + ")");
+    return this.parse(TAG_TYPE_WIKI_LINK, yytext(), "nested");
 }
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{htmllinkraw} {
@@ -424,15 +422,15 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 /* ----- bold / italic ----- */
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{bold} {
+<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{bold} {
     return this.parse(TAG_TYPE_WIKI_BOLD_ITALIC, yytext(), "b");
 }
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{bolditalic} {
+<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{bolditalic} {
     return this.parse(TAG_TYPE_WIKI_BOLD_ITALIC, yytext(), (String)null);
 }
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{italic} {
+<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{italic} {
     return this.parse(TAG_TYPE_WIKI_BOLD_ITALIC, yytext(), "i");
 }
 
@@ -447,6 +445,11 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 }
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{references} {
+    logger.finer("references: " + yytext() + " (" + yystate() + ")");
+    if (this.peekTag().getTagType().equals("p")) {
+        // if a paragraph is already opened, close it
+        this.popTag("p");
+    }
     return this.parse(TAG_TYPE_WIKI_REFERENCES, yytext());
 }
 
@@ -506,13 +509,13 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     return "";
 }
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmltagnocontent} {
+<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{htmltagnocontent} {
     if (logger.isFinerEnabled()) logger.finer("htmltagnocontent: " + yytext() + " (" + yystate() + ")");
     HtmlTagItem tagItem = JFlexParserUtil.sanitizeHtmlTag(yytext());
     return ((tagItem == null) ? "" : tagItem.getHtml());
 }
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmltagopen} {
+<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{htmltagopen} {
     if (logger.isFinerEnabled()) logger.finer("htmltagopen: " + yytext() + " (" + yystate() + ")");
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
@@ -521,7 +524,7 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     return "";
 }
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmltagclose} {
+<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{htmltagclose} {
     if (logger.isFinerEnabled()) logger.finer("htmltagclose: " + yytext() + " (" + yystate() + ")");
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());

@@ -36,7 +36,7 @@ import org.jamwiki.utils.WikiLogger;
             result.append(' ').append(key);
             value = this.attributes.get(key);
             if (value != null) {
-                result.append('=').append(value);
+                result.append('=').append("\"").append(value.trim()).append("\"");
             }
         }
         result.append(closeString);
@@ -205,8 +205,7 @@ tagContent         = "<" ({whitespace})* ({htmlTag}) [^\n]* ">"
 tagClose           = "<" ({whitespace})* "/" ({whitespace})* ({htmlTag}) ({whitespace})* ">"
 tagCloseContent    = ({whitespace})* ">"
 tagCloseNoContent  = "/" ({whitespace})* ">"
-tagAttributeValueInQuotes = "\"" ~"\""
-tagAttributeValueInSingleQuotes = "'" ~"'"
+tagAttributeValueInQuotes = ("\"" ~"\"")|("'" ~"'")
 tagAttributeValueNoQuotes = [^ \t\f\"'>/]+
 /* <script> tags */
 tagScript          = "<" ({whitespace})* "script" [^\n]* ">"
@@ -544,19 +543,8 @@ tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespa
             // potential XSS attack, drop this attribute
             this.attributes.remove(this.currentAttributeKey);
         } else {
-            this.attributes.put(this.currentAttributeKey, yytext());
-        }
-        this.currentAttributeKey = null;
-        return "";
-    }
-    {tagAttributeValueInSingleQuotes} {
-        endState();
-        if (!allowJavascript() && yytext().indexOf("javascript") != -1) {
-            // potential XSS attack, drop this attribute
-            this.attributes.remove(this.currentAttributeKey);
-        } else {
-            // convert apostrophes to quotation marks
-            this.attributes.put(this.currentAttributeKey, "\"" + yytext().substring(1, yytext().length() - 1) + "\"");
+            // strip the quotation marks (they will be re-added later)
+            this.attributes.put(this.currentAttributeKey, yytext().substring(1, yytext().length() - 1));
         }
         this.currentAttributeKey = null;
         return "";
@@ -568,7 +556,7 @@ tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespa
             this.attributes.remove(this.currentAttributeKey);
         } else {
             // add quotes
-            this.attributes.put(this.currentAttributeKey, "\"" + yytext() + "\"");
+            this.attributes.put(this.currentAttributeKey, yytext());
         }
         this.currentAttributeKey = null;
         return "";

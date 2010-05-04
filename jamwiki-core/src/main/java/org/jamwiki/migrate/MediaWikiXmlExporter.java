@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
@@ -177,16 +178,16 @@ public class MediaWikiXmlExporter implements TopicExporter {
 	/**
 	 * Convert all namespaces names from JAMWiki to MediaWiki local representation.
 	 */
-	private String convertToMediawikiNamespaces(String virtualWiki, String text) {
+	private String convertToMediawikiNamespaces(String virtualWiki, String text) throws DataAccessException {
 		StringBuilder builder = new StringBuilder(text);
 		Namespace jamwikiNamespace;
 		String mediawikiNamespace, mediawikiPattern, jamwikiPattern;
 		int start = 0;
 		for (Integer key : MediaWikiConstants.MEDIAWIKI_NAMESPACE_MAP.keySet()) {
 			// use the JAMWiki namespace if one exists
-			jamwikiNamespace = MediaWikiConstants.NAMESPACE_CONVERSION_MAP.get(key);
+			jamwikiNamespace = WikiBase.getDataHandler().lookupNamespaceById(key);
 			mediawikiNamespace = MediaWikiConstants.MEDIAWIKI_NAMESPACE_MAP.get(key);
-			if (jamwikiNamespace == null) {
+			if (jamwikiNamespace == null || StringUtils.equals(jamwikiNamespace.getLabel(virtualWiki), mediawikiNamespace)) {
 				continue;
 			}
 			mediawikiPattern = "[[" + mediawikiNamespace + ":";

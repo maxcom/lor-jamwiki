@@ -28,7 +28,6 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
-import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
 import org.jamwiki.db.DatabaseUpgrades;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.LinkUtil;
@@ -155,7 +154,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private void handleUpgradeSuccess(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
 		WikiMessage wm = new WikiMessage("upgrade.caption.upgradecomplete");
 		try {
-			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(WikiBase.DEFAULT_VWIKI);
+			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT));
 			WikiLink wikiLink = new WikiLink();
 			wikiLink.setDestination(virtualWiki.getDefaultTopicName());
 			String htmlLink = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki.getName(), wikiLink, virtualWiki.getDefaultTopicName(), null, null, true);
@@ -170,9 +169,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 		// force logout to ensure current user will be re-validated.  this is
 		// necessary because the upgrade may have changed underlying data structures.
 		SecurityContextHolder.clearContext();
-		// force group permissions to reset
-		JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
-		JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
 	}
 
 	/**

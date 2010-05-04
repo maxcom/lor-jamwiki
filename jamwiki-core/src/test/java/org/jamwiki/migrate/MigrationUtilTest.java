@@ -20,7 +20,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import org.jamwiki.Environment;
+import org.jamwiki.JAMWikiUnitTest;
 import org.jamwiki.TestFileUtil;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
@@ -33,7 +33,7 @@ import org.junit.rules.TemporaryFolder;
 /**
  *
  */
-public class MigrationUtilTest {
+public class MigrationUtilTest extends JAMWikiUnitTest {
 
 	private static final String FILE_TEST_TWO_TOPICS_WITH_HISTORY = "mediawiki-export-two-topics-with-history.xml";
 	private static final String FILE_ONE_TOPIC_WITH_UNSORTED_HISTORY = "mediawiki-export-one-topic-with-unsorted-history.xml";
@@ -151,14 +151,16 @@ public class MigrationUtilTest {
 		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Talk:Test - [[Comments:Test]]") != -1));
 		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("User:Test - [[User:Test]]") != -1));
 		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("User talk:Test - [[User comments:Test]]") != -1));
-		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Wikipedia:Test - [[Wikipedia:Test]]") != -1));
-		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Wikipedia talk:Test - [[Wikipedia talk:Test]]") != -1));
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Wikipedia:Test - [[Project:Test]]") != -1));
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Wikipedia talk:Test - [[Project comments:Test]]") != -1));
 		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("File:Test - [[Image:Test]]") != -1));
 		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("File talk:Test - [[Image comments:Test]]") != -1));
 		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Template:Test - [[Template:Test]]") != -1));
 		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Template talk:Test - [[Template comments:Test]]") != -1));
 		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Category:Test - [[Category:Test]]") != -1));
 		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Category talk:Test - [[Category comments:Test]]") != -1));
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Custom:Test - [[Custom:Test]]") != -1));
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Custom talk:Test - [[Custom talk:Test]]") != -1));
 	}
 
 	/**

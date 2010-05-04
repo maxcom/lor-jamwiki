@@ -25,9 +25,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.utils.ImageUtil;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
@@ -47,6 +49,8 @@ public class ParserFunctionUtil {
 	private static final String PARSER_FUNCTION_LOCAL_URL = "localurl:";
 	private static final String PARSER_FUNCTION_LOWER_CASE = "lc:";
 	private static final String PARSER_FUNCTION_LOWER_CASE_FIRST = "lcfirst:";
+	private static final String PARSER_FUNCTION_NAMESPACE = "ns:";
+	private static final String PARSER_FUNCTION_NAMESPACE_ESCAPED = "nse:";
 	private static final String PARSER_FUNCTION_UPPER_CASE = "uc:";
 	private static final String PARSER_FUNCTION_UPPER_CASE_FIRST = "ucfirst:";
 	private static final String PARSER_FUNCTION_URL_ENCODE = "urlencode:";
@@ -63,6 +67,8 @@ public class ParserFunctionUtil {
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOCAL_URL);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOWER_CASE);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOWER_CASE_FIRST);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_NAMESPACE);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_NAMESPACE_ESCAPED);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_UPPER_CASE);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_UPPER_CASE_FIRST);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_URL_ENCODE);
@@ -121,6 +127,12 @@ public class ParserFunctionUtil {
 		if (parserFunction.equals(PARSER_FUNCTION_LOWER_CASE_FIRST)) {
 			return ParserFunctionUtil.parseLowerCaseFirst(parserInput, parserFunctionArgumentArray);
 		}
+		if (parserFunction.equals(PARSER_FUNCTION_NAMESPACE)) {
+			return ParserFunctionUtil.parseNamespace(parserInput, parserFunctionArgumentArray, false);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_NAMESPACE_ESCAPED)) {
+			return ParserFunctionUtil.parseNamespace(parserInput, parserFunctionArgumentArray, true);
+		}
 		if (parserFunction.equals(PARSER_FUNCTION_UPPER_CASE)) {
 			return ParserFunctionUtil.parseUpperCase(parserInput, parserFunctionArgumentArray);
 		}
@@ -138,8 +150,8 @@ public class ParserFunctionUtil {
 	 */
 	private static String parseFilePath(ParserInput parserInput, String[] parserFunctionArgumentArray) throws DataAccessException {
 		// pre-pend the image namespace to the file name
-		String filename = Namespace.FILE.getLabel(parserInput.getVirtualWiki()) + Namespace.SEPARATOR + parserFunctionArgumentArray[0];
-		String result = LinkUtil.buildImageFileUrl(parserInput.getContext(), parserInput.getVirtualWiki(), filename);
+		String filename = Namespace.namespace(Namespace.FILE_ID).getLabel(parserInput.getVirtualWiki()) + Namespace.SEPARATOR + parserFunctionArgumentArray[0];
+		String result = ImageUtil.buildImageFileUrl(parserInput.getContext(), parserInput.getVirtualWiki(), filename);
 		if (result == null) {
 			return "";
 		}
@@ -308,6 +320,24 @@ public class ParserFunctionUtil {
 	 */
 	private static String parseLowerCaseFirst(ParserInput parserInput, String[] parserFunctionArgumentArray) {
 		return StringUtils.uncapitalize(parserFunctionArgumentArray[0]);
+	}
+
+	/**
+	 * Parse the {{ns:}} and {{nse:}} parser functions.
+	 */
+	private static String parseNamespace(ParserInput parserInput, String[] parserFunctionArgumentArray, boolean escape) throws DataAccessException {
+		int namespaceId = NumberUtils.toInt(parserFunctionArgumentArray[0], -10);
+		Namespace namespace = null;
+		if (namespaceId != -10) {
+			namespace = WikiBase.getDataHandler().lookupNamespaceById(namespaceId);
+		} else {
+			namespace = WikiBase.getDataHandler().lookupNamespace(parserInput.getVirtualWiki(), Utilities.decodeAndEscapeTopicName(parserFunctionArgumentArray[0], true));
+		}
+		String result = ((namespace == null) ? "" : namespace.getLabel(parserInput.getVirtualWiki()));
+		if (StringUtils.isBlank(result)) {
+			return "";
+		}
+		return (escape) ? Utilities.encodeAndEscapeTopicName(result) : result;
 	}
 
 	/**

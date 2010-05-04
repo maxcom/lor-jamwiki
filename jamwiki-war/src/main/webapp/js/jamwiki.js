@@ -77,7 +77,7 @@ function escapeQuotesHTML(text) {
 // copied and adapted from phpBB
 function insertTags(tagOpen, tagClose, sampleText) {
 
-	var txtarea = document.form.contents;
+	var txtarea = document.editForm.contents;
 	// IE
 	if(document.selection  && !is_gecko) {
 		var theSelection = document.selection.createRange().text;

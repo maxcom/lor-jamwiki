@@ -21,7 +21,7 @@ package org.jamwiki;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class WikiVersionTest {
+public class WikiVersionTest extends JAMWikiUnitTest {
 
 	/**
 	 *

@@ -21,7 +21,7 @@ package org.jamwiki;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class WikiMessageTest {
+public class WikiMessageTest extends JAMWikiUnitTest {
 
 	/**
 	 *

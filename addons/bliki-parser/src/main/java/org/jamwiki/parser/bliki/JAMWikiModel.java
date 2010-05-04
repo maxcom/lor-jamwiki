@@ -276,19 +276,19 @@ public class JAMWikiModel extends AbstractWikiModel {
 	@Override
 	public String getCategoryNamespace() {
 		// FIXME - this does not return the virtual wiki specific namespace
-		return Namespace.CATEGORY.getDefaultLabel();
+		return Namespace.namespace(Namespace.CATEGORY_ID).getDefaultLabel();
 	}
 
 	@Override
 	public String getImageNamespace() {
 		// FIXME - this does not return the virtual wiki specific namespace
-		return Namespace.FILE.getDefaultLabel();
+		return Namespace.namespace(Namespace.FILE_ID).getDefaultLabel();
 	}
 
 	@Override
 	public String getTemplateNamespace() {
 		// FIXME - this does not return the virtual wiki specific namespace
-		return Namespace.TEMPLATE.getDefaultLabel();
+		return Namespace.namespace(Namespace.TEMPLATE_ID).getDefaultLabel();
 	}
 
 	public Set<String> getLinks() {
@@ -307,7 +307,6 @@ public class JAMWikiModel extends AbstractWikiModel {
 			TagNode aTagNode = new TagNode("a");
 			aTagNode.addAttribute("href", hrefLink, true);
 			aTagNode.addAttribute("class", "interwiki", false);
-			aTagNode.addAttribute("rel", "nofollow", false);
 
 			pushNode(aTagNode);
 			WikipediaParser.parseRecursive(topicDescription.trim(), this, false, true);

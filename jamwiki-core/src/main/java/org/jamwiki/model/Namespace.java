@@ -17,14 +17,13 @@
 package org.jamwiki.model;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
-import org.jamwiki.migrate.MediaWikiConstants;
+import org.jamwiki.utils.WikiLogger;
 
 /**
  * Namespaces allow the organization of wiki topics by dividing topics into
@@ -36,26 +35,45 @@ import org.jamwiki.migrate.MediaWikiConstants;
 public class Namespace implements Serializable {
 
 	public static final String SEPARATOR = ":";
+	// IDs must match Mediawiki - see http://www.mediawiki.org/wiki/Help:Namespaces
+	public static final int MEDIA_ID                = -2;
+	public static final int SPECIAL_ID              = -1;
+	public static final int MAIN_ID                 = 0;
+	public static final int COMMENTS_ID             = 1;
+	public static final int USER_ID                 = 2;
+	public static final int USER_COMMENTS_ID        = 3;
+	public static final int SITE_CUSTOM_ID          = 4;
+	public static final int SITE_CUSTOM_COMMENTS_ID = 5;
+	public static final int FILE_ID                 = 6;
+	public static final int FILE_COMMENTS_ID        = 7;
+	public static final int JAMWIKI_ID              = 8;
+	public static final int JAMWIKI_COMMENTS_ID     = 9;
+	public static final int TEMPLATE_ID             = 10;
+	public static final int TEMPLATE_COMMENTS_ID    = 11;
+	public static final int HELP_ID                 = 12;
+	public static final int HELP_COMMENTS_ID        = 13;
+	public static final int CATEGORY_ID             = 14;
+	public static final int CATEGORY_COMMENTS_ID    = 15;
 	// default namespaces, used during setup.  additional namespaces may be added after setup.
 	// namespace IDs should match Mediawiki to maximize compatibility.
-	public static final Namespace MEDIA                = new Namespace(MediaWikiConstants.MEDIAWIKI_MEDIA_NAMESPACE_ID, "Media", null);
-	public static final Namespace SPECIAL              = new Namespace(MediaWikiConstants.MEDIAWIKI_SPECIAL_NAMESPACE_ID, "Special", null);
-	public static final Namespace MAIN                 = new Namespace(MediaWikiConstants.MEDIAWIKI_MAIN_NAMESPACE_ID, "", null);
-	public static final Namespace COMMENTS             = new Namespace(MediaWikiConstants.MEDIAWIKI_TALK_NAMESPACE_ID, "Comments", Namespace.MAIN);
-	public static final Namespace USER                 = new Namespace(MediaWikiConstants.MEDIAWIKI_USER_NAMESPACE_ID, "User", null);
-	public static final Namespace USER_COMMENTS        = new Namespace(MediaWikiConstants.MEDIAWIKI_USER_TALK_NAMESPACE_ID, "User comments", Namespace.USER);
-	public static final Namespace SITE_CUSTOM          = new Namespace(MediaWikiConstants.MEDIAWIKI_SITE_CUSTOM_NAMESPACE_ID, "Project", null);
-	public static final Namespace SITE_CUSTOM_COMMENTS = new Namespace(MediaWikiConstants.MEDIAWIKI_SITE_CUSTOM_TALK_NAMESPACE_ID, "Project comments", Namespace.SITE_CUSTOM);
-	public static final Namespace FILE                 = new Namespace(MediaWikiConstants.MEDIAWIKI_FILE_NAMESPACE_ID, "Image", null);
-	public static final Namespace FILE_COMMENTS        = new Namespace(MediaWikiConstants.MEDIAWIKI_FILE_TALK_NAMESPACE_ID, "Image comments", Namespace.FILE);
-	public static final Namespace JAMWIKI              = new Namespace(MediaWikiConstants.MEDIAWIKI_MEDIAWIKI_NAMESPACE_ID, "JAMWiki", null);
-	public static final Namespace JAMWIKI_COMMENTS     = new Namespace(MediaWikiConstants.MEDIAWIKI_MEDIAWIKI_TALK_NAMESPACE_ID, "JAMWiki comments", Namespace.JAMWIKI);
-	public static final Namespace TEMPLATE             = new Namespace(MediaWikiConstants.MEDIAWIKI_TEMPLATE_NAMESPACE_ID, "Template", null);
-	public static final Namespace TEMPLATE_COMMENTS    = new Namespace(MediaWikiConstants.MEDIAWIKI_TEMPLATE_TALK_NAMESPACE_ID, "Template comments", Namespace.TEMPLATE);
-	public static final Namespace HELP                 = new Namespace(MediaWikiConstants.MEDIAWIKI_HELP_NAMESPACE_ID, "Help", null);
-	public static final Namespace HELP_COMMENTS        = new Namespace(MediaWikiConstants.MEDIAWIKI_HELP_TALK_NAMESPACE_ID, "Help comments", Namespace.HELP);
-	public static final Namespace CATEGORY             = new Namespace(MediaWikiConstants.MEDIAWIKI_CATEGORY_NAMESPACE_ID, "Category", null);
-	public static final Namespace CATEGORY_COMMENTS    = new Namespace(MediaWikiConstants.MEDIAWIKI_CATEGORY_TALK_NAMESPACE_ID, "Category comments", Namespace.CATEGORY);
+	private static final Namespace MEDIA                = new Namespace(MEDIA_ID, "Media", null);
+	private static final Namespace SPECIAL              = new Namespace(SPECIAL_ID, "Special", null);
+	private static final Namespace MAIN                 = new Namespace(MAIN_ID, "", null);
+	private static final Namespace COMMENTS             = new Namespace(COMMENTS_ID, "Comments", Namespace.MAIN);
+	private static final Namespace USER                 = new Namespace(USER_ID, "User", null);
+	private static final Namespace USER_COMMENTS        = new Namespace(USER_COMMENTS_ID, "User comments", Namespace.USER);
+	private static final Namespace SITE_CUSTOM          = new Namespace(SITE_CUSTOM_ID, "Project", null);
+	private static final Namespace SITE_CUSTOM_COMMENTS = new Namespace(SITE_CUSTOM_COMMENTS_ID, "Project comments", Namespace.SITE_CUSTOM);
+	private static final Namespace FILE                 = new Namespace(FILE_ID, "Image", null);
+	private static final Namespace FILE_COMMENTS        = new Namespace(FILE_COMMENTS_ID, "Image comments", Namespace.FILE);
+	private static final Namespace JAMWIKI              = new Namespace(JAMWIKI_ID, "JAMWiki", null);
+	private static final Namespace JAMWIKI_COMMENTS     = new Namespace(JAMWIKI_COMMENTS_ID, "JAMWiki comments", Namespace.JAMWIKI);
+	private static final Namespace TEMPLATE             = new Namespace(TEMPLATE_ID, "Template", null);
+	private static final Namespace TEMPLATE_COMMENTS    = new Namespace(TEMPLATE_COMMENTS_ID, "Template comments", Namespace.TEMPLATE);
+	private static final Namespace HELP                 = new Namespace(HELP_ID, "Help", null);
+	private static final Namespace HELP_COMMENTS        = new Namespace(HELP_COMMENTS_ID, "Help comments", Namespace.HELP);
+	private static final Namespace CATEGORY             = new Namespace(CATEGORY_ID, "Category", null);
+	private static final Namespace CATEGORY_COMMENTS    = new Namespace(CATEGORY_COMMENTS_ID, "Category comments", Namespace.CATEGORY);
 	public static Map<Integer, Namespace> DEFAULT_NAMESPACES = new LinkedHashMap<Integer, Namespace>();
 	private Integer id;
 	private final String label;
@@ -82,16 +100,14 @@ public class Namespace implements Serializable {
 		DEFAULT_NAMESPACES.put(Namespace.CATEGORY.getId(), Namespace.CATEGORY);
 		DEFAULT_NAMESPACES.put(Namespace.CATEGORY_COMMENTS.getId(), Namespace.CATEGORY_COMMENTS);
 	}
+	private static final WikiLogger logger = WikiLogger.getLogger(Namespace.class.getName());
 
 	/**
-	 * Create a namespace and add it to the global list of namespaces.
+	 * Create a namespace.
 	 */
 	public Namespace(Integer id, String label) {
 		this.id = id;
 		this.label = label;
-		if (id != null && DEFAULT_NAMESPACES.get(id) != null) {
-			DEFAULT_NAMESPACES.put(id, this);
-		}
 	}
 
 	/**
@@ -193,9 +209,27 @@ public class Namespace implements Serializable {
 	}
 
 	/**
+	 * Utility method for retrieving a namespace given the ID.  Note that this method
+	 * will suppress any database exceptions, so if the caller must know if the
+	 * retrieval failed then DataHandler.lookupNamespaceById() should be used instead.
+	 *
+	 * @param namespaceId The ID of the namespace being retrieved.
+	 * @return The Namespace object that matches the ID, or <code>null</code> if no
+	 *  match is found or if an error is returned.
+	 */
+	public static Namespace namespace(int namespaceId) {
+		try {
+			return WikiBase.getDataHandler().lookupNamespaceById(namespaceId);
+		} catch (DataAccessException e) {
+			logger.severe("Failure while retrieving namespace for ID: " + namespaceId, e);
+		}
+		return null;
+	}
+
+	/**
 	 * Standard equals method.  Two namespaces are equal if they have the same ID.
 	 */
 	public boolean equals(Namespace namespace) {
-		return (namespace != null && this.id.equals(namespace.getId()));
+		return (namespace != null && this.label.equals(namespace.getDefaultLabel()));
 	}
 }

@@ -18,13 +18,14 @@
  */
 package org.jamwiki.utils;
 
+import org.jamwiki.JAMWikiUnitTest;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
  *
  */
-public class WikiCacheTest {
+public class WikiCacheTest extends JAMWikiUnitTest {
 
 	/**
 	 *

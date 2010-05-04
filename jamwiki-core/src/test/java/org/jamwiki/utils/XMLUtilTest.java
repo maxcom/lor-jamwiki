@@ -20,13 +20,14 @@ package org.jamwiki.utils;
 
 import java.io.File;
 import java.sql.Timestamp;
+import org.jamwiki.JAMWikiUnitTest;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
  *
  */
-public class XMLUtilTest {
+public class XMLUtilTest extends JAMWikiUnitTest {
 
 	/**
 	 *

@@ -29,6 +29,7 @@ import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
@@ -112,6 +113,7 @@ public class MagicWordUtil {
 	private static final String MAGIC_REVISION_MONTH = "REVISIONMONTH";
 	private static final String MAGIC_REVISION_YEAR = "REVISIONYEAR";
 	private static final String MAGIC_REVISION_TIMESTAMP = "REVISIONTIMESTAMP";
+	private static final String MAGIC_REVISION_USER = "REVISIONUSER";
 	private static final String MAGIC_SITE_NAME = "SITENAME";
 	private static final String MAGIC_SERVER = "SERVER";
 	private static final String MAGIC_SCRIPT_PATH = "SCRIPTPATH";
@@ -189,6 +191,7 @@ public class MagicWordUtil {
 		MAGIC_WORDS.add(MAGIC_REVISION_MONTH);
 		MAGIC_WORDS.add(MAGIC_REVISION_YEAR);
 		MAGIC_WORDS.add(MAGIC_REVISION_TIMESTAMP);
+		MAGIC_WORDS.add(MAGIC_REVISION_USER);
 		MAGIC_WORDS.add(MAGIC_SITE_NAME);
 		MAGIC_WORDS.add(MAGIC_SERVER);
 		MAGIC_WORDS.add(MAGIC_SCRIPT_PATH);
@@ -317,18 +320,20 @@ public class MagicWordUtil {
 		if (name.equals(MAGIC_CURRENT_VERSION)) {
 			return WikiVersion.CURRENT_WIKI_VERSION;
 		}
-		/*
 		if (name.equals(MAGIC_NUMBER_ARTICLES)) {
+			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki(), Namespace.MAIN_ID);
+			return numFormatter.format(results);
 		}
 		if (name.equals(MAGIC_NUMBER_ARTICLES_R)) {
+			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki(), Namespace.MAIN_ID);
+			return Integer.toString(results);
 		}
-		*/
 		if (name.equals(MAGIC_NUMBER_PAGES)) {
-			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki());
+			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki(), null);
 			return numFormatter.format(results);
 		}
 		if (name.equals(MAGIC_NUMBER_PAGES_R)) {
-			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki());
+			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki(), null);
 			return Integer.toString(results);
 		}
 		if (name.equals(MAGIC_NUMBER_FILES)) {
@@ -483,12 +488,19 @@ public class MagicWordUtil {
 			formatter.applyPattern("yyyyMMddHHmmss");
 			return formatter.format(revision);
 		}
-		/*
+		if (name.equals(MAGIC_REVISION_USER)) {
+			if (topicVersion == null) {
+				return "";
+			}
+			WikiUser wikiUser = (topicVersion.getAuthorId() != null) ? WikiBase.getDataHandler().lookupWikiUser(topicVersion.getAuthorId()) : null;
+			return (wikiUser != null) ? wikiUser.getUsername() : topicVersion.getAuthorDisplay();
+		}
 		if (name.equals(MAGIC_REVISION_ID)) {
+			return (topicVersion == null) ? "" : Integer.toString(topicVersion.getTopicVersionId());
 		}
 		if (name.equals(MAGIC_SITE_NAME)) {
+			return Environment.getValue(Environment.PROP_SITE_NAME);
 		}
-		*/
 		if (name.equals(MAGIC_SERVER)) {
 			return Environment.getValue(Environment.PROP_SERVER_URL);
 		}

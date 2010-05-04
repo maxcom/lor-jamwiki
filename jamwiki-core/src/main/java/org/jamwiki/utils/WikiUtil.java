@@ -22,7 +22,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -108,7 +107,7 @@ public class WikiUtil {
 	 *  instantiated.
 	 */
 	public static DataHandler dataHandlerInstance() throws IOException {
-		if (Environment.getValue(Environment.PROP_DB_TYPE) == null) {
+		if (StringUtils.isBlank(Environment.getValue(Environment.PROP_DB_TYPE))) {
 			// this is a problem, but it should never occur
 			logger.warning("WikiUtil.dataHandlerInstance called without a valid PROP_DB_TYPE value");
 		}
@@ -198,7 +197,7 @@ public class WikiUtil {
 	 */
 	public static String findDefaultVirtualWikiUrl(String virtualWikiName) {
 		if (StringUtils.isBlank(virtualWikiName)) {
-			virtualWikiName = WikiBase.DEFAULT_VWIKI;
+			virtualWikiName = Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT);
 		}
 		String target = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
 		try {
@@ -261,16 +260,16 @@ public class WikiUtil {
 	 */
 	public static TopicType findTopicTypeForNamespace(Namespace namespace) {
 		if (namespace != null) {
-			if (namespace.equals(Namespace.CATEGORY)) {
+			if (namespace.getId().equals(Namespace.CATEGORY_ID)) {
 				return TopicType.CATEGORY;
 			}
-			if (namespace.equals(Namespace.TEMPLATE)) {
+			if (namespace.getId().equals(Namespace.TEMPLATE_ID)) {
 				return TopicType.TEMPLATE;
 			}
-			if (namespace.equals(Namespace.JAMWIKI)) {
+			if (namespace.getId().equals(Namespace.JAMWIKI_ID)) {
 				return TopicType.SYSTEM_FILE;
 			}
-			if (namespace.equals(Namespace.FILE)) {
+			if (namespace.getId().equals(Namespace.FILE_ID)) {
 				// FIXME - handle TYPE_FILE
 				return TopicType.IMAGE;
 			}
@@ -285,7 +284,7 @@ public class WikiUtil {
 	 */
 	public static String getBaseUrl() throws DataAccessException {
 		String url = Environment.getValue(Environment.PROP_SERVER_URL);
-		url += LinkUtil.buildTopicUrl(WEBAPP_CONTEXT_PATH, WikiBase.DEFAULT_VWIKI, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC), true);
+		url += LinkUtil.buildTopicUrl(WEBAPP_CONTEXT_PATH, Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT), Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC), true);
 		return url;
 	}
 
@@ -459,7 +458,7 @@ public class WikiUtil {
 	 */
 	public static boolean isCommentsPage(String virtualWiki, String topicName) {
 		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, topicName);
-		if (wikiLink.getNamespace().equals(Namespace.SPECIAL)) {
+		if (wikiLink.getNamespace().getId().equals(Namespace.SPECIAL_ID)) {
 			return false;
 		}
 		try {
@@ -495,54 +494,6 @@ public class WikiUtil {
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 		WikiVersion currentVersion = new WikiVersion(WikiVersion.CURRENT_WIKI_VERSION);
 		return oldVersion.before(currentVersion);
-	}
-
-	/**
-	 * Utility method for reading special topic values from files and returning
-	 * the file contents.
-	 *
-	 * @param locale The locale for the user viewing the special page.
-	 * @param pageName The name of the special page being retrieved.
-	 */
-	public static String readSpecialPage(Locale locale, String pageName) throws IOException {
-		String contents = null;
-		String filename = null;
-		String language = null;
-		String country = null;
-		if (locale != null) {
-			language = locale.getLanguage();
-			country = locale.getCountry();
-		}
-		String subdirectory = "";
-		if (!StringUtils.isBlank(language) && !StringUtils.isBlank(country)) {
-			try {
-				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language + "_" + country).getPath();
-				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
-				contents = Utilities.readFile(filename);
-			} catch (IOException e) {
-				logger.info("File " + filename + " does not exist");
-			}
-		}
-		if (contents == null && !StringUtils.isBlank(language)) {
-			try {
-				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language).getPath();
-				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
-				contents = Utilities.readFile(filename);
-			} catch (IOException e) {
-				logger.info("File " + filename + " does not exist");
-			}
-		}
-		if (contents == null) {
-			try {
-				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR).getPath();
-				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
-				contents = Utilities.readFile(filename);
-			} catch (IOException e) {
-				logger.warning("File " + filename + " could not be read", e);
-				throw e;
-			}
-		}
-		return contents;
 	}
 
 	/**
@@ -741,7 +692,7 @@ public class WikiUtil {
 		if (StringUtils.startsWith(article, "/")) {
 			throw new WikiException(new WikiMessage("common.exception.name", name));
 		}
-		if (wikiLink.getNamespace().equals(Namespace.SPECIAL)) {
+		if (wikiLink.getNamespace().getId().equals(Namespace.SPECIAL_ID)) {
 			throw new WikiException(new WikiMessage("common.exception.name", name));
 		}
 		Matcher m = WikiUtil.INVALID_TOPIC_NAME_PATTERN.matcher(name);
@@ -783,6 +734,23 @@ public class WikiUtil {
 		Matcher m = WikiUtil.VALID_USER_LOGIN_PATTERN.matcher(name);
 		if (!m.matches()) {
 			throw new WikiException(new WikiMessage("common.exception.name", name));
+		}
+	}
+
+	/**
+	 * Utility method for determining if a virtual wiki name is valid for use on the Wiki,
+	 * meaning that it is not empty and does not contain any invalid characters.
+	 *
+	 * @param virtualWikiName The virtual wiki name to validate.
+	 * @throws WikiException Thrown if the user name is invalid.
+	 */
+	public static void validateVirtualWikiName(String virtualWikiName) throws WikiException {
+		if (StringUtils.isBlank(virtualWikiName)) {
+			throw new WikiException(new WikiMessage("common.exception.notopic"));
+		}
+		Matcher m = WikiUtil.INVALID_TOPIC_NAME_PATTERN.matcher(virtualWikiName);
+		if (m.find()) {
+			throw new WikiException(new WikiMessage("common.exception.name", virtualWikiName));
 		}
 	}
 }

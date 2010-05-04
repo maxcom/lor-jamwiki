@@ -23,9 +23,9 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.RoleImpl;
-import org.jamwiki.authentication.WikiUserDetails;
+import org.jamwiki.authentication.WikiUserDetailsImpl;
 import org.jamwiki.model.Namespace;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
@@ -146,7 +146,7 @@ public class EditServlet extends JAMWikiServlet {
 		pageInfo.setPageTitle(new WikiMessage("edit.title", topicName));
 		pageInfo.setTopicName(topicName);
 		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, topicName);
-		if (wikiLink.getNamespace().equals(Namespace.CATEGORY)) {
+		if (wikiLink.getNamespace().getId().equals(Namespace.CATEGORY_ID)) {
 			ServletUtil.loadCategoryContent(next, virtualWiki, topicName);
 		}
 		if (request.getParameter("editComment") != null) {
@@ -186,15 +186,15 @@ public class EditServlet extends JAMWikiServlet {
 	private ModelAndView loginRequired(HttpServletRequest request, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
 		String virtualWiki = pageInfo.getVirtualWikiName();
-		WikiUserDetails user = ServletUtil.currentUserDetails();
+		WikiUserDetailsImpl user = ServletUtil.currentUserDetails();
 		if (ServletUtil.isEditable(virtualWiki, topicName, user)) {
 			return null;
 		}
-		if (!user.hasRole(RoleImpl.ROLE_EDIT_EXISTING)) {
+		if (!user.hasRole(Role.ROLE_EDIT_EXISTING)) {
 			WikiMessage messageObject = new WikiMessage("login.message.edit");
 			return ServletUtil.viewLogin(request, pageInfo, WikiUtil.getTopicFromURI(request), messageObject);
 		}
-		if (!user.hasRole(RoleImpl.ROLE_EDIT_NEW) && WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null) == null) {
+		if (!user.hasRole(Role.ROLE_EDIT_NEW) && WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null) == null) {
 			WikiMessage messageObject = new WikiMessage("login.message.editnew");
 			return ServletUtil.viewLogin(request, pageInfo, WikiUtil.getTopicFromURI(request), messageObject);
 		}
@@ -319,8 +319,8 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks());
 		// update watchlist
-		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
-		if (!userDetails.hasRole(RoleImpl.ROLE_ANONYMOUS)) {
+		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
+		if (!userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 			Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
 			boolean watchTopic = (request.getParameter("watchTopic") != null);
 			if (watchlist.containsTopic(topicName) != watchTopic) {

@@ -18,13 +18,14 @@
  */
 package org.jamwiki.utils;
 
+import org.jamwiki.JAMWikiUnitTest;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
  *
  */
-public class WikiLoggerTest {
+public class WikiLoggerTest extends JAMWikiUnitTest {
 
 	/**
 	 *

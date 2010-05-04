@@ -35,7 +35,7 @@ public class InterWikiHandler {
 	/** Properties bundle to store mappings */
 	private static Properties mapping;
 	/** Name of resource to access the persisted bundle */
-	private static final String RESOURCE_NAME = "/interwiki.properties";
+	private static final String RESOURCE_NAME = "interwiki.properties";
 
 	static {
 		InterWikiHandler.mapping = Environment.loadProperties(RESOURCE_NAME);

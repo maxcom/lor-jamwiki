@@ -21,7 +21,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
-import org.jamwiki.WikiBase;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
@@ -56,7 +55,7 @@ public class JFlexParser extends AbstractParser {
 	public static final int MODE_POSTPROCESS = 7;
 
 	/** Pattern to determine if the topic is a redirect. */
-	private static final Pattern REDIRECT_PATTERN = Pattern.compile("#REDIRECT[ ]+\\[\\[([^\\n\\r\\]]+)\\]\\]", Pattern.CASE_INSENSITIVE);
+	private static final Pattern REDIRECT_PATTERN = Pattern.compile("#REDIRECT[ ]*\\[\\[([^\\n\\r\\]]+)\\]\\]", Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * The constructor creates a parser instance, initialized with the
@@ -294,10 +293,10 @@ public class JFlexParser extends AbstractParser {
 		// pre-process the text to remove comments, categories, etc.
 		String preprocessed = JFlexParserUtil.parseFragment(parserInput, raw, JFlexParser.MODE_PREPROCESS);
 		String redirect = this.isRedirect(preprocessed);
-		String virtualWiki = this.parserInput.getVirtualWiki();
-		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(virtualWiki, "[[" + redirect + "]]");
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(this.parserInput, "[[" + redirect + "]]");
 		String style = "redirect";
 		try {
+			String virtualWiki = this.parserInput.getVirtualWiki();
 			// see if the redirect link starts with a virtual wiki
 			if (wikiLink.getVirtualWiki() != null) {
 				virtualWiki = wikiLink.getVirtualWiki().getName();

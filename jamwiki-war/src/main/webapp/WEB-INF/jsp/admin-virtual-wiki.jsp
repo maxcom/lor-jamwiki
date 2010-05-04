@@ -95,6 +95,12 @@
 		</c:if>
 		<input type="text" name="defaultTopicName" id="defaultTopicName" value="${virtualWikiName}" size="30" />
 	</span>
+	<div class="formhelp"><fmt:message key="admin.vwiki.help.defaulttopic" /></div>
+</div>
+<div class="row">
+	<label for="defaultVirtualWiki"><fmt:message key="admin.vwiki.caption.makedefault" /></label>
+	<span><jamwiki:checkbox name="defaultVirtualWiki" value="true" checked="${!empty selected && selected.defaultVirtualWiki}" id="defaultVirtualWiki" /></span>
+	<div class="formhelp"><fmt:message key="admin.vwiki.help.makedefault" /></div>
 </div>
 <c:set var="buttonLabel"><fmt:message key="common.add" /></c:set>
 <c:if test="${!empty selected}">

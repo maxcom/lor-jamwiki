@@ -18,7 +18,7 @@
 --%>
 <%@ page import="
         org.jamwiki.authentication.JAMWikiAuthenticationConstants,
-        org.jamwiki.WikiBase,
+        org.jamwiki.Environment,
         org.jamwiki.servlets.ServletUtil
     "
     errorPage="error.jsp"
@@ -27,8 +27,8 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<c:set var="defaultTopic"><%= ServletUtil.retrieveVirtualWiki(WikiBase.DEFAULT_VWIKI).getDefaultTopicName() %></c:set>
-<c:set var="defaultVirtualWiki"><%= WikiBase.DEFAULT_VWIKI %></c:set>
+<c:set var="defaultTopic"><%= ServletUtil.retrieveVirtualWiki(Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT)).getDefaultTopicName() %></c:set>
+<c:set var="defaultVirtualWiki"><%= Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT) %></c:set>
 <%
 String accessDeniedUri = (String)session.getAttribute(JAMWikiAuthenticationConstants.JAMWIKI_ACCESS_DENIED_REDIRECT_URI);
 if (accessDeniedUri != null) {

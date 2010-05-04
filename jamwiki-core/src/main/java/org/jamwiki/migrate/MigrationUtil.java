@@ -71,8 +71,6 @@ public class MigrationUtil {
 	 * @param authorDisplay The display value for the user that is performing the
 	 *  import.  This value is typically the user's IP address.
 	 * @param locale The locale for the user that is performing the import.
-	 * @param errors A list of errors that will be updating if errors are encountered
-	 *  during parsing.
 	 * @return A list of topic names that are successfully parsed and committed to
 	 *  the database.
 	 * @throws MigrationException Thrown if a parsing error or data update error is
@@ -87,7 +85,7 @@ public class MigrationUtil {
 			parsedTopics = importer.importFromFile(file, virtualWiki);
 		} catch (MigrationException e) {
 			if (e.getCause() instanceof WikiException) {
-				throw (MigrationException)(e.getCause());
+				throw (WikiException)(e.getCause());
 			}
 			throw e;
 		}

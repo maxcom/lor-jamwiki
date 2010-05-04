@@ -5,21 +5,28 @@ New Features:
 
   * Signficant updates to the syntax parser, including support for additional
     HTML tags and XHTML transitional validation of tag attributes.
+  * New Special:VirtualWiki page for administering virtual wikis and
+    namespaces, including the ability to configure translated / alternate
+    namespaces and to change the default virtual wiki from "en".
   * Support the #if: and the #ifeq parser functions.  Usage:
     "{{#if: test | true | false}}" and "{{#ifeq: 1 | 2 | true | false}}".
   * Basic support for the #expr: parser function.  Only basic operations are
     supported (+, -, /, *) and parentheses must be used to ensure that the
     order of operations is followed.
+  * Support added for the {{ns:}} and {{nse:}} parser functions.
   * Support Mediawiki's {{subst:}} syntax.  Usage: {{subst:template}}.
-  * New Special:VirtualWiki page for administering virtual wikis and
-    namespaces, including the ability to configure translated / alternate
-    namespaces.
+  * Support added for the __NOEDITSECTION__ behavior switch.
+  * Support added for the {{NUMBEROFARTICLES}}, {{REVISIONUSER}} and
+    {{REVISIONID}} magic words.
   * Add the ability for sysadmins to create user accounts (hanspeterklapf).
   * Topic add/update is now significantly faster due to query refactoring
     and changes so that the search index is not re-optimized after every
     add/update.
+  * Topic history retrieval speed improved by a factor of up to 100x for
+    large data sets by adding an additional database index.
   * Search engine optimizations.  Existing JAMWiki installs may want to
     rebuild their search index.
+  * Filter results by namespace added to Special:Allpages.
   * Update the CSS & HTML used for forms.  Requires StyleSheet topic update.
   * Support ehcache.xml configuration.  Based on code by Daniel Fisla (dfisla).
   * Automatically populate sample JDBC values based on database type on the
@@ -29,13 +36,23 @@ New Features:
     org.jamwiki.authentication.RoleImpl class.
   * Run the spam filter against edit comments as well as topic content to
     thwart spam attempts.
+  * Update image parsing to match the latest Mediawiki standards, including
+    support for "frameless", "link=", "alt=", "{width}x{height}" and the
+    "Media:" namespace.
+  * Allow parameters to be used when topics not in the template namespace are
+    are utilized as templates.  Example: "{{myTopic|arg1=test1|arg2=test2}}".
   * Remove ability to automatically upgrade from versions prior to 0.7.0.
+  * Move the database code into the jamwiki-core project.
+  * All unit tests now use HSQL as a test database, rather than the dummy
+    TestDataHandler.
+  * Delete the webtest module, reducing the source code size by 12MB.
   * Upgrade to Spring Framework 3.0.1.RELEASE.
   * Upgrade to Spring Security 3.0.2.RELEASE.
   * Upgrade to Lucene Search 3.0.1.
   * Upgrade to ehcache 1.7.0.
   * Upgrade to commons-pool 1.5.4.
   * Upgrade to JUnit 4.7.
+  * Upgrade to HSQLDB 1.8.0.10.
 
 Bugfixes:
 
@@ -49,10 +66,49 @@ Bugfixes:
     or namespace.  Thus if a wiki has a namespace of "Test" and an interwiki
     of "Test", the link "Test:Topic" will parse as an internal link rather than
     an interwiki link.
+  * Trim leading and trailing whitespace during parsing when a template is
+    included to fix breakage of wiki table syntax such as "!{{Hl2}}| Word".
+  * Named template parameters should also be allowed to be referenced by
+    index, for example "name={{{named}}}, index={{{1}}}".
+  * The {{SITENAME}} magic word was not fully implemented, and returned
+    "SITENAME" instead of the actual site name.
+  * Links containing templates or magic words of the form "[[{{PAGENAME}}]]"
+    should properly resolve the template/magic word.
+  * If a namespace is not case-sensitive (user, template, category) then the
+    associated comments namespace should not be case-sensitive either.
+  * Interwiki links should not be rel="nofollow".
+  * Links of the form "[[Help : Test]]" should link to the "Help:Test" page
+    but output "Help : Test" as the link text, as per Mediawiki.
+  * Fix parsing of nested links such as
+    "[[Topic|caption with http://example.com link]]".
+  * Wiki pre syntax (" pre <span>HTML</span") should allow HTML, although
+    HTML pre ("<pre>pre <span>HTML</span></pre>") should not.
+  * Return the resized image URL when images of the form
+    "[[Image:Example.jpg|200px]]" are used.
+  * Fix issues where image transparency was lost after resizing.
 
 Translation Updates:
 
   * Updated German translations (axelclk).
+
+
+0.8.4
+=====
+
+Bugfixes:
+
+  * Wiki tables placed after lists were being incorrectly indented.  Reported
+    by Rudi Wiesmayr.
+  * Fix incorrect parsing when inline tags (such as wiki bold) are left
+    unclosed before or after list tags.  Reported by Rudi Wiesmayr.
+  * Parsing of the <references /> tag produced an unclosed ordered list.
+    Reported by Rudi Wiesmayr and an anonymous user.
+  * Fix potential XSS attack with URLs of the form Special:Login?message=XSS.
+    Reported by frafu.
+  * Fix the manual upgrade steps for MS SQL in the UPGRADE.txt document.
+    Reported by Angel.
+  * Very large values for max upload file size could result in
+    NumberFormatException being thrown on the Special:Admin page.
 
 
 0.8.3
@@ -287,7 +343,7 @@ New Features:
   * Initial implementation of Mediawiki parser functions including
     anchorencode, filepath, fullurl, localurl, lc, lcfirst, uc, ucfirst and
     urlencode.
-  * Add support for the {{SITENAME}} and {{SERVER}} magic words.
+  * Add support for the {{SERVERNAME}} and {{SERVER}} magic words.
   * Allow nesting of templates ("{{template1|content={{template2}}}}").
   * Support categories on #REDIRECT pages to match Mediawiki.
   * Add "H2" as a database configuration option.

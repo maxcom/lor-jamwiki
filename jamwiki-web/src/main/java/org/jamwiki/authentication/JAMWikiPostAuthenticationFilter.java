@@ -109,7 +109,7 @@ public class JAMWikiPostAuthenticationFilter implements Filter {
 	private void handleRegisteredUser(Authentication auth) throws ServletException {
 		Object principal = auth.getPrincipal();
 		// Check if Authentication returns a known principal
-		if (principal instanceof WikiUserDetails) {
+		if (principal instanceof WikiUserDetailsImpl) {
 			// user has gone through the normal authentication path, no need to process further
 			return;
 		}

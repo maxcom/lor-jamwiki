@@ -33,10 +33,9 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
-import org.jamwiki.authentication.RoleImpl;
-import org.jamwiki.authentication.WikiUserDetails;
+import org.jamwiki.authentication.WikiUserDetailsImpl;
 import org.jamwiki.db.WikiDatabase;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.servlets.ServletUtil;
@@ -326,8 +325,8 @@ public class AdminServlet extends JAMWikiServlet {
 			if (StringUtils.isBlank(maxFileSizeString) || !StringUtils.isNumeric(maxFileSizeString)) {
 				errors.add(new WikiMessage("admin.message.nonnumeric", Environment.PROP_FILE_MAX_FILE_SIZE, maxFileSizeString));
 			} else {
-				int maxFileSizeInKB = Integer.parseInt(maxFileSizeString);
-				props.setProperty(Environment.PROP_FILE_MAX_FILE_SIZE, Integer.toString(maxFileSizeInKB * 1000));
+				long maxFileSizeInKB = Long.parseLong(maxFileSizeString);
+				props.setProperty(Environment.PROP_FILE_MAX_FILE_SIZE, Long.toString(maxFileSizeInKB * 1000));
 			}
 			setProperty(props, request, Environment.PROP_FILE_DIR_FULL_PATH);
 			setProperty(props, request, Environment.PROP_FILE_DIR_RELATIVE_PATH);
@@ -408,14 +407,12 @@ public class AdminServlet extends JAMWikiServlet {
 		}
 		Environment.saveProperties();
 		// re-initialize to reset database settings (if needed)
-		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
-		if (userDetails.hasRole(RoleImpl.ROLE_ANONYMOUS)) {
+		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
+		if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 		}
 		WikiUser user = ServletUtil.currentWikiUser();
 		WikiBase.reset(request.getLocale(), user, user.getUsername(), null);
-		JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
-		JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
 		return true;
 	}
 
@@ -507,7 +504,7 @@ public class AdminServlet extends JAMWikiServlet {
 		if (props == null) {
 			props = Environment.getInstance();
 		}
-		int maximumFileSize = Integer.valueOf(props.getProperty(Environment.PROP_FILE_MAX_FILE_SIZE))/1000;
+		long maximumFileSize = Long.valueOf(props.getProperty(Environment.PROP_FILE_MAX_FILE_SIZE))/1000;
 		next.addObject("maximumFileSize", maximumFileSize);
 		next.addObject("props", props);
 	}

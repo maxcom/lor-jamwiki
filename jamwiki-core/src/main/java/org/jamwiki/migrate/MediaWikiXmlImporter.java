@@ -96,7 +96,11 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 		} catch (IOException e) {
 			throw new MigrationException(e);
 		} catch (SAXException e) {
-			throw new MigrationException(e);
+			if (e.getCause() instanceof DataAccessException || e.getCause() instanceof WikiException) {
+				throw new MigrationException(e.getCause());
+			} else {
+				throw new MigrationException(e);
+			}
 		} finally {
 			if (fis != null) {
 				try {
@@ -111,14 +115,14 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 	 */
 	private String convertArticleNameFromWikipediaToJAMWiki(String fullName) {
 		String ret = fullName;
-		int pos = fullName.indexOf(':');
+		int pos = fullName.indexOf(Namespace.SEPARATOR);
 		if (pos > 0) {
 			String namespace = fullName.substring(0, pos);
 			String title = fullName.substring(pos+1);
 			String jamwikiNamespace = mediawikiNamespaceMap.get(namespace);
 			if (!StringUtils.isBlank(jamwikiNamespace)) {
 				// matching JAMWiki namespace found
-				ret = jamwikiNamespace + ":" + title;
+				ret = jamwikiNamespace + Namespace.SEPARATOR + title;
 			}
 		}
 		// remove any characters that are valid for Mediawiki but not JAMWiki
@@ -135,8 +139,11 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 		int start = 0;
 		for (String mediawikiNamespace : mediawikiNamespaceMap.keySet()) {
 			jamwikiNamespace = mediawikiNamespaceMap.get(mediawikiNamespace);
-			mediawikiPattern = "[[" + mediawikiNamespace + ":";
-			jamwikiPattern = "[[" + jamwikiNamespace + ":";
+			if (jamwikiNamespace == null || StringUtils.equals(jamwikiNamespace, mediawikiNamespace)) {
+				continue;
+			}
+			mediawikiPattern = "[[" + mediawikiNamespace + Namespace.SEPARATOR;
+			jamwikiPattern = "[[" + jamwikiNamespace + Namespace.SEPARATOR;
 			while ((start = builder.indexOf(mediawikiPattern, start + 1)) != -1) {
 				builder.replace(start, start + mediawikiPattern.length(), jamwikiPattern);
 			}
@@ -239,7 +246,7 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 	 * @param localName The local name (without prefix), or the empty string if Namespace processing
 	 *  is not being performed.
 	 * @param qName The qualified name (with prefix), or the empty string if qualified names are not available.
-	 * @param attributes The attributes attached to the element. If there are no attributes, it shall be an
+	 * @param attrs The attributes attached to the element. If there are no attributes, it shall be an
 	 *  empty Attributes object.
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
@@ -275,10 +282,14 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (StringUtils.equals(MediaWikiConstants.MEDIAWIKI_ELEMENT_NAMESPACE, qName)) {
 			int key = NumberUtils.toInt(this.currentAttributeMap.get("key"));
-			Namespace jamwikiNamespace = MediaWikiConstants.NAMESPACE_CONVERSION_MAP.get(key);
-			if (jamwikiNamespace != null) {
-				String mediawikiNamespace = currentElementBuffer.toString().trim();
-				mediawikiNamespaceMap.put(mediawikiNamespace, jamwikiNamespace.getLabel(this.virtualWiki));
+			try {
+				Namespace jamwikiNamespace = WikiBase.getDataHandler().lookupNamespaceById(key);
+				if (jamwikiNamespace != null) {
+					String mediawikiNamespace = currentElementBuffer.toString().trim();
+					mediawikiNamespaceMap.put(mediawikiNamespace, jamwikiNamespace.getLabel(this.virtualWiki));
+				}
+			} catch (DataAccessException e) {
+				throw new SAXException("Failure while processing namespace with ID: " + key, e);
 			}
 		} else if (MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC_NAME.equals(qName)) {
 			String topicName = currentElementBuffer.toString().trim();

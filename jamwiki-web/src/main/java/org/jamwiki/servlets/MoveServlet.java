@@ -22,9 +22,9 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.RoleImpl;
-import org.jamwiki.authentication.WikiUserDetails;
+import org.jamwiki.authentication.WikiUserDetailsImpl;
 import org.jamwiki.model.Namespace;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
@@ -48,8 +48,8 @@ public class MoveServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
-		if (!userDetails.hasRole(RoleImpl.ROLE_MOVE)) {
+		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
+		if (!userDetails.hasRole(Role.ROLE_MOVE)) {
 			WikiMessage messageObject = new WikiMessage("login.message.move");
 			return ServletUtil.viewLogin(request, pageInfo, WikiUtil.getTopicFromURI(request), messageObject);
 		}
@@ -108,25 +108,25 @@ public class MoveServlet extends JAMWikiServlet {
 		WikiLink destinationWikiLink = LinkUtil.parseWikiLink(virtualWiki, moveDestination);
 		if (fromWikiLink.getNamespace() != destinationWikiLink.getNamespace()) {
 			// do not allow moving into or out of image & category namespace
-			if (fromWikiLink.getNamespace().equals(Namespace.CATEGORY)
-					|| fromWikiLink.getNamespace().equals(Namespace.CATEGORY_COMMENTS)
-					|| destinationWikiLink.getNamespace().equals(Namespace.CATEGORY)
-					|| destinationWikiLink.getNamespace().equals(Namespace.CATEGORY_COMMENTS)
+			if (fromWikiLink.getNamespace().getId().equals(Namespace.CATEGORY_ID)
+					|| fromWikiLink.getNamespace().getId().equals(Namespace.CATEGORY_COMMENTS_ID)
+					|| destinationWikiLink.getNamespace().getId().equals(Namespace.CATEGORY_ID)
+					|| destinationWikiLink.getNamespace().getId().equals(Namespace.CATEGORY_COMMENTS_ID)
 				) {
 				next.addObject("messageObject", new WikiMessage("move.exception.namespacecategory"));
 				this.view(request, next, pageInfo);
 				return false;
-			} else if (fromWikiLink.getNamespace().equals(Namespace.FILE)
-					|| fromWikiLink.getNamespace().equals(Namespace.FILE_COMMENTS)
-					|| destinationWikiLink.getNamespace().equals(Namespace.FILE)
-					|| destinationWikiLink.getNamespace().equals(Namespace.FILE_COMMENTS)
+			} else if (fromWikiLink.getNamespace().getId().equals(Namespace.FILE_ID)
+					|| fromWikiLink.getNamespace().getId().equals(Namespace.FILE_COMMENTS_ID)
+					|| destinationWikiLink.getNamespace().getId().equals(Namespace.FILE_ID)
+					|| destinationWikiLink.getNamespace().getId().equals(Namespace.FILE_COMMENTS_ID)
 				) {
 				next.addObject("messageObject", new WikiMessage("move.exception.namespaceimage"));
 				this.view(request, next, pageInfo);
 				return false;
 			}
 		}
-		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		if (!ServletUtil.isMoveable(virtualWiki, moveFrom, userDetails)) {
 			this.view(request, next, pageInfo);
 			next.addObject("messageObject", new WikiMessage("move.exception.permission", moveFrom));

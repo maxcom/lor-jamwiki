@@ -174,7 +174,7 @@ class JFlexTagItem {
 	 * Evaluate the tag to determine whether it is the parser root tag
 	 * that indicates the bottom of the parser tag stack.
 	 */
-	private boolean isRootTag() {
+	protected boolean isRootTag() {
 		return this.tagType.equals(JFlexTagItem.ROOT_TAG);
 	}
 

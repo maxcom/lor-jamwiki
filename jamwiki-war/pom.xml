@@ -37,6 +37,38 @@
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>maven-jetty-plugin</artifactId>
 			</plugin>
+			<!--
+			Currently the sql.*.properties files and default topic files are in the
+			jamwiki-core.jar file.  To make it easy for sites to customize SQL (for bug
+			fixing and such) and to create new translations, unpack these files
+			from the JAR and place them into the WEB-INF/classes folder.
+			
+			NOTE: *.txt files currently won't unpack - a bug report has been filed with
+			the Maven team (http://jira.codehaus.org/browse/MDEP-258).
+			-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>unpack</id>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.jamwiki</groupId>
+									<artifactId>jamwiki-core</artifactId>
+									<type>jar</type>
+									<includes>**/sql.*.properties,pages/**</includes>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin> 
 		</plugins>
 	</build>
 </project>

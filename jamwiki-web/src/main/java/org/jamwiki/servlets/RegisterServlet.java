@@ -33,8 +33,8 @@ import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
-import org.jamwiki.authentication.RoleImpl;
-import org.jamwiki.authentication.WikiUserDetails;
+import org.jamwiki.authentication.WikiUserDetailsImpl;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
@@ -96,7 +96,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void login(HttpServletRequest request, String username, String password) {
-		WikiUserDetails userDetails = new WikiUserDetails(username, password, true, true, true, true, JAMWikiAuthenticationConfiguration.getDefaultGroupRoles());
+		WikiUserDetailsImpl userDetails = new WikiUserDetailsImpl(username, password, true, true, true, true, JAMWikiAuthenticationConfiguration.getDefaultGroupRoles());
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 		authentication.setDetails(new WebAuthenticationDetails(request));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -219,7 +219,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		// FIXME - i suspect initializing with a null login is bad
 		WikiUser user = new WikiUser();
-		if (!ServletUtil.currentUserDetails().hasRole(RoleImpl.ROLE_ANONYMOUS)) {
+		if (!ServletUtil.currentUserDetails().hasRole(Role.ROLE_ANONYMOUS)) {
 			user = ServletUtil.currentWikiUser();
 		}
 		this.loadDefaults(request, next, pageInfo, user);

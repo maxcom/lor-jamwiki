@@ -22,7 +22,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
-import org.jamwiki.WikiBase;
+import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.security.core.AuthenticationException;
@@ -57,7 +57,7 @@ public class JAMWikiAuthenticationFailureHandler extends SimpleUrlAuthentication
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws java.io.IOException, ServletException {
 		String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
 		if (StringUtils.isBlank(virtualWikiName)) {
-			virtualWikiName = WikiBase.DEFAULT_VWIKI;
+			virtualWikiName = Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT);
 		}
 		String targetUrl = "/" + virtualWikiName + this.getAuthenticationFailureUrl();
 		// set the original target in the request for later use

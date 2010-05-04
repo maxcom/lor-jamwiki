@@ -53,12 +53,17 @@ wikipreend         = ([^ ]) | ({newline})
 /* comments */
 htmlcomment        = "<!--" ~"-->"
 
+/* processing commands */
+noeditsection      = ({newline})? "__NOEDITSECTION__"
+
 /* wiki links */
-wikilink           = "[[" [^\]\n]+ "]]"
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
 htmllinkwiki       = "[" ({protocol}) ([^\]\n]+) "]"
-/* FIXME - hard-coding of image namespace */
-imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\]\[]* ({wikilink} | {htmllinkwiki}) [^\n\]\[]*)+ "]]"
+htmllinkraw        = ({protocol}) ([^ <'\n\t]+)
+htmllink           = ({htmllinkwiki}) | ({htmllinkraw})
+wikilinkcontent    = [^\n\]] | "]" [^\n\]] | {htmllink}
+wikilink           = "[[" ({wikilinkcontent})+ "]]" [a-z]*
+nestedwikilink     = "[[" ({wikilinkcontent})+ "|" ({wikilinkcontent} | {wikilink})+ "]]"
 
 /* templates */
 templatestart      = "{{"
@@ -196,16 +201,24 @@ wikisignature      = ([~]{3,5})
     return this.parse(TAG_TYPE_NO_INCLUDE, yytext());
 }
 
-/* ----- wiki links ----- */
+/* ----- processing commands ----- */
 
-<YYINITIAL>{imagelinkcaption} {
-    if (logger.isFinerEnabled()) logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
-    return this.parse(TAG_TYPE_WIKI_LINK, yytext());
+<YYINITIAL>{noeditsection} {
+    if (logger.isFinerEnabled()) logger.finer("noeditsection: " + yytext() + " (" + yystate() + ")");
+    this.parserInput.setAllowSectionEdit(false);
+    return "";
 }
+
+/* ----- wiki links ----- */
 
 <YYINITIAL>{wikilink} {
     if (logger.isFinerEnabled()) logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
     return this.parse(TAG_TYPE_WIKI_LINK, yytext());
+}
+
+<YYINITIAL>{nestedwikilink} {
+    if (logger.isFinerEnabled()) logger.finer("nestedwikilink: " + yytext() + " (" + yystate() + ")");
+    return this.parse(TAG_TYPE_WIKI_LINK, yytext(), "nested");
 }
 
 /* ----- signatures ----- */

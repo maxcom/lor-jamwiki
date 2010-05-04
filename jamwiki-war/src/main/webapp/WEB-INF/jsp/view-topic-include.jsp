@@ -33,8 +33,8 @@
 				<a href="<c:out value="${fileVersion.url}" />"><fmt:formatDate value="${fileVersion.uploadDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></a>
 				&#160;(<fmt:message key="topic.filesize.bytes"><fmt:param value="${fileVersion.fileSize}" /></fmt:message>)
 				&#160;.&#160;.&#160;
-				<jamwiki:link value="User:${fileVersion.authorDisplay}" text="${fileVersion.authorDisplay}" />
-				(<jamwiki:link value="User comments:${fileVersion.authorDisplay}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${fileVersion.authorDisplay}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
+				<jamwiki:link value="${pageInfo.namespaces['User']}:${fileVersion.authorDisplay}" text="${fileVersion.authorDisplay}" />
+				(<jamwiki:link value="${pageInfo.namespaces['User comments']}:${fileVersion.authorDisplay}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${fileVersion.authorDisplay}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
 				<c:if test="${!empty fileVersion.uploadComment}">&#160;(<i><c:out value="${fileVersion.uploadComment}" /></i>)</c:if>
 				</li>
 				</c:forEach>
