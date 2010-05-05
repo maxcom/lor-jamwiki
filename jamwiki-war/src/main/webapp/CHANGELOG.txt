@@ -85,6 +85,8 @@ Bugfixes:
     HTML pre ("<pre>pre <span>HTML</span></pre>") should not.
   * Return the resized image URL when images of the form
     "[[Image:Example.jpg|200px]]" are used.
+  * Use MEDIUMTEXT instead of TEXT for storing topic content on MySQL.  This
+    increases the maximum allowed topic size from 64kb to 16MB.
   * Fix issues where image transparency was lost after resizing.
 
 Translation Updates:
