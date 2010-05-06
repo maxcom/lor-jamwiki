@@ -91,7 +91,9 @@ Bugfixes:
 
 Translation Updates:
 
+  * Added Sinhala translations (ruchira56).
   * Updated German translations (axelclk).
+  * Updated Polish translations (dlpa).
 
 
 0.8.4
