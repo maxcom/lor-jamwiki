@@ -115,7 +115,7 @@ public class HtmlLinkTag implements JFlexParserTag {
 		String caption = link;
 		if (!StringUtils.isBlank(text)) {
 			// pass a parameter via the parserInput to prevent nested links from being generated
-			parserInput.getTempParams().put(HTML_LINK_CAPTION, "true");
+			parserInput.getTempParams().put(HTML_LINK_CAPTION, true);
 			caption = JFlexParserUtil.parseFragment(parserInput, text, mode);
 			parserInput.getTempParams().remove(HTML_LINK_CAPTION);
 		}
