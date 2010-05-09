@@ -73,7 +73,7 @@
 <fieldset>
 <legend><fmt:message key="admin.vwiki.title.virtualwiki" /></legend>
 <input type="hidden" name="function" value="virtualwiki" />
-<c:if test="${!empty selected}">
+<c:if test="${!empty selected && selected.virtualWikiId != -1}">
 	<input type="hidden" name="virtualWikiId" value="${selected.virtualWikiId}" />
 	<input type="hidden" name="name" value="${selected.name}" />
 </c:if>
@@ -81,8 +81,8 @@
 	<label for="name"><fmt:message key="common.name" /></label>
 	<span>
 		<c:choose>
-			<c:when test="${!empty selected}">${selected.name}</c:when>
-			<c:otherwise><input type="text" name="name" id="name" size="30" /></c:otherwise>
+			<c:when test="${!empty selected && selected.virtualWikiId != -1}">${selected.name}</c:when>
+			<c:otherwise><input type="text" name="name" id="name" size="30" value="<c:if test="${!empty selected}">${selected.name}</c:if>" /></c:otherwise>
 		</c:choose>
 	</span>
 </div>
