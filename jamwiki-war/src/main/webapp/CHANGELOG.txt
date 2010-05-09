@@ -94,6 +94,7 @@ Translation Updates:
   * Added Sinhala translations (ruchira56).
   * Updated German translations (axelclk).
   * Updated Polish translations (dlpa).
+  * Updated Russian translations (shar).
 
 
 0.8.4
