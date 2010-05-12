@@ -94,7 +94,7 @@ public class JFlexParserUtil {
 			wikiLink.setText(text);
 		}
 		if (!StringUtils.isBlank(suffix)) {
-			wikiLink.setText((StringUtils.isBlank(text) ? wikiLink.getDestination() : text) + suffix);
+			wikiLink.setText(wikiLink.getText() + suffix);
 		}
 		return wikiLink;
 	}

@@ -447,6 +447,8 @@ public class LinkUtil {
 		if (wikiLink.getNamespace().getId().equals(Namespace.FILE_ID)) {
 			// captions are handled differently for images, so clear the link text value.
 			wikiLink.setText(null);
+		} else if (!StringUtils.isBlank(wikiLink.getSection())) {
+			wikiLink.setText(wikiLink.getText() + "#" + wikiLink.getSection());
 		}
 		wikiLink.setArticle(Utilities.decodeTopicName(topic, true));
 		// destination is namespace + topic

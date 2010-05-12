@@ -38,3 +38,7 @@
 <p><a href="/wiki/en/StartingPoints" title="StartingPoints">test http://example.com link</a></p>
 <p><a href="/wiki/en/StartingPoints" title="StartingPoints">test http://example.com link</a></p>
 <p><a href="/wiki/en/StartingPoints" title="StartingPoints">test http://example.com link test</a></p>
+<p><a href="#Section_1" title="Section 1">#Section 1</a></p>
+<p><a href="/wiki/en/WikiLink1#Section_1" title="WikiLink1">WikiLink1#Section 1</a></p>
+<p><a href="#Section_1" title="Section 1">alt text</a></p>
+<p><a href="/wiki/en/WikiLink1#Section_1" title="WikiLink1">alt text</a></p>
