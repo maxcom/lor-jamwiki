@@ -339,7 +339,7 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     return "<hr />";
 }
 
-<YYINITIAL, PARAGRAPH> {
+<YYINITIAL, PARAGRAPH, TABLE> {
     ^{wikiheading6} {
         return this.parse(TAG_TYPE_WIKI_HEADING, yytext(), 6);
     }
