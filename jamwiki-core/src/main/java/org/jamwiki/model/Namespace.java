@@ -76,7 +76,7 @@ public class Namespace implements Serializable {
 	private static final Namespace CATEGORY_COMMENTS    = new Namespace(CATEGORY_COMMENTS_ID, "Category comments", Namespace.CATEGORY);
 	public static Map<Integer, Namespace> DEFAULT_NAMESPACES = new LinkedHashMap<Integer, Namespace>();
 	private Integer id;
-	private final String label;
+	private String label;
 	private Namespace mainNamespace;
 	private Map<String, String> namespaceTranslations = new HashMap<String, String>();
 
@@ -138,6 +138,13 @@ public class Namespace implements Serializable {
 	 */
 	public String getDefaultLabel() {
 		return this.label;
+	}
+
+	/**
+	 * Setter method for the namespace label.
+	 */
+	public void setDefaultLabel(String label) {
+		this.label = label;
 	}
 
 	/**
