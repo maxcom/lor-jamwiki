@@ -683,6 +683,9 @@ public class WikiUtil {
 	 * @throws WikiException Thrown if the user name is invalid.
 	 */
 	public static void validateTopicName(String virtualWiki, String name) throws WikiException {
+		if (StringUtils.isBlank(virtualWiki)) {
+			throw new WikiException(new WikiMessage("common.exception.novirtualwiki"));
+		}
 		if (StringUtils.isBlank(name)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}

@@ -45,6 +45,7 @@ public class WikiPageInfo {
 	private boolean admin = false;
 	private String contentJsp = JSP_TOPIC;
 	private WikiMessage pageTitle = null;
+	private WikiMessage exception = null;
 	private String redirectName = null;
 	private String redirectUrl = null;
 	private boolean special = false;
@@ -71,6 +72,7 @@ public class WikiPageInfo {
 	protected void reset() {
 		this.admin = false;
 		this.contentJsp = JSP_TOPIC;
+		this.exception = null;
 		this.pageTitle = null;
 		this.redirectName = null;
 		this.special = false;
@@ -122,6 +124,26 @@ public class WikiPageInfo {
 	 */
 	public void setContentJsp(String contentJsp) {
 		this.contentJsp = contentJsp;
+	}
+
+	/**
+	 * If a fatal error occurs it will be stored for display on the front
+	 * end.
+	 *
+	 * @return The WikiMessage object representing the error.
+	 */
+	public WikiMessage getException() {
+		return this.exception;
+	}
+
+	/**
+	 * If a fatal error occurs it will be stored for display on the front
+	 * end.
+	 *
+	 * @param exception The WikiMessage object representing the error.
+	 */
+	public void setException(WikiMessage exception) {
+		this.exception = exception;
 	}
 
 	/**

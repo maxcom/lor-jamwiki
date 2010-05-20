@@ -423,7 +423,7 @@ public class ImageUtil {
 	 * @throws IOException Thrown if an error occurs while initializing the
 	 *  WikiImage object.
 	 */
-	private static WikiImage initializeImage(WikiFile wikiFile, ImageMetadata imageMetadata) throws IOException {
+	private static WikiImage initializeImage(WikiFile wikiFile, ImageMetadata imageMetadata) throws DataAccessException, IOException {
 		if (wikiFile == null) {
 			throw new IllegalArgumentException("wikiFile may not be null");
 		}
@@ -510,7 +510,7 @@ public class ImageUtil {
 	 * Determine if image information is available in the cache.  If so return it,
 	 * otherwise return <code>null</code>.
 	 */
-	private static ImageDimensions retrieveFromCache(WikiImage wikiImage) {
+	private static ImageDimensions retrieveFromCache(WikiImage wikiImage) throws DataAccessException {
 		String key = wikiImage.getVirtualWiki() + "/" + wikiImage.getUrl();
 		Element cachedDimensions = WikiCache.retrieveFromCache(CACHE_IMAGE_DIMENSIONS, key);
 		return (cachedDimensions != null) ? (ImageDimensions)cachedDimensions.getObjectValue() : null;

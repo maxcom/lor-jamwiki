@@ -19,11 +19,13 @@ package org.jamwiki.utils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.Configuration;
 import net.sf.ehcache.config.DiskStoreConfiguration;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 
 /**
@@ -84,7 +86,7 @@ public class WikiCache {
 	 * @throws IllegalStateException if an attempt is made to retrieve a cache
 	 *  using XML configuration and the cache is not configured.
 	 */
-	private static Cache getCache(String cacheName) {
+	private static Cache getCache(String cacheName) throws CacheException {
 		if (!WikiCache.cacheManager.cacheExists(cacheName)) {
 			if (USES_XML_CONFIG) {
 				// all caches should be configured from ehcache.xml
@@ -213,8 +215,13 @@ public class WikiCache {
 	 * @return A new <code>Element</code> object containing the key and cached
 	 *  object value.
 	 */
-	public static Element retrieveFromCache(String cacheName, Object key) {
-		Cache cache = WikiCache.getCache(cacheName);
+	public static Element retrieveFromCache(String cacheName, Object key) throws DataAccessException {
+		Cache cache = null;
+		try {
+			cache = WikiCache.getCache(cacheName);
+		} catch (CacheException e) {
+			throw new DataAccessException("Failure while retrieving data from cache " + cacheName, e);
+		}
 		return cache.get(key);
 	}
 }
