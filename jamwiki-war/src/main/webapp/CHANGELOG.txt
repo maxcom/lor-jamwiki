@@ -46,6 +46,9 @@ New Features:
   * All unit tests now use HSQL as a test database, rather than the dummy
     TestDataHandler.
   * Delete the webtest module, reducing the source code size by 12MB.
+  * Remove the "export internal database to CSV" functionality - since it
+    is now possible to export to XML and migrate databases this capability
+    is no longer needed.
   * Upgrade to Spring Framework 3.0.1.RELEASE.
   * Upgrade to Spring Security 3.0.2.RELEASE.
   * Upgrade to Lucene Search 3.0.1.

@@ -16,7 +16,6 @@
  */
 package org.jamwiki.servlets;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -38,8 +37,6 @@ import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.servlets.ServletUtil;
-import org.jamwiki.servlets.WikiPageInfo;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.SpamFilter;
 import org.jamwiki.utils.WikiCache;
@@ -85,8 +82,6 @@ public class AdminServlet extends JAMWikiServlet {
 			recentChanges(request, next, pageInfo);
 		} else if (function.equals("spam")) {
 			spam(request, next, pageInfo);
-		} else if (function.equals("export")) {
-			exportToCsv(request, next, pageInfo);
 		} else if (function.equals("migrate")) {
 			migrateDatabase(request, next, pageInfo);
 		} else if (function.equals("password")) {
@@ -152,23 +147,6 @@ public class AdminServlet extends JAMWikiServlet {
 			logger.severe("Failure while clearing cache", e);
 			List<WikiMessage> errors = new ArrayList<WikiMessage>();
 			errors.add(new WikiMessage("admin.cache.message.clearfailed", e.getMessage()));
-			next.addObject("errors", errors);
-		}
-		viewAdminSystem(request, next, pageInfo);
-	}
-
-	/**
-	 *
-	 */
-	private void exportToCsv(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		try {
-			WikiDatabase.exportToCsv();
-			String outputDirectory = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), "database").getPath();
-			next.addObject("message", new WikiMessage("admin.message.exportcsv", outputDirectory));
-		} catch (Exception e) {
-			logger.severe("Failure while exporting database data to CSV file", e);
-			List<WikiMessage> errors = new ArrayList<WikiMessage>();
-			errors.add(new WikiMessage("admin.message.exportcsvfail", e.getMessage()));
 			next.addObject("errors", errors);
 		}
 		viewAdminSystem(request, next, pageInfo);
@@ -261,7 +239,7 @@ public class AdminServlet extends JAMWikiServlet {
 			errors.add(e.getWikiMessage());
 		} catch (Exception e) {
 			logger.severe("Failure while updating user password", e);
-			errors.add(new WikiMessage("admin.message.exportcsvfail", e.getMessage()));
+			errors.add(new WikiMessage("error.unknown", e.getMessage()));
 		}
 		if (!errors.isEmpty()) {
 			next.addObject("errors", errors);

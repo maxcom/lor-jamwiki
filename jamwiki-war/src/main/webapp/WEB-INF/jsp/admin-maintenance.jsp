@@ -34,7 +34,6 @@
 <br />
 <a href="#namespaces"><fmt:message key="admin.maintenance.title.namespaces" /></a>
 | <a href="#password"><fmt:message key="admin.title.password" /></a>
-<c:if test="${allowExport}"> | <a href="#export"><fmt:message key="admin.title.exportcsv" /></a></c:if>
 | <a href="#adduser"><fmt:message key="admin.title.adduser" /></a>
 | <a href="#migrate"><fmt:message key="admin.title.migratedatabase" /></a>
 </div>
@@ -250,29 +249,6 @@
 <input type="hidden" name="function" value="adduser" />
 </form>
 </fieldset>
-
-<c:if test="${allowExport}">
-<!-- Export to CSV -->
-<a name="export"></a>
-<c:if test="${!empty message && function == 'export'}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
-</c:if>
-<c:if test="${!empty errors && function == 'export'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
-</c:if>
-<fieldset>
-<legend><fmt:message key="admin.title.exportcsv" /> (<fmt:message key="common.caption.experimental" />)</legend>
-<form action="<jamwiki:link value="Special:Maintenance" />#export" method="post">
-<div class="row">
-	<label><fmt:message key="admin.caption.exportcsv" /></label>
-	<span><input type="submit" value="<fmt:message key="common.export" />" /></span>
-		<div class="formhelp"><fmt:message key="admin.help.exportcsv" /></div>
-	</div>
-	<input type="hidden" name="function" value="export" />
-	</form>
-	</fieldset>
-
-</c:if>
 
 <!-- Migrate Database -->
 <a name="migrate"></a>
