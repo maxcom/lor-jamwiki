@@ -25,6 +25,7 @@ import org.jamwiki.TestFileUtil;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -48,6 +49,21 @@ public class MigrationUtilTest extends JAMWikiUnitTest {
 	private static final String VIRTUAL_WIKI_EN = "en";
 	@Rule
 	public TemporaryFolder TEMP_FOLDER = new TemporaryFolder();
+
+	private static boolean INITIALIZED = false;
+
+	/**
+	 *
+	 */
+	@Before
+	public void setup() throws Exception {
+		super.setup();
+		if (!INITIALIZED) {
+			this.setupTopic(null, "Example1");
+			this.setupTopic(null, "Example2");
+			INITIALIZED = true;
+		}
+	}
 
 	/**
 	 *
@@ -76,7 +92,6 @@ public class MigrationUtilTest extends JAMWikiUnitTest {
 	 */
 	@Test
 	public void testTwoTopics() throws Throwable {
-/*
 		String virtualWiki = VIRTUAL_WIKI_EN;
 		List<String> topicNames = new ArrayList<String>();
 		topicNames.add("Example1");
@@ -86,9 +101,8 @@ public class MigrationUtilTest extends JAMWikiUnitTest {
 		try {
 			MigrationUtil.exportToFile(file, virtualWiki, topicNames, excludeHistory);
 		} catch (MigrationException e) {
-			fail("Failure during export");
+			fail("Failure during export" + e);
 		}
-*/
 	}
 
 	/**
