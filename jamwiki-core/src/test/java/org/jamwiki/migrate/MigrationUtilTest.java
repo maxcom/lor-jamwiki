@@ -132,13 +132,11 @@ public class MigrationUtilTest extends JAMWikiUnitTest {
 	 */
 	@Test
 	public void testImportFromFileWithUnsortedHistory() throws Throwable {
-/*
 		String virtualWiki = VIRTUAL_WIKI_EN;
 		List<String> results = this.importTestFile(FILE_ONE_TOPIC_WITH_UNSORTED_HISTORY);
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME3, false, null);
 		// validate that the current topic content is correct
-		assertEquals("Topic content set correctly", "Newest Revision", topic.getTopicContent());
-*/
+		assertEquals("Incorrect topic ordering: " + topic.getTopicId() + " / " + topic.getCurrentVersionId(), "Newest Revision", topic.getTopicContent());
 	}
 
 	/**

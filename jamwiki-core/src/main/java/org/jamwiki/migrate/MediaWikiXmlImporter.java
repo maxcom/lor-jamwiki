@@ -221,11 +221,8 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 		if (this.currentTopicVersions.isEmpty()) {
 			throw new SAXException("No topic versions found for " + this.currentTopic.getName());
 		}
-		List<Integer> currentTopicVersionIdList = new ArrayList<Integer>();
 		// topic versions are stored in a tree map to allow sorting... convert to a list
-		for (Integer topicVersionId : this.currentTopicVersions.values()) {
-			currentTopicVersionIdList.add(topicVersionId);
-		}
+		List<Integer> currentTopicVersionIdList = new ArrayList<Integer>(this.currentTopicVersions.values());
 		try {
 			WikiBase.getDataHandler().orderTopicVersions(this.currentTopic, currentTopicVersionIdList);
 		} catch (DataAccessException e) {
