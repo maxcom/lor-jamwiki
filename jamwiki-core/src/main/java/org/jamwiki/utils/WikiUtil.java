@@ -369,7 +369,8 @@ public class WikiUtil {
 		// skip one directory, which is the virutal wiki
 		String topic = retrieveDirectoriesFromURI(request, 1);
 		if (topic == null) {
-			logger.warning("No topic in URL: " + request.getRequestURI());
+			// may be the root URL, ie: http://example.com/wiki/en/
+			logger.info("No topic in URL: " + request.getRequestURI());
 			return null;
 		}
 		int pos = topic.indexOf('#');

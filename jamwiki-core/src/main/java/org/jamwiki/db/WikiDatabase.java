@@ -445,7 +445,7 @@ public class WikiDatabase {
 				filename = subdirectory + File.separator + WikiUtil.encodeForFilename(pageName) + ".txt";
 				contents = Utilities.readFile(filename);
 			} catch (IOException e) {
-				logger.info("File " + filename + " does not exist");
+				logger.info("No locale-specific file is available for " + filename + ", checking for a language-specific version.");
 			}
 		}
 		if (contents == null && !StringUtils.isBlank(language)) {
@@ -454,7 +454,7 @@ public class WikiDatabase {
 				filename = subdirectory + File.separator + WikiUtil.encodeForFilename(pageName) + ".txt";
 				contents = Utilities.readFile(filename);
 			} catch (IOException e) {
-				logger.info("File " + filename + " does not exist");
+				logger.info("No language-specific file is available for " + filename + " so the default will be used.");
 			}
 		}
 		if (contents == null) {
@@ -463,7 +463,7 @@ public class WikiDatabase {
 				filename = subdirectory + File.separator + WikiUtil.encodeForFilename(pageName) + ".txt";
 				contents = Utilities.readFile(filename);
 			} catch (IOException e) {
-				logger.warning("File " + filename + " could not be read", e);
+				logger.warning("Default topic initialization file " + filename + " could not be read", e);
 				throw e;
 			}
 		}
