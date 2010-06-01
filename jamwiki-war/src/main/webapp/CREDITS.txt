@@ -37,6 +37,7 @@ JAMWiki Contributors
      Portugese:             Manuel Meixide - bagonix.net (mmeixide)
      Portugese (Brazilian): Fernando Fernandes (leandes)
      Russian:               Andrej Sharapov (shar)
+     Sinhala:               Ruchira Bandara (ruchira56)
      Slovak:                Matus Majchrak (aryan)
      Spanish:               Angel Luis Pinazo Perpiñán (AngelPinazo)
                             Manuel Meixide - bagonix.net (mmeixide)

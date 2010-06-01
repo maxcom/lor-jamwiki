@@ -399,6 +399,9 @@ public class LinkUtil {
 		// with topics such as "Urnordisch oder Nordwestgermanisch?"
 		String processed = raw.trim();
 		WikiLink wikiLink = new WikiLink();
+		if (wikiLink.getNamespace() == null) {
+			throw new IllegalStateException("Unable to determine namespace for topic.  This error generally indicates a configuration or database issue.  Check the logs for additional information.");
+		}
 		if (StringUtils.isBlank(processed)) {
 			return new WikiLink();
 		}
@@ -447,6 +450,8 @@ public class LinkUtil {
 		if (wikiLink.getNamespace().getId().equals(Namespace.FILE_ID)) {
 			// captions are handled differently for images, so clear the link text value.
 			wikiLink.setText(null);
+		} else if (!StringUtils.isBlank(wikiLink.getSection())) {
+			wikiLink.setText(wikiLink.getText() + "#" + wikiLink.getSection());
 		}
 		wikiLink.setArticle(Utilities.decodeTopicName(topic, true));
 		// destination is namespace + topic
@@ -505,8 +510,8 @@ public class LinkUtil {
 				wikiLink.setNamespace(namespace);
 			}
 		} catch (DataAccessException e) {
-			// this should not happen, if it does then swallow the error
-			logger.warning("Failure while trying to lookup namespace: " + linkPrefix, e);
+			// this should not happen, if it does then throw a runtime exception
+			throw new IllegalStateException("Failure while trying to lookup namespace: " + linkPrefix, e);
 		}
 		return (!wikiLink.getNamespace().getId().equals(Namespace.MAIN_ID)) ? processed.substring(prefixPosition + Namespace.SEPARATOR.length()).trim(): processed;
 	}

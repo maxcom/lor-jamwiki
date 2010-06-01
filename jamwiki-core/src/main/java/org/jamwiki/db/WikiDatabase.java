@@ -86,64 +86,6 @@ public class WikiDatabase {
 	}
 
 	/**
-	 * Dump the database to a CSV file.  This is an HSQL-specific method useful
-	 * for individuals who want to convert from HSQL to another database.
-	 */
-	public static void exportToCsv() throws DataAccessException, SQLException {
-		if (!(WikiBase.getDataHandler() instanceof HSqlDataHandler)) {
-			throw new IllegalStateException("Exporting to CSV is allowed only when the wiki is configured to use the internal database setting.");
-		}
-		PreparedStatement stmt = null;
-		Connection conn = null;
-		String sql = null;
-		String exportTableName = null;
-		String csvDirectory = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), "database").getPath();
-		File csvFile = null;
-		TransactionStatus status = DatabaseConnection.startTransaction();
-		try {
-			conn = DatabaseConnection.getConnection();
-			// make sure CSV files are encoded UTF-8
-			// TODO: this does not seem to be working currently - HSQL bug?
-			sql = "set property \"textdb.encoding\" 'UTF-8'";
-			stmt = conn.prepareStatement(sql);
-			stmt.executeUpdate();
-			for (int i=0; i < JAMWIKI_DB_TABLE_INFO.length; i++) {
-				exportTableName = JAMWIKI_DB_TABLE_INFO[i][0] + "_export";
-				// first drop any pre-existing CSV database files.
-				sql = "drop table " + exportTableName + " if exists";
-				stmt = conn.prepareStatement(sql);
-				stmt.executeUpdate();
-				// now delete the CSV file if it exists
-				csvFile = new File(csvDirectory, exportTableName + ".csv");
-				if (csvFile.exists()) {
-					if (csvFile.delete()) {
-						logger.info("Deleted existing CSV file: " + csvFile.getPath());
-					} else {
-						logger.warning("Could not delete existing CSV file: " + csvFile.getPath());
-					}
-				}
-				// create the CSV files
-				sql = "select * into text " + exportTableName + " from " + JAMWIKI_DB_TABLE_INFO[i][0];
-				stmt = conn.prepareStatement(sql);
-				stmt.executeUpdate();
-			}
-			// rebuild the data files to make sure everything is committed to disk
-			sql = "checkpoint";
-			stmt = conn.prepareStatement(sql);
-			stmt.executeUpdate();
-		} catch (Exception e) {
-			DatabaseConnection.rollbackOnException(status, e);
-			throw new DataAccessException(e);
-		} catch (Error err) {
-			DatabaseConnection.rollbackOnException(status, err);
-			throw new DataAccessException(err);
-		} finally {
-			DatabaseConnection.closeStatement(stmt);
-		}
-		DatabaseConnection.commit(status);
-	}
-
-	/**
 	 *
 	 */
 	private static DataHandler findNewDataHandler(Properties props) {
@@ -503,7 +445,7 @@ public class WikiDatabase {
 				filename = subdirectory + File.separator + WikiUtil.encodeForFilename(pageName) + ".txt";
 				contents = Utilities.readFile(filename);
 			} catch (IOException e) {
-				logger.info("File " + filename + " does not exist");
+				logger.info("No locale-specific file is available for " + filename + ", checking for a language-specific version.");
 			}
 		}
 		if (contents == null && !StringUtils.isBlank(language)) {
@@ -512,7 +454,7 @@ public class WikiDatabase {
 				filename = subdirectory + File.separator + WikiUtil.encodeForFilename(pageName) + ".txt";
 				contents = Utilities.readFile(filename);
 			} catch (IOException e) {
-				logger.info("File " + filename + " does not exist");
+				logger.info("No language-specific file is available for " + filename + " so the default will be used.");
 			}
 		}
 		if (contents == null) {
@@ -521,7 +463,7 @@ public class WikiDatabase {
 				filename = subdirectory + File.separator + WikiUtil.encodeForFilename(pageName) + ".txt";
 				contents = Utilities.readFile(filename);
 			} catch (IOException e) {
-				logger.warning("File " + filename + " could not be read", e);
+				logger.warning("Default topic initialization file " + filename + " could not be read", e);
 				throw e;
 			}
 		}

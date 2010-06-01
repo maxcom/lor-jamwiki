@@ -56,6 +56,7 @@ public class WikiUtil {
 	private static Pattern INVALID_ROLE_NAME_PATTERN = null;
 	private static Pattern INVALID_TOPIC_NAME_PATTERN = null;
 	private static Pattern VALID_USER_LOGIN_PATTERN = null;
+	private static Pattern VALID_VIRTUAL_WIKI_PATTERN = null;
 	public static final String PARAMETER_TOPIC = "topic";
 	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
 	public static final String PARAMETER_WATCHLIST = "watchlist";
@@ -66,6 +67,7 @@ public class WikiUtil {
 			INVALID_ROLE_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_ROLE_NAME));
 			INVALID_TOPIC_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_TOPIC_NAME));
 			VALID_USER_LOGIN_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_VALID_USER_LOGIN));
+			VALID_VIRTUAL_WIKI_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_VALID_VIRTUAL_WIKI));
 		} catch (PatternSyntaxException e) {
 			logger.severe("Unable to compile pattern", e);
 		}
@@ -367,7 +369,8 @@ public class WikiUtil {
 		// skip one directory, which is the virutal wiki
 		String topic = retrieveDirectoriesFromURI(request, 1);
 		if (topic == null) {
-			logger.warning("No topic in URL: " + request.getRequestURI());
+			// may be the root URL, ie: http://example.com/wiki/en/
+			logger.info("No topic in URL: " + request.getRequestURI());
 			return null;
 		}
 		int pos = topic.indexOf('#');
@@ -681,6 +684,9 @@ public class WikiUtil {
 	 * @throws WikiException Thrown if the user name is invalid.
 	 */
 	public static void validateTopicName(String virtualWiki, String name) throws WikiException {
+		if (StringUtils.isBlank(virtualWiki)) {
+			throw new WikiException(new WikiMessage("common.exception.novirtualwiki"));
+		}
 		if (StringUtils.isBlank(name)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
@@ -746,10 +752,10 @@ public class WikiUtil {
 	 */
 	public static void validateVirtualWikiName(String virtualWikiName) throws WikiException {
 		if (StringUtils.isBlank(virtualWikiName)) {
-			throw new WikiException(new WikiMessage("common.exception.notopic"));
+			throw new WikiException(new WikiMessage("common.exception.novirtualwiki"));
 		}
-		Matcher m = WikiUtil.INVALID_TOPIC_NAME_PATTERN.matcher(virtualWikiName);
-		if (m.find()) {
+		Matcher m = WikiUtil.VALID_VIRTUAL_WIKI_PATTERN.matcher(virtualWikiName);
+		if (!m.matches()) {
 			throw new WikiException(new WikiMessage("common.exception.name", virtualWikiName));
 		}
 	}

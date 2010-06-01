@@ -31,7 +31,7 @@ New Features:
   * Support ehcache.xml configuration.  Based on code by Daniel Fisla (dfisla).
   * Automatically populate sample JDBC values based on database type on the
     setup and admin pages.
-  * Remove all dependencies on Spring from the jamwiki-core project by
+  * Remove all dependencies on Spring Security from the jamwiki-core project by
     converting org.jamwiki.model.Role to an interface and creating a new
     org.jamwiki.authentication.RoleImpl class.
   * Run the spam filter against edit comments as well as topic content to
@@ -46,6 +46,9 @@ New Features:
   * All unit tests now use HSQL as a test database, rather than the dummy
     TestDataHandler.
   * Delete the webtest module, reducing the source code size by 12MB.
+  * Remove the "export internal database to CSV" functionality - since it
+    is now possible to export to XML and migrate databases this capability
+    is no longer needed.
   * Upgrade to Spring Framework 3.0.1.RELEASE.
   * Upgrade to Spring Security 3.0.2.RELEASE.
   * Upgrade to Lucene Search 3.0.1.
@@ -85,11 +88,17 @@ Bugfixes:
     HTML pre ("<pre>pre <span>HTML</span></pre>") should not.
   * Return the resized image URL when images of the form
     "[[Image:Example.jpg|200px]]" are used.
+  * Use MEDIUMTEXT instead of TEXT for storing topic content on MySQL.  This
+    increases the maximum allowed topic size from 64kb to 16MB.
   * Fix issues where image transparency was lost after resizing.
+  * Fix issue that prevented use of wiki headings within tables.
 
 Translation Updates:
 
+  * Added Sinhala translations (ruchira56).
   * Updated German translations (axelclk).
+  * Updated Polish translations (dlpa).
+  * Updated Russian translations (shar).
 
 
 0.8.4

@@ -67,7 +67,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * @param next A ModelAndView object corresponding to the page being
 	 *  constructed.
 	 */
-	private void buildLayout(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
+	private void buildLayout(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws DataAccessException {
 		String virtualWikiName = pageInfo.getVirtualWikiName();
 		if (virtualWikiName == null) {
 			logger.severe("No virtual wiki available for page request " + request.getRequestURI());
@@ -338,9 +338,17 @@ public abstract class JAMWikiServlet extends AbstractController {
 		pageInfo.setSpecial(true);
 		if (t instanceof WikiException) {
 			WikiException we = (WikiException)t;
+			pageInfo.setException(we.getWikiMessage());
 			next.addObject("messageObject", we.getWikiMessage());
 		} else {
-			next.addObject("messageObject", new WikiMessage("error.unknown", t.toString()));
+			String errorMessage = t.toString();
+			if (t.getCause() != null) {
+				errorMessage += " / " + t.getCause().toString();
+			}
+			WikiMessage wm = new WikiMessage("error.unknown", errorMessage);
+			pageInfo.setException(wm);
+			next.addObject("messageObject", wm);
+			logger.severe("Failure while loading JSP: " + request.getServletPath(), t);
 		}
 		try {
 			this.loadLayout(request, next, pageInfo);

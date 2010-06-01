@@ -2480,7 +2480,9 @@ public class AnsiQueryHandler implements QueryHandler {
 				previousTopicVersionId = topicVersionId;
 			}
 			stmt.executeBatch();
+			TopicVersion topicVersion = this.lookupTopicVersion(previousTopicVersionId);
 			topic.setCurrentVersionId(previousTopicVersionId);
+			topic.setTopicContent(topicVersion.getVersionContent());
 			this.updateTopic(topic, virtualWikiId, conn);
 			conn.commit();
 		} catch (SQLException e) {

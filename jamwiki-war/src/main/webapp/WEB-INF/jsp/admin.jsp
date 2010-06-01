@@ -84,6 +84,12 @@ function onRSS() {
 <fieldset>
 <legend><fmt:message key="admin.header.general" /></legend>
 <div class="row">
+	<label for="<%= Environment.PROP_BASE_FILE_DIR %>"><fmt:message key="admin.caption.filedir" /></label>
+	<c:set var="PROP_BASE_FILE_DIR"><%= Environment.PROP_BASE_FILE_DIR %></c:set>
+	<span><jamwiki:text name="${PROP_BASE_FILE_DIR}" value="${props[PROP_BASE_FILE_DIR]}" size="50" id="${PROP_BASE_FILE_DIR}" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.filedir" /></div>
+</div>
+<div class="row">
 	<label for="<%= Environment.PROP_SERVER_URL %>"><fmt:message key="admin.caption.serverurl" /></label>
 	<c:set var="PROP_SERVER_URL"><%= Environment.PROP_SERVER_URL %></c:set>
 	<span><jamwiki:text name="${PROP_SERVER_URL}" value="${props[PROP_SERVER_URL]}" size="50" id="${PROP_SERVER_URL}" /></span>
@@ -96,22 +102,10 @@ function onRSS() {
 	<div class="formhelp"><fmt:message key="admin.help.sitename" /></div>
 </div>
 <div class="row">
-	<label for="<%= Environment.PROP_BASE_DEFAULT_TOPIC %>"><fmt:message key="admin.caption.defaulttopic" /></label>
-	<c:set var="PROP_BASE_DEFAULT_TOPIC"><%= Environment.PROP_BASE_DEFAULT_TOPIC %></c:set>
-	<span><jamwiki:text name="${PROP_BASE_DEFAULT_TOPIC}" value="${props[PROP_BASE_DEFAULT_TOPIC]}" size="30" id="${PROP_BASE_DEFAULT_TOPIC}" /></span>
-	<div class="formhelp"><fmt:message key="admin.help.defaulttopic" /></div>
-</div>
-<div class="row">
 	<label for="<%= Environment.PROP_BASE_LOGO_IMAGE %>"><fmt:message key="admin.caption.logoimage" /></label>
 	<c:set var="PROP_BASE_LOGO_IMAGE"><%= Environment.PROP_BASE_LOGO_IMAGE %></c:set>
 	<span><jamwiki:text name="${PROP_BASE_LOGO_IMAGE}" value="${props[PROP_BASE_LOGO_IMAGE]}" size="30" id="${PROP_BASE_LOGO_IMAGE}" /></span>
 	<div class="formhelp"><fmt:message key="admin.help.logoimage" /></div>
-</div>
-<div class="row">
-	<label for="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>"><fmt:message key="admin.caption.imageresize" /></label>
-	<c:set var="PROP_IMAGE_RESIZE_INCREMENT"><%= Environment.PROP_IMAGE_RESIZE_INCREMENT %></c:set>
-	<span><jamwiki:text name="${PROP_IMAGE_RESIZE_INCREMENT}" size="5" maxlength="4" value="${props[PROP_IMAGE_RESIZE_INCREMENT]}" id="${PROP_IMAGE_RESIZE_INCREMENT}" /></span>
-	<div class="formhelp"><fmt:message key="admin.help.imageresize" /></div>
 </div>
 <div class="row">
 	<label for="<%= Environment.PROP_RECENT_CHANGES_NUM %>"><fmt:message key="admin.caption.recentchangesdefault" /></label>
@@ -174,6 +168,18 @@ function onRSS() {
 		</c:forEach>
 		</select>
 	</span>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_BASE_DEFAULT_TOPIC %>"><fmt:message key="admin.caption.defaulttopic" /></label>
+	<c:set var="PROP_BASE_DEFAULT_TOPIC"><%= Environment.PROP_BASE_DEFAULT_TOPIC %></c:set>
+	<span><jamwiki:text name="${PROP_BASE_DEFAULT_TOPIC}" value="${props[PROP_BASE_DEFAULT_TOPIC]}" size="30" id="${PROP_BASE_DEFAULT_TOPIC}" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.defaulttopic" /></div>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>"><fmt:message key="admin.caption.imageresize" /></label>
+	<c:set var="PROP_IMAGE_RESIZE_INCREMENT"><%= Environment.PROP_IMAGE_RESIZE_INCREMENT %></c:set>
+	<span><jamwiki:text name="${PROP_IMAGE_RESIZE_INCREMENT}" size="5" maxlength="4" value="${props[PROP_IMAGE_RESIZE_INCREMENT]}" id="${PROP_IMAGE_RESIZE_INCREMENT}" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.imageresize" /></div>
 </div>
 <div class="row">
 	<label for="<%= Environment.PROP_MAX_TOPIC_VERSION_EXPORT %>"><fmt:message key="admin.caption.maxversionexport" /></label>
@@ -275,12 +281,6 @@ FIXME - Email not supported right now, comment this out
 <a name="database"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.persistence" /></legend>
-<div class="row">
-	<label for="<%= Environment.PROP_BASE_FILE_DIR %>"><fmt:message key="admin.caption.filedir" /></label>
-	<c:set var="PROP_BASE_FILE_DIR"><%= Environment.PROP_BASE_FILE_DIR %></c:set>
-	<span><jamwiki:text name="${PROP_BASE_FILE_DIR}" value="${props[PROP_BASE_FILE_DIR]}" size="50" id="${PROP_BASE_FILE_DIR}" /></span>
-	<div class="formhelp"><fmt:message key="admin.help.filedir" /></div>
-</div>
 <div class="row">
 	<label for="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>"><fmt:message key="admin.persistence.caption" /></label>
 	<span>

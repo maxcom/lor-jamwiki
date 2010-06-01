@@ -306,6 +306,17 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	private void clearTopicCache(Topic topic) {
+		String key = WikiCache.key(topic.getVirtualWiki(), topic.getName());
+		WikiCache.removeFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key);
+		WikiCache.addToCache(CACHE_TOPICS_BY_NAME, key, topic);
+		WikiCache.addToCache(CACHE_TOPIC_IDS_BY_NAME, key, topic.getTopicId());
+		WikiCache.addToCache(CACHE_TOPICS_BY_ID, topic.getTopicId(), topic);
+	}
+
+	/**
+	 *
+	 */
 	private void deleteRecentChanges(Topic topic, Connection conn) throws DataAccessException {
 		try {
 			this.queryHandler().deleteRecentChanges(topic.getTopicId(), conn);
@@ -1054,6 +1065,8 @@ public class AnsiDataHandler implements DataHandler {
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
+		String key = WikiCache.key(topic.getVirtualWiki(), topic.getName());
+		this.clearTopicCache(topic);
 	}
 
 	/**
@@ -1653,11 +1666,7 @@ public class AnsiDataHandler implements DataHandler {
 		}
 		DatabaseConnection.commit(status);
 		// update the cache AFTER the commit
-		String key = WikiCache.key(topic.getVirtualWiki(), topic.getName());
-		WikiCache.removeFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key);
-		WikiCache.addToCache(CACHE_TOPICS_BY_NAME, key, topic);
-		WikiCache.addToCache(CACHE_TOPIC_IDS_BY_NAME, key, topic.getTopicId());
-		WikiCache.addToCache(CACHE_TOPICS_BY_ID, topic.getTopicId(), topic);
+		this.clearTopicCache(topic);
 		logger.fine("Wrote topic " + topic.getName() + " with params [categories is null: " + (categories == null) + "] / [links is null: " + (links == null) + "] in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 	}
 

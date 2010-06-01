@@ -84,11 +84,11 @@ public class WikiLinkTag implements JFlexParserTag {
 				wikiLink.setText(Utilities.decodeAndEscapeTopicName("#" + wikiLink.getSection(), true));
 			} else {
 				// pass a parameter via the parserInput to prevent nested links from being generated
-				lexer.getParserInput().getTempParams().put(LINK_CAPTION, "true");
+				lexer.getParserInput().getTempParams().put(LINK_CAPTION, true);
 				wikiLink.setText(JFlexParserUtil.parseFragment(lexer.getParserInput(), wikiLink.getText(), lexer.getMode()));
 				lexer.getParserInput().getTempParams().remove(LINK_CAPTION);
 			}
-			if (StringUtils.equals(wikiLink.getDestination(), lexer.getParserInput().getTopicName()) && StringUtils.equals(virtualWiki, lexer.getParserInput().getVirtualWiki())) {
+			if (StringUtils.equals(wikiLink.getDestination(), lexer.getParserInput().getTopicName()) && StringUtils.equals(virtualWiki, lexer.getParserInput().getVirtualWiki()) && StringUtils.isBlank(wikiLink.getSection())) {
 				// same page, bold the text and return
 				return "<b>" + (StringUtils.isBlank(wikiLink.getText()) ? wikiLink.getDestination() : wikiLink.getText()) + "</b>";
 			}

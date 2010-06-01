@@ -109,7 +109,7 @@ public class ServletUtil {
 	 * @return The parsed or unparsed (depending on the <code>cook</code>
 	 *  parameter) topic content.
 	 */
-	protected static String cachedContent(String context, Locale locale, String virtualWiki, String topicName, boolean cook) {
+	protected static String cachedContent(String context, Locale locale, String virtualWiki, String topicName, boolean cook) throws DataAccessException {
 		String content = null;
 		String key = WikiCache.key(virtualWiki, topicName);
 		Element cacheElement = WikiCache.retrieveFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key);

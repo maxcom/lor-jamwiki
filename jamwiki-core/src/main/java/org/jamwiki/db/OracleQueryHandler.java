@@ -19,8 +19,11 @@ package org.jamwiki.db;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Properties;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.TopicType;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
@@ -131,6 +134,20 @@ public class OracleQueryHandler extends AnsiQueryHandler {
 	}
 
 	/**
+	 * Override the parent method - Oracle treats empty strings and null the
+	 * same, so this method converts empty strings to " " as a workaround.
+	 */
+	public List<Namespace> lookupNamespaces(Connection conn) throws SQLException {
+		List<Namespace> namespaces = super.lookupNamespaces(conn);
+		for (Namespace namespace : namespaces) {
+			if (StringUtils.isBlank(namespace.getDefaultLabel())) {
+				namespace.setDefaultLabel("");
+			}
+		}
+		return namespaces;
+	}
+
+	/**
 	 *
 	 */
 	protected PreparedStatement getWatchlistStatement(Connection conn, int virtualWikiId, int userId, Pagination pagination) throws SQLException {
@@ -165,5 +182,43 @@ public class OracleQueryHandler extends AnsiQueryHandler {
 		stmt.setInt(1, pagination.getEnd());
 		stmt.setInt(2, pagination.getStart());
 		return stmt;
+	}
+
+	/**
+	 * Override the parent method - Oracle treats empty strings and null the
+	 * same, so this method converts empty strings to " " as a workaround.
+	 */
+	public void updateNamespace(Namespace mainNamespace, Namespace commentsNamespace, Connection conn) throws SQLException {
+		if (StringUtils.isBlank(mainNamespace.getDefaultLabel())) {
+			mainNamespace.setDefaultLabel(" ");
+		}
+		if (commentsNamespace != null && StringUtils.isBlank(commentsNamespace.getDefaultLabel())) {
+			commentsNamespace.setDefaultLabel(" ");
+		}
+		super.updateNamespace(mainNamespace, commentsNamespace, conn);
+		if (StringUtils.isBlank(mainNamespace.getDefaultLabel())) {
+			mainNamespace.setDefaultLabel("");
+		}
+		if (commentsNamespace != null && StringUtils.isBlank(commentsNamespace.getDefaultLabel())) {
+			commentsNamespace.setDefaultLabel("");
+		}
+	}
+
+	/**
+	 * Override the parent method - Oracle treats empty strings and null the
+	 * same, so this method converts empty strings to " " as a workaround.
+	 */
+	public void updateNamespaceTranslations(List<Namespace> namespaces, String virtualWiki, int virtualWikiId, Connection conn) throws SQLException {
+		for (Namespace namespace : namespaces) {
+			if (StringUtils.isBlank(namespace.getDefaultLabel())) {
+				namespace.setDefaultLabel(" ");
+			}
+		}
+		super.updateNamespaceTranslations(namespaces, virtualWiki, virtualWikiId, conn);
+		for (Namespace namespace : namespaces) {
+			if (StringUtils.isBlank(namespace.getDefaultLabel())) {
+				namespace.setDefaultLabel("");
+			}
+		}
 	}
 }
