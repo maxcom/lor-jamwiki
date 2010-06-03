@@ -186,19 +186,6 @@ public interface QueryHandler {
 	String existenceValidationQuery();
 
 	/**
-	 * Retrieve a list of all topic names that exist for a virtual wiki. This method
-	 * will not return the names of previously deleted topics.
-	 *
-	 * @param virtualWikiId The id of the virtual wiki for which topic names
-	 *  are being retrieved.
-	 * @return A list of the names of all topics for the virtual wiki, not including
-	 *  any previously deleted topics.  If no topics are found an empty list is
-	 *  returned.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	List<String> getAllTopicNames(int virtualWikiId) throws SQLException;
-
-	/**
 	 * Retrieve a list of all wiki file version information for a given wiki file.
 	 * Version information is sorted by wiki file version id, which in effect sorts
 	 * the wiki file versions from newest to oldest.
@@ -744,16 +731,17 @@ public interface QueryHandler {
 	TopicVersion lookupTopicVersion(int topicVersionId) throws SQLException;
 
 	/**
-	 * Retrieve a list of all topic names within a virtual wiki, including
-	 * deleted topics.
+	 * Retrieve a list of all topic names within a virtual wiki.
 	 *
 	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the topics
 	 *  being retrieved.
+	 * @param includeDeleted Set to <code>true</code> if deleted topics
+	 *  should be included in the results.
 	 * @return A map of topic id and topic name for all topic names within a
 	 *  virtual wiki.  If no results are found then an empty list is returned.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	Map<Integer, String> lookupTopicNames(int virtualWikiId, Connection conn) throws SQLException;
+	Map<Integer, String> lookupTopicNames(int virtualWikiId, boolean includeDeleted, Connection conn) throws SQLException;
 
 	/**
 	 * Retrieve a result set containing all wiki file information for a given WikiFile.

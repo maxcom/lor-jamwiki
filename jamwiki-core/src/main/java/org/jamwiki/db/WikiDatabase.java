@@ -114,7 +114,7 @@ public class WikiDatabase {
 		try {
 			conn = DatabaseConnection.getConnection();
 			for (VirtualWiki virtualWiki : virtualWikis) {
-				topicNames = WikiDatabase.queryHandler().lookupTopicNames(virtualWiki.getVirtualWikiId(), conn);
+				topicNames = WikiDatabase.queryHandler().lookupTopicNames(virtualWiki.getVirtualWikiId(), true, conn);
 				if (topicNames.isEmpty()) {
 					continue;
 				}

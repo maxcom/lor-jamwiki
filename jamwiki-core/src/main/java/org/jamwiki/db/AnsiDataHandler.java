@@ -429,12 +429,16 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List<String> getAllTopicNames(String virtualWiki) throws DataAccessException {
+	public List<String> getAllTopicNames(String virtualWiki, boolean includeDeleted) throws DataAccessException {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		Connection conn = null;
 		try {
-			return this.queryHandler().getAllTopicNames(virtualWikiId);
+			conn = DatabaseConnection.getConnection();
+			return new ArrayList<String>(this.queryHandler().lookupTopicNames(virtualWikiId, includeDeleted, conn).values());
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
 		}
 	}
 
