@@ -39,6 +39,8 @@ public class JFlexParser extends AbstractParser {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexParser.class.getName());
 
+	/** Any parsing that takes longer than the specified time (in ms) will trigger a log message. */
+	private static final int TIME_LIMIT_PARSE = 15;
 	/** Splice mode is used when inserting an edited topic section back into the full topic content. */
 	public static final int MODE_SPLICE = 1;
 	/** Slice mode is used when retrieving a section of a topic for editing. */
@@ -112,9 +114,9 @@ public class JFlexParser extends AbstractParser {
 			while ((line = lexer.yylex()) != null) {
 				lexer.append(line);
 				current = System.currentTimeMillis();
-				if (logger.isFineEnabled() && (current - previous) > 10) {
-					// took longer than ten milliseconds, log warning
-					logger.fine("WARNING: slow parsing (" + ((current - previous) / 1000.000) + " s) for input: " + this.parserInput.getTopicName() + " (state: " + lexer.yystate() + ")");
+				if (logger.isFineEnabled() && (current - previous) > TIME_LIMIT_PARSE) {
+					// took too long, log a message
+					logger.fine("Slow parsing (" + ((current - previous) / 1000.000) + " s) for input: " + this.parserInput.getTopicName() + " (state: " + lexer.yystate() + ")");
 				}
 				previous = current;
 			}

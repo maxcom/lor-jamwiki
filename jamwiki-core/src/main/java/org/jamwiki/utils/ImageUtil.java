@@ -499,9 +499,12 @@ public class ImageUtil {
 	 * BufferedImage object.
 	 */
 	private static BufferedImage loadImage(File file) throws IOException {
+		if (!file.exists()) {
+			throw new FileNotFoundException("File does not exist: " + file.getAbsolutePath());
+		}
 		BufferedImage image = ImageIO.read(file);
 		if (image == null) {
-			throw new IOException("JDK is unable to process image file: " + file.getAbsolutePath());
+			throw new IOException("JDK is unable to process image file, possibly indicating file corruption: " + file.getAbsolutePath());
 		}
 		return image;
 	}

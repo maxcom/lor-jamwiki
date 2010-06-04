@@ -118,7 +118,6 @@ public class ParserUtil {
 	 */
 	private static AbstractParser parserInstance(ParserInput parserInput) throws ParserException {
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
-		logger.fine("Using parser: " + parserClass);
 		try {
 			Class clazz = ClassUtils.getClass(parserClass);
 			Class[] parameterTypes = new Class[1];
