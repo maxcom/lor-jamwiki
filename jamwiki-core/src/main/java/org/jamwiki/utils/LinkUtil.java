@@ -342,10 +342,11 @@ public class LinkUtil {
 		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(articleName)) {
 			return false;
 		}
-		if (PseudoTopicHandler.isPseudoTopic(articleName)) {
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, articleName);
+		if (PseudoTopicHandler.isPseudoTopic(wikiLink.getDestination())) {
 			return true;
 		}
-		if (InterWikiHandler.isInterWiki(articleName)) {
+		if (wikiLink.getInterWiki() != null) {
 			return true;
 		}
 		if (StringUtils.isBlank(Environment.getValue(Environment.PROP_BASE_FILE_DIR)) || !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
