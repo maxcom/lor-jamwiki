@@ -59,6 +59,10 @@
 		<class>org.jamwiki.db.HSqlDataHandler</class>
 	</data-handler>
 	<data-handler>
+		<name>mssql</name>
+		<class>org.jamwiki.db.MSSqlDataHandler</class>
+	</data-handler>
+	<data-handler>
 		<name>mysql</name>
 		<class>org.jamwiki.db.MySqlDataHandler</class>
 	</data-handler>
@@ -83,11 +87,6 @@
 	<data-handler>
 		<name>db2/400</name>
 		<class>org.jamwiki.db.DB2400DataHandler</class>
-		<state>experimental</state>
-	</data-handler>
-	<data-handler>
-		<name>mssql</name>
-		<class>org.jamwiki.db.MSSqlDataHandler</class>
 		<state>experimental</state>
 	</data-handler>
 </data-handlers>

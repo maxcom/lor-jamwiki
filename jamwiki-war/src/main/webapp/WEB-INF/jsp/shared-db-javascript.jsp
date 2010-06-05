@@ -45,7 +45,7 @@ DATABASE_SAMPLE_VALUES["<%= DataHandler.DATA_HANDLER_HSQL %>"] ={
 	<%= Environment.PROP_DB_DRIVER %>: "org.hsqldb.jdbcDriver", <%= Environment.PROP_DB_URL %>: "jdbc:hsqldb:file:\database\path;shutdown=true"
 };
 DATABASE_SAMPLE_VALUES["<%= DataHandler.DATA_HANDLER_MSSQL %>"] ={
-	<%= Environment.PROP_DB_DRIVER %>: "com.microsoft.jdbc.sqlserver.SQLServerDriver", <%= Environment.PROP_DB_URL %>: "jdbc:microsoft:sqlserver://localhost:1433;DatabaseName=database"
+	<%= Environment.PROP_DB_DRIVER %>: "com.microsoft.sqlserver.jdbc.SQLServerDriver", <%= Environment.PROP_DB_URL %>: "jdbc:sqlserver://localhost:1433;DatabaseName=database"
 };
 DATABASE_SAMPLE_VALUES["<%= DataHandler.DATA_HANDLER_MYSQL %>"] ={
 	<%= Environment.PROP_DB_DRIVER %>: "com.mysql.jdbc.Driver", <%= Environment.PROP_DB_URL %>: "jdbc:mysql://localhost:3306/database"
