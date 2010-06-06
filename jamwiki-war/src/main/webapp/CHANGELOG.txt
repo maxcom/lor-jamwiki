@@ -24,9 +24,9 @@ New Features:
     add/update.
   * Topic history retrieval speed improved by a factor of up to 100x for
     large data sets by adding an additional database index.
-  * Search engine optimizations.  Existing JAMWiki installs may want to
-    rebuild their search index.
-  * Filter results by namespace added to Special:Allpages.
+  * Search engine optimizations.  Existing JAMWiki installs should rebuild
+    their search index using the tools on the Special:Maintenance page.
+  * "Filter results by namespace" added to Special:Allpages.
   * Update the CSS & HTML used for forms.  Requires StyleSheet topic update.
   * Support ehcache.xml configuration.  Based on code by Daniel Fisla (dfisla).
   * Automatically populate sample JDBC values based on database type on the
@@ -84,10 +84,10 @@ Bugfixes:
     but output "Help : Test" as the link text, as per Mediawiki.
   * Fix parsing of nested links such as
     "[[Topic|caption with http://example.com link]]".
-  * Wiki pre syntax (" pre <span>HTML</span") should allow HTML, although
+  * Wiki pre syntax (" pre <span>HTML</span>") should allow HTML, although
     HTML pre ("<pre>pre <span>HTML</span></pre>") should not.
-  * Return the resized image URL when images of the form
-    "[[Image:Example.jpg|200px]]" are used.
+  * Fix an issue that caused the original image URL (instead of the resized
+    image URL) to be used for syntax such as "[[Image:Example.jpg|200px]]".
   * Use MEDIUMTEXT instead of TEXT for storing topic content on MySQL.  This
     increases the maximum allowed topic size from 64kb to 16MB.
   * Fix issues where image transparency was lost after resizing.

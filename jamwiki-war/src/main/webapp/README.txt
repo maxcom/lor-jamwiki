@@ -26,12 +26,12 @@ built-in support for recent versions of the following databases:
 
   H2
   HSQL
+  MS SQL
   MySQL
   Oracle
   Postgres
   DB2 (experimental)
   DB2/400 (experimental)
-  MS SQL Server (experimental)
   Sybase (experimental)
 
 Note that JAMWiki should work with any ANSI compliant database.  Also note that
@@ -153,9 +153,11 @@ named "en" is created during installation.  The default URL for files within
 this virtual wiki is then of the form "http://<server>/<context>/en/Topic".
 To create a new virtual wiki the following steps are required:
 
-1. Access the admin console at http://<server>/<context>/en/Special:Admin.
+1. Access the Special:VirtualWiki page (JAMWiki 0.9.0+) or for earlier
+   JAMWiki releases, access the Special:Maintenance page.
 2. Scroll down to the "add virtual wiki" box, enter a name (one word, no
-   spaces) and click add.
+   spaces) and click add.  A database record for the virtual wiki will be
+   created, but the virtual wiki will not yet be active.
 3. Shut down the web application server.
 4. Edit the web application web.xml file.  There will be a mapping of the
    form:
@@ -165,11 +167,11 @@ To create a new virtual wiki the following steps are required:
         <url-pattern>/en/*</url-pattern>
     </servlet-mapping>
 
-5. Enter a new servlet-mapping, replacing "en" in the above example with the
+5. Create a new servlet-mapping, replacing "en" in the above example with the
    name of the new virtual wiki.
 6. Restart the web application server.
 7. A new virtual wiki will now be available from URLs of the form
-   "http://<server>/<context>/<virtual-wiki>/Topic.
+   http://example.com/context/virtual-wiki/
 
 
 BUILDING FROM SOURCE
