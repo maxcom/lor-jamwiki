@@ -121,6 +121,17 @@ public interface QueryHandler {
 	void deleteTopicCategories(int topicId, Connection conn) throws SQLException;
 
 	/**
+	 * Delete all topic links associated with a topic.
+	 *
+	 * @param topicId The topic for which link association records are being
+	 *  deleted.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	void deleteTopicLinks(int topicId, Connection conn) throws SQLException;
+
+	/**
 	 * Delete all authorities for a specific user.
 	 *
 	 * @param username The username for which authorities are being deleted.
@@ -513,6 +524,19 @@ public interface QueryHandler {
 	void insertTopic(Topic topic, int virtualWikiId, Connection conn) throws SQLException;
 
 	/**
+	 * Add new topic link records for a topic to the database.  Note that this
+	 * method will fail if an existing link of the same name is already associated
+	 * with the topic.
+	 *
+	 * @param links A list of topic link records to create.
+	 * @param topicId The ID of the topic record to which the links are being added.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	void insertTopicLinks(List<String> links, int topicId, Connection conn) throws SQLException;
+
+	/**
 	 * Add a new topic version record to the database.  The topic version must
 	 * not already exist in the database or else an error will be thrown.
 	 *
@@ -733,6 +757,17 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	Integer lookupTopicId(int virtualWikiId, String virtualWikiName, String topicName) throws SQLException;
+
+	/**
+	 * Find the names for all topics that link to a specified topic.
+	 *
+	 * @param virtualWikiId The virtual wiki id for the topic being queried.
+	 * @return A list of topic names for all topics that link to the
+	 *  specified topic.  If no results are found then an empty list is
+	 *  returned.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	List<String> lookupTopicLinks(int virtualWikiId, String topicName) throws SQLException;
 
 	/**
 	 * Retrieve a result set containing a specific topic version.

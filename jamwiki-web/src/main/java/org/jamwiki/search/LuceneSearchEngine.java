@@ -34,7 +34,6 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Searcher;
@@ -53,8 +52,6 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
-import org.jamwiki.parser.ParserOutput;
-import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -92,14 +89,12 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * Add a topic to the search index.
 	 *
 	 * @param topic The Topic object that is to be added to the index.
-	 * @param links A list containing the topic names for all topics that link
-	 *  to the current topic.
 	 */
-	public void addToIndex(Topic topic, List<String> links) {
+	public void addToIndex(Topic topic) {
 		try {
 			long start = System.currentTimeMillis();
 			IndexWriter writer = this.retrieveIndexWriter(topic.getVirtualWiki(), false);
-			this.addToIndex(writer, topic, links);
+			this.addToIndex(writer, topic);
 			writer.commit();
 			if (logger.isFineEnabled()) {
 				logger.fine("Add to search index for topic " + topic.getName() + " in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
@@ -113,11 +108,9 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * Add a topic to the search index.
 	 *
 	 * @param topic The Topic object that is to be added to the index.
-	 * @param links A list containing the topic names for all topics that link
-	 *  to the current topic.
 	 */
-	private void addToIndex(IndexWriter writer, Topic topic, List<String> links) throws IOException {
-		Document standardDocument = createStandardDocument(topic, links);
+	private void addToIndex(IndexWriter writer, Topic topic) throws IOException {
+		Document standardDocument = createStandardDocument(topic);
 		writer.addDocument(standardDocument);
 		this.resetIndexSearcher(topic.getVirtualWiki());
 	}
@@ -126,7 +119,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * Create a basic Lucene document to add to the index.  This document
 	 * is suitable to be parsed with the StandardAnalyzer.
 	 */
-	private Document createStandardDocument(Topic topic, List<String> links) {
+	private Document createStandardDocument(Topic topic) {
 		String topicContent = topic.getTopicContent();
 		if (topicContent == null) {
 			topicContent = "";
@@ -138,13 +131,6 @@ public class LuceneSearchEngine implements SearchEngine {
 		// index topic name and content for search purposes
 		doc.add(new Field(ITYPE_TOPIC, new StringReader(topic.getName())));
 		doc.add(new Field(ITYPE_CONTENT, new StringReader(topicContent)));
-		// index topic links for search purposes
-		if (links == null) {
-			links = new ArrayList<String>();
-		}
-		for (String linkTopic : links) {
-			doc.add(new Field(ITYPE_TOPIC_LINK, linkTopic, Field.Store.NO, Field.Index.NOT_ANALYZED));
-		}
 		return doc;
 	}
 
@@ -176,39 +162,6 @@ public class LuceneSearchEngine implements SearchEngine {
 	private void deleteFromIndex(IndexWriter writer, Topic topic) throws IOException {
 		writer.deleteDocuments(new Term(ITYPE_TOPIC_PLAIN, topic.getName()));
 		this.resetIndexSearcher(topic.getVirtualWiki());
-	}
-
-	/**
-	 * Find all documents that link to a specified topic.
-	 *
-	 * @param virtualWiki The virtual wiki for the topic.
-	 * @param topicName The name of the topic.
-	 * @return A list of SearchResultEntry objects for all documents that
-	 *  link to the topic.
-	 */
-	public List<SearchResultEntry> findLinkedTo(String virtualWiki, String topicName) {
-		List<SearchResultEntry> results = new ArrayList<SearchResultEntry>();
-		try {
-			PhraseQuery query = new PhraseQuery();
-			Term term = new Term(ITYPE_TOPIC_LINK, topicName);
-			query.add(term);
-			Searcher searcher = this.retrieveIndexSearcher(virtualWiki);
-			// actually perform the search
-			TopScoreDocCollector collector = TopScoreDocCollector.create(MAXIMUM_RESULTS_PER_SEARCH, true);
-			searcher.search(query, collector);
-			ScoreDoc[] hits = collector.topDocs().scoreDocs;
-			for (int i = 0; i < hits.length; i++) {
-				int docId = hits[i].doc;
-				Document doc = searcher.doc(docId);
-				SearchResultEntry result = new SearchResultEntry();
-				result.setRanking(hits[i].score);
-				result.setTopic(doc.get(ITYPE_TOPIC_PLAIN));
-				results.add(result);
-			}
-		} catch (Exception e) {
-			logger.severe("Exception while searching for " + topicName, e);
-		}
-		return results;
 	}
 
 	/**
@@ -303,9 +256,8 @@ public class LuceneSearchEngine implements SearchEngine {
 						logger.info("Unable to rebuild search index for topic: " + topicName);
 						continue;
 					}
-					ParserOutput parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki.getName(), topicName);
 					// note: no delete is necessary since a new index is being created
-					this.addToIndex(writer, topic, parserOutput.getLinks());
+					this.addToIndex(writer, topic);
 					count++;
 				}
 			} catch (Exception ex) {
@@ -396,12 +348,12 @@ public class LuceneSearchEngine implements SearchEngine {
 	/**
 	 *
 	 */
-	public void updateInIndex(Topic topic, List<String> links) {
+	public void updateInIndex(Topic topic) {
 		try {
 			long start = System.currentTimeMillis();
 			IndexWriter writer = this.retrieveIndexWriter(topic.getVirtualWiki(), false);
 			this.deleteFromIndex(writer, topic);
-			this.addToIndex(writer, topic, links);
+			this.addToIndex(writer, topic);
 			writer.commit();
 			if (logger.isFineEnabled()) {
 				logger.fine("Update search index for topic " + topic.getName() + " in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");

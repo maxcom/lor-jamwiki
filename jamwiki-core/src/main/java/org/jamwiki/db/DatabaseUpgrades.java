@@ -286,4 +286,26 @@ public class DatabaseUpgrades {
 		}
 		return messages;
 	}
+
+	/**
+	 *
+	 */
+	public static List<WikiMessage> upgrade100(List<WikiMessage> messages) throws WikiException {
+		String dbType = Environment.getValue(Environment.PROP_DB_TYPE);
+		TransactionStatus status = null;
+		try {
+			status = DatabaseConnection.startTransaction(getTransactionDefinition());
+			Connection conn = DatabaseConnection.getConnection();
+			// add the jam_topic_links table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_LINKS_TABLE", conn);
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_LINKS_INDEX", conn);
+			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_topic_links"));
+		} catch (SQLException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			logger.severe("Database failure during upgrade", e);
+			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
+		}
+		DatabaseConnection.commit(status);
+		return messages;
+	}
 }

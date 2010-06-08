@@ -75,6 +75,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_CREATE_ROLE_TABLE = null;
 	protected static String STATEMENT_CREATE_TOPIC_CURRENT_VERSION_CONSTRAINT = null;
 	protected static String STATEMENT_CREATE_TOPIC_TABLE = null;
+	protected static String STATEMENT_CREATE_TOPIC_LINKS_TABLE = null;
+	protected static String STATEMENT_CREATE_TOPIC_LINKS_INDEX = null;
 	protected static String STATEMENT_CREATE_TOPIC_PAGE_NAME_INDEX = null;
 	protected static String STATEMENT_CREATE_TOPIC_PAGE_NAME_LOWER_INDEX = null;
 	protected static String STATEMENT_CREATE_TOPIC_VERSION_TABLE = null;
@@ -93,6 +95,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DELETE_RECENT_CHANGES = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES_TOPIC = null;
 	protected static String STATEMENT_DELETE_TOPIC_CATEGORIES = null;
+	protected static String STATEMENT_DELETE_TOPIC_LINKS = null;
 	protected static String STATEMENT_DELETE_WATCHLIST_ENTRY = null;
 	protected static String STATEMENT_DROP_AUTHORITIES_TABLE = null;
 	protected static String STATEMENT_DROP_CATEGORY_TABLE = null;
@@ -106,6 +109,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DROP_ROLE_TABLE = null;
 	protected static String STATEMENT_DROP_TOPIC_CURRENT_VERSION_CONSTRAINT = null;
 	protected static String STATEMENT_DROP_TOPIC_TABLE = null;
+	protected static String STATEMENT_DROP_TOPIC_LINKS_TABLE = null;
+	protected static String STATEMENT_DROP_TOPIC_LINKS_INDEX = null;
 	protected static String STATEMENT_DROP_TOPIC_PAGE_NAME_INDEX = null;
 	protected static String STATEMENT_DROP_TOPIC_PAGE_NAME_LOWER_INDEX = null;
 	protected static String STATEMENT_DROP_TOPIC_VERSION_TABLE = null;
@@ -138,6 +143,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_INSERT_ROLE = null;
 	protected static String STATEMENT_INSERT_TOPIC = null;
 	protected static String STATEMENT_INSERT_TOPIC_AUTO_INCREMENT = null;
+	protected static String STATEMENT_INSERT_TOPIC_LINKS = null;
 	protected static String STATEMENT_INSERT_TOPIC_VERSION = null;
 	protected static String STATEMENT_INSERT_TOPIC_VERSION_AUTO_INCREMENT = null;
 	protected static String STATEMENT_INSERT_USER = null;
@@ -173,6 +179,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_TOPIC_HISTORY = null;
 	protected static String STATEMENT_SELECT_TOPIC_ID = null;
 	protected static String STATEMENT_SELECT_TOPIC_ID_LOWER = null;
+	protected static String STATEMENT_SELECT_TOPIC_LINKS = null;
 	protected static String STATEMENT_SELECT_TOPIC_LOWER = null;
 	protected static String STATEMENT_SELECT_TOPIC_NAMES = null;
 	protected static String STATEMENT_SELECT_TOPICS = null;
@@ -263,6 +270,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_TOPIC_INDEX, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_CURRENT_VERSION_CONSTRAINT, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_LINKS_TABLE, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_LINKS_INDEX, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_CATEGORY_TABLE, conn);
@@ -312,6 +321,20 @@ public class AnsiQueryHandler implements QueryHandler {
 		try {
 			stmt = conn.prepareStatement(STATEMENT_DELETE_TOPIC_CATEGORIES);
 			stmt.setInt(1, childTopicId);
+			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void deleteTopicLinks(int topicId, Connection conn) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_DELETE_TOPIC_LINKS);
+			stmt.setInt(1, topicId);
 			stmt.executeUpdate();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
@@ -388,6 +411,12 @@ public class AnsiQueryHandler implements QueryHandler {
 		} catch (SQLException e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_FILE_TABLE, conn);
+		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_LINKS_INDEX, conn);
+		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_LINKS_TABLE, conn);
 		} catch (SQLException e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_CURRENT_VERSION_CONSTRAINT, conn);
@@ -1026,6 +1055,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_CREATE_WIKI_USER_LOGIN_INDEX   = props.getProperty("STATEMENT_CREATE_WIKI_USER_LOGIN_INDEX");
 		STATEMENT_CREATE_TOPIC_CURRENT_VERSION_CONSTRAINT = props.getProperty("STATEMENT_CREATE_TOPIC_CURRENT_VERSION_CONSTRAINT");
 		STATEMENT_CREATE_TOPIC_TABLE             = props.getProperty("STATEMENT_CREATE_TOPIC_TABLE");
+		STATEMENT_CREATE_TOPIC_LINKS_TABLE       = props.getProperty("STATEMENT_CREATE_TOPIC_LINKS_TABLE");
+		STATEMENT_CREATE_TOPIC_LINKS_INDEX       = props.getProperty("STATEMENT_CREATE_TOPIC_LINKS_INDEX");
 		STATEMENT_CREATE_TOPIC_PAGE_NAME_INDEX   = props.getProperty("STATEMENT_CREATE_TOPIC_PAGE_NAME_INDEX");
 		STATEMENT_CREATE_TOPIC_PAGE_NAME_LOWER_INDEX = props.getProperty("STATEMENT_CREATE_TOPIC_PAGE_NAME_LOWER_INDEX");
 		STATEMENT_CREATE_TOPIC_VERSION_TABLE     = props.getProperty("STATEMENT_CREATE_TOPIC_VERSION_TABLE");
@@ -1047,6 +1078,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_DELETE_RECENT_CHANGES          = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES");
 		STATEMENT_DELETE_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES_TOPIC");
 		STATEMENT_DELETE_TOPIC_CATEGORIES        = props.getProperty("STATEMENT_DELETE_TOPIC_CATEGORIES");
+		STATEMENT_DELETE_TOPIC_LINKS             = props.getProperty("STATEMENT_DELETE_TOPIC_LINKS");
 		STATEMENT_DELETE_WATCHLIST_ENTRY         = props.getProperty("STATEMENT_DELETE_WATCHLIST_ENTRY");
 		STATEMENT_DROP_AUTHORITIES_TABLE         = props.getProperty("STATEMENT_DROP_AUTHORITIES_TABLE");
 		STATEMENT_DROP_CATEGORY_TABLE            = props.getProperty("STATEMENT_DROP_CATEGORY_TABLE");
@@ -1060,6 +1092,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_DROP_ROLE_TABLE                = props.getProperty("STATEMENT_DROP_ROLE_TABLE");
 		STATEMENT_DROP_TOPIC_CURRENT_VERSION_CONSTRAINT = props.getProperty("STATEMENT_DROP_TOPIC_CURRENT_VERSION_CONSTRAINT");
 		STATEMENT_DROP_TOPIC_TABLE               = props.getProperty("STATEMENT_DROP_TOPIC_TABLE");
+		STATEMENT_DROP_TOPIC_LINKS_INDEX         = props.getProperty("STATEMENT_DROP_TOPIC_LINKS_INDEX");
+		STATEMENT_DROP_TOPIC_LINKS_TABLE         = props.getProperty("STATEMENT_DROP_TOPIC_LINKS_TABLE");
 		STATEMENT_DROP_TOPIC_PAGE_NAME_INDEX     = props.getProperty("STATEMENT_DROP_TOPIC_PAGE_NAME_INDEX");
 		STATEMENT_DROP_TOPIC_PAGE_NAME_LOWER_INDEX = props.getProperty("STATEMENT_DROP_TOPIC_PAGE_NAME_LOWER_INDEX");
 		STATEMENT_DROP_TOPIC_VERSION_TABLE       = props.getProperty("STATEMENT_DROP_TOPIC_VERSION_TABLE");
@@ -1092,6 +1126,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_INSERT_ROLE                    = props.getProperty("STATEMENT_INSERT_ROLE");
 		STATEMENT_INSERT_TOPIC                   = props.getProperty("STATEMENT_INSERT_TOPIC");
 		STATEMENT_INSERT_TOPIC_AUTO_INCREMENT    = props.getProperty("STATEMENT_INSERT_TOPIC_AUTO_INCREMENT");
+		STATEMENT_INSERT_TOPIC_LINKS             = props.getProperty("STATEMENT_INSERT_TOPIC_LINKS");
 		STATEMENT_INSERT_TOPIC_VERSION           = props.getProperty("STATEMENT_INSERT_TOPIC_VERSION");
 		STATEMENT_INSERT_TOPIC_VERSION_AUTO_INCREMENT = props.getProperty("STATEMENT_INSERT_TOPIC_VERSION_AUTO_INCREMENT");
 		STATEMENT_INSERT_USER                    = props.getProperty("STATEMENT_INSERT_USER");
@@ -1127,6 +1162,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_TOPIC_HISTORY           = props.getProperty("STATEMENT_SELECT_TOPIC_HISTORY");
 		STATEMENT_SELECT_TOPIC_ID                = props.getProperty("STATEMENT_SELECT_TOPIC_ID");
 		STATEMENT_SELECT_TOPIC_ID_LOWER          = props.getProperty("STATEMENT_SELECT_TOPIC_ID_LOWER");
+		STATEMENT_SELECT_TOPIC_LINKS             = props.getProperty("STATEMENT_SELECT_TOPIC_LINKS");
 		STATEMENT_SELECT_TOPIC_LOWER             = props.getProperty("STATEMENT_SELECT_TOPIC_LOWER");
 		STATEMENT_SELECT_TOPIC_NAMES             = props.getProperty("STATEMENT_SELECT_TOPIC_NAMES");
 		STATEMENT_SELECT_TOPICS                  = props.getProperty("STATEMENT_SELECT_TOPICS");
@@ -1589,6 +1625,27 @@ public class AnsiQueryHandler implements QueryHandler {
 		} finally {
 			// close only the statement and result set - leave the connection open for further use
 			DatabaseConnection.closeConnection(null, stmt, rs);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void insertTopicLinks(List<String> links, int topicId, Connection conn) throws SQLException {
+		if (topicId == -1) {
+			throw new SQLException("Invalid topicId passed to method AnsiQueryHandler.insertTopicLinks");
+		}
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_INSERT_TOPIC_LINKS);
+			for (String link : links) {
+				stmt.setInt(1, topicId);
+				stmt.setString(2, link);
+				stmt.addBatch();
+			}
+			stmt.executeBatch();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -2090,6 +2147,29 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(3, wikiLink.getNamespace().getId());
 			rs = stmt.executeQuery();
 			return (rs.next()) ? Integer.valueOf(rs.getInt("topic_id")) : null;
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public List<String> lookupTopicLinks(int virtualWikiId, String topicName) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_LINKS);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setString(2, topicName);
+			rs = stmt.executeQuery();
+			List<String> results = new ArrayList<String>();
+			while (rs.next()) {
+				results.add(rs.getString("topic_name"));
+			}
+			return results;
 		} finally {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}

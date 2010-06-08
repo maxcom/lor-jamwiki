@@ -20,10 +20,10 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
@@ -40,7 +40,7 @@ public class LinkToServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws DataAccessException, WikiException {
 		this.linksTo(request, next, pageInfo);
 		return next;
 	}
@@ -48,7 +48,7 @@ public class LinkToServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void linksTo(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	private void linksTo(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws DataAccessException, WikiException {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		String topicName = WikiUtil.getTopicFromRequest(request);
 		if (StringUtils.isBlank(topicName)) {
@@ -56,9 +56,9 @@ public class LinkToServlet extends JAMWikiServlet {
 		}
 		WikiMessage pageTitle = new WikiMessage("linkto.title", topicName);
 		pageInfo.setPageTitle(pageTitle);
-		// grab search engine instance and find
-		List<SearchResultEntry> results = WikiBase.getSearchEngine().findLinkedTo(virtualWiki, topicName);
-		next.addObject("results", results);
+		// retrieve topic names for topics that link to this one
+		List<String> linkTopics = WikiBase.getDataHandler().lookupTopicLinks(virtualWiki, topicName);
+		next.addObject("linkTopics", linkTopics);
 		next.addObject("link", topicName);
 		pageInfo.setContentJsp(JSP_LINKTO);
 		pageInfo.setTopicName(topicName);

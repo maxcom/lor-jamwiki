@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -139,6 +140,25 @@ public class AnsiDataHandler implements DataHandler {
 		try {
 			this.validateTopic(topic);
 			this.queryHandler().insertTopic(topic, virtualWikiId, conn);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		}
+	}
+
+	/**
+	 *
+	 */
+	private void addTopicLinks(List<String> links, int topicId, Connection conn) throws DataAccessException {
+		// strip any links longer than 200 characters and any duplicates
+		Map<String, String> linksMap = new HashMap<String, String>();
+		for (String link : links) {
+			if (link.length() <= 200) {
+				linksMap.put(link, link);
+			}
+		}
+		links = new ArrayList<String>(linksMap.keySet());
+		try {
+			this.queryHandler().insertTopicLinks(links, topicId, conn);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
@@ -338,7 +358,7 @@ public class AnsiDataHandler implements DataHandler {
 				deleteRecentChanges(topic, conn);
 			}
 			// update topic to indicate deleted, add delete topic version.  parser output
-			// should be empty since nothing to add to search engine.
+			// should be empty since no links or categories to update.
 			ParserOutput parserOutput = new ParserOutput();
 			topic.setDeleteDate(new Timestamp(System.currentTimeMillis()));
 			this.writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks());
@@ -361,6 +381,17 @@ public class AnsiDataHandler implements DataHandler {
 	private void deleteTopicCategories(Topic topic, Connection conn) throws DataAccessException {
 		try {
 			this.queryHandler().deleteTopicCategories(topic.getTopicId(), conn);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		}
+	}
+
+	/**
+	 *
+	 */
+	private void deleteTopicLinks(Topic topic, Connection conn) throws DataAccessException {
+		try {
+			this.queryHandler().deleteTopicLinks(topic.getTopicId(), conn);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
@@ -824,6 +855,18 @@ public class AnsiDataHandler implements DataHandler {
 			}
 		}
 		return topicId;
+	}
+
+	/**
+	 *
+	 */
+	public List<String> lookupTopicLinks(String virtualWiki, String topicName) throws DataAccessException {
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		try {
+			return this.queryHandler().lookupTopicLinks(virtualWikiId, topicName);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		}
 	}
 
 	/**
@@ -1652,7 +1695,13 @@ public class AnsiDataHandler implements DataHandler {
 				}
 			}
 			if (links != null) {
-				WikiBase.getSearchEngine().updateInIndex(topic, links);
+				// add / remove links associated with the topic
+				this.deleteTopicLinks(topic, conn);
+				if (topic.getDeleteDate() == null && !links.isEmpty()) {
+					this.addTopicLinks(links, topic.getTopicId(), conn);
+				}
+				// only update the search engine if metadata is available
+				WikiBase.getSearchEngine().updateInIndex(topic);
 			}
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
