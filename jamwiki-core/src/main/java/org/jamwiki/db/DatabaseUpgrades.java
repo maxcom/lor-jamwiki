@@ -252,7 +252,7 @@ public class DatabaseUpgrades {
 			Connection conn = DatabaseConnection.getConnection();
 			// populate jam_topic.namespace_id, jam_topic.page_name and jam_topic.page_name_lower
 			int numUpdated = WikiDatabase.fixIncorrectTopicNamespaces();
-			messages.add(new WikiMessage("admin.maintenance.message.namespaces", Integer.toString(numUpdated)));
+			messages.add(new WikiMessage("admin.maintenance.message.topicsUpdated", Integer.toString(numUpdated)));
 			// add not null constraints for jam_topic.page_name and jam_topic.page_name_lower
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_PAGE_NAME_NOT_NULL_CONSTRAINT", conn);
 			messages.add(new WikiMessage("upgrade.message.db.column.modified", "page_name", "jam_topic"));

@@ -471,6 +471,22 @@ public class WikiDatabase {
 	}
 
 	/**
+	 * Utility method for regenerating the "link to" records for all wiki topics.
+	 */
+	public static void rebuildTopicLinks(int topicId, List<String> links) throws DataAccessException {
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			((AnsiDataHandler)WikiBase.getDataHandler()).deleteTopicLinks(topicId, conn);
+			((AnsiDataHandler)WikiBase.getDataHandler()).addTopicLinks(links, topicId, conn);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+	}
+
+	/**
 	 *
 	 */
 	protected static void releaseConnection(Connection conn, Object transactionObject) throws SQLException {

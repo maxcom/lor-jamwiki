@@ -36,6 +36,7 @@
 | <a href="#password"><fmt:message key="admin.title.password" /></a>
 | <a href="#adduser"><fmt:message key="admin.title.adduser" /></a>
 | <a href="#migrate"><fmt:message key="admin.title.migratedatabase" /></a>
+| <a href="#links"><fmt:message key="admin.maintenance.title.links" /></a>
 </div>
 
 <!-- Refresh Search Index -->
@@ -307,6 +308,28 @@
 	<span><input type="submit" value="<fmt:message key="common.migrate" />" /></span>
 </div>
 <input type="hidden" name="function" value="migrate" />
+</form>
+</fieldset>
+
+<!-- Topic Links -->
+<a name="links"></a>
+
+<c:if test="${!empty message && function == 'links'}">
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+</c:if>
+<c:if test="${!empty errors && function == 'links'}">
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+</c:if>
+
+<fieldset>
+<legend><fmt:message key="admin.maintenance.title.links" /></legend>
+<form action="<jamwiki:link value="Special:Maintenance" />#links" method="post">
+<div class="row">
+	<label><fmt:message key="admin.maintenance.caption.links" /></label>
+	<span><input type="submit" value="<fmt:message key="common.update" />" /></span>
+	<div class="formhelp"><fmt:message key="admin.maintenance.help.links" /></div>
+</div>
+<input type="hidden" name="function" value="links" />
 </form>
 </fieldset>
 

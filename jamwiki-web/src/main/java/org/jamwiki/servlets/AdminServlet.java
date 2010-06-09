@@ -35,8 +35,13 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.WikiUserDetailsImpl;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.Role;
+import org.jamwiki.model.Topic;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.parser.ParserException;
+import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.SpamFilter;
 import org.jamwiki.utils.WikiCache;
@@ -90,6 +95,8 @@ public class AdminServlet extends JAMWikiServlet {
 			adduser(request, next, pageInfo);
 		} else if (function.equals("namespaces")) {
 			namespaces(request, next, pageInfo);
+		} else if (function.equals("links")) {
+			links(request, next, pageInfo);
 		}
 		return next;
 	}
@@ -155,6 +162,43 @@ public class AdminServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private void links(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
+		int numUpdated = 0;
+		List<String> topicNames;
+		Topic topic;
+		ParserOutput parserOutput;
+		try {
+			List<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
+			for (VirtualWiki virtualWiki : virtualWikis) {
+				topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName());
+				if (topicNames.isEmpty()) {
+					continue;
+				}
+				for (String topicName : topicNames) {
+					topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
+					parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki.getName(), topicName);
+					WikiDatabase.rebuildTopicLinks(topic.getTopicId(), parserOutput.getLinks());
+				}
+				numUpdated += topicNames.size();
+			}
+			next.addObject("message", new WikiMessage("admin.maintenance.message.topicsUpdated", Integer.toString(numUpdated)));
+		} catch (DataAccessException e) {
+			logger.severe("Failure while regenerating topic links", e);
+			List<WikiMessage> errors = new ArrayList<WikiMessage>();
+			errors.add(new WikiMessage("admin.maintenance.error.linksfail", e.getMessage()));
+			next.addObject("errors", errors);
+		} catch (ParserException e) {
+			logger.severe("Failure while regenerating topic links", e);
+			List<WikiMessage> errors = new ArrayList<WikiMessage>();
+			errors.add(new WikiMessage("admin.maintenance.error.linksfail", e.getMessage()));
+			next.addObject("errors", errors);
+		}
+		viewAdminSystem(request, next, pageInfo);
+	}
+
+	/**
+	 *
+	 */
 	private void logItems(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		try {
 			WikiBase.getDataHandler().reloadLogItems();
@@ -209,7 +253,7 @@ public class AdminServlet extends JAMWikiServlet {
 	private void namespaces(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
 		try {
 			int numUpdated = WikiDatabase.fixIncorrectTopicNamespaces();
-			next.addObject("message", new WikiMessage("admin.maintenance.message.namespaces", Integer.toString(numUpdated)));
+			next.addObject("message", new WikiMessage("admin.maintenance.message.topicsUpdated", Integer.toString(numUpdated)));
 		} catch (DataAccessException e) {
 			logger.severe("Failure while fixing incorrect topic namespaces", e);
 			List<WikiMessage> errors = new ArrayList<WikiMessage>();

@@ -148,7 +148,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private void addTopicLinks(List<String> links, int topicId, Connection conn) throws DataAccessException {
+	protected void addTopicLinks(List<String> links, int topicId, Connection conn) throws DataAccessException {
 		// strip any links longer than 200 characters and any duplicates
 		Map<String, String> linksMap = new HashMap<String, String>();
 		for (String link : links) {
@@ -389,9 +389,9 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private void deleteTopicLinks(Topic topic, Connection conn) throws DataAccessException {
+	protected void deleteTopicLinks(int topicId, Connection conn) throws DataAccessException {
 		try {
-			this.queryHandler().deleteTopicLinks(topic.getTopicId(), conn);
+			this.queryHandler().deleteTopicLinks(topicId, conn);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
@@ -1696,7 +1696,7 @@ public class AnsiDataHandler implements DataHandler {
 			}
 			if (links != null) {
 				// add / remove links associated with the topic
-				this.deleteTopicLinks(topic, conn);
+				this.deleteTopicLinks(topic.getTopicId(), conn);
 				if (topic.getDeleteDate() == null && !links.isEmpty()) {
 					this.addTopicLinks(links, topic.getTopicId(), conn);
 				}
