@@ -170,7 +170,7 @@ public class AdminServlet extends JAMWikiServlet {
 		try {
 			List<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
 			for (VirtualWiki virtualWiki : virtualWikis) {
-				topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName());
+				topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName(), false);
 				if (topicNames.isEmpty()) {
 					continue;
 				}

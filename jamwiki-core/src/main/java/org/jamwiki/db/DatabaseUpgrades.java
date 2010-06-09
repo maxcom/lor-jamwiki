@@ -229,10 +229,8 @@ public class DatabaseUpgrades {
 			messages.add(new WikiMessage("upgrade.message.db.column.added", "namespace_id", "jam_topic"));
 			// update jam_topic to add page_name and page_name_lower
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_PAGE_NAME", conn);
-			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_PAGE_NAME_INDEX", conn);
 			messages.add(new WikiMessage("upgrade.message.db.column.added", "page_name", "jam_topic"));
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_PAGE_NAME_LOWER", conn);
-			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_PAGE_NAME_LOWER_INDEX", conn);
 			messages.add(new WikiMessage("upgrade.message.db.column.added", "page_name_lower", "jam_topic"));
 			// add an index for topic_id on the jam_topic_version table
 			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_VERSION_TOPIC_INDEX", conn);
@@ -258,6 +256,9 @@ public class DatabaseUpgrades {
 			messages.add(new WikiMessage("upgrade.message.db.column.modified", "page_name", "jam_topic"));
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_PAGE_NAME_LOWER_NOT_NULL_CONSTRAINT", conn);
 			messages.add(new WikiMessage("upgrade.message.db.column.modified", "page_name_lower", "jam_topic"));
+			// add the indexes after adding the not null constraint, otherwise MS SQL Server gets angry
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_PAGE_NAME_INDEX", conn);
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_PAGE_NAME_LOWER_INDEX", conn);
 		} catch (SQLException e) {
 			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 			// do not throw this error and halt the upgrade process - populating the field

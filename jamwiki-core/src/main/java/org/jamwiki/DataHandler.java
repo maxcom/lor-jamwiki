@@ -154,16 +154,18 @@ public interface DataHandler {
 	List<Role> getAllRoles() throws DataAccessException;
 
 	/**
-	 * Return a List of all topic names for all non-deleted topics that
-	 * exist for the virtual wiki.
+	 * Return a List of all topic names for all topics that exist for
+	 * the virtual wiki.
 	 *
 	 * @param virtualWiki The virtual wiki for which topics are being
 	 *  retrieved.
+	 * @param includeDeleted Set to <code>true</code> if deleted topics
+	 *  should be included in the results.
 	 * @return A List of all topic names for all non-deleted topics that
 	 *  exist for the virtual wiki.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<String> getAllTopicNames(String virtualWiki) throws DataAccessException;
+	List<String> getAllTopicNames(String virtualWiki, boolean includeDeleted) throws DataAccessException;
 
 	/**
 	 * Retrieve a List of all TopicVersions for a given topic, sorted

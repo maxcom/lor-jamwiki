@@ -66,6 +66,8 @@ import org.springframework.transaction.TransactionStatus;
  */
 public class AnsiDataHandler implements DataHandler {
 
+	/** Any topic lookup that takes longer than the specified time (in ms) will trigger a log message. */
+	private static final int TIME_LIMIT_TOPIC_LOOKUP = 10;
 	private static final String CACHE_NAMESPACE_LIST = "org.jamwiki.db.AnsiDataHandler.CACHE_NAMESPACE_LIST";
 	private static final String CACHE_ROLE_MAP_GROUP = "org.jamwiki.db.AnsiDataHandler.CACHE_ROLE_MAP_GROUP";
 	private static final String CACHE_TOPIC_IDS_BY_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPIC_IDS_BY_NAME";
@@ -460,12 +462,16 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List<String> getAllTopicNames(String virtualWiki) throws DataAccessException {
+	public List<String> getAllTopicNames(String virtualWiki, boolean includeDeleted) throws DataAccessException {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		Connection conn = null;
 		try {
-			return this.queryHandler().getAllTopicNames(virtualWikiId);
+			conn = DatabaseConnection.getConnection();
+			return new ArrayList<String>(this.queryHandler().lookupTopicNames(virtualWikiId, includeDeleted, conn).values());
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
 		}
 	}
 
@@ -768,9 +774,9 @@ public class AnsiDataHandler implements DataHandler {
 			throw new DataAccessException(e);
 		}
 		if (logger.isFineEnabled()) {
-			double execution = ((System.currentTimeMillis() - start) / 1000.000);
-			if (execution > 0.005) {
-				logger.fine("WARNING: slow topic lookup for: " + topicName + " (" + execution + " s)");
+			long execution = (System.currentTimeMillis() - start);
+			if (execution > TIME_LIMIT_TOPIC_LOOKUP) {
+				logger.fine("Slow topic lookup for: " + topicName + " (" + (execution / 1000.000) + " s)");
 			}
 		}
 		return (topic == null || (!deleteOK && topic.getDeleteDate() != null)) ? null : topic;
@@ -849,9 +855,9 @@ public class AnsiDataHandler implements DataHandler {
 			throw new DataAccessException(e);
 		}
 		if (logger.isFineEnabled()) {
-			double execution = ((System.currentTimeMillis() - start) / 1000.000);
-			if (execution > 0.005) {
-				logger.fine("WARNING: slow topic existence lookup for: " + topicName + " (" + execution + " s)");
+			long execution = (System.currentTimeMillis() - start);
+			if (execution > TIME_LIMIT_TOPIC_LOOKUP) {
+				logger.fine("Slow topic existence lookup for: " + topicName + " (" +  (execution / 1000.000) + " s)");
 			}
 		}
 		return topicId;

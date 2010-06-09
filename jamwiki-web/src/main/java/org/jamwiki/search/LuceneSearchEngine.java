@@ -247,7 +247,7 @@ public class LuceneSearchEngine implements SearchEngine {
 			IndexWriter writer = null;
 			try {
 				writer = this.retrieveIndexWriter(virtualWiki.getName(), true);
-				List<String> topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName());
+				List<String> topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName(), false);
 				// FIXME - parsing all documents will be intolerably slow with even a
 				// moderately large Wiki
 				for (String topicName : topicNames) {

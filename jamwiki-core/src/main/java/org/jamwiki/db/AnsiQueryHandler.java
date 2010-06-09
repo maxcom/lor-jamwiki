@@ -182,7 +182,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_TOPIC_LINKS = null;
 	protected static String STATEMENT_SELECT_TOPIC_LOWER = null;
 	protected static String STATEMENT_SELECT_TOPIC_NAMES = null;
-	protected static String STATEMENT_SELECT_TOPICS = null;
 	protected static String STATEMENT_SELECT_TOPICS_ADMIN = null;
 	protected static String STATEMENT_SELECT_TOPIC_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_TOPIC_VERSION = null;
@@ -499,28 +498,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public String existenceValidationQuery() {
 		return STATEMENT_SELECT_VIRTUAL_WIKIS;
-	}
-
-	/**
-	 *
-	 */
-	public List<String> getAllTopicNames(int virtualWikiId) throws SQLException {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPICS);
-			stmt.setInt(1, virtualWikiId);
-			rs = stmt.executeQuery();
-			List<String> topicNames = new ArrayList<String>();
-			while (rs.next()) {
-				topicNames.add(rs.getString("topic_name"));
-			}
-			return topicNames;
-		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
-		}
 	}
 
 	/**
@@ -1165,7 +1142,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_TOPIC_LINKS             = props.getProperty("STATEMENT_SELECT_TOPIC_LINKS");
 		STATEMENT_SELECT_TOPIC_LOWER             = props.getProperty("STATEMENT_SELECT_TOPIC_LOWER");
 		STATEMENT_SELECT_TOPIC_NAMES             = props.getProperty("STATEMENT_SELECT_TOPIC_NAMES");
-		STATEMENT_SELECT_TOPICS                  = props.getProperty("STATEMENT_SELECT_TOPICS");
 		STATEMENT_SELECT_TOPICS_ADMIN            = props.getProperty("STATEMENT_SELECT_TOPICS_ADMIN");
 		STATEMENT_SELECT_TOPIC_SEQUENCE          = props.getProperty("STATEMENT_SELECT_TOPIC_SEQUENCE");
 		STATEMENT_SELECT_TOPIC_VERSION           = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION");
@@ -2178,7 +2154,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public Map<Integer, String> lookupTopicNames(int virtualWikiId, Connection conn) throws SQLException {
+	public Map<Integer, String> lookupTopicNames(int virtualWikiId, boolean includeDeleted, Connection conn) throws SQLException {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
@@ -2187,7 +2163,9 @@ public class AnsiQueryHandler implements QueryHandler {
 			rs = stmt.executeQuery();
 			Map<Integer, String> results = new LinkedHashMap<Integer, String>();
 			while (rs.next()) {
-				results.put(rs.getInt("topic_id"), rs.getString("topic_name"));
+				if (includeDeleted || rs.getTimestamp("delete_date") == null) {
+					results.put(rs.getInt("topic_id"), rs.getString("topic_name"));
+				}
 			}
 			return results;
 		} finally {

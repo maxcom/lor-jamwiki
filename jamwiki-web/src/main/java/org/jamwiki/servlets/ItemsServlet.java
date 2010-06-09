@@ -96,7 +96,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		Set<String> allItems = new TreeSet<String>();
-		List<String> unlinkedTopics = WikiBase.getDataHandler().getAllTopicNames(virtualWiki);
+		List<String> unlinkedTopics = WikiBase.getDataHandler().getAllTopicNames(virtualWiki, false);
 		Topic topic;
 		List<String> topicLinks;
 		ParserInput parserInput;

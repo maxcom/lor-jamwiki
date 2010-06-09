@@ -112,7 +112,7 @@ public class ImageLinkTag implements JFlexParserTag {
 		try {
 			return ImageUtil.buildImageLinkHtml(context, virtualWiki, wikiLink.getDestination(), imageMetadata, null, false);
 		} catch (IOException e) {
-			throw new ParserException("I/O Failure while parsing image link", e);
+			throw new ParserException("I/O Failure while parsing image link: " + e.getMessage(), e);
 		}
 	}
 

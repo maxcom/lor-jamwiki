@@ -300,6 +300,13 @@ public class ImageUtil {
 			return originalDimensions;
 		}
 		int incrementalHeight = (int)Math.round(((double)incrementalWidth / (double)originalDimensions.getWidth()) * (double)originalDimensions.getHeight());
+		// check to see if an image with the desired dimensions already exists on the filesystem
+		String newUrl = buildImagePath(wikiImage.getUrl(), originalDimensions.getWidth(), incrementalWidth);
+		File newImageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), newUrl);
+		if (newImageFile.exists()) {
+			return new ImageDimensions(incrementalWidth, incrementalHeight);
+		}
+		// otherwise generate a scaled instance
 		File imageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
 		BufferedImage original = ImageUtil.loadImage(imageFile);
 		BufferedImage bufferedImage = null;
@@ -319,8 +326,8 @@ public class ImageUtil {
 			logger.severe("Unable to resize image.  This problem sometimes occurs due to dependencies between Java and X on UNIX systems.  Consider enabling an X server or setting the java.awt.headless parameter to true for your JVM.", t);
 			bufferedImage = original;
 		}
-		String newUrl = buildImagePath(wikiImage.getUrl(), originalDimensions.getWidth(), bufferedImage.getWidth());
-		File newImageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), newUrl);
+		newUrl = buildImagePath(wikiImage.getUrl(), originalDimensions.getWidth(), bufferedImage.getWidth());
+		newImageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), newUrl);
 		ImageUtil.saveImage(bufferedImage, newImageFile);
 		return new ImageDimensions(bufferedImage.getWidth(), bufferedImage.getHeight());
 	}
@@ -499,9 +506,12 @@ public class ImageUtil {
 	 * BufferedImage object.
 	 */
 	private static BufferedImage loadImage(File file) throws IOException {
+		if (!file.exists()) {
+			throw new FileNotFoundException("File does not exist: " + file.getAbsolutePath());
+		}
 		BufferedImage image = ImageIO.read(file);
 		if (image == null) {
-			throw new IOException("JDK is unable to process image file: " + file.getAbsolutePath());
+			throw new IOException("JDK is unable to process image file, possibly indicating file corruption: " + file.getAbsolutePath());
 		}
 		return image;
 	}
