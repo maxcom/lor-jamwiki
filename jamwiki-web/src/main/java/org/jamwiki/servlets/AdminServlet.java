@@ -35,13 +35,9 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.WikiUserDetailsImpl;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.Role;
-import org.jamwiki.model.Topic;
-import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserException;
-import org.jamwiki.parser.ParserOutput;
-import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.SpamFilter;
 import org.jamwiki.utils.WikiCache;
@@ -163,24 +159,8 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void links(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
-		int numUpdated = 0;
-		List<String> topicNames;
-		Topic topic;
-		ParserOutput parserOutput;
 		try {
-			List<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
-			for (VirtualWiki virtualWiki : virtualWikis) {
-				topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName(), false);
-				if (topicNames.isEmpty()) {
-					continue;
-				}
-				for (String topicName : topicNames) {
-					topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
-					parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki.getName(), topicName);
-					WikiDatabase.rebuildTopicLinks(topic.getTopicId(), parserOutput.getLinks());
-				}
-				numUpdated += topicNames.size();
-			}
+			int numUpdated = WikiDatabase.rebuildTopicLinks();
 			next.addObject("message", new WikiMessage("admin.maintenance.message.topicsUpdated", Integer.toString(numUpdated)));
 		} catch (DataAccessException e) {
 			logger.severe("Failure while regenerating topic links", e);

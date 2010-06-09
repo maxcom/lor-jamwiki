@@ -77,6 +77,29 @@ otherwise noted.  For example, if upgrading from version 0.6.0 to version
 followed by 0.6.3.
 
 
+  JAMWiki 1.0.0
+  =============
+
+  NOTE: The Lucene search engine has been updated in this release.  As a
+  result most users will want to rebuild their search index using the
+  tools on the Special:Maintenance page.
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "1.0.0".
+  2. Update the database schema by executing the following SQL statements:
+       a) Create the jam_topic_links table
+              CREATE TABLE jam_topic_links ( 
+                topic_id INTEGER NOT NULL, 
+                link_topic_name VARCHAR(200) NOT NULL, 
+                CONSTRAINT jam_p_topic_links PRIMARY KEY (topic_id, link_topic_name), 
+                CONSTRAINT jam_f_tlink_topic_id FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id) 
+              );
+       b) Add an index to the jam_topic_links table
+              CREATE INDEX jam_i_topic_links_tnm on jam_topic_links (link_topic_name);
+  3. Once the database upgrades are complete the "Regenerate Link to records"
+     tool should be invoked from the Special:Maintenance page.
+
+
   JAMWiki 0.9.0
   =============
 

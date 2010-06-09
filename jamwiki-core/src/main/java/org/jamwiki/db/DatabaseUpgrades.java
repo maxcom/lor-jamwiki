@@ -26,6 +26,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.parser.ParserException;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -307,6 +308,18 @@ public class DatabaseUpgrades {
 			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
 		}
 		DatabaseConnection.commit(status);
+		try {
+			// perform a separate transaction to update existing data.  this code is in its own
+			// transaction since if it fails the upgrade can still be considered successful.
+			WikiDatabase.rebuildTopicLinks();
+			messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_topic_links"));
+		} catch (DataAccessException e) {
+			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
+			logger.warning("Failure while populating jam_topic_links records.", e);
+		} catch (ParserException e) {
+			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
+			logger.warning("Failure while populating jam_topic_links records.", e);
+		}
 		return messages;
 	}
 }
