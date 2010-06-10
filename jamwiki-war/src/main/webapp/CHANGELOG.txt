@@ -92,6 +92,8 @@ Bugfixes:
     increases the maximum allowed topic size from 64kb to 16MB.
   * Fix issues where image transparency was lost after resizing.
   * Fix issue that prevented use of wiki headings within tables.
+  * The Bliki parser was not included in the distribution and thus could not
+    be selected from the Special:Admin page.  Reported by cstenkes.
 
 Translation Updates:
 

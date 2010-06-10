@@ -22,6 +22,11 @@
 			<artifactId>jamwiki-web</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.jamwiki</groupId>
+			<artifactId>bliki-parser</artifactId>
+			<version>0.9.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-taglibs</artifactId>
 		</dependency>
