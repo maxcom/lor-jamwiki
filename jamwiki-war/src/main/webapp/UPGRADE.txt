@@ -28,8 +28,9 @@ To upgrade using this automated process follow these steps:
         4.  (Optional) Any other files in the /WEB-INF/ directory that have
             custom modifications.
   3.  Back up all database data prior to upgrading. If you skip this step you
-      do so at your own risk - the upgrade process may modify the database
-      schema, and a failure can leave your wiki in an unusable state. User who
+      do so at your own risk - major upgrades (such as from 0.7.x 0.8.x) will
+      generally include database schema modifications, and failures while
+      updating the schema can leave your wiki in an unusable state. Users who
       are not using an external database should back up all files in the wiki
       system folder, which is specified by the Special:Admin#database
       "File-system directory" property.
@@ -81,7 +82,8 @@ followed by 0.6.3.
   =============
 
   NOTE: The Lucene search engine has been updated in this release.  As a
-  result some users may want to rebuild their search index.
+  result most users will want to rebuild their search index using the
+  tools on the Special:Maintenance page.
 
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.9.0".
