@@ -29,20 +29,13 @@ public class TestSearchEngine implements SearchEngine {
 	/**
 	 *
 	 */
-	public void addToIndex(Topic topic, List<String> links) {
+	public void addToIndex(Topic topic) {
 	}
 
 	/**
 	 *
 	 */
 	public void deleteFromIndex(Topic topic) {
-	}
-
-	/**
-	 *
-	 */
-	public List<SearchResultEntry> findLinkedTo(String virtualWiki, String topicName) {
-		return new ArrayList<SearchResultEntry>();
 	}
 
 	/**
@@ -61,6 +54,6 @@ public class TestSearchEngine implements SearchEngine {
 	/**
 	 *
 	 */
-	public void updateInIndex(Topic topic, List<String> links) {
+	public void updateInIndex(Topic topic) {
 	}
 }

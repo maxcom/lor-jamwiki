@@ -79,25 +79,6 @@ public class ParserOutput implements Serializable {
 	}
 
 	/**
-	 *
-	 */
-	public void appendMetadata(ParserOutput document) {
-		if (document.getCategories() != null) {
-			this.categories.putAll(document.getCategories());
-		}
-		if (document.getLinks() != null) {
-			this.links.addAll(document.getLinks());
-		}
-		if (document.getTemplates() != null) {
-			this.links.addAll(document.getTemplates());
-		}
-		if (!document.getCacheable()) {
-			this.cacheable = false;
-		}
-	}
-
-
-	/**
 	 * Return a flag indicating whether or not the current ParserOutput
 	 * object can be cached.  If the document contains user-specific,
 	 * time-specific or other non-cacheable content then this method should

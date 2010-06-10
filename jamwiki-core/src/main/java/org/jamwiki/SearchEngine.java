@@ -35,10 +35,8 @@ public interface SearchEngine {
 	 * Add a topic to the search index.
 	 *
 	 * @param topic The Topic object that is to be added to the index.
-	 * @param links A list containing the topic names for all topics that link
-	 *  to the current topic.
 	 */
-	void addToIndex(Topic topic, List<String> links);
+	void addToIndex(Topic topic);
 
 	/**
 	 * Remove a topic from the search index.
@@ -46,16 +44,6 @@ public interface SearchEngine {
 	 * @param topic The topic object that is to be removed from the index.
 	 */
 	void deleteFromIndex(Topic topic);
-
-	/**
-	 * Find all documents that link to a specified topic.
-	 *
-	 * @param virtualWiki The virtual wiki for the topic.
-	 * @param topicName The name of the topic.
-	 * @return A list of SearchResultEntry objects for all documents that
-	 *  link to the topic.
-	 */
-	List<SearchResultEntry> findLinkedTo(String virtualWiki, String topicName);
 
 	/**
 	 * Find all documents that contain a specific search term, ordered by relevance.
@@ -78,8 +66,6 @@ public interface SearchEngine {
 	 * Update a topic in the search index.
 	 *
 	 * @param topic The Topic object that is to be updated in the index.
-	 * @param links A list containing the topic names for all topics that link
-	 *  to the current topic.
 	 */
-	void updateInIndex(Topic topic, List<String> links);
+	void updateInIndex(Topic topic);
 }

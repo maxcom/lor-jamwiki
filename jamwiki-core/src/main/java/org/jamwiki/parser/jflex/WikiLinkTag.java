@@ -119,7 +119,7 @@ public class WikiLinkTag implements JFlexParserTag {
 				result = "";
 			}
 		}
-		if (!StringUtils.isBlank(wikiLink.getDestination())) {
+		if (StringUtils.isBlank(wikiLink.getInterWiki()) && (wikiLink.getVirtualWiki() == null || StringUtils.equals(wikiLink.getVirtualWiki().getName(), parserInput.getVirtualWiki())) && !StringUtils.isBlank(wikiLink.getDestination())) {
 			parserOutput.addLink(wikiLink.getDestination());
 		}
 		return result;

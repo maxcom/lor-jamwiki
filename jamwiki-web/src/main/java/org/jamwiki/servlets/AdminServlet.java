@@ -37,6 +37,7 @@ import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.parser.ParserException;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.SpamFilter;
 import org.jamwiki.utils.WikiCache;
@@ -90,6 +91,8 @@ public class AdminServlet extends JAMWikiServlet {
 			adduser(request, next, pageInfo);
 		} else if (function.equals("namespaces")) {
 			namespaces(request, next, pageInfo);
+		} else if (function.equals("links")) {
+			links(request, next, pageInfo);
 		}
 		return next;
 	}
@@ -155,6 +158,27 @@ public class AdminServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private void links(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
+		try {
+			int numUpdated = WikiDatabase.rebuildTopicLinks();
+			next.addObject("message", new WikiMessage("admin.maintenance.message.topicsUpdated", Integer.toString(numUpdated)));
+		} catch (DataAccessException e) {
+			logger.severe("Failure while regenerating topic links", e);
+			List<WikiMessage> errors = new ArrayList<WikiMessage>();
+			errors.add(new WikiMessage("admin.maintenance.error.linksfail", e.getMessage()));
+			next.addObject("errors", errors);
+		} catch (ParserException e) {
+			logger.severe("Failure while regenerating topic links", e);
+			List<WikiMessage> errors = new ArrayList<WikiMessage>();
+			errors.add(new WikiMessage("admin.maintenance.error.linksfail", e.getMessage()));
+			next.addObject("errors", errors);
+		}
+		viewAdminSystem(request, next, pageInfo);
+	}
+
+	/**
+	 *
+	 */
 	private void logItems(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		try {
 			WikiBase.getDataHandler().reloadLogItems();
@@ -209,7 +233,7 @@ public class AdminServlet extends JAMWikiServlet {
 	private void namespaces(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
 		try {
 			int numUpdated = WikiDatabase.fixIncorrectTopicNamespaces();
-			next.addObject("message", new WikiMessage("admin.maintenance.message.namespaces", Integer.toString(numUpdated)));
+			next.addObject("message", new WikiMessage("admin.maintenance.message.topicsUpdated", Integer.toString(numUpdated)));
 		} catch (DataAccessException e) {
 			logger.severe("Failure while fixing incorrect topic namespaces", e);
 			List<WikiMessage> errors = new ArrayList<WikiMessage>();

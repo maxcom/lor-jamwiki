@@ -28,7 +28,6 @@ import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Namespace;
-import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicType;
 import org.jamwiki.parser.ParserInput;
@@ -99,7 +98,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		Set<String> allItems = new TreeSet<String>();
 		List<String> unlinkedTopics = WikiBase.getDataHandler().getAllTopicNames(virtualWiki, false);
 		Topic topic;
-		List<SearchResultEntry> topicLinks;
+		List<String> topicLinks;
 		ParserInput parserInput;
 		ParserOutput parserOutput;
 		for (String topicName : unlinkedTopics) {
@@ -112,7 +111,7 @@ public class ItemsServlet extends JAMWikiServlet {
 				continue;
 			}
 			// only mark them orphaned if there is neither category defined in it, nor a link to it!
-			topicLinks = WikiBase.getSearchEngine().findLinkedTo(virtualWiki, topicName);
+			topicLinks = WikiBase.getDataHandler().lookupTopicLinks(virtualWiki, topicName);
 			if (!topicLinks.isEmpty()) {
 				continue;
 			}

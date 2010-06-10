@@ -44,6 +44,9 @@ import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.parser.ParserException;
+import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
@@ -468,6 +471,39 @@ public class WikiDatabase {
 			}
 		}
 		return contents;
+	}
+
+	/**
+	 * Utility method for regenerating the "link to" records for all wiki topics.
+	 */
+	public static int rebuildTopicLinks() throws DataAccessException, ParserException {
+		int numUpdated = 0;
+		List<String> topicNames;
+		Topic topic;
+		ParserOutput parserOutput;
+		List<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
+		for (VirtualWiki virtualWiki : virtualWikis) {
+			topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName(), false);
+			if (topicNames.isEmpty()) {
+				continue;
+			}
+			for (String topicName : topicNames) {
+				topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
+				parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki.getName(), topicName);
+				Connection conn = null;
+				try {
+					conn = DatabaseConnection.getConnection();
+					((AnsiDataHandler)WikiBase.getDataHandler()).deleteTopicLinks(topic.getTopicId(), conn);
+					((AnsiDataHandler)WikiBase.getDataHandler()).addTopicLinks(parserOutput.getLinks(), topic.getTopicId(), conn);
+				} catch (SQLException e) {
+					throw new DataAccessException(e);
+				} finally {
+					DatabaseConnection.closeConnection(conn);
+				}
+			}
+			numUpdated += topicNames.size();
+		}
+		return numUpdated;
 	}
 
 	/**

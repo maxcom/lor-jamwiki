@@ -22,16 +22,16 @@
 
 <%@ include file="page-init.jsp" %>
 
-<c:if test="${!empty results}">
-<div class="message"><fmt:message key="linkto.overview"><fmt:param value="${link}" /></fmt:message></div>
-
-<ul>
-<c:forEach items="${results}" var="result">
-<li><jamwiki:link value="${result.topic}" text="${result.topic}" /></li>
-</c:forEach>
-</ul>
-</c:if>
-
-<c:if test="${empty results}">
-<div class="message"><fmt:message key="linkto.none"><fmt:param value="${link}" /></fmt:message></div>
-</c:if>
+<c:choose>
+	<c:when test="${!empty linkTopics}">
+		<div class="message"><fmt:message key="linkto.overview"><fmt:param value="${link}" /></fmt:message></div>
+		<ul>
+		<c:forEach items="${linkTopics}" var="linkTopic">
+			<li><jamwiki:link value="${linkTopic}" text="${linkTopic}" /></li>
+		</c:forEach>
+		</ul>
+	</c:when>
+	<c:otherwise>
+		<div class="message"><fmt:message key="linkto.none"><fmt:param value="${link}" /></fmt:message></div>
+	</c:otherwise>
+</c:choose>

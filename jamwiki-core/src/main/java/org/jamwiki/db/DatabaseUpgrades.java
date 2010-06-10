@@ -26,6 +26,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.parser.ParserException;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -250,7 +251,7 @@ public class DatabaseUpgrades {
 			Connection conn = DatabaseConnection.getConnection();
 			// populate jam_topic.namespace_id, jam_topic.page_name and jam_topic.page_name_lower
 			int numUpdated = WikiDatabase.fixIncorrectTopicNamespaces();
-			messages.add(new WikiMessage("admin.maintenance.message.namespaces", Integer.toString(numUpdated)));
+			messages.add(new WikiMessage("admin.maintenance.message.topicsUpdated", Integer.toString(numUpdated)));
 			// add not null constraints for jam_topic.page_name and jam_topic.page_name_lower
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_PAGE_NAME_NOT_NULL_CONSTRAINT", conn);
 			messages.add(new WikiMessage("upgrade.message.db.column.modified", "page_name", "jam_topic"));
@@ -284,6 +285,40 @@ public class DatabaseUpgrades {
 		}
 		if (status != null) {
 			DatabaseConnection.commit(status);
+		}
+		return messages;
+	}
+
+	/**
+	 *
+	 */
+	public static List<WikiMessage> upgrade100(List<WikiMessage> messages) throws WikiException {
+		String dbType = Environment.getValue(Environment.PROP_DB_TYPE);
+		TransactionStatus status = null;
+		try {
+			status = DatabaseConnection.startTransaction(getTransactionDefinition());
+			Connection conn = DatabaseConnection.getConnection();
+			// add the jam_topic_links table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_LINKS_TABLE", conn);
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_LINKS_INDEX", conn);
+			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_topic_links"));
+		} catch (SQLException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			logger.severe("Database failure during upgrade", e);
+			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
+		}
+		DatabaseConnection.commit(status);
+		try {
+			// perform a separate transaction to update existing data.  this code is in its own
+			// transaction since if it fails the upgrade can still be considered successful.
+			WikiDatabase.rebuildTopicLinks();
+			messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_topic_links"));
+		} catch (DataAccessException e) {
+			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
+			logger.warning("Failure while populating jam_topic_links records.", e);
+		} catch (ParserException e) {
+			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
+			logger.warning("Failure while populating jam_topic_links records.", e);
 		}
 		return messages;
 	}

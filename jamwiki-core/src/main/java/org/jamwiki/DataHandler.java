@@ -498,6 +498,17 @@ public interface DataHandler {
 	TopicVersion lookupTopicVersion(int topicVersionId) throws DataAccessException;
 
 	/**
+	 * Find the names for all topics that link to a specified topic.
+	 *
+	 * @param virtualWiki The virtual wiki for the topic.
+	 * @param topicName The name of the topic.
+	 * @return A list of topic names for all topics that link to the
+	 *  specified topic.  If no results are found then an empty list is
+	 *  returned.
+	 */
+	List<String> lookupTopicLinks(String virtualWiki, String topicName) throws DataAccessException;
+
+	/**
 	 * Given a virtual wiki name, return the corresponding VirtualWiki object.
 	 *
 	 * @param virtualWikiName The name of the VirtualWiki object that is
