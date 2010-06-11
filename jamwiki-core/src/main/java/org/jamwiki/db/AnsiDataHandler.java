@@ -878,6 +878,19 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public List<String> lookupTopicLinkOrphans(String virtualWiki) throws DataAccessException {
+		// FIXME - caching needed
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		try {
+			return this.queryHandler().lookupTopicLinkOrphans(virtualWikiId);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		}
+	}
+
+	/**
+	 *
+	 */
 	public TopicVersion lookupTopicVersion(int topicVersionId) throws DataAccessException {
 		Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPIC_VERSIONS, topicVersionId);
 		if (cacheElement != null) {

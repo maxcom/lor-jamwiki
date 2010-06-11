@@ -30,9 +30,6 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicType;
-import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
-import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -96,39 +93,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		Set<String> allItems = new TreeSet<String>();
-		List<String> unlinkedTopics = WikiBase.getDataHandler().getAllTopicNames(virtualWiki, false);
-		Topic topic;
-		List<String> topicLinks;
-		ParserInput parserInput;
-		ParserOutput parserOutput;
-		for (String topicName : unlinkedTopics) {
-			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, null);
-			if (topic == null) {
-				logger.warning("No topic found: " + virtualWiki + " / " + topicName);
-				continue;
-			}
-			if (topic.getTopicType() != TopicType.ARTICLE) {
-				continue;
-			}
-			// only mark them orphaned if there is neither category defined in it, nor a link to it!
-			topicLinks = WikiBase.getDataHandler().lookupTopicLinks(virtualWiki, topicName);
-			if (!topicLinks.isEmpty()) {
-				continue;
-			}
-			parserInput = new ParserInput();
-			parserInput.setContext(request.getContextPath());
-			parserInput.setLocale(request.getLocale());
-			parserInput.setWikiUser(ServletUtil.currentWikiUser());
-			parserInput.setTopicName(topicName);
-			parserInput.setUserDisplay(ServletUtil.getIpAddress(request));
-			parserInput.setVirtualWiki(virtualWiki);
-			parserInput.setAllowSectionEdit(false);
-			parserOutput = new ParserOutput();
-			ParserUtil.parse(parserInput, parserOutput, topic.getTopicContent());
-			if (parserOutput.getCategories().size() == 0) {
-				allItems.add(topic.getName());
-			}
-		}
+		allItems.addAll(WikiBase.getDataHandler().lookupTopicLinkOrphans(virtualWiki));
 		// FIXME - this is a nasty hack until data can be retrieved properly for pagination
 		Set<String> items = new TreeSet<String>();
 		int count = 0;

@@ -179,6 +179,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_TOPIC_HISTORY = null;
 	protected static String STATEMENT_SELECT_TOPIC_ID = null;
 	protected static String STATEMENT_SELECT_TOPIC_ID_LOWER = null;
+	protected static String STATEMENT_SELECT_TOPIC_LINK_ORPHANS = null;
 	protected static String STATEMENT_SELECT_TOPIC_LINKS = null;
 	protected static String STATEMENT_SELECT_TOPIC_LOWER = null;
 	protected static String STATEMENT_SELECT_TOPIC_NAMES = null;
@@ -1139,6 +1140,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_TOPIC_HISTORY           = props.getProperty("STATEMENT_SELECT_TOPIC_HISTORY");
 		STATEMENT_SELECT_TOPIC_ID                = props.getProperty("STATEMENT_SELECT_TOPIC_ID");
 		STATEMENT_SELECT_TOPIC_ID_LOWER          = props.getProperty("STATEMENT_SELECT_TOPIC_ID_LOWER");
+		STATEMENT_SELECT_TOPIC_LINK_ORPHANS      = props.getProperty("STATEMENT_SELECT_TOPIC_LINK_ORPHANS");
 		STATEMENT_SELECT_TOPIC_LINKS             = props.getProperty("STATEMENT_SELECT_TOPIC_LINKS");
 		STATEMENT_SELECT_TOPIC_LOWER             = props.getProperty("STATEMENT_SELECT_TOPIC_LOWER");
 		STATEMENT_SELECT_TOPIC_NAMES             = props.getProperty("STATEMENT_SELECT_TOPIC_NAMES");
@@ -2140,6 +2142,30 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_LINKS);
 			stmt.setInt(1, virtualWikiId);
 			stmt.setString(2, topicName);
+			rs = stmt.executeQuery();
+			List<String> results = new ArrayList<String>();
+			while (rs.next()) {
+				results.add(rs.getString("topic_name"));
+			}
+			return results;
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public List<String> lookupTopicLinkOrphans(int virtualWikiId) throws SQLException{
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_LINK_ORPHANS);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setInt(2, Namespace.MAIN_ID);
+			stmt.setInt(3, TopicType.ARTICLE.id());
 			rs = stmt.executeQuery();
 			List<String> results = new ArrayList<String>();
 			while (rs.next()) {
