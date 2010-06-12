@@ -574,6 +574,7 @@ div.row {
 	border-top: 1px solid #fff;
 }
 div.row span {
+	display: inline-block;
 	vertical-align: top;
 	text-align: left;
 	padding-left: 5px;
