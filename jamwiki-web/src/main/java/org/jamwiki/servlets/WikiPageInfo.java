@@ -48,6 +48,7 @@ public class WikiPageInfo {
 	private WikiMessage exception = null;
 	private String redirectName = null;
 	private String redirectUrl = null;
+	private String selectedTab = null;
 	private boolean special = false;
 	private LinkedHashMap<String, WikiMessage> tabMenu = new LinkedHashMap<String, WikiMessage>();
 	private String topicName = "";
@@ -75,6 +76,7 @@ public class WikiPageInfo {
 		this.exception = null;
 		this.pageTitle = null;
 		this.redirectName = null;
+		this.selectedTab = null;
 		this.special = false;
 		this.tabMenu = new LinkedHashMap<String, WikiMessage>();
 		this.topicName = "";
@@ -254,6 +256,28 @@ public class WikiPageInfo {
 	 */
 	public String getRSSTitle() {
 		return Environment.getValue("rss-title");
+	}
+
+	/**
+	 * Return the page topic (example: "Special:Admin") for the page that is
+	 * currently active.
+	 *
+	 * @return The page topic (example: "Special:Admin") for the page that is
+	 * currently active.
+	 */
+	public String getSelectedTab() {
+		return this.selectedTab;
+	}
+
+	/**
+	 * Set the page topic (example: "Special:Admin") for the page that is
+	 * currently active.
+	 *
+	 * @param selectedTab The page topic (example: "Special:Admin") for the
+	 *  page that is currently active.
+	 */
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
 	}
 
 	/**

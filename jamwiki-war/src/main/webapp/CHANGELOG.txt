@@ -49,6 +49,8 @@ New Features:
   * Remove the "export internal database to CSV" functionality - since it
     is now possible to export to XML and migrate databases this capability
     is no longer needed.
+  * Highlight the currently selected tab on each page by adding an "active" CSS
+    class.  Suggested by cstenkes.
   * Upgrade to Spring Framework 3.0.1.RELEASE.
   * Upgrade to Spring Security 3.0.2.RELEASE.
   * Upgrade to Lucene Search 3.0.1.

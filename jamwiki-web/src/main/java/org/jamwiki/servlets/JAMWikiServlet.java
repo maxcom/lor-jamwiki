@@ -94,7 +94,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * Build a map of links and the corresponding link text to be used as the
 	 * tab menu links for the WikiPageInfo object.
 	 */
-	private LinkedHashMap<String, WikiMessage> buildTabMenu(HttpServletRequest request, WikiPageInfo pageInfo) {
+	private void buildTabMenu(HttpServletRequest request, WikiPageInfo pageInfo) {
 		LinkedHashMap<String, WikiMessage> links = new LinkedHashMap<String, WikiMessage>();
 		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		String pageName = pageInfo.getTopicName();
@@ -159,7 +159,21 @@ public abstract class JAMWikiServlet extends AbstractController {
 				logger.severe("Unable to build tabbed menu links", e);
 			}
 		}
-		return links;
+		pageInfo.setTabMenu(links);
+		// determine the currently active tab
+		String activePage = WikiUtil.getTopicFromURI(request);
+		int pos;
+		for (String link : links.keySet()) {
+			if (StringUtils.isBlank(pageInfo.getSelectedTab())) {
+				// if no tab is selected default to the first one
+				pageInfo.setSelectedTab(link);
+			}
+			pos = link.indexOf("?");
+			if ((pos != -1 && StringUtils.equals(activePage, link.substring(0, pos))) || (pos == -1 && StringUtils.equals(activePage, link))) {
+				pageInfo.setSelectedTab(link);
+				break;
+			}
+		}
 	}
 
 	/**
@@ -317,7 +331,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			pageInfo.setTopicName(WikiUtil.getTopicFromURI(request));
 		}
 		pageInfo.setUserMenu(this.buildUserMenu(pageInfo));
-		pageInfo.setTabMenu(this.buildTabMenu(request, pageInfo));
+		this.buildTabMenu(request, pageInfo);
 	}
 
 	/**

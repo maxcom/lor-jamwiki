@@ -326,22 +326,30 @@ div.submenu {
 
 /* tab menu */
 
-#tab-menu {
+ul#tab-menu {
 	padding: 0;
 	margin: 0;
 	margin-left: 6px;
+	display: inline-block;
+	list-style: inherit;
+	list-style-type: none;
 }
-#tab-menu .tab-item {
+ul#tab-menu li {
 	float: left;
 	background: white;
 	color: blue;
 	border: 1px solid #D8D8E7;
 	border-bottom: none;
-	padding: 0.2em 0.5em 0.2em 0.5em;
+	padding: 0 0.5em;
 	margin: 0;
-	margin-right: 6px;
+	margin-right: 4px;
+	min-width: 40px;
 	font-size: 85%;
 	text-align: center;
+}
+ul#tab-menu li.active {
+	margin-bottom: -1px;
+	border-bottom: 1px solid #fff;
 }
 
 /* user menu */
