@@ -350,6 +350,8 @@ ul#tab-menu li {
 ul#tab-menu li.active {
 	margin-bottom: -1px;
 	border-bottom: 1px solid #fff;
+	font-size: 90%;
+	font-weight: bold;
 }
 
 /* user menu */
