@@ -443,6 +443,10 @@ public class ImageUtil {
 			originalDimensions = new ImageDimensions(imageObject.getWidth(), imageObject.getHeight());
 			addToCache(wikiImage, imageObject.getWidth(), imageObject.getHeight());
 		}
+		if (!imageMetadata.getAllowEnlarge() && imageMetadata.getMaxWidth() > originalDimensions.getWidth() && imageMetadata.getMaxHeight() > originalDimensions.getHeight()) {
+			imageMetadata.setMaxWidth(originalDimensions.getWidth());
+			imageMetadata.setMaxHeight(originalDimensions.getHeight());
+		}
 		// determine the width & height of scaled image (if needed)
 		ImageDimensions scaledDimensions = calculateScaledDimensions(originalDimensions, imageMetadata.getMaxWidth(), imageMetadata.getMaxHeight());
 		wikiImage.setWidth(scaledDimensions.getWidth());

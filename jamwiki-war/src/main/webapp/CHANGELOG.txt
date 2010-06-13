@@ -51,6 +51,7 @@ New Features:
     is no longer needed.
   * Highlight the currently selected tab on each page by adding an "active" CSS
     class.  Suggested by cstenkes.
+  * Resize large images on Image: pages to a maximum dimension of 800x600.
   * Upgrade to Spring Framework 3.0.1.RELEASE.
   * Upgrade to Spring Security 3.0.2.RELEASE.
   * Upgrade to Lucene Search 3.0.1.

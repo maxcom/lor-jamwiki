@@ -128,7 +128,17 @@
 		<tag-class>org.jamwiki.taglib.ImageLinkTag</tag-class>
 		<body-content>JSP</body-content>
 		<attribute>
-			<name>maxDimension</name>
+			<name>allowEnlarge</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>maxHeight</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>maxWidth</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>

@@ -22,6 +22,8 @@ package org.jamwiki.utils;
 public class ImageMetadata {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(ImageMetadata.class.getName());
+	/** Flag indicating whether the image can be resized larger than its current size. */
+	private boolean allowEnlarge = true;
 	private String alt = null;
 	private boolean bordered = false;
 	private ImageBorderEnum border = ImageBorderEnum.NOT_SPECIFIED;
@@ -45,6 +47,22 @@ public class ImageMetadata {
 	 */
 	private int maxWidth = -1;
 	private ImageVerticalAlignmentEnum verticalAlignment = ImageVerticalAlignmentEnum.NOT_SPECIFIED;
+
+	/**
+	 * Return a flag indicating whether the image can be resized larger than its
+	 * actual dimensions.
+	 */
+	public boolean getAllowEnlarge() {
+		return this.allowEnlarge;
+	}
+
+	/**
+	 * Set a flag indicating whether the image can be resized larger than its
+	 * actual dimensions.
+	 */
+	public void setAllowEnlarge(boolean allowEnlarge) {
+		this.allowEnlarge = allowEnlarge;
+	}
 
 	/**
 	 *

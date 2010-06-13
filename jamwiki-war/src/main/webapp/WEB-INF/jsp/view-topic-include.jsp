@@ -20,7 +20,7 @@
 <c:if test="${empty notopic}">
 	<c:if test="${!empty topicObject}">
 		<div id="content-article">
-		<c:if test="${topicImage}"><jamwiki:image value="${topicObject.name}" /></c:if>
+		<c:if test="${topicImage}"><a href="<c:out value="${fileVersions[0].url}" />" class="wikiimg"><jamwiki:image value="${topicObject.name}" maxWidth="800" maxHeight="600" allowEnlarge="false" /></a></c:if>
 		<c:if test="${topicFile}"><div id="topic-file-download"><fmt:message key="topic.file.download" />:&#160;<a href="<c:out value="${fileVersions[0].url}" />"><c:out value="${topicObject.name}" /></a></div></c:if>
 		<c:out value="${topicObject.topicContent}" escapeXml="false" />
 		</div>
