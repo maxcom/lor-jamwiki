@@ -241,6 +241,9 @@ div.submenu {
 	background-color: white;
 	border: 1px solid #D8D8E7;
 }
+#nav-search input[type="text"] {
+	width: 150px;
+}
 
 /* diff page */
 

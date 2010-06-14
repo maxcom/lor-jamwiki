@@ -38,7 +38,7 @@
 	</c:if>
 	<div id="nav-search">
 	<form method="post" action="<jamwiki:link value="Special:Search" />">
-	<input type="text" name="text" size="20" value="" />
+	<input type="text" name="text" value="" />
 	<br />
 	<input type="submit" name="search" value='<fmt:message key="generalmenu.search"/>'/>
 	<input type="submit" name="jumpto" value='<fmt:message key="generalmenu.jumpto"/>'/>
