@@ -45,7 +45,7 @@
 <table class="gallery" cellpadding="0" cellspacing="0"><tr>
 		<%-- FIXME - number of columns and max image size are hard-coded --%>
 		<c:forEach items="${categoryImages}" var="categoryImage" varStatus="status">
-<td><a href="<jamwiki:link value="${categoryImage.childTopicName}" />"><jamwiki:image value="${categoryImage.childTopicName}" maxDimension="120" style="gallery" /></a></td>
+<td><a href="<jamwiki:link value="${categoryImage.childTopicName}" />" class="wikiimg"><jamwiki:image value="${categoryImage.childTopicName}" maxWidth="120" maxHeight="120" style="gallery" /></a></td>
 			<c:if test="${(status.count % 4) == 0}">
 </tr><tr>
 			</c:if>
