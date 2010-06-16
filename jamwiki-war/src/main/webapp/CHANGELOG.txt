@@ -102,6 +102,7 @@ Translation Updates:
 
   * Added Sinhala translations (ruchira56).
   * Updated German translations (axelclk).
+  * Updated Hungarian translations (cstenkes).
   * Updated Polish translations (dlpa).
   * Updated Russian translations (shar).
 
