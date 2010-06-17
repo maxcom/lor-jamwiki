@@ -51,6 +51,11 @@
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache-core</artifactId>
 		</dependency>
+		<!-- slf4j is an ehcache dependency -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jdk14</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.incava</groupId>
 			<artifactId>javadiff</artifactId>

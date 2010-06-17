@@ -121,12 +121,10 @@ public class WikiCache {
 				WikiCache.cacheManager = CacheManager.create();
 			} else {
 				Configuration configuration = new Configuration();
-				CacheConfiguration defaultCacheConfiguration = new CacheConfiguration();
+				CacheConfiguration defaultCacheConfiguration = new CacheConfiguration("jamwikiCache", Environment.getIntValue(Environment.PROP_CACHE_TOTAL_SIZE));
 				defaultCacheConfiguration.setDiskPersistent(false);
 				defaultCacheConfiguration.setEternal(false);
 				defaultCacheConfiguration.setOverflowToDisk(true);
-				defaultCacheConfiguration.setMaxElementsInMemory(Environment.getIntValue(Environment.PROP_CACHE_TOTAL_SIZE));
-				defaultCacheConfiguration.setName("defaultCache");
 				configuration.addDefaultCache(defaultCacheConfiguration);
 				DiskStoreConfiguration diskStoreConfiguration = new DiskStoreConfiguration();
 //				diskStoreConfiguration.addExpiryThreadPool(new ThreadPoolConfiguration("", 5, 5));
@@ -135,10 +133,11 @@ public class WikiCache {
 				configuration.addDiskStore(diskStoreConfiguration);
 				WikiCache.cacheManager = new CacheManager(configuration);
 			}
-		} catch (RuntimeException e) {
+		} catch (Exception e) {
 			logger.severe("Failure while initializing cache", e);
-			throw e;
+			throw new RuntimeException(e);
 		}
+		logger.info("Initializing cache 9");
 	}
 
 	public static void shutdown() {
