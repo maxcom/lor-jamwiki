@@ -6,6 +6,7 @@ New Features:
   * Use the database rather than the search engine to generate results for the
     Special:LinkTo page.
   * Refactor Special:OrphanedPages to vastly improve speed & scalability.
+  * Upgrade to Spring Framework 3.0.3.RELEASE.
 
 
 0.9.0
