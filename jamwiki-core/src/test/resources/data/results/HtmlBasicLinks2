@@ -14,3 +14,4 @@
 <p><a class="externallink" rel="nofollow" href="http://www.google.com">Caption with [http://example.com nested captioned</a> link]</p>
 <p><a class="externallink" rel="nofollow" href="http://www.google.com">Caption with [[StartingPoints</a>] nested wiki link]</p>
 <p><a class="externallink" rel="nofollow" href="http://www.google.com">Caption with [[StartingPoints|nested captioned</a>] wiki link]</p>
+<p>&quot;<a class="externallink" rel="nofollow" href="http://www.google.com/">http://www.google.com/</a>&quot;</p>

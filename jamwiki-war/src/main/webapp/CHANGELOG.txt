@@ -9,6 +9,11 @@ New Features:
   * Upgrade to Spring Framework 3.0.3.RELEASE.
   * Upgrade to Ehcache 2.1.0.
 
+Bugfixes:
+
+  * Fix parsing of links followed by quotation marks: "http://example.com".
+
+
 0.9.0
 =====
 
