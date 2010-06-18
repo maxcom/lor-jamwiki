@@ -65,6 +65,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_CONNECTION_VALIDATION_QUERY = null;
 	protected static String STATEMENT_CREATE_AUTHORITIES_TABLE = null;
 	protected static String STATEMENT_CREATE_CATEGORY_TABLE = null;
+	protected static String STATEMENT_CREATE_CATEGORY_INDEX = null;
 	protected static String STATEMENT_CREATE_GROUP_AUTHORITIES_TABLE = null;
 	protected static String STATEMENT_CREATE_GROUP_MEMBERS_TABLE = null;
 	protected static String STATEMENT_CREATE_GROUP_TABLE = null;
@@ -79,6 +80,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_CREATE_TOPIC_LINKS_INDEX = null;
 	protected static String STATEMENT_CREATE_TOPIC_PAGE_NAME_INDEX = null;
 	protected static String STATEMENT_CREATE_TOPIC_PAGE_NAME_LOWER_INDEX = null;
+	protected static String STATEMENT_CREATE_TOPIC_CURRENT_VERSION_INDEX = null;
 	protected static String STATEMENT_CREATE_TOPIC_VERSION_TABLE = null;
 	protected static String STATEMENT_CREATE_TOPIC_VERSION_TOPIC_INDEX = null;
 	protected static String STATEMENT_CREATE_USERS_TABLE = null;
@@ -99,6 +101,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DELETE_WATCHLIST_ENTRY = null;
 	protected static String STATEMENT_DROP_AUTHORITIES_TABLE = null;
 	protected static String STATEMENT_DROP_CATEGORY_TABLE = null;
+	protected static String STATEMENT_DROP_CATEGORY_INDEX = null;
 	protected static String STATEMENT_DROP_GROUP_AUTHORITIES_TABLE = null;
 	protected static String STATEMENT_DROP_GROUP_MEMBERS_TABLE = null;
 	protected static String STATEMENT_DROP_GROUP_TABLE = null;
@@ -113,6 +116,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DROP_TOPIC_LINKS_INDEX = null;
 	protected static String STATEMENT_DROP_TOPIC_PAGE_NAME_INDEX = null;
 	protected static String STATEMENT_DROP_TOPIC_PAGE_NAME_LOWER_INDEX = null;
+	protected static String STATEMENT_DROP_TOPIC_CURRENT_VERSION_INDEX = null;
 	protected static String STATEMENT_DROP_TOPIC_VERSION_TABLE = null;
 	protected static String STATEMENT_DROP_TOPIC_VERSION_TOPIC_INDEX = null;
 	protected static String STATEMENT_DROP_USERS_TABLE = null;
@@ -267,6 +271,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_PAGE_NAME_INDEX, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_PAGE_NAME_LOWER_INDEX, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_CURRENT_VERSION_INDEX, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_TOPIC_INDEX, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_CURRENT_VERSION_CONSTRAINT, conn);
@@ -275,6 +280,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_CATEGORY_TABLE, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_CATEGORY_INDEX, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_GROUP_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_GROUP_MEMBERS_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_ROLE_TABLE, conn);
@@ -404,6 +410,9 @@ public class AnsiQueryHandler implements QueryHandler {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_GROUP_TABLE, conn);
 		} catch (SQLException e) { logger.severe(e.getMessage()); }
 		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_CATEGORY_INDEX, conn);
+		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_CATEGORY_TABLE, conn);
 		} catch (SQLException e) { logger.severe(e.getMessage()); }
 		try {
@@ -426,6 +435,9 @@ public class AnsiQueryHandler implements QueryHandler {
 		} catch (SQLException e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_VERSION_TABLE, conn);
+		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_CURRENT_VERSION_INDEX, conn);
 		} catch (SQLException e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_PAGE_NAME_LOWER_INDEX, conn);
@@ -1037,6 +1049,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_CREATE_TOPIC_LINKS_INDEX       = props.getProperty("STATEMENT_CREATE_TOPIC_LINKS_INDEX");
 		STATEMENT_CREATE_TOPIC_PAGE_NAME_INDEX   = props.getProperty("STATEMENT_CREATE_TOPIC_PAGE_NAME_INDEX");
 		STATEMENT_CREATE_TOPIC_PAGE_NAME_LOWER_INDEX = props.getProperty("STATEMENT_CREATE_TOPIC_PAGE_NAME_LOWER_INDEX");
+		STATEMENT_CREATE_TOPIC_CURRENT_VERSION_INDEX = props.getProperty("STATEMENT_CREATE_TOPIC_CURRENT_VERSION_INDEX");
 		STATEMENT_CREATE_TOPIC_VERSION_TABLE     = props.getProperty("STATEMENT_CREATE_TOPIC_VERSION_TABLE");
 		STATEMENT_CREATE_TOPIC_VERSION_TOPIC_INDEX = props.getProperty("STATEMENT_CREATE_TOPIC_VERSION_TOPIC_INDEX");
 		STATEMENT_CREATE_USERS_TABLE             = props.getProperty("STATEMENT_CREATE_USERS_TABLE");
@@ -1044,6 +1057,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE = props.getProperty("STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE");
 		STATEMENT_CREATE_AUTHORITIES_TABLE       = props.getProperty("STATEMENT_CREATE_AUTHORITIES_TABLE");
 		STATEMENT_CREATE_CATEGORY_TABLE          = props.getProperty("STATEMENT_CREATE_CATEGORY_TABLE");
+		STATEMENT_CREATE_CATEGORY_INDEX          = props.getProperty("STATEMENT_CREATE_CATEGORY_INDEX");
 		STATEMENT_CREATE_GROUP_AUTHORITIES_TABLE = props.getProperty("STATEMENT_CREATE_GROUP_AUTHORITIES_TABLE");
 		STATEMENT_CREATE_GROUP_MEMBERS_TABLE     = props.getProperty("STATEMENT_CREATE_GROUP_MEMBERS_TABLE");
 		STATEMENT_CREATE_LOG_TABLE               = props.getProperty("STATEMENT_CREATE_LOG_TABLE");
@@ -1060,6 +1074,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_DELETE_WATCHLIST_ENTRY         = props.getProperty("STATEMENT_DELETE_WATCHLIST_ENTRY");
 		STATEMENT_DROP_AUTHORITIES_TABLE         = props.getProperty("STATEMENT_DROP_AUTHORITIES_TABLE");
 		STATEMENT_DROP_CATEGORY_TABLE            = props.getProperty("STATEMENT_DROP_CATEGORY_TABLE");
+		STATEMENT_DROP_CATEGORY_INDEX            = props.getProperty("STATEMENT_DROP_CATEGORY_INDEX");
 		STATEMENT_DROP_GROUP_AUTHORITIES_TABLE   = props.getProperty("STATEMENT_DROP_GROUP_AUTHORITIES_TABLE");
 		STATEMENT_DROP_GROUP_MEMBERS_TABLE       = props.getProperty("STATEMENT_DROP_GROUP_MEMBERS_TABLE");
 		STATEMENT_DROP_GROUP_TABLE               = props.getProperty("STATEMENT_DROP_GROUP_TABLE");
@@ -1074,6 +1089,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_DROP_TOPIC_LINKS_TABLE         = props.getProperty("STATEMENT_DROP_TOPIC_LINKS_TABLE");
 		STATEMENT_DROP_TOPIC_PAGE_NAME_INDEX     = props.getProperty("STATEMENT_DROP_TOPIC_PAGE_NAME_INDEX");
 		STATEMENT_DROP_TOPIC_PAGE_NAME_LOWER_INDEX = props.getProperty("STATEMENT_DROP_TOPIC_PAGE_NAME_LOWER_INDEX");
+		STATEMENT_DROP_TOPIC_CURRENT_VERSION_INDEX = props.getProperty("STATEMENT_DROP_TOPIC_CURRENT_VERSION_INDEX");
 		STATEMENT_DROP_TOPIC_VERSION_TABLE       = props.getProperty("STATEMENT_DROP_TOPIC_VERSION_TABLE");
 		STATEMENT_DROP_TOPIC_VERSION_TOPIC_INDEX = props.getProperty("STATEMENT_DROP_TOPIC_VERSION_TOPIC_INDEX");
 		STATEMENT_DROP_USERS_TABLE               = props.getProperty("STATEMENT_DROP_USERS_TABLE");

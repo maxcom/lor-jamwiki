@@ -311,14 +311,39 @@ public class DatabaseUpgrades {
 		try {
 			// perform a separate transaction to update existing data.  this code is in its own
 			// transaction since if it fails the upgrade can still be considered successful.
+			status = DatabaseConnection.startTransaction(getTransactionDefinition());
+			Connection conn = DatabaseConnection.getConnection();
+			// add an index to the jam_category table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_CATEGORY_INDEX", conn);
+			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_category"));
+			// add an index to the jam_topic table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_CURRENT_VERSION_INDEX", conn);
+			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic"));
+			// populate the jam_topic_links table
 			WikiDatabase.rebuildTopicLinks();
 			messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_topic_links"));
 		} catch (DataAccessException e) {
 			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 			logger.warning("Failure while populating jam_topic_links records.", e);
+			status = null; // so we do not try to commit
 		} catch (ParserException e) {
 			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 			logger.warning("Failure while populating jam_topic_links records.", e);
+			status = null; // so we do not try to commit
+		} catch (SQLException e) {
+			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
+			// do not throw this error and halt the upgrade process - populating the field
+			// is not required for existing systems.
+			logger.warning("Non-fatal error while upgrading.", e);
+			try {
+				DatabaseConnection.rollbackOnException(status, e);
+			} catch (Exception ex) {
+				// ignore
+			}
+			status = null; // so we do not try to commit
+		}
+		if (status != null) {
+			DatabaseConnection.commit(status);
 		}
 		return messages;
 	}
