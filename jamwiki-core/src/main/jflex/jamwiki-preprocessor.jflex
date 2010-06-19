@@ -59,7 +59,7 @@ noeditsection      = ({newline})? "__NOEDITSECTION__"
 /* wiki links */
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
 htmllinkwiki       = "[" ({protocol}) ([^\]\n]+) "]"
-htmllinkraw        = ({protocol}) ([^ <'\n\t]+)
+htmllinkraw        = ({protocol}) ([^ <'\"\n\t]+)
 htmllink           = ({htmllinkwiki}) | ({htmllinkraw})
 wikilinkcontent    = [^\n\]] | "]" [^\n\]] | {htmllink}
 wikilink           = "[[" ({wikilinkcontent})+ "]]" [a-z]*

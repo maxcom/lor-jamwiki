@@ -30,3 +30,5 @@ http://www.google.com/'''bold'''
 [http://www.google.com Caption with [[StartingPoints]] nested wiki link]
 
 [http://www.google.com Caption with [[StartingPoints|nested captioned]] wiki link]
+
+"http://www.google.com/"

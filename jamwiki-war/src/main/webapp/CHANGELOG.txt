@@ -97,6 +97,7 @@ Bugfixes:
   * Fix issue that prevented use of wiki headings within tables.
   * The Bliki parser was not included in the distribution and thus could not
     be selected from the Special:Admin page.  Reported by cstenkes.
+  * Fix parsing of links followed by quotation marks: "http://example.com".
 
 Translation Updates:
 
