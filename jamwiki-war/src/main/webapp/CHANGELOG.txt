@@ -9,10 +9,6 @@ New Features:
   * Upgrade to Spring Framework 3.0.3.RELEASE.
   * Upgrade to Ehcache 2.1.0.
 
-Bugfixes:
-
-  * Fix parsing of links followed by quotation marks: "http://example.com".
-
 
 0.9.0
 =====
@@ -113,11 +109,13 @@ Bugfixes:
   * Fix issue that prevented use of wiki headings within tables.
   * The Bliki parser was not included in the distribution and thus could not
     be selected from the Special:Admin page.  Reported by cstenkes.
+  * Fix parsing of links followed by quotation marks: "http://example.com".
 
 Translation Updates:
 
   * Added Sinhala translations (ruchira56).
   * Updated German translations (axelclk).
+  * Updated Hungarian translations (cstenkes).
   * Updated Polish translations (dlpa).
   * Updated Russian translations (shar).
 

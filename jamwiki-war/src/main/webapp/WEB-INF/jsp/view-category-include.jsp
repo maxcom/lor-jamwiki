@@ -16,11 +16,15 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
-<%@ page errorPage="/WEB-INF/jsp/error.jsp"
-    contentType="text/html; charset=utf-8"
-%>
 
-<%@ include file="page-init.jsp" %>
-
-<%@ include file="view-topic-include.jsp" %>
-<%@ include file="view-category-include.jsp" %>
+<c:if test="${empty notopic}">
+	<%@ include file="category-include.jsp" %>
+	<c:if test="${!empty categories}">
+		<div id="category-index"><jamwiki:link value="Special:Categories"><fmt:message key="topic.categories" /></jamwiki:link>:
+		<c:forEach items="${categories}" var="category" varStatus="status">
+			<c:if test="${!status.first}">&#160;|&#160;</c:if><jamwiki:link value="${category.key}" text="${category.value}" />
+		</c:forEach>
+		</div>
+		<div class="clear"></div>
+	</c:if>
+</c:if>

@@ -37,6 +37,7 @@
 <%@ include file="view-topic-include.jsp" %>
 </c:if>
 </jamwiki:enabled>
+<%@ include file="view-category-include.jsp" %>
 
 <jamwiki:enabled property="PROP_TOPIC_USE_SHOW_CHANGES">
 <c:if test="${!empty editShowChanges}">
