@@ -6,6 +6,7 @@ New Features:
   * Use the database rather than the search engine to generate results for the
     Special:LinkTo page.
   * Refactor Special:OrphanedPages to vastly improve speed & scalability.
+  * Remove ability to automatically upgrade from versions prior to 0.8.0.
   * Upgrade to Spring Framework 3.0.3.RELEASE.
   * Upgrade to Ehcache 2.1.0.
   * Upgrade to Lucene Search 3.0.2.

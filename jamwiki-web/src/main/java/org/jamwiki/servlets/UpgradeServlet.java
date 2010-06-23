@@ -29,7 +29,9 @@ import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.db.DatabaseUpgrades;
+import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.VirtualWiki;
+import org.jamwiki.parser.ParserException;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -104,17 +106,22 @@ public class UpgradeServlet extends JAMWikiServlet {
 			// first perform database upgrades
 			this.upgradeDatabase(true, messages);
 			// perform any additional upgrades required
-			if (oldVersion.before(0, 8, 0)) {
+			if (oldVersion.before(1, 0, 0)) {
 				try {
-					WikiBase.getDataHandler().reloadLogItems();
+					int topicCount = WikiBase.getDataHandler().lookupTopicCount(Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT), null);
+					if (topicCount < 1000) {
+						// populate the jam_topic_links table
+						WikiDatabase.rebuildTopicLinks();
+						messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_topic_links"));
+					} else {
+						// print a message telling the user to do this step manually
+						messages.add(new WikiMessage("upgrade.message.100.topic.links"));
+					}
 				} catch (DataAccessException e) {
-					logger.warning("Failure during upgrade while reloading log items.  Please use the Special:Maintenance page to complete this step.", e);
+					logger.warning("Failure during upgrade while generating topic link records.  Please use the tools on the Special:Maintenance page to complete this step.", e);
 					messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
-				}
-				try {
-					WikiBase.getDataHandler().reloadRecentChanges();
-				} catch (DataAccessException e) {
-					logger.warning("Failure during upgrade while reloading recent changes.  Please use the Special:Maintenance page to complete this step.", e);
+				} catch (ParserException e) {
+					logger.warning("Failure during upgrade while generating topic link records.  Please use the tools on the Special:Maintenance page to complete this step.", e);
 					messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 				}
 			}
@@ -177,12 +184,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private boolean upgradeDatabase(boolean performUpgrade, List<WikiMessage> messages) throws WikiException {
 		boolean upgradeRequired = false;
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
-		if (oldVersion.before(0, 8, 0)) {
-			upgradeRequired = true;
-			if (performUpgrade) {
-				messages = DatabaseUpgrades.upgrade080(messages);
-			}
-		}
 		if (oldVersion.before(0, 9, 0)) {
 			upgradeRequired = true;
 			if (performUpgrade) {
