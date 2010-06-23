@@ -319,9 +319,15 @@ public class DatabaseUpgrades {
 			// add an index to the jam_topic table
 			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_CURRENT_VERSION_INDEX", conn);
 			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic"));
-			// populate the jam_topic_links table
-			WikiDatabase.rebuildTopicLinks();
-			messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_topic_links"));
+			int topicCount = WikiBase.getDataHandler().lookupTopicCount(Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT), null);
+			if (topicCount < 1000) {
+				// populate the jam_topic_links table
+				WikiDatabase.rebuildTopicLinks();
+				messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_topic_links"));
+			} else {
+				// print a message telling the user to do this step manually
+				messages.add(new WikiMessage("upgrade.message.100.topic.links"));
+			}
 		} catch (DataAccessException e) {
 			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 			logger.warning("Failure while populating jam_topic_links records.", e);
