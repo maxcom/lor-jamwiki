@@ -8,6 +8,7 @@ New Features:
   * Refactor Special:OrphanedPages to vastly improve speed & scalability.
   * Upgrade to Spring Framework 3.0.3.RELEASE.
   * Upgrade to Ehcache 2.1.0.
+  * Upgrade to Lucene Search 3.0.2.
 
 
 0.9.0
