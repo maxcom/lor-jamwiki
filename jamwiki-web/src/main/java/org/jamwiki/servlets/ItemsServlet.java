@@ -111,7 +111,11 @@ public class ItemsServlet extends JAMWikiServlet {
 		}
 		next.addObject("itemCount", items.size());
 		next.addObject("items", items);
-		next.addObject("rootUrl", "Special:OrphanedPages");
+		String rootUrl = "Special:OrphanedPages";
+		if (request.getParameter("namespace") != null) {
+			rootUrl += "?namespace=" + namespaceId;
+		}
+		next.addObject("rootUrl", rootUrl);
 		// add a map of namespace id & label for display on the front end.
 		Map<Integer, String> namespaceMap = new TreeMap<Integer, String>();
 		for (Namespace namespace : namespaces) {
