@@ -760,11 +760,12 @@ public interface QueryHandler {
 	 * Find the names for all un-linked topics in the main namespace.
 	 *
 	 * @param virtualWikiId The virtual wiki id to query against.
+	 * @param namespaceId The ID for the namespace being retrieved.
 	 * @return A list of topic names for all topics that are not linked to by
 	 *  any other topic.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	List<String> lookupTopicLinkOrphans(int virtualWikiId) throws SQLException;
+	List<String> lookupTopicLinkOrphans(int virtualWikiId, int namespaceId) throws SQLException;
 
 	/**
 	 * Retrieve a result set containing a specific topic version.

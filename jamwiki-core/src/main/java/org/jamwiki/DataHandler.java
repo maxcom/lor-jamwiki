@@ -513,11 +513,12 @@ public interface DataHandler {
 	 * Find the names for all un-linked topics in the main namespace.
 	 *
 	 * @param virtualWiki The virtual wiki to query against.
+	 * @param namespaceId The ID for the namespace being retrieved.
 	 * @return A list of topic names for all topics that are not linked to by
 	 *  any other topic.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<String> lookupTopicLinkOrphans(String virtualWiki) throws DataAccessException;
+	List<String> lookupTopicLinkOrphans(String virtualWiki, int namespaceId) throws DataAccessException;
 
 	/**
 	 * Given a virtual wiki name, return the corresponding VirtualWiki object.

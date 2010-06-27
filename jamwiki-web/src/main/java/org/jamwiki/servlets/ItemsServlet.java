@@ -92,8 +92,10 @@ public class ItemsServlet extends JAMWikiServlet {
 	private void viewOrphanedPages(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
+		List<Namespace> namespaces = WikiBase.getDataHandler().lookupNamespaces();
+		int namespaceId = (request.getParameter("namespace") == null) ? Namespace.MAIN_ID : new Integer(request.getParameter("namespace")).intValue();
 		Set<String> allItems = new TreeSet<String>();
-		allItems.addAll(WikiBase.getDataHandler().lookupTopicLinkOrphans(virtualWiki));
+		allItems.addAll(WikiBase.getDataHandler().lookupTopicLinkOrphans(virtualWiki, namespaceId));
 		// FIXME - this is a nasty hack until data can be retrieved properly for pagination
 		Set<String> items = new TreeSet<String>();
 		int count = 0;
@@ -110,6 +112,14 @@ public class ItemsServlet extends JAMWikiServlet {
 		next.addObject("itemCount", items.size());
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:OrphanedPages");
+		// add a map of namespace id & label for display on the front end.
+		Map<Integer, String> namespaceMap = new TreeMap<Integer, String>();
+		for (Namespace namespace : namespaces) {
+			if (namespace.getId() >= 0) {
+				namespaceMap.put(namespace.getId(), namespace.getLabel(virtualWiki));
+			}
+		}
+		next.addObject("namespaces", namespaceMap);
 		pageInfo.setPageTitle(new WikiMessage("orphaned.title"));
 		pageInfo.setContentJsp(JSP_ITEMS);
 		pageInfo.setSpecial(true);

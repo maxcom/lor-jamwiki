@@ -2172,7 +2172,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public List<String> lookupTopicLinkOrphans(int virtualWikiId) throws SQLException{
+	public List<String> lookupTopicLinkOrphans(int virtualWikiId, int namespaceId) throws SQLException{
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -2180,8 +2180,8 @@ public class AnsiQueryHandler implements QueryHandler {
 			conn = DatabaseConnection.getConnection();
 			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_LINK_ORPHANS);
 			stmt.setInt(1, virtualWikiId);
-			stmt.setInt(2, Namespace.MAIN_ID);
-			stmt.setInt(3, TopicType.ARTICLE.id());
+			stmt.setInt(2, namespaceId);
+			stmt.setInt(3, TopicType.REDIRECT.id());
 			rs = stmt.executeQuery();
 			List<String> results = new ArrayList<String>();
 			while (rs.next()) {

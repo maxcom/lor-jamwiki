@@ -878,11 +878,11 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List<String> lookupTopicLinkOrphans(String virtualWiki) throws DataAccessException {
+	public List<String> lookupTopicLinkOrphans(String virtualWiki, int namespaceId) throws DataAccessException {
 		// FIXME - caching needed
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		try {
-			return this.queryHandler().lookupTopicLinkOrphans(virtualWikiId);
+			return this.queryHandler().lookupTopicLinkOrphans(virtualWikiId, namespaceId);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
