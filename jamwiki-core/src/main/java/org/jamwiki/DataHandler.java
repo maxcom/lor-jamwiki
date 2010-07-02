@@ -410,7 +410,10 @@ public interface DataHandler {
 
 	/**
 	 * Retrieve a Topic object that matches the given virtual wiki and topic
-	 * name.
+	 * name.  Note that when a shared image repository is in use this method
+	 * should first try to retrieve images from the specified virtual wiki,
+	 * but if that search fails then a second search should be performed
+	 * against the shared repository.
 	 *
 	 * @param virtualWiki The virtual wiki for the topic being queried.
 	 * @param topicName The name of the topic being queried.

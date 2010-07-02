@@ -39,6 +39,7 @@ public class LinkTag extends BodyTagSupport {
 	private String target = null;
 	private String text = null;
 	private String value = null;
+	private String virtualWiki = null;
 	private String queryParams = "";
 
 	/**
@@ -52,18 +53,18 @@ public class LinkTag extends BodyTagSupport {
 		String tagText = buildLinkText();
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		String url = null;
-		String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
-		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, this.value);
+		String tagVirtualWiki = (StringUtils.isBlank(this.virtualWiki)) ? WikiUtil.getVirtualWikiFromRequest(request) : this.virtualWiki;
+		WikiLink wikiLink = LinkUtil.parseWikiLink(tagVirtualWiki, this.value);
 		if (!StringUtils.isBlank(this.queryParams)) {
 			wikiLink.setQuery(this.queryParams);
 		}
 		try {
 			if (!StringUtils.isBlank(tagText)) {
 				// return formatted link of the form "<a href="/wiki/en/Special:Edit">text</a>"
-				url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, wikiLink, tagText, this.style, tagTarget, true);
+				url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), tagVirtualWiki, wikiLink, tagText, this.style, tagTarget, true);
 			} else {
 				// return raw link of the form "/wiki/en/Special:Edit"
-				url = LinkUtil.buildTopicUrl(request.getContextPath(), virtualWiki, wikiLink);
+				url = LinkUtil.buildTopicUrl(request.getContextPath(), tagVirtualWiki, wikiLink);
 			}
 			this.pageContext.getOut().print(url);
 		} catch (DataAccessException e) {
@@ -162,5 +163,19 @@ public class LinkTag extends BodyTagSupport {
 	 */
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	/**
+	 *
+	 */
+	public String getVirtualWiki() {
+		return this.virtualWiki;
+	}
+
+	/**
+	 *
+	 */
+	public void setVirtualWiki(String virtualWiki) {
+		this.virtualWiki = virtualWiki;
 	}
 }

@@ -24,6 +24,9 @@ a.logo {
 a.externallink:after {
 	content:url("../images/external.png");
 }
+a.interwikilink:after {
+	content:url("../images/external.png");
+}
 a.edit {
 	color: #aa1111;
 	border-color: #aa1111;
@@ -422,6 +425,14 @@ span.section-link a {
 	float: right;
 	margin-left: 5px;
 	position: relative;
+}
+#shared-image-message {
+	border: 1px solid red;
+	font-size: 125%;
+	font-weight: bold;
+	margin: 10px 50px;
+	padding: 10px;
+	text-align:center;
 }
 
 /* images */

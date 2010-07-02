@@ -31,6 +31,7 @@ import net.sf.ehcache.Element;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.DataHandler;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -54,6 +55,7 @@ import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLogger;
@@ -308,6 +310,10 @@ public class AnsiDataHandler implements DataHandler {
 		if (toTopic == null || toTopic.getDeleteDate() != null) {
 			// destination doesn't exist or is deleted, so move is OK
 			return true;
+		}
+		if (!toTopic.getVirtualWiki().equals(fromTopic.getVirtualWiki())) {
+			// topics are on different virtual wikis (can happen with shared images) so move is not allowed
+			return false;
 		}
 		if (toTopic.getRedirectTo() != null && toTopic.getRedirectTo().equals(fromTopic.getName())) {
 			// source redirects to destination, so move is OK
@@ -759,10 +765,23 @@ public class AnsiDataHandler implements DataHandler {
 				return (cacheTopic == null || (!deleteOK && cacheTopic.getDeleteDate() != null)) ? null : new Topic(cacheTopic);
 			}
 		}
+		boolean checkSharedVirtualWiki = this.useSharedVirtualWiki(virtualWiki, topicName);
+		String sharedVirtualWiki = Environment.getValue(Environment.PROP_SHARED_UPLOAD_VIRTUAL_WIKI);
+		if (conn == null && checkSharedVirtualWiki) {
+			String sharedKey = WikiCache.key(sharedVirtualWiki, topicName);
+			Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPICS_BY_NAME, sharedKey);
+			if (cacheElement != null) {
+				Topic cacheTopic = (Topic)cacheElement.getObjectValue();
+				return (cacheTopic == null || (!deleteOK && cacheTopic.getDeleteDate() != null)) ? null : new Topic(cacheTopic);
+			}
+		}
 		Topic topic = null;
 		try {
 			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 			topic = this.queryHandler().lookupTopic(virtualWikiId, virtualWiki, topicName, conn);
+			if (topic == null && checkSharedVirtualWiki) {
+				topic = this.lookupTopic(sharedVirtualWiki, topicName, deleteOK, conn);
+			}
 			if (conn == null) {
 				// add topic to the cache only if it is not currently a part of a transaction
 				// to avoid caching something that might need to be rolled back
@@ -846,10 +865,22 @@ public class AnsiDataHandler implements DataHandler {
 		if (cacheElement != null) {
 			return (Integer)cacheElement.getObjectValue();
 		}
+		boolean checkSharedVirtualWiki = this.useSharedVirtualWiki(virtualWiki, topicName);
+		String sharedVirtualWiki = Environment.getValue(Environment.PROP_SHARED_UPLOAD_VIRTUAL_WIKI);
+		if (checkSharedVirtualWiki) {
+			String sharedKey = WikiCache.key(sharedVirtualWiki, topicName);
+			cacheElement = WikiCache.retrieveFromCache(CACHE_TOPIC_IDS_BY_NAME, sharedKey);
+			if (cacheElement != null) {
+				return (Integer)cacheElement.getObjectValue();
+			}
+		}
 		Integer topicId = null;
 		try {
 			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 			topicId = this.queryHandler().lookupTopicId(virtualWikiId, virtualWiki, topicName);
+			if (topicId == null && checkSharedVirtualWiki) {
+				topicId = this.lookupTopicId(sharedVirtualWiki, topicName);
+			}
 			WikiCache.addToCache(CACHE_TOPIC_IDS_BY_NAME, key, topicId);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
@@ -938,8 +969,8 @@ public class AnsiDataHandler implements DataHandler {
 			return null;
 		}
 		try {
-			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-			return this.queryHandler().lookupWikiFile(virtualWikiId, virtualWiki, topic.getTopicId());
+			int virtualWikiId = this.lookupVirtualWikiId(topic.getVirtualWiki());
+			return this.queryHandler().lookupWikiFile(virtualWikiId, topic.getVirtualWiki(), topic.getTopicId());
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
@@ -1356,6 +1387,22 @@ public class AnsiDataHandler implements DataHandler {
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
+	}
+
+	/**
+	 * Utility method to determine whether to check a shared virtual wiki when
+	 * performing a topic lookup.
+	 *
+	 * @param virtualWiki The current virtual wiki being used for a lookup.
+	 * @param topicname The topic name being looked up.
+	 */
+	private boolean useSharedVirtualWiki(String virtualWiki, String topicName) {
+		String sharedVirtualWiki = Environment.getValue(Environment.PROP_SHARED_UPLOAD_VIRTUAL_WIKI);
+		if (!StringUtils.isBlank(sharedVirtualWiki) && !StringUtils.equals(virtualWiki, sharedVirtualWiki)) {
+			Namespace namespace = LinkUtil.parseWikiLink(sharedVirtualWiki, topicName).getNamespace();
+			return (namespace.getId().equals(Namespace.FILE_ID) || namespace.getId().equals(Namespace.MEDIA_ID));
+		}
+		return false;
 	}
 
 	/**

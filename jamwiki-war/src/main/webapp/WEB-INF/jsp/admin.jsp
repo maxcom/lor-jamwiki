@@ -406,6 +406,19 @@ FIXME - Email not supported right now, comment this out
 	<div class="formhelp"><fmt:message key="admin.upload.help.serverurl" /></div>
 </div>
 <div class="row">
+	<label for="<%= Environment.PROP_SHARED_UPLOAD_VIRTUAL_WIKI %>"><fmt:message key="admin.upload.caption.sharedrepository" /></label>
+	<span>
+		<c:set var="PROP_SHARED_UPLOAD_VIRTUAL_WIKI"><%= Environment.PROP_SHARED_UPLOAD_VIRTUAL_WIKI %></c:set>
+		<select name="<%= Environment.PROP_SHARED_UPLOAD_VIRTUAL_WIKI %>" id="<%= Environment.PROP_SHARED_UPLOAD_VIRTUAL_WIKI %>" onchange="onUploadType()">
+		<option value=""></option>
+		<c:forEach items="${virtualwikis}" var="virtualwiki">
+		<option value="<c:out value="${virtualwiki.name}" />"<c:if test="${props[PROP_SHARED_UPLOAD_VIRTUAL_WIKI] == virtualwiki.name}"> selected="selected"</c:if>>${virtualwiki.name}</option>
+		</c:forEach>
+		</select>
+	</span>
+	<div class="formhelp"><fmt:message key="admin.upload.help.sharedrepository" /></div>
+</div>
+<div class="row">
 	<label for="<%= Environment.PROP_FILE_BLACKLIST_TYPE %>"><fmt:message key="admin.upload.caption.blacklisttype" /></label>
 	<span>
 		<c:set var="PROP_FILE_BLACKLIST_TYPE"><%= Environment.PROP_FILE_BLACKLIST_TYPE %></c:set>

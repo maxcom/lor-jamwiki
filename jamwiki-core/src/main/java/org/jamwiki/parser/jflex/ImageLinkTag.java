@@ -99,7 +99,6 @@ public class ImageLinkTag implements JFlexParserTag {
 	 */
 	private String parseImageLink(ParserInput parserInput, int mode, WikiLink wikiLink) throws DataAccessException, ParserException {
 		String context = parserInput.getContext();
-		String virtualWiki = parserInput.getVirtualWiki();
 		ImageMetadata imageMetadata = parseImageParams(wikiLink.getText());
 		if (!StringUtils.isBlank(imageMetadata.getCaption())) {
 			imageMetadata.setCaption(JFlexParserUtil.parseFragment(parserInput, imageMetadata.getCaption(), mode));
@@ -110,6 +109,7 @@ public class ImageLinkTag implements JFlexParserTag {
 		}
 		// do not escape html for caption since parser does it above
 		try {
+			String virtualWiki = (wikiLink.getVirtualWiki() == null) ? parserInput.getVirtualWiki() : wikiLink.getVirtualWiki().getName();
 			return ImageUtil.buildImageLinkHtml(context, virtualWiki, wikiLink.getDestination(), imageMetadata, null, false);
 		} catch (IOException e) {
 			throw new ParserException("I/O Failure while parsing image link: " + e.getMessage(), e);

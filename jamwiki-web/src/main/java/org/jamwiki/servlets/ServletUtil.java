@@ -788,7 +788,7 @@ public class ServletUtil {
 		if (topic.getTopicType() == TopicType.IMAGE || topic.getTopicType() == TopicType.FILE) {
 			List<WikiFileVersion> fileVersions = null;
 			try {
-				fileVersions = WikiBase.getDataHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
+				fileVersions = WikiBase.getDataHandler().getAllWikiFileVersions(topic.getVirtualWiki(), topicName, true);
 			} catch (DataAccessException e) {
 				throw new WikiException(new WikiMessage("error.unknown", e.getMessage()), e);
 			}
@@ -817,6 +817,7 @@ public class ServletUtil {
 			} else {
 				next.addObject("topicFile", true);
 			}
+			next.addObject("sharedImage", !pageInfo.getVirtualWikiName().equals(virtualWiki));
 		}
 		pageInfo.setSpecial(false);
 		pageInfo.setTopicName(topicName);

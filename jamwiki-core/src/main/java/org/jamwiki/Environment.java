@@ -98,6 +98,7 @@ public class Environment {
 	public static final String PROP_RSS_ALLOWED = "rss-allowed";
 	public static final String PROP_RSS_TITLE = "rss-title";
 	public static final String PROP_SERVER_URL = "server-url";
+	public static final String PROP_SHARED_UPLOAD_VIRTUAL_WIKI = "shared-upload-virtual-wiki";
 	public static final String PROP_SITE_NAME = "site-name";
 	public static final String PROP_TOPIC_EDITOR = "default-editor";
 	public static final String PROP_TOPIC_SPAM_FILTER = "use-spam-filter";
@@ -235,6 +236,7 @@ public class Environment {
 		defaults.setProperty(PROP_RSS_ALLOWED, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_RSS_TITLE, "Wiki Recent Changes");
 		defaults.setProperty(PROP_SERVER_URL, "");
+		defaults.setProperty(PROP_SHARED_UPLOAD_VIRTUAL_WIKI, "");
 		defaults.setProperty(PROP_SITE_NAME, "JAMWiki");
 		// FIXME - hard coding
 		defaults.setProperty(PROP_TOPIC_EDITOR, "toolbar");

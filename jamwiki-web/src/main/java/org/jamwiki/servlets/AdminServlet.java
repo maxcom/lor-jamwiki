@@ -35,6 +35,7 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.WikiUserDetailsImpl;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.Role;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserException;
@@ -333,6 +334,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_FILE_DIR_FULL_PATH);
 			setProperty(props, request, Environment.PROP_FILE_DIR_RELATIVE_PATH);
 			setProperty(props, request, Environment.PROP_FILE_SERVER_URL);
+			setProperty(props, request, Environment.PROP_SHARED_UPLOAD_VIRTUAL_WIKI);
 			setProperty(props, request, Environment.PROP_FILE_BLACKLIST_TYPE);
 			setProperty(props, request, Environment.PROP_FILE_BLACKLIST);
 			setProperty(props, request, Environment.PROP_FILE_WHITELIST);
@@ -481,6 +483,10 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void viewAdmin(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, Properties props) {
+		List<WikiMessage> errors = (List<WikiMessage>)next.getModelMap().get("errors");
+		if (errors == null) {
+			errors = new ArrayList<WikiMessage>();
+		}
 		pageInfo.setContentJsp(JSP_ADMIN);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("admin.title"));
@@ -509,6 +515,14 @@ public class AdminServlet extends JAMWikiServlet {
 		long maximumFileSize = Long.valueOf(props.getProperty(Environment.PROP_FILE_MAX_FILE_SIZE))/1000;
 		next.addObject("maximumFileSize", maximumFileSize);
 		next.addObject("props", props);
+		try {
+			List<VirtualWiki> virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList();
+			next.addObject("virtualwikis", virtualWikiList);
+		} catch (DataAccessException e) {
+			logger.severe("Failure while retrieving database records", e);
+			errors.add(new WikiMessage("error.unknown", e.getMessage()));
+		}
+		next.addObject("errors", errors);
 	}
 
 	/**
