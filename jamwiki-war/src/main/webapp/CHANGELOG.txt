@@ -11,6 +11,7 @@ New Features:
     Special:LinkTo page.
   * Remove ability to automatically upgrade from versions prior to 0.8.0.
   * Upgrade to Spring Framework 3.0.3.RELEASE.
+  * Upgrade to Spring Security 3.0.3.RELEASE.
   * Upgrade to Ehcache 2.1.0.
   * Upgrade to Lucene Search 3.0.2.
 
