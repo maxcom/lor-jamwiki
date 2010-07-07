@@ -206,7 +206,7 @@ wikisignature      = ([~]{3,5})
 <YYINITIAL>{noeditsection} {
     if (logger.isFinerEnabled()) logger.finer("noeditsection: " + yytext() + " (" + yystate() + ")");
     this.parserInput.setAllowSectionEdit(false);
-    return "";
+    return (this.mode < JFlexParser.MODE_PREPROCESS) ? yytext() : "";
 }
 
 /* ----- wiki links ----- */
