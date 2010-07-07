@@ -63,8 +63,9 @@ wikiprecontinue    = (" ") ([ \t\n])
 wikipreend         = ([^ ]) | ({newline})
 
 /* allowed html */
+heading            = h1|h2|h3|h4|h5|h6
 inlinetag          = abbr|br|b|big|cite|code|del|em|font|i|ins|s|small|span|strike|strong|sub|sup|tt|u|var
-blockleveltag      = blockquote|caption|center|col|colgroup|dd|div|dl|dt|hr|li|ol|p|table|tbody|td|tfoot|th|thead|tr|ul
+blockleveltag      = blockquote|caption|center|col|colgroup|dd|div|dl|dt|{heading}|hr|li|ol|p|table|tbody|td|tfoot|th|thead|tr|ul
 htmlkeyword        = {inlinetag}|{blockleveltag}
 htmlbr             = <[ ]* (\/)? [ ]* br ({htmlattribute})* [ ]* (\/)? [ ]*>
 htmlparagraphopen  = <[ ]* p ({htmlattribute})* [ ]* (\/)? [ ]*>
@@ -75,6 +76,7 @@ blockleveltagclose = (<[ ]*\/[ ]*) {blockleveltag} ([ ]*>)
 htmltagopen        = <[ ]* ({htmlkeyword}) ({htmlattribute})* [ ]* (\/)? [ ]*>
 htmltagclose       = (<[ ]*\/[ ]*) {htmlkeyword} ([ ]*>)
 htmltagnocontent   = (<[ ]*) {htmlkeyword} ({htmlattribute})* ([ ]*\/[ ]*>)
+htmlheading        = (<[ ]*h[1-6][^>]*>) ~(<[ ]*\/[ ]*h[1-6][ ]*>)
 
 /* javascript */
 javascript         = (<[ ]*script[^>]*>) ~(<[ ]*\/[ ]*script[ ]*>)
@@ -357,6 +359,9 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     }
     ^{wikiheading1} {
         return this.parse(TAG_TYPE_WIKI_HEADING, yytext(), 1);
+    }
+    {htmlheading} {
+        return this.parse(TAG_TYPE_HTML_HEADING, yytext());
     }
 }
 

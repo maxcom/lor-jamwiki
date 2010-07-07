@@ -7,6 +7,7 @@ New Features:
     page.  If set, then any virtual wiki will be able to access images from the
     specified virtual wiki.
   * Refactor Special:OrphanedPages to vastly improve speed & scalability.
+  * Allow use of HTML heading tags (<h1>, <h2>, etc).
   * Use the database rather than the search engine to generate results for the
     Special:LinkTo page.
   * Remove ability to automatically upgrade from versions prior to 0.8.0.

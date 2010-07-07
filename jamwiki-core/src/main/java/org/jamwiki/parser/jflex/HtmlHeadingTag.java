@@ -16,44 +16,47 @@
  */
 package org.jamwiki.parser.jflex;
 
-import org.jamwiki.DataAccessException;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
+import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.TableOfContents;
-import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
-import org.apache.commons.lang.StringEscapeUtils;
 
 /**
- * This class parses wiki headings of the form <code>==heading content==</code>.
+ * Handle HTML heading tags such as <h1>...</h1>.
  */
-public class WikiHeadingTag extends AbstractHeadingTag {
+public class HtmlHeadingTag extends AbstractHeadingTag {
 
-	private static final WikiLogger logger = WikiLogger.getLogger(WikiHeadingTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(HtmlHeadingTag.class.getName());
 
 	/**
 	 *
 	 */
 	protected int generateTagLevel(String raw, Object... args) throws ParserException {
-		if (args.length == 0) {
-			throw new IllegalArgumentException("Must pass heading depth to WikiHeadingTag.parse");
-		}
-		return (Integer)args[0];
+		String openTag = this.generateTagOpen(raw, args);
+		int tagLevelPos = openTag.toLowerCase().indexOf("h") + 1;
+		return Integer.parseInt(openTag.substring(tagLevelPos, tagLevelPos + 1));
 	}
 
 	/**
 	 *
 	 */
 	protected String generateTagOpen(String raw, Object... args) throws ParserException {
-		return "<h" + this.generateTagLevel(raw, args) + ">";
+		int pos = raw.indexOf(">");
+		String openTagRaw = raw.substring(0, pos + 1);
+		return JFlexParserUtil.sanitizeHtmlTag(openTagRaw).getHtml();
 	}
 
 	/**
 	 *
 	 */
 	protected String generateTagText(String raw, Object... args) throws ParserException {
-		int level = this.generateTagLevel(raw, args);
-		return raw.substring(level, raw.length() - level).trim();
+		// get end of opening tag
+		int pos = raw.indexOf(">");
+		String tagText = raw.substring(pos + 1);
+		// get start of closing tag
+		pos = tagText.lastIndexOf("<");
+		return tagText.substring(0, pos).trim();
 	}
 }

@@ -29,12 +29,12 @@ import org.jamwiki.utils.WikiLogger;
     /**
      *
      */
-    protected String processHeading(int level, String headingText) {
+    protected String processHeading(int level, String headingText, int tagType) {
         this.section++;
         if (inTargetSection && this.sectionDepth >= level) {
             inTargetSection = false;
         } else if (this.targetSection == this.section) {
-            this.parse(TAG_TYPE_WIKI_HEADING, headingText, level);
+            this.parse(tagType, headingText, level);
             inTargetSection = true;
             this.sectionDepth = level;
             if (this.mode == JFlexParser.MODE_SPLICE) return this.replacementText;
@@ -73,21 +73,34 @@ import org.jamwiki.utils.WikiLogger;
 newline            = "\n"
 whitespace         = {newline} | [ \t\f]
 
+/* html attributes */
+attributeValueInQuotes = "\"" ~"\""
+attributeValueInSingleQuotes = "'" ~"'"
+attributeValueNoQuotes = [^>\n]+
+htmlattribute      = ([ ]+) [a-zA-Z:]+ ([ ]*=[ ]*({attributeValueInQuotes}|{attributeValueInSingleQuotes}|{attributeValueNoQuotes}))*
+
 /* non-container expressions */
-h1                 = "=" [^=\n]+ ~"="
-h2                 = "==" [^=\n]+ ~"=="
-h3                 = "===" [^=\n]+ ~"==="
-h4                 = "====" [^=\n]+ ~"===="
-h5                 = "=====" [^=\n]+ ~"====="
-h6                 = "======" [^=\n]+ ~"======"
+wikiheading1       = "=" [^=\n]+ ~"="
+wikiheading2       = "==" [^=\n]+ ~"=="
+wikiheading3       = "===" [^=\n]+ ~"==="
+wikiheading4       = "====" [^=\n]+ ~"===="
+wikiheading5       = "=====" [^=\n]+ ~"====="
+wikiheading6       = "======" [^=\n]+ ~"======"
+h1                 = (<[ ]*h1 ({htmlattribute})* [ ]*>) ~(<[ ]*\/[ ]*h1[ ]*>)
+h2                 = (<[ ]*h2 ({htmlattribute})* [ ]*>) ~(<[ ]*\/[ ]*h2[ ]*>)
+h3                 = (<[ ]*h3 ({htmlattribute})* [ ]*>) ~(<[ ]*\/[ ]*h3[ ]*>)
+h4                 = (<[ ]*h4 ({htmlattribute})* [ ]*>) ~(<[ ]*\/[ ]*h4[ ]*>)
+h5                 = (<[ ]*h5 ({htmlattribute})* [ ]*>) ~(<[ ]*\/[ ]*h5[ ]*>)
+h6                 = (<[ ]*h6 ({htmlattribute})* [ ]*>) ~(<[ ]*\/[ ]*h6[ ]*>)
+
+/* html headings */
+nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
 
 /* nowiki */
 nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
 
 /* pre */
-htmlpreattributes  = class|dir|id|lang|style|title
-htmlpreattribute   = ([ ]+) {htmlpreattributes} ([ ]*=[^>\n]+[ ]*)*
-htmlprestart       = (<[ ]*pre ({htmlpreattribute})* [ ]* (\/)? [ ]*>)
+htmlprestart       = (<[ ]*pre ({htmlattribute})* [ ]* (\/)? [ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
 
 /* comments */
@@ -127,28 +140,43 @@ htmlcomment        = "<!--" ~"-->"
 
 /* ----- headings ----- */
 
-<YYINITIAL>^{h1} {
-    return processHeading(1, yytext());
-}
-
-<YYINITIAL>^{h2} {
-    return processHeading(2, yytext());
-}
-
-<YYINITIAL>^{h3} {
-    return processHeading(3, yytext());
-}
-
-<YYINITIAL>^{h4} {
-    return processHeading(4, yytext());
-}
-
-<YYINITIAL>^{h5} {
-    return processHeading(5, yytext());
-}
-
-<YYINITIAL>^{h6} {
-    return processHeading(6, yytext());
+<YYINITIAL> {
+    ^{wikiheading1} {
+        return processHeading(1, yytext(), TAG_TYPE_WIKI_HEADING);
+    }
+    ^{wikiheading2} {
+        return processHeading(2, yytext(), TAG_TYPE_WIKI_HEADING);
+    }
+    ^{wikiheading3} {
+        return processHeading(3, yytext(), TAG_TYPE_WIKI_HEADING);
+    }
+    ^{wikiheading4} {
+        return processHeading(4, yytext(), TAG_TYPE_WIKI_HEADING);
+    }
+    ^{wikiheading5} {
+        return processHeading(5, yytext(), TAG_TYPE_WIKI_HEADING);
+    }
+    ^{wikiheading6} {
+        return processHeading(6, yytext(), TAG_TYPE_WIKI_HEADING);
+    }
+    {h1} {
+        return processHeading(1, yytext(), TAG_TYPE_HTML_HEADING);
+    }
+    {h2} {
+        return processHeading(2, yytext(), TAG_TYPE_HTML_HEADING);
+    }
+    {h3} {
+        return processHeading(3, yytext(), TAG_TYPE_HTML_HEADING);
+    }
+    {h4} {
+        return processHeading(4, yytext(), TAG_TYPE_HTML_HEADING);
+    }
+    {h5} {
+        return processHeading(5, yytext(), TAG_TYPE_HTML_HEADING);
+    }
+    {h6} {
+        return processHeading(6, yytext(), TAG_TYPE_HTML_HEADING);
+    }
 }
 
 /* ----- default ----- */

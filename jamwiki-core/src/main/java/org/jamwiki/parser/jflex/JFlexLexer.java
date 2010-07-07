@@ -43,18 +43,20 @@ public abstract class JFlexLexer {
 	/** Stack of currently parsed tag content. */
 	private Stack<JFlexTagItem> tagStack = new Stack<JFlexTagItem>();
 
-	protected static final int TAG_TYPE_HTML_LINK = 1;
-	protected static final int TAG_TYPE_IMAGE_LINK = 2;
-	protected static final int TAG_TYPE_INCLUDE_ONLY = 3;
-	protected static final int TAG_TYPE_JAVASCRIPT = 4;
-	protected static final int TAG_TYPE_NO_INCLUDE = 5;
-	protected static final int TAG_TYPE_TEMPLATE = 6;
-	protected static final int TAG_TYPE_WIKI_BOLD_ITALIC = 7;
-	protected static final int TAG_TYPE_WIKI_HEADING = 8;
-	protected static final int TAG_TYPE_WIKI_LINK = 9;
-	protected static final int TAG_TYPE_WIKI_REFERENCE = 10;
-	protected static final int TAG_TYPE_WIKI_REFERENCES = 11;
-	protected static final int TAG_TYPE_WIKI_SIGNATURE = 12;
+	protected static final int TAG_TYPE_HTML_HEADING = 5;
+	protected static final int TAG_TYPE_HTML_LINK = 10;
+	protected static final int TAG_TYPE_IMAGE_LINK = 15;
+	protected static final int TAG_TYPE_INCLUDE_ONLY = 20;
+	protected static final int TAG_TYPE_JAVASCRIPT = 25;
+	protected static final int TAG_TYPE_NO_INCLUDE = 30;
+	protected static final int TAG_TYPE_TEMPLATE = 35;
+	protected static final int TAG_TYPE_WIKI_BOLD_ITALIC = 40;
+	protected static final int TAG_TYPE_WIKI_HEADING = 45;
+	protected static final int TAG_TYPE_WIKI_LINK = 50;
+	protected static final int TAG_TYPE_WIKI_REFERENCE = 55;
+	protected static final int TAG_TYPE_WIKI_REFERENCES = 60;
+	protected static final int TAG_TYPE_WIKI_SIGNATURE = 65;
+	private static final HtmlHeadingTag TAG_HTML_HEADING = new HtmlHeadingTag();
 	private static final HtmlLinkTag TAG_HTML_LINK = new HtmlLinkTag();
 	private static final ImageLinkTag TAG_IMAGE_LINK = new ImageLinkTag();
 	private static final IncludeOnlyTag TAG_INCLUDE_ONLY = new IncludeOnlyTag();
@@ -183,6 +185,9 @@ public abstract class JFlexLexer {
 	protected String parse(int type, String raw, Object... args) {
 		JFlexParserTag jflexParserTag = null;
 		switch (type) {
+			case TAG_TYPE_HTML_HEADING:
+				jflexParserTag = TAG_HTML_HEADING;
+				break;
 			case TAG_TYPE_HTML_LINK:
 				jflexParserTag = TAG_HTML_LINK;
 				break;
