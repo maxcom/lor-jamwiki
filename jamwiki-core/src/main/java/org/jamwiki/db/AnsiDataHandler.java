@@ -500,7 +500,6 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public List<LogItem> getLogItems(String virtualWiki, int logType, Pagination pagination, boolean descending) throws DataAccessException {
-		List<LogItem> logItems = new ArrayList<LogItem>();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		try {
 			return this.queryHandler().getLogItems(virtualWikiId, virtualWiki, logType, pagination, descending);
@@ -1158,7 +1157,6 @@ public class AnsiDataHandler implements DataHandler {
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
-		String key = WikiCache.key(topic.getVirtualWiki(), topic.getName());
 		this.clearTopicCache(topic);
 	}
 

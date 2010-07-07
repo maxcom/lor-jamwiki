@@ -16,14 +16,8 @@
  */
 package org.jamwiki.parser.jflex;
 
-import org.jamwiki.DataAccessException;
 import org.jamwiki.parser.ParserException;
-import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.TableOfContents;
-import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
-import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * This class parses wiki headings of the form <code>==heading content==</code>.

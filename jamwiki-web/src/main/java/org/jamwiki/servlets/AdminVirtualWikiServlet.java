@@ -113,13 +113,11 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 		List<Namespace> namespaces = new ArrayList<Namespace>();
 		String[] namespaceIds = request.getParameterValues("namespace_id");
 		String defaultLabel;
-		String updatedLabel;
 		String translatedLabel;
 		try {
 			for (String namespaceId : namespaceIds) {
 				defaultLabel = request.getParameter(namespaceId + "_label");
 				Namespace namespace = WikiBase.getDataHandler().lookupNamespace(null, defaultLabel);
-				updatedLabel = request.getParameter(namespaceId + "_newlabel");
 				translatedLabel = request.getParameter(namespaceId + "_vwiki");
 				if (StringUtils.equals(defaultLabel, translatedLabel) || StringUtils.isBlank(translatedLabel)) {
 					namespace.getNamespaceTranslations().remove(virtualWiki);

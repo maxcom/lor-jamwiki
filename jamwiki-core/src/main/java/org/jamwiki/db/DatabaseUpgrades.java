@@ -20,8 +20,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import org.jamwiki.DataAccessException;
-import org.jamwiki.DataHandler;
-import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -58,7 +56,7 @@ public class DatabaseUpgrades {
 	 */
 	public static boolean login(String username, String password) throws WikiException {
 		try {
-			return (WikiBase.getDataHandler().authenticate(username, password));
+			return WikiBase.getDataHandler().authenticate(username, password);
 		} catch (DataAccessException e) {
 			logger.severe("Unable to authenticate user during upgrade", e);
 			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
@@ -69,7 +67,6 @@ public class DatabaseUpgrades {
 	 *
 	 */
 	public static List<WikiMessage> upgrade090(List<WikiMessage> messages) throws WikiException {
-		String dbType = Environment.getValue(Environment.PROP_DB_TYPE);
 		TransactionStatus status = null;
 		try {
 			status = DatabaseConnection.startTransaction(getTransactionDefinition());
@@ -151,7 +148,6 @@ public class DatabaseUpgrades {
 	 *
 	 */
 	public static List<WikiMessage> upgrade100(List<WikiMessage> messages) throws WikiException {
-		String dbType = Environment.getValue(Environment.PROP_DB_TYPE);
 		TransactionStatus status = null;
 		try {
 			status = DatabaseConnection.startTransaction(getTransactionDefinition());

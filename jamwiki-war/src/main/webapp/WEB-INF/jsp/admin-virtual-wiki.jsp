@@ -180,7 +180,6 @@
 				<c:when test="${namespace.id >= 0 && namespace.id != 8}">
 					<input type="hidden" name="namespace_id" value="${namespace.id}" />
 					<input type="hidden" name="${namespace.id}_label" value="${namespace.defaultLabel}" />
-					<input type="hidden" name="${namespace.id}_newlabel" value="${namespace.defaultLabel}" />
 					<span><input type="text" name="${namespace.id}_vwiki" size="30" value="${namespace.namespaceTranslations[selected.name]}" /></span>
 				</c:when>
 				<c:otherwise>
