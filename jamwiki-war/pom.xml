@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>org.jamwiki</groupId>
 			<artifactId>bliki-parser</artifactId>
-			<version>0.9.0</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
