@@ -1237,9 +1237,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		// one exists), otherwise the last is the most recently deleted
 		// topic.
 		if (rs.getTimestamp("delete_date") != null) {
-			while (!rs.isLast()) {
+			while (rs.next()) {
 				// go to the last result - do not use rs.last() since result set may be FORWARD_ONLY
-				rs.next();
 			}
 		}
 		Topic topic = new Topic(virtualWikiName, rs.getString("topic_name"));
