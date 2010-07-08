@@ -1232,15 +1232,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	private Topic initTopic(ResultSet rs, String virtualWikiName) throws SQLException {
-		// if a topic by this name has been deleted then there will be
-		// multiple results.  the first will be a non-deleted topic (if
-		// one exists), otherwise the last is the most recently deleted
-		// topic.
-		if (rs.getTimestamp("delete_date") != null) {
-			while (rs.next()) {
-				// go to the last result - do not use rs.last() since result set may be FORWARD_ONLY
-			}
-		}
 		Topic topic = new Topic(virtualWikiName, rs.getString("topic_name"));
 		topic.setAdminOnly(rs.getInt("topic_admin_only") != 0);
 		int currentVersionId = rs.getInt("current_version_id");
@@ -1258,6 +1249,17 @@ public class AnsiQueryHandler implements QueryHandler {
 		topic.setDeleteDate(rs.getTimestamp("delete_date"));
 		topic.setTopicType(TopicType.findTopicType(rs.getInt("topic_type")));
 		topic.setRedirectTo(rs.getString("redirect_to"));
+		// if a topic by this name has been deleted then there will be multiple results and
+		// the one we want is the last one.  due to the fact that the result set may be
+		// FORWARD_ONLY re-run this method for the remaining available results in the result
+		// set - it's inefficient, but safe.
+		if (rs.getTimestamp("delete_date") != null) {
+			// this is an inefficient way to get the last result, but due to the fact that
+			// the result set may be forward only it's the safest.
+			if (rs.next()) {
+				topic = this.initTopic(rs, virtualWikiName);
+			}
+		}
 		return topic;
 	}
 
