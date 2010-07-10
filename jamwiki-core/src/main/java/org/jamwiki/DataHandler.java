@@ -427,7 +427,8 @@ public interface DataHandler {
 	Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Connection conn) throws DataAccessException;
 
 	/**
-	 * Retrieve a Topic object that matches the given topic id and virtual wiki.
+	 * Retrieve a Topic object that matches the given topic id and virtual wiki.  Note
+	 * that this method can return deleted topics.
 	 *
 	 * @param virtualWiki The virtual wiki for the topic being queried.
 	 * @param topicId The identifier of the topic being queried.

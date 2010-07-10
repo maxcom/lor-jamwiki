@@ -53,6 +53,7 @@ import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLogger;
@@ -281,6 +282,39 @@ public class AnsiDataHandler implements DataHandler {
 	}
 
 	/**
+	 * Given a virtual wiki and topic name, generate the key used for caching
+	 * the corresponding topic information.
+	 */
+	private String cacheTopicKey(String virtualWiki, String topicName) {
+		Namespace namespace = LinkUtil.retrieveTopicNamespace(virtualWiki, topicName);
+		return this.cacheTopicKey(virtualWiki, topicName, namespace);
+	}
+
+	/**
+	 * Given a virtual wiki and topic name, generate the key used for caching
+	 * the corresponding topic information.
+	 */
+	private String cacheTopicKey(String virtualWiki, String topicName, Namespace namespace) {
+		return (namespace.isCaseSensitive() ? WikiCache.key(virtualWiki, topicName) : WikiCache.key(virtualWiki, topicName.toLowerCase()));
+	}
+
+	/**
+	 * Call this method whenever a topic is updated to update all relevant caches
+	 * for the topic.
+	 */
+	private void cacheTopicRefresh(Topic topic) {
+		String key = this.cacheTopicKey(topic.getVirtualWiki(), topic.getName(), topic.getNamespace());
+		WikiCache.removeFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key);
+		if (topic.getDeleteDate() == null) {
+			WikiCache.addToCache(CACHE_TOPIC_IDS_BY_NAME, key, topic.getTopicId());
+		} else {
+			WikiCache.removeFromCache(CACHE_TOPIC_IDS_BY_NAME, key);
+		}
+		WikiCache.addToCache(CACHE_TOPICS_BY_NAME, key, topic);
+		WikiCache.addToCache(CACHE_TOPICS_BY_ID, topic.getTopicId(), topic);
+	}
+
+	/**
 	 *
 	 */
 	public boolean canMoveTopic(Topic fromTopic, String destination) throws DataAccessException {
@@ -303,17 +337,6 @@ public class AnsiDataHandler implements DataHandler {
 		if (value != null && value.length() > maxLength) {
 			throw new WikiException(new WikiMessage("error.fieldlength", value, Integer.valueOf(maxLength).toString()));
 		}
-	}
-
-	/**
-	 *
-	 */
-	private void clearTopicCache(Topic topic) {
-		String key = WikiCache.key(topic.getVirtualWiki(), topic.getName());
-		WikiCache.removeFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key);
-		WikiCache.addToCache(CACHE_TOPICS_BY_NAME, key, topic);
-		WikiCache.addToCache(CACHE_TOPIC_IDS_BY_NAME, key, topic.getTopicId());
-		WikiCache.addToCache(CACHE_TOPICS_BY_ID, topic.getTopicId(), topic);
 	}
 
 	/**
@@ -717,7 +740,7 @@ public class AnsiDataHandler implements DataHandler {
 			return null;
 		}
 		long start = System.currentTimeMillis();
-		String key = WikiCache.key(virtualWiki, topicName);
+		String key = this.cacheTopicKey(virtualWiki, topicName);
 		if (conn == null) {
 			// retrieve topic from the cache only if this call is not currently a part
 			// of a transaction to avoid retrieving data that might have been updated
@@ -810,7 +833,7 @@ public class AnsiDataHandler implements DataHandler {
 			return null;
 		}
 		long start = System.currentTimeMillis();
-		String key = WikiCache.key(virtualWiki, topicName);
+		String key = this.cacheTopicKey(virtualWiki, topicName);
 		Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPIC_IDS_BY_NAME, key);
 		if (cacheElement != null) {
 			return (Integer)cacheElement.getObjectValue();
@@ -1071,8 +1094,8 @@ public class AnsiDataHandler implements DataHandler {
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
-		String key = WikiCache.key(topic.getVirtualWiki(), topic.getName());
-		this.clearTopicCache(topic);
+		String key = this.cacheTopicKey(topic.getVirtualWiki(), topic.getName(), topic.getNamespace());
+		this.cacheTopicRefresh(topic);
 	}
 
 	/**
@@ -1672,7 +1695,7 @@ public class AnsiDataHandler implements DataHandler {
 		}
 		DatabaseConnection.commit(status);
 		// update the cache AFTER the commit
-		this.clearTopicCache(topic);
+		this.cacheTopicRefresh(topic);
 		logger.fine("Wrote topic " + topic.getName() + " with params [categories is null: " + (categories == null) + "] / [links is null: " + (links == null) + "] in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 	}
 

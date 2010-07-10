@@ -177,6 +177,27 @@ public class Namespace implements Serializable {
 	}
 
 	/**
+	 * Certain namespaces are case sensitive (such as the main namespace) while
+	 * others (such as the user namespace) are not.
+	 */
+	public boolean isCaseSensitive() {
+		// user/template/category namespaces are not case-insensitive
+		if (this.getId().equals(Namespace.SPECIAL_ID)) {
+			return false;
+		}
+		if (this.getId().equals(Namespace.TEMPLATE_ID) || this.getId().equals(Namespace.TEMPLATE_COMMENTS_ID)) {
+			return false;
+		}
+		if (this.getId().equals(Namespace.USER_ID) || this.getId().equals(Namespace.USER_COMMENTS_ID)) {
+			return false;
+		}
+		if (this.getId().equals(Namespace.CATEGORY_ID) || this.getId().equals(Namespace.CATEGORY_COMMENTS_ID)) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Given a namespace, return the Namespace for the corresponding "comments"
 	 * namespace.  If no match exists return <code>null</code>.  Example: if this
 	 * method is called with Namespace.USER_COMMENTS or Namespace.USER as an
