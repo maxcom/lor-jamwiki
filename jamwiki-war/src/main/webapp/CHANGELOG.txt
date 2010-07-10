@@ -25,6 +25,8 @@ Bugfixes:
   * __NOEDITSECTION__ was being improperly stripped from topics.
   * Fix a potental JDBC error with FORWARD_ONLY result sets when parsing
     deleted topics.  Reported by cmasuch.
+  * Case-insensitive topic names and deleted topics were not being properly
+    updated in the cache.
 
 
 0.9.0

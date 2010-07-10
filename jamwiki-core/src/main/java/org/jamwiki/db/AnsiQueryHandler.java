@@ -2020,7 +2020,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				conn = DatabaseConnection.getConnection();
 			}
 			String pageName = wikiLink.getArticle();
-			if (wikiLink.isCaseSensitive()) {
+			if (wikiLink.getNamespace().isCaseSensitive()) {
 				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC);
 			} else {
 				pageName = pageName.toLowerCase();
@@ -2131,7 +2131,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		try {
 			conn = DatabaseConnection.getConnection();
 			String pageName = wikiLink.getArticle();
-			if (wikiLink.isCaseSensitive()) {
+			if (wikiLink.getNamespace().isCaseSensitive()) {
 				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_ID);
 			} else {
 				pageName = pageName.toLowerCase();

@@ -500,20 +500,33 @@ public class LinkUtil {
 	 *
 	 */
 	private static String processNamespace(String virtualWiki, String processed, WikiLink wikiLink) {
-		int prefixPosition = LinkUtil.prefixPosition(processed);
-		if (prefixPosition == -1) {
+		wikiLink.setNamespace(LinkUtil.retrieveTopicNamespace(virtualWiki, processed));
+		if (wikiLink.getNamespace().getId().equals(Namespace.MAIN_ID)) {
 			return processed;
+		} else {
+			// remove the namespace
+			int prefixPosition = LinkUtil.prefixPosition(processed);
+			return processed.substring(prefixPosition + Namespace.SEPARATOR.length()).trim();
 		}
-		String linkPrefix = processed.substring(0, prefixPosition).trim();
+	}
+
+	/**
+	 * Utility method for determining a topic namespace given a topic name.  This method
+	 * accepts ONLY the topic name - if the topic name is prefixed with a virtual wiki,
+	 * interwiki, or other value then it will not return the proper namespace.
+	 */
+	public static Namespace retrieveTopicNamespace(String virtualWiki, String topicName) {
+		int prefixPosition = LinkUtil.prefixPosition(topicName);
+		if (prefixPosition == -1) {
+			return Namespace.namespace(Namespace.MAIN_ID);
+		}
+		String linkPrefix = topicName.substring(0, prefixPosition).trim();
 		try {
 			Namespace namespace = WikiBase.getDataHandler().lookupNamespace(virtualWiki, linkPrefix);
-			if (namespace != null) {
-				wikiLink.setNamespace(namespace);
-			}
+			return (namespace == null) ? Namespace.namespace(Namespace.MAIN_ID) : namespace;
 		} catch (DataAccessException e) {
 			// this should not happen, if it does then throw a runtime exception
 			throw new IllegalStateException("Failure while trying to lookup namespace: " + linkPrefix, e);
 		}
-		return (!wikiLink.getNamespace().getId().equals(Namespace.MAIN_ID)) ? processed.substring(prefixPosition + Namespace.SEPARATOR.length()).trim(): processed;
 	}
 }
