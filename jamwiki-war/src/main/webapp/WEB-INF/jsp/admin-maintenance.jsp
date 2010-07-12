@@ -25,33 +25,30 @@
 
 <div id="maintenance" class="admin">
 
-<div class="submenu">
-<a href="#search"><fmt:message key="admin.title.refresh" /></a>
-| <a href="#recentchanges"><fmt:message key="admin.title.recentchanges" /></a>
-| <a href="#logitems"><fmt:message key="admin.title.logitems" /></a>
-| <a href="#cache"><fmt:message key="admin.title.cache" /></a>
-<jamwiki:enabled property="PROP_TOPIC_SPAM_FILTER"> | <a href="#spam"><fmt:message key="admin.title.spamfilter" /></a></jamwiki:enabled>
-<br />
-<a href="#namespaces"><fmt:message key="admin.maintenance.title.namespaces" /></a>
-| <a href="#password"><fmt:message key="admin.title.password" /></a>
-| <a href="#adduser"><fmt:message key="admin.title.adduser" /></a>
-| <a href="#migrate"><fmt:message key="admin.title.migratedatabase" /></a>
-| <a href="#links"><fmt:message key="admin.maintenance.title.links" /></a>
-</div>
+<!-- sub-menu tabs -->
+<ul class="tab-menu" id="tab_submenu">
+<li><a href="#system"><fmt:message key="admin.maintenance.title.system" /></a></li>
+<li><a href="#data"><fmt:message key="admin.maintenance.title.data" /></a></li>
+<li><a href="#password"><fmt:message key="admin.title.password" /></a></li>
+<li><a href="#adduser"><fmt:message key="admin.title.adduser" /></a></li>
+<li><a href="#migrate"><fmt:message key="admin.title.migratedatabase" /></a></li>
+</ul>
+<div class="submenu-tab-content">
+
+<!-- System Tools -->
+<div id="system" class="submenu-tab-item">
+<a name="system"></a>
 
 <!-- Refresh Search Index -->
-<a name="search"></a>
-
 <c:if test="${!empty message && function == 'search'}">
 <div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'search'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
-
 <fieldset>
 <legend><fmt:message key="admin.title.refresh" /></legend>
-<form action="<jamwiki:link value="Special:Maintenance" />#search" method="post">
+<form action="<jamwiki:link value="Special:Maintenance" />#system" method="post">
 <div class="row">
 	<label><fmt:message key="admin.title.refresh" /></label>
 	<span><input type="submit" name="submit" value="<fmt:message key="admin.action.refresh" />" /></span>
@@ -61,63 +58,16 @@
 </form>
 </fieldset>
 
-<!-- Recent Changes -->
-<a name="recentchanges"></a>
-
-<c:if test="${!empty message && function == 'recentchanges'}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
-</c:if>
-<c:if test="${!empty errors && function == 'recentchanges'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
-</c:if>
-
-<fieldset>
-<legend><fmt:message key="admin.title.recentchanges" /></legend>
-<form action="<jamwiki:link value="Special:Maintenance" />#recentchanges" method="post">
-<div class="row">
-	<label><fmt:message key="admin.caption.recentchanges" /></label>
-	<span><input type="submit" value="<fmt:message key="admin.caption.reset" />" /></span>
-	<div class="formhelp"><fmt:message key="admin.help.reloadrecentchanges" /></div>
-</div>
-<input type="hidden" name="function" value="recentchanges" />
-</form>
-</fieldset>
-
-<!-- Log Items -->
-<a name="logitems"></a>
-
-<c:if test="${!empty message && function == 'logitems'}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
-</c:if>
-<c:if test="${!empty errors && function == 'logitems'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
-</c:if>
-
-<fieldset>
-<legend><fmt:message key="admin.title.logitems" /></legend>
-<form action="<jamwiki:link value="Special:Maintenance" />#logitems" method="post">
-<div class="row">
-	<label><fmt:message key="admin.caption.logitems" /></label>
-	<span><input type="submit" value="<fmt:message key="admin.caption.reset" />" /></span>
-	<div class="formhelp"><fmt:message key="admin.help.reloadlogitems" /></div>
-</div>
-<input type="hidden" name="function" value="logitems" />
-</form>
-</fieldset>
-
 <!-- Cache -->
-<a name="cache"></a>
-
 <c:if test="${!empty message && function == 'cache'}">
 <div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'cache'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
-
 <fieldset>
 <legend><fmt:message key="admin.title.cache" /></legend>
-<form action="<jamwiki:link value="Special:Maintenance" />#cache" method="post">
+<form action="<jamwiki:link value="Special:Maintenance" />#system" method="post">
 <div class="row">
 	<label><fmt:message key="admin.cache.caption" /></label>
 	<span><input type="submit" value="<fmt:message key="admin.caption.reset" />" /></span>
@@ -138,10 +88,9 @@
 <c:if test="${!empty errors && function == 'spam'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
-
 <fieldset>
 <legend><fmt:message key="admin.title.spamfilter" /></legend>
-<form action="<jamwiki:link value="Special:Maintenance" />#spam" method="post">
+<form action="<jamwiki:link value="Special:Maintenance" />#system" method="post">
 <div class="row">
 	<label><fmt:message key="admin.caption.spamfilter" /></label>
 	<span><input type="submit" value="<fmt:message key="admin.caption.reset" />" /></span>
@@ -153,19 +102,60 @@
 
 </jamwiki:enabled>
 
-<!-- Namespaces -->
-<a name="namespaces"></a>
+</div>
 
+<!-- Data Tools -->
+<div id="data" class="submenu-tab-item">
+<a name="data"></a>
+
+<!-- Recent Changes -->
+<c:if test="${!empty message && function == 'recentchanges'}">
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+</c:if>
+<c:if test="${!empty errors && function == 'recentchanges'}">
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+</c:if>
+<fieldset>
+<legend><fmt:message key="admin.title.recentchanges" /></legend>
+<form action="<jamwiki:link value="Special:Maintenance" />#data" method="post">
+<div class="row">
+	<label><fmt:message key="admin.caption.recentchanges" /></label>
+	<span><input type="submit" value="<fmt:message key="admin.caption.reset" />" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.reloadrecentchanges" /></div>
+</div>
+<input type="hidden" name="function" value="recentchanges" />
+</form>
+</fieldset>
+
+<!-- Log Items -->
+<c:if test="${!empty message && function == 'logitems'}">
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+</c:if>
+<c:if test="${!empty errors && function == 'logitems'}">
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+</c:if>
+<fieldset>
+<legend><fmt:message key="admin.title.logitems" /></legend>
+<form action="<jamwiki:link value="Special:Maintenance" />#data" method="post">
+<div class="row">
+	<label><fmt:message key="admin.caption.logitems" /></label>
+	<span><input type="submit" value="<fmt:message key="admin.caption.reset" />" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.reloadlogitems" /></div>
+</div>
+<input type="hidden" name="function" value="logitems" />
+</form>
+</fieldset>
+
+<!-- Namespaces -->
 <c:if test="${!empty message && function == 'namespaces'}">
 <div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'namespaces'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
-
 <fieldset>
 <legend><fmt:message key="admin.maintenance.title.namespaces" /></legend>
-<form action="<jamwiki:link value="Special:Maintenance" />#namespaces" method="post">
+<form action="<jamwiki:link value="Special:Maintenance" />#data" method="post">
 <div class="row">
 	<label><fmt:message key="admin.maintenance.caption.namespaces" /></label>
 	<span><input type="submit" value="<fmt:message key="common.update" />" /></span>
@@ -175,16 +165,36 @@
 </form>
 </fieldset>
 
-<!-- Password Reset -->
-<a name="password"></a>
+<!-- Topic Links -->
+<c:if test="${!empty message && function == 'links'}">
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+</c:if>
+<c:if test="${!empty errors && function == 'links'}">
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+</c:if>
+<fieldset>
+<legend><fmt:message key="admin.maintenance.title.links" /></legend>
+<form action="<jamwiki:link value="Special:Maintenance" />#data" method="post">
+<div class="row">
+	<label><fmt:message key="admin.maintenance.caption.links" /></label>
+	<span><input type="submit" value="<fmt:message key="common.update" />" /></span>
+	<div class="formhelp"><fmt:message key="admin.maintenance.help.links" /></div>
+</div>
+<input type="hidden" name="function" value="links" />
+</form>
+</fieldset>
 
+</div>
+
+<!-- Password Reset -->
+<div id="password" class="submenu-tab-item">
+<a name="password"></a>
 <c:if test="${!empty message && function == 'password'}">
 <div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'password'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
-
 <fieldset>
 <legend><fmt:message key="admin.title.password" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />#password" method="post">
@@ -208,9 +218,10 @@
 <input type="hidden" name="function" value="password" />
 </form>
 </fieldset>
-
+</div>
 
 <!-- Add User  -->
+<div id="adduser" class="submenu-tab-item">
 <a name="adduser"></a>
 <c:if test="${!empty message && function == 'adduser'}">
 <div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
@@ -218,7 +229,6 @@
 <c:if test="${!empty errors && function == 'adduser'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
-
 <fieldset>
 <legend><fmt:message key="admin.title.adduser" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />#adduser" method="post">
@@ -250,8 +260,10 @@
 <input type="hidden" name="function" value="adduser" />
 </form>
 </fieldset>
+</div>
 
 <!-- Migrate Database -->
+<div id="migrate" class="submenu-tab-item">
 <a name="migrate"></a>
 <c:if test="${!empty message && function == 'migrate'}">
 <div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
@@ -259,7 +271,6 @@
 <c:if test="${!empty errors && function == 'migrate'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
-
 <fieldset>
 <legend><fmt:message key="admin.title.migratedatabase" /> (<fmt:message key="common.caption.experimental" />)</legend>
 <form action="<jamwiki:link value="Special:Maintenance" />#migrate" method="post">
@@ -310,28 +321,9 @@
 <input type="hidden" name="function" value="migrate" />
 </form>
 </fieldset>
-
-<!-- Topic Links -->
-<a name="links"></a>
-
-<c:if test="${!empty message && function == 'links'}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
-</c:if>
-<c:if test="${!empty errors && function == 'links'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
-</c:if>
-
-<fieldset>
-<legend><fmt:message key="admin.maintenance.title.links" /></legend>
-<form action="<jamwiki:link value="Special:Maintenance" />#links" method="post">
-<div class="row">
-	<label><fmt:message key="admin.maintenance.caption.links" /></label>
-	<span><input type="submit" value="<fmt:message key="common.update" />" /></span>
-	<div class="formhelp"><fmt:message key="admin.maintenance.help.links" /></div>
 </div>
-<input type="hidden" name="function" value="links" />
-</form>
-</fieldset>
+
+</div>
 
 </div>
 

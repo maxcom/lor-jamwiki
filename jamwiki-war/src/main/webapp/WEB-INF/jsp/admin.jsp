@@ -51,13 +51,6 @@ function onRSS() {
 
 <div id="configuration" class="admin">
 
-<form name="form1" method="post" action="<jamwiki:link value="Special:Admin" />">
-
-<div class="submenu">
-<a href="#general"><fmt:message key="admin.header.general" /></a> | <a href="#parser"><fmt:message key="admin.header.parser" /></a> | <a href="#database"><fmt:message key="admin.header.persistence" /></a> | <a href="#upload"><fmt:message key="admin.header.upload" /></a><br />
-<a href="#cache"><fmt:message key="admin.header.cache" /></a> | <a href="#rss"><fmt:message key="admin.header.rss" /></a> | <a href="#save"><fmt:message key="admin.action.save" /></a>
-</div>
-
 <c:if test="${!empty message}">
 <div class="message red">
 	<fmt:message key="${message.key}">
@@ -79,7 +72,23 @@ function onRSS() {
 </div>
 </c:if>
 
+<!-- sub-menu tabs -->
+<ul class="tab-menu" id="tab_submenu">
+<li><a href="#general"><fmt:message key="admin.header.general" /></a></li>
+<li><a href="#parser"><fmt:message key="admin.header.parser" /></a></li>
+<li><a href="#database"><fmt:message key="admin.header.persistence" /></a></li>
+<li><a href="#upload"><fmt:message key="admin.header.upload" /></a></li>
+<li><a href="#cache"><fmt:message key="admin.header.cache" /></a></li>
+<li><a href="#rss"><fmt:message key="admin.header.rss" /></a></li>
+</ul>
+<div class="submenu-tab-content">
+
+<form name="form1" method="post" action="<jamwiki:link value="Special:Admin" />">
+
+<input type="submit" name="Submit" value="<fmt:message key="admin.action.save" />" />
+
 <!-- BEGIN GENERAL SETTINGS -->
+<div id="general" class="submenu-tab-item">
 <a name="general"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.general" /></legend>
@@ -188,9 +197,11 @@ function onRSS() {
 	<div class="formhelp"><fmt:message key="admin.help.maxversionexport" /></div>
 </div>
 </fieldset>
+</div>
 <!-- END GENERAL SETTINGS -->
 
 <!-- BEGIN PARSER -->
+<div id="parser" class="submenu-tab-item">
 <a name="parser"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.parser" /></legend>
@@ -244,12 +255,14 @@ function onRSS() {
 	<div class="formhelp"><fmt:message key="admin.parser.help.signaturedate" /></div>
 </div>
 </fieldset>
+</div>
 <!-- END PARSER -->
 
 <%--
 FIXME - Email not supported right now, comment this out
 
 <!-- BEGIN EMAIL -->
+<div id="email" class="submenu-tab-item">
 <a name="email"></a>
 <fieldset>
 <legend><fmt:message key="admin.smtp.caption" /></legend>
@@ -273,11 +286,13 @@ FIXME - Email not supported right now, comment this out
 	<span><jamwiki:text name="${PROP_EMAIL_REPLY_ADDRESS}" value="${props[PROP_EMAIL_REPLY_ADDRESS]}" size="50" id="${PROP_EMAIL_REPLY_ADDRESS}" /></span>
 </div>
 </fieldset>
+</div>
 <!-- END EMAIL -->
 
 --%>
 
 <!-- BEGIN DATABASE PERSISTENCE -->
+<div id="database" class="submenu-tab-item">
 <a name="database"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.persistence" /></legend>
@@ -377,9 +392,11 @@ FIXME - Email not supported right now, comment this out
 	</span>
 </div>
 </fieldset>
+</div>
 <!-- END DATABASE PERSISTENCE -->
 
 <!-- BEGIN FILE UPLOAD -->
+<div id="upload" class="submenu-tab-item">
 <a name="upload"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.upload" /></legend>
@@ -442,9 +459,11 @@ FIXME - Email not supported right now, comment this out
 	<div class="formhelp"><fmt:message key="admin.upload.help.whitelist" /></div>
 </div>
 </fieldset>
+</div>
 <!-- END FILE UPLOAD -->
 
 <!-- BEGIN CACHE -->
+<div id="cache" class="submenu-tab-item">
 <a name="cache"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.cache" /></legend>
@@ -474,9 +493,11 @@ FIXME - Email not supported right now, comment this out
 	<span><jamwiki:text name="${PROP_CACHE_MAX_IDLE_AGE}" id="${PROP_CACHE_MAX_IDLE_AGE}" value="${props[PROP_CACHE_MAX_IDLE_AGE]}" size="10" /></span>
 </div>
 </fieldset>
+</div>
 <!-- END CACHE -->
 
 <!-- BEGIN RSS -->
+<div id="rss" class="submenu-tab-item">
 <a name="rss"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.rss" /></legend>
@@ -491,14 +512,8 @@ FIXME - Email not supported right now, comment this out
 	<span><jamwiki:text name="${PROP_RSS_TITLE}" id="${PROP_RSS_TITLE}" value="${props[PROP_RSS_TITLE]}" size="50" /></span>
 </div>
 </fieldset>
+</div>
 <!-- END RSS -->
-
-<a name="save"></a>
-<table border="0" class="contents" width="99%">
-<tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2" align="center"><input type="submit" name="Submit" value="<fmt:message key="admin.action.save" />" /></td></tr>
-<tr><td colspan="2">&nbsp;</td></tr>
-</table>
 
 <input type="hidden" name="function" value="properties" />
 
@@ -511,5 +526,7 @@ FIXME - Email not supported right now, comment this out
 
 <input type="password" name="fakePassword" value="" style="display:none" />
 </form>
+
+</div>
 
 </div>

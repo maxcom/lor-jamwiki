@@ -25,16 +25,6 @@
 
 <div id="virtualwiki" class="admin">
 
-<div class="submenu">
-<a href="#search"><fmt:message key="admin.vwiki.title.select" /></a>
-| <a href="#vwiki"><fmt:message key="admin.vwiki.title.virtualwiki" /></a>
-| <a href="#addnamespace"><fmt:message key="admin.vwiki.title.namespace.add" /></a>
-<c:if test="${!empty selected}">| <a href="#namespaces"><fmt:message key="admin.vwiki.title.namespace.translations"><fmt:param value="${selected.name}" /></fmt:message></a></c:if>
-</div>
-
-<!-- Select Virtual Wiki -->
-<a name="search"></a>
-
 <c:if test="${!empty message && function == 'search'}">
 <div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
@@ -42,7 +32,16 @@
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
 
-<form action="<jamwiki:link value="Special:VirtualWiki" />#search" method="get" name="search">
+<!-- sub-menu tabs -->
+<ul class="tab-menu" id="tab_submenu">
+<li><a href="#vwiki"><fmt:message key="admin.vwiki.title.virtualwiki" /></a></li>
+<li><a href="#addnamespace"><fmt:message key="admin.vwiki.title.namespace.add" /></a></li>
+<c:if test="${!empty selected}"><li><a href="#namespaces"><fmt:message key="admin.vwiki.title.namespace.translations"><fmt:param value="${selected.name}" /></fmt:message></a></li></c:if>
+</ul>
+<div class="submenu-tab-content">
+
+<!-- Select Virtual Wiki -->
+<form action="<jamwiki:link value="Special:VirtualWiki" />" method="get" name="search">
 <input type="hidden" name="function" value="search" />
 <fieldset>
 <legend><fmt:message key="admin.vwiki.title.select" /></legend>
@@ -60,15 +59,14 @@
 </form>
 
 <!-- Add/Update Virtual Wiki -->
+<div id="vwiki" class="submenu-tab-item">
 <a name="vwiki"></a>
-
 <c:if test="${!empty message && function == 'virtualwiki'}">
 <div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'virtualwiki'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
-
 <form action="<jamwiki:link value="Special:VirtualWiki" />#vwiki" method="post">
 <fieldset>
 <legend><fmt:message key="admin.vwiki.title.virtualwiki" /></legend>
@@ -111,17 +109,17 @@
 </div>
 </fieldset>
 </form>
+</div>
 
 <!-- Add Namesapce -->
+<div id="addnamespace" class="submenu-tab-item">
 <a name="addnamespace"></a>
-
 <c:if test="${!empty message && function == 'addnamespace'}">
 <div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'addnamespace'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
-
 <form action="<jamwiki:link value="Special:VirtualWiki" />#addnamespace" method="post">
 <fieldset>
 <legend><fmt:message key="admin.vwiki.title.namespace.add" /></legend>
@@ -149,19 +147,18 @@
 </div>
 </fieldset>
 </form>
+</div>
 
 <c:if test="${!empty selected}">
-
 	<!-- Add/Update Namesapce Translations -->
+	<div id="namespaces" class="submenu-tab-item">
 	<a name="namespaces"></a>
-
 	<c:if test="${!empty message && function == 'namespaces'}">
 	<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 	</c:if>
 	<c:if test="${!empty errors && function == 'namespaces'}">
 	<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 	</c:if>
-
 	<form action="<jamwiki:link value="Special:VirtualWiki" />#namespaces" method="post">
 	<input type="hidden" name="function" value="namespaces" />
 	<input type="hidden" name="selected" value="${selected.name}" />
@@ -193,6 +190,9 @@
 	</div>
 	</fieldset>
 	</form>
+	</div>
 </c:if>
+
+</div>
 
 </div>

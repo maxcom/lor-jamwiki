@@ -158,3 +158,76 @@ function historyRadio(element, siblingName, disableLower) {
 		}
 	}
 }
+var JAMWiki = {};
+JAMWiki.Tabs = function() {
+	// Based on code by Matt Doyle http://www.elated.com/articles/javascript-tabs/.
+	var tabLinks = new Array();
+	var contentDivs = new Array();
+	function showTab() {
+		var tabLink = getFirstChildWithTagName(this, 'A');
+		var selectedId = getHash(tabLink.getAttribute('href'));
+		for (var id in contentDivs) {
+			if (id == selectedId) {
+				tabLinks[id].className = 'active';
+				contentDivs[id].className = 'submenu-tab-item';
+			} else {
+				tabLinks[id].className = '';
+				contentDivs[id].className = 'submenu-tab-item hidden';
+			}
+		}
+		return false;
+	}
+	function getFirstChildWithTagName(element, tagName) {
+		for (var i = 0; i < element.childNodes.length; i++) {
+			if (element.childNodes[i].nodeName == tagName) {
+				return element.childNodes[i];
+			}
+		}
+	}
+	function getHash(url) {
+		var hashPos = url.lastIndexOf('#');
+		return url.substring(hashPos + 1);
+	}
+	return {
+		initializeTabs: function() {
+			var tabNode = document.getElementById('tab_submenu');
+			if (!tabNode) {
+				return;
+			}
+			var tabListItems = tabNode.childNodes;
+			for (var i = 0; i < tabListItems.length; i++) {
+				if (tabListItems[i].nodeName == "LI") {
+					var tabLink = getFirstChildWithTagName(tabListItems[i], 'A');
+					var id = getHash(tabLink.getAttribute('href'));
+					tabLinks[id] = tabListItems[i];
+					contentDivs[id] = document.getElementById(id);
+				}
+			}
+			var i = 0;
+			var selectedId = 0;
+			for (var id in tabLinks) {
+				tabLinks[id].onclick = showTab;
+				var tabLink = getFirstChildWithTagName(tabLinks[id], 'A');
+				tabLink.onfocus = function() {
+					// blur focus to avoid a link box around the text
+					this.blur();
+				};
+				if (document.location.hash == '#' + id || i == 0) {
+					selectedId = id;
+				}
+				i++;
+			}
+			tabLinks[selectedId].className = 'active';
+			var i = 0;
+			for (var id in contentDivs) {
+				if (id != selectedId) {
+					contentDivs[id].className = 'submenu-tab-item hidden';
+				}
+				i++;
+			}
+		}
+	};
+}();
+window.onload = function() {
+	JAMWiki.Tabs.initializeTabs();
+}

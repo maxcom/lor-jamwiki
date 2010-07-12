@@ -24,9 +24,13 @@
 
 <div id="roles" class="admin">
 
-<div class="submenu">
-<a href="#assign"><fmt:message key="roles.header.group" /></a> | <a href="#assign"><fmt:message key="roles.header.user" /></a> | <a href="#create"><fmt:message key="roles.header.modify" /></a>
-</div>
+<!-- sub-menu tabs -->
+<ul class="tab-menu" id="tab_submenu">
+<li><a href="#group"><fmt:message key="roles.header.group" /></a></li>
+<li><a href="#user"><fmt:message key="roles.header.user" /></a></li>
+<li><a href="#create"><fmt:message key="roles.header.modify" /></a></li>
+</ul>
+<div class="submenu-tab-content">
 
 <div class="message"><fmt:message key="roles.caption.instructions" /></div>
 
@@ -38,9 +42,10 @@
 </c:if>
 
 <!-- Assign Group Roles -->
-<form action="<jamwiki:link value="Special:Roles" />" method="post">
-<input type="hidden" name="function" value="assignRole" />
+<div id="group" class="submenu-tab-item">
 <a name="group"></a>
+<form action="<jamwiki:link value="Special:Roles" />#group" method="post">
+<input type="hidden" name="function" value="assignRole" />
 <fieldset>
 <legend><fmt:message key="roles.header.group" /></legend>
 <div class="rowhelp"><fmt:message key="roles.help.grouproles" /></div>
@@ -69,12 +74,14 @@
 <div align="center" style="padding:10px"><input type="submit" name="Submit" value="<fmt:message key="common.save" />" /></div>
 </fieldset>
 </form>
+</div>
 
 <!-- Assign User Roles -->
+<div id="user" class="submenu-tab-item">
 <a name="user"></a>
 <fieldset>
 <legend><fmt:message key="roles.header.user" /></legend>
-<form action="<jamwiki:link value="Special:Roles" />" method="post" name="searchRoleForm">
+<form action="<jamwiki:link value="Special:Roles" />#user" method="post" name="searchRoleForm">
 <input type="hidden" name="function" value="searchRole" />
 <div class="rowhelp"><fmt:message key="roles.help.userroles" /></div>
 <div class="row">
@@ -95,7 +102,7 @@
 </div>
 </form>
 <c:if test="${!empty roleMapUsers}">
-<form action="<jamwiki:link value="Special:Roles" />" method="post">
+<form action="<jamwiki:link value="Special:Roles" />#user" method="post">
 <input type="hidden" name="function" value="assignRole" />
 <table border="0" class="contents" width="99%">
 <tr class="darkbg">
@@ -125,11 +132,13 @@
 </form>
 </c:if>
 </fieldset>
+</div>
 
 <!-- Create/Update Roles -->
-<form action="<jamwiki:link value="Special:Roles" />" name="modifyRoleForm" method="post">
-<input type="hidden" name="function" value="modifyRole" />
+<div id="create" class="submenu-tab-item">
 <a name="create"></a>
+<form action="<jamwiki:link value="Special:Roles" />#create" name="modifyRoleForm" method="post">
+<input type="hidden" name="function" value="modifyRole" />
 <fieldset>
 <legend><fmt:message key="roles.header.modify" /></legend>
 <div class="row">
@@ -157,5 +166,8 @@
 </div>
 </fieldset>
 </form>
+</div>
+
+</div>
 
 </div>
