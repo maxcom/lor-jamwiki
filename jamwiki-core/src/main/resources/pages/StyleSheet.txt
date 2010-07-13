@@ -78,8 +78,8 @@ h5 {
 	font-weight: bold;
 }
 pre {
-	background-color: #FBFBFD;
-	border: 1px dashed #7E7ECB;
+	background-color: #fbfbfd;
+	border: 1px dashed #7e7ecb;
 	color: black;
 	font-size: 110%;
 	line-height: 1.1em;
@@ -132,11 +132,11 @@ legend {
 }
 .red {
 	font-weight: bold;
-	color: #ff0000;
+	color: #f00;
 }
 .green {
 	font-weight: bold;
-	color: #009900;
+	color: #090;
 }
 div.message {
 	margin: 1.5em 0 1.5em 0;
@@ -520,7 +520,7 @@ div.thumb {
 	width:auto;
 }
 div.thumbinner  {
-	background-color:#F9F9F9;
+	background-color:#f9f9f9;
 	border: 1px solid #ccc;
 	font-size:94%;
 	overflow:hidden;
@@ -590,7 +590,7 @@ img.gallery {
 	clear: both;
 }
 .lightbg {
-	background-color: #ffffff;
+	background-color: #fff;
 }
 .mediumbg {
 	background-color: #e9e9f8;
@@ -656,6 +656,14 @@ div.row label.nonblock {
 	text-align: inherit;
 	width: auto;
 	font-weight: inherit;
+}
+div.callout {
+	border: 1px solid #e9e9e9;
+	margin: 10px;
+	padding: 10px;
+}
+div.callout input {
+	margin-right: 20px;
 }
 #manage div.row label, #move div.row label, #register div.row label {
 	width: 180px;

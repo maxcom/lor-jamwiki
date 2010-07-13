@@ -85,7 +85,14 @@ function onRSS() {
 
 <form name="form1" method="post" action="<jamwiki:link value="Special:Admin" />">
 
-<input type="submit" name="Submit" value="<fmt:message key="admin.action.save" />" />
+<div class="callout">
+	<table>
+	<tr>
+		<td><input type="submit" name="Submit" value="<fmt:message key="admin.action.save" />" /></td>
+		<td><fmt:message key="admin.message.savechanges" /></td>
+	</tr>
+	</table>
+</div>
 
 <!-- BEGIN GENERAL SETTINGS -->
 <div id="general" class="submenu-tab-item">
@@ -151,16 +158,6 @@ function onRSS() {
 	<div class="formhelp"><fmt:message key="admin.help.editor" /></div>
 </div>
 <div class="row">
-	<label for="<%= Environment.PROP_PRINT_NEW_WINDOW %>"><fmt:message key="admin.caption.printnewwindow" /></label>
-	<c:set var="PROP_PRINT_NEW_WINDOW"><%= Environment.PROP_PRINT_NEW_WINDOW %></c:set>
-	<span><jamwiki:checkbox name="${PROP_PRINT_NEW_WINDOW}" value="true" checked="${props[PROP_PRINT_NEW_WINDOW]}" id="${PROP_PRINT_NEW_WINDOW}" /></span>
-</div>
-<div class="row">
-	<label for="<%= Environment.PROP_EXTERNAL_LINK_NEW_WINDOW %>"><fmt:message key="admin.caption.externallinknewwindow" /></label>
-	<c:set var="PROP_EXTERNAL_LINK_NEW_WINDOW"><%= Environment.PROP_EXTERNAL_LINK_NEW_WINDOW %></c:set>
-	<span><jamwiki:checkbox name="${PROP_EXTERNAL_LINK_NEW_WINDOW}" value="true" checked="${props[PROP_EXTERNAL_LINK_NEW_WINDOW]}" id="${PROP_EXTERNAL_LINK_NEW_WINDOW}" /></span>
-</div>
-<div class="row">
 	<label for="<%= Environment.PROP_BASE_META_DESCRIPTION %>"><fmt:message key="admin.caption.metadescription" /></label>
 	<c:set var="PROP_BASE_META_DESCRIPTION"><%= Environment.PROP_BASE_META_DESCRIPTION %></c:set>
 	<span><textarea class="medium" name="<%= Environment.PROP_BASE_META_DESCRIPTION %>" id="<%= Environment.PROP_BASE_META_DESCRIPTION %>"><c:out value="${props[PROP_BASE_META_DESCRIPTION]}" /></textarea></span>
@@ -183,12 +180,6 @@ function onRSS() {
 	<c:set var="PROP_BASE_DEFAULT_TOPIC"><%= Environment.PROP_BASE_DEFAULT_TOPIC %></c:set>
 	<span><jamwiki:text name="${PROP_BASE_DEFAULT_TOPIC}" value="${props[PROP_BASE_DEFAULT_TOPIC]}" size="30" id="${PROP_BASE_DEFAULT_TOPIC}" /></span>
 	<div class="formhelp"><fmt:message key="admin.help.defaulttopic" /></div>
-</div>
-<div class="row">
-	<label for="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>"><fmt:message key="admin.caption.imageresize" /></label>
-	<c:set var="PROP_IMAGE_RESIZE_INCREMENT"><%= Environment.PROP_IMAGE_RESIZE_INCREMENT %></c:set>
-	<span><jamwiki:text name="${PROP_IMAGE_RESIZE_INCREMENT}" size="5" maxlength="4" value="${props[PROP_IMAGE_RESIZE_INCREMENT]}" id="${PROP_IMAGE_RESIZE_INCREMENT}" /></span>
-	<div class="formhelp"><fmt:message key="admin.help.imageresize" /></div>
 </div>
 <div class="row">
 	<label for="<%= Environment.PROP_MAX_TOPIC_VERSION_EXPORT %>"><fmt:message key="admin.caption.maxversionexport" /></label>
@@ -217,17 +208,6 @@ function onRSS() {
 	</span>
 </div>
 <div class="row">
-	<label for="<%= Environment.PROP_PARSER_TOC %>"><fmt:message key="admin.parser.caption.tableofcontents" /></label>
-	<c:set var="PROP_PARSER_TOC"><%= Environment.PROP_PARSER_TOC %></c:set>
-	<span><jamwiki:checkbox name="${PROP_PARSER_TOC}" value="true" checked="${props[PROP_PARSER_TOC]}" id="${PROP_PARSER_TOC}" /></span>
-</div>
-<div class="row">
-	<label for="<%= Environment.PROP_PARSER_TOC_DEPTH %>"><fmt:message key="admin.parser.caption.tableofcontentsdepth" /></label>
-	<c:set var="PROP_PARSER_TOC_DEPTH"><%= Environment.PROP_PARSER_TOC_DEPTH %></c:set>
-	<span><jamwiki:text name="${PROP_PARSER_TOC_DEPTH}" value="${props[PROP_PARSER_TOC_DEPTH]}" size="5" maxlength="1" id="${PROP_PARSER_TOC_DEPTH}" /></span>
-	<div class="formhelp"><fmt:message key="admin.parser.help.tableofcontentsdepth" /></div>
-</div>
-<div class="row">
 	<label for="<%= Environment.PROP_PARSER_ALLOW_HTML %>"><fmt:message key="admin.parser.caption.allowhtml" /></label>
 	<c:set var="PROP_PARSER_ALLOW_HTML"><%= Environment.PROP_PARSER_ALLOW_HTML %></c:set>
 	<span><jamwiki:checkbox name="${PROP_PARSER_ALLOW_HTML}" value="true" checked="${props[PROP_PARSER_ALLOW_HTML]}" id="${PROP_PARSER_ALLOW_HTML}" /></span>
@@ -241,6 +221,33 @@ function onRSS() {
 	<label for="<%= Environment.PROP_PARSER_ALLOW_TEMPLATES %>"><fmt:message key="admin.parser.caption.allowtemplates" /></label>
 	<c:set var="PROP_PARSER_ALLOW_TEMPLATES"><%= Environment.PROP_PARSER_ALLOW_TEMPLATES %></c:set>
 	<span><jamwiki:checkbox name="${PROP_PARSER_ALLOW_TEMPLATES}" value="true" checked="${props[PROP_PARSER_ALLOW_TEMPLATES]}" id="${PROP_PARSER_ALLOW_TEMPLATES}" /></span>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_PRINT_NEW_WINDOW %>"><fmt:message key="admin.caption.printnewwindow" /></label>
+	<c:set var="PROP_PRINT_NEW_WINDOW"><%= Environment.PROP_PRINT_NEW_WINDOW %></c:set>
+	<span><jamwiki:checkbox name="${PROP_PRINT_NEW_WINDOW}" value="true" checked="${props[PROP_PRINT_NEW_WINDOW]}" id="${PROP_PRINT_NEW_WINDOW}" /></span>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_EXTERNAL_LINK_NEW_WINDOW %>"><fmt:message key="admin.caption.externallinknewwindow" /></label>
+	<c:set var="PROP_EXTERNAL_LINK_NEW_WINDOW"><%= Environment.PROP_EXTERNAL_LINK_NEW_WINDOW %></c:set>
+	<span><jamwiki:checkbox name="${PROP_EXTERNAL_LINK_NEW_WINDOW}" value="true" checked="${props[PROP_EXTERNAL_LINK_NEW_WINDOW]}" id="${PROP_EXTERNAL_LINK_NEW_WINDOW}" /></span>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_PARSER_TOC %>"><fmt:message key="admin.parser.caption.tableofcontents" /></label>
+	<c:set var="PROP_PARSER_TOC"><%= Environment.PROP_PARSER_TOC %></c:set>
+	<span><jamwiki:checkbox name="${PROP_PARSER_TOC}" value="true" checked="${props[PROP_PARSER_TOC]}" id="${PROP_PARSER_TOC}" /></span>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_PARSER_TOC_DEPTH %>"><fmt:message key="admin.parser.caption.tableofcontentsdepth" /></label>
+	<c:set var="PROP_PARSER_TOC_DEPTH"><%= Environment.PROP_PARSER_TOC_DEPTH %></c:set>
+	<span><jamwiki:text name="${PROP_PARSER_TOC_DEPTH}" value="${props[PROP_PARSER_TOC_DEPTH]}" size="5" maxlength="1" id="${PROP_PARSER_TOC_DEPTH}" /></span>
+	<div class="formhelp"><fmt:message key="admin.parser.help.tableofcontentsdepth" /></div>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>"><fmt:message key="admin.caption.imageresize" /></label>
+	<c:set var="PROP_IMAGE_RESIZE_INCREMENT"><%= Environment.PROP_IMAGE_RESIZE_INCREMENT %></c:set>
+	<span><jamwiki:text name="${PROP_IMAGE_RESIZE_INCREMENT}" size="5" maxlength="4" value="${props[PROP_IMAGE_RESIZE_INCREMENT]}" id="${PROP_IMAGE_RESIZE_INCREMENT}" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.imageresize" /></div>
 </div>
 <div class="row">
 	<label for="<%= Environment.PROP_PARSER_SIGNATURE_USER_PATTERN %>"><fmt:message key="admin.parser.caption.signatureuser" /></label>
