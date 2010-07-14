@@ -18,6 +18,10 @@ New Features:
   * Upgrade to Ehcache 2.1.0.
   * Upgrade to Lucene Search 3.0.2.
 
+Translation Updates:
+
+  * Updated Russian translations (shar).
+
 
 0.9.1
 =====
