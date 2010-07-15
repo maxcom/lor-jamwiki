@@ -156,6 +156,15 @@ public class DatabaseUpgrades {
 			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_LINKS_TABLE", conn);
 			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_LINKS_INDEX", conn);
 			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_topic_links"));
+			// add the interwiki table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_INTERWIKI_TABLE", conn);
+			// populate the jam_interwiki table
+			WikiDatabase.setupDefaultInterwikis();
+			messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_interwiki"));
+		} catch (DataAccessException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			logger.severe("Database failure during upgrade", e);
+			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			logger.severe("Database failure during upgrade", e);

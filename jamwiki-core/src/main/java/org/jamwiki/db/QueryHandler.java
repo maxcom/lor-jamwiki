@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import org.jamwiki.model.Category;
+import org.jamwiki.model.Interwiki;
 import org.jamwiki.model.LogItem;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.RecentChange;
@@ -98,6 +99,16 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	void deleteGroupAuthorities(int groupId, Connection conn) throws SQLException;
+
+	/**
+	 * Delete an interwiki record from the interwiki table.
+	 *
+	 * @param interwiki The Interwiki record to be deleted.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	void deleteInterwiki(Interwiki interwiki, Connection conn) throws SQLException;
 
 	/**
 	 * Delete all records from the recent changes table for a specific topic.
@@ -466,6 +477,17 @@ public interface QueryHandler {
 	void insertGroupMember(String username, int groupId, Connection conn) throws SQLException;
 
 	/**
+	 * Add an interwiki record to the database.  Note that this method will fail if a
+	 * record with the same prefix already exists.
+	 *
+	 * @param interwiki The Interwiki record to insert into the database.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	void insertInterwiki(Interwiki interwiki, Connection conn) throws SQLException;
+
+	/**
 	 * Add a new log item record to the database.
 	 *
 	 * @param logItem The LogItem record that is to be added to the database.
@@ -645,6 +667,16 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	List<Category> lookupCategoryTopics(int virtualWikiId, String virtualWikiName, String categoryName) throws SQLException;
+
+	/**
+	 * Return all interwiki records currently available for the wiki.
+	 *
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @return A list of all Interwiki records currently available for the wiki.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	List<Interwiki> lookupInterwikis(Connection conn) throws SQLException;
 
 	/**
 	 * Retrieve a list of all current namespace objects.

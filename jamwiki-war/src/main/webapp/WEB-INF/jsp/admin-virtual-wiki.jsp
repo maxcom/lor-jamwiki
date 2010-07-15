@@ -36,27 +36,10 @@
 <ul class="tab-menu" id="tab_submenu">
 <li><a href="#vwiki"><fmt:message key="admin.vwiki.title.virtualwiki" /></a></li>
 <li><a href="#addnamespace"><fmt:message key="admin.vwiki.title.namespace.add" /></a></li>
-<c:if test="${!empty selected}"><li><a href="#namespaces"><fmt:message key="admin.vwiki.title.namespace.translations"><fmt:param value="${selected.name}" /></fmt:message></a></li></c:if>
+<li><a href="#namespaces"><fmt:message key="admin.vwiki.title.namespace.translations" /></a></li>
+<li><a href="#interwiki"><fmt:message key="admin.vwiki.title.interwiki" /></a></li>
 </ul>
 <div class="submenu-tab-content">
-
-<!-- Select Virtual Wiki -->
-<form action="<jamwiki:link value="Special:VirtualWiki" />" method="get" name="search">
-<input type="hidden" name="function" value="search" />
-<fieldset>
-<legend><fmt:message key="admin.vwiki.title.select" /></legend>
-<div class="row lightbg">
-	<label for="name"><fmt:message key="common.name" /></label>
-	<span>
-		<select name="selected" id="searchVirtualWiki" onchange="document.search.submit()">
-		<option value=""></option>
-		<c:forEach items="${wikis}" var="wiki"><option value="${wiki.name}" <c:if test="${!empty selected && wiki.name == selected.name}">selected="selected"</c:if>>${wiki.name}</option></c:forEach>
-		</select>
-	</span>
-	<div class="formhelp"><fmt:message key="admin.vwiki.help.search" /></div>
-</div>
-</fieldset>
-</form>
 
 <!-- Add/Update Virtual Wiki -->
 <div id="vwiki" class="submenu-tab-item">
@@ -67,6 +50,23 @@
 <c:if test="${!empty errors && function == 'virtualwiki'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
+<!-- Select Virtual Wiki -->
+<form action="<jamwiki:link value="Special:VirtualWiki" />#vwiki" method="get" name="selectvwiki">
+<input type="hidden" name="function" value="search" />
+<fieldset>
+<legend><fmt:message key="admin.vwiki.title.select" /></legend>
+<div class="row">
+	<label for="name"><fmt:message key="common.name" /></label>
+	<span>
+		<select name="selected" onchange="document.selectvwiki.submit()">
+		<option value=""></option>
+		<c:forEach items="${wikis}" var="wiki"><option value="${wiki.name}" <c:if test="${!empty selected && wiki.name == selected.name}">selected="selected"</c:if>>${wiki.name}</option></c:forEach>
+		</select>
+	</span>
+	<div class="formhelp"><fmt:message key="admin.vwiki.help.search" /></div>
+</div>
+</fieldset>
+</form>
 <form action="<jamwiki:link value="Special:VirtualWiki" />#vwiki" method="post">
 <fieldset>
 <legend><fmt:message key="admin.vwiki.title.virtualwiki" /></legend>
@@ -136,7 +136,7 @@
 		<input type="text" name="mainNamespace" size="30" value="${mainNamespace}" />
 	</span>
 </div>
-<div class="row lightbg">
+<div class="row">
 	<label for="name"><fmt:message key="admin.vwiki.caption.namespace.comments" /></label>
 	<span>
 		<input type="text" name="commentsNamespace" size="30" value="${commentsNamespace}" />
@@ -149,21 +149,38 @@
 </form>
 </div>
 
+<!-- Add/Update Namesapce Translations -->
+<div id="namespaces" class="submenu-tab-item">
+<a name="namespaces"></a>
+<c:if test="${!empty message && function == 'namespaces'}">
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+</c:if>
+<c:if test="${!empty errors && function == 'namespaces'}">
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+</c:if>
+<!-- Select Virtual Wiki -->
+<form action="<jamwiki:link value="Special:VirtualWiki" />#namespaces" method="get" name="selectnamespaces">
+<input type="hidden" name="function" value="search" />
+<fieldset>
+<legend><fmt:message key="admin.vwiki.title.select" /></legend>
+<div class="row">
+	<label for="name"><fmt:message key="common.name" /></label>
+	<span>
+		<select name="selected" onchange="document.selectnamespaces.submit()">
+		<option value=""></option>
+		<c:forEach items="${wikis}" var="wiki"><option value="${wiki.name}" <c:if test="${!empty selected && wiki.name == selected.name}">selected="selected"</c:if>>${wiki.name}</option></c:forEach>
+		</select>
+	</span>
+	<div class="formhelp"><fmt:message key="admin.vwiki.help.search" /></div>
+</div>
+</fieldset>
+</form>
 <c:if test="${!empty selected}">
-	<!-- Add/Update Namesapce Translations -->
-	<div id="namespaces" class="submenu-tab-item">
-	<a name="namespaces"></a>
-	<c:if test="${!empty message && function == 'namespaces'}">
-	<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
-	</c:if>
-	<c:if test="${!empty errors && function == 'namespaces'}">
-	<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
-	</c:if>
 	<form action="<jamwiki:link value="Special:VirtualWiki" />#namespaces" method="post">
 	<input type="hidden" name="function" value="namespaces" />
 	<input type="hidden" name="selected" value="${selected.name}" />
 	<fieldset>
-	<legend><fmt:message key="admin.vwiki.title.namespace.translations"><fmt:param value="${selected.name}" /></fmt:message></legend>
+	<legend><fmt:message key="admin.vwiki.title.namespace.translations" /></legend>
 	<div class="rowhelp">
 		<p><fmt:message key="admin.vwiki.help.namespace.translations" /></p>
 		<p><fmt:message key="admin.vwiki.help.namespace.translations.warning" /></p>
@@ -190,8 +207,66 @@
 	</div>
 	</fieldset>
 	</form>
-	</div>
 </c:if>
+</div>
+
+<!-- Interwiki Links -->
+<div id="interwiki" class="submenu-tab-item">
+<a name="interwiki"></a>
+<c:if test="${!empty message && (function == 'addInterwiki' || function == 'updateInterwiki')}">
+<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+</c:if>
+<c:if test="${!empty errors && (function == 'addInterwiki' || function == 'updateInterwiki')}">
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+</c:if>
+<%-- Add Interwiki --%>
+<form action="<jamwiki:link value="Special:VirtualWiki" />#interwiki" method="post">
+<input type="hidden" name="function" value="addInterwiki" />
+<input type="hidden" name="selected" value="${selected.name}" />
+<fieldset>
+<legend><fmt:message key="admin.vwiki.title.interwiki.add" /></legend>
+<div class="row">
+	<label for="name"><fmt:message key="admin.vwiki.caption.interwiki.prefix" /></label>
+	<span><input type="text" name="interwikiPrefix" size="30" maxlength="30" value="${interwikiPrefix}" /></span>
+	<div class="formhelp"><fmt:message key="admin.vwiki.help.interwiki.prefix" /></div>
+</div>
+<div class="row">
+	<label for="name"><fmt:message key="admin.vwiki.caption.interwiki.pattern" /></label>
+	<span><input type="text" name="interwikiPattern" size="30" maxlength="200" value="${interwikiPattern}" /></span>
+	<div class="formhelp"><fmt:message key="admin.vwiki.help.interwiki.pattern" /></div>
+</div>
+<div class="row">
+	<span class="form-button"><input type="submit" value="<fmt:message key="common.add" />" /></span>
+</div>
+</fieldset>
+</form>
+<c:if test="${!empty interwikis}">
+<%-- Update Interwiki --%>
+<form action="<jamwiki:link value="Special:VirtualWiki" />#interwiki" method="post">
+<input type="hidden" name="function" value="updateInterwiki" />
+<input type="hidden" name="selected" value="${selected.name}" />
+<fieldset>
+<legend><fmt:message key="admin.vwiki.title.interwiki.update" /></legend>
+<c:if test="${!empty selected}">
+	<input type="hidden" name="selected" value="${selected.name}" />
+</c:if>
+<c:forEach items="${interwikis}" var="interwiki" varStatus="status">
+<div class="row">
+	<input type="hidden" name="interwikiPrefix" value="${interwiki.interwikiPrefix}" />
+	<label for="name">${interwiki.interwikiPrefix}</label>
+	<span>
+		<input type="text" name="pattern-${interwiki.interwikiPrefix}" size="50" maxlength="200" value="${interwiki.interwikiPattern}" />
+		<input type="checkbox" name="delete-${interwiki.interwikiPrefix}" value="true" /> <fmt:message key="admin.vwiki.caption.interwiki.delete" />
+	</span>
+</div>
+</c:forEach>
+<div class="row">
+	<span class="form-button"><input type="submit" value="<fmt:message key="common.update" />" /></span>
+</div>
+</fieldset>
+</form>
+</c:if>
+</div>
 
 </div>
 

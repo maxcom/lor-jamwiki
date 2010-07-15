@@ -92,16 +92,23 @@ followed by 0.6.3.
      /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
      should only be edited AFTER all other upgrade steps have been completed.
   3. Update the database schema by executing the following SQL statements:
-       a) Create the jam_topic_links table
+       a) Create the jam_topic_links table.
               CREATE TABLE jam_topic_links ( 
                 topic_id INTEGER NOT NULL, 
                 link_topic_name VARCHAR(200) NOT NULL, 
                 CONSTRAINT jam_p_topic_links PRIMARY KEY (topic_id, link_topic_name), 
                 CONSTRAINT jam_f_tlink_topic_id FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id) 
               );
-       b) Add an index to the jam_topic_links table
+       b) Add an index to the jam_topic_links table.
               CREATE INDEX jam_i_topic_links_tnm on jam_topic_links (link_topic_name);
-  3. Once the database upgrades are complete the "Regenerate Link to records"
+       c) Create the jam_interwiki table.
+              CREATE TABLE jam_interwiki ( 
+                interwiki_prefix VARCHAR(30) NOT NULL, 
+                interwiki_pattern VARCHAR(200) NOT NULL, 
+                interwiki_type INTEGER NOT NULL, 
+                CONSTRAINT jam_p_interw PRIMARY KEY (interwiki_prefix) 
+              );
+  4. Once the database upgrades are complete the "Regenerate Link to records"
      tool should be invoked from the Special:Maintenance page.
 
 
@@ -133,7 +140,7 @@ followed by 0.6.3.
      jamwiki-configuration.xml will need to be re-configured using the new
      interface.
   5. Update the database schema by executing the following SQL statements:
-       a) Create the jam_namespace table
+       a) Create the jam_namespace table.
               CREATE TABLE jam_namespace ( 
                 namespace_id INTEGER NOT NULL, 
                 namespace VARCHAR(200) NOT NULL, 

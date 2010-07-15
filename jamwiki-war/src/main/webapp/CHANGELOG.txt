@@ -8,10 +8,13 @@ New Features:
     specified virtual wiki.
   * Refactor Special:OrphanedPages to vastly improve speed & scalability.
   * Allow use of HTML heading tags (<h1>, <h2>, etc).
-  * Use the database rather than the search engine to generate results for the
-    Special:LinkTo page.
   * Update the admin page UI to improve usability - content is now organized
     using tabs, and some options have been re-worked.
+  * Store interwiki patterns in the database and add a management interface for
+    interwiki links to the Special:VirtualWiki page.  Note that not all
+    records have been carried over from the old interwiki.properties file.
+  * Use the database rather than the search engine to generate results for the
+    Special:LinkTo page.
   * Remove ability to automatically upgrade from versions prior to 0.8.0.
   * Upgrade to Spring Framework 3.0.3.RELEASE.
   * Upgrade to Spring Security 3.0.3.RELEASE.

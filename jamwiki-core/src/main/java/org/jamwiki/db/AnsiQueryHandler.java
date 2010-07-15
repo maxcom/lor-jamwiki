@@ -33,6 +33,7 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.model.Category;
+import org.jamwiki.model.Interwiki;
 import org.jamwiki.model.LogItem;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.RecentChange;
@@ -69,6 +70,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_CREATE_GROUP_AUTHORITIES_TABLE = null;
 	protected static String STATEMENT_CREATE_GROUP_MEMBERS_TABLE = null;
 	protected static String STATEMENT_CREATE_GROUP_TABLE = null;
+	protected static String STATEMENT_CREATE_INTERWIKI_TABLE = null;
 	protected static String STATEMENT_CREATE_LOG_TABLE = null;
 	protected static String STATEMENT_CREATE_NAMESPACE_TABLE = null;
 	protected static String STATEMENT_CREATE_NAMESPACE_TRANSLATION_TABLE = null;
@@ -92,6 +94,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_CREATE_WIKI_USER_LOGIN_INDEX = null;
 	protected static String STATEMENT_DELETE_AUTHORITIES = null;
 	protected static String STATEMENT_DELETE_GROUP_AUTHORITIES = null;
+	protected static String STATEMENT_DELETE_INTERWIKI = null;
 	protected static String STATEMENT_DELETE_LOG_ITEMS = null;
 	protected static String STATEMENT_DELETE_NAMESPACE_TRANSLATIONS = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES = null;
@@ -105,6 +108,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DROP_GROUP_AUTHORITIES_TABLE = null;
 	protected static String STATEMENT_DROP_GROUP_MEMBERS_TABLE = null;
 	protected static String STATEMENT_DROP_GROUP_TABLE = null;
+	protected static String STATEMENT_DROP_INTERWIKI_TABLE = null;
 	protected static String STATEMENT_DROP_LOG_TABLE = null;
 	protected static String STATEMENT_DROP_NAMESPACE_TABLE = null;
 	protected static String STATEMENT_DROP_NAMESPACE_TRANSLATION_TABLE = null;
@@ -133,6 +137,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_INSERT_GROUP_AUTHORITY = null;
 	protected static String STATEMENT_INSERT_GROUP_MEMBER = null;
 	protected static String STATEMENT_INSERT_GROUP_MEMBER_AUTO_INCREMENT = null;
+	protected static String STATEMENT_INSERT_INTERWIKI = null;
 	protected static String STATEMENT_INSERT_LOG_ITEM = null;
 	protected static String STATEMENT_INSERT_LOG_ITEMS_BY_TOPIC_VERSION_TYPE = null;
 	protected static String STATEMENT_INSERT_LOG_ITEMS_IMPORT = null;
@@ -170,6 +175,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_GROUPS_AUTHORITIES = null;
 	protected static String STATEMENT_SELECT_GROUP_MEMBERS_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_GROUP_SEQUENCE = null;
+	protected static String STATEMENT_SELECT_INTERWIKIS = null;
 	protected static String STATEMENT_SELECT_LOG_ITEMS = null;
 	protected static String STATEMENT_SELECT_LOG_ITEMS_BY_TYPE = null;
 	protected static String STATEMENT_SELECT_NAMESPACE_SEQUENCE = null;
@@ -289,6 +295,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_LOG_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_RECENT_CHANGE_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WATCHLIST_TABLE, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_INTERWIKI_TABLE, conn);
 	}
 
 	/**
@@ -299,6 +306,20 @@ public class AnsiQueryHandler implements QueryHandler {
 		try {
 			stmt = conn.prepareStatement(STATEMENT_DELETE_GROUP_AUTHORITIES);
 			stmt.setInt(1, groupId);
+			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void deleteInterwiki(Interwiki interwiki, Connection conn) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_DELETE_INTERWIKI);
+			stmt.setString(1, interwiki.getInterwikiPrefix());
 			stmt.executeUpdate();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
@@ -385,6 +406,9 @@ public class AnsiQueryHandler implements QueryHandler {
 		// catch errors that might result from a partial failure during install.  also
 		// note that the coding style violation here is intentional since it makes the
 		// actual work of the method more obvious.
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_INTERWIKI_TABLE, conn);
+		} catch (SQLException e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_WATCHLIST_TABLE, conn);
 		} catch (SQLException e) { logger.severe(e.getMessage()); }
@@ -1037,6 +1061,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		this.props = properties;
 		STATEMENT_CONNECTION_VALIDATION_QUERY    = props.getProperty("STATEMENT_CONNECTION_VALIDATION_QUERY");
 		STATEMENT_CREATE_GROUP_TABLE             = props.getProperty("STATEMENT_CREATE_GROUP_TABLE");
+		STATEMENT_CREATE_INTERWIKI_TABLE         = props.getProperty("STATEMENT_CREATE_INTERWIKI_TABLE");
 		STATEMENT_CREATE_NAMESPACE_TABLE         = props.getProperty("STATEMENT_CREATE_NAMESPACE_TABLE");
 		STATEMENT_CREATE_NAMESPACE_TRANSLATION_TABLE = props.getProperty("STATEMENT_CREATE_NAMESPACE_TRANSLATION_TABLE");
 		STATEMENT_CREATE_ROLE_TABLE              = props.getProperty("STATEMENT_CREATE_ROLE_TABLE");
@@ -1065,6 +1090,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_CREATE_WATCHLIST_TABLE         = props.getProperty("STATEMENT_CREATE_WATCHLIST_TABLE");
 		STATEMENT_DELETE_AUTHORITIES             = props.getProperty("STATEMENT_DELETE_AUTHORITIES");
 		STATEMENT_DELETE_GROUP_AUTHORITIES       = props.getProperty("STATEMENT_DELETE_GROUP_AUTHORITIES");
+		STATEMENT_DELETE_INTERWIKI               = props.getProperty("STATEMENT_DELETE_INTERWIKI");
 		STATEMENT_DELETE_LOG_ITEMS               = props.getProperty("STATEMENT_DELETE_LOG_ITEMS");
 		STATEMENT_DELETE_NAMESPACE_TRANSLATIONS  = props.getProperty("STATEMENT_DELETE_NAMESPACE_TRANSLATIONS");
 		STATEMENT_DELETE_RECENT_CHANGES          = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES");
@@ -1078,6 +1104,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_DROP_GROUP_AUTHORITIES_TABLE   = props.getProperty("STATEMENT_DROP_GROUP_AUTHORITIES_TABLE");
 		STATEMENT_DROP_GROUP_MEMBERS_TABLE       = props.getProperty("STATEMENT_DROP_GROUP_MEMBERS_TABLE");
 		STATEMENT_DROP_GROUP_TABLE               = props.getProperty("STATEMENT_DROP_GROUP_TABLE");
+		STATEMENT_DROP_INTERWIKI_TABLE           = props.getProperty("STATEMENT_DROP_INTERWIKI_TABLE");
 		STATEMENT_DROP_LOG_TABLE                 = props.getProperty("STATEMENT_DROP_LOG_TABLE");
 		STATEMENT_DROP_NAMESPACE_TABLE           = props.getProperty("STATEMENT_DROP_NAMESPACE_TABLE");
 		STATEMENT_DROP_NAMESPACE_TRANSLATION_TABLE = props.getProperty("STATEMENT_DROP_NAMESPACE_TRANSLATION_TABLE");
@@ -1106,6 +1133,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_INSERT_GROUP_AUTHORITY         = props.getProperty("STATEMENT_INSERT_GROUP_AUTHORITY");
 		STATEMENT_INSERT_GROUP_MEMBER            = props.getProperty("STATEMENT_INSERT_GROUP_MEMBER");
 		STATEMENT_INSERT_GROUP_MEMBER_AUTO_INCREMENT = props.getProperty("STATEMENT_INSERT_GROUP_MEMBER_AUTO_INCREMENT");
+		STATEMENT_INSERT_INTERWIKI               = props.getProperty("STATEMENT_INSERT_INTERWIKI");
 		STATEMENT_INSERT_LOG_ITEM                = props.getProperty("STATEMENT_INSERT_LOG_ITEM");
 		STATEMENT_INSERT_LOG_ITEMS_BY_TOPIC_VERSION_TYPE = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_BY_TOPIC_VERSION_TYPE");
 		STATEMENT_INSERT_LOG_ITEMS_IMPORT        = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_IMPORT");
@@ -1143,6 +1171,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_GROUPS_AUTHORITIES      = props.getProperty("STATEMENT_SELECT_GROUPS_AUTHORITIES");
 		STATEMENT_SELECT_GROUP_MEMBERS_SEQUENCE  = props.getProperty("STATEMENT_SELECT_GROUP_MEMBERS_SEQUENCE");
 		STATEMENT_SELECT_GROUP_SEQUENCE          = props.getProperty("STATEMENT_SELECT_GROUP_SEQUENCE");
+		STATEMENT_SELECT_INTERWIKIS              = props.getProperty("STATEMENT_SELECT_INTERWIKIS");
 		STATEMENT_SELECT_LOG_ITEMS               = props.getProperty("STATEMENT_SELECT_LOG_ITEMS");
 		STATEMENT_SELECT_LOG_ITEMS_BY_TYPE       = props.getProperty("STATEMENT_SELECT_LOG_ITEMS_BY_TYPE");
 		STATEMENT_SELECT_NAMESPACE_SEQUENCE      = props.getProperty("STATEMENT_SELECT_NAMESPACE_SEQUENCE");
@@ -1468,6 +1497,22 @@ public class AnsiQueryHandler implements QueryHandler {
 			}
 			stmt.setString(index++, username);
 			stmt.setInt(index++, groupId);
+			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void insertInterwiki(Interwiki interwiki, Connection conn) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_INSERT_INTERWIKI);
+			stmt.setString(1, interwiki.getInterwikiPrefix());
+			stmt.setString(2, interwiki.getInterwikiPattern());
+			stmt.setInt(3, interwiki.getInterwikiType());
 			stmt.executeUpdate();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
@@ -1954,6 +1999,32 @@ public class AnsiQueryHandler implements QueryHandler {
 		} finally {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}
+	}
+
+	/**
+	 *
+	 */
+	public List<Interwiki> lookupInterwikis(Connection conn) throws SQLException {
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Map<String, Interwiki> interwikis = new TreeMap<String, Interwiki>();
+		try {
+			stmt = conn.prepareStatement(STATEMENT_SELECT_INTERWIKIS);
+			rs = stmt.executeQuery();
+			String interwikiPrefix, interwikiPattern;
+			int interwikiType;
+			while (rs.next()) {
+				interwikiPrefix = rs.getString("interwiki_prefix");
+				interwikiPattern = rs.getString("interwiki_pattern");
+				interwikiType = rs.getInt("interwiki_type");
+				Interwiki interwiki = new Interwiki(interwikiPrefix, interwikiPattern);
+				interwiki.setInterwikiType(interwikiType);
+				interwikis.put(interwikiPrefix, interwiki);
+			}
+		} finally {
+			DatabaseConnection.closeConnection(null, stmt, rs);
+		}
+		return new ArrayList<Interwiki>(interwikis.values());
 	}
 
 	/**

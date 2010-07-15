@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.jamwiki.model.Category;
+import org.jamwiki.model.Interwiki;
 import org.jamwiki.model.LogItem;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.RecentChange;
@@ -95,6 +96,14 @@ public interface DataHandler {
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
 	boolean canMoveTopic(Topic fromTopic, String destination) throws DataAccessException;
+
+	/**
+	 * Delete an interwiki record from the interwiki table.
+	 *
+	 * @param interwiki The Interwiki record to be deleted.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	void deleteInterwiki(Interwiki interwiki) throws DataAccessException;
 
 	/**
 	 * Mark a topic deleted by setting its delete date to a non-null value.
@@ -378,6 +387,25 @@ public interface DataHandler {
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
 	List<Category> lookupCategoryTopics(String virtualWiki, String categoryName) throws DataAccessException;
+
+	/**
+	 * Given an interwiki prefix, return the Interwiki that corresponds to that prefix,
+	 * or <code>null</code> if no match exists.
+	 *
+	 * @param interwikiPrefix The value to query to see if a matching interwiki record
+	 *  exists.
+	 * @return The matching Interwiki object, or <code>null</code> if no match is found.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	Interwiki lookupInterwiki(String interwikiPrefix) throws DataAccessException;
+
+	/**
+	 * Return all interwiki records currently available for the wiki.
+	 *
+	 * @return A list of all Interwiki records currently available for the wiki.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	List<Interwiki> lookupInterwikis() throws DataAccessException;
 
 	/**
 	 * Given a namespace string, return the namespace that corresponds to that string,
@@ -740,6 +768,17 @@ public interface DataHandler {
 	 * @throws WikiException Thrown if the file information is invalid.
 	 */
 	void writeFile(WikiFile wikiFile, WikiFileVersion wikiFileVersion) throws DataAccessException, WikiException;
+
+	/**
+	 * Add or update an Interwiki record.  This method will first delete any
+	 * existing method with the same prefix and then add the new record.
+	 *
+	 * @param interwiki The Interwiki record to add or update.  If a record
+	 *  already exists with the same prefix then that record will be deleted.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the interwiki information is invalid.
+	 */
+	void writeInterwiki(Interwiki interwiki) throws DataAccessException, WikiException;
 
 	/**
 	 * Add or update a namespace.  This method will add a new record if the

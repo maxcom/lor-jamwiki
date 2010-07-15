@@ -27,6 +27,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Interwiki;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
@@ -57,6 +58,10 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			view(request, next, pageInfo);
 		} else if (function.equals("addnamespace")) {
 			addNamespace(request, next, pageInfo);
+		} else if (function.equals("addInterwiki")) {
+			addInterwiki(request, next, pageInfo);
+		} else if (function.equals("updateInterwiki")) {
+			updateInterwiki(request, next, pageInfo);
 		} else if (function.equals("namespaces")) {
 			namespaces(request, next, pageInfo);
 		} else if (function.equals("search")) {
@@ -65,6 +70,33 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			virtualWiki(request, next, pageInfo);
 		}
 		return next;
+	}
+
+	/**
+	 *
+	 */
+	private void addInterwiki(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		List<WikiMessage> errors = new ArrayList<WikiMessage>();
+		String interwikiPrefix = request.getParameter("interwikiPrefix");
+		String interwikiPattern = request.getParameter("interwikiPattern");
+		try {
+			Interwiki interwiki = new Interwiki(interwikiPrefix, interwikiPattern);
+			// write to the database.  this will also perform required validation.
+			WikiBase.getDataHandler().writeInterwiki(interwiki);
+		} catch (WikiException e) {
+			errors.add(e.getWikiMessage());
+		} catch (DataAccessException e) {
+			logger.severe("Failure while adding interwiki record", e);
+			errors.add(new WikiMessage("error.unknown", e.getMessage()));
+		}
+		if (!errors.isEmpty()) {
+			next.addObject("errors", errors);
+			next.addObject("interwikiPrefix", interwikiPrefix);
+			next.addObject("interwikiPattern", interwikiPattern);
+		} else {
+			next.addObject("message", new WikiMessage("admin.vwiki.message.interwiki.addsuccess", interwikiPrefix));
+		}
+		this.view(request, next, pageInfo);
 	}
 
 	/**
@@ -92,7 +124,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 		} catch (WikiException e) {
 			errors.add(e.getWikiMessage());
 		} catch (DataAccessException e) {
-			logger.severe("Failure while retrieving virtual wiki", e);
+			logger.severe("Failure while creating new namespace", e);
 			errors.add(new WikiMessage("error.unknown", e.getMessage()));
 		}
 		if (!errors.isEmpty()) {
@@ -147,6 +179,39 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private void updateInterwiki(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		List<WikiMessage> errors = new ArrayList<WikiMessage>();
+		String[] interwikiPrefixes = request.getParameterValues("interwikiPrefix");
+		if (interwikiPrefixes != null) {
+			for (String interwikiPrefix : interwikiPrefixes) {
+				String interwikiPattern = request.getParameter("pattern-" + interwikiPrefix);
+				try {
+					Interwiki interwiki = new Interwiki(interwikiPrefix, interwikiPattern);
+					// write to the database.  this will also perform required validation.
+					if (!StringUtils.equals(request.getParameter("delete-" + interwikiPrefix), "true")) {
+						WikiBase.getDataHandler().writeInterwiki(interwiki);
+					} else {
+						WikiBase.getDataHandler().deleteInterwiki(interwiki);
+					}
+				} catch (WikiException e) {
+					errors.add(e.getWikiMessage());
+				} catch (DataAccessException e) {
+					logger.severe("Failure while adding interwiki record", e);
+					errors.add(new WikiMessage("error.unknown", e.getMessage()));
+				}
+			}
+		}
+		if (!errors.isEmpty()) {
+			next.addObject("errors", errors);
+		} else {
+			next.addObject("message", new WikiMessage("admin.vwiki.message.interwiki.updatesuccess"));
+		}
+		this.view(request, next, pageInfo);
+	}
+
+	/**
+	 *
+	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
 		List<WikiMessage> errors = (next.getModel().get("errors") != null) ? (List<WikiMessage>)next.getModel().get("errors") : new ArrayList<WikiMessage>();
 		// find the current virtual wiki
@@ -170,6 +235,8 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			next.addObject("wikis", virtualWikiList);
 			List<Namespace> namespaces = WikiBase.getDataHandler().lookupNamespaces();
 			next.addObject("namespaces", namespaces);
+			List<Interwiki> interwikis = WikiBase.getDataHandler().lookupInterwikis();
+			next.addObject("interwikis", interwikis);
 		} catch (DataAccessException e) {
 			logger.severe("Failure while retrieving database records", e);
 			errors.add(new WikiMessage("error.unknown", e.getMessage()));

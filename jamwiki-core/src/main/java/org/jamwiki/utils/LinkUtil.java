@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.Interwiki;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.parser.ParserException;
@@ -174,7 +175,7 @@ public class LinkUtil {
 			text = topic;
 		}
 		if (!wikiLink.getNamespace().getId().equals(Namespace.MEDIA_ID) && !StringUtils.isBlank(topic) && StringUtils.isBlank(style)) {
-			if (InterWikiHandler.isInterWiki(virtualWiki)) {
+			if (WikiBase.getDataHandler().lookupInterwiki(virtualWiki) != null) {
 				style = "interwiki";
 			} else if (!LinkUtil.isExistingArticle(virtualWiki, topic)) {
 				style = "edit";
@@ -319,8 +320,14 @@ public class LinkUtil {
 	 *  about the link being generated.
 	 * @return The HTML anchor tag for the interwiki link.
 	 */
-	public static String interWiki(WikiLink wikiLink) {
-		String url = InterWikiHandler.formatInterWiki(wikiLink.getInterWiki(), wikiLink.getDestination());
+	public static String interWiki(WikiLink wikiLink) throws DataAccessException {
+		Interwiki interwiki = WikiBase.getDataHandler().lookupInterwiki(wikiLink.getInterWiki());
+		String url = null;
+		if (interwiki != null) {
+			url = interwiki.format(wikiLink.getDestination());
+		} else {
+			url = wikiLink.getInterWiki() + Namespace.SEPARATOR + wikiLink.getDestination();
+		}
 		String text = (!StringUtils.isBlank(wikiLink.getText())) ? wikiLink.getText() : wikiLink.getDestination();
 		return "<a class=\"interwiki\" title=\"" + text + "\" href=\"" + url + "\">" + text + "</a>";
 	}
@@ -469,8 +476,13 @@ public class LinkUtil {
 			return processed;
 		}
 		String linkPrefix = processed.substring(0, prefixPosition).trim();
-		if (InterWikiHandler.isInterWiki(linkPrefix)) {
-			wikiLink.setInterWiki(linkPrefix);
+		try {
+			if (WikiBase.getDataHandler().lookupInterwiki(linkPrefix) != null) {
+				wikiLink.setInterWiki(linkPrefix);
+			}
+		} catch (DataAccessException e) {
+			// this should not happen, if it does then swallow the error
+			logger.warning("Failure while trying to lookup interwiki: " + linkPrefix, e);
 		}
 		return (wikiLink.getInterWiki() != null) ? processed.substring(prefixPosition + Namespace.SEPARATOR.length()).trim(): processed;
 	}

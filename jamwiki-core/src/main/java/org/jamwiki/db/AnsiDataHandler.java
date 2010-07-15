@@ -36,6 +36,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Category;
+import org.jamwiki.model.Interwiki;
 import org.jamwiki.model.LogItem;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.RecentChange;
@@ -70,6 +71,7 @@ public class AnsiDataHandler implements DataHandler {
 
 	/** Any topic lookup that takes longer than the specified time (in ms) will trigger a log message. */
 	private static final int TIME_LIMIT_TOPIC_LOOKUP = 10;
+	private static final String CACHE_INTERWIKI_LIST = "org.jamwiki.db.AnsiDataHandler.CACHE_INTERWIKI_LIST";
 	private static final String CACHE_NAMESPACE_LIST = "org.jamwiki.db.AnsiDataHandler.CACHE_NAMESPACE_LIST";
 	private static final String CACHE_ROLE_MAP_GROUP = "org.jamwiki.db.AnsiDataHandler.CACHE_ROLE_MAP_GROUP";
 	private static final String CACHE_TOPIC_IDS_BY_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPIC_IDS_BY_NAME";
@@ -362,6 +364,22 @@ public class AnsiDataHandler implements DataHandler {
 		if (value != null && value.length() > maxLength) {
 			throw new WikiException(new WikiMessage("error.fieldlength", value, Integer.valueOf(maxLength).toString()));
 		}
+	}
+
+	/**
+	 *
+	 */
+	public void deleteInterwiki(Interwiki interwiki) throws DataAccessException {
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			this.queryHandler().deleteInterwiki(interwiki, conn);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+		WikiCache.removeAllFromCache(CACHE_INTERWIKI_LIST);
 	}
 
 	/**
@@ -708,6 +726,48 @@ public class AnsiDataHandler implements DataHandler {
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
+	}
+
+	/**
+	 *
+	 */
+	public Interwiki lookupInterwiki(String interwikiPrefix) throws DataAccessException {
+		if (interwikiPrefix == null) {
+			return null;
+		}
+		List<Interwiki> interwikis = this.lookupInterwikis();
+		for (Interwiki interwiki : interwikis) {
+			if (interwiki.getInterwikiPrefix().equalsIgnoreCase(interwikiPrefix.trim())) {
+				// found a match, return it
+				return interwiki;
+			}
+		}
+		// no result found
+		return null;
+	}
+
+	/**
+	 *
+	 */
+	public List<Interwiki> lookupInterwikis() throws DataAccessException {
+		// first check the cache
+		Element cacheElement = WikiCache.retrieveFromCache(CACHE_INTERWIKI_LIST, CACHE_INTERWIKI_LIST);
+		if (cacheElement != null) {
+			return (List<Interwiki>)cacheElement.getObjectValue();
+		}
+		// if not in the cache, go to the database
+		List<Interwiki> interwikis = null;
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			interwikis = this.queryHandler().lookupInterwikis(conn);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+		WikiCache.addToCache(CACHE_INTERWIKI_LIST, CACHE_INTERWIKI_LIST, interwikis);
+		return interwikis;
 	}
 
 	/**
@@ -1600,6 +1660,25 @@ public class AnsiDataHandler implements DataHandler {
 			throw e;
 		}
 		DatabaseConnection.commit(status);
+	}
+
+	/**
+	 *
+	 */
+	public void writeInterwiki(Interwiki interwiki) throws DataAccessException, WikiException {
+		interwiki.validate();
+		TransactionStatus status = null;
+		try {
+			status = DatabaseConnection.startTransaction();
+			Connection conn = DatabaseConnection.getConnection();
+			this.queryHandler().deleteInterwiki(interwiki, conn);
+			this.queryHandler().insertInterwiki(interwiki, conn);
+		} catch (SQLException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			throw new DataAccessException(e);
+		}
+		DatabaseConnection.commit(status);
+		WikiCache.removeAllFromCache(CACHE_INTERWIKI_LIST);
 	}
 
 	/**
