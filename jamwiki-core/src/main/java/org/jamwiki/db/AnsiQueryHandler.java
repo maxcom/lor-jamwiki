@@ -2034,6 +2034,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(1, virtualWikiId);
 			stmt.setInt(2, namespaceStart);
 			stmt.setInt(3, namespaceEnd);
+			stmt.setInt(4, TopicType.REDIRECT.id());
 			rs = stmt.executeQuery();
 			return (rs.next()) ? rs.getInt("topic_count") : 0;
 		} finally {

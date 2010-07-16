@@ -8,7 +8,8 @@ Bugfixes:
     deleted topics.  Reported by cmasuch.
   * Case-insensitive topic names and deleted topics were not being properly
     updated in the cache.
-
+  * Exclude redirects when calculating the number of articles using the
+    NUMBEROFARTICLES magic word.
 
 0.9.0
 =====
