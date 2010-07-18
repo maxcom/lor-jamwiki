@@ -10,6 +10,9 @@ Bugfixes:
     updated in the cache.
   * Exclude redirects when calculating the number of articles using the
     NUMBEROFARTICLES magic word.
+  * Upgrade to Lucene Search 3.0.2 to resolve a LockObtainFailedException
+    error.  Reported by TimStone.
+
 
 0.9.0
 =====
