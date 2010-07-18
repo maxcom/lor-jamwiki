@@ -20,7 +20,6 @@ New Features:
   * Upgrade to Spring Framework 3.0.3.RELEASE.
   * Upgrade to Spring Security 3.0.3.RELEASE.
   * Upgrade to Ehcache 2.1.0.
-  * Upgrade to Lucene Search 3.0.2.
 
 Translation Updates:
 
@@ -37,6 +36,10 @@ Bugfixes:
     deleted topics.  Reported by cmasuch.
   * Case-insensitive topic names and deleted topics were not being properly
     updated in the cache.
+  * Exclude redirects when calculating the number of articles using the
+    NUMBEROFARTICLES magic word.
+  * Upgrade to Lucene Search 3.0.2 to resolve a LockObtainFailedException
+    error.  Reported by TimStone.
 
 
 0.9.0
