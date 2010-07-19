@@ -490,6 +490,10 @@ public class WikiDatabase {
 			}
 			for (String topicName : topicNames) {
 				topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
+				if (topic == null) {
+					logger.warning("Invalid topic record found, possible database integrity issue: " + virtualWiki.getName() + " / " + topicName);
+					continue;
+				}
 				parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki.getName(), topicName);
 				Connection conn = null;
 				try {
