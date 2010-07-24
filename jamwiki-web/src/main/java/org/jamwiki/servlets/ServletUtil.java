@@ -712,7 +712,8 @@ public class ServletUtil {
 	 * @param next The current Spring ModelAndView object.
 	 * @param pageInfo The current WikiPageInfo object, which contains
 	 *  information needed for rendering the final JSP page.
-	 * @param pageTitle The title of the page being rendered.
+	 * @param pageTitle A WikiMessage for the title of the page being rendered.  The
+	 *  first parameter of the message should be the topic name.
 	 * @param topic The Topic object for the topic being displayed.
 	 * @param sectionEdit Set to <code>true</code> if edit links should be displayed
 	 *  for each section of the topic.
@@ -745,7 +746,7 @@ public class ServletUtil {
 				redirectUrl += LinkUtil.appendQueryParam("", "redirect", "no");
 				String redirectName = topic.getName();
 				pageInfo.setRedirectInfo(redirectUrl, redirectName);
-				pageTitle = new WikiMessage("topic.title", child.getName());
+				pageTitle.replaceParameter(0, child.getName());
 				topic = child;
 				// update the page info's virtual wiki in case this redirect is to another virtual wiki
 				pageInfo.setVirtualWikiName(topic.getVirtualWiki());
@@ -822,6 +823,9 @@ public class ServletUtil {
 		pageInfo.setTopicName(topicName);
 		next.addObject(ServletUtil.PARAMETER_TOPIC_OBJECT, topic);
 		if (pageTitle != null) {
+			if (parserOutput.getPageTitle() != null) {
+				pageTitle.replaceParameter(0, parserOutput.getPageTitle());
+			}
 			pageInfo.setPageTitle(pageTitle);
 		}
 	}

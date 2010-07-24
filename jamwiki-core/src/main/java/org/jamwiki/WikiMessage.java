@@ -170,4 +170,20 @@ public class WikiMessage {
 		param = StringUtils.replace(param, "\"", "&quot;");
 		return param;
 	}
+
+	/**
+	 * Utility method for replacing a specified WikiMessage paramter.  If no
+	 * parameter exists at the specified index then an error will be thrown.
+	 *
+	 * @param index The message parameter to replace, starting with zero.
+	 * @param parameter The value to replace the current parameter with.
+	 * @throw IllegalArgumentException Thrown if the existing message parameter
+	 *  array is shorter than the specified index.
+	 */
+	public void replaceParameter(int index, String parameter) {
+		if (this.params == null || this.params.length <= index) {
+			throw new IllegalArgumentException("Attempt to replace index " + index + " for an array that has " + ((this.params == null) ? "0" : this.params.length) + " parameters");
+		}
+		this.params[index] = this.escapeHtml(parameter);
+	}
 }

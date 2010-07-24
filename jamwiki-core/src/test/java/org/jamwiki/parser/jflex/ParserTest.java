@@ -58,6 +58,34 @@ public class ParserTest extends JAMWikiUnitTest {
 	 *
 	 */
 	@Test
+	public void testMagicWordDisplayTitleValid() throws Throwable {
+		String topicName = "Magic Words Display Title";
+		String displayTitle = "Magic_Words Display_Title";
+		String topicContent = "{{DISPLAYTITLE:" + displayTitle + "}}";
+		ParserInput parserInput = this.parserInput(topicName);
+		ParserOutput parserOutput = new ParserOutput();
+		ParserUtil.parse(parserInput, parserOutput, topicContent);
+		assertEquals("DISPLAYTITLE", displayTitle, parserOutput.getPageTitle());
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testMagicWordDisplayTitleInvalid() throws Throwable {
+		String topicName = "Magic Words Display Title";
+		String displayTitle = "Invalid Title";
+		String topicContent = "{{DISPLAYTITLE:" + displayTitle + "}}";
+		ParserInput parserInput = this.parserInput(topicName);
+		ParserOutput parserOutput = new ParserOutput();
+		ParserUtil.parse(parserInput, parserOutput, topicContent);
+		assertNull("DISPLAYTITLE", parserOutput.getPageTitle());
+	}
+
+	/**
+	 *
+	 */
+	@Test
 	public void testParserNoJavascript() throws IOException {
 		// test with JS disabled
 		Environment.setBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT, false);
@@ -78,6 +106,15 @@ public class ParserTest extends JAMWikiUnitTest {
 	 *
 	 */
 	private String parse(String topicName, String raw) throws ParserException {
+		ParserInput parserInput = this.parserInput(topicName);
+		ParserOutput parserOutput = new ParserOutput();
+		return ParserUtil.parse(parserInput, parserOutput, raw);
+	}
+
+	/**
+	 * Generate a generic ParserInput object that can be used for testing.
+	 */
+	private ParserInput parserInput(String topicName) {
 		// set dummy values for parser input
 		ParserInput parserInput = new ParserInput();
 		parserInput.setContext("/wiki");
@@ -87,8 +124,7 @@ public class ParserTest extends JAMWikiUnitTest {
 		parserInput.setUserDisplay("0.0.0.0");
 		parserInput.setVirtualWiki("en");
 		parserInput.setAllowSectionEdit(true);
-		ParserOutput parserOutput = new ParserOutput();
-		return ParserUtil.parse(parserInput, parserOutput, raw);
+		return parserInput;
 	}
 
 	/**

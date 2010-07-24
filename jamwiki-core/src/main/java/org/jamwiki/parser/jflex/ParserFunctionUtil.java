@@ -29,6 +29,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.ImageUtil;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
@@ -54,6 +55,7 @@ public class ParserFunctionUtil {
 	private static final String PARSER_FUNCTION_UPPER_CASE = "uc:";
 	private static final String PARSER_FUNCTION_UPPER_CASE_FIRST = "ucfirst:";
 	private static final String PARSER_FUNCTION_URL_ENCODE = "urlencode:";
+	private static final String MAGIC_DISPLAY_TITLE = "DISPLAYTITLE:";
 	private static List<String> PARSER_FUNCTIONS = new ArrayList<String>();
 
 	static {
@@ -72,6 +74,7 @@ public class ParserFunctionUtil {
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_UPPER_CASE);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_UPPER_CASE_FIRST);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_URL_ENCODE);
+		PARSER_FUNCTIONS.add(MAGIC_DISPLAY_TITLE);
 	}
 
 	/**
@@ -98,7 +101,7 @@ public class ParserFunctionUtil {
 	 * function result.  See http://meta.wikimedia.org/wiki/Help:Magic_words for a
 	 * list of Mediawiki parser functions.
 	 */
-	protected static String processParserFunction(ParserInput parserInput, String parserFunction, String parserFunctionArguments) throws DataAccessException, ParserException {
+	protected static String processParserFunction(ParserInput parserInput, ParserOutput parserOutput, String parserFunction, String parserFunctionArguments) throws DataAccessException, ParserException {
 		String[] parserFunctionArgumentArray = ParserFunctionUtil.parseParserFunctionArgumentArray(parserFunctionArguments);
 		if (parserFunction.equals(PARSER_FUNCTION_ANCHOR_ENCODE)) {
 			return Utilities.encodeAndEscapeTopicName(parserFunctionArgumentArray[0]);
@@ -141,6 +144,9 @@ public class ParserFunctionUtil {
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_URL_ENCODE)) {
 			return ParserFunctionUtil.parseUrlEncode(parserInput, parserFunctionArgumentArray);
+		}
+		if (parserFunction.equals(MAGIC_DISPLAY_TITLE)) {
+			return ParserFunctionUtil.parseDisplayTitle(parserInput, parserOutput, parserFunctionArgumentArray);
 		}
 		return null;
 	}
@@ -364,6 +370,19 @@ public class ParserFunctionUtil {
 			// this should never happen
 			throw new IllegalStateException("Unsupporting encoding UTF-8");
 		}
+	}
+
+	/**
+	 *
+	 */
+	private static String parseDisplayTitle(ParserInput parserInput, ParserOutput parserOutput, String[] parserFunctionArgumentArray) {
+		String pageTitle = parserFunctionArgumentArray[0];
+		if (pageTitle != null) {
+			if (StringUtils.equals(Utilities.decodeAndEscapeTopicName(pageTitle, true), parserInput.getTopicName())) {
+				parserOutput.setPageTitle(parserFunctionArgumentArray[0]);
+			}
+		}
+		return "";
 	}
 
 	/**
