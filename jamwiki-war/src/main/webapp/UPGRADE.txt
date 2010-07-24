@@ -57,6 +57,8 @@ To upgrade using this automated process follow these steps:
       "History" tab for the StyleSheet topic (for example: 
       http://jamwiki.org/wiki/en/Special:History?topic=StyleSheet), selecting
       the pre-upgrade version, and then editing and saving that version.
+  11. If you have created any virtual wikis, be sure to restore the
+      configuration for each virtual wiki to the /WEB-INF/web-xml file.
 
 If the upgrade fails see below for instructions to manually upgrade. If the
 problem persists please report it on http://jamwiki.org/wiki/en/Bug_Reports and

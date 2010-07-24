@@ -113,7 +113,7 @@ public class TemplateTag implements JFlexParserTag {
 			if (MagicWordUtil.isMagicWord(templateContent)) {
 				return MagicWordUtil.processMagicWord(parserInput, templateContent);
 			} else {
-				return ParserFunctionUtil.processParserFunction(parserInput, parserFunctionInfo[0], parserFunctionInfo[1]);
+				return ParserFunctionUtil.processParserFunction(parserInput, parserOutput, parserFunctionInfo[0], parserFunctionInfo[1]);
 			}
 		}
 		// extract the template name

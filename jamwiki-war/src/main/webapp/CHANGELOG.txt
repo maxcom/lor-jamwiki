@@ -29,6 +29,10 @@ Translation Updates:
 0.9.1
 =====
 
+New Features:
+
+  * Support added for the {{DISPLAYTITLE}} magic word.
+
 Bugfixes:
 
   * __NOEDITSECTION__ was being improperly stripped from topics.

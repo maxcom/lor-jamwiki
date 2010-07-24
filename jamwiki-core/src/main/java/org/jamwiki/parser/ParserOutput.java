@@ -30,6 +30,7 @@ public class ParserOutput implements Serializable {
 	private boolean cacheable = true;
 	private final LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>();
 	private final List<String> links = new ArrayList<String>();
+	private String pageTitle = null;
 	private String redirect = null;
 	private String sectionName = null;
 	private final List<String> templates = new ArrayList<String>();
@@ -126,6 +127,30 @@ public class ParserOutput implements Serializable {
 	 */
 	public List<String> getLinks() {
 		return this.links;
+	}
+
+	/**
+	 * If a parser element supports setting an alternate page title then this
+	 * field provides a way to do so.  If no alternate page title is specified
+	 * then this method should return <code>null</code>.
+	 *
+	 * @return An alternate page title as indicated by a parsing element, or
+	 *  <code>null</code> if no alternate page title is specified.
+	 */
+	public String getPageTitle() {
+		return this.pageTitle;
+	}
+
+	/**
+	 * If a parser element supports setting an alternate page title then this
+	 * field provides a way to do so.  If no alternate page title is specified
+	 * then this method should return <code>null</code>.
+	 *
+	 * @param pageTitle An alternate page title as indicated by a parsing
+	 *  element, or <code>null</code> if no alternate page title is in use.
+	 */
+	public void setPageTitle(String pageTitle) {
+		this.pageTitle = pageTitle;
 	}
 
 	/**
