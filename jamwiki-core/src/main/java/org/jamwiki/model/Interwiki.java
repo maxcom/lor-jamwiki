@@ -27,6 +27,7 @@ import org.jamwiki.utils.Utilities;
  */
 public class Interwiki {
 
+	private String interwikiDisplay = null;
 	private String interwikiPattern = null;
 	private String interwikiPrefix = null;
 	private int interwikiType = -1;
@@ -34,13 +35,27 @@ public class Interwiki {
 	/**
 	 *
 	 */
-	public Interwiki(String interwikiPrefix, String interwikiPattern) {
+	public Interwiki(String interwikiPrefix, String interwikiPattern, String interwikiDisplay) {
 		this.interwikiPrefix = interwikiPrefix;
 		this.interwikiPattern = interwikiPattern;
+		this.interwikiDisplay = interwikiDisplay;
 	}
 
 	/**
+	 * Return a string appropriate for display to represent this interwiki link.
 	 *
+	 * @return A string appropriate for display to represent this interwiki link.
+	 */
+	public String getInterwikiDisplay() {
+		return (this.interwikiDisplay != null) ? this.interwikiDisplay.trim() : null;
+	}
+
+	/**
+	 * Return a pattern into which a topic name will be substitued to generate a full
+	 * link to the interwiki target.
+	 *
+	 * @return A pattern into which a topic name will be substitued to generate a full
+	 * link to the interwiki target.
 	 */
 	public String getInterwikiPattern() {
 		return (this.interwikiPattern != null) ? this.interwikiPattern.trim() : null;
@@ -49,6 +64,8 @@ public class Interwiki {
 	/**
 	 * The prefix that generates links for this interwiki.  Note that Interwiki
 	 * links are case-insensitive.
+	 *
+	 * @return The prefix that generates links for this interwiki.
 	 */
 	public String getInterwikiPrefix() {
 		return (this.interwikiPrefix != null) ? this.interwikiPrefix.trim().toLowerCase() : null;
@@ -101,6 +118,9 @@ public class Interwiki {
 		} catch (IllegalArgumentException e) {
 			// a failure indicates an invalid pattern
 			throw new WikiException(new WikiMessage("admin.vwiki.error.interwiki.pattern", this.getInterwikiPattern()));
+		}
+		if (StringUtils.isBlank(this.getInterwikiDisplay()) || this.getInterwikiDisplay().length() > 30) {
+			throw new WikiException(new WikiMessage("admin.vwiki.error.interwiki.display", this.getInterwikiDisplay()));
 		}
 	}
 }

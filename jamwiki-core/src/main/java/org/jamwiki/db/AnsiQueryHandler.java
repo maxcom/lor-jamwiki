@@ -1512,7 +1512,8 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt = conn.prepareStatement(STATEMENT_INSERT_INTERWIKI);
 			stmt.setString(1, interwiki.getInterwikiPrefix());
 			stmt.setString(2, interwiki.getInterwikiPattern());
-			stmt.setInt(3, interwiki.getInterwikiType());
+			stmt.setString(3, interwiki.getInterwikiDisplay());
+			stmt.setInt(4, interwiki.getInterwikiType());
 			stmt.executeUpdate();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
@@ -2011,13 +2012,14 @@ public class AnsiQueryHandler implements QueryHandler {
 		try {
 			stmt = conn.prepareStatement(STATEMENT_SELECT_INTERWIKIS);
 			rs = stmt.executeQuery();
-			String interwikiPrefix, interwikiPattern;
+			String interwikiPrefix, interwikiPattern, interwikiDisplay;
 			int interwikiType;
 			while (rs.next()) {
 				interwikiPrefix = rs.getString("interwiki_prefix");
 				interwikiPattern = rs.getString("interwiki_pattern");
+				interwikiDisplay = rs.getString("interwiki_display");
 				interwikiType = rs.getInt("interwiki_type");
-				Interwiki interwiki = new Interwiki(interwikiPrefix, interwikiPattern);
+				Interwiki interwiki = new Interwiki(interwikiPrefix, interwikiPattern, interwikiDisplay);
 				interwiki.setInterwikiType(interwikiType);
 				interwikis.put(interwikiPrefix, interwiki);
 			}

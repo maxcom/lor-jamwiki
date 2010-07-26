@@ -58,6 +58,30 @@ public class ParserTest extends JAMWikiUnitTest {
 	 *
 	 */
 	@Test
+	public void testInterwiki1() throws Throwable {
+		// this topic has two interwiki links, but they both go to the same wikipedia page
+		ParserOutput parserOutput = new ParserOutput();
+		String parserResult = this.parserResult(parserOutput, "Interwiki1");
+		assertEquals("Interwiki1", 1, parserOutput.getInterwikiLinks().size());
+		assertEquals("Interwiki1", "<a class=\"interwiki\" title=\"Wikipedia\" href=\"http://en.wikipedia.org/wiki/Main_Page\">Wikipedia</a>", parserOutput.getInterwikiLinks().get(0));
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testVirtualWiki1() throws Throwable {
+		// this topic has one virtual wiki link
+		ParserOutput parserOutput = new ParserOutput();
+		String parserResult = this.parserResult(parserOutput, "WikiLink1");
+		assertEquals("Interwiki1", 1, parserOutput.getVirtualWikiLinks().size());
+		assertEquals("Interwiki1", "<a href=\"/wiki/test/WikiLink1\" title=\"WikiLink1\">test:WikiLink1</a>", parserOutput.getVirtualWikiLinks().get(0));
+	}
+
+	/**
+	 *
+	 */
+	@Test
 	public void testMagicWordDisplayTitleValid() throws Throwable {
 		String topicName = "Magic Words Display Title";
 		String displayTitle = "Magic_Words Display_Title";
@@ -103,15 +127,6 @@ public class ParserTest extends JAMWikiUnitTest {
 	}
 
 	/**
-	 *
-	 */
-	private String parse(String topicName, String raw) throws ParserException {
-		ParserInput parserInput = this.parserInput(topicName);
-		ParserOutput parserOutput = new ParserOutput();
-		return ParserUtil.parse(parserInput, parserOutput, raw);
-	}
-
-	/**
 	 * Generate a generic ParserInput object that can be used for testing.
 	 */
 	private ParserInput parserInput(String topicName) {
@@ -131,7 +146,8 @@ public class ParserTest extends JAMWikiUnitTest {
 	 *
 	 */
 	private void executeParserTest(String fileName, String resultDirName) throws IOException, ParserException {
-		String parserResult = this.parserResult(fileName);
+		ParserOutput parserOutput = new ParserOutput();
+		String parserResult = this.parserResult(parserOutput, fileName);
 		String expectedResult = this.expectedResult(fileName, resultDirName);
 		assertEquals("Testing file " + fileName, expectedResult, parserResult);
 	}
@@ -185,10 +201,11 @@ public class ParserTest extends JAMWikiUnitTest {
 	/**
 	 *
 	 */
-	private String parserResult(String fileName) throws IOException, ParserException {
+	private String parserResult(ParserOutput parserOutput, String fileName) throws IOException, ParserException {
 		String raw = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_TOPICS_DIR, fileName);
 		String topicName = TestFileUtil.decodeTopicName(fileName);
-		return this.parse(topicName, raw);
+		ParserInput parserInput = this.parserInput(topicName);
+		return ParserUtil.parse(parserInput, parserOutput, raw);
 	}
 
 	/**

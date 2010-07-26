@@ -236,6 +236,11 @@
 	<div class="formhelp"><fmt:message key="admin.vwiki.help.interwiki.pattern" /></div>
 </div>
 <div class="row">
+	<label for="name"><fmt:message key="admin.vwiki.caption.interwiki.display" /></label>
+	<span><input type="text" name="interwikiDisplay" size="30" maxlength="30" value="${interwikiDisplay}" /></span>
+	<div class="formhelp"><fmt:message key="admin.vwiki.help.interwiki.display" /></div>
+</div>
+<div class="row">
 	<span class="form-button"><input type="submit" value="<fmt:message key="common.add" />" /></span>
 </div>
 </fieldset>
@@ -256,6 +261,7 @@
 	<label for="name">${interwiki.interwikiPrefix}</label>
 	<span>
 		<input type="text" name="pattern-${interwiki.interwikiPrefix}" size="50" maxlength="200" value="${interwiki.interwikiPattern}" />
+		<input type="text" name="display-${interwiki.interwikiDisplay}" size="30" maxlength="30" value="${interwiki.interwikiDisplay}" />
 		<input type="checkbox" name="delete-${interwiki.interwikiPrefix}" value="true" /> <fmt:message key="admin.vwiki.caption.interwiki.delete" />
 	</span>
 </div>

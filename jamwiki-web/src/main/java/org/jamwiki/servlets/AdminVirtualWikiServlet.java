@@ -79,8 +79,9 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		String interwikiPrefix = request.getParameter("interwikiPrefix");
 		String interwikiPattern = request.getParameter("interwikiPattern");
+		String interwikiDisplay = request.getParameter("interwikiDisplay");
 		try {
-			Interwiki interwiki = new Interwiki(interwikiPrefix, interwikiPattern);
+			Interwiki interwiki = new Interwiki(interwikiPrefix, interwikiPattern, interwikiDisplay);
 			// write to the database.  this will also perform required validation.
 			WikiBase.getDataHandler().writeInterwiki(interwiki);
 		} catch (WikiException e) {
@@ -93,6 +94,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			next.addObject("errors", errors);
 			next.addObject("interwikiPrefix", interwikiPrefix);
 			next.addObject("interwikiPattern", interwikiPattern);
+			next.addObject("interwikiDisplay", interwikiDisplay);
 		} else {
 			next.addObject("message", new WikiMessage("admin.vwiki.message.interwiki.addsuccess", interwikiPrefix));
 		}
@@ -185,8 +187,9 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 		if (interwikiPrefixes != null) {
 			for (String interwikiPrefix : interwikiPrefixes) {
 				String interwikiPattern = request.getParameter("pattern-" + interwikiPrefix);
+				String interwikiDisplay = request.getParameter("display-" + interwikiPrefix);
 				try {
-					Interwiki interwiki = new Interwiki(interwikiPrefix, interwikiPattern);
+					Interwiki interwiki = new Interwiki(interwikiPrefix, interwikiPattern, interwikiDisplay);
 					// write to the database.  this will also perform required validation.
 					if (!StringUtils.equals(request.getParameter("delete-" + interwikiPrefix), "true")) {
 						WikiBase.getDataHandler().writeInterwiki(interwiki);

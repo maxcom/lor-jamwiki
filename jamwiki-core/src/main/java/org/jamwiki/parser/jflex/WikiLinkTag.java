@@ -18,6 +18,7 @@ package org.jamwiki.parser.jflex;
 
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
+import org.jamwiki.Environment;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
@@ -66,14 +67,27 @@ public class WikiLinkTag implements JFlexParserTag {
 			return lexer.parse(JFlexLexer.TAG_TYPE_IMAGE_LINK, raw);
 		}
 		try {
-			if (!StringUtils.isBlank(wikiLink.getInterWiki())) {
+			if (wikiLink.getInterwiki() != null) {
 				// inter-wiki link
-				return LinkUtil.interWiki(wikiLink);
+				if (!wikiLink.getColon() && !Environment.getBooleanValue(Environment.PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE)) {
+					wikiLink.setText(wikiLink.getInterwiki().getInterwikiDisplay());
+					String url = LinkUtil.interwiki(wikiLink);
+					lexer.getParserOutput().addInterwikiLink(url);
+					return "";
+				} else {
+					return LinkUtil.interwiki(wikiLink);
+				}
 			}
 			String virtualWiki = lexer.getParserInput().getVirtualWiki();
-			if (wikiLink.getVirtualWiki() != null) {
+			if (wikiLink.getVirtualWiki() != null && !StringUtils.equals(wikiLink.getVirtualWiki().getName(), virtualWiki)) {
 				// link to another virtual wiki
 				virtualWiki = wikiLink.getVirtualWiki().getName();
+				if (!wikiLink.getColon() && !Environment.getBooleanValue(Environment.PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE)) {
+					wikiLink.setText(wikiLink.getVirtualWiki().getName() + Namespace.SEPARATOR + wikiLink.getDestination());
+					String url = LinkUtil.buildInternalLinkHtml(lexer.getParserInput().getContext(), virtualWiki, wikiLink, wikiLink.getText(), null, null, false);
+					lexer.getParserOutput().addVirtualWikiLink(url);
+					return "";
+				}
 			}
 			if (StringUtils.isBlank(wikiLink.getText()) && !StringUtils.isBlank(wikiLink.getDestination())) {
 				wikiLink.setText(wikiLink.getDestination());
@@ -119,7 +133,7 @@ public class WikiLinkTag implements JFlexParserTag {
 				result = "";
 			}
 		}
-		if (StringUtils.isBlank(wikiLink.getInterWiki()) && (wikiLink.getVirtualWiki() == null || StringUtils.equals(wikiLink.getVirtualWiki().getName(), parserInput.getVirtualWiki())) && !StringUtils.isBlank(wikiLink.getDestination())) {
+		if (wikiLink.getInterwiki() == null && (wikiLink.getVirtualWiki() == null || StringUtils.equals(wikiLink.getVirtualWiki().getName(), parserInput.getVirtualWiki())) && !StringUtils.isBlank(wikiLink.getDestination())) {
 			parserOutput.addLink(wikiLink.getDestination());
 		}
 		return result;

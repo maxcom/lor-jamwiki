@@ -648,21 +648,21 @@ public class WikiDatabase {
 	// FIXME - make this private once the ability to upgrade to 1.0.0 is removed
 	protected static void setupDefaultInterwikis() throws DataAccessException, WikiException {
 		logger.info("Creating default interwiki records");
-		Interwiki jamwiki = new Interwiki("jamwiki", "http://jamwiki.org/wiki/en/{0}");
+		Interwiki jamwiki = new Interwiki("jamwiki", "http://jamwiki.org/wiki/en/{0}", "JAMWiki");
 		WikiBase.getDataHandler().writeInterwiki(jamwiki);
-		Interwiki mediawiki = new Interwiki("mediawiki", "http://www.mediawiki.org/wiki/{0}");
+		Interwiki mediawiki = new Interwiki("mediawiki", "http://www.mediawiki.org/wiki/{0}", "MediaWiki");
 		WikiBase.getDataHandler().writeInterwiki(mediawiki);
-		Interwiki metawikipedia = new Interwiki("metawikipedia", "http://meta.wikimedia.org/wiki/{0}");
+		Interwiki metawikipedia = new Interwiki("metawikipedia", "http://meta.wikimedia.org/wiki/{0}", "Wikimedia Meta-Wiki");
 		WikiBase.getDataHandler().writeInterwiki(metawikipedia);
-		Interwiki wiki = new Interwiki("wiki", "http://c2.com/cgi/wiki?{0}");
+		Interwiki wiki = new Interwiki("wiki", "http://c2.com/cgi/wiki?{0}", "WikiWiki");
 		WikiBase.getDataHandler().writeInterwiki(wiki);
-		Interwiki wikia = new Interwiki("wikia", "http://www.wikia.com/wiki/index.php/{0}");
+		Interwiki wikia = new Interwiki("wikia", "http://www.wikia.com/wiki/index.php/{0}", "Wikia");
 		WikiBase.getDataHandler().writeInterwiki(wikia);
-		Interwiki wikipedia = new Interwiki("wikipedia", "http://en.wikipedia.org/wiki/{0}");
+		Interwiki wikipedia = new Interwiki("wikipedia", "http://en.wikipedia.org/wiki/{0}", "Wikipedia");
 		WikiBase.getDataHandler().writeInterwiki(wikipedia);
-		Interwiki wikiquote = new Interwiki("wikiquote", "http://en.wikiquote.org/wiki/{0}");
+		Interwiki wikiquote = new Interwiki("wikiquote", "http://en.wikiquote.org/wiki/{0}", "Wikiquote");
 		WikiBase.getDataHandler().writeInterwiki(wikiquote);
-		Interwiki wikinews = new Interwiki("wikinews", "http://en.wikinews.org/wiki/{0}");
+		Interwiki wikinews = new Interwiki("wikinews", "http://en.wikinews.org/wiki/{0}", "Wikinews");
 		WikiBase.getDataHandler().writeInterwiki(wikinews);
 	}
 

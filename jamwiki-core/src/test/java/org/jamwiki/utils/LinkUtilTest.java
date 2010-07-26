@@ -131,7 +131,7 @@ public class LinkUtilTest extends JAMWikiUnitTest {
 	 */
 	@Test(expected=NullPointerException.class)
 	public void testInterWikiThrowsNullPointerException() throws Throwable {
-		LinkUtil.interWiki(null);
+		LinkUtil.interwiki(null);
 	}
 }
 

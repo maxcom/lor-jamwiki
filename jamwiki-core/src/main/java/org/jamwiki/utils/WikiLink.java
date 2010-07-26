@@ -16,6 +16,7 @@
  */
 package org.jamwiki.utils;
 
+import org.jamwiki.model.Interwiki;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.VirtualWiki;
 
@@ -32,7 +33,7 @@ public class WikiLink {
 	/** Link destination, including namespace. */
 	private String destination = null;
 	/** Interwiki link prefix. */
-	private String interWiki = null;
+	private Interwiki interwiki = null;
 	/** Namespace prefix for the link. */
 	private Namespace namespace = Namespace.namespace(Namespace.MAIN_ID);
 	/** Link query paramters. */
@@ -89,15 +90,15 @@ public class WikiLink {
 	/**
 	 *
 	 */
-	public String getInterWiki() {
-		return this.interWiki;
+	public Interwiki getInterwiki() {
+		return this.interwiki;
 	}
 
 	/**
 	 *
 	 */
-	public void setInterWiki(String interWiki) {
-		this.interWiki = interWiki;
+	public void setInterwiki(Interwiki interwiki) {
+		this.interwiki = interwiki;
 	}
 
 	/**

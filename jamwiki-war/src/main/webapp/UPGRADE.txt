@@ -83,9 +83,20 @@ followed by 0.6.3.
   JAMWiki 1.0.0
   =============
 
-  NOTE: The Lucene search engine has been updated in this release.  As a
-  result most users will want to rebuild their search index using the
-  tools on the Special:Maintenance page.
+  SPECIAL NOTES:
+
+  * The Lucene search engine has been updated in this release.  As a result
+    most users will want to rebuild their search index using the tools on
+    the Special:Maintenance page.
+  * This release updates the default StyleSheet topic.  See below for
+    instructions on manaully updating this topic with the new styles.
+  * By default interwiki links that are not preceded by colons
+    ("[[:inter:Topic]]") will not be parsed as inline links.  This behavior
+    can be changed from the "Parser" tab of the Special:Admin page.
+  * This release changes how the "Link To" records for a topic are calculated.
+    See below for steps to initialize the new data after upgrading.
+
+  UPGRADE STEPS:
 
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "1.0.0".

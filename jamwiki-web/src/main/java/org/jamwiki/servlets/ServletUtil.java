@@ -786,6 +786,8 @@ public class ServletUtil {
 		if (topic.getTopicType() == TopicType.CATEGORY) {
 			loadCategoryContent(next, virtualWiki, topic.getName());
 		}
+		next.addObject("interwikiLinks", parserOutput.getInterwikiLinks());
+		next.addObject("virtualWikiLinks", parserOutput.getVirtualWikiLinks());
 		if (topic.getTopicType() == TopicType.IMAGE || topic.getTopicType() == TopicType.FILE) {
 			List<WikiFileVersion> fileVersions = null;
 			try {

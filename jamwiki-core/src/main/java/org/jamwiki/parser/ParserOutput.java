@@ -29,7 +29,9 @@ public class ParserOutput implements Serializable {
 
 	private boolean cacheable = true;
 	private final LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>();
+	private final List<String> interwikiLinks = new ArrayList<String>();
 	private final List<String> links = new ArrayList<String>();
+	private final List<String> virtualWikiLinks = new ArrayList<String>();
 	private String pageTitle = null;
 	private String redirect = null;
 	private String sectionName = null;
@@ -58,6 +60,20 @@ public class ParserOutput implements Serializable {
 	}
 
 	/**
+	 * Add a fully-formatted interwiki link to the list of available
+	 * interwiki links for a document.  These links can then be rendered
+	 * separately from the document, for example in an "Other Sites"
+	 * toolbox.
+	 *
+	 * @param interwikiLink The fully-formatted HTML interwiki link.
+	 */
+	public void addInterwikiLink(String interwikiLink) {
+		if (!this.interwikiLinks.contains(interwikiLink)) {
+			this.interwikiLinks.add(interwikiLink);
+		}
+	}
+
+	/**
 	 * When a document contains a token indicating that the document links
 	 * to another Wiki topic this method should be called to add that
 	 * topic link to the output metadata.
@@ -77,6 +93,20 @@ public class ParserOutput implements Serializable {
 	 */
 	public void addTemplate(String template) {
 		this.templates.add(template);
+	}
+
+	/**
+	 * Add a fully-formatted virtual wiki link to the list of available
+	 * virtual wiki links for a document.  These links can then be rendered
+	 * separately from the document, for example in an "Other Languages"
+	 * toolbox.
+	 *
+	 * @param virtualWikiLink The fully-formatted HTML interwiki link.
+	 */
+	public void addVirtualWikiLink(String virtualWikiLink) {
+		if (!this.virtualWikiLinks.contains(virtualWikiLink)) {
+			this.virtualWikiLinks.add(virtualWikiLink);
+		}
 	}
 
 	/**
@@ -116,6 +146,17 @@ public class ParserOutput implements Serializable {
 	 */
 	public LinkedHashMap<String, String> getCategories() {
 		return this.categories;
+	}
+
+	/**
+	 * For the document being parsed, return the current list of interwiki
+	 * links for all interwiki links specified for the current document.
+	 *
+	 * @return A list of all interwiki links for all interwiki links
+	 *  specified for the current document.
+	 */
+	public List<String> getInterwikiLinks() {
+		return this.interwikiLinks;
 	}
 
 	/**
@@ -211,5 +252,16 @@ public class ParserOutput implements Serializable {
 	 */
 	public void setRedirect(String redirect) {
 		this.redirect = redirect;
+	}
+
+	/**
+	 * For the document being parsed, return the current list of virtual wiki
+	 * links for all virtual wiki links specified for the current document.
+	 *
+	 * @return A list of all virtual wiki links for all virtual wiki links
+	 *  specified for the current document.
+	 */
+	public List<String> getVirtualWikiLinks() {
+		return this.virtualWikiLinks;
 	}
 }

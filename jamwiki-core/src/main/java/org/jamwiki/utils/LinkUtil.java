@@ -318,16 +318,14 @@ public class LinkUtil {
 	 *
 	 * @param wikiLink The WikiLink object containing all relevant information
 	 *  about the link being generated.
-	 * @return The HTML anchor tag for the interwiki link.
+	 * @return The HTML anchor tag for the interwiki link, or <code>null</code>
+	 *  if there is no interwiki link defined for the WikiLink.
 	 */
-	public static String interWiki(WikiLink wikiLink) throws DataAccessException {
-		Interwiki interwiki = WikiBase.getDataHandler().lookupInterwiki(wikiLink.getInterWiki());
-		String url = null;
-		if (interwiki != null) {
-			url = interwiki.format(wikiLink.getDestination());
-		} else {
-			url = wikiLink.getInterWiki() + Namespace.SEPARATOR + wikiLink.getDestination();
+	public static String interwiki(WikiLink wikiLink) {
+		if (wikiLink.getInterwiki() == null) {
+			return null;
 		}
+		String url = wikiLink.getInterwiki().format(wikiLink.getDestination());
 		String text = (!StringUtils.isBlank(wikiLink.getText())) ? wikiLink.getText() : wikiLink.getDestination();
 		return "<a class=\"interwiki\" title=\"" + text + "\" href=\"" + url + "\">" + text + "</a>";
 	}
@@ -353,7 +351,7 @@ public class LinkUtil {
 		if (PseudoTopicHandler.isPseudoTopic(wikiLink.getDestination())) {
 			return true;
 		}
-		if (wikiLink.getInterWiki() != null) {
+		if (wikiLink.getInterwiki() != null) {
 			return true;
 		}
 		if (StringUtils.isBlank(Environment.getValue(Environment.PROP_BASE_FILE_DIR)) || !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
@@ -449,7 +447,7 @@ public class LinkUtil {
 		// if no namespace or virtual wiki, see if there's an interwiki link
 		if (wikiLink.getNamespace().getId().equals(Namespace.MAIN_ID) && wikiLink.getVirtualWiki() == null) {
 			topic = LinkUtil.processInterWiki(processed, wikiLink);
-			if (wikiLink.getInterWiki() != null) {
+			if (wikiLink.getInterwiki() != null) {
 				// strip the interwiki
 				processed = topic;
 				wikiLink.setText(processed);
@@ -477,14 +475,15 @@ public class LinkUtil {
 		}
 		String linkPrefix = processed.substring(0, prefixPosition).trim();
 		try {
-			if (WikiBase.getDataHandler().lookupInterwiki(linkPrefix) != null) {
-				wikiLink.setInterWiki(linkPrefix);
+			Interwiki interwiki = WikiBase.getDataHandler().lookupInterwiki(linkPrefix);
+			if (interwiki != null) {
+				wikiLink.setInterwiki(interwiki);
 			}
 		} catch (DataAccessException e) {
 			// this should not happen, if it does then swallow the error
 			logger.warning("Failure while trying to lookup interwiki: " + linkPrefix, e);
 		}
-		return (wikiLink.getInterWiki() != null) ? processed.substring(prefixPosition + Namespace.SEPARATOR.length()).trim(): processed;
+		return (wikiLink.getInterwiki() != null) ? processed.substring(prefixPosition + Namespace.SEPARATOR.length()).trim(): processed;
 	}
 
 	/**

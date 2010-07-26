@@ -13,6 +13,8 @@ New Features:
   * Store interwiki patterns in the database and add a management interface for
     interwiki links to the Special:VirtualWiki page.  Note that not all
     records have been carried over from the old interwiki.properties file.
+  * Display interwiki and virtual wiki links in boxes in the left nav.  This
+    capability can be configured from the parser tab of the Special:Admin page.
   * Use the database rather than the search engine to generate results for the
     Special:LinkTo page.
   * Remove ability to automatically upgrade from versions prior to 0.8.0.

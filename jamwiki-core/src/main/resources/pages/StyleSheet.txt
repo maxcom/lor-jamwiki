@@ -210,12 +210,22 @@ div.submenu {
 	text-align: center;
 	vertical-align: middle;
 }
-#nav-menu {
+.portlet {
 	background: white;
 	border: 1px solid #D8D8E7;
-	border-bottom: 0;
 	font-size: 90%;
-	margin: 2px 0 8px 0;
+	margin: 16px 0 8px;
+	padding: 0 8px 8px;
+}
+.portlet h5 {
+	font-size: 90%;
+	font-weight: normal;
+	padding: 5px 0 0;
+}
+#nav-menu {
+	border-bottom: 0;
+	margin-top: 2px;
+	padding: 0;
 }
 #nav-menu hr {
 	display: none;
@@ -228,12 +238,7 @@ div.submenu {
 	margin-left: 0;
 }
 #nav-search {
-	background: white;
-	margin: 18px 0 8px 0;
-	padding: 8px;
-	padding-top: 0;
 	text-align: center;
-	border: 1px solid #D8D8E7;
 }
 #nav-search form {
 	padding: 0;
