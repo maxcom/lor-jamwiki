@@ -261,8 +261,8 @@
 	<label for="name">${interwiki.interwikiPrefix}</label>
 	<span>
 		<input type="text" name="pattern-${interwiki.interwikiPrefix}" size="50" maxlength="200" value="${interwiki.interwikiPattern}" />
-		<input type="text" name="display-${interwiki.interwikiDisplay}" size="30" maxlength="30" value="${interwiki.interwikiDisplay}" />
-		<input type="checkbox" name="delete-${interwiki.interwikiPrefix}" value="true" /> <fmt:message key="admin.vwiki.caption.interwiki.delete" />
+		<input type="text" name="display-${interwiki.interwikiPrefix}" size="30" maxlength="30" value="${interwiki.interwikiDisplay}" />
+		<input type="checkbox" name="delete-${interwiki.interwikiPrefix}" value="true" /> <fmt:message key="common.delete" />
 	</span>
 </div>
 </c:forEach>
