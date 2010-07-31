@@ -263,7 +263,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 				next.addObject(ServletUtil.PARAMETER_PAGE_INFO, pageInfo);
 			}
 		} catch (Throwable t) {
-			return this.viewError(request, t);
+			return this.viewError(request, response, t);
 		}
 		long execution = System.currentTimeMillis() - start;
 		if (execution > JAMWikiServlet.SLOW_PAGE_LIMIT) {
@@ -335,16 +335,18 @@ public abstract class JAMWikiServlet extends AbstractController {
 	}
 
 	/**
-	 * Method used when redirecting to an error page.
+	 * Method used when redirecting to an error page.  The HTTP response will be
+	 * set to 500 (Internal Server Error).
 	 *
 	 * @param request The servlet request object.
 	 * @param t The exception that is the source of the error.
 	 * @return Returns a ModelAndView object corresponding to the error page display.
 	 */
-	private ModelAndView viewError(HttpServletRequest request, Throwable t) {
+	private ModelAndView viewError(HttpServletRequest request, HttpServletResponse response, Throwable t) {
 		if (!(t instanceof WikiException)) {
 			logger.severe("Servlet error", t);
 		}
+		response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		ModelAndView next = new ModelAndView("wiki");
 		WikiPageInfo pageInfo = new WikiPageInfo(request);
 		pageInfo.setPageTitle(new WikiMessage("error.title"));
