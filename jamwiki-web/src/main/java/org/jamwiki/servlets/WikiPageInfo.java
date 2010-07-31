@@ -383,9 +383,6 @@ public class WikiPageInfo {
 	 * to other virtual wikis) it may differ.
 	 */
 	public String getVirtualWikiName() {
-		if (StringUtils.isBlank(virtualWikiName)) {
-			throw new IllegalArgumentException("Cannot pass a null or empty virtual wiki name");
-		}
 		return this.virtualWikiName;
 	}
 
@@ -398,6 +395,9 @@ public class WikiPageInfo {
 	 * @param virtualWikiName The name of the virtual wiki to set.
 	 */
 	public void setVirtualWikiName(String virtualWikiName) {
+		if (StringUtils.isBlank(virtualWikiName)) {
+			throw new IllegalArgumentException("Cannot pass a null or empty virtual wiki name");
+		}
 		this.virtualWikiName = virtualWikiName;
 	}
 
