@@ -24,6 +24,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiDiff;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -79,6 +80,10 @@ public class DiffServlet extends JAMWikiServlet {
 		next.addObject("version2", version2);
 		Integer nextTopicVersionId = (version1 != null) ? WikiBase.getDataHandler().lookupTopicVersionNextId(version1.getTopicVersionId()) : null;
 		next.addObject("nextTopicVersionId", nextTopicVersionId);
+		WikiUser user = (version1.getAuthorId() != null) ? WikiBase.getDataHandler().lookupWikiUser(version1.getAuthorId()) : null;
+		next.addObject("authorVersion1", ((user != null) ? user.getUsername() : version1.getAuthorDisplay()));
+		user = (version2.getAuthorId() != null) ? WikiBase.getDataHandler().lookupWikiUser(version2.getAuthorId()) : null;
+		next.addObject("authorVersion2", ((user != null) ? user.getUsername() : version2.getAuthorDisplay()));
 		pageInfo.setPageTitle(new WikiMessage("diff.title", topicName));
 		pageInfo.setTopicName(topicName);
 		pageInfo.setContentJsp(JSP_DIFF);
