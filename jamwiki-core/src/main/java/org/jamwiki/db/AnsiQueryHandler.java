@@ -85,6 +85,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_CREATE_TOPIC_CURRENT_VERSION_INDEX = null;
 	protected static String STATEMENT_CREATE_TOPIC_VERSION_TABLE = null;
 	protected static String STATEMENT_CREATE_TOPIC_VERSION_TOPIC_INDEX = null;
+	protected static String STATEMENT_CREATE_TOPIC_VERSION_PREVIOUS_INDEX = null;
 	protected static String STATEMENT_CREATE_USERS_TABLE = null;
 	protected static String STATEMENT_CREATE_VIRTUAL_WIKI_TABLE = null;
 	protected static String STATEMENT_CREATE_WATCHLIST_TABLE = null;
@@ -196,6 +197,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_TOPICS_ADMIN = null;
 	protected static String STATEMENT_SELECT_TOPIC_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_TOPIC_VERSION = null;
+	protected static String STATEMENT_SELECT_TOPIC_VERSION_NEXT_ID = null;
 	protected static String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_USERS_AUTHENTICATION = null;
 	protected static String STATEMENT_SELECT_VIRTUAL_WIKIS = null;
@@ -280,6 +282,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_CURRENT_VERSION_INDEX, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_TOPIC_INDEX, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_PREVIOUS_INDEX, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_CURRENT_VERSION_CONSTRAINT, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_LINKS_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_LINKS_INDEX, conn);
@@ -1077,6 +1080,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_CREATE_TOPIC_CURRENT_VERSION_INDEX = props.getProperty("STATEMENT_CREATE_TOPIC_CURRENT_VERSION_INDEX");
 		STATEMENT_CREATE_TOPIC_VERSION_TABLE     = props.getProperty("STATEMENT_CREATE_TOPIC_VERSION_TABLE");
 		STATEMENT_CREATE_TOPIC_VERSION_TOPIC_INDEX = props.getProperty("STATEMENT_CREATE_TOPIC_VERSION_TOPIC_INDEX");
+		STATEMENT_CREATE_TOPIC_VERSION_PREVIOUS_INDEX = props.getProperty("STATEMENT_CREATE_TOPIC_VERSION_PREVIOUS_INDEX");
 		STATEMENT_CREATE_USERS_TABLE             = props.getProperty("STATEMENT_CREATE_USERS_TABLE");
 		STATEMENT_CREATE_WIKI_FILE_TABLE         = props.getProperty("STATEMENT_CREATE_WIKI_FILE_TABLE");
 		STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE = props.getProperty("STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE");
@@ -1192,6 +1196,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_TOPICS_ADMIN            = props.getProperty("STATEMENT_SELECT_TOPICS_ADMIN");
 		STATEMENT_SELECT_TOPIC_SEQUENCE          = props.getProperty("STATEMENT_SELECT_TOPIC_SEQUENCE");
 		STATEMENT_SELECT_TOPIC_VERSION           = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION");
+		STATEMENT_SELECT_TOPIC_VERSION_NEXT_ID   = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION_NEXT_ID");
 		STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE  = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE");
 		STATEMENT_SELECT_USERS_AUTHENTICATION    = props.getProperty("STATEMENT_SELECT_USERS_AUTHENTICATION");
 		STATEMENT_SELECT_VIRTUAL_WIKIS           = props.getProperty("STATEMENT_SELECT_VIRTUAL_WIKIS");
@@ -2304,6 +2309,24 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(1, topicVersionId);
 			rs = stmt.executeQuery();
 			return (rs.next()) ? this.initTopicVersion(rs) : null;
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public Integer lookupTopicVersionNextId(int topicVersionId) throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_VERSION_NEXT_ID);
+			stmt.setInt(1, topicVersionId);
+			rs = stmt.executeQuery();
+			return (rs.next()) ? rs.getInt("topic_version_id") : null;
 		} finally {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}

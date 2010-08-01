@@ -17,6 +17,8 @@ New Features:
     capability can be configured from the parser tab of the Special:Admin page.
   * Use the database rather than the search engine to generate results for the
     Special:LinkTo page.
+  * Update the Special:Diff UI to display additional information, including
+    revision dates, edit comments, and links to previous/next diff.
   * SEO optimizations: return HTTP 404 when requesting a page for a topic that
     does not exist, return HTTP 500 for error pages, and specify the
     "canonical" meta tag for redirected topics.

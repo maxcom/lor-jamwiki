@@ -1021,6 +1021,17 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public Integer lookupTopicVersionNextId(int topicVersionId) throws DataAccessException {
+		try {
+			return this.queryHandler().lookupTopicVersionNextId(topicVersionId);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		}
+	}
+
+	/**
+	 *
+	 */
 	public VirtualWiki lookupVirtualWiki(String virtualWikiName) throws DataAccessException {
 		List<VirtualWiki> virtualWikis = this.getVirtualWikiList();
 		for (VirtualWiki virtualWiki : virtualWikis) {

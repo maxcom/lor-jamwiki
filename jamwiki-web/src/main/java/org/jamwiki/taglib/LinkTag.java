@@ -35,6 +35,7 @@ import org.jamwiki.utils.WikiUtil;
 public class LinkTag extends BodyTagSupport {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(LinkTag.class.getName());
+	private String escape = null;
 	private String style = null;
 	private String target = null;
 	private String text = null;
@@ -60,8 +61,9 @@ public class LinkTag extends BodyTagSupport {
 		}
 		try {
 			if (!StringUtils.isBlank(tagText)) {
+				boolean tagEscape = (!StringUtils.equalsIgnoreCase(this.escape, "false"));
 				// return formatted link of the form "<a href="/wiki/en/Special:Edit">text</a>"
-				url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), tagVirtualWiki, wikiLink, tagText, this.style, tagTarget, true);
+				url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), tagVirtualWiki, wikiLink, tagText, this.style, tagTarget, tagEscape);
 			} else {
 				// return raw link of the form "/wiki/en/Special:Edit"
 				url = LinkUtil.buildTopicUrl(request.getContextPath(), tagVirtualWiki, wikiLink);
@@ -107,6 +109,21 @@ public class LinkTag extends BodyTagSupport {
 			tagText = body;
 		}
 		return tagText;
+	}
+
+	/**
+	 * Parameter indicating whether to escape HTML for the tag text.  Defaults to
+	 * true unless this value is explicitly set to false.
+	 */
+	public String getEscape() {
+		return this.escape;
+	}
+
+	/**
+	 *
+	 */
+	public void setEscape(String escape) {
+		this.escape = escape;
 	}
 
 	/**

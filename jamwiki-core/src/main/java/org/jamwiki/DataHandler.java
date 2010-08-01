@@ -530,6 +530,18 @@ public interface DataHandler {
 	TopicVersion lookupTopicVersion(int topicVersionId) throws DataAccessException;
 
 	/**
+	 * Retrieve the next topic version ID chronologically for a given topic
+	 * version, or <code>null</code> if there is no next topic version ID.
+	 *
+	 * @param topicVersionId The ID of the topic version whose next topic version
+	 *  ID is being retrieved.
+	 * @return The next topic version ID chronologically for a given topic
+	 * version, or <code>null</code> if there is no next topic version ID.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	Integer lookupTopicVersionNextId(int topicVersionId) throws DataAccessException;
+
+	/**
 	 * Find the names for all topics that link to a specified topic.
 	 *
 	 * @param virtualWiki The virtual wiki for the topic.

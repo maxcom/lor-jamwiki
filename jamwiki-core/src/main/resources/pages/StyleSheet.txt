@@ -258,6 +258,18 @@ div.submenu {
 
 /* diff page */
 
+#diff_heading {
+	margin-top: 10px;
+	width: 98%;
+}
+#diff_heading td {
+	text-align: center;
+	vertical-align: top;
+	width: 50%;
+}
+#left_revision, #right_revision {
+	font-weight: bold;
+}
 .diff-delete {
 	float: left;
 	position: relative;

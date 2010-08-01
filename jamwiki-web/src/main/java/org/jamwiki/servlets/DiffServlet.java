@@ -75,6 +75,10 @@ public class DiffServlet extends JAMWikiServlet {
 		}
 		List<WikiDiff> diffs = DiffUtil.diff(contents1, contents2);
 		next.addObject("diffs", diffs);
+		next.addObject("version1", version1);
+		next.addObject("version2", version2);
+		Integer nextTopicVersionId = (version1 != null) ? WikiBase.getDataHandler().lookupTopicVersionNextId(version1.getTopicVersionId()) : null;
+		next.addObject("nextTopicVersionId", nextTopicVersionId);
 		pageInfo.setPageTitle(new WikiMessage("diff.title", topicName));
 		pageInfo.setTopicName(topicName);
 		pageInfo.setContentJsp(JSP_DIFF);

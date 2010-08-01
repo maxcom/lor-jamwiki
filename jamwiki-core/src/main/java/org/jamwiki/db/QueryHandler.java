@@ -809,6 +809,18 @@ public interface QueryHandler {
 	TopicVersion lookupTopicVersion(int topicVersionId) throws SQLException;
 
 	/**
+	 * Retrieve the next topic version ID chronologically for a given topic
+	 * version, or <code>null</code> if there is no next topic version ID.
+	 *
+	 * @param topicVersionId The ID of the topic version whose next topic version
+	 *  ID is being retrieved.
+	 * @return The next topic version ID chronologically for a given topic
+	 * version, or <code>null</code> if there is no next topic version ID.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	Integer lookupTopicVersionNextId(int topicVersionId) throws SQLException;
+
+	/**
 	 * Retrieve a list of all topic names within a virtual wiki.
 	 *
 	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the topics
