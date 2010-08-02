@@ -16,7 +16,7 @@ New Features:
   * Display interwiki and virtual wiki links in boxes in the left nav.  This
     capability can be configured from the parser tab of the Special:Admin page.
   * Use the database rather than the search engine to generate results for the
-    Special:LinkTo page.
+    Special:LinkTo page and add pagination and sorting to Special:LinkTo.
   * Update the Special:Diff UI to display additional information, including
     revision dates, edit comments, and links to previous/next diff.
   * SEO optimizations: return HTTP 404 when requesting a page for a topic that

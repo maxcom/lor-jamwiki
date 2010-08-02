@@ -24,7 +24,7 @@
 				<prop key="/**/Special:Import">Import</prop>
 				<prop key="/**/Special:ImportTiddly">ImportTiddly</prop>
 				<prop key="/**/Special:Imagelist">Items</prop>
-				<prop key="/**/Special:LinkTo">LinkTo</prop>
+				<prop key="/**/Special:LinkTo">Items</prop>
 				<prop key="/**/Special:Listusers">Items</prop>
 				<prop key="/**/Special:Login">Login</prop>
 				<prop key="/**/Special:Logout">Login</prop>
@@ -64,7 +64,6 @@
 	<bean id="Import" class="org.jamwiki.servlets.ImportServlet" />
 	<bean id="ImportTiddly" class="org.jamwiki.servlets.ImportTiddlyWikiServlet" />
 	<bean id="Items" class="org.jamwiki.servlets.ItemsServlet" />
-	<bean id="LinkTo" class="org.jamwiki.servlets.LinkToServlet" />
 	<bean id="Login" class="org.jamwiki.servlets.LoginServlet" />
 	<bean id="Log" class="org.jamwiki.servlets.LogServlet" />
 	<bean id="Manage" class="org.jamwiki.servlets.ManageServlet" />
