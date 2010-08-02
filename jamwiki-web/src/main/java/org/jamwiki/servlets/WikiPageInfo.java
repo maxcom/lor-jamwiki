@@ -43,6 +43,7 @@ public class WikiPageInfo {
 	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_TOPIC = "topic.jsp";
 	private boolean admin = false;
+	private String canonicalUrl = null;
 	private String contentJsp = JSP_TOPIC;
 	private WikiMessage pageTitle = null;
 	private WikiMessage exception = null;
@@ -103,6 +104,30 @@ public class WikiPageInfo {
 	 */
 	public void setAdmin(boolean admin) {
 		this.admin = admin;
+	}
+
+	/**
+	 * The canonical URL is used with search engines to indicate the primary
+	 * URL for a topic.  For redirects and shared images this is the target
+	 * URL.
+	 *
+	 * @return The canonical URL is used with search engines to indicate the primary
+	 * URL for a topic.
+	 */
+	public String getCanonicalUrl() {
+		return this.canonicalUrl;
+	}
+
+	/**
+	 * The canonical URL is used with search engines to indicate the primary
+	 * URL for a topic.  For redirects and shared images this is the target
+	 * URL.
+	 *
+	 * @param canonicalUrl The canonical URL is used with search engines to indicate
+	 * the primary URL for a topic.
+	 */
+	public void setCanonicalUrl(String canonicalUrl) {
+		this.canonicalUrl = canonicalUrl;
 	}
 
 	/**

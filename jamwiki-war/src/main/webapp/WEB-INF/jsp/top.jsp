@@ -30,8 +30,8 @@
 	<link rel="start" title="<c:out value="${defaultTopic}" />" href="<jamwiki:link value="${defaultTopic}" />" />
 	<link rel="home" title="<c:out value="${defaultTopic}" />" href="<jamwiki:link value="${defaultTopic}" />" />
 </c:if>
-<c:if test="${!empty pageInfo.redirectUrl && !empty pageInfo.topicName}">
-	<link rel="canonical" href="<jamwiki:link value="${pageInfo.topicName}" />" />
+<c:if test="${!empty pageInfo.canonicalUrl}">
+	<link rel="canonical" href="${pageInfo.canonicalUrl}" />
 </c:if>
 <jamwiki:enabled property="PROP_RSS_ALLOWED">
 	<%-- This RSS link is automatically recognized by (some) browsers --%>

@@ -748,6 +748,11 @@ public class ServletUtil {
 				pageInfo.setRedirectInfo(redirectUrl, redirectName);
 				pageTitle.replaceParameter(0, child.getName());
 				topic = child;
+				try {
+					pageInfo.setCanonicalUrl(LinkUtil.buildTopicUrl(request.getContextPath(), topic.getVirtualWiki(), topic.getName(), false));
+				} catch (DataAccessException e) {
+					throw new WikiException(new WikiMessage("error.unknown", e.getMessage()), e);
+				}
 				// update the page info's virtual wiki in case this redirect is to another virtual wiki
 				pageInfo.setVirtualWikiName(topic.getVirtualWiki());
 			}
@@ -820,7 +825,15 @@ public class ServletUtil {
 			} else {
 				next.addObject("topicFile", true);
 			}
-			next.addObject("sharedImage", !pageInfo.getVirtualWikiName().equals(virtualWiki));
+			boolean sharedImage = !pageInfo.getVirtualWikiName().equals(virtualWiki);
+			next.addObject("sharedImage", sharedImage);
+			if (sharedImage) {
+				try {
+					pageInfo.setCanonicalUrl(LinkUtil.buildTopicUrl(request.getContextPath(), virtualWiki, topic.getName(), false));
+				} catch (DataAccessException e) {
+					throw new WikiException(new WikiMessage("error.unknown", e.getMessage()), e);
+				}
+			}
 		}
 		pageInfo.setSpecial(false);
 		pageInfo.setTopicName(topicName);
