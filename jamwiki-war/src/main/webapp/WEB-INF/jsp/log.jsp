@@ -55,8 +55,7 @@
 	&#160;
 	(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${logItem.logType}" /><fmt:message key="${logItem.logWikiLinkCaption}" /></jamwiki:link>)
 	&#160;.&#160;.&#160;
-	<jamwiki:link value="${pageInfo.namespaces['User']}:${logItem.userDisplayName}" text="${logItem.userDisplayName}" />
-	(<jamwiki:link value="${pageInfo.namespaces['User comments']}:${logItem.userDisplayName}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${logItem.userDisplayName}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
+	<jamwiki_t:userLinks pageInfo="${pageInfo}" userDisplay="${logItem.userDisplayName}" />
 	&#160;
 	<c:if test="${!empty logItem.logWikiMessage}">
 		&#160;
