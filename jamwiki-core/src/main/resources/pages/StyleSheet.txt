@@ -201,6 +201,10 @@ div.submenu {
 	color: #7d7d7d;
 	width: auto;
 }
+#contentSub {
+	color: #7d7d7d;
+	margin-left: 1em;
+}
 
 /* navbar elements */
 

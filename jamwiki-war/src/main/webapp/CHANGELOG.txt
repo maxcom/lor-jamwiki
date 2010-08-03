@@ -19,6 +19,8 @@ New Features:
     Special:LinkTo page and add pagination and sorting to Special:LinkTo.
   * Update the Special:Diff UI to display additional information, including
     revision dates, edit comments, and links to previous/next diff.
+  * Display author, revision information, and links to previous/next revision
+    when viewing an old version of a topic.
   * SEO optimizations: return HTTP 404 when requesting a page for a topic that
     does not exist, return HTTP 500 for error pages, and specify the
     "canonical" meta tag for redirected topics.
