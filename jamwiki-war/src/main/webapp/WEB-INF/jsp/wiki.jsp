@@ -71,7 +71,7 @@
 	<div id="contents" >
 	<h1 id="contents-header"><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /></fmt:message></h1>
 	<c:if test="${!empty pageInfo.redirectUrl}">
-	<div id="contents-subheader"><fmt:message key="topic.redirect.from"><fmt:param><a href="<c:out value="${pageInfo.redirectUrl}" />"><c:out value="${pageInfo.redirectName}" /></a></fmt:param></fmt:message></div>
+	<div id="contentSub"><fmt:message key="topic.redirect.from"><fmt:param><a href="<c:out value="${pageInfo.redirectUrl}" />"><c:out value="${pageInfo.redirectName}" /></a></fmt:param></fmt:message></div>
 	</c:if>
 <c:set var="contentJsp" scope="page" value="${pageInfo.contentJsp}" />
 <%

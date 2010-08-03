@@ -194,16 +194,9 @@ div.submenu {
 #contents-header {
 	margin-bottom: 0.1em;
 }
-#contents-subheader {
-	font-size: 100%;
-	line-height: 1.2em;
-	margin: 0 0 1.4em 1em;
-	color: #7d7d7d;
-	width: auto;
-}
 #contentSub {
 	color: #7d7d7d;
-	margin-left: 1em;
+	margin: 0 0 1em 1em;
 }
 
 /* navbar elements */
