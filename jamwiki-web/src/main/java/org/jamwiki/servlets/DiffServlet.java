@@ -84,12 +84,16 @@ public class DiffServlet extends JAMWikiServlet {
 		}
 		List<WikiDiff> diffs = DiffUtil.diff(contents1, contents2);
 		next.addObject("diffs", diffs);
-		WikiUser user = (version1.getAuthorId() != null) ? WikiBase.getDataHandler().lookupWikiUser(version1.getAuthorId()) : null;
-		String author1 = ((user != null) ? user.getUsername() : version1.getAuthorDisplay());
-		next.addObject("version1", RecentChange.initRecentChange(topic, version1, author1));
-		user = (version2.getAuthorId() != null) ? WikiBase.getDataHandler().lookupWikiUser(version2.getAuthorId()) : null;
-		String author2 = ((user != null) ? user.getUsername() : version2.getAuthorDisplay());
-		next.addObject("version2", RecentChange.initRecentChange(topic, version2, author2));
+		if (version1 != null) {
+			WikiUser user = (version1.getAuthorId() != null) ? WikiBase.getDataHandler().lookupWikiUser(version1.getAuthorId()) : null;
+			String author1 = ((user != null) ? user.getUsername() : version1.getAuthorDisplay());
+			next.addObject("version1", RecentChange.initRecentChange(topic, version1, author1));
+		}
+		if (version2 != null) {
+			WikiUser user = (version2.getAuthorId() != null) ? WikiBase.getDataHandler().lookupWikiUser(version2.getAuthorId()) : null;
+			String author2 = ((user != null) ? user.getUsername() : version2.getAuthorDisplay());
+			next.addObject("version2", RecentChange.initRecentChange(topic, version2, author2));
+		}
 		Integer nextTopicVersionId = (version1 != null) ? WikiBase.getDataHandler().lookupTopicVersionNextId(version1.getTopicVersionId()) : null;
 		next.addObject("nextTopicVersionId", nextTopicVersionId);
 		pageInfo.setPageTitle(new WikiMessage("diff.title", topicName));
