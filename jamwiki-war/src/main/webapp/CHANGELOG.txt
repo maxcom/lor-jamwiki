@@ -21,6 +21,8 @@ New Features:
     revision dates, edit comments, and links to previous/next diff.
   * Display author, revision information, and links to previous/next revision
     when viewing an old version of a topic.
+  * Support the #switch parser functions.  Usage:
+    "{{#switch: value | case1 = result | case2 = result | default}}".
   * SEO optimizations: return HTTP 404 when requesting a page for a topic that
     does not exist, return HTTP 500 for error pages, and specify the
     "canonical" meta tag for redirected topics.

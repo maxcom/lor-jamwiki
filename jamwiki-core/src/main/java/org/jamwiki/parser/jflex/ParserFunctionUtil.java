@@ -52,6 +52,7 @@ public class ParserFunctionUtil {
 	private static final String PARSER_FUNCTION_LOWER_CASE_FIRST = "lcfirst:";
 	private static final String PARSER_FUNCTION_NAMESPACE = "ns:";
 	private static final String PARSER_FUNCTION_NAMESPACE_ESCAPED = "nse:";
+	private static final String PARSER_FUNCTION_SWITCH = "#switch:";
 	private static final String PARSER_FUNCTION_UPPER_CASE = "uc:";
 	private static final String PARSER_FUNCTION_UPPER_CASE_FIRST = "ucfirst:";
 	private static final String PARSER_FUNCTION_URL_ENCODE = "urlencode:";
@@ -71,6 +72,7 @@ public class ParserFunctionUtil {
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOWER_CASE_FIRST);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_NAMESPACE);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_NAMESPACE_ESCAPED);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_SWITCH);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_UPPER_CASE);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_UPPER_CASE_FIRST);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_URL_ENCODE);
@@ -135,6 +137,9 @@ public class ParserFunctionUtil {
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_NAMESPACE_ESCAPED)) {
 			return ParserFunctionUtil.parseNamespace(parserInput, parserFunctionArgumentArray, true);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_SWITCH)) {
+			return ParserFunctionUtil.parseSwitch(parserInput, parserFunctionArgumentArray);
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_UPPER_CASE)) {
 			return ParserFunctionUtil.parseUpperCase(parserInput, parserFunctionArgumentArray);
@@ -344,6 +349,37 @@ public class ParserFunctionUtil {
 			return "";
 		}
 		return (escape) ? Utilities.encodeAndEscapeTopicName(result) : result;
+	}
+
+	/**
+	 * Parse the {{#switch:}} parser function.
+	 */
+	private static String parseSwitch(ParserInput parserInput, String[] parserFunctionArgumentArray) {
+		String condition = ((parserFunctionArgumentArray.length >= 1) ? parserFunctionArgumentArray[0].trim() : "#default");
+		String defaultCondition = null;
+		int pos = 0;
+		String caseCondition, caseResult;
+		for (int i = 1; i < parserFunctionArgumentArray.length; i++) {
+			pos = parserFunctionArgumentArray[i].indexOf("=");
+			if (pos == -1 && i == (parserFunctionArgumentArray.length - 1)) {
+				// last argument is the default when no case is specified
+				defaultCondition = parserFunctionArgumentArray[i].trim();
+				continue;
+			}
+			if (pos == -1 || pos == 0) {
+				// invalid argument
+				continue;
+			}
+			caseCondition = parserFunctionArgumentArray[i].substring(0, pos).trim();
+			caseResult = (pos < (parserFunctionArgumentArray[i].length() - 1)) ? parserFunctionArgumentArray[i].substring(pos + 1).trim() : "";
+			if (StringUtils.equals(condition, caseCondition)) {
+				return caseResult;
+			}
+			if (StringUtils.equals(caseCondition, "#default")) {
+				defaultCondition = caseResult;
+			}
+		}
+		return (defaultCondition != null) ? defaultCondition : "";
 	}
 
 	/**
