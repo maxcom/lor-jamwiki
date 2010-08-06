@@ -33,6 +33,8 @@ class JFlexTagItem {
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexTagItem.class.getName());
 
 	private static final List<String> EMPTY_BODY_TAGS = Arrays.asList("br", "col", "div", "hr", "td", "th");
+	private static final List<String> LIST_ITEM_TAGS = Arrays.asList("dd", "dt", "li");
+	private static final List<String> LIST_TAGS = Arrays.asList("dd", "dl", "dt", "li", "ol", "ul");
 	private static final List<String> NON_NESTING_TAGS = Arrays.asList("col", "colgroup", "dd", "dl", "dt", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "li", "ol", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "ul");
 	private static final List<String> NON_TEXT_BODY_TAGS = Arrays.asList("col", "colgroup", "dl", "ol", "table", "tbody", "tfoot", "thead", "tr", "ul");
 	private static final List<String> NON_INLINE_TAGS = Arrays.asList("caption", "col", "colgroup", "dd", "div", "dl", "dt", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "li", "ol", "p", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "ul");
@@ -130,11 +132,47 @@ class JFlexTagItem {
 	}
 
 	/**
+	 * Determine if the tag is a list item tag (dd, dt, li).
+	 */
+	protected boolean isListItemTag() {
+		return JFlexTagItem.isListItemTag(this.tagType);
+	}
+
+	/**
+	 * Determine if the tag is a list item tag (dd, dt, li).
+	 */
+	protected static boolean isListItemTag(String tagType) {
+		return (LIST_ITEM_TAGS.indexOf(tagType) != -1);
+	}
+
+	/**
+	 * Determine if the tag is a list tag (dd, dl, dt, li, ol, ul).
+	 */
+	protected boolean isListTag() {
+		return JFlexTagItem.isListTag(this.tagType);
+	}
+
+	/**
+	 * Determine if the tag is a list tag (dd, dl, dt, li, ol, ul).
+	 */
+	protected static boolean isListTag(String tagType) {
+		return (LIST_TAGS.indexOf(tagType) != -1);
+	}
+
+	/**
 	 * A non-nesting tag is a tag such as "li" which cannot be nested within
 	 * another "li" tag.
 	 */
 	protected boolean isNonNestingTag() {
-		return (NON_NESTING_TAGS.indexOf(this.tagType) != -1);
+		return JFlexTagItem.isNonNestingTag(this.tagType);
+	}
+
+	/**
+	 * A non-nesting tag is a tag such as "li" which cannot be nested within
+	 * another "li" tag.
+	 */
+	protected static boolean isNonNestingTag(String tagType) {
+		return (NON_NESTING_TAGS.indexOf(tagType) != -1);
 	}
 
 	/**

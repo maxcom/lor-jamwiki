@@ -180,6 +180,24 @@ public abstract class JFlexLexer {
 	}
 
 	/**
+	 * Utility method to walk the current tag stack to determine if the top of the stack
+	 * contains list tags followed by a tag of a specific type.
+	 */
+	private boolean isNextAfterListTags(String tagType) {
+		JFlexTagItem nextTag;
+		for (int i = (this.tagStack.size() - 1); i > 0; i--) {
+			nextTag = this.tagStack.get(i);
+			if (nextTag.getTagType().equals(tagType)) {
+				return true;
+			}
+			if (!nextTag.isListTag()) {
+				return false;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 *
 	 */
 	protected String parse(int type, String raw, Object... args) {
@@ -262,6 +280,12 @@ public abstract class JFlexLexer {
 			// the "</strong>" should actually be parsed as a "</u>".
 			if (StringUtils.equals(this.peekTag().getTagType(), this.peekTag().getCloseTagOverride())) {
 				return this.popTag(this.peekTag().getCloseTagOverride());
+			}
+			// check to see if the parent tag is a list and the current tag is in the tag
+			// stack.  if so close the list and pop the current tag.
+			if (!JFlexTagItem.isListTag(tagType) && this.peekTag().isListItemTag() && this.isNextAfterListTags(tagType)) {
+				this.popAllListTags();
+				return this.popTag(tagType);
 			}
 			// check to see if the parent tag matches the current close tag.  if so then
 			// this is unbalanced HTML of the form "<u><strong>text</u></strong>" and
