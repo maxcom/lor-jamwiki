@@ -3,6 +3,8 @@
 
 Bugfixes:
 
+  * Fix list parsing for lists that end with </td> or </div>.
+
 
 0.9.1
 =====
