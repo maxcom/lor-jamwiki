@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.jamwiki</groupId>
 		<artifactId>jamwiki</artifactId>
-		<version>0.9.1</version>
+		<version>0.9.2</version>
 	</parent>
 	<artifactId>jamwiki-war</artifactId>
 	<packaging>war</packaging>
@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>org.jamwiki</groupId>
 			<artifactId>bliki-parser</artifactId>
-			<version>0.9.1</version>
+			<version>0.9.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
