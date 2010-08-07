@@ -80,6 +80,7 @@ public class UploadServlet extends JAMWikiServlet {
 		if (!file.exists()) {
 			throw new WikiException(new WikiMessage("upload.error.nodirectory"));
 		}
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		Iterator iterator = ServletUtil.processMultipartRequest(request, Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
 		String filename = null;
 		String destinationFilename = null;
@@ -107,7 +108,7 @@ public class UploadServlet extends JAMWikiServlet {
 				throw new WikiException(new WikiMessage("upload.error.filename"));
 			}
 			filename = ImageUtil.sanitizeFilename(filename);
-			url = ImageUtil.generateFileUrl(filename, null);
+			url = ImageUtil.generateFileUrl(virtualWiki, filename, null);
 			if (!ImageUtil.isFileTypeAllowed(filename)) {
 				String extension = FilenameUtils.getExtension(filename);
 				throw new WikiException(new WikiMessage("upload.error.filetype", extension));
@@ -121,7 +122,6 @@ public class UploadServlet extends JAMWikiServlet {
 		if (uploadedFile == null) {
 			throw new WikiException(new WikiMessage("upload.error.filenotfound"));
 		}
-		String virtualWiki = pageInfo.getVirtualWikiName();
 		destinationFilename = processDestinationFilename(virtualWiki, destinationFilename, filename);
 		String topicName = ImageUtil.generateFileTopicName(virtualWiki, (!StringUtils.isEmpty(destinationFilename) ? destinationFilename : filename));
 		if (this.handleSpam(request, next, topicName, contents, null)) {
@@ -134,7 +134,7 @@ public class UploadServlet extends JAMWikiServlet {
 		if (!StringUtils.isEmpty(destinationFilename)) {
 			// rename the uploaded file if a destination file name was specified
 			filename = ImageUtil.sanitizeFilename(destinationFilename);
-			url = ImageUtil.generateFileUrl(filename, null);
+			url = ImageUtil.generateFileUrl(virtualWiki, filename, null);
 			File renamedFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), url);
 			if (!uploadedFile.renameTo(renamedFile)) {
 				throw new WikiException(new WikiMessage("upload.error.filerename", destinationFilename));

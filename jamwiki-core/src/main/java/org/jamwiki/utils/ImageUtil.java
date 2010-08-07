@@ -368,7 +368,10 @@ public class ImageUtil {
 	/**
 	 * Given a filename, generate the URL to use to store the file on the filesystem.
 	 */
-	public static String generateFileUrl(String filename, Date date) throws WikiException {
+	public static String generateFileUrl(String virtualWiki, String filename, Date date) throws WikiException {
+		if (StringUtils.isBlank(virtualWiki)) {
+			throw new WikiException(new WikiMessage("common.exception.novirtualwiki"));
+		}
 		String url = filename;
 		if (StringUtils.isBlank(url)) {
 			throw new WikiException(new WikiMessage("upload.error.filename"));
@@ -398,10 +401,10 @@ public class ImageUtil {
 		int pos = url.lastIndexOf('.');
 		url = (pos == -1) ? url + suffix : url.substring(0, pos) + suffix + url.substring(pos);
 		// now pre-pend the file system directory
-		// subdirectory is composed of year/month
+		// subdirectory is composed of vwiki/year/month
 		String year = Integer.toString(cal.get(Calendar.YEAR));
 		String month = Integer.toString(cal.get(Calendar.MONTH) + 1);
-		String subdirectory = "/" + year + "/" + month;
+		String subdirectory = "/" + virtualWiki + "/" + year + "/" + month;
 		File directory = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), subdirectory);
 		if (!directory.exists() && !directory.mkdirs()) {
 			throw new WikiException(new WikiMessage("upload.error.directorycreate", directory.getAbsolutePath()));
