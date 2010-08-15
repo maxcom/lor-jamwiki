@@ -22,7 +22,9 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Calendar;
@@ -513,11 +515,23 @@ public class ImageUtil {
 		if (!file.exists()) {
 			throw new FileNotFoundException("File does not exist: " + file.getAbsolutePath());
 		}
-		BufferedImage image = ImageIO.read(file);
-		if (image == null) {
-			throw new IOException("JDK is unable to process image file, possibly indicating file corruption: " + file.getAbsolutePath());
+		// use a FileInputStream and make sure it gets closed to prevent unclosed file
+		// errors on some operating systems
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(file);
+			BufferedImage image = ImageIO.read(fis);
+			if (image == null) {
+				throw new IOException("JDK is unable to process image file, possibly indicating file corruption: " + file.getAbsolutePath());
+			}
+			return image;
+		} finally {
+			if (fis != null) {
+				try {
+					fis.close();
+				} catch (IOException e) {}
+			}
 		}
-		return image;
 	}
 
 	/**
@@ -558,9 +572,21 @@ public class ImageUtil {
 		}
 		String imageType = filename.substring(pos + 1);
 		File imageFile = new File(file.getParent(), filename);
-		boolean result = ImageIO.write(image, imageType, imageFile);
-		if (!result) {
-			throw new IOException("No appropriate writer found when writing image: " + filename);
+		// use a FileOutputStream and make sure it gets closed to prevent unclosed file
+		// errors on some operating systems
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(imageFile);
+			boolean result = ImageIO.write(image, imageType, imageFile);
+			if (!result) {
+				throw new IOException("No appropriate writer found when writing image: " + filename);
+			}
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException e) {}
+			}
 		}
 	}
 
