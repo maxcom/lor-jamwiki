@@ -14,6 +14,8 @@ Bugfixes:
     Reported by an anonymous user.
   * Fix an issue in which non-image file uploads could fail on some operating
     systems.  Reported by an anonymous user.
+  * Fix an invalid "You may not remove ROLE_SYSADMIN from your own account"
+    message on the Special:Roles page when updating the sysadmin account.
 
 
 0.9.1
