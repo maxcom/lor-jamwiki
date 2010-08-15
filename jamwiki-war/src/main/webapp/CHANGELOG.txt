@@ -4,6 +4,8 @@
 Bugfixes:
 
   * Fix list parsing for lists that end with </td> or </div>.
+  * Fix the manual upgrade steps for namespace in the UPGRADE.txt document.
+    Reported by an anonymous user.
 
 
 0.9.1
