@@ -79,7 +79,9 @@
 	</b:bean>
 
 	<!--
-	LDAP.  See the Spring Security documentation for configuration information.  When using LDAP comment
+	LDAP example #1 - this example authenticates and retrieves roles from LDAP, so the LDAP
+	system must return roles used by JAMWiki (see the intercept-url patterns above).  See
+	the Spring Security documentation for configuration information.  When using LDAP comment
 	out the authentication provider configuration above.
 	-->
 	<!--
@@ -88,6 +90,39 @@
 	<authentication-provider>
 		<ldap-user-service server-ref="ldapServer" group-search-filter="member={0}" group-search-base="ou=groups" user-search-filter="uid={0}" user-search-base="ou=people" />
 	</authentication-provider>
+	-->
+
+	<!--
+	LDAP example #2 - this example uses LDAP for authentication only, and JAMWiki for role
+	assignment.  See the Spring Security documentation for configuration information.  When
+	using LDAP comment out the authentication provider configuration above.
+	-->
+	<!--
+	<authentication-manager alias="authenticationManager">
+		<authentication-provider ref="ldapAuthProvider" user-service-ref="jamWikiAuthenticationDao" />
+	</authentication-manager>
+	<b:bean id="ldapAuthProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
+		<b:constructor-arg><b:ref bean="ldapAuthenticator"/></b:constructor-arg>
+		<b:constructor-arg><b:ref bean="ldapAuthoritiesPopulator"/></b:constructor-arg>
+	</b:bean>
+	<b:bean id="ldapAuthenticator" class="org.springframework.security.ldap.authentication.BindAuthenticator">
+		<b:constructor-arg><b:ref bean="ldapContextSource"/></b:constructor-arg>
+		<b:property name="userSearch" ref="ldapUserSearch" />
+	</b:bean>
+	<b:bean id="ldapAuthoritiesPopulator" class="org.springframework.security.ldap.authentication.UserDetailsServiceLdapAuthoritiesPopulator">
+		<b:constructor-arg><b:ref bean="jamWikiAuthenticationDao"/></b:constructor-arg>
+	</b:bean>
+	<b:bean id="ldapContextSource" class="org.springframework.ldap.core.support.LdapContextSource">
+		<b:property name="url" value="${ldap-url}:${ldap-port}" />
+		<b:property name="userDn" value="${manager-dn}" />
+		<b:property name="password" value="${manager-password}" />
+		<b:property name="referral" value="follow" />
+	</b:bean>
+	<b:bean id="ldapUserSearch" class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
+		<b:constructor-arg><b:value>${user-search-base}</b:value></b:constructor-arg>
+		<b:constructor-arg><b:value>${user-search-filter}</b:value></b:constructor-arg>
+		<b:constructor-arg><b:ref bean="ldapContextSource"/></b:constructor-arg>
+	</b:bean>
 	-->
 
 	<!--

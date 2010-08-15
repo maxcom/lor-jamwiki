@@ -164,10 +164,10 @@ followed by 0.6.3.
               CREATE TABLE jam_namespace ( 
                 namespace_id INTEGER NOT NULL, 
                 namespace VARCHAR(200) NOT NULL, 
-                main_namespace_id INTEGER,
-                CONSTRAINT jam_p_namesp PRIMARY KEY (namespace_id), \
-                CONSTRAINT jam_u_namesp_namesp UNIQUE (namespace), \
-                CONSTRAINT jam_f_namesp_namesp FOREIGN KEY (main_namespace_id) REFERENCES jam_topic(namespace_id) \
+                main_namespace_id INTEGER, 
+                CONSTRAINT jam_p_namesp PRIMARY KEY (namespace_id), 
+                CONSTRAINT jam_u_namesp_namesp UNIQUE (namespace), 
+                CONSTRAINT jam_f_namesp_namesp FOREIGN KEY (main_namespace_id) REFERENCES jam_namespace(namespace_id) 
               );
        b) Create the jam_namespace_translation table.
               CREATE TABLE jam_namespace_translation ( 
@@ -179,7 +179,26 @@ followed by 0.6.3.
                 CONSTRAINT jam_f_namesptr_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id), 
                 CONSTRAINT jam_u_namesptr_namesp UNIQUE (virtual_wiki_id, namespace) 
               );
-       c) Update the jam_topic table with namespace-related values
+       c) Create the base namespaces.
+              INSERT INTO jam_namespace (namespace_id, namespace) values (-2, 'Media');
+              INSERT INTO jam_namespace (namespace_id, namespace) values (-1, 'Special');
+              INSERT INTO jam_namespace (namespace_id, namespace) values (0, '');
+              INSERT INTO jam_namespace (namespace_id, namespace, main_namespace_id) values (1, 'Comments', 0);
+              INSERT INTO jam_namespace (namespace_id, namespace) values (2, 'User');
+              INSERT INTO jam_namespace (namespace_id, namespace, main_namespace_id) values (3, 'User comments', 2);
+              INSERT INTO jam_namespace (namespace_id, namespace) values (4, 'Project');
+              INSERT INTO jam_namespace (namespace_id, namespace, main_namespace_id) values (5, 'Project comments', 4);
+              INSERT INTO jam_namespace (namespace_id, namespace) values (6, 'Image');
+              INSERT INTO jam_namespace (namespace_id, namespace, main_namespace_id) values (7, 'Image comments', 6);
+              INSERT INTO jam_namespace (namespace_id, namespace) values (8, 'JAMWiki');
+              INSERT INTO jam_namespace (namespace_id, namespace, main_namespace_id) values (9, 'JAMWiki comments', 8);
+              INSERT INTO jam_namespace (namespace_id, namespace) values (10, 'Template');
+              INSERT INTO jam_namespace (namespace_id, namespace, main_namespace_id) values (11, 'Template comments', 10);
+              INSERT INTO jam_namespace (namespace_id, namespace) values (12, 'Help');
+              INSERT INTO jam_namespace (namespace_id, namespace, main_namespace_id) values (13, 'Help comments', 12);
+              INSERT INTO jam_namespace (namespace_id, namespace) values (14, 'Category');
+              INSERT INTO jam_namespace (namespace_id, namespace, main_namespace_id) values (15, 'Category comments', 14);
+       d) Update the jam_topic table with namespace-related values
             Oracle:
               alter table jam_topic add namespace_id INTEGER DEFAULT 0 NOT NULL;
               alter table jam_topic add constraint jam_f_topic_namesp FOREIGN KEY (namespace_id) REFERENCES jam_namespace(namespace_id);

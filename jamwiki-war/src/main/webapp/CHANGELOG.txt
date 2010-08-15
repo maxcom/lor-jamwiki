@@ -43,9 +43,21 @@ Translation Updates:
 0.9.2
 =====
 
+New Features:
+
+  * Update the LDAP sample in applicationContext-security.xml with an example
+    of using LDAP for authentication and JAMWiki for role management.  Provided
+    by Bobby Lawrence.
+
 Bugfixes:
 
   * Fix list parsing for lists that end with </td> or </div>.
+  * Fix the manual upgrade steps for namespace in the UPGRADE.txt document.
+    Reported by an anonymous user.
+  * Fix an issue in which non-image file uploads could fail on some operating
+    systems.  Reported by an anonymous user.
+  * Fix an invalid "You may not remove ROLE_SYSADMIN from your own account"
+    message on the Special:Roles page when updating the sysadmin account.
 
 
 0.9.1
