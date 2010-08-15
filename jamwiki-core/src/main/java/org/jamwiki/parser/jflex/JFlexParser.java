@@ -116,7 +116,11 @@ public class JFlexParser extends AbstractParser {
 				current = System.currentTimeMillis();
 				if (logger.isFineEnabled() && (current - previous) > TIME_LIMIT_PARSE) {
 					// took too long, log a message
-					logger.fine("Slow parsing (" + ((current - previous) / 1000.000) + " s) for input: " + this.parserInput.getTopicName() + " (state: " + lexer.yystate() + ")");
+					String message = "Slow parsing (" + ((current - previous) / 1000.000) + " s) for topic: " + this.parserInput.getTopicName() + " / state: " + lexer.yystate();
+					if (raw != null && raw.length() < 300) {
+						message += " / content: " + raw;
+					}
+					logger.fine(message);
 				}
 				previous = current;
 			}
