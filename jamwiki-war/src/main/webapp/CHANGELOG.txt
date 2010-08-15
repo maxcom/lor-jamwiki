@@ -1,6 +1,12 @@
 ﻿0.9.2
 =====
 
+New Features:
+
+  * Update the LDAP sample in applicationContext-security.xml with an example
+    of using LDAP for authentication and JAMWiki for role management.  Provided
+    by Bobby Lawrence.
+
 Bugfixes:
 
   * Fix list parsing for lists that end with </td> or </div>.
