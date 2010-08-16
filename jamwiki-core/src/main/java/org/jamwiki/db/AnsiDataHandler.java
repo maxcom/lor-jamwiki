@@ -859,7 +859,9 @@ public class AnsiDataHandler implements DataHandler {
 		Topic topic = null;
 		try {
 			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-			topic = this.queryHandler().lookupTopic(virtualWikiId, virtualWiki, topicName, conn);
+			Namespace namespace = LinkUtil.retrieveTopicNamespace(virtualWiki, topicName);
+			String pageName = LinkUtil.retrieveTopicPageName(namespace, virtualWiki, topicName);
+			topic = this.queryHandler().lookupTopic(virtualWikiId, virtualWiki, namespace, pageName, conn);
 			if (topic == null && checkSharedVirtualWiki) {
 				topic = this.lookupTopic(sharedVirtualWiki, topicName, deleteOK, conn);
 			}
@@ -958,7 +960,9 @@ public class AnsiDataHandler implements DataHandler {
 		Integer topicId = null;
 		try {
 			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-			topicId = this.queryHandler().lookupTopicId(virtualWikiId, virtualWiki, topicName);
+			Namespace namespace = LinkUtil.retrieveTopicNamespace(virtualWiki, topicName);
+			String pageName = LinkUtil.retrieveTopicPageName(namespace, virtualWiki, topicName);
+			topicId = this.queryHandler().lookupTopicId(virtualWikiId, virtualWiki, namespace, topicName);
 			if (topicId == null && checkSharedVirtualWiki) {
 				topicId = this.lookupTopicId(sharedVirtualWiki, topicName);
 			}

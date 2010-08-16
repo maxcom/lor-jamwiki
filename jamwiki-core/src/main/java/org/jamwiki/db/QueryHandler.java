@@ -695,7 +695,9 @@ public interface QueryHandler {
 	 *  being retrieved.
 	 * @param virtualWikiName The name of the virtual wiki for the virtual wiki of
 	 *  the topic being retrieved.
-	 * @param topicName The name of the topic being retrieved.
+	 * @param namespace The Namespace for the topic being retrieved.
+	 * @param pageName The topic pageName (topic name without the namespace) for
+	 *  the topic being retrieved.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @return A topic containing all topic information for the given topic
@@ -703,7 +705,7 @@ public interface QueryHandler {
 	 *  returned.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	Topic lookupTopic(int virtualWikiId, String virtualWikiName, String topicName, Connection conn) throws SQLException;
+	Topic lookupTopic(int virtualWikiId, String virtualWikiName, Namespace namespace, String pageName, Connection conn) throws SQLException;
 
 	/**
 	 * Retrieve a topic that matches a given topic ID and virtual wiki.
@@ -770,12 +772,14 @@ public interface QueryHandler {
 	 * @param virtualWikiId The ID of the virtual wiki for the topic being queried.
 	 * @param virtualWikiName The name of the virtual wiki for the virtual wiki of
 	 *  the topic being retrieved.
-	 * @param topicName The name of the topic being queried.
+	 * @param namespace The Namespace for the topic being retrieved.
+	 * @param pageName The topic pageName (topic name without the namespace) for
+	 *  the topic being retrieved.
 	 * @return The ID of the Topic object that matches the given virtual wiki and topic
 	 * name, or <code>null</code> if no matching topic exists.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	Integer lookupTopicId(int virtualWikiId, String virtualWikiName, String topicName) throws SQLException;
+	Integer lookupTopicId(int virtualWikiId, String virtualWikiName, Namespace namespace, String pageName) throws SQLException;
 
 	/**
 	 * Find the names for all topics that link to a specified topic.

@@ -48,9 +48,7 @@ import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserDetails;
-import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Pagination;
-import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -2055,9 +2053,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public Topic lookupTopic(int virtualWikiId, String virtualWikiName, String topicName, Connection conn) throws SQLException {
-		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWikiName, topicName);
-		if (wikiLink.getNamespace().getId().equals(Namespace.SPECIAL_ID)) {
+	public Topic lookupTopic(int virtualWikiId, String virtualWikiName, Namespace namespace, String pageName, Connection conn) throws SQLException {
+		if (namespace.getId().equals(Namespace.SPECIAL_ID)) {
 			// invalid namespace
 			return null;
 		}
@@ -2068,16 +2065,15 @@ public class AnsiQueryHandler implements QueryHandler {
 			if (conn == null) {
 				conn = DatabaseConnection.getConnection();
 			}
-			String pageName = wikiLink.getArticle();
-			if (wikiLink.getNamespace().isCaseSensitive()) {
+			if (namespace.isCaseSensitive()) {
 				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC);
+				stmt.setString(1, pageName);
 			} else {
-				pageName = pageName.toLowerCase();
 				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_LOWER);
+				stmt.setString(1, pageName.toLowerCase());
 			}
-			stmt.setString(1, pageName);
 			stmt.setInt(2, virtualWikiId);
-			stmt.setInt(3, wikiLink.getNamespace().getId());
+			stmt.setInt(3, namespace.getId());
 			rs = stmt.executeQuery();
 			return (rs.next()) ? this.initTopic(rs, virtualWikiName) : null;
 		} finally {
@@ -2169,9 +2165,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public Integer lookupTopicId(int virtualWikiId, String virtualWikiName, String topicName) throws SQLException {
-		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWikiName, topicName);
-		if (wikiLink.getNamespace().getId().equals(Namespace.SPECIAL_ID)) {
+	public Integer lookupTopicId(int virtualWikiId, String virtualWikiName, Namespace namespace, String pageName) throws SQLException {
+		if (namespace.getId().equals(Namespace.SPECIAL_ID)) {
 			// invalid namespace
 			return null;
 		}
@@ -2180,16 +2175,15 @@ public class AnsiQueryHandler implements QueryHandler {
 		ResultSet rs = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			String pageName = wikiLink.getArticle();
-			if (wikiLink.getNamespace().isCaseSensitive()) {
+			if (namespace.isCaseSensitive()) {
 				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_ID);
+				stmt.setString(1, pageName);
 			} else {
-				pageName = pageName.toLowerCase();
 				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_ID_LOWER);
+				stmt.setString(1, pageName.toLowerCase());
 			}
-			stmt.setString(1, pageName);
 			stmt.setInt(2, virtualWikiId);
-			stmt.setInt(3, wikiLink.getNamespace().getId());
+			stmt.setInt(3, namespace.getId());
 			rs = stmt.executeQuery();
 			return (rs.next()) ? Integer.valueOf(rs.getInt("topic_id")) : null;
 		} finally {

@@ -540,4 +540,15 @@ public class LinkUtil {
 			throw new IllegalStateException("Failure while trying to lookup namespace: " + linkPrefix, e);
 		}
 	}
+
+	/**
+	 * Utility method for determining a topic's page name given its namespace and full
+	 * topic name.
+	 */
+	public static String retrieveTopicPageName(Namespace namespace, String virtualWiki, String topicName) {
+		if (namespace.getId() == Namespace.MAIN_ID) {
+			return topicName;
+		}
+		return topicName.substring(namespace.getLabel(virtualWiki).length() + Namespace.SEPARATOR.length() + 1);
+	}
 }
