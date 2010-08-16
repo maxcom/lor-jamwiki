@@ -182,9 +182,14 @@ public class DatabaseUpgrades {
 			// add an index to the jam_category table
 			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_CATEGORY_INDEX", conn);
 			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_category"));
-			// add an index to the jam_topic table
+			// add indexes to the jam_topic table
 			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_CURRENT_VERSION_INDEX", conn);
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_NAMESPACE_INDEX", conn);
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_VIRTUAL_WIKI_INDEX", conn);
 			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic"));
+			// add an index for topic_id on the jam_topic_version table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_VERSION_TOPIC_INDEX", conn);
+			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic_version"));
 		} catch (SQLException e) {
 			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 			// do not throw this error and halt the upgrade process - populating the field

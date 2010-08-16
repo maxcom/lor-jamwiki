@@ -112,8 +112,10 @@ followed by 0.6.3.
                 CONSTRAINT jam_p_topic_links PRIMARY KEY (topic_id, link_topic_name), 
                 CONSTRAINT jam_f_tlink_topic_id FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id) 
               );
-       b) Add an index to the jam_topic_links table.
+       b) Add indexes to the jam_topic_links table.
               CREATE INDEX jam_i_topic_links_tnm on jam_topic_links (link_topic_name);
+              CREATE INDEX jam_i_topic_vwiki on jam_topic (virtual_wiki_id);
+              CREATE INDEX jam_i_topic_nmsp on jam_topic (namespace_id);
        c) Create the jam_interwiki table.
               CREATE TABLE jam_interwiki ( 
                 interwiki_prefix VARCHAR(30) NOT NULL, 
