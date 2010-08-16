@@ -544,11 +544,18 @@ public class LinkUtil {
 	/**
 	 * Utility method for determining a topic's page name given its namespace and full
 	 * topic name.
+	 *
+	 * @param namespace The namespace for the topic name.  Use LinkUtil.retrieveTopicNamespace
+	 *  to retrieve the namespace prior to calling this method if necessary.
+	 * @param virtualWiki The virtual wiki for the topic.
+	 * @param topicName The full topic name that is being split.
+	 * @return The pageName portion of the topic name.  If the topic is "Comments:Main Page"
+	 *  then the page name is "Main Page".
 	 */
 	public static String retrieveTopicPageName(Namespace namespace, String virtualWiki, String topicName) {
 		if (namespace.getId() == Namespace.MAIN_ID) {
 			return topicName;
 		}
-		return topicName.substring(namespace.getLabel(virtualWiki).length() + Namespace.SEPARATOR.length() + 1);
+		return topicName.substring(namespace.getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
 	}
 }

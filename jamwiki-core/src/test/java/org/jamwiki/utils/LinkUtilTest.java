@@ -19,6 +19,7 @@
 package org.jamwiki.utils;
 
 import org.jamwiki.JAMWikiUnitTest;
+import org.jamwiki.model.Namespace;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -132,6 +133,26 @@ public class LinkUtilTest extends JAMWikiUnitTest {
 	@Test(expected=NullPointerException.class)
 	public void testInterWikiThrowsNullPointerException() throws Throwable {
 		LinkUtil.interwiki(null);
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testRetrieveTopicPageName1() throws Throwable {
+		String topicName = "Main Page";
+		String result = LinkUtil.retrieveTopicPageName(Namespace.namespace(Namespace.MAIN_ID), "en", topicName);
+		assertEquals("LinkUtil.retrieveTopicPageName", "Main Page", result);
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testRetrieveTopicPageName2() throws Throwable {
+		String topicName = "Comments:Main Page";
+		String result = LinkUtil.retrieveTopicPageName(Namespace.namespace(Namespace.COMMENTS_ID), "en", topicName);
+		assertEquals("LinkUtil.retrieveTopicPageName", "Main Page", result);
 	}
 }
 

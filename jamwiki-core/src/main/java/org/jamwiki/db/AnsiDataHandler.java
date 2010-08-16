@@ -962,7 +962,7 @@ public class AnsiDataHandler implements DataHandler {
 			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 			Namespace namespace = LinkUtil.retrieveTopicNamespace(virtualWiki, topicName);
 			String pageName = LinkUtil.retrieveTopicPageName(namespace, virtualWiki, topicName);
-			topicId = this.queryHandler().lookupTopicId(virtualWikiId, virtualWiki, namespace, topicName);
+			topicId = this.queryHandler().lookupTopicId(virtualWikiId, virtualWiki, namespace, pageName);
 			if (topicId == null && checkSharedVirtualWiki) {
 				topicId = this.lookupTopicId(sharedVirtualWiki, topicName);
 			}
