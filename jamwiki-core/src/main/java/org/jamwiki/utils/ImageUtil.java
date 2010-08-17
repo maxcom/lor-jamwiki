@@ -148,9 +148,11 @@ public class ImageUtil {
 		StringBuilder html = new StringBuilder();
 		String caption = imageMetadata.getCaption();
 		if (topic.getTopicType() == TopicType.FILE) {
-			// file, not an image
-			if (StringUtils.isBlank(caption)) {
+			// file, not an image - use the file name, minus the translated/untranslated namespace
+			if (StringUtils.isBlank(caption) && topicName.startsWith(Namespace.namespace(Namespace.FILE_ID).getLabel(topic.getVirtualWiki()))) {
 				caption = topicName.substring(Namespace.namespace(Namespace.FILE_ID).getLabel(topic.getVirtualWiki()).length() + 1);
+			} else if (StringUtils.isBlank(caption) && topicName.startsWith(Namespace.namespace(Namespace.FILE_ID).getDefaultLabel())) {
+				caption = topicName.substring(Namespace.namespace(Namespace.FILE_ID).getDefaultLabel().length() + 1);
 			}
 			html.append("<a href=\"").append(url).append("\">");
 			if (escapeHtml) {
@@ -161,7 +163,7 @@ public class ImageUtil {
 			html.append("</a>");
 			return html.toString();
 		}
-		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(topic.getVirtualWiki(), topicName);
+		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(topic.getVirtualWiki(), topic.getName());
 		WikiImage wikiImage = null;
 		try {
 			wikiImage = ImageUtil.initializeImage(wikiFile, imageMetadata);

@@ -308,17 +308,13 @@ public class AnsiDataHandler implements DataHandler {
 	 * Given a virtual wiki and topic name, generate the key used for caching
 	 * the corresponding topic information.
 	 */
-	private String cacheTopicKey(String virtualWiki, String topicName) {
-		Namespace namespace = LinkUtil.retrieveTopicNamespace(virtualWiki, topicName);
-		return this.cacheTopicKey(virtualWiki, topicName, namespace);
-	}
-
-	/**
-	 * Given a virtual wiki and topic name, generate the key used for caching
-	 * the corresponding topic information.
-	 */
-	private String cacheTopicKey(String virtualWiki, String topicName, Namespace namespace) {
-		return (namespace.isCaseSensitive() ? WikiCache.key(virtualWiki, topicName) : WikiCache.key(virtualWiki, topicName.toLowerCase()));
+	private String cacheTopicKey(String virtualWiki, Namespace namespace, String pageName) {
+		String topicName = namespace.getLabel(virtualWiki);
+		if (topicName.length() != 0) {
+			topicName += Namespace.SEPARATOR;
+		}
+		topicName += (namespace.isCaseSensitive() ? pageName : pageName.toLowerCase());
+		return WikiCache.key(virtualWiki, topicName);
 	}
 
 	/**
@@ -326,7 +322,7 @@ public class AnsiDataHandler implements DataHandler {
 	 * for the topic.
 	 */
 	private void cacheTopicRefresh(Topic topic) {
-		String key = this.cacheTopicKey(topic.getVirtualWiki(), topic.getName(), topic.getNamespace());
+		String key = this.cacheTopicKey(topic.getVirtualWiki(), topic.getNamespace(), topic.getPageName());
 		WikiCache.removeFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key);
 		if (topic.getDeleteDate() == null) {
 			WikiCache.addToCache(CACHE_TOPIC_IDS_BY_NAME, key, topic.getTopicId());
@@ -779,7 +775,7 @@ public class AnsiDataHandler implements DataHandler {
 		}
 		List<Namespace> namespaces = this.lookupNamespaces();
 		for (Namespace namespace : namespaces) {
-			if (namespace.getLabel(virtualWiki).equalsIgnoreCase(namespaceString)) {
+			if (namespace.getLabel(virtualWiki).equalsIgnoreCase(namespaceString) || namespace.getDefaultLabel().equals(namespaceString)) {
 				// found a match, return it
 				return namespace;
 			}
@@ -834,8 +830,17 @@ public class AnsiDataHandler implements DataHandler {
 		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(topicName)) {
 			return null;
 		}
+		Namespace namespace = LinkUtil.retrieveTopicNamespace(virtualWiki, topicName);
+		String pageName = LinkUtil.retrieveTopicPageName(namespace, virtualWiki, topicName);
+		return this.lookupTopic(virtualWiki, namespace, pageName, deleteOK, conn);
+	}
+
+	/**
+	 *
+	 */
+	private Topic lookupTopic(String virtualWiki, Namespace namespace, String pageName, boolean deleteOK, Connection conn) throws DataAccessException {
 		long start = System.currentTimeMillis();
-		String key = this.cacheTopicKey(virtualWiki, topicName);
+		String key = this.cacheTopicKey(virtualWiki, namespace, pageName);
 		if (conn == null) {
 			// retrieve topic from the cache only if this call is not currently a part
 			// of a transaction to avoid retrieving data that might have been updated
@@ -846,10 +851,10 @@ public class AnsiDataHandler implements DataHandler {
 				return (cacheTopic == null || (!deleteOK && cacheTopic.getDeleteDate() != null)) ? null : new Topic(cacheTopic);
 			}
 		}
-		boolean checkSharedVirtualWiki = this.useSharedVirtualWiki(virtualWiki, topicName);
+		boolean checkSharedVirtualWiki = this.useSharedVirtualWiki(virtualWiki, namespace);
 		String sharedVirtualWiki = Environment.getValue(Environment.PROP_SHARED_UPLOAD_VIRTUAL_WIKI);
 		if (conn == null && checkSharedVirtualWiki) {
-			String sharedKey = WikiCache.key(sharedVirtualWiki, topicName);
+			String sharedKey = this.cacheTopicKey(sharedVirtualWiki, namespace, pageName);
 			Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPICS_BY_NAME, sharedKey);
 			if (cacheElement != null) {
 				Topic cacheTopic = (Topic)cacheElement.getObjectValue();
@@ -859,11 +864,9 @@ public class AnsiDataHandler implements DataHandler {
 		Topic topic = null;
 		try {
 			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-			Namespace namespace = LinkUtil.retrieveTopicNamespace(virtualWiki, topicName);
-			String pageName = LinkUtil.retrieveTopicPageName(namespace, virtualWiki, topicName);
 			topic = this.queryHandler().lookupTopic(virtualWikiId, virtualWiki, namespace, pageName, conn);
 			if (topic == null && checkSharedVirtualWiki) {
-				topic = this.lookupTopic(sharedVirtualWiki, topicName, deleteOK, conn);
+				topic = this.lookupTopic(sharedVirtualWiki, namespace, pageName, deleteOK, conn);
 			}
 			if (conn == null) {
 				// add topic to the cache only if it is not currently a part of a transaction
@@ -878,7 +881,7 @@ public class AnsiDataHandler implements DataHandler {
 		if (logger.isFineEnabled()) {
 			long execution = (System.currentTimeMillis() - start);
 			if (execution > TIME_LIMIT_TOPIC_LOOKUP) {
-				logger.fine("Slow topic lookup for: " + topicName + " (" + (execution / 1000.000) + " s)");
+				logger.fine("Slow topic lookup for: " + Topic.buildTopicName(virtualWiki, namespace, pageName) + " (" + (execution / 1000.000) + " s)");
 			}
 		}
 		return (topic == null || (!deleteOK && topic.getDeleteDate() != null)) ? null : topic;
@@ -942,16 +945,25 @@ public class AnsiDataHandler implements DataHandler {
 		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(topicName)) {
 			return null;
 		}
+		Namespace namespace = LinkUtil.retrieveTopicNamespace(virtualWiki, topicName);
+		String pageName = LinkUtil.retrieveTopicPageName(namespace, virtualWiki, topicName);
+		return this.lookupTopicId(virtualWiki, namespace, pageName);
+	}
+
+	/**
+	 *
+	 */
+	private Integer lookupTopicId(String virtualWiki, Namespace namespace, String pageName) throws DataAccessException {
 		long start = System.currentTimeMillis();
-		String key = this.cacheTopicKey(virtualWiki, topicName);
+		String key = this.cacheTopicKey(virtualWiki, namespace, pageName);
 		Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPIC_IDS_BY_NAME, key);
 		if (cacheElement != null) {
 			return (Integer)cacheElement.getObjectValue();
 		}
-		boolean checkSharedVirtualWiki = this.useSharedVirtualWiki(virtualWiki, topicName);
+		boolean checkSharedVirtualWiki = this.useSharedVirtualWiki(virtualWiki, namespace);
 		String sharedVirtualWiki = Environment.getValue(Environment.PROP_SHARED_UPLOAD_VIRTUAL_WIKI);
 		if (checkSharedVirtualWiki) {
-			String sharedKey = WikiCache.key(sharedVirtualWiki, topicName);
+			String sharedKey = this.cacheTopicKey(sharedVirtualWiki, namespace, pageName);
 			cacheElement = WikiCache.retrieveFromCache(CACHE_TOPIC_IDS_BY_NAME, sharedKey);
 			if (cacheElement != null) {
 				return (Integer)cacheElement.getObjectValue();
@@ -960,11 +972,9 @@ public class AnsiDataHandler implements DataHandler {
 		Integer topicId = null;
 		try {
 			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-			Namespace namespace = LinkUtil.retrieveTopicNamespace(virtualWiki, topicName);
-			String pageName = LinkUtil.retrieveTopicPageName(namespace, virtualWiki, topicName);
 			topicId = this.queryHandler().lookupTopicId(virtualWikiId, virtualWiki, namespace, pageName);
 			if (topicId == null && checkSharedVirtualWiki) {
-				topicId = this.lookupTopicId(sharedVirtualWiki, topicName);
+				topicId = this.lookupTopicId(sharedVirtualWiki, namespace, pageName);
 			}
 			WikiCache.addToCache(CACHE_TOPIC_IDS_BY_NAME, key, topicId);
 		} catch (SQLException e) {
@@ -973,7 +983,7 @@ public class AnsiDataHandler implements DataHandler {
 		if (logger.isFineEnabled()) {
 			long execution = (System.currentTimeMillis() - start);
 			if (execution > TIME_LIMIT_TOPIC_LOOKUP) {
-				logger.fine("Slow topic existence lookup for: " + topicName + " (" +  (execution / 1000.000) + " s)");
+				logger.fine("Slow topic existence lookup for: " + Topic.buildTopicName(virtualWiki, namespace, pageName) + " (" +  (execution / 1000.000) + " s)");
 			}
 		}
 		return topicId;
@@ -1489,12 +1499,11 @@ public class AnsiDataHandler implements DataHandler {
 	 * performing a topic lookup.
 	 *
 	 * @param virtualWiki The current virtual wiki being used for a lookup.
-	 * @param topicname The topic name being looked up.
+	 * @param namespace The namespace for the current topic being retrieved.
 	 */
-	private boolean useSharedVirtualWiki(String virtualWiki, String topicName) {
+	private boolean useSharedVirtualWiki(String virtualWiki, Namespace namespace) {
 		String sharedVirtualWiki = Environment.getValue(Environment.PROP_SHARED_UPLOAD_VIRTUAL_WIKI);
 		if (!StringUtils.isBlank(sharedVirtualWiki) && !StringUtils.equals(virtualWiki, sharedVirtualWiki)) {
-			Namespace namespace = LinkUtil.parseWikiLink(sharedVirtualWiki, topicName).getNamespace();
 			return (namespace.getId().equals(Namespace.FILE_ID) || namespace.getId().equals(Namespace.MEDIA_ID));
 		}
 		return false;

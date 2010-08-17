@@ -28,6 +28,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Namespace;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -192,14 +193,19 @@ public class WikiPageInfo {
 	}
 
 	/**
-	 * Return a map of default namespace name and the virtual wiki translation for the
-	 * namespace.
+	 * Return a map whose keys are virtual wikis, and whose values is a mapping of
+	 * namespace id and value for the virtual wiki.
 	 */
-	public Map<String, String> getNamespaces() throws DataAccessException {
+	public Map<String, Map<String, String>> getNamespaces() throws DataAccessException {
+		Map<String, Map<String, String>> results = new HashMap<String, Map<String, String>>();
 		List<Namespace> namespaces = WikiBase.getDataHandler().lookupNamespaces();
-		Map<String, String> results = new HashMap<String, String>();
-		for (Namespace namespace : namespaces) {
-			results.put(namespace.getDefaultLabel(), namespace.getLabel(this.virtualWikiName));
+		List<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
+		for (VirtualWiki virtualWiki : virtualWikis) {
+			Map<String, String> namespaceMap = new HashMap<String, String>();
+			for (Namespace namespace : namespaces) {
+				namespaceMap.put(namespace.getDefaultLabel(), namespace.getLabel(virtualWiki.getName()));
+			}
+			results.put(virtualWiki.getName(), namespaceMap);
 		}
 		return results;
 	}

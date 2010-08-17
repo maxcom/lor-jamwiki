@@ -556,6 +556,13 @@ public class LinkUtil {
 		if (namespace.getId() == Namespace.MAIN_ID) {
 			return topicName;
 		}
-		return topicName.substring(namespace.getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
+		if (topicName.startsWith(namespace.getLabel(virtualWiki))) {
+			// translated namespace
+			return topicName.substring(namespace.getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
+		} else if (topicName.startsWith(namespace.getDefaultLabel())) {
+			// translated namespace available, but using the default namespace label
+			return topicName.substring(namespace.getDefaultLabel().length() + Namespace.SEPARATOR.length());
+		}
+		throw new IllegalArgumentException("Invalid topic name & namespace combination: " + namespace.getId() + " / " + topicName);
 	}
 }
