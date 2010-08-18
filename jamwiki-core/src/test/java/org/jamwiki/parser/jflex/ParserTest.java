@@ -131,13 +131,11 @@ public class ParserTest extends JAMWikiUnitTest {
 	 */
 	private ParserInput parserInput(String topicName) {
 		// set dummy values for parser input
-		ParserInput parserInput = new ParserInput();
+		ParserInput parserInput = new ParserInput("en", topicName);
 		parserInput.setContext("/wiki");
 		parserInput.setLocale(LocaleUtils.toLocale("en_US"));
 		parserInput.setWikiUser(null);
-		parserInput.setTopicName(topicName);
 		parserInput.setUserDisplay("0.0.0.0");
-		parserInput.setVirtualWiki("en");
 		parserInput.setAllowSectionEdit(true);
 		return parserInput;
 	}

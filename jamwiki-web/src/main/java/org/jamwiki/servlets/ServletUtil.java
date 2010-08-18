@@ -121,11 +121,9 @@ public class ServletUtil {
 			Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 			content = topic.getTopicContent();
 			if (cook) {
-				ParserInput parserInput = new ParserInput();
+				ParserInput parserInput = new ParserInput(virtualWiki, topicName);
 				parserInput.setContext(context);
 				parserInput.setLocale(locale);
-				parserInput.setVirtualWiki(virtualWiki);
-				parserInput.setTopicName(topicName);
 				content = ParserUtil.parse(parserInput, null, content);
 			}
 			WikiCache.addToCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key, content);
@@ -764,13 +762,11 @@ public class ServletUtil {
 			sectionEdit = false;
 		}
 		WikiUser user = ServletUtil.currentWikiUser();
-		ParserInput parserInput = new ParserInput();
+		ParserInput parserInput = new ParserInput(virtualWiki, topicName);
 		parserInput.setContext(request.getContextPath());
 		parserInput.setLocale(request.getLocale());
 		parserInput.setWikiUser(user);
-		parserInput.setTopicName(topicName);
 		parserInput.setUserDisplay(ServletUtil.getIpAddress(request));
-		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setAllowSectionEdit(sectionEdit);
 		ParserOutput parserOutput = new ParserOutput();
 		String content = null;

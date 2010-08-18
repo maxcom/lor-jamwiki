@@ -67,9 +67,7 @@ public class ParserUtil {
 	 * @throws ParserException Thrown if a parser error occurs.
 	 */
 	public static ParserOutput parserOutput(String content, String virtualWiki, String topicName) throws ParserException {
-		ParserInput parserInput = new ParserInput();
-		parserInput.setVirtualWiki(virtualWiki);
-		parserInput.setTopicName(topicName);
+		ParserInput parserInput = new ParserInput(virtualWiki, topicName);
 		parserInput.setAllowSectionEdit(false);
 		return ParserUtil.parseMetadata(parserInput, content);
 	}
@@ -206,11 +204,9 @@ public class ParserUtil {
 		if (topic == null || topic.getTopicContent() == null) {
 			return null;
 		}
-		ParserInput parserInput = new ParserInput();
+		ParserInput parserInput = new ParserInput(virtualWiki, topicName);
 		parserInput.setContext(context);
 		parserInput.setLocale(locale);
-		parserInput.setTopicName(topicName);
-		parserInput.setVirtualWiki(virtualWiki);
 		AbstractParser parser = ParserUtil.parserInstance(parserInput);
 		String content = null;
 		if (isSlice) {

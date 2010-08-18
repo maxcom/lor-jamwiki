@@ -292,13 +292,11 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		// parse for signatures and other syntax that should not be saved in raw form
 		WikiUser user = ServletUtil.currentWikiUser();
-		ParserInput parserInput = new ParserInput();
+		ParserInput parserInput = new ParserInput(virtualWiki, topicName);
 		parserInput.setContext(request.getContextPath());
 		parserInput.setLocale(request.getLocale());
 		parserInput.setWikiUser(user);
-		parserInput.setTopicName(topicName);
 		parserInput.setUserDisplay(ServletUtil.getIpAddress(request));
-		parserInput.setVirtualWiki(virtualWiki);
 		ParserOutput parserOutput = ParserUtil.parseMetadata(parserInput, contents);
 		// parse signatures and other values that need to be updated prior to saving
 		contents = ParserUtil.parseMinimal(parserInput, contents);

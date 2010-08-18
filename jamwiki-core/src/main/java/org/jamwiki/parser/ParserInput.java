@@ -46,7 +46,9 @@ public class ParserInput {
 	/**
 	 *
 	 */
-	public ParserInput() {
+	public ParserInput(String virtualWiki, String topicName) {
+		this.virtualWiki = virtualWiki;
+		this.topicName = topicName;
 	}
 
 	/**
@@ -252,17 +254,6 @@ public class ParserInput {
 	}
 
 	/**
-	 * Set the topic name for the topic being parsed by this parser input
-	 * instance.
-	 *
-	 * @param topicName The topic name for the topic being parsed by this
-	 *  parser input instance.
-	 */
-	public void setTopicName(String topicName) {
-		this.topicName = topicName;
-	}
-
-	/**
 	 * Get the user display name associated with the current parser input
 	 * instance.  This value is typically the user IP address and is used
 	 * primarily when parsing signatures.
@@ -295,17 +286,6 @@ public class ParserInput {
 	 */
 	public String getVirtualWiki() {
 		return this.virtualWiki;
-	}
-
-	/**
-	 * Set the virtual wiki name associated with the current parser input
-	 * instance.  The virtual wiki name is used primarily when parsing links.
-	 *
-	 * @param virtualWiki The virtual wiki name associated with the current
-	 *  parser input instance.
-	 */
-	public void setVirtualWiki(String virtualWiki) {
-		this.virtualWiki = virtualWiki;
 	}
 
 	/**
