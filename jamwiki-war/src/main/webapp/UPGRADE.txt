@@ -169,6 +169,10 @@ followed by 0.6.3.
               alter table jam_topic add constraint jam_f_topic_namesp FOREIGN KEY (namespace_id) REFERENCES jam_namespace(namespace_id);
               alter table jam_topic add column page_name VARCHAR(200);
               alter table jam_topic add column page_name_lower VARCHAR(200);
+       e) Add indexes to tables.
+              CREATE INDEX jam_i_topic_pgnm on jam_topic (page_name);
+              CREATE INDEX jam_i_topic_pgnml on jam_topic (page_name_lower);
+              CREATE INDEX jam_i_topicv_topic on jam_topic_version (topic_id);
   6. Once the database upgrades are complete the "Fix Incorrect Topic Namespaces"
      tool should be invoked from the Special:Maintenance page.  Provided that tool
      runs successfully then "NOT NULL" constraints should be added to the page_name
