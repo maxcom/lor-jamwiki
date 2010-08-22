@@ -154,11 +154,7 @@ public class DatabaseUpgrades {
 			Connection conn = DatabaseConnection.getConnection();
 			// add the jam_topic_links table
 			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_LINKS_TABLE", conn);
-			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_LINKS_INDEX", conn);
 			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_topic_links"));
-			// add an index for previous_topic_version_id on the jam_topic_version table
-			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_VERSION_PREVIOUS_INDEX", conn);
-			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic_version"));
 			// add the interwiki table
 			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_INTERWIKI_TABLE", conn);
 			// populate the jam_interwiki table
@@ -179,6 +175,9 @@ public class DatabaseUpgrades {
 			// transaction since if it fails the upgrade can still be considered successful.
 			status = DatabaseConnection.startTransaction(getTransactionDefinition());
 			Connection conn = DatabaseConnection.getConnection();
+			// add an index to the jam_topic_links table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_LINKS_INDEX", conn);
+			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic_links"));
 			// add an index to the jam_category table
 			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_CATEGORY_INDEX", conn);
 			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_category"));
@@ -187,8 +186,10 @@ public class DatabaseUpgrades {
 			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_NAMESPACE_INDEX", conn);
 			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_VIRTUAL_WIKI_INDEX", conn);
 			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic"));
-			// add an index for topic_id on the jam_topic_version table
-			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_VERSION_TOPIC_INDEX", conn);
+			// add several indexes to the jam_topic_version table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_VERSION_PREVIOUS_INDEX", conn);
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_VERSION_USER_DISPLAY_INDEX", conn);
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_VERSION_USER_ID_INDEX", conn);
 			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic_version"));
 		} catch (SQLException e) {
 			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
