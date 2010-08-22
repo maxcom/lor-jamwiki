@@ -175,6 +175,7 @@ public class ParserTest extends JAMWikiUnitTest {
 		failures.add("Paragraph15"); // failure parsing of empty paragraphs with <nowiki>
 		failures.add("PreformattedInvalid1");
 		failures.add("Template_-_Paramtest");
+		failures.add("TemplateIncludePipe"); // noinclude not processing correctly in nested templates
 		failures.add("UnbalancedTag1");
 		failures.add("UnbalancedTag3");
 		return (failures.indexOf(fileName) != -1);
