@@ -35,6 +35,11 @@ New Features:
   * Upgrade to Ehcache 2.1.0.
   * Upgrade to commons-fileupload-1.2.2.
 
+Bugfixes:
+
+  * Fix template parsing when <includeonly>|</includeonly> is used.
+  * Fix template parsing for syntax like "{{{template}}".
+
 Translation Updates:
 
   * Updated German translations (axelclk).

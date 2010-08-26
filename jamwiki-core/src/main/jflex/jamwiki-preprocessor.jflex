@@ -6,6 +6,7 @@
 package org.jamwiki.parser.jflex;
 
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 %%
@@ -31,7 +32,6 @@ import org.jamwiki.utils.WikiLogger;
 /* code copied verbatim into the generated .java file */
 %{
     private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiPreProcessor.class.getName());
-    protected int templateCharCount = 0;
     protected String templateString = "";
 %}
 
@@ -66,8 +66,7 @@ wikilink           = "[[" ({wikilinkcontent})+ "]]" [a-z]*
 nestedwikilink     = "[[" ({wikilinkcontent})+ "|" ({wikilinkcontent} | {wikilink})+ "]]"
 
 /* templates */
-templatestart      = "{{"
-templatestartchar  = "{"
+templatestart      = "{{" [^\{]
 templateendchar    = "}"
 templateparam      = "{{{" [^\{\}\n]+ "}}}"
 includeonly        = (<[ ]*includeonly[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*includeonly[ ]*>)
@@ -126,12 +125,13 @@ wikisignature      = ([~]{3,5})
 
 <YYINITIAL, TEMPLATE>{templatestart} {
     if (logger.isFinerEnabled()) logger.finer("templatestart: " + yytext() + " (" + yystate() + ")");
+    // push back the one non-template character that matched
+    yypushback(1);
     String raw = yytext();
     if (!allowTemplates()) {
         return yytext();
     }
     this.templateString += raw;
-    this.templateCharCount += 2;
     if (yystate() != TEMPLATE) {
         beginState(TEMPLATE);
     }
@@ -142,28 +142,11 @@ wikisignature      = ([~]{3,5})
     if (logger.isFinerEnabled()) logger.finer("templateendchar: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     this.templateString += raw;
-    this.templateCharCount -= raw.length();
-    if (this.templateCharCount == 0) {
+    if (Utilities.findMatchingEndTag(this.templateString, 0, "{", "}") != -1) {
         endState();
-        String value = new String(this.templateString);
+        String value = this.templateString;
         this.templateString = "";
         return this.parse(TAG_TYPE_TEMPLATE, value);
-    }
-    return "";
-}
-
-<TEMPLATE>{templatestartchar} {
-    if (logger.isFinerEnabled()) logger.finer("templatestartchar: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    this.templateString += raw;
-    this.templateCharCount += raw.length();
-    if (this.templateString.equals("{{{")) {
-        // param, not a template
-        this.templateCharCount = 0;
-        endState();
-        String value = new String(this.templateString);
-        this.templateString = "";
-        return value;
     }
     return "";
 }
