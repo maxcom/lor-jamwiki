@@ -39,6 +39,8 @@ Bugfixes:
 
   * Fix template parsing when <includeonly>|</includeonly> is used.
   * Fix template parsing for syntax like "{{{template}}".
+  * Interwiki links with no topic name of the form "[[interwiki:]]" should link
+    to the root page of the interwiki target site.
 
 Translation Updates:
 

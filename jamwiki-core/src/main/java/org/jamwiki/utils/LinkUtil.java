@@ -326,7 +326,13 @@ public class LinkUtil {
 			return null;
 		}
 		String url = wikiLink.getInterwiki().format(wikiLink.getDestination());
-		String text = (!StringUtils.isBlank(wikiLink.getText())) ? wikiLink.getText() : wikiLink.getDestination();
+		String text = wikiLink.getText();
+		if (StringUtils.isBlank(text)) {
+			text = wikiLink.getDestination();
+		}
+		if (StringUtils.isBlank(text)) {
+			text = wikiLink.getInterwiki().getInterwikiPrefix();
+		}
 		return "<a class=\"interwiki\" title=\"" + text + "\" href=\"" + url + "\">" + text + "</a>";
 	}
 
@@ -469,7 +475,8 @@ public class LinkUtil {
 	 *
 	 */
 	private static String processInterWiki(String processed, WikiLink wikiLink) {
-		int prefixPosition = LinkUtil.prefixPosition(processed);
+		// interwiki does not require a topic name, so do not use the prefixPosition method
+		int prefixPosition = processed.indexOf(Namespace.SEPARATOR, 1);
 		if (prefixPosition == -1) {
 			return processed;
 		}

@@ -44,7 +44,7 @@ public class WikiLinkTag implements JFlexParserTag {
 	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
 		boolean containsNestedLinks = (args.length > 0 && StringUtils.equals(args[0].toString(), "nested"));
 		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(lexer.getParserInput(), raw);
-		if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
+		if (wikiLink.getInterwiki() == null && StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
 			// no destination or section
 			return raw;
 		}

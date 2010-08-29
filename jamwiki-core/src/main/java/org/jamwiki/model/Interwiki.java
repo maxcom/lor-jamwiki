@@ -97,6 +97,9 @@ public class Interwiki {
 	 *  or if the topic name is invalid.
 	 */
 	public String format(String topicName) throws IllegalArgumentException {
+		if (StringUtils.isBlank(topicName)) {
+			topicName = "";
+		}
 		Object[] objects = {Utilities.encodeAndEscapeTopicName(topicName)};
 		return MessageFormat.format(this.getInterwikiPattern(), objects);
 	}
