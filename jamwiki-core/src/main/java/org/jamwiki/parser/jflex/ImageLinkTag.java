@@ -99,10 +99,7 @@ public class ImageLinkTag implements JFlexParserTag {
 	 */
 	private String parseImageLink(ParserInput parserInput, int mode, WikiLink wikiLink) throws DataAccessException, ParserException {
 		String context = parserInput.getContext();
-		ImageMetadata imageMetadata = parseImageParams(wikiLink.getText());
-		if (!StringUtils.isBlank(imageMetadata.getCaption())) {
-			imageMetadata.setCaption(JFlexParserUtil.parseFragment(parserInput, imageMetadata.getCaption(), mode));
-		}
+		ImageMetadata imageMetadata = parseImageParams(parserInput, mode, wikiLink.getText());
 		if (imageMetadata.getAlt() == null) {
 			// use the image name as the alt tag if no other value has been set
 			imageMetadata.setAlt(wikiLink.getArticle());
@@ -119,13 +116,14 @@ public class ImageLinkTag implements JFlexParserTag {
 	/**
 	 *
 	 */
-	private ImageMetadata parseImageParams(String paramText) {
+	private ImageMetadata parseImageParams(ParserInput parserInput, int mode, String paramText) throws ParserException {
 		ImageMetadata imageMetadata = new ImageMetadata();
 		if (StringUtils.isBlank(paramText)) {
 			return imageMetadata;
 		}
 		String[] tokens = paramText.split("\\|");
 		Matcher matcher;
+		String caption = "";
 		tokenLoop: for (int i = 0; i < tokens.length; i++) {
 			String token = tokens[i];
 			if (StringUtils.isBlank(token)) {
@@ -180,13 +178,19 @@ public class ImageLinkTag implements JFlexParserTag {
 				imageMetadata.setLink(matcher.group(1).trim());
 				continue tokenLoop;
 			}
-			// FIXME - this is a hack.  images may contain piped links, so if
-			// there was previous caption info append the new info.
-			if (StringUtils.isBlank(imageMetadata.getCaption())) {
-				imageMetadata.setCaption(token);
-			} else {
-				imageMetadata.setCaption(imageMetadata.getCaption() + "|" + token);
+			// this is a bit hackish.  string together any remaining content as a possible
+			// caption, then parse it and strip out anything after the first pipe character
+			caption += (StringUtils.isBlank(caption)) ? token : "|" + token;
+		}
+		// parse the caption and strip anything prior to the last "|" to handle syntax of
+		// the form "[[Image:Example.gif|caption1|caption2]]".
+		if (!StringUtils.isBlank(caption)) {
+			caption = JFlexParserUtil.parseFragment(parserInput, caption, mode);
+			int pos = caption.indexOf("|");
+			if (pos != -1) {
+				caption = (pos >= (caption.length() - 1)) ? " " : caption.substring(pos + 1);
 			}
+			imageMetadata.setCaption(caption);
 		}
 		if (imageMetadata.getVerticalAlignment() != ImageVerticalAlignmentEnum.NOT_SPECIFIED && (imageMetadata.getBorder() == ImageBorderEnum.THUMB || imageMetadata.getBorder() == ImageBorderEnum.FRAME)) {
 			// per spec, vertical alignment can only be set for non-thumb and non-frame

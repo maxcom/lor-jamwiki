@@ -172,3 +172,9 @@
 </div>
 </div>
 <p>Caption]]</p>
+<p>caption test #10</p>
+<div class="thumb tright">
+<div class="thumbinner" style="width:222px"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/test_image-300px.jpg" width="220" height="147" alt="Test Image.jpg" /></a>
+<div class="thumbcaption">caption2</div>
+</div>
+</div>

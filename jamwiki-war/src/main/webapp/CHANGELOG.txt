@@ -41,6 +41,8 @@ Bugfixes:
   * Fix template parsing for syntax like "{{{template}}".
   * Interwiki links with no topic name of the form "[[interwiki:]]" should link
     to the root page of the interwiki target site.
+  * Images with multiple captions ([[Image:Example.gif|caption1|caption2]])
+    should only render the last caption value specified.
 
 Translation Updates:
 
