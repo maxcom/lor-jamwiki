@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -39,13 +40,13 @@ public class JavascriptTag implements JFlexParserTag {
 			// no link to display
 			return raw;
 		}
-		return this.parseScriptTag(lexer.getParserInput(), raw, lexer.getMode());
+		return this.parseScriptTag(lexer.getParserInput(), lexer.getParserOutput(), raw, lexer.getMode());
 	}
 
 	/**
 	 *
 	 */
-	private String parseScriptTag(ParserInput parserInput, String raw, int mode) throws ParserException {
+	private String parseScriptTag(ParserInput parserInput, ParserOutput parserOutput, String raw, int mode) throws ParserException {
 		// get open <script> tag
 		int pos = raw.indexOf(">");
 		String openTag = raw.substring(0, pos + 1);
@@ -55,7 +56,7 @@ public class JavascriptTag implements JFlexParserTag {
 		String closeTag = raw.substring(pos);
 		raw = raw.substring(0, pos);
 		if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT)) {
-			return StringEscapeUtils.escapeHtml(openTag) + JFlexParserUtil.parseFragment(parserInput, raw, mode) + StringEscapeUtils.escapeHtml(closeTag);
+			return StringEscapeUtils.escapeHtml(openTag) + JFlexParserUtil.parseFragment(parserInput, parserOutput, raw, mode) + StringEscapeUtils.escapeHtml(closeTag);
 		}
 		JFlexTagItem tag = new JFlexTagItem("script", openTag);
 		tag.getTagContent().append(raw);

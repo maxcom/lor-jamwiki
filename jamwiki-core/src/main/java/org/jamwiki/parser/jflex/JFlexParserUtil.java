@@ -48,12 +48,11 @@ public class JFlexParserUtil {
 	 * as an image caption.  This method should be used sparingly since it is
 	 * not very efficient.
 	 */
-	public static String parseFragment(ParserInput parserInput, String raw, int mode) throws ParserException {
+	public static String parseFragment(ParserInput parserInput, ParserOutput parserOutput, String raw, int mode) throws ParserException {
 		if (StringUtils.isBlank(raw)) {
 			return raw;
 		}
 		JFlexParser parser = new JFlexParser(parserInput);
-		ParserOutput parserOutput = new ParserOutput();
 		return parser.parseFragment(parserOutput, raw, mode);
 	}
 
@@ -65,7 +64,7 @@ public class JFlexParserUtil {
 	 * @param raw The raw Wiki link text.
 	 * @return A WikiLink object that represents the link.
 	 */
-	protected static WikiLink parseWikiLink(ParserInput parserInput, String raw) throws ParserException {
+	protected static WikiLink parseWikiLink(ParserInput parserInput, ParserOutput parserOutput, String raw) throws ParserException {
 		if (StringUtils.isBlank(raw)) {
 			return new WikiLink();
 		}
@@ -75,7 +74,7 @@ public class JFlexParserUtil {
 		// private static final Pattern WIKI_LINK_PATTERN = Pattern.compile("\\[\\[\\s*(\\:\\s*)?\\s*(.+?)(\\s*\\|\\s*(.+))?\\s*\\]\\]([a-z]*)");
 		raw = raw.substring(raw.indexOf("[[") + 2, raw.lastIndexOf("]]")).trim();
 		// parse in case there is a template or magic word - [[{{PAGENAME}}]]
-		raw = JFlexParserUtil.parseFragment(parserInput, raw, JFlexParser.MODE_PREPROCESS);
+		raw = JFlexParserUtil.parseFragment(parserInput, parserOutput, raw, JFlexParser.MODE_PREPROCESS);
 		boolean colon = false;
 		if (raw.startsWith(":")) {
 			colon = true;

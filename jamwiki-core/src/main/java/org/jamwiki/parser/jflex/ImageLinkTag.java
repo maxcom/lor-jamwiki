@@ -25,6 +25,7 @@ import org.jamwiki.DataAccessException;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.ImageBorderEnum;
 import org.jamwiki.utils.ImageHorizontalAlignmentEnum;
 import org.jamwiki.utils.ImageVerticalAlignmentEnum;
@@ -57,7 +58,7 @@ public class ImageLinkTag implements JFlexParserTag {
 			// parse as a link if not doing a full parse
 			return lexer.parse(JFlexLexer.TAG_TYPE_WIKI_LINK, raw);
 		}
-		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(lexer.getParserInput(), raw);
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(lexer.getParserInput(), lexer.getParserOutput(), raw);
 		if (StringUtils.isBlank(wikiLink.getDestination())) {
 			// no destination or section
 			return raw;
@@ -67,7 +68,7 @@ public class ImageLinkTag implements JFlexParserTag {
 			return lexer.parse(JFlexLexer.TAG_TYPE_WIKI_LINK, raw);
 		}
 		try {
-			String result = this.parseImageLink(lexer.getParserInput(), lexer.getMode(), wikiLink);
+			String result = this.parseImageLink(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), wikiLink);
 			// depending on image alignment/border the image may be contained within a div.  If that's the
 			// case, close any open paragraph tags prior to pushing the image onto the stack
 			if (result.startsWith("<div") && lexer.peekTag().getTagType().equals("p")) {
@@ -97,9 +98,9 @@ public class ImageLinkTag implements JFlexParserTag {
 	/**
 	 *
 	 */
-	private String parseImageLink(ParserInput parserInput, int mode, WikiLink wikiLink) throws DataAccessException, ParserException {
+	private String parseImageLink(ParserInput parserInput, ParserOutput parserOutput, int mode, WikiLink wikiLink) throws DataAccessException, ParserException {
 		String context = parserInput.getContext();
-		ImageMetadata imageMetadata = parseImageParams(parserInput, mode, wikiLink.getText());
+		ImageMetadata imageMetadata = parseImageParams(parserInput, parserOutput, mode, wikiLink.getText());
 		if (imageMetadata.getAlt() == null) {
 			// use the image name as the alt tag if no other value has been set
 			imageMetadata.setAlt(wikiLink.getArticle());
@@ -116,7 +117,7 @@ public class ImageLinkTag implements JFlexParserTag {
 	/**
 	 *
 	 */
-	private ImageMetadata parseImageParams(ParserInput parserInput, int mode, String paramText) throws ParserException {
+	private ImageMetadata parseImageParams(ParserInput parserInput, ParserOutput parserOutput, int mode, String paramText) throws ParserException {
 		ImageMetadata imageMetadata = new ImageMetadata();
 		if (StringUtils.isBlank(paramText)) {
 			return imageMetadata;
@@ -185,7 +186,7 @@ public class ImageLinkTag implements JFlexParserTag {
 		// parse the caption and strip anything prior to the last "|" to handle syntax of
 		// the form "[[Image:Example.gif|caption1|caption2]]".
 		if (!StringUtils.isBlank(caption)) {
-			caption = JFlexParserUtil.parseFragment(parserInput, caption, mode);
+			caption = JFlexParserUtil.parseFragment(parserInput, parserOutput, caption, mode);
 			int pos = caption.indexOf("|");
 			if (pos != -1) {
 				caption = (pos >= (caption.length() - 1)) ? " " : caption.substring(pos + 1);

@@ -81,7 +81,7 @@ public class WikiReferencesTag implements JFlexParserTag {
 				html.append(reference.getCitation()).append("</a>&#160;");
 			}
 			html.append("</sup>");
-			html.append(JFlexParserUtil.parseFragment(lexer.getParserInput(), reference.getContent(), JFlexParser.MODE_PROCESS));
+			html.append(JFlexParserUtil.parseFragment(lexer.getParserInput(), lexer.getParserOutput(), reference.getContent(), JFlexParser.MODE_PROCESS));
 			html.append("</li>");
 		}
 		html.append("\n</ol>");

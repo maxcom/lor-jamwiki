@@ -53,12 +53,12 @@ public class TemplateTag implements JFlexParserTag {
 	 * voodoo magic that happens here to first parse any embedded values, and
 	 * to apply default values when no template value has been set.
 	 */
-	private String applyParameter(ParserInput parserInput, String param, Map<String, String> parameterValues) throws ParserException {
+	private String applyParameter(ParserInput parserInput, ParserOutput parserOutput, String param, Map<String, String> parameterValues) throws ParserException {
 		String content = param.substring("{{{".length(), param.length() - "}}}".length());
 		// re-parse in case of embedded templates or params
-		content = this.parseTemplateBody(parserInput, content, parameterValues);
+		content = this.parseTemplateBody(parserInput, parserOutput, content, parameterValues);
 		String name = this.parseParamName(content);
-		String defaultValue = this.parseParamDefaultValue(parserInput, content);
+		String defaultValue = this.parseParamDefaultValue(parserInput, parserOutput, content);
 		String value = parameterValues.get(name);
 		if (value == null && defaultValue == null) {
 			return param;
@@ -169,7 +169,7 @@ public class TemplateTag implements JFlexParserTag {
 	 * Given template parameter content of the form "name" or "name|default",
 	 * return the default value if it exists.
 	 */
-	private String parseParamDefaultValue(ParserInput parserInput, String raw) throws ParserException {
+	private String parseParamDefaultValue(ParserInput parserInput, ParserOutput parserOutput, String raw) throws ParserException {
 		List<String> tokens = JFlexParserUtil.tokenizeParamString(raw);
 		if (tokens.size() < 2) {
 			return null;
@@ -178,7 +178,7 @@ public class TemplateTag implements JFlexParserTag {
 		// the first parameter to avoid having to implement special table logic
 		String param1 = tokens.get(0);
 		String value = raw.substring(param1.length() + 1);
-		return JFlexParserUtil.parseFragment(parserInput, value, JFlexParser.MODE_PREPROCESS);
+		return JFlexParserUtil.parseFragment(parserInput, parserOutput, value, JFlexParser.MODE_PREPROCESS);
 	}
 
 	/**
@@ -221,7 +221,7 @@ public class TemplateTag implements JFlexParserTag {
 	 * and replace parameters with parameter values or defaults, processing any
 	 * embedded parameters or templates.
 	 */
-	private String parseTemplateBody(ParserInput parserInput, String content, Map<String, String> parameterValues) throws ParserException {
+	private String parseTemplateBody(ParserInput parserInput, ParserOutput parserOutput, String content, Map<String, String> parameterValues) throws ParserException {
 		StringBuilder output = new StringBuilder();
 		char current;
 		// find template parameters of the form {{{0}}}
@@ -261,10 +261,10 @@ public class TemplateTag implements JFlexParserTag {
 				continue;
 			}
 			String param = content.substring(pos, endPos);
-			output.append(this.applyParameter(parserInput, param, parameterValues));
+			output.append(this.applyParameter(parserInput, parserOutput, param, parameterValues));
 			pos = endPos - 1;
 		}
-		return JFlexParserUtil.parseFragment(parserInput, output.toString().trim(), JFlexParser.MODE_PREPROCESS);
+		return JFlexParserUtil.parseFragment(parserInput, parserOutput, output.toString().trim(), JFlexParser.MODE_PREPROCESS);
 	}
 
 	/**
@@ -336,7 +336,7 @@ public class TemplateTag implements JFlexParserTag {
 	private String processTemplateContent(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String templateContent, String name) throws ParserException {
 		// set template parameter values
 		Map<String, String> parameterValues = this.parseTemplateParameterValues(parserInput, templateContent);
-		return this.parseTemplateBody(parserInput, templateTopic.getTopicContent(), parameterValues);
+		return this.parseTemplateBody(parserInput, parserOutput, templateTopic.getTopicContent(), parameterValues);
 	}
 
 	/**

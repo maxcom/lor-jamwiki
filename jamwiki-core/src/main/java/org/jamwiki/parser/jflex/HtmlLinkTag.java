@@ -19,6 +19,7 @@ package org.jamwiki.parser.jflex;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
@@ -41,7 +42,7 @@ public class HtmlLinkTag implements JFlexParserTag {
 	 * @param raw The raw HTML link that is to be converted into an HTML link.
 	 * @return A formatted HTML link.
 	 */
-	private String buildHtmlLinkRaw(ParserInput parserInput, int mode, String raw) throws ParserException {
+	private String buildHtmlLinkRaw(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws ParserException {
 		String link = raw.trim();
 		// search for link text (space followed by text)
 		String punctuation = this.extractTrailingPunctuation(link);
@@ -57,7 +58,7 @@ public class HtmlLinkTag implements JFlexParserTag {
 		} else {
 			link = link.substring(0, link.length() - punctuation.length()).trim();
 		}
-		String html = this.linkHtml(parserInput, mode, link, text, punctuation);
+		String html = this.linkHtml(parserInput, parserOutput, mode, link, text, punctuation);
 		return (html == null) ? raw : html;
 	}
 
@@ -107,7 +108,7 @@ public class HtmlLinkTag implements JFlexParserTag {
 	/**
 	 *
 	 */
-	private String linkHtml(ParserInput parserInput, int mode, String link, String text, String punctuation) throws ParserException {
+	private String linkHtml(ParserInput parserInput, ParserOutput parserOutput, int mode, String link, String text, String punctuation) throws ParserException {
 		if (link.toLowerCase().startsWith("mailto://")) {
 			// fix bad mailto syntax
 			link = "mailto:" + link.substring("mailto://".length());
@@ -116,7 +117,7 @@ public class HtmlLinkTag implements JFlexParserTag {
 		if (!StringUtils.isBlank(text)) {
 			// pass a parameter via the parserInput to prevent nested links from being generated
 			parserInput.getTempParams().put(HTML_LINK_CAPTION, true);
-			caption = JFlexParserUtil.parseFragment(parserInput, text, mode);
+			caption = JFlexParserUtil.parseFragment(parserInput, parserOutput, text, mode);
 			parserInput.getTempParams().remove(HTML_LINK_CAPTION);
 		}
 		String openTag = LinkUtil.buildHtmlLinkOpenTag(link, "externallink");
@@ -142,6 +143,6 @@ public class HtmlLinkTag implements JFlexParserTag {
 			// "<a href="">this is the <a href="">link caption</a></a>"
 			return raw;
 		}
-		return this.buildHtmlLinkRaw(lexer.getParserInput(), lexer.getMode(), raw);
+		return this.buildHtmlLinkRaw(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), raw);
 	}
 }

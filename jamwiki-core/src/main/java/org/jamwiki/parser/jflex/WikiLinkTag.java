@@ -43,7 +43,7 @@ public class WikiLinkTag implements JFlexParserTag {
 	 */
 	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
 		boolean containsNestedLinks = (args.length > 0 && StringUtils.equals(args[0].toString(), "nested"));
-		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(lexer.getParserInput(), raw);
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(lexer.getParserInput(), lexer.getParserOutput(), raw);
 		if (wikiLink.getInterwiki() == null && StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
 			// no destination or section
 			return raw;
@@ -54,7 +54,7 @@ public class WikiLinkTag implements JFlexParserTag {
 				int start = raw.indexOf("[[");
 				int end = raw.lastIndexOf("]]");
 				String content = raw.substring(start + "[[".length(), end);
-				return "[[" + JFlexParserUtil.parseFragment(lexer.getParserInput(), content, lexer.getMode()) + "]]";
+				return "[[" + JFlexParserUtil.parseFragment(lexer.getParserInput(), lexer.getParserOutput(), content, lexer.getMode()) + "]]";
 			}
 		}
 		raw = this.processLinkMetadata(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), raw, wikiLink);
@@ -99,7 +99,7 @@ public class WikiLinkTag implements JFlexParserTag {
 			} else {
 				// pass a parameter via the parserInput to prevent nested links from being generated
 				lexer.getParserInput().getTempParams().put(LINK_CAPTION, true);
-				wikiLink.setText(JFlexParserUtil.parseFragment(lexer.getParserInput(), wikiLink.getText(), lexer.getMode()));
+				wikiLink.setText(JFlexParserUtil.parseFragment(lexer.getParserInput(), lexer.getParserOutput(), wikiLink.getText(), lexer.getMode()));
 				lexer.getParserInput().getTempParams().remove(LINK_CAPTION);
 			}
 			if (StringUtils.equals(wikiLink.getDestination(), lexer.getParserInput().getTopicName()) && StringUtils.equals(virtualWiki, lexer.getParserInput().getVirtualWiki()) && StringUtils.isBlank(wikiLink.getSection())) {
@@ -125,7 +125,7 @@ public class WikiLinkTag implements JFlexParserTag {
 		if (!wikiLink.getColon() && wikiLink.getNamespace().getId().equals(Namespace.CATEGORY_ID)) {
 			String sortKey = wikiLink.getText();
 			if (!StringUtils.isBlank(sortKey)) {
-				sortKey = JFlexParserUtil.parseFragment(parserInput, sortKey, JFlexParser.MODE_PREPROCESS);
+				sortKey = JFlexParserUtil.parseFragment(parserInput, parserOutput, sortKey, JFlexParser.MODE_PREPROCESS);
 			}
 			parserOutput.addCategory(wikiLink.getDestination(), sortKey);
 			if (mode > JFlexParser.MODE_MINIMAL) {

@@ -46,7 +46,7 @@ public class WikiSignatureTag implements JFlexParserTag {
 			wikiLinkTag.parse(lexer, signature);
 			if (lexer.getMode() != JFlexParser.MODE_MINIMAL) {
 				try {
-					signature = JFlexParserUtil.parseFragment(lexer.getParserInput(), signature, lexer.getMode());
+					signature = JFlexParserUtil.parseFragment(lexer.getParserInput(), lexer.getParserOutput(), signature, lexer.getMode());
 				} catch (ParserException e) {
 					logger.severe("Failure while building wiki signature", e);
 					// FIXME - return empty or a failure indicator?

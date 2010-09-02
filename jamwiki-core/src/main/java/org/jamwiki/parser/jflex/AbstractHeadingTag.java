@@ -19,6 +19,7 @@ package org.jamwiki.parser.jflex;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
@@ -74,8 +75,11 @@ public abstract class AbstractHeadingTag implements JFlexParserTag {
 	 *
 	 */
 	private String buildTocText(JFlexLexer lexer, String tagText) throws ParserException {
+		// since the TOC isn't part of the editable content use a copy of the parser input/
+		// and an empty output.
 		ParserInput tmpParserInput = new ParserInput(lexer.getParserInput());
-		String tocText = JFlexParserUtil.parseFragment(tmpParserInput, tagText, JFlexParser.MODE_PROCESS);
+		ParserOutput parserOutput = new ParserOutput();
+		String tocText = JFlexParserUtil.parseFragment(tmpParserInput, parserOutput, tagText, JFlexParser.MODE_PROCESS);
 		return Utilities.stripMarkup(tocText);
 	}
 
@@ -88,7 +92,7 @@ public abstract class AbstractHeadingTag implements JFlexParserTag {
 		output.append("<a name=\"").append(Utilities.encodeAndEscapeTopicName(tagName)).append("\"></a>");
 		output.append(generateTagOpen(raw, args));
 		output.append(this.buildSectionEditLink(lexer.getParserInput(), nextSection));
-		output.append("<span>").append(JFlexParserUtil.parseFragment(lexer.getParserInput(), tagText, lexer.getMode())).append("</span>");
+		output.append("<span>").append(JFlexParserUtil.parseFragment(lexer.getParserInput(), lexer.getParserOutput(), tagText, lexer.getMode())).append("</span>");
 		output.append("</h").append(level).append('>');
 		return output.toString();
 	}

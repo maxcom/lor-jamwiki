@@ -58,6 +58,32 @@ public class ParserTest extends JAMWikiUnitTest {
 	 *
 	 */
 	@Test
+	public void testCategory() throws Throwable {
+		this.executeCategoryTest("WikiCategory");
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testCategoryNested() throws Throwable {
+		this.executeCategoryTest("TemplateIncludeCategory");
+	}
+
+	/**
+	 *
+	 */
+	private void executeCategoryTest(String topicName) throws Throwable {
+		ParserOutput parserOutput = new ParserOutput();
+		String parserResult = this.parserResult(parserOutput, topicName);
+		assertEquals("Category Parsing", 1, parserOutput.getCategories().size());
+		assertNotNull("Category Parsing", parserOutput.getCategories().get("Category:Test"));
+	}
+
+	/**
+	 *
+	 */
+	@Test
 	public void testInterwiki1() throws Throwable {
 		// this topic has two interwiki links, but they both go to the same wikipedia page
 		ParserOutput parserOutput = new ParserOutput();

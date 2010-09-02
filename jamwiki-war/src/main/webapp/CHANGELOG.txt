@@ -43,6 +43,8 @@ Bugfixes:
     to the root page of the interwiki target site.
   * Images with multiple captions ([[Image:Example.gif|caption1|caption2]])
     should only render the last caption value specified.
+  * Fix a design flaw in processing of nested metadata, such as categories
+    included via templates or "link to" in records in image captions.
 
 Translation Updates:
 

@@ -297,9 +297,9 @@ public class JFlexParser extends AbstractParser {
 	 */
 	protected String parseRedirect(ParserOutput parserOutput, String raw) throws ParserException {
 		// pre-process the text to remove comments, categories, etc.
-		String preprocessed = JFlexParserUtil.parseFragment(parserInput, raw, JFlexParser.MODE_PREPROCESS);
+		String preprocessed = JFlexParserUtil.parseFragment(this.parserInput, parserOutput, raw, JFlexParser.MODE_PREPROCESS);
 		String redirect = this.isRedirect(preprocessed);
-		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(this.parserInput, "[[" + redirect + "]]");
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(this.parserInput, parserOutput, "[[" + redirect + "]]");
 		String style = "redirect";
 		try {
 			String virtualWiki = this.parserInput.getVirtualWiki();

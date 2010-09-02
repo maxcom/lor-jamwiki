@@ -99,13 +99,13 @@ public class JAMWikiModel extends AbstractWikiModel {
 	public void appendSignature(Appendable writer, int numberOfTildes) throws IOException {
 		switch (numberOfTildes) {
 		case 3:
-			writer.append(JFlexParserUtil.parseFragment(fParserInput, "~~~", JFlexParser.MODE_MINIMAL));
+			writer.append(JFlexParserUtil.parseFragment(fParserInput, fParserOutput, "~~~", JFlexParser.MODE_MINIMAL));
 			break;
 		case 4:
-			writer.append(JFlexParserUtil.parseFragment(fParserInput, "~~~~", JFlexParser.MODE_MINIMAL));
+			writer.append(JFlexParserUtil.parseFragment(fParserInput, fParserOutput, "~~~~", JFlexParser.MODE_MINIMAL));
 			break;
 		case 5:
-			writer.append(JFlexParserUtil.parseFragment(fParserInput, "~~~~~", JFlexParser.MODE_MINIMAL));
+			writer.append(JFlexParserUtil.parseFragment(fParserInput, fParserOutput, "~~~~~", JFlexParser.MODE_MINIMAL));
 			break;
 		}
 	}
