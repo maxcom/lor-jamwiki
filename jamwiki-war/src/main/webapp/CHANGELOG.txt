@@ -45,6 +45,8 @@ Bugfixes:
     should only render the last caption value specified.
   * Fix a design flaw in processing of nested metadata, such as categories
     included via templates or "link to" in records in image captions.
+  * A corrupt image should not halt page parsing; instead just display the
+    image name as text.
 
 Translation Updates:
 
