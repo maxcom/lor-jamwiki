@@ -38,7 +38,6 @@ import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.parser.ParserException;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.SpamFilter;
 import org.jamwiki.utils.WikiCache;
@@ -160,18 +159,17 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void links(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
+		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		try {
-			int numUpdated = WikiDatabase.rebuildTopicLinks();
+			int numUpdated = WikiDatabase.rebuildTopicMetadata();
 			next.addObject("message", new WikiMessage("admin.maintenance.message.topicsUpdated", Integer.toString(numUpdated)));
+		} catch (WikiException e) {
+			errors.add(e.getWikiMessage());
 		} catch (DataAccessException e) {
-			logger.severe("Failure while regenerating topic links", e);
-			List<WikiMessage> errors = new ArrayList<WikiMessage>();
+			logger.severe("Failure while regenerating topic metadata", e);
 			errors.add(new WikiMessage("admin.maintenance.error.linksfail", e.getMessage()));
-			next.addObject("errors", errors);
-		} catch (ParserException e) {
-			logger.severe("Failure while regenerating topic links", e);
-			List<WikiMessage> errors = new ArrayList<WikiMessage>();
-			errors.add(new WikiMessage("admin.maintenance.error.linksfail", e.getMessage()));
+		}
+		if (!errors.isEmpty()) {
 			next.addObject("errors", errors);
 		}
 		viewAdminSystem(request, next, pageInfo);

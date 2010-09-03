@@ -31,7 +31,6 @@ import org.jamwiki.WikiVersion;
 import org.jamwiki.db.DatabaseUpgrades;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.VirtualWiki;
-import org.jamwiki.parser.ParserException;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -111,16 +110,13 @@ public class UpgradeServlet extends JAMWikiServlet {
 					int topicCount = WikiBase.getDataHandler().lookupTopicCount(Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT), null);
 					if (topicCount < 1000) {
 						// populate the jam_topic_links table
-						WikiDatabase.rebuildTopicLinks();
+						WikiDatabase.rebuildTopicMetadata();
 						messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_topic_links"));
 					} else {
 						// print a message telling the user to do this step manually
 						messages.add(new WikiMessage("upgrade.message.100.topic.links"));
 					}
 				} catch (DataAccessException e) {
-					logger.warning("Failure during upgrade while generating topic link records.  Please use the tools on the Special:Maintenance page to complete this step.", e);
-					messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
-				} catch (ParserException e) {
 					logger.warning("Failure during upgrade while generating topic link records.  Please use the tools on the Special:Maintenance page to complete this step.", e);
 					messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 				}

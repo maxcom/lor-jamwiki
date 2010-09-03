@@ -154,7 +154,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	protected void addTopicLinks(List<String> links, int topicId, Connection conn) throws DataAccessException {
+	private void addTopicLinks(List<String> links, int topicId, Connection conn) throws DataAccessException {
 		// strip any links longer than 200 characters and any duplicates
 		Map<String, String> linksMap = new HashMap<String, String>();
 		for (String link : links) {
@@ -433,7 +433,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	protected void deleteTopicLinks(int topicId, Connection conn) throws DataAccessException {
+	private void deleteTopicLinks(int topicId, Connection conn) throws DataAccessException {
 		try {
 			this.queryHandler().deleteTopicLinks(topicId, conn);
 		} catch (SQLException e) {

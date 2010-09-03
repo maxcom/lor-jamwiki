@@ -128,8 +128,8 @@ followed by 0.6.3.
               CREATE INDEX jam_i_topicv_prv on jam_topic_version (previous_topic_version_id);
               CREATE INDEX jam_i_topicv_udisp on jam_topic_version (wiki_user_display);
               CREATE INDEX jam_i_topicv_uid on jam_topic_version (wiki_user_id);
-  4. Once the database upgrades are complete the "Regenerate Link to records"
-     tool should be invoked from the Special:Maintenance page.
+  4. Once the database upgrades are complete the "Regenerate Topic Metadata
+     Records" tool should be invoked from the Special:Maintenance page.
 
 
   JAMWiki 0.9.2

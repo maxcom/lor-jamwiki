@@ -475,9 +475,10 @@ public class WikiDatabase {
 	}
 
 	/**
-	 * Utility method for regenerating the "link to" records for all wiki topics.
+	 * Utility method for regenerating categories, "link to" records and other metadata
+	 * for all wiki topics.
 	 */
-	public static int rebuildTopicLinks() throws DataAccessException, ParserException {
+	public static int rebuildTopicMetadata() throws DataAccessException, WikiException {
 		int numUpdated = 0;
 		List<String> topicNames;
 		Topic topic;
@@ -494,17 +495,13 @@ public class WikiDatabase {
 					logger.warning("Invalid topic record found, possible database integrity issue: " + virtualWiki.getName() + " / " + topicName);
 					continue;
 				}
-				parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki.getName(), topicName);
-				Connection conn = null;
 				try {
-					conn = DatabaseConnection.getConnection();
-					((AnsiDataHandler)WikiBase.getDataHandler()).deleteTopicLinks(topic.getTopicId(), conn);
-					((AnsiDataHandler)WikiBase.getDataHandler()).addTopicLinks(parserOutput.getLinks(), topic.getTopicId(), conn);
-				} catch (SQLException e) {
-					throw new DataAccessException(e);
-				} finally {
-					DatabaseConnection.closeConnection(conn);
+					parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki.getName(), topicName);
+				} catch (ParserException e) {
+					logger.severe("Failure while regenerating topic metadata", e);
+					continue;
 				}
+				WikiBase.getDataHandler().writeTopic(topic, null, parserOutput.getCategories(), parserOutput.getLinks());
 			}
 			numUpdated += topicNames.size();
 		}
