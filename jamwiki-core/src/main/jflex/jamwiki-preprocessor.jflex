@@ -47,6 +47,7 @@ htmlpreattributes  = class|dir|id|lang|style|title
 htmlpreattribute   = ([ ]+) {htmlpreattributes} ([ ]*=[^>\n]+[ ]*)*
 htmlprestart       = (<[ ]*pre ({htmlpreattribute})* [ ]* (\/)? [ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
+htmlpre            = ({htmlprestart}) ~({htmlpreend})
 wikiprestart       = (" ")+ ([^ \t\n])
 wikipreend         = ([^ ]) | ({newline})
 
@@ -75,31 +76,21 @@ noinclude          = (<[ ]*noinclude[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*noinclude[ ]*>)
 /* signatures */
 wikisignature      = ([~]{3,5})
 
-%state PRE, WIKIPRE, TEMPLATE
+%state WIKIPRE, TEMPLATE
 
 %%
 
 /* ----- nowiki ----- */
 
-<YYINITIAL, WIKIPRE, PRE>{nowiki} {
+<YYINITIAL, WIKIPRE>{nowiki} {
     if (logger.isFinerEnabled()) logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
 
 /* ----- pre ----- */
 
-<YYINITIAL>{htmlprestart} {
-    if (logger.isFinerEnabled()) logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
-    if (allowHTML()) {
-        beginState(PRE);
-    }
-    return yytext();
-}
-
-<PRE>{htmlpreend} {
-    if (logger.isFinerEnabled()) logger.finer("htmlpreend: " + yytext() + " (" + yystate() + ")");
-    // state only changes to pre if allowHTML() is true, so no need to check here
-    endState();
+<YYINITIAL>{htmlpre} {
+    if (logger.isFinerEnabled()) logger.finer("htmlpre: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
 
@@ -224,12 +215,12 @@ wikisignature      = ([~]{3,5})
 
 /* ----- other ----- */
 
-<YYINITIAL, WIKIPRE, PRE>{whitespace} {
+<YYINITIAL, WIKIPRE>{whitespace} {
     // no need to log this
     return yytext();
 }
 
-<YYINITIAL, WIKIPRE, PRE>. {
+<YYINITIAL, WIKIPRE>. {
     // no need to log this
     return yytext();
 }
