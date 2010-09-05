@@ -622,11 +622,24 @@ public class ImageUtil {
 	}
 
 	/**
+	 * Add/Update a WikiFile record, and add a WikiFileVersion record.
 	 *
+	 * @param topic The Topic record corresponding to this WikiFile.
+	 * @param wikiFileVersion A skeleton WikiFileVersion record.  Most of the values of this
+	 *  record will be populated from other parameters passed to this method, but fields
+	 *  such as uploadComment should be populated prior to calling this method.
+	 * @param user The user who is creating the file record, or <code>null</code> if the user
+	 *  creating the file record is anonymous.
+	 * @param ipAddress The IP address of the user creating the file record.
+	 * @param filename The path on the filesystem relative to the file upload root for the
+	 *  file version being created.
+	 * @param url The relative URL for the file version being created.
+	 * @param contentType The MIME type of the file version record being created.  For
+	 *  example, "image/jpeg".
+	 * @param fileSize The size of the file version record in bytes.
+	 * @return The new or updated WikiFile record.
 	 */
-	public static WikiFile writeWikiFile(Topic topic, WikiUser user, String ipAddress, String filename, String url, String contentType, long fileSize) throws DataAccessException, WikiException {
-		WikiFileVersion wikiFileVersion = new WikiFileVersion();
-		wikiFileVersion.setUploadComment(topic.getTopicContent());
+	public static WikiFile writeWikiFile(Topic topic, WikiFileVersion wikiFileVersion, WikiUser user, String ipAddress, String filename, String url, String contentType, long fileSize) throws DataAccessException, WikiException {
 		wikiFileVersion.setAuthorDisplay(ipAddress);
 		Integer authorId = null;
 		if (user != null && user.getUserId() > 0) {

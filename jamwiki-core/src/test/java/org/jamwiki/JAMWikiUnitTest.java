@@ -32,6 +32,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
+import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.ImageUtil;
 import org.junit.Before;
@@ -130,15 +131,16 @@ public abstract class JAMWikiUnitTest {
 		// hard code image details - Image:Test Image.jpg will be created for both the "en"
 		// and "test" virtual wikis, while Image:Test Image2.jpg will be created only for
 		// the "test" virtual wiki.
+		WikiFileVersion wikiFileVersion = new WikiFileVersion();
 		if (topic.getName().equals("Image:Test Image.jpg") && virtualWiki.getName().equals("en")) {
 			WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
-			ImageUtil.writeWikiFile(topic, null, "127.0.0.1", "test_image.jpg", "/test_image.jpg", "image/jpeg", 61136);
+			ImageUtil.writeWikiFile(topic, wikiFileVersion, null, "127.0.0.1", "test_image.jpg", "/test_image.jpg", "image/jpeg", 61136);
 		} else if (topic.getName().equals("Image:Test Image.jpg") && virtualWiki.getName().equals("test")) {
 			WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
-			ImageUtil.writeWikiFile(topic, null, "127.0.0.1", "test_image_shared.jpg", "/test_image_shared.jpg", "image/jpeg", 61136);
+			ImageUtil.writeWikiFile(topic, wikiFileVersion, null, "127.0.0.1", "test_image_shared.jpg", "/test_image_shared.jpg", "image/jpeg", 61136);
 		} else if (topic.getName().equals("Image:Test Image2.jpg") && virtualWiki.getName().equals("test")) {
 			WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
-			ImageUtil.writeWikiFile(topic, null, "127.0.0.1", "test_image2_shared.jpg", "/test_image2_shared.jpg", "image/jpeg", 61136);
+			ImageUtil.writeWikiFile(topic, wikiFileVersion, null, "127.0.0.1", "test_image2_shared.jpg", "/test_image2_shared.jpg", "image/jpeg", 61136);
 		}
 	}
 }
