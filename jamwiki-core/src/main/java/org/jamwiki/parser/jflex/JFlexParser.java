@@ -39,6 +39,8 @@ public class JFlexParser extends AbstractParser {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexParser.class.getName());
 
+	/** Maximum number of parser iterations allowed for a single parsing run. */
+	private static final int MAX_PARSER_ITERATIONS = 100;
 	/** Any parsing that takes longer than the specified time (in ms) will trigger a log message. */
 	private static final int TIME_LIMIT_PARSE = 15;
 	/** Splice mode is used when inserting an edited topic section back into the full topic content. */
@@ -103,7 +105,7 @@ public class JFlexParser extends AbstractParser {
 		validate(lexer);
 		this.parserInput.incrementDepth();
 		// avoid infinite loops
-		if (this.parserInput.getDepth() > 100) {
+		if (this.parserInput.getDepth() > MAX_PARSER_ITERATIONS) {
 			this.parserInput.decrementDepth();
 			String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 			throw new ParserException("Infinite parsing loop - over " + this.parserInput.getDepth() + " parser iterations while parsing topic " + topicName);

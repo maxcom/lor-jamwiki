@@ -140,17 +140,6 @@ public class ParserInput {
 	}
 
 	/**
-	 * Since it is possible to call a new parser instance from within another
-	 * parser instance, depth provides a way to determine how many times the
-	 * parser has nested, thus providing a way of avoiding infinite loops.
-	 *
-	 * @param depth The current nesting level of the parser instance.
-	 */
-	public void setDepth(int depth) {
-		this.depth = depth;
-	}
-
-	/**
 	 * Get the locale associated with the current parser input instance.
 	 * Locale is used primarily when building links or displaying messages.
 	 *
@@ -231,15 +220,6 @@ public class ParserInput {
 	 */
 	public void incrementTemplateDepth() {
 		this.templateDepth++;
-	}
-
-	/**
-	 * Set the depth level when template code is being parsed.
-	 *
-	 * @param templateDepth The current number of template inclusions.
-	 */
-	public void setTemplateDepth(int templateDepth) {
-		this.templateDepth = templateDepth;
 	}
 
 	/**
