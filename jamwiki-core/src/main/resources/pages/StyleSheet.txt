@@ -601,12 +601,6 @@ img.gallery {
 	color: #5f5f5f;
 	clear: both;
 }
-.lightbg {
-	background-color: #fff;
-}
-.mediumbg {
-	background-color: #e9e9f8;
-}
 .darkbg {
 	background-color: #d8d8e7;
 }
