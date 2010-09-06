@@ -119,7 +119,23 @@ followed by 0.6.3.
                 interwiki_type INTEGER NOT NULL, 
                 CONSTRAINT jam_p_interw PRIMARY KEY (interwiki_prefix) 
               );
-       c) Add indexes to tables.
+       c) Add new columns to the jam_virtul_wiki table.
+            Oracle & MS SQL:
+              alter table jam_virtual_wiki add logo_image_url VARCHAR(200);
+              alter table jam_virtual_wiki add site_name VARCHAR(200);
+              alter table jam_virtual_wiki add meta_description VARCHAR(500);
+            Other Databases:
+              alter table jam_virtual_wiki add column logo_image_url VARCHAR(200);
+              alter table jam_virtual_wiki add column site_name VARCHAR(200);
+              alter table jam_virtual_wiki add column meta_description VARCHAR(500);
+       d) Drop the NOT NULL constraint on jam_virtual_wiki.default_topic_name:
+            Oracle & MySQL:
+              alter table jam_virtual_wiki modify default_topic_name VARCHAR(200) NULL;
+            Postgres:
+              alter table jam_virtual_wiki alter column default_topic_name drop NOT NULL;
+            Other Databases:
+              alter table jam_virtual_wiki alter column default_topic_name VARCHAR(200) NULL;
+       e) Add indexes to tables.
               CREATE INDEX jam_i_topic_links_tnm on jam_topic_links (link_topic_name);
               CREATE INDEX jam_i_category_cti on jam_category (child_topic_id);
               CREATE INDEX jam_i_topic_cver on jam_topic (current_version_id);

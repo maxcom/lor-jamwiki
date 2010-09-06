@@ -1606,6 +1606,9 @@ public class AnsiDataHandler implements DataHandler {
 	protected void validateVirtualWiki(VirtualWiki virtualWiki) throws WikiException {
 		checkLength(virtualWiki.getName(), 100);
 		checkLength(virtualWiki.getDefaultTopicName(), 200);
+		checkLength(virtualWiki.getLogoImageUrl(), 200);
+		checkLength(virtualWiki.getMetaDescription(), 500);
+		checkLength(virtualWiki.getSiteName(), 200);
 	}
 
 	/**

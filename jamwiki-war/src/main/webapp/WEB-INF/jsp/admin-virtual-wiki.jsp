@@ -96,14 +96,40 @@
 <div class="row">
 	<label for="defaultTopicName"><fmt:message key="admin.caption.defaulttopic" /></label>
 	<span>
-		<c:set var="virtualWikiName"><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %></c:set>
-		<c:if test="${!empty selected}">
-			<c:set var="virtualWikiName" value="${selected.defaultTopicName}" />
-		</c:if>
-		<input type="text" name="defaultTopicName" id="defaultTopicName" value="${virtualWikiName}" size="30" />
+		<c:set var="defaultTopicName" value="${(!empty selected) ? selected.defaultTopicName : ''}" />
+		<input type="text" name="defaultTopicName" id="defaultTopicName" value="${defaultTopicName}" size="50" />
+		&#160;&#160;&#160;<input type="checkbox" />&#160;<fmt:message key="admin.vwiki.caption.usedefault" />
 	</span>
 	<div class="formhelp"><fmt:message key="admin.vwiki.help.defaulttopic" /></div>
 </div>
+<div class="row">
+	<label for="virtualWikiSiteName"><fmt:message key="admin.caption.sitename" /></label>
+	<span>
+		<c:set var="virtualWikiSiteName" value="${(!empty selected) ? selected.siteName : ''}" />
+		<input type="text" name="virtualWikiSiteName" size="50" id="virtualWikiSiteName" value="${virtualWikiSiteName}" />
+		&#160;&#160;&#160;<input type="checkbox" />&#160;<fmt:message key="admin.vwiki.caption.usedefault" />
+	</span>
+	<div class="formhelp"><fmt:message key="admin.help.sitename" /></div>
+</div>
+<div class="row">
+	<label for="virtualWikiLogoImageUrl"><fmt:message key="admin.caption.logoimage" /></label>
+	<span>
+		<c:set var="virtualWikiLogoImageUrl" value="${(!empty selected) ? selected.logoImageUrl : ''}" />
+		<input type="text" name="virtualWikiLogoImageUrl" size="50" id="virtualWikiLogoImageUrl" value="${virtualWikiLogoImageUrl}" />
+		&#160;&#160;&#160;<input type="checkbox" />&#160;<fmt:message key="admin.vwiki.caption.usedefault" />
+	</span>
+	<div class="formhelp"><fmt:message key="admin.help.logoimage" /></div>
+</div>
+<div class="row">
+	<label for="virtualWikiMetaDescription"><fmt:message key="admin.caption.metadescription" /></label>
+	<span>
+		<c:set var="virtualWikiMetaDescription" value="${(!empty selected) ? selected.metaDescription : ''}" />
+		<textarea class="medium" name="virtualWikiMetaDescription" id="virtualWikiMetaDescription"><c:out value="${virtualWikiMetaDescription}" /></textarea>
+		&#160;&#160;&#160;<input type="checkbox" />&#160;<fmt:message key="admin.vwiki.caption.usedefault" />
+	</span>
+	<div class="formhelp"><fmt:message key="admin.help.metadescription" /></div>
+</div>
+
 <c:set var="buttonLabel"><fmt:message key="common.add" /></c:set>
 <c:if test="${!empty selected}">
 	<c:set var="buttonLabel"><fmt:message key="common.update" /></c:set>

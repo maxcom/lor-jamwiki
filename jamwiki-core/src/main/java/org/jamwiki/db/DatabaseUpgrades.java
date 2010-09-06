@@ -160,6 +160,16 @@ public class DatabaseUpgrades {
 			// populate the jam_interwiki table
 			WikiDatabase.setupDefaultInterwikis();
 			messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_interwiki"));
+			// update jam_virtual_wiki to add new columns
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_ADD_VIRTUAL_WIKI_LOGO_URL", conn);
+			messages.add(new WikiMessage("upgrade.message.db.column.added", "logo_image_url", "jam_virtual_wiki"));
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_ADD_VIRTUAL_WIKI_SITE_NAME", conn);
+			messages.add(new WikiMessage("upgrade.message.db.column.added", "site_name", "jam_virtual_wiki"));
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_ADD_VIRTUAL_WIKI_META_DESCRIPTION", conn);
+			messages.add(new WikiMessage("upgrade.message.db.column.added", "meta_description", "jam_virtual_wiki"));
+			// drop the not null constraints for jam_virtual_wiki.default_topic_name
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_DROP_VIRTUAL_WIKI_DEFAULT_TOPIC_NOT_NULL", conn);
+			messages.add(new WikiMessage("upgrade.message.db.column.modified", "default_topic_name", "jam_virtual_wiki"));
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			logger.severe("Database failure during upgrade", e);

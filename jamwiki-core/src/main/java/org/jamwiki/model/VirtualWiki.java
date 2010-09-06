@@ -26,8 +26,11 @@ import org.jamwiki.utils.WikiLogger;
 public class VirtualWiki implements Serializable {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(VirtualWiki.class.getName());
+	private String defaultTopicName = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
+	private String logoImageUrl = Environment.getValue(Environment.PROP_BASE_LOGO_IMAGE);
+	private String metaDescription = Environment.getValue(Environment.PROP_BASE_META_DESCRIPTION);
 	private String name = null;
-	private String defaultTopicName = null;
+	private String siteName = Environment.getValue(Environment.PROP_SITE_NAME);
 	private int virtualWikiId = -1;
 
 	/**
@@ -51,6 +54,34 @@ public class VirtualWiki implements Serializable {
 	}
 
 	/**
+	 *
+	 */
+	public String getLogoImageUrl() {
+		return this.logoImageUrl;
+	}
+
+	/**
+	 *
+	 */
+	public void setLogoImageUrl(String logoImageUrl) {
+		this.logoImageUrl = logoImageUrl;
+	}
+
+	/**
+	 *
+	 */
+	public String getMetaDescription() {
+		return this.metaDescription;
+	}
+
+	/**
+	 *
+	 */
+	public void setMetaDescription(String metaDescription) {
+		this.metaDescription = metaDescription;
+	}
+
+	/**
 	 * Determine if this virtual wiki matches the system default.
 	 */
 	public boolean isDefaultVirtualWiki() {
@@ -69,6 +100,20 @@ public class VirtualWiki implements Serializable {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 *
+	 */
+	public String getSiteName() {
+		return this.siteName;
+	}
+
+	/**
+	 *
+	 */
+	public void setSiteName(String siteName) {
+		this.siteName = siteName;
 	}
 
 	/**

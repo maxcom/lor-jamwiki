@@ -970,6 +970,9 @@ public class AnsiQueryHandler implements QueryHandler {
 				virtualWiki.setVirtualWikiId(rs.getInt("virtual_wiki_id"));
 				virtualWiki.setName(rs.getString("virtual_wiki_name"));
 				virtualWiki.setDefaultTopicName(rs.getString("default_topic_name"));
+				virtualWiki.setLogoImageUrl(rs.getString("logo_image_url"));
+				virtualWiki.setMetaDescription(rs.getString("meta_description"));
+				virtualWiki.setSiteName(rs.getString("site_name"));
 				results.add(virtualWiki);
 			}
 			return results;
@@ -1770,6 +1773,9 @@ public class AnsiQueryHandler implements QueryHandler {
 			}
 			stmt.setString(index++, virtualWiki.getName());
 			stmt.setString(index++, virtualWiki.getDefaultTopicName());
+			stmt.setString(index++, virtualWiki.getLogoImageUrl());
+			stmt.setString(index++, virtualWiki.getMetaDescription());
+			stmt.setString(index++, virtualWiki.getSiteName());
 			stmt.executeUpdate();
 			if (this.autoIncrementPrimaryKeys()) {
 				rs = stmt.getGeneratedKeys();
@@ -2830,7 +2836,10 @@ public class AnsiQueryHandler implements QueryHandler {
 		try {
 			stmt = conn.prepareStatement(STATEMENT_UPDATE_VIRTUAL_WIKI);
 			stmt.setString(1, virtualWiki.getDefaultTopicName());
-			stmt.setInt(2, virtualWiki.getVirtualWikiId());
+			stmt.setString(2, virtualWiki.getLogoImageUrl());
+			stmt.setString(3, virtualWiki.getMetaDescription());
+			stmt.setString(4, virtualWiki.getSiteName());
+			stmt.setInt(5, virtualWiki.getVirtualWikiId());
 			stmt.executeUpdate();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
