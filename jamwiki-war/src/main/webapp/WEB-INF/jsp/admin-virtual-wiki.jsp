@@ -44,10 +44,10 @@
 <!-- Add/Update Virtual Wiki -->
 <div id="vwiki" class="submenu-tab-item">
 <a name="vwiki"></a>
-<c:if test="${!empty message && function == 'virtualwiki'}">
+<c:if test="${!empty message && (function == 'virtualwiki' || function == 'defaultvwiki')}">
 <div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
-<c:if test="${!empty errors && function == 'virtualwiki'}">
+<c:if test="${!empty errors && (function == 'virtualwiki' || function == 'defaultvwiki')}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
 <%-- Select Virtual Wiki --%>
@@ -64,6 +64,27 @@
 		</select>
 	</span>
 	<div class="formhelp"><fmt:message key="admin.vwiki.help.search" /></div>
+</div>
+</fieldset>
+</form>
+<form action="<jamwiki:link value="Special:VirtualWiki" />#defaultvwiki" method="post">
+<fieldset>
+<legend><fmt:message key="admin.vwiki.title.defaultvirtualwiki" /></legend>
+<input type="hidden" name="function" value="defaultvwiki" />
+<c:if test="${!empty selected && selected.virtualWikiId != -1}">
+	<input type="hidden" name="selected" value="${selected.virtualWikiId}" />
+</c:if>
+<div class="row">
+	<label for="defaultVirtualWiki"><fmt:message key="admin.vwiki.caption.makedefault" /></label>
+	<span>
+		<select name="defaultVirtualWiki">
+		<c:forEach items="${wikis}" var="wiki"><option value="${wiki.name}" <c:if test="${wiki.name == defaultVirtualWiki}">selected="selected"</c:if>>${wiki.name}</option></c:forEach>
+		</select>
+	</span>
+	<div class="formhelp"><fmt:message key="admin.vwiki.help.makedefault" /></div>
+</div>
+<div class="row">
+	<span class="form-button"><input type="submit" value="<fmt:message key="common.update" />" /></span>
 </div>
 </fieldset>
 </form>
@@ -94,11 +115,6 @@
 		<input type="text" name="defaultTopicName" id="defaultTopicName" value="${virtualWikiName}" size="30" />
 	</span>
 	<div class="formhelp"><fmt:message key="admin.vwiki.help.defaulttopic" /></div>
-</div>
-<div class="row">
-	<label for="defaultVirtualWiki"><fmt:message key="admin.vwiki.caption.makedefault" /></label>
-	<span><jamwiki:checkbox name="defaultVirtualWiki" value="true" checked="${!empty selected && selected.defaultVirtualWiki}" id="defaultVirtualWiki" /></span>
-	<div class="formhelp"><fmt:message key="admin.vwiki.help.makedefault" /></div>
 </div>
 <c:set var="buttonLabel"><fmt:message key="common.add" /></c:set>
 <c:if test="${!empty selected}">

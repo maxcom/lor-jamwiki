@@ -68,6 +68,8 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			search(request, next, pageInfo);
 		} else if (function.equals("virtualwiki")) {
 			virtualWiki(request, next, pageInfo);
+		} else if (function.equals("defaultvwiki")) {
+			defaultVirtualWiki(request, next, pageInfo);
 		}
 		return next;
 	}
@@ -137,6 +139,26 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.vwiki.message.addnamespacesuccess", mainNamespace));
 		}
 		this.view(request, next, pageInfo);
+	}
+
+	/**
+	 *
+	 */
+	private void defaultVirtualWiki(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
+		List<WikiMessage> errors = new ArrayList<WikiMessage>();
+		String defaultVirtualWiki = request.getParameter("defaultVirtualWiki");
+		if (!StringUtils.isBlank(defaultVirtualWiki)) {
+			Environment.setValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT, defaultVirtualWiki);
+			try {
+				Environment.saveProperties();
+			} catch (IOException e) {
+				logger.severe("Failure while updating default virtual wiki", e);
+				errors.add(new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
+			}
+			next.addObject("message", new WikiMessage("admin.message.vwiki.defaultupdated", defaultVirtualWiki));
+		}
+		next.addObject("errors", errors);
+		view(request, next, pageInfo);
 	}
 
 	/**
@@ -244,6 +266,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			logger.severe("Failure while retrieving database records", e);
 			errors.add(new WikiMessage("error.unknown", e.getMessage()));
 		}
+		next.addObject("defaultVirtualWiki", Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT));
 		pageInfo.setContentJsp(JSP_ADMIN_VIRTUAL_WIKI);
 		pageInfo.setPageTitle(new WikiMessage("admin.vwiki.title"));
 		next.addObject("errors", errors);
@@ -272,13 +295,6 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 				// update
 				next.addObject("message", new WikiMessage("admin.message.virtualwikiupdated", virtualWiki.getName()));
 			}
-			if (StringUtils.equals(request.getParameter("defaultVirtualWiki"), "true")) {
-				Environment.setValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT, virtualWiki.getName());
-				Environment.saveProperties();
-			}
-		} catch (IOException e) {
-			logger.severe("Failure while adding virtual wiki", e);
-			errors.add(new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
 		} catch (DataAccessException e) {
 			logger.severe("Failure while adding virtual wiki", e);
 			errors.add(new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
