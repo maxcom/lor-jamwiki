@@ -25,13 +25,6 @@
 
 <div id="virtualwiki" class="admin">
 
-<c:if test="${!empty message && function == 'search'}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
-</c:if>
-<c:if test="${!empty errors && function == 'search'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
-</c:if>
-
 <!-- sub-menu tabs -->
 <ul class="tab-menu" id="tab_submenu">
 <li><a href="#vwiki"><fmt:message key="admin.vwiki.title.virtualwiki" /></a></li>
@@ -41,32 +34,15 @@
 </ul>
 <div class="submenu-tab-content">
 
-<!-- Add/Update Virtual Wiki -->
+<!-- Update Default Virtual Wiki -->
 <div id="vwiki" class="submenu-tab-item">
 <a name="vwiki"></a>
-<c:if test="${!empty message && (function == 'virtualwiki' || function == 'defaultvwiki')}">
+<c:if test="${!empty message}">
 <div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
-<c:if test="${!empty errors && (function == 'virtualwiki' || function == 'defaultvwiki')}">
+<c:if test="${!empty errors}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
-<%-- Select Virtual Wiki --%>
-<form action="<jamwiki:link value="Special:VirtualWiki" />#vwiki" method="get" name="selectvwiki">
-<input type="hidden" name="function" value="search" />
-<fieldset>
-<legend><fmt:message key="admin.vwiki.title.select" /></legend>
-<div class="row">
-	<label for="name"><fmt:message key="common.name" /></label>
-	<span>
-		<select name="selected" onchange="document.selectvwiki.submit()">
-		<option value=""></option>
-		<c:forEach items="${wikis}" var="wiki"><option value="${wiki.name}" <c:if test="${!empty selected && wiki.name == selected.name}">selected="selected"</c:if>>${wiki.name}</option></c:forEach>
-		</select>
-	</span>
-	<div class="formhelp"><fmt:message key="admin.vwiki.help.search" /></div>
-</div>
-</fieldset>
-</form>
 <form action="<jamwiki:link value="Special:VirtualWiki" />#defaultvwiki" method="post">
 <fieldset>
 <legend><fmt:message key="admin.vwiki.title.defaultvirtualwiki" /></legend>
@@ -88,23 +64,35 @@
 </div>
 </fieldset>
 </form>
-<form action="<jamwiki:link value="Special:VirtualWiki" />#vwiki" method="post">
+<!-- Add/Update Virtual Wiki -->
 <fieldset>
 <legend><fmt:message key="admin.vwiki.title.virtualwiki" /></legend>
+<form action="<jamwiki:link value="Special:VirtualWiki" />#vwiki" method="get" name="selectvwiki">
+<input type="hidden" name="function" value="search" />
+<div class="row">
+	<label for="name"><fmt:message key="admin.vwiki.caption.select" /></label>
+	<span>
+		<select name="selected" onchange="document.selectvwiki.submit()">
+		<option value=""></option>
+		<c:forEach items="${wikis}" var="wiki"><option value="${wiki.name}" <c:if test="${!empty selected && wiki.name == selected.name}">selected="selected"</c:if>>${wiki.name}</option></c:forEach>
+		</select>
+	</span>
+	<div class="formhelp"><fmt:message key="admin.vwiki.help.search" /></div>
+</div>
+</form>
+<form action="<jamwiki:link value="Special:VirtualWiki" />#vwiki" method="post">
 <input type="hidden" name="function" value="virtualwiki" />
 <c:if test="${!empty selected && selected.virtualWikiId != -1}">
 	<input type="hidden" name="virtualWikiId" value="${selected.virtualWikiId}" />
 	<input type="hidden" name="name" value="${selected.name}" />
 </c:if>
+<c:if test="${empty selected || selected.virtualWikiId == -1}">
 <div class="row">
 	<label for="name"><fmt:message key="common.name" /></label>
-	<span>
-		<c:choose>
-			<c:when test="${!empty selected && selected.virtualWikiId != -1}">${selected.name}</c:when>
-			<c:otherwise><input type="text" name="name" id="name" size="30" value="<c:if test="${!empty selected}">${selected.name}</c:if>" /></c:otherwise>
-		</c:choose>
-	</span>
+	<span><input type="text" name="name" id="name" size="30" value="<c:if test="${!empty selected}">${selected.name}</c:if>" /></span>
+	<div class="formhelp"><fmt:message key="admin.vwiki.help.name" /></div>
 </div>
+</c:if>
 <div class="row">
 	<label for="defaultTopicName"><fmt:message key="admin.caption.defaulttopic" /></label>
 	<span>
@@ -123,8 +111,8 @@
 <div class="row">
 	<span class="form-button"><input type="submit" value="${buttonLabel}" /></span>
 </div>
-</fieldset>
 </form>
+</fieldset>
 </div>
 
 <!-- Add Namesapce -->
@@ -187,7 +175,7 @@
 		<c:forEach items="${wikis}" var="wiki"><option value="${wiki.name}" <c:if test="${!empty selected && wiki.name == selected.name}">selected="selected"</c:if>>${wiki.name}</option></c:forEach>
 		</select>
 	</span>
-	<div class="formhelp"><fmt:message key="admin.vwiki.help.search" /></div>
+	<div class="formhelp"><fmt:message key="admin.vwiki.help.namespace.search" /></div>
 </div>
 </fieldset>
 </form>
