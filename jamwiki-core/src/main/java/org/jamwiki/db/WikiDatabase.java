@@ -86,7 +86,9 @@ public class WikiDatabase {
 		{"jam_group_authorities", null},
 		{"jam_recent_change", "topic_version_id"},
 		{"jam_log", null},
-		{"jam_watchlist", null}
+		{"jam_watchlist", null},
+		{"jam_topic_links", null},
+		{"jam_interwiki", null}
 	};
 
 	/**
