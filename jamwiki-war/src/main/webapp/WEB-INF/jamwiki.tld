@@ -10,30 +10,6 @@
 	<description>JAMWiki Tag Library</description>
 
 	<tag>
-		<name>alternate</name>
-		<tag-class>org.jamwiki.taglib.AlternateTag</tag-class>
-		<body-content>empty</body-content>
-		<description>
-			Tag alternates between two values, useful for functions such as
-			rotating background colors of table rows.
-		</description>
-		<attribute>
-			<name>attributeName</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>value1</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>value2</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-	</tag>
-	<tag>
 		<name>authmsg</name>
 		<tag-class>org.jamwiki.taglib.AuthMsgTag</tag-class>
 		<body-content>empty</body-content>
