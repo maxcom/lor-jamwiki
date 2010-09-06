@@ -49,28 +49,29 @@
 <fieldset>
 <legend><fmt:message key="roles.header.group" /></legend>
 <div class="rowhelp"><fmt:message key="roles.help.grouproles" /></div>
-<table border="0" class="contents" width="99%">
-<tr class="darkbg">
-	<th><fmt:message key="roles.caption.groupname" /></th>
+<div class="row">
+<table class="wiki-admin">
+<tr>
+	<th class="first"><fmt:message key="roles.caption.groupname" /></th>
 	<th colspan="3"><fmt:message key="roles.caption.roles" /></th>
 </tr>
 <c:forEach items="${roleMapGroups}" var="roleMap">
 	<c:if test="${!empty roleMap.groupId}">
-<tr class="<jamwiki:alternate value1="lightbg" value2="mediumbg" attributeName="userList" />">
+<tr>
 	<td>
 		<input type="hidden" name="candidateGroup" value="<c:out value="${roleMap.groupId}" />" />
 		<c:out value="${roleMap.groupName}" />
 	</td>
-		<c:forEach items="${roles}" var="role" varStatus="status">
-			<c:if test="${((3 * status.index) % roleCount) < 3}"><td></c:if>
-			<jamwiki:checkbox name="groupRole" value="${roleMap.userGroup}|${role.authority}" checked="${roleMap.roleNamesMap[role.authority]}" />&#160;<c:out value="${role.authority}" /><br />
-			<c:if test="${((3 * status.count) % roleCount) < 3}"></td></c:if>
-		</c:forEach>
+	<c:forEach items="${roles}" var="role" varStatus="status">
+		<c:if test="${((3 * status.index) % roleCount) < 3}"><td></c:if>
+		<jamwiki:checkbox name="groupRole" value="${roleMap.userGroup}|${role.authority}" checked="${roleMap.roleNamesMap[role.authority]}" />&#160;<c:out value="${role.authority}" /><br />
+		<c:if test="${((3 * status.count) % roleCount) < 3}"></td></c:if>
+	</c:forEach>
 </tr>
 	</c:if>
 </c:forEach>
-<tr><td colspan="4">&nbsp;</td></tr>
 </table>
+</div>
 <div align="center" style="padding:10px"><input type="submit" name="Submit" value="<fmt:message key="common.save" />" /></div>
 </fieldset>
 </form>
@@ -104,28 +105,30 @@
 <c:if test="${!empty roleMapUsers}">
 <form action="<jamwiki:link value="Special:Roles" />#user" method="post">
 <input type="hidden" name="function" value="assignRole" />
-<table border="0" class="contents" width="99%">
-<tr class="darkbg">
-	<th><fmt:message key="roles.caption.userlogin" /></th>
+<div class="row">
+<table class="wiki-admin">
+<tr>
+	<th class="first"><fmt:message key="roles.caption.userlogin" /></th>
 	<th colspan="3"><fmt:message key="roles.caption.roles" /></th>
 </tr>
 <c:forEach items="${roleMapUsers}" var="roleMap">
 	<c:if test="${!empty roleMap.userId}">
-<tr class="<jamwiki:alternate value1="lightbg" value2="mediumbg" attributeName="userList" />">
+<tr>
 	<td>
 		<input type="hidden" name="candidateUser" value="<c:out value="${roleMap.userId}" />" />
 		<input type="hidden" name="candidateUsername" value="<c:out value="${roleMap.userLogin}" />" />
 		<c:out value="${roleMap.userLogin}" />
 	</td>
-		<c:forEach items="${roles}" var="role" varStatus="status">
-			<c:if test="${((3 * status.index) % roleCount) < 3}"><td></c:if>
-			<jamwiki:checkbox name="userRole" value="${roleMap.userGroup}|${role.authority}" checked="${roleMap.roleNamesMap[role.authority]}" />&#160;<c:out value="${role.authority}" /><br />
-			<c:if test="${((3 * status.count) % roleCount) < 3}"></td></c:if>
-		</c:forEach>
+	<c:forEach items="${roles}" var="role" varStatus="status">
+		<c:if test="${((3 * status.index) % roleCount) < 3}"><td></c:if>
+		<jamwiki:checkbox name="userRole" value="${roleMap.userGroup}|${role.authority}" checked="${roleMap.roleNamesMap[role.authority]}" />&#160;<c:out value="${role.authority}" /><br />
+		<c:if test="${((3 * status.count) % roleCount) < 3}"></td></c:if>
+	</c:forEach>
 </tr>
 	</c:if>
 </c:forEach>
 </table>
+</div>
 <div class="row">
 	<span class="form-button"><input type="submit" name="Submit" value="<fmt:message key="common.save" />" /></span>
 </div>

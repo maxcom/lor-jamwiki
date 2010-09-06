@@ -50,7 +50,7 @@
 <c:if test="${!empty errors && function == 'virtualwiki'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
-<!-- Select Virtual Wiki -->
+<%-- Select Virtual Wiki --%>
 <form action="<jamwiki:link value="Special:VirtualWiki" />#vwiki" method="get" name="selectvwiki">
 <input type="hidden" name="function" value="search" />
 <fieldset>
@@ -255,17 +255,35 @@
 <c:if test="${!empty selected}">
 	<input type="hidden" name="selected" value="${selected.name}" />
 </c:if>
-<c:forEach items="${interwikis}" var="interwiki" varStatus="status">
+<c:if test="${!empty interwikis}">
 <div class="row">
-	<input type="hidden" name="interwikiPrefix" value="${interwiki.interwikiPrefix}" />
-	<label for="name">${interwiki.interwikiPrefix}</label>
-	<span>
+<table class="wiki-admin">
+<tr>
+	<th class="first"><fmt:message key="admin.vwiki.caption.interwiki.prefix" /></th>
+	<th><fmt:message key="admin.vwiki.caption.interwiki.pattern" /></th>
+	<th><fmt:message key="admin.vwiki.caption.interwiki.display" /></th>
+	<th><fmt:message key="common.delete" /></th>
+</tr>
+<c:forEach items="${interwikis}" var="interwiki" varStatus="status">
+<tr>
+	<td>
+		<input type="hidden" name="interwikiPrefix" value="${interwiki.interwikiPrefix}" />
+		<label for="name">${interwiki.interwikiPrefix}</label>
+	</td>
+	<td class="center">
 		<input type="text" name="pattern-${interwiki.interwikiPrefix}" size="50" maxlength="200" value="${interwiki.interwikiPattern}" />
+	</td>
+	<td class="center">
 		<input type="text" name="display-${interwiki.interwikiPrefix}" size="30" maxlength="30" value="${interwiki.interwikiDisplay}" />
-		<input type="checkbox" name="delete-${interwiki.interwikiPrefix}" value="true" /> <fmt:message key="common.delete" />
-	</span>
-</div>
+	</td>
+	<td class="center">
+		<input type="checkbox" name="delete-${interwiki.interwikiPrefix}" value="true" />
+	</td>
+</tr>
 </c:forEach>
+</table>
+</div>
+</c:if>
 <div class="row">
 	<span class="form-button"><input type="submit" value="<fmt:message key="common.update" />" /></span>
 </div>
