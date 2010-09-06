@@ -61,10 +61,15 @@ public class WikiDatabase {
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiDatabase.class.getName());
 	/** Root directory within the WAR distribution that contains the default topic pages. */
 	public static final String SPECIAL_PAGE_DIR = "pages";
+	// array used in database migration - elements are table name and, if elements within the
+	// table have dependencies (such as jam_namespace dependending on main_namespace_id), the
+	// column to sort results be in order to avoid foreign key constrain violations
 	private static final String[][] JAMWIKI_DB_TABLE_INFO = {
 		{"jam_virtual_wiki", "virtual_wiki_id"},
 		{"jam_users", null},
 		{"jam_wiki_user", "wiki_user_id"},
+		{"jam_namespace", "namespace_id"},
+		{"jam_namespace_translation", "namespace_id"},
 		{"jam_topic", "topic_id"},
 		{"jam_topic_version", "topic_version_id"},
 		{"jam_file", "file_id"},
@@ -76,6 +81,7 @@ public class WikiDatabase {
 		{"jam_authorities", null},
 		{"jam_group_authorities", null},
 		{"jam_recent_change", "topic_version_id"},
+		{"jam_log", null},
 		{"jam_watchlist", null}
 	};
 
@@ -201,8 +207,15 @@ public class WikiDatabase {
 				for (int j = 0; j <= maxIndex; j += RECORDS_PER_CYCLE) {
 					select = new StringBuilder("SELECT * FROM ").append(JAMWIKI_DB_TABLE_INFO[i][0]);
 					if (!StringUtils.isBlank(JAMWIKI_DB_TABLE_INFO[i][1])) {
-						select.append(" WHERE ").append(JAMWIKI_DB_TABLE_INFO[i][1]).append(" > ").append(j);
-						select.append(" AND ").append(JAMWIKI_DB_TABLE_INFO[i][1]).append(" <= ").append(j + RECORDS_PER_CYCLE);
+						if (j == 0) {
+							// for the first record do not set a lower limit in case there is an ID less
+							// than zero
+							select.append(" WHERE ");
+						} else {
+							select.append(" WHERE ").append(JAMWIKI_DB_TABLE_INFO[i][1]).append(" > ").append(j);
+							select.append(" AND ");
+						}
+						select.append(JAMWIKI_DB_TABLE_INFO[i][1]).append(" <= ").append(j + RECORDS_PER_CYCLE);
 						select.append(" ORDER BY ").append(JAMWIKI_DB_TABLE_INFO[i][1]);
 					}
 					insert = new StringBuilder();

@@ -16,6 +16,8 @@ Bugfixes:
     systems.  Reported by an anonymous user.
   * Fix an invalid "You may not remove ROLE_SYSADMIN from your own account"
     message on the Special:Roles page when updating the sysadmin account.
+  * Make sure all tables are properly migrated when using the
+    Special:Maintenance "database migration" functionality.
 
 
 0.9.1
