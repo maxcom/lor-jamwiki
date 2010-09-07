@@ -282,10 +282,18 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 		if (!StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
 			virtualWiki.setVirtualWikiId(Integer.valueOf(request.getParameter("virtualWikiId")));
 		}
-		virtualWiki.setRootTopicName(WikiUtil.getParameterFromRequest(request, "rootTopicName", true));
-		virtualWiki.setLogoImageUrl(request.getParameter("virtualWikiLogoImageUrl"));
-		virtualWiki.setMetaDescription(request.getParameter("virtualWikiMetaDescription"));
-		virtualWiki.setSiteName(request.getParameter("virtualWikiSiteName"));
+		if (StringUtils.isBlank(request.getParameter("defaultRootTopicName"))) {
+			virtualWiki.setRootTopicName(WikiUtil.getParameterFromRequest(request, "rootTopicName", true));
+		}
+		if (StringUtils.isBlank(request.getParameter("defaultVirtualWikiLogoImageUrl"))) {
+			virtualWiki.setLogoImageUrl(request.getParameter("virtualWikiLogoImageUrl"));
+		}
+		if (StringUtils.isBlank(request.getParameter("defaultVirtualWikiMetaDescription"))) {
+			virtualWiki.setMetaDescription(request.getParameter("virtualWikiMetaDescription"));
+		}
+		if (StringUtils.isBlank(request.getParameter("defaultVirtualWikiSiteName"))) {
+			virtualWiki.setSiteName(request.getParameter("virtualWikiSiteName"));
+		}
 		try {
 			WikiBase.getDataHandler().writeVirtualWiki(virtualWiki);
 			if (StringUtils.isBlank(request.getParameter("virtualWikiId"))) {

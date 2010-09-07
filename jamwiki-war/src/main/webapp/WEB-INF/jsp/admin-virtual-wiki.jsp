@@ -97,7 +97,7 @@
 	<span>
 		<c:set var="rootTopicName" value="${(!empty selected) ? selected.rootTopicName : defaultVirtualWiki.rootTopicName}" />
 		<input type="text" name="rootTopicName" id="rootTopicName" value="${rootTopicName}" size="50" />
-		&#160;&#160;&#160;<input type="checkbox"<c:if test="${empty selected || selected.defaultRootTopicName}"> checked="checked"</c:if> />&#160;<fmt:message key="admin.vwiki.caption.usedefault" />
+		&#160;&#160;&#160;<input type="checkbox" name="defaultRootTopicName" id="defaultRootTopicName" value="${defaultVirtualWiki.rootTopicName}"<c:if test="${empty selected || selected.defaultRootTopicName}"> checked="checked"</c:if> />&#160;<fmt:message key="admin.vwiki.caption.usedefault" />
 	</span>
 	<div class="formhelp"><fmt:message key="admin.vwiki.help.defaulttopic" /></div>
 </div>
@@ -106,7 +106,7 @@
 	<span>
 		<c:set var="virtualWikiSiteName" value="${(!empty selected) ? selected.siteName : defaultVirtualWiki.siteName}" />
 		<input type="text" name="virtualWikiSiteName" size="50" id="virtualWikiSiteName" value="${virtualWikiSiteName}" />
-		&#160;&#160;&#160;<input type="checkbox"<c:if test="${empty selected || selected.defaultSiteName}"> checked="checked"</c:if> />&#160;<fmt:message key="admin.vwiki.caption.usedefault" />
+		&#160;&#160;&#160;<input type="checkbox" name="defaultVirtualWikiSiteName" id="defaultVirtualWikiSiteName" value="${defaultVirtualWiki.siteName}"<c:if test="${empty selected || selected.defaultSiteName}"> checked="checked"</c:if> />&#160;<fmt:message key="admin.vwiki.caption.usedefault" />
 	</span>
 	<div class="formhelp"><fmt:message key="admin.help.sitename" /></div>
 </div>
@@ -115,7 +115,7 @@
 	<span>
 		<c:set var="virtualWikiLogoImageUrl" value="${(!empty selected) ? selected.logoImageUrl : defaultVirtualWiki.logoImageUrl}" />
 		<input type="text" name="virtualWikiLogoImageUrl" size="50" id="virtualWikiLogoImageUrl" value="${virtualWikiLogoImageUrl}" />
-		&#160;&#160;&#160;<input type="checkbox"<c:if test="${empty selected || selected.defaultLogoImageUrl}"> checked="checked"</c:if> />&#160;<fmt:message key="admin.vwiki.caption.usedefault" />
+		&#160;&#160;&#160;<input type="checkbox" name="defaultVirtualWikiLogoImageUrl" id="defaultVirtualWikiLogoImageUrl" value="${defaultVirtualWiki.logoImageUrl}"<c:if test="${empty selected || selected.defaultLogoImageUrl}"> checked="checked"</c:if> />&#160;<fmt:message key="admin.vwiki.caption.usedefault" />
 	</span>
 	<div class="formhelp"><fmt:message key="admin.help.logoimage" /></div>
 </div>
@@ -124,7 +124,7 @@
 	<span>
 		<c:set var="virtualWikiMetaDescription" value="${(!empty selected) ? selected.metaDescription : defaultVirtualWiki.metaDescription}" />
 		<textarea class="medium" name="virtualWikiMetaDescription" id="virtualWikiMetaDescription"><c:out value="${virtualWikiMetaDescription}" /></textarea>
-		&#160;&#160;&#160;<input type="checkbox"<c:if test="${empty selected || selected.defaultMetaDescription}"> checked="checked"</c:if> />&#160;<fmt:message key="admin.vwiki.caption.usedefault" />
+		&#160;&#160;&#160;<input type="checkbox" name="defaultVirtualWikiMetaDescription" id="defaultVirtualWikiMetaDescription" value="${defaultVirtualWiki.metaDescription}"<c:if test="${empty selected || selected.defaultMetaDescription}"> checked="checked"</c:if> />&#160;<fmt:message key="admin.vwiki.caption.usedefault" />
 	</span>
 	<div class="formhelp"><fmt:message key="admin.help.metadescription" /></div>
 </div>

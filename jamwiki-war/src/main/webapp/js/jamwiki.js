@@ -1,4 +1,18 @@
 var JAMWiki = JAMWiki || {};
+if (!Function.bind) {
+	// allow binding of a function to a specific scope.  Usage: myFunction.bind(this, args).
+	Function.prototype.bind = function(scope) {
+		var _function = this;
+		// trim the argument array (if any) to remove the scope argument
+		var args = new Array();
+		for (var i = 1; i < arguments.length; i++) {
+			args[i - 1] = arguments[i];
+		}
+		return function() {
+			return _function.apply(scope, args);
+		}
+	}
+}
 JAMWiki.Editor = function() {
 	var alertText;
 	var clientPC = navigator.userAgent.toLowerCase(); // Get client info
@@ -192,6 +206,36 @@ JAMWiki.Tabs = function() {
 		}
 	};
 }();
+JAMWiki.Admin = function() {
+	// array of checkbox ID and corresponding text input ID
+	var virtualWikiCheckboxArray = [
+			['defaultRootTopicName', 'rootTopicName'],
+			['defaultVirtualWikiSiteName', 'virtualWikiSiteName'],
+			['defaultVirtualWikiLogoImageUrl', 'virtualWikiLogoImageUrl'],
+			['defaultVirtualWikiMetaDescription', 'virtualWikiMetaDescription']
+	];
+	function toggleInputState(checkbox, input) {
+		input.disabled = checkbox.checked;
+		if (checkbox.checked) {
+			input.value = checkbox.value;
+		}
+	}
+	return {
+		initializeVirtualWikiCheckboxes: function() {
+			for (var i = 0; i < virtualWikiCheckboxArray.length; i++) {
+				var checkbox = document.getElementById(virtualWikiCheckboxArray[i][0]);
+				if (!checkbox) {
+					// not available on this page
+					break;
+				}
+				var input = document.getElementById(virtualWikiCheckboxArray[i][1]);
+				checkbox.onclick = toggleInputState.bind(JAMWiki.Admin, checkbox, input);
+				toggleInputState(checkbox, input);
+			}
+		}
+	};
+}();
 window.onload = function() {
 	JAMWiki.Tabs.initializeTabs();
+	JAMWiki.Admin.initializeVirtualWikiCheckboxes();
 }
