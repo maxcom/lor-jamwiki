@@ -17,6 +17,7 @@
 package org.jamwiki.model;
 
 import java.io.Serializable;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 
@@ -26,38 +27,32 @@ import org.jamwiki.utils.WikiLogger;
 public class VirtualWiki implements Serializable {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(VirtualWiki.class.getName());
-	private String defaultTopicName = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
-	private String logoImageUrl = Environment.getValue(Environment.PROP_BASE_LOGO_IMAGE);
-	private String metaDescription = Environment.getValue(Environment.PROP_BASE_META_DESCRIPTION);
+	private String rootTopicName = null;
+	private String logoImageUrl = null;
+	private String metaDescription = null;
 	private String name = null;
-	private String siteName = Environment.getValue(Environment.PROP_SITE_NAME);
+	private String siteName = null;
 	private int virtualWikiId = -1;
 
 	/**
 	 *
 	 */
-	public VirtualWiki() {
+	public VirtualWiki(String name) {
+		this.name = name;
 	}
 
 	/**
-	 *
+	 * Temporary utility method for returning a virtual wiki containing only default values.
 	 */
-	public String getDefaultTopicName() {
-		return this.defaultTopicName;
-	}
-
-	/**
-	 *
-	 */
-	public void setDefaultTopicName(String defaultTopicName) {
-		this.defaultTopicName = defaultTopicName;
+	public static VirtualWiki defaultVirtualWiki() {
+		return new VirtualWiki(Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT));
 	}
 
 	/**
 	 *
 	 */
 	public String getLogoImageUrl() {
-		return this.logoImageUrl;
+		return (StringUtils.isBlank(this.logoImageUrl) ? Environment.getValue(Environment.PROP_BASE_LOGO_IMAGE) : this.logoImageUrl);
 	}
 
 	/**
@@ -70,8 +65,15 @@ public class VirtualWiki implements Serializable {
 	/**
 	 *
 	 */
+	public boolean isDefaultLogoImageUrl() {
+		return (StringUtils.isBlank(this.logoImageUrl) || StringUtils.equals(this.logoImageUrl, Environment.getValue(Environment.PROP_BASE_LOGO_IMAGE)));
+	}
+
+	/**
+	 *
+	 */
 	public String getMetaDescription() {
-		return this.metaDescription;
+		return (StringUtils.isBlank(this.metaDescription) ? Environment.getValue(Environment.PROP_BASE_META_DESCRIPTION) : this.metaDescription);
 	}
 
 	/**
@@ -79,6 +81,13 @@ public class VirtualWiki implements Serializable {
 	 */
 	public void setMetaDescription(String metaDescription) {
 		this.metaDescription = metaDescription;
+	}
+
+	/**
+	 *
+	 */
+	public boolean isDefaultMetaDescription() {
+		return (StringUtils.isBlank(this.metaDescription) || StringUtils.equals(this.metaDescription, Environment.getValue(Environment.PROP_BASE_META_DESCRIPTION)));
 	}
 
 	/**
@@ -98,15 +107,29 @@ public class VirtualWiki implements Serializable {
 	/**
 	 *
 	 */
-	public void setName(String name) {
-		this.name = name;
+	public String getRootTopicName() {
+		return (StringUtils.isBlank(this.rootTopicName) ? Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) : this.rootTopicName);
+	}
+
+	/**
+	 *
+	 */
+	public void setRootTopicName(String rootTopicName) {
+		this.rootTopicName = rootTopicName;
+	}
+
+	/**
+	 *
+	 */
+	public boolean isDefaultRootTopicName() {
+		return (StringUtils.isBlank(this.rootTopicName) || StringUtils.equals(this.rootTopicName, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC)));
 	}
 
 	/**
 	 *
 	 */
 	public String getSiteName() {
-		return this.siteName;
+		return (StringUtils.isBlank(this.siteName) ? Environment.getValue(Environment.PROP_SITE_NAME) : this.siteName);
 	}
 
 	/**
@@ -114,6 +137,13 @@ public class VirtualWiki implements Serializable {
 	 */
 	public void setSiteName(String siteName) {
 		this.siteName = siteName;
+	}
+
+	/**
+	 *
+	 */
+	public boolean isDefaultSiteName() {
+		return (StringUtils.isBlank(this.siteName) || StringUtils.equals(this.siteName, Environment.getValue(Environment.PROP_SITE_NAME)));
 	}
 
 	/**

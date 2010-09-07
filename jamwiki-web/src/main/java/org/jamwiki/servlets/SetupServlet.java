@@ -30,6 +30,7 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.db.WikiDatabase;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
@@ -71,7 +72,8 @@ public class SetupServlet extends JAMWikiServlet {
 				throw new WikiException(new WikiMessage("setup.error.jdk", Integer.valueOf(MINIMUM_JDK_VERSION).toString(), System.getProperty("java.version")));
 			}
 			if (!StringUtils.isBlank(function) && initialize(request, next, pageInfo)) {
-				ServletUtil.redirect(next, Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT), Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
+				VirtualWiki virtualWiki = VirtualWiki.defaultVirtualWiki();
+				ServletUtil.redirect(next, virtualWiki.getName(), virtualWiki.getRootTopicName());
 			} else {
 				view(request, next, pageInfo);
 			}

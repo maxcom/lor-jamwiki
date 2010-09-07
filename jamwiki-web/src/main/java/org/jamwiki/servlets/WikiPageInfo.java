@@ -64,7 +64,7 @@ public class WikiPageInfo {
 		this.virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
 		if (this.virtualWikiName == null) {
 			logger.severe("No virtual wiki available for page request " + request.getRequestURI());
-			this.virtualWikiName = Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT);
+			this.virtualWikiName = VirtualWiki.defaultVirtualWiki().getName();
 		}
 	}
 
@@ -182,7 +182,7 @@ public class WikiPageInfo {
 	 *  meta tag.
 	 */
 	public String getMetaDescription() {
-		String pattern = Environment.getValue(Environment.PROP_BASE_META_DESCRIPTION);
+		String pattern = this.getVirtualWiki().getMetaDescription();
 		if (StringUtils.isBlank(pattern)) {
 			return "";
 		}
@@ -319,7 +319,7 @@ public class WikiPageInfo {
 	 *  wiki.  This value is configurable through the Special:Admin interface.
 	 */
 	public String getSiteName() {
-		return Environment.getValue(Environment.PROP_SITE_NAME);
+		return this.getVirtualWiki().getSiteName();
 	}
 
 	/**
@@ -405,6 +405,20 @@ public class WikiPageInfo {
 	 */
 	public void setUserMenu(LinkedHashMap<String, WikiMessage> userMenu) {
 		this.userMenu = userMenu;
+	}
+
+	/**
+	 * Utility method for retrieving a VirtualWiki object given the virtual wiki
+	 * name.
+	 */
+	public VirtualWiki getVirtualWiki() {
+		VirtualWiki virtualWiki = VirtualWiki.defaultVirtualWiki();
+		try {
+			virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(this.getVirtualWikiName());
+		} catch (DataAccessException e) {
+			logger.severe("Failure while retrieving virtual wiki: " + this.getVirtualWikiName(), e);
+		}
+		return virtualWiki;
 	}
 
 	/**

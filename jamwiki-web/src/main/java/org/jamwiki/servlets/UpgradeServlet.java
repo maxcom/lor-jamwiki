@@ -107,7 +107,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 			// perform any additional upgrades required
 			if (oldVersion.before(1, 0, 0)) {
 				try {
-					int topicCount = WikiBase.getDataHandler().lookupTopicCount(Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT), null);
+					int topicCount = WikiBase.getDataHandler().lookupTopicCount(VirtualWiki.defaultVirtualWiki().getName(), null);
 					if (topicCount < 1000) {
 						// populate the jam_topic_links table
 						WikiDatabase.rebuildTopicMetadata();
@@ -156,11 +156,11 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 */
 	private void handleUpgradeSuccess(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
 		WikiMessage wm = new WikiMessage("upgrade.caption.upgradecomplete");
+		VirtualWiki virtualWiki = VirtualWiki.defaultVirtualWiki();
+		WikiLink wikiLink = new WikiLink();
+		wikiLink.setDestination(virtualWiki.getRootTopicName());
 		try {
-			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT));
-			WikiLink wikiLink = new WikiLink();
-			wikiLink.setDestination(virtualWiki.getDefaultTopicName());
-			String htmlLink = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki.getName(), wikiLink, virtualWiki.getDefaultTopicName(), null, null, true);
+			String htmlLink = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki.getName(), wikiLink, virtualWiki.getRootTopicName(), null, null, true);
 			// do not escape the HTML link
 			wm.setParamsWithoutEscaping(new String[]{htmlLink});
 		} catch (DataAccessException e) {

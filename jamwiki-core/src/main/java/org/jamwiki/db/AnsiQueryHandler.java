@@ -966,10 +966,9 @@ public class AnsiQueryHandler implements QueryHandler {
 			rs = stmt.executeQuery();
 			List<VirtualWiki> results = new ArrayList<VirtualWiki>();
 			while (rs.next()) {
-				VirtualWiki virtualWiki = new VirtualWiki();
+				VirtualWiki virtualWiki = new VirtualWiki(rs.getString("virtual_wiki_name"));
 				virtualWiki.setVirtualWikiId(rs.getInt("virtual_wiki_id"));
-				virtualWiki.setName(rs.getString("virtual_wiki_name"));
-				virtualWiki.setDefaultTopicName(rs.getString("default_topic_name"));
+				virtualWiki.setRootTopicName(rs.getString("default_topic_name"));
 				virtualWiki.setLogoImageUrl(rs.getString("logo_image_url"));
 				virtualWiki.setMetaDescription(rs.getString("meta_description"));
 				virtualWiki.setSiteName(rs.getString("site_name"));
@@ -1772,10 +1771,10 @@ public class AnsiQueryHandler implements QueryHandler {
 				stmt = conn.prepareStatement(STATEMENT_INSERT_VIRTUAL_WIKI_AUTO_INCREMENT, Statement.RETURN_GENERATED_KEYS);
 			}
 			stmt.setString(index++, virtualWiki.getName());
-			stmt.setString(index++, virtualWiki.getDefaultTopicName());
-			stmt.setString(index++, virtualWiki.getLogoImageUrl());
-			stmt.setString(index++, virtualWiki.getMetaDescription());
-			stmt.setString(index++, virtualWiki.getSiteName());
+			stmt.setString(index++, (virtualWiki.isDefaultRootTopicName() ? null : virtualWiki.getRootTopicName()));
+			stmt.setString(index++, (virtualWiki.isDefaultLogoImageUrl() ? null : virtualWiki.getLogoImageUrl()));
+			stmt.setString(index++, (virtualWiki.isDefaultMetaDescription() ? null : virtualWiki.getMetaDescription()));
+			stmt.setString(index++, (virtualWiki.isDefaultSiteName() ? null : virtualWiki.getSiteName()));
 			stmt.executeUpdate();
 			if (this.autoIncrementPrimaryKeys()) {
 				rs = stmt.getGeneratedKeys();
@@ -2835,10 +2834,10 @@ public class AnsiQueryHandler implements QueryHandler {
 		PreparedStatement stmt = null;
 		try {
 			stmt = conn.prepareStatement(STATEMENT_UPDATE_VIRTUAL_WIKI);
-			stmt.setString(1, virtualWiki.getDefaultTopicName());
-			stmt.setString(2, virtualWiki.getLogoImageUrl());
-			stmt.setString(3, virtualWiki.getMetaDescription());
-			stmt.setString(4, virtualWiki.getSiteName());
+			stmt.setString(1, (virtualWiki.isDefaultRootTopicName() ? null : virtualWiki.getRootTopicName()));
+			stmt.setString(2, (virtualWiki.isDefaultLogoImageUrl() ? null : virtualWiki.getLogoImageUrl()));
+			stmt.setString(3, (virtualWiki.isDefaultMetaDescription() ? null : virtualWiki.getMetaDescription()));
+			stmt.setString(4, (virtualWiki.isDefaultSiteName() ? null : virtualWiki.getSiteName()));
 			stmt.setInt(5, virtualWiki.getVirtualWikiId());
 			stmt.executeUpdate();
 		} finally {

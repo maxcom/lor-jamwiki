@@ -148,7 +148,7 @@ public class RegisterServlet extends JAMWikiServlet {
 				this.view(request, next, pageInfo);
 			} else {
 				VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
-				String topic = virtualWiki.getDefaultTopicName();
+				String topic = virtualWiki.getRootTopicName();
 				ServletUtil.redirect(next, virtualWikiName, topic);
 			}
 		}

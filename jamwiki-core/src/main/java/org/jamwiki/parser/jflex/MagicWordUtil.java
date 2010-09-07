@@ -29,6 +29,7 @@ import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.LinkUtil;
@@ -499,7 +500,8 @@ public class MagicWordUtil {
 			return (topicVersion == null) ? "" : Integer.toString(topicVersion.getTopicVersionId());
 		}
 		if (name.equals(MAGIC_SITE_NAME)) {
-			return Environment.getValue(Environment.PROP_SITE_NAME);
+			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(parserInput.getVirtualWiki());
+			return virtualWiki.getSiteName();
 		}
 		if (name.equals(MAGIC_SERVER)) {
 			return Environment.getValue(Environment.PROP_SERVER_URL);

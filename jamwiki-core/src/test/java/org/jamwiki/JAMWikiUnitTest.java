@@ -76,9 +76,8 @@ public abstract class JAMWikiUnitTest {
 		WikiUser wikiUser = new WikiUser(username);
 		WikiBase.reset(locale, wikiUser, username, password);
 		// set up a second "test" virtual wiki
-		VirtualWiki virtualWiki = new VirtualWiki();
-		virtualWiki.setName("test");
-		virtualWiki.setDefaultTopicName("StartingPoints");
+		VirtualWiki virtualWiki = new VirtualWiki("test");
+		virtualWiki.setRootTopicName("StartingPoints");
 		WikiBase.getDataHandler().writeVirtualWiki(virtualWiki);
 		WikiBase.getDataHandler().setupSpecialPages(locale, wikiUser, virtualWiki);
 	}

@@ -708,9 +708,7 @@ public class WikiDatabase {
 	 */
 	private static void setupDefaultVirtualWiki() throws DataAccessException, WikiException {
 		logger.info("Creating default virtual wiki");
-		VirtualWiki virtualWiki = new VirtualWiki();
-		virtualWiki.setName(Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT));
-		virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
+		VirtualWiki virtualWiki = VirtualWiki.defaultVirtualWiki();
 		WikiBase.getDataHandler().writeVirtualWiki(virtualWiki);
 	}
 

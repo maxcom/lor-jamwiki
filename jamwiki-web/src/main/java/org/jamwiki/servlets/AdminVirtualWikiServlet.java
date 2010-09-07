@@ -253,6 +253,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 				next.addObject("selected", virtualWiki);
 			}
 		}
+		next.addObject("defaultVirtualWiki", VirtualWiki.defaultVirtualWiki());
 		// initialize page defaults
 		pageInfo.setAdmin(true);
 		try {
@@ -266,7 +267,6 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			logger.severe("Failure while retrieving database records", e);
 			errors.add(new WikiMessage("error.unknown", e.getMessage()));
 		}
-		next.addObject("defaultVirtualWiki", Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT));
 		pageInfo.setContentJsp(JSP_ADMIN_VIRTUAL_WIKI);
 		pageInfo.setPageTitle(new WikiMessage("admin.vwiki.title"));
 		next.addObject("errors", errors);
@@ -278,12 +278,11 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 	private void virtualWiki(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
 		WikiUser user = ServletUtil.currentWikiUser();
 		List<WikiMessage> errors = new ArrayList<WikiMessage>();
-		VirtualWiki virtualWiki = new VirtualWiki();
+		VirtualWiki virtualWiki = new VirtualWiki(request.getParameter("name"));
 		if (!StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
 			virtualWiki.setVirtualWikiId(Integer.valueOf(request.getParameter("virtualWikiId")));
 		}
-		virtualWiki.setName(request.getParameter("name"));
-		virtualWiki.setDefaultTopicName(WikiUtil.getParameterFromRequest(request, "defaultTopicName", true));
+		virtualWiki.setRootTopicName(WikiUtil.getParameterFromRequest(request, "rootTopicName", true));
 		virtualWiki.setLogoImageUrl(request.getParameter("virtualWikiLogoImageUrl"));
 		virtualWiki.setMetaDescription(request.getParameter("virtualWikiMetaDescription"));
 		virtualWiki.setSiteName(request.getParameter("virtualWikiSiteName"));

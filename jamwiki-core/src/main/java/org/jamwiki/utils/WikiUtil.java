@@ -186,17 +186,15 @@ public class WikiUtil {
 	 * Determine the URL for the default virtual wiki topic, not including the application server context.
 	 */
 	public static String findDefaultVirtualWikiUrl(String virtualWikiName) {
-		if (StringUtils.isBlank(virtualWikiName)) {
-			virtualWikiName = Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT);
+		VirtualWiki virtualWiki = VirtualWiki.defaultVirtualWiki();
+		if (!StringUtils.isBlank(virtualWikiName)) {
+			try {
+				virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
+			} catch (DataAccessException e) {
+				logger.warning("Unable to retrieve default topic for virtual wiki", e);
+			}
 		}
-		String target = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
-		try {
-			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
-			target = virtualWiki.getDefaultTopicName();
-		} catch (DataAccessException e) {
-			logger.warning("Unable to retrieve default topic for virtual wiki", e);
-		}
-		return "/" + virtualWikiName + "/" + target;
+		return "/" + virtualWiki.getName() + "/" + virtualWiki.getRootTopicName();
 	}
 
 	/**
@@ -273,8 +271,9 @@ public class WikiUtil {
 	 * @throws DataAccessException Thrown if any error occurs while retrieving data.
 	 */
 	public static String getBaseUrl() throws DataAccessException {
+		VirtualWiki virtualWiki = VirtualWiki.defaultVirtualWiki();
 		String url = Environment.getValue(Environment.PROP_SERVER_URL);
-		url += LinkUtil.buildTopicUrl(WEBAPP_CONTEXT_PATH, Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT), Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC), true);
+		url += LinkUtil.buildTopicUrl(WEBAPP_CONTEXT_PATH, virtualWiki.getName(), virtualWiki.getRootTopicName(), true);
 		return url;
 	}
 
