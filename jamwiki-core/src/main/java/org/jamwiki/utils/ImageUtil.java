@@ -29,8 +29,11 @@ import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import net.sf.ehcache.Element;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
@@ -314,7 +317,6 @@ public class ImageUtil {
 		}
 		// otherwise generate a scaled instance
 		File imageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
-		BufferedImage original = ImageUtil.loadImage(imageFile);
 		BufferedImage bufferedImage = ImageUtil.resizeImage(imageFile, incrementalWidth, incrementalHeight);
 		newUrl = buildImagePath(wikiImage.getUrl(), originalDimensions.getWidth(), bufferedImage.getWidth());
 		newImageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), newUrl);
@@ -432,9 +434,11 @@ public class ImageUtil {
 		ImageDimensions originalDimensions = ImageUtil.retrieveFromCache(wikiImage);
 		if (originalDimensions == null) {
 			File file = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
-			BufferedImage imageObject = ImageUtil.loadImage(file);
-			originalDimensions = new ImageDimensions(imageObject.getWidth(), imageObject.getHeight());
-			addToCache(wikiImage, imageObject.getWidth(), imageObject.getHeight());
+			originalDimensions = ImageUtil.retrieveImageDimensions(file);
+			if (originalDimensions == null) {
+				throw new IllegalArgumentException("Invalid image: " + wikiImage.getUrl());
+			}
+			addToCache(wikiImage, originalDimensions.getWidth(), originalDimensions.getHeight());
 		}
 		if (!imageMetadata.getAllowEnlarge() && imageMetadata.getMaxWidth() > originalDimensions.getWidth() && imageMetadata.getMaxHeight() > originalDimensions.getHeight()) {
 			imageMetadata.setMaxWidth(originalDimensions.getWidth());
@@ -484,15 +488,14 @@ public class ImageUtil {
 
 	/**
 	 * Given a File object, determine if the file is an image or if it is some
-	 * other type of file.  Note that this method will read in the entire file,
-	 * so there are performance implications for large files.
+	 * other type of file.
 	 *
 	 * @param file The File object for the file that is being examined.
 	 * @return Returns <code>true</code> if the file is an image object.
 	 */
 	public static boolean isImage(File file) {
 		try {
-			return (ImageUtil.loadImage(file) != null);
+			return (ImageUtil.retrieveImageDimensions(file) != null);
 		} catch (IOException x) {
 			return false;
 		}
@@ -526,34 +529,23 @@ public class ImageUtil {
 	}
 
 	/**
-	 * Utility method for resizing an image given the image file.
-	 */
-	public static BufferedImage resizeImage(File imageFile, int incrementalWidth, int incrementalHeight) throws IOException {
-		long start = System.currentTimeMillis();
-		BufferedImage original = ImageUtil.loadImage(imageFile);
-		BufferedImage resizedImage = ImageUtil.resizeImage(original, incrementalWidth, incrementalHeight);
-		if (logger.isFineEnabled()) {
-			long current = System.currentTimeMillis();
-			String message = "Image resize time (" + ((current - start) / 1000.000) + " s), dimensions: " + incrementalWidth + "x" + incrementalHeight + " for file: " + imageFile.getAbsolutePath();
-			logger.fine(message);
-		}
-		return resizedImage;
-	}
-
-	/**
 	 * Convenience method that returns a scaled instance of the provided BufferedImage. Taken
 	 * from http://today.java.net/pub/a/today/2007/04/03/perils-of-image-getscaledinstance.html.
 	 * This method never resizes by more than 50% since resizing by more than that amount
 	 * causes quality issues.
 	 *
-	 * @param img the original image to be scaled.
+	 * @param imageFile The file path for the original image to be scaled.
 	 * @param targetWidth the desired width of the scaled instance in pixels.
 	 * @param targetHeight the desired height of the scaled instance in pixels.
 	 * @return a scaled version of the original {@code BufferedImage}
 	 */
-	public static BufferedImage resizeImage(BufferedImage img, int targetWidth, int targetHeight) {
+	public static BufferedImage resizeImage(File imageFile, int targetWidth, int targetHeight) throws IOException {
+		long start = System.currentTimeMillis();
+		BufferedImage img = ImageUtil.loadImage(imageFile);
 		int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-		BufferedImage ret = (BufferedImage)img;
+		BufferedImage ret = img;
+		BufferedImage tmp;
+		Graphics2D g2;
 		int w = img.getWidth();
 		int h = img.getHeight();
 		do {
@@ -569,13 +561,18 @@ public class ImageUtil {
 					h = targetHeight;
 				}
 			}
-			BufferedImage tmp = new BufferedImage(w, h, type);
-			Graphics2D g2 = tmp.createGraphics();
+			tmp = new BufferedImage(w, h, type);
+			g2 = tmp.createGraphics();
 			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 			g2.drawImage(ret, 0, 0, w, h, null);
 			g2.dispose();
 			ret = tmp;
 		} while (w != targetWidth || h != targetHeight);
+		if (logger.isFineEnabled()) {
+			long current = System.currentTimeMillis();
+			String message = "Image resize time (" + ((current - start) / 1000.000) + " s), dimensions: " + targetWidth + "x" + targetHeight + " for file: " + imageFile.getAbsolutePath();
+			logger.fine(message);
+		}
 		return ret;
 	}
 
@@ -604,6 +601,37 @@ public class ImageUtil {
 		filename = FilenameUtils.getName(filename);
 		filename = StringUtils.replace(filename.trim(), " ", "_");
 		return filename;
+	}
+
+	/**
+	 * Retrieve image dimensions.  This method simply reads headers so it should perform
+	 * relatively fast.
+	 */
+	private static ImageDimensions retrieveImageDimensions(File imageFile) throws IOException {
+		ImageInputStream iis = null;
+		ImageDimensions dimensions = null;
+		ImageReader reader = null;
+		try {
+			iis = ImageIO.createImageInputStream(imageFile);
+			Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+			if (readers.hasNext()) {
+				reader = readers.next();
+				reader.setInput(iis, true);
+				dimensions = new ImageDimensions(reader.getWidth(0), reader.getHeight(0));
+			}
+		} finally {
+			if (reader != null) {
+				reader.dispose();
+			}
+			if (iis != null) {
+				try {
+					iis.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+		}
+		return dimensions;
 	}
 
 	/**

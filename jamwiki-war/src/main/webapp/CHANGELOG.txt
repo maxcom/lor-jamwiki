@@ -50,6 +50,7 @@ Bugfixes:
     included via templates or "link to" in records in image captions.
   * A corrupt image should not halt page parsing; instead just display the
     image name as text.
+  * Refactor image processing code to use less memory and avoid OOM errors.
 
 Translation Updates:
 
