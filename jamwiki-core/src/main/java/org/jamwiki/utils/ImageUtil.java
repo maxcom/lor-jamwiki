@@ -17,9 +17,8 @@
 package org.jamwiki.utils;
 
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
 import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -316,23 +315,7 @@ public class ImageUtil {
 		// otherwise generate a scaled instance
 		File imageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
 		BufferedImage original = ImageUtil.loadImage(imageFile);
-		BufferedImage bufferedImage = null;
-		try {
-			Graphics2D g2dIn = original.createGraphics();
-			GraphicsConfiguration gc = g2dIn.getDeviceConfiguration();
-			g2dIn.dispose();
-			bufferedImage = gc.createCompatibleImage(incrementalWidth, incrementalHeight, original.getColorModel().getTransparency());
-			Graphics2D g2dOut = bufferedImage.createGraphics();
-			g2dOut.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-			double xScale = ((double)incrementalWidth) / (double)originalDimensions.getWidth();
-			double yScale = ((double)incrementalHeight) / (double)originalDimensions.getHeight();
-			AffineTransform at = AffineTransform.getScaleInstance(xScale, yScale);
-			g2dOut.drawRenderedImage(original, at);
-			g2dOut.dispose();
-		} catch (Throwable t) {
-			logger.severe("Unable to resize image.  This problem sometimes occurs due to dependencies between Java and X on UNIX systems.  Consider enabling an X server or setting the java.awt.headless parameter to true for your JVM.", t);
-			bufferedImage = original;
-		}
+		BufferedImage bufferedImage = ImageUtil.resizeImage(imageFile, incrementalWidth, incrementalHeight);
 		newUrl = buildImagePath(wikiImage.getUrl(), originalDimensions.getWidth(), bufferedImage.getWidth());
 		newImageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), newUrl);
 		ImageUtil.saveImage(bufferedImage, newImageFile);
@@ -540,6 +523,60 @@ public class ImageUtil {
 				} catch (IOException e) {}
 			}
 		}
+	}
+
+	/**
+	 * Utility method for resizing an image given the image file.
+	 */
+	public static BufferedImage resizeImage(File imageFile, int incrementalWidth, int incrementalHeight) throws IOException {
+		long start = System.currentTimeMillis();
+		BufferedImage original = ImageUtil.loadImage(imageFile);
+		BufferedImage resizedImage = ImageUtil.resizeImage(original, incrementalWidth, incrementalHeight);
+		if (logger.isFineEnabled()) {
+			long current = System.currentTimeMillis();
+			String message = "Image resize time (" + ((current - start) / 1000.000) + " s), dimensions: " + incrementalWidth + "x" + incrementalHeight + " for file: " + imageFile.getAbsolutePath();
+			logger.fine(message);
+		}
+		return resizedImage;
+	}
+
+	/**
+	 * Convenience method that returns a scaled instance of the provided BufferedImage. Taken
+	 * from http://today.java.net/pub/a/today/2007/04/03/perils-of-image-getscaledinstance.html.
+	 * This method never resizes by more than 50% since resizing by more than that amount
+	 * causes quality issues.
+	 *
+	 * @param img the original image to be scaled.
+	 * @param targetWidth the desired width of the scaled instance in pixels.
+	 * @param targetHeight the desired height of the scaled instance in pixels.
+	 * @return a scaled version of the original {@code BufferedImage}
+	 */
+	public static BufferedImage resizeImage(BufferedImage img, int targetWidth, int targetHeight) {
+		int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+		BufferedImage ret = (BufferedImage)img;
+		int w = img.getWidth();
+		int h = img.getHeight();
+		do {
+			if (w > targetWidth) {
+				w /= 2;
+				if (w < targetWidth) {
+					w = targetWidth;
+				}
+			}
+			if (h > targetHeight) {
+				h /= 2;
+				if (h < targetHeight) {
+					h = targetHeight;
+				}
+			}
+			BufferedImage tmp = new BufferedImage(w, h, type);
+			Graphics2D g2 = tmp.createGraphics();
+			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+			g2.drawImage(ret, 0, 0, w, h, null);
+			g2.dispose();
+			ret = tmp;
+		} while (w != targetWidth || h != targetHeight);
+		return ret;
 	}
 
 	/**

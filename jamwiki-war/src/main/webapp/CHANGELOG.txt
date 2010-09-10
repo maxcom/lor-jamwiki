@@ -25,6 +25,7 @@ New Features:
     "{{#switch: value | case1 = result | case2 = result | default}}".
   * Special:VirtualWiki optimizations.  Site name, meta description and logo
     can now allow be customized per-virtual wiki.
+  * Use a new algorithm for image resizing to greatly improve image quality.
   * SEO optimizations: return HTTP 404 when requesting a page for a topic that
     does not exist, return HTTP 500 for error pages, and specify the
     "canonical" meta tag for redirected topics.
