@@ -151,19 +151,7 @@ public class ImageUtil {
 		String caption = imageMetadata.getCaption();
 		if (topic.getTopicType() == TopicType.FILE) {
 			// file, not an image - use the file name, minus the translated/untranslated namespace
-			if (StringUtils.isBlank(caption) && topicName.startsWith(Namespace.namespace(Namespace.FILE_ID).getLabel(topic.getVirtualWiki()))) {
-				caption = topicName.substring(Namespace.namespace(Namespace.FILE_ID).getLabel(topic.getVirtualWiki()).length() + 1);
-			} else if (StringUtils.isBlank(caption) && topicName.startsWith(Namespace.namespace(Namespace.FILE_ID).getDefaultLabel())) {
-				caption = topicName.substring(Namespace.namespace(Namespace.FILE_ID).getDefaultLabel().length() + 1);
-			}
-			html.append("<a href=\"").append(url).append("\">");
-			if (escapeHtml) {
-				html.append(StringEscapeUtils.escapeHtml(caption));
-			} else {
-				html.append(caption);
-			}
-			html.append("</a>");
-			return html.toString();
+			return ImageUtil.buildLinkToFile(url, topic, caption, escapeHtml);
 		}
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(topic.getVirtualWiki(), topic.getName());
 		WikiImage wikiImage = null;
@@ -173,6 +161,9 @@ public class ImageUtil {
 			// do not log the full exception as the logs can fill up very for this sort of error, and it is generally due to a bad configuration.  instead log a warning message so that the administrator can try to fix the problem
 			logger.warning("File not found while parsing image link for topic: " + topic.getVirtualWiki() + " / " + topicName + ".  Make sure that the following file exists and is readable by the JAMWiki installation: " + e.getMessage());
 			return ImageUtil.buildUploadLink(context, topic.getVirtualWiki(), topicName);
+		}
+		if (wikiImage == null) {
+			return ImageUtil.buildLinkToFile(url, topic, caption, escapeHtml);
 		}
 		String imageWrapperDiv = ImageUtil.buildImageWrapperDivs(imageMetadata, wikiImage.getWidth());
 		if (!StringUtils.isWhitespace(imageMetadata.getLink())) {
@@ -276,6 +267,24 @@ public class ImageUtil {
 				return "<div class=\"thumb tright\">\n<div class=\"thumbinner\"" + styleWidth + ">{0}</div>\n</div>";
 			}
 		}
+	}
+
+	/**
+	 * Generate an HTML link to the image file without any resizing.
+	 */
+	private static String buildLinkToFile(String url, Topic topic, String caption, boolean escapeHtml) {
+		StringBuilder html = new StringBuilder();
+		if (StringUtils.isBlank(caption)) {
+			caption = topic.getPageName();
+		}
+		html.append("<a href=\"").append(url).append("\">");
+		if (escapeHtml) {
+			html.append(StringEscapeUtils.escapeHtml(caption));
+		} else {
+			html.append(caption);
+		}
+		html.append("</a>");
+		return html.toString();
 	}
 
 	/**
@@ -436,7 +445,8 @@ public class ImageUtil {
 			File file = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
 			originalDimensions = ImageUtil.retrieveImageDimensions(file);
 			if (originalDimensions == null) {
-				throw new IllegalArgumentException("Invalid image: " + wikiImage.getUrl());
+				logger.info("Unable to determine dimensions for image: " + wikiImage.getUrl());
+				return null;
 			}
 			addToCache(wikiImage, originalDimensions.getWidth(), originalDimensions.getHeight());
 		}

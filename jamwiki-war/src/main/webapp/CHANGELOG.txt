@@ -51,6 +51,8 @@ Bugfixes:
   * A corrupt image should not halt page parsing; instead just display the
     image name as text.
   * Refactor image processing code to use less memory and avoid OOM errors.
+  * For SVG images and other images that cannot be resized by the JVM, return
+    a link to the image file rather than an upload link or error message.
 
 Translation Updates:
 
