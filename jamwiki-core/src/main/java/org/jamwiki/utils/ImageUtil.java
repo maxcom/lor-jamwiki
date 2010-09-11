@@ -17,24 +17,15 @@
 package org.jamwiki.utils;
 
 import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.List;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import net.sf.ehcache.Element;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
@@ -57,24 +48,14 @@ import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
 
 /**
- * Utility methods for readding images from disk, saving images to disk,
- * resizing images, and returning information about images such as width and
- * height.
+ * Utility methods for performing wiki-specific image tasks, such as generating
+ * HTML to display an image or building links to images.
  */
 public class ImageUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(ImageUtil.class.getName());
 	/** Cache name for the cache of image dimensions. */
 	private static final String CACHE_IMAGE_DIMENSIONS = "org.jamwiki.utils.ImageUtil.CACHE_IMAGE_DIMENSIONS";
-
-	static {
-		// manually set the ImageIO temp directory so that systems with incorrect defaults won't fail
-		// when processing images.
-		File directory = WikiUtil.getTempDirectory();
-		if (directory.exists()) {
-			ImageIO.setCacheDirectory(directory);
-		}
-	}
 
 	/**
 	 *
@@ -156,7 +137,7 @@ public class ImageUtil {
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(topic.getVirtualWiki(), topic.getName());
 		WikiImage wikiImage = null;
 		try {
-			wikiImage = ImageUtil.initializeImage(wikiFile, imageMetadata);
+			wikiImage = ImageUtil.initializeWikiImage(wikiFile, imageMetadata);
 		} catch (FileNotFoundException e) {
 			// do not log the full exception as the logs can fill up very for this sort of error, and it is generally due to a bad configuration.  instead log a warning message so that the administrator can try to fix the problem
 			logger.warning("File not found while parsing image link for topic: " + topic.getVirtualWiki() + " / " + topicName + ".  Make sure that the following file exists and is readable by the JAMWiki installation: " + e.getMessage());
@@ -326,13 +307,12 @@ public class ImageUtil {
 		}
 		// otherwise generate a scaled instance
 		File imageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
-		BufferedImage bufferedImage = ImageUtil.resizeImage(imageFile, incrementalWidth, incrementalHeight);
+		BufferedImage bufferedImage = ImageProcessor.resizeImage(imageFile, incrementalWidth, incrementalHeight);
 		newUrl = buildImagePath(wikiImage.getUrl(), (int)originalDimensions.getWidth(), bufferedImage.getWidth());
 		newImageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), newUrl);
-		ImageUtil.saveImage(bufferedImage, newImageFile);
+		ImageProcessor.saveImage(bufferedImage, newImageFile);
 		return new Dimension(bufferedImage.getWidth(), bufferedImage.getHeight());
 	}
-
 
 	/**
 	 * Determine the scaled dimensions, given a max width and height.  For example, if
@@ -434,7 +414,7 @@ public class ImageUtil {
 	 * @throws IOException Thrown if an error occurs while initializing the
 	 *  WikiImage object.
 	 */
-	private static WikiImage initializeImage(WikiFile wikiFile, ImageMetadata imageMetadata) throws DataAccessException, IOException {
+	private static WikiImage initializeWikiImage(WikiFile wikiFile, ImageMetadata imageMetadata) throws DataAccessException, IOException {
 		if (wikiFile == null) {
 			throw new IllegalArgumentException("wikiFile may not be null");
 		}
@@ -443,7 +423,7 @@ public class ImageUtil {
 		Dimension originalDimensions = ImageUtil.retrieveFromCache(wikiImage);
 		if (originalDimensions == null) {
 			File file = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
-			originalDimensions = ImageUtil.retrieveImageDimensions(file);
+			originalDimensions = ImageProcessor.retrieveImageDimensions(file);
 			if (originalDimensions == null) {
 				logger.info("Unable to determine dimensions for image: " + wikiImage.getUrl());
 				return null;
@@ -505,85 +485,10 @@ public class ImageUtil {
 	 */
 	public static boolean isImage(File file) {
 		try {
-			return (ImageUtil.retrieveImageDimensions(file) != null);
+			return (ImageProcessor.retrieveImageDimensions(file) != null);
 		} catch (IOException x) {
 			return false;
 		}
-	}
-
-	/**
-	 * Given a file that corresponds to an existing image, return a
-	 * BufferedImage object.
-	 */
-	private static BufferedImage loadImage(File file) throws IOException {
-		if (!file.exists()) {
-			throw new FileNotFoundException("File does not exist: " + file.getAbsolutePath());
-		}
-		// use a FileInputStream and make sure it gets closed to prevent unclosed file
-		// errors on some operating systems
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(file);
-			BufferedImage image = ImageIO.read(fis);
-			if (image == null) {
-				throw new IOException("JDK is unable to process image file, possibly indicating file corruption: " + file.getAbsolutePath());
-			}
-			return image;
-		} finally {
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {}
-			}
-		}
-	}
-
-	/**
-	 * Convenience method that returns a scaled instance of the provided BufferedImage. Taken
-	 * from http://today.java.net/pub/a/today/2007/04/03/perils-of-image-getscaledinstance.html.
-	 * This method never resizes by more than 50% since resizing by more than that amount
-	 * causes quality issues.
-	 *
-	 * @param imageFile The file path for the original image to be scaled.
-	 * @param targetWidth the desired width of the scaled instance in pixels.
-	 * @param targetHeight the desired height of the scaled instance in pixels.
-	 * @return a scaled version of the original {@code BufferedImage}
-	 */
-	public static BufferedImage resizeImage(File imageFile, int targetWidth, int targetHeight) throws IOException {
-		long start = System.currentTimeMillis();
-		BufferedImage img = ImageUtil.loadImage(imageFile);
-		int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-		BufferedImage ret = img;
-		BufferedImage tmp;
-		Graphics2D g2;
-		int w = img.getWidth();
-		int h = img.getHeight();
-		do {
-			if (w > targetWidth) {
-				w /= 2;
-				if (w < targetWidth) {
-					w = targetWidth;
-				}
-			}
-			if (h > targetHeight) {
-				h /= 2;
-				if (h < targetHeight) {
-					h = targetHeight;
-				}
-			}
-			tmp = new BufferedImage(w, h, type);
-			g2 = tmp.createGraphics();
-			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-			g2.drawImage(ret, 0, 0, w, h, null);
-			ret = tmp;
-		} while (w != targetWidth || h != targetHeight);
-		g2.dispose();
-		if (logger.isFineEnabled()) {
-			long current = System.currentTimeMillis();
-			String message = "Image resize time (" + ((current - start) / 1000.000) + " s), dimensions: " + targetWidth + "x" + targetHeight + " for file: " + imageFile.getAbsolutePath();
-			logger.fine(message);
-		}
-		return ret;
 	}
 
 	/**
@@ -611,81 +516,6 @@ public class ImageUtil {
 		filename = FilenameUtils.getName(filename);
 		filename = StringUtils.replace(filename.trim(), " ", "_");
 		return filename;
-	}
-
-	/**
-	 * Retrieve image dimensions.  This method simply reads headers so it should perform
-	 * relatively fast.
-	 */
-	private static Dimension retrieveImageDimensions(File imageFile) throws IOException {
-		if (!imageFile.exists()) {
-			logger.info("No file found while determining image dimensions: " + imageFile.getAbsolutePath());
-			return null;
-		}
-		ImageInputStream iis = null;
-		Dimension dimensions = null;
-		ImageReader reader = null;
-		// use a FileInputStream and make sure it gets closed to prevent unclosed file
-		// errors on some operating systems
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(imageFile);
-			iis = ImageIO.createImageInputStream(fis);
-			Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
-			if (readers.hasNext()) {
-				reader = readers.next();
-				reader.setInput(iis, true);
-				dimensions = new Dimension(reader.getWidth(0), reader.getHeight(0));
-			}
-		} finally {
-			if (reader != null) {
-				reader.dispose();
-			}
-			if (iis != null) {
-				try {
-					iis.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
-		}
-		return dimensions;
-	}
-
-	/**
-	 * Save an image to a specified file.
-	 */
-	private static void saveImage(BufferedImage image, File file) throws IOException {
-		String filename = file.getName();
-		int pos = filename.lastIndexOf('.');
-		if (pos == -1 || (pos + 1) >= filename.length()) {
-			throw new IOException("Unknown image file type " + filename);
-		}
-		String imageType = filename.substring(pos + 1);
-		File imageFile = new File(file.getParent(), filename);
-		// use a FileOutputStream and make sure it gets closed to prevent unclosed file
-		// errors on some operating systems
-		FileOutputStream fos = null;
-		try {
-			fos = new FileOutputStream(imageFile);
-			boolean result = ImageIO.write(image, imageType, fos);
-			if (!result) {
-				throw new IOException("No appropriate writer found when writing image: " + filename);
-			}
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException e) {}
-			}
-		}
 	}
 
 	/**
