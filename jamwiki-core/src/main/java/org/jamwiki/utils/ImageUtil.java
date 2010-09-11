@@ -16,6 +16,7 @@
  */
 package org.jamwiki.utils;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
@@ -84,8 +85,7 @@ public class ImageUtil {
 	/**
 	 *
 	 */
-	private static void addToCache(WikiImage wikiImage, int width, int height) {
-		ImageDimensions dimensions = new ImageDimensions(width, height);
+	private static void addToCache(WikiImage wikiImage, Dimension dimensions) {
 		String key = wikiImage.getVirtualWiki() + "/" + wikiImage.getUrl();
 		WikiCache.addToCache(CACHE_IMAGE_DIMENSIONS, key, dimensions);
 	}
@@ -298,9 +298,9 @@ public class ImageUtil {
 	/**
 	 *
 	 */
-	private static int calculateImageIncrement(int dimension) {
+	private static int calculateImageIncrement(double dimension) {
 		int increment = Environment.getIntValue(Environment.PROP_IMAGE_RESIZE_INCREMENT);
-		double result = Math.ceil((double)dimension / (double)increment) * increment;
+		double result = Math.ceil(dimension / (double)increment) * increment;
 		return (int)result;
 	}
 
@@ -309,7 +309,7 @@ public class ImageUtil {
 	 * given a max width and height.  For example, if the original dimensions are 800x400,
 	 * the max width height are 200, and the increment is 400, the result is 400x200.
 	 */
-	private static ImageDimensions calculateIncrementalDimensions(WikiImage wikiImage, ImageDimensions originalDimensions, ImageDimensions scaledDimensions) throws IOException {
+	private static Dimension calculateIncrementalDimensions(WikiImage wikiImage, Dimension originalDimensions, Dimension scaledDimensions) throws IOException {
 		int increment = Environment.getIntValue(Environment.PROP_IMAGE_RESIZE_INCREMENT);
 		// use width for incremental resizing
 		int incrementalWidth = calculateImageIncrement(scaledDimensions.getWidth());
@@ -319,18 +319,18 @@ public class ImageUtil {
 		}
 		int incrementalHeight = (int)Math.round(((double)incrementalWidth / (double)originalDimensions.getWidth()) * (double)originalDimensions.getHeight());
 		// check to see if an image with the desired dimensions already exists on the filesystem
-		String newUrl = buildImagePath(wikiImage.getUrl(), originalDimensions.getWidth(), incrementalWidth);
+		String newUrl = buildImagePath(wikiImage.getUrl(), (int)originalDimensions.getWidth(), incrementalWidth);
 		File newImageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), newUrl);
 		if (newImageFile.exists()) {
-			return new ImageDimensions(incrementalWidth, incrementalHeight);
+			return new Dimension(incrementalWidth, incrementalHeight);
 		}
 		// otherwise generate a scaled instance
 		File imageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
 		BufferedImage bufferedImage = ImageUtil.resizeImage(imageFile, incrementalWidth, incrementalHeight);
-		newUrl = buildImagePath(wikiImage.getUrl(), originalDimensions.getWidth(), bufferedImage.getWidth());
+		newUrl = buildImagePath(wikiImage.getUrl(), (int)originalDimensions.getWidth(), bufferedImage.getWidth());
 		newImageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), newUrl);
 		ImageUtil.saveImage(bufferedImage, newImageFile);
-		return new ImageDimensions(bufferedImage.getWidth(), bufferedImage.getHeight());
+		return new Dimension(bufferedImage.getWidth(), bufferedImage.getHeight());
 	}
 
 
@@ -339,7 +339,7 @@ public class ImageUtil {
 	 * the original dimensions are 800x400 and the max width height are 200, the result
 	 * is 200x100.
 	 */
-	private static ImageDimensions calculateScaledDimensions(ImageDimensions originalDimensions, int maxWidth, int maxHeight) {
+	private static Dimension calculateScaledDimensions(Dimension originalDimensions, int maxWidth, int maxHeight) {
 		if (maxWidth <= 0 && maxHeight <=0) {
 			return originalDimensions;
 		}
@@ -360,7 +360,7 @@ public class ImageUtil {
 			width = (int)Math.round(widthScalingFactor * (double)originalDimensions.getWidth());
 			height = (int)Math.round(widthScalingFactor * (double)originalDimensions.getHeight());
 		}
-		return new ImageDimensions(width, height);
+		return new Dimension(width, height);
 	}
 
 	/**
@@ -440,7 +440,7 @@ public class ImageUtil {
 		}
 		WikiImage wikiImage = new WikiImage(wikiFile);
 		// get the size of the original (unresized) image
-		ImageDimensions originalDimensions = ImageUtil.retrieveFromCache(wikiImage);
+		Dimension originalDimensions = ImageUtil.retrieveFromCache(wikiImage);
 		if (originalDimensions == null) {
 			File file = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
 			originalDimensions = ImageUtil.retrieveImageDimensions(file);
@@ -448,19 +448,19 @@ public class ImageUtil {
 				logger.info("Unable to determine dimensions for image: " + wikiImage.getUrl());
 				return null;
 			}
-			addToCache(wikiImage, originalDimensions.getWidth(), originalDimensions.getHeight());
+			addToCache(wikiImage, originalDimensions);
 		}
 		if (!imageMetadata.getAllowEnlarge() && imageMetadata.getMaxWidth() > originalDimensions.getWidth() && imageMetadata.getMaxHeight() > originalDimensions.getHeight()) {
-			imageMetadata.setMaxWidth(originalDimensions.getWidth());
-			imageMetadata.setMaxHeight(originalDimensions.getHeight());
+			imageMetadata.setMaxWidth((int)originalDimensions.getWidth());
+			imageMetadata.setMaxHeight((int)originalDimensions.getHeight());
 		}
 		// determine the width & height of scaled image (if needed)
-		ImageDimensions scaledDimensions = calculateScaledDimensions(originalDimensions, imageMetadata.getMaxWidth(), imageMetadata.getMaxHeight());
-		wikiImage.setWidth(scaledDimensions.getWidth());
-		wikiImage.setHeight(scaledDimensions.getHeight());
+		Dimension scaledDimensions = calculateScaledDimensions(originalDimensions, imageMetadata.getMaxWidth(), imageMetadata.getMaxHeight());
+		wikiImage.setWidth((int)scaledDimensions.getWidth());
+		wikiImage.setHeight((int)scaledDimensions.getHeight());
 		// return an appropriate WikiImage object with URL to the scaled image, proper width, and proper height
-		ImageDimensions incrementalDimensions = calculateIncrementalDimensions(wikiImage, originalDimensions, scaledDimensions);
-		String url = buildImagePath(wikiImage.getUrl(), originalDimensions.getWidth(), incrementalDimensions.getWidth());
+		Dimension incrementalDimensions = calculateIncrementalDimensions(wikiImage, originalDimensions, scaledDimensions);
+		String url = buildImagePath(wikiImage.getUrl(), (int)originalDimensions.getWidth(), (int)incrementalDimensions.getWidth());
 		wikiImage.setUrl(url);
 		return wikiImage;
 	}
@@ -590,10 +590,10 @@ public class ImageUtil {
 	 * Determine if image information is available in the cache.  If so return it,
 	 * otherwise return <code>null</code>.
 	 */
-	private static ImageDimensions retrieveFromCache(WikiImage wikiImage) throws DataAccessException {
+	private static Dimension retrieveFromCache(WikiImage wikiImage) throws DataAccessException {
 		String key = wikiImage.getVirtualWiki() + "/" + wikiImage.getUrl();
 		Element cachedDimensions = WikiCache.retrieveFromCache(CACHE_IMAGE_DIMENSIONS, key);
-		return (cachedDimensions != null) ? (ImageDimensions)cachedDimensions.getObjectValue() : null;
+		return (cachedDimensions != null) ? (Dimension)cachedDimensions.getObjectValue() : null;
 	}
 
 	/**
@@ -617,9 +617,9 @@ public class ImageUtil {
 	 * Retrieve image dimensions.  This method simply reads headers so it should perform
 	 * relatively fast.
 	 */
-	private static ImageDimensions retrieveImageDimensions(File imageFile) throws IOException {
+	private static Dimension retrieveImageDimensions(File imageFile) throws IOException {
 		ImageInputStream iis = null;
-		ImageDimensions dimensions = null;
+		Dimension dimensions = null;
 		ImageReader reader = null;
 		try {
 			iis = ImageIO.createImageInputStream(imageFile);
@@ -627,7 +627,7 @@ public class ImageUtil {
 			if (readers.hasNext()) {
 				reader = readers.next();
 				reader.setInput(iis, true);
-				dimensions = new ImageDimensions(reader.getWidth(0), reader.getHeight(0));
+				dimensions = new Dimension(reader.getWidth(0), reader.getHeight(0));
 			}
 		} finally {
 			if (reader != null) {
