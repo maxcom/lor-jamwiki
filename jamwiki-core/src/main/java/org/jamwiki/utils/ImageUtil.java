@@ -575,9 +575,9 @@ public class ImageUtil {
 			g2 = tmp.createGraphics();
 			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 			g2.drawImage(ret, 0, 0, w, h, null);
-			g2.dispose();
 			ret = tmp;
 		} while (w != targetWidth || h != targetHeight);
+		g2.dispose();
 		if (logger.isFineEnabled()) {
 			long current = System.currentTimeMillis();
 			String message = "Image resize time (" + ((current - start) / 1000.000) + " s), dimensions: " + targetWidth + "x" + targetHeight + " for file: " + imageFile.getAbsolutePath();
@@ -618,11 +618,19 @@ public class ImageUtil {
 	 * relatively fast.
 	 */
 	private static Dimension retrieveImageDimensions(File imageFile) throws IOException {
+		if (!imageFile.exists()) {
+			logger.info("No file found while determining image dimensions: " + imageFile.getAbsolutePath());
+			return null;
+		}
 		ImageInputStream iis = null;
 		Dimension dimensions = null;
 		ImageReader reader = null;
+		// use a FileInputStream and make sure it gets closed to prevent unclosed file
+		// errors on some operating systems
+		FileInputStream fis = null;
 		try {
-			iis = ImageIO.createImageInputStream(imageFile);
+			fis = new FileInputStream(imageFile);
+			iis = ImageIO.createImageInputStream(fis);
 			Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
 			if (readers.hasNext()) {
 				reader = readers.next();
@@ -636,6 +644,13 @@ public class ImageUtil {
 			if (iis != null) {
 				try {
 					iis.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+			if (fis != null) {
+				try {
+					fis.close();
 				} catch (IOException e) {
 					// ignore
 				}
@@ -660,7 +675,7 @@ public class ImageUtil {
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(imageFile);
-			boolean result = ImageIO.write(image, imageType, imageFile);
+			boolean result = ImageIO.write(image, imageType, fos);
 			if (!result) {
 				throw new IOException("No appropriate writer found when writing image: " + filename);
 			}
