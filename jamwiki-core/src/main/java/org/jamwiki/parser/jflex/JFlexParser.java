@@ -205,9 +205,10 @@ public class JFlexParser extends AbstractParser {
 		// to the end of the content for good measure
 		String output = raw + '\n';
 		output = this.parsePreProcess(parserOutput, output, JFlexParser.MODE_PREPROCESS);
-		output = this.parseProcess(parserOutput, output, JFlexParser.MODE_PROCESS);
-		String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
-		logger.info("Parse time (parseMetadata) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		if (logger.isInfoEnabled()) {
+			String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
+			logger.info("Parse time (parseMetadata) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		}
 	}
 
 	/**
@@ -243,7 +244,17 @@ public class JFlexParser extends AbstractParser {
 		StringReader reader = toStringReader(raw);
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(reader);
 		int preMode = (mode > JFlexParser.MODE_PREPROCESS) ? JFlexParser.MODE_PREPROCESS : mode;
-		return this.lex(lexer, raw, parserOutput, preMode);
+		String result = this.lex(lexer, raw, parserOutput, preMode);
+		// if the topic is a redirect store the redirect target
+		String redirect = this.isRedirect(result);
+		if (!StringUtils.isBlank(redirect)) {
+			boolean colon = (redirect.length() > 1 && redirect.charAt(0) == ':');
+			if (colon) {
+				redirect = redirect.substring(1);
+			}
+			parserOutput.setRedirect(redirect);
+		}
+		return result;
 	}
 
 	/**
@@ -257,15 +268,6 @@ public class JFlexParser extends AbstractParser {
 	 * @throws ParserException Thrown if any error occurs during parsing.
 	 */
 	private String parseProcess(ParserOutput parserOutput, String raw, int mode) throws ParserException {
-		// if the topic is a redirect store the redirect target
-		String redirect = this.isRedirect(raw);
-		if (!StringUtils.isBlank(redirect)) {
-			boolean colon = (redirect.length() > 1 && redirect.charAt(0) == ':');
-			if (colon) {
-				redirect = redirect.substring(1);
-			}
-			parserOutput.setRedirect(redirect);
-		}
 		StringReader reader = toStringReader(raw);
 		JAMWikiProcessor lexer = new JAMWikiProcessor(reader);
 		return this.lex(lexer, raw, parserOutput, mode);

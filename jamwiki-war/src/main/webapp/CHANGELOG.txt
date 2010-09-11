@@ -29,6 +29,8 @@ New Features:
   * SEO optimizations: return HTTP 404 when requesting a page for a topic that
     does not exist, return HTTP 500 for error pages, and specify the
     "canonical" meta tag for redirected topics.
+  * Reduce the amount of parsing the must be done when importing topics in
+    order to improve performance.
   * Remove ability to automatically upgrade from versions prior to 0.8.0.
   * Remove unused/obsolete Javascript and namespace the remaining code.
   * Organize uploaded images by virtual wiki on the file system.
