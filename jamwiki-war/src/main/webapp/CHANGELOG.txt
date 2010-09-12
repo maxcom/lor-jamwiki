@@ -55,6 +55,8 @@ Bugfixes:
   * Refactor image processing code to use less memory and avoid OOM errors.
   * For SVG images and other images that cannot be resized by the JVM, return
     a link to the image file rather than an upload link or error message.
+  * When importing topics with Special:Import convert from Mediawiki to JAMWiki
+    namespace for additional patterns including "[[:", "{{", and "{{:".
 
 Translation Updates:
 

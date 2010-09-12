@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
@@ -135,18 +137,31 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 	 */
 	private void convertToJAMWikiNamespaces(StringBuilder builder) {
 		// convert all namespaces names from MediaWiki to JAMWiki local representation
-		String jamwikiNamespace, mediawikiPattern, jamwikiPattern;
-		int start = 0;
+		String jamwikiNamespace;
 		for (String mediawikiNamespace : mediawikiNamespaceMap.keySet()) {
 			jamwikiNamespace = mediawikiNamespaceMap.get(mediawikiNamespace);
-			if (jamwikiNamespace == null || StringUtils.equals(jamwikiNamespace, mediawikiNamespace)) {
+			if (jamwikiNamespace == null || StringUtils.equalsIgnoreCase(jamwikiNamespace, mediawikiNamespace)) {
 				continue;
 			}
-			mediawikiPattern = "[[" + mediawikiNamespace + Namespace.SEPARATOR;
-			jamwikiPattern = "[[" + jamwikiNamespace + Namespace.SEPARATOR;
-			while ((start = builder.indexOf(mediawikiPattern, start + 1)) != -1) {
-				builder.replace(start, start + mediawikiPattern.length(), jamwikiPattern);
-			}
+			// convert from Mediawiki to JAMWiki namespaces.  handle "[[", "[[:", "{{", "{{:".
+			String wikiLinkPatternString = "(\\[\\[[ ]*(:)?)" + mediawikiNamespace + Namespace.SEPARATOR;
+			this.replaceNamespace(builder, jamwikiNamespace, wikiLinkPatternString);
+			String templatePatternString = "(\\{\\{[ ]*(:)?)" + mediawikiNamespace + Namespace.SEPARATOR;
+			this.replaceNamespace(builder, jamwikiNamespace, templatePatternString);
+		}
+	}
+
+	/**
+	 * Utility method for replacing a namespace.
+	 */
+	private void replaceNamespace(StringBuilder builder, String jamwikiNamespace, String patternString) {
+		Pattern mediawikiPattern = Pattern.compile(patternString, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+		Matcher matcher = mediawikiPattern.matcher(builder);
+		String replacement;
+		while (matcher.find()) {
+			replacement = matcher.group(1) + jamwikiNamespace + Namespace.SEPARATOR;
+			builder.replace(0, builder.length(), matcher.replaceFirst(replacement));
+			matcher.reset(builder);
 		}
 	}
 
@@ -173,7 +188,7 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 		} catch (DataAccessException e) {
 			throw new SAXException("Failure while validating topic name: " + topicName, e);
 		}
-		if (existingTopic != null) {
+		if (existingTopic != null && existingTopic.getVirtualWiki().equals(this.virtualWiki)) {
 			// FIXME - update so that this merges any new versions instead of throwing an error
 			WikiException e = new WikiException(new WikiMessage("import.error.topicexists", topicName));
 			throw new SAXException("Topic " + topicName + " already exists and cannot be imported", e);
