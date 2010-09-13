@@ -47,6 +47,7 @@ public class ParserFunctionUtil {
 	private static final String PARSER_FUNCTION_EXPR = "#expr:";
 	private static final String PARSER_FUNCTION_IF = "#if:";
 	private static final String PARSER_FUNCTION_IF_EQUAL = "#ifeq:";
+	private static final String PARSER_FUNCTION_IF_EXIST = "#ifexist:";
 	private static final String PARSER_FUNCTION_LOCAL_URL = "localurl:";
 	private static final String PARSER_FUNCTION_LOWER_CASE = "lc:";
 	private static final String PARSER_FUNCTION_LOWER_CASE_FIRST = "lcfirst:";
@@ -67,6 +68,7 @@ public class ParserFunctionUtil {
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_EXPR);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_IF);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_IF_EQUAL);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_IF_EXIST);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOCAL_URL);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOWER_CASE);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOWER_CASE_FIRST);
@@ -122,6 +124,9 @@ public class ParserFunctionUtil {
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_IF_EQUAL)) {
 			return ParserFunctionUtil.parseIfEqual(parserInput, parserOutput, parserFunctionArgumentArray);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_IF_EXIST)) {
+			return ParserFunctionUtil.parseIfExist(parserInput, parserOutput, parserFunctionArgumentArray);
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_LOCAL_URL)) {
 			return ParserFunctionUtil.parseLocalUrl(parserInput, parserFunctionArgumentArray);
@@ -305,6 +310,22 @@ public class ParserFunctionUtil {
 			return JFlexParserUtil.parseFragment(parserInput, parserOutput, result1, JFlexParser.MODE_PREPROCESS);
 		} else {
 			return JFlexParserUtil.parseFragment(parserInput, parserOutput, result2, JFlexParser.MODE_PREPROCESS);
+		}
+	}
+
+	/**
+	 * Parse the {{#ifexist:}} parser function.  Usage: {{#ifexist: topic | exists | does not exist}}.
+	 */
+	private static String parseIfExist(ParserInput parserInput, ParserOutput parserOutput, String[] parserFunctionArgumentArray) throws DataAccessException,  ParserException {
+		if (parserFunctionArgumentArray.length < 1) {
+			return "";
+		}
+		String topicName = Utilities.decodeAndEscapeTopicName(parserFunctionArgumentArray[0], true);
+		// parse to handle any embedded templates
+		if (WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), topicName, false, null) != null) {
+			return (parserFunctionArgumentArray.length >= 2) ? JFlexParserUtil.parseFragment(parserInput, parserOutput, parserFunctionArgumentArray[1], JFlexParser.MODE_PREPROCESS) : "";
+		} else {
+			return (parserFunctionArgumentArray.length >= 3) ? JFlexParserUtil.parseFragment(parserInput, parserOutput, parserFunctionArgumentArray[2], JFlexParser.MODE_PREPROCESS) : "";
 		}
 	}
 

@@ -23,6 +23,8 @@ New Features:
     when viewing an old version of a topic.
   * Support the #switch parser functions.  Usage:
     "{{#switch: value | case1 = result | case2 = result | default}}".
+  * Support the #ifexist parser function.  Usage:
+    "{{#ifexist: topic | exists | does not exist}}".
   * Special:VirtualWiki optimizations.  Site name, meta description and logo
     can now allow be customized per-virtual wiki.
   * Use a new algorithm for image resizing to greatly improve image quality.
