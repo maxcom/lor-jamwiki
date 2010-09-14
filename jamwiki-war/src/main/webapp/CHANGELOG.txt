@@ -37,7 +37,7 @@ New Features:
   * Remove unused/obsolete Javascript and namespace the remaining code.
   * Organize uploaded images by virtual wiki on the file system.
   * Add several indexes to the database to improve query performance.
-  * Upgrade to Spring Framework 3.0.3.RELEASE.
+  * Upgrade to Spring Framework 3.0.4.RELEASE.
   * Upgrade to Spring Security 3.0.3.RELEASE.
   * Upgrade to Ehcache 2.1.0.
   * Upgrade to commons-fileupload-1.2.2.

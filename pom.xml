@@ -46,7 +46,7 @@
 	</licenses>
 	<properties>
 		<jamwiki.version>1.0.0-SNAPSHOT</jamwiki.version>
-		<dependency.spring.version>3.0.3.RELEASE</dependency.spring.version>
+		<dependency.spring.version>3.0.4.RELEASE</dependency.spring.version>
 		<dependency.spring.security.version>3.0.3.RELEASE</dependency.spring.security.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
