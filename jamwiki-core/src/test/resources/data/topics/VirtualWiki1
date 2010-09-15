@@ -1,0 +1,10 @@
+<!-- test virtual wiki links -->
+[[:en:Example1]]
+
+[[:test:Example1]]
+
+[[:en:Non-existent]]
+
+[[:test:Non-existent]]
+
+[[:test:]]

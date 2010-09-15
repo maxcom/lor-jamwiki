@@ -497,7 +497,8 @@ public class LinkUtil {
 	 *
 	 */
 	private static String processVirtualWiki(String processed, WikiLink wikiLink) {
-		int prefixPosition = LinkUtil.prefixPosition(processed);
+		// virtual wiki does not require a topic name, so do not use the prefixPosition method
+		int prefixPosition = processed.indexOf(Namespace.SEPARATOR, 1);
 		if (prefixPosition == -1) {
 			return processed;
 		}
