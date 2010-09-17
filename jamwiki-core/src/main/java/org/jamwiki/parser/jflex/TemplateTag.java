@@ -244,10 +244,11 @@ public class TemplateTag implements JFlexParserTag {
 			// 1. {{{1|{{PAGENAME}}}}}
 			// 2. {{{{{1}}}}}
 			// 3. {{{template}} x {{template}}}
-			int secondEndPos = Utilities.findMatchingEndTag(content, pos, "{", "}");
-			if (endPos < secondEndPos && content.substring(secondEndPos - 3, secondEndPos).equals("}}}")) {
+			// 4. {{{1|{{{2}}}}}}
+			int case1EndPos = Utilities.findMatchingEndTag(content, pos, "{", "}");
+			if (endPos < case1EndPos && content.substring(case1EndPos - 3, case1EndPos).equals("}}}")) {
 				// case #1
-				endPos = secondEndPos;
+				endPos = case1EndPos;
 			}
 			if (substring.startsWith("{{{{{") && content.substring(endPos - 5, endPos).equals("}}}}}")) {
 				// case #2 (note: endPos updated in the previous step)
@@ -255,10 +256,15 @@ public class TemplateTag implements JFlexParserTag {
 				pos++;
 				continue;
 			}
-			if (Utilities.findMatchingEndTag(content, pos + 1, "{{", "}}") != (endPos - 1)) {
-				// case #3
-				output.append(current);
-				continue;
+			int case3EndPos = Utilities.findMatchingEndTag(content, pos + 1, "{{", "}}");
+			if (case3EndPos != (endPos - 1)) {
+				// either case #3 or case #4
+				char case4Char = content.charAt(case3EndPos + 1);
+				if (case4Char != '}') {
+					// case #3
+					output.append(current);
+					continue;
+				}
 			}
 			String param = content.substring(pos, endPos);
 			output.append(this.applyParameter(parserInput, parserOutput, param, parameterValues));
