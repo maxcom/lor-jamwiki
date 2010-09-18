@@ -43,6 +43,8 @@ import org.jamwiki.utils.WikiUtil;
 public class TemplateTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(TemplateTag.class.getName());
+	/** Maximum depth to which templates can be included for a single parsing run. */
+	private static final int MAX_TEMPLATE_DEPTH = 100;
 	protected static final String TEMPLATE_INCLUSION = "template-inclusion";
 	private static Pattern PARAM_NAME_VALUE_PATTERN = Pattern.compile("[\\s]*([A-Za-z0-9_\\ \\-]+)[\\s]*\\=([\\s\\S]*)");
 
@@ -93,8 +95,13 @@ public class TemplateTag implements JFlexParserTag {
 	 */
 	private String parseTemplateOutput(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw, boolean allowTemplateEdit) throws DataAccessException, ParserException {
 		String templateContent = raw.substring("{{".length(), raw.length() - "}}".length());
-		// parse for nested templates, signatures, etc.
 		parserInput.incrementTemplateDepth();
+		if (parserInput.getTemplateDepth() > MAX_TEMPLATE_DEPTH) {
+			parserInput.decrementTemplateDepth();
+			String topicName = (!StringUtils.isBlank(parserInput.getTopicName())) ? parserInput.getTopicName() : null;
+			throw new ParserException("Infinite parsing loop - over " + parserInput.getTemplateDepth() + " template inclusions while parsing topic " + topicName);
+		}
+		// parse for nested templates, signatures, etc.
 		templateContent = JFlexParserUtil.parseFragment(parserInput, templateContent, mode);
 		parserInput.decrementTemplateDepth();
 		// update the raw value to handle cases such as a signature in the template content
