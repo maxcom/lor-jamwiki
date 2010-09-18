@@ -183,11 +183,11 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_TOPIC_COUNT = null;
 	protected static String STATEMENT_SELECT_TOPIC = null;
 	protected static String STATEMENT_SELECT_TOPIC_HISTORY = null;
-	protected static String STATEMENT_SELECT_TOPIC_ID = null;
-	protected static String STATEMENT_SELECT_TOPIC_ID_LOWER = null;
 	protected static String STATEMENT_SELECT_TOPIC_LINK_ORPHANS = null;
 	protected static String STATEMENT_SELECT_TOPIC_LINKS = null;
 	protected static String STATEMENT_SELECT_TOPIC_LOWER = null;
+	protected static String STATEMENT_SELECT_TOPIC_NAME = null;
+	protected static String STATEMENT_SELECT_TOPIC_NAME_LOWER = null;
 	protected static String STATEMENT_SELECT_TOPIC_NAMES = null;
 	protected static String STATEMENT_SELECT_TOPICS_ADMIN = null;
 	protected static String STATEMENT_SELECT_TOPIC_SEQUENCE = null;
@@ -1164,11 +1164,11 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_TOPIC_COUNT             = props.getProperty("STATEMENT_SELECT_TOPIC_COUNT");
 		STATEMENT_SELECT_TOPIC                   = props.getProperty("STATEMENT_SELECT_TOPIC");
 		STATEMENT_SELECT_TOPIC_HISTORY           = props.getProperty("STATEMENT_SELECT_TOPIC_HISTORY");
-		STATEMENT_SELECT_TOPIC_ID                = props.getProperty("STATEMENT_SELECT_TOPIC_ID");
-		STATEMENT_SELECT_TOPIC_ID_LOWER          = props.getProperty("STATEMENT_SELECT_TOPIC_ID_LOWER");
 		STATEMENT_SELECT_TOPIC_LINK_ORPHANS      = props.getProperty("STATEMENT_SELECT_TOPIC_LINK_ORPHANS");
 		STATEMENT_SELECT_TOPIC_LINKS             = props.getProperty("STATEMENT_SELECT_TOPIC_LINKS");
 		STATEMENT_SELECT_TOPIC_LOWER             = props.getProperty("STATEMENT_SELECT_TOPIC_LOWER");
+		STATEMENT_SELECT_TOPIC_NAME              = props.getProperty("STATEMENT_SELECT_TOPIC_NAME");
+		STATEMENT_SELECT_TOPIC_NAME_LOWER        = props.getProperty("STATEMENT_SELECT_TOPIC_NAME_LOWER");
 		STATEMENT_SELECT_TOPIC_NAMES             = props.getProperty("STATEMENT_SELECT_TOPIC_NAMES");
 		STATEMENT_SELECT_TOPICS_ADMIN            = props.getProperty("STATEMENT_SELECT_TOPICS_ADMIN");
 		STATEMENT_SELECT_TOPIC_SEQUENCE          = props.getProperty("STATEMENT_SELECT_TOPIC_SEQUENCE");
@@ -2176,7 +2176,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public Integer lookupTopicId(int virtualWikiId, String virtualWikiName, Namespace namespace, String pageName) throws SQLException {
+	public String lookupTopicName(int virtualWikiId, String virtualWikiName, Namespace namespace, String pageName) throws SQLException {
 		if (namespace.getId().equals(Namespace.SPECIAL_ID)) {
 			// invalid namespace
 			return null;
@@ -2187,16 +2187,16 @@ public class AnsiQueryHandler implements QueryHandler {
 		try {
 			conn = DatabaseConnection.getConnection();
 			if (namespace.isCaseSensitive()) {
-				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_ID);
+				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_NAME);
 				stmt.setString(1, pageName);
 			} else {
-				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_ID_LOWER);
+				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_NAME_LOWER);
 				stmt.setString(1, pageName.toLowerCase());
 			}
 			stmt.setInt(2, virtualWikiId);
 			stmt.setInt(3, namespace.getId());
 			rs = stmt.executeQuery();
-			return (rs.next()) ? Integer.valueOf(rs.getInt("topic_id")) : null;
+			return (rs.next()) ? rs.getString("topic_name") : null;
 		} finally {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}

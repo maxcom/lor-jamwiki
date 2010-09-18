@@ -244,6 +244,12 @@ function onRSS() {
 	<div class="formhelp"><fmt:message key="admin.parser.help.tableofcontentsdepth" /></div>
 </div>
 <div class="row">
+	<label for="<%= Environment.PROP_PARSER_ALLOW_CAPITALIZATION %>"><fmt:message key="admin.parser.caption.allowcapitalized" /></label>
+	<c:set var="PROP_PARSER_ALLOW_CAPITALIZATION"><%= Environment.PROP_PARSER_ALLOW_CAPITALIZATION %></c:set>
+	<span><jamwiki:checkbox name="${PROP_PARSER_ALLOW_CAPITALIZATION}" value="true" checked="${props[PROP_PARSER_ALLOW_CAPITALIZATION]}" id="${PROP_PARSER_ALLOW_CAPITALIZATION}" /></span>
+	<div class="formhelp"><fmt:message key="admin.parser.help.allowcapitalized" /></div>
+</div>
+<div class="row">
 	<label for="<%= Environment.PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE %>"><fmt:message key="admin.parser.caption.interwikiinline" /></label>
 	<c:set var="PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE"><%= Environment.PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE %></c:set>
 	<span><jamwiki:checkbox name="${PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE}" value="true" checked="${props[PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE]}" id="${PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE}" /></span>

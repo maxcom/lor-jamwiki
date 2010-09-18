@@ -506,18 +506,19 @@ public interface DataHandler {
 	Map<Integer, String> lookupTopicByType(String virtualWiki, TopicType topicType1, TopicType topicType2, Integer namespaceId, Pagination pagination) throws DataAccessException;
 
 	/**
-	 * Given a topic name and virtual wiki, return the corresponding topic ID, or
-	 * <code>null</code> if no matching topic exists.  This method will return only
-	 * non-deleted topics and performs better for cases where a caller only needs to
-	 * know if a topic exists, but does not need a full Topic object.
+	 * This method is used primarily to determine if a topic with a given name exists,
+	 * taking as input a topic name and virtual wiki and returning the corresponding
+	 * topic name, or <code>null</code> if no matching topic exists.  This method will
+	 * return only non-deleted topics and performs better for cases where a caller only
+	 * needs to know if a topic exists, but does not need a full Topic object.
 	 *
 	 * @param virtualWiki The virtual wiki for the topic being queried.
 	 * @param topicName The name of the topic being queried.
-	 * @return The ID of the Topic object that matches the given virtual wiki and topic
+	 * @return The name of the Topic object that matches the given virtual wiki and topic
 	 * name, or <code>null</code> if no matching topic exists.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	Integer lookupTopicId(String virtualWiki, String topicName) throws DataAccessException;
+	String lookupTopicName(String virtualWiki, String topicName) throws DataAccessException;
 
 	/**
 	 * Retrieve a TopicVersion object for a given topic version ID.

@@ -94,6 +94,9 @@ public class LinkUtil {
 	 * @throws DataAccessException Thrown if any error occurs while builing the link URL.
 	 */
 	public static String buildEditLinkUrl(String context, String virtualWiki, String topic, String query, int section) throws DataAccessException {
+		if (Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_CAPITALIZATION)) {
+			topic = StringUtils.capitalize(topic);
+		}
 		query = LinkUtil.appendQueryParam(query, "topic", topic);
 		if (section > 0) {
 			query += "&amp;section=" + section;
@@ -177,7 +180,7 @@ public class LinkUtil {
 		if (!wikiLink.getNamespace().getId().equals(Namespace.MEDIA_ID) && !StringUtils.isBlank(topic) && StringUtils.isBlank(style)) {
 			if (WikiBase.getDataHandler().lookupInterwiki(virtualWiki) != null) {
 				style = "interwiki";
-			} else if (!LinkUtil.isExistingArticle(virtualWiki, topic)) {
+			} else if (LinkUtil.isExistingArticle(virtualWiki, topic) == null) {
 				style = "edit";
 			}
 		}
@@ -262,8 +265,12 @@ public class LinkUtil {
 				// do not check existence for section links
 				return url;
 			}
-			if (!LinkUtil.isExistingArticle(virtualWiki, topic)) {
+			String targetTopic = LinkUtil.isExistingArticle(virtualWiki, topic);
+			if (targetTopic == null) {
 				url = LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, -1);
+			} else if (!StringUtils.equals(topic, targetTopic)) {
+				// add an additional check in case the link was case sensitive
+				url = LinkUtil.buildTopicUrlNoEdit(context, virtualWiki, targetTopic, section, query);
 			}
 		}
 		return url;
@@ -340,31 +347,41 @@ public class LinkUtil {
 	 * Utility method for determining if an article name corresponds to a valid
 	 * wiki link.  In this case an "article name" could be an existing topic, a
 	 * "Special:" page, a user page, an interwiki link, etc.  This method will
-	 * return true if the given name corresponds to a valid special page, user
-	 * page, topic, or other existing article.
+	 * return the article name if the given name corresponds to a valid special
+	 * page, user page, topic, or other existing article, or <code>null</code>
+	 * if no valid article exists.
 	 *
 	 * @param virtualWiki The virtual wiki for the topic being checked.
 	 * @param articleName The name of the article that is being checked.
-	 * @return <code>true</code> if there is an article that exists for the given
-	 *  name and virtual wiki.
+	 * @return The article name if the given name and virtual wiki correspond
+	 *  to a valid special page, user page, topic, or other existing article,
+	 *  or <code>null</code> if no valid article exists.
 	 * @throws DataAccessException Thrown if an error occurs during lookup.
 	 */
-	public static boolean isExistingArticle(String virtualWiki, String articleName) throws DataAccessException {
+	public static String isExistingArticle(String virtualWiki, String articleName) throws DataAccessException {
 		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(articleName)) {
-			return false;
+			return null;
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, articleName);
 		if (PseudoTopicHandler.isPseudoTopic(wikiLink.getDestination())) {
-			return true;
+			return articleName;
 		}
 		if (wikiLink.getInterwiki() != null) {
-			return true;
+			return articleName;
 		}
 		if (StringUtils.isBlank(Environment.getValue(Environment.PROP_BASE_FILE_DIR)) || !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
 			// not initialized yet
-			return false;
+			return null;
 		}
-		return (WikiBase.getDataHandler().lookupTopicId(virtualWiki, articleName) != null);
+		String topicName = WikiBase.getDataHandler().lookupTopicName(virtualWiki, articleName);
+		if (topicName == null && Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_CAPITALIZATION)) {
+			String alternativeArticleName = (StringUtils.equals(wikiLink.getArticle(), StringUtils.capitalize(wikiLink.getArticle()))) ? StringUtils.lowerCase(wikiLink.getArticle()) : StringUtils.capitalize(wikiLink.getArticle());
+			if (!wikiLink.getNamespace().getId().equals(Namespace.MAIN_ID)) {
+				alternativeArticleName = wikiLink.getNamespace().getLabel(virtualWiki) + Namespace.SEPARATOR + alternativeArticleName;
+			}
+			topicName = WikiBase.getDataHandler().lookupTopicName(virtualWiki, alternativeArticleName);
+		}
+		return topicName;
 	}
 
 	/**

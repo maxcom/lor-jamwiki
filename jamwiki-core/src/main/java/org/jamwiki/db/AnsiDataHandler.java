@@ -74,7 +74,7 @@ public class AnsiDataHandler implements DataHandler {
 	private static final String CACHE_INTERWIKI_LIST = "org.jamwiki.db.AnsiDataHandler.CACHE_INTERWIKI_LIST";
 	private static final String CACHE_NAMESPACE_LIST = "org.jamwiki.db.AnsiDataHandler.CACHE_NAMESPACE_LIST";
 	private static final String CACHE_ROLE_MAP_GROUP = "org.jamwiki.db.AnsiDataHandler.CACHE_ROLE_MAP_GROUP";
-	private static final String CACHE_TOPIC_IDS_BY_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPIC_IDS_BY_NAME";
+	private static final String CACHE_TOPIC_NAMES_BY_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPIC_NAMES_BY_NAME";
 	private static final String CACHE_TOPICS_BY_ID = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS_BY_ID";
 	private static final String CACHE_TOPICS_BY_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS_BY_NAME";
 	private static final String CACHE_TOPIC_VERSIONS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPIC_VERSIONS";
@@ -325,9 +325,9 @@ public class AnsiDataHandler implements DataHandler {
 		String key = this.cacheTopicKey(topic.getVirtualWiki(), topic.getNamespace(), topic.getPageName());
 		WikiCache.removeFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key);
 		if (topic.getDeleteDate() == null) {
-			WikiCache.addToCache(CACHE_TOPIC_IDS_BY_NAME, key, topic.getTopicId());
+			WikiCache.addToCache(CACHE_TOPIC_NAMES_BY_NAME, key, topic.getName());
 		} else {
-			WikiCache.removeFromCache(CACHE_TOPIC_IDS_BY_NAME, key);
+			WikiCache.removeFromCache(CACHE_TOPIC_NAMES_BY_NAME, key);
 		}
 		WikiCache.addToCache(CACHE_TOPICS_BY_NAME, key, topic);
 		WikiCache.addToCache(CACHE_TOPICS_BY_ID, topic.getTopicId(), topic);
@@ -865,6 +865,10 @@ public class AnsiDataHandler implements DataHandler {
 		try {
 			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 			topic = this.queryHandler().lookupTopic(virtualWikiId, virtualWiki, namespace, pageName, conn);
+			if (topic == null && Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_CAPITALIZATION)) {
+				String alternativePageName = (StringUtils.equals(pageName, StringUtils.capitalize(pageName))) ? StringUtils.lowerCase(pageName) : StringUtils.capitalize(pageName);
+				topic = this.queryHandler().lookupTopic(virtualWikiId, virtualWiki, namespace, alternativePageName, conn);
+			}
 			if (topic == null && checkSharedVirtualWiki) {
 				topic = this.lookupTopic(sharedVirtualWiki, namespace, pageName, deleteOK, conn);
 			}
@@ -873,7 +877,7 @@ public class AnsiDataHandler implements DataHandler {
 				// to avoid caching something that might need to be rolled back
 				Topic cacheTopic = (topic == null) ? null : new Topic(topic);
 				WikiCache.addToCache(CACHE_TOPICS_BY_NAME, key, cacheTopic);
-				WikiCache.addToCache(CACHE_TOPIC_IDS_BY_NAME, key, (cacheTopic == null) ? null : cacheTopic.getTopicId());
+				WikiCache.addToCache(CACHE_TOPIC_NAMES_BY_NAME, key, (cacheTopic == null) ? null : cacheTopic.getName());
 			}
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
@@ -941,42 +945,42 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Integer lookupTopicId(String virtualWiki, String topicName) throws DataAccessException {
+	public String lookupTopicName(String virtualWiki, String topicName) throws DataAccessException {
 		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(topicName)) {
 			return null;
 		}
 		Namespace namespace = LinkUtil.retrieveTopicNamespace(virtualWiki, topicName);
 		String pageName = LinkUtil.retrieveTopicPageName(namespace, virtualWiki, topicName);
-		return this.lookupTopicId(virtualWiki, namespace, pageName);
+		return this.lookupTopicName(virtualWiki, namespace, pageName);
 	}
 
 	/**
 	 *
 	 */
-	private Integer lookupTopicId(String virtualWiki, Namespace namespace, String pageName) throws DataAccessException {
+	private String lookupTopicName(String virtualWiki, Namespace namespace, String pageName) throws DataAccessException {
 		long start = System.currentTimeMillis();
 		String key = this.cacheTopicKey(virtualWiki, namespace, pageName);
-		Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPIC_IDS_BY_NAME, key);
+		Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPIC_NAMES_BY_NAME, key);
 		if (cacheElement != null) {
-			return (Integer)cacheElement.getObjectValue();
+			return (String)cacheElement.getObjectValue();
 		}
 		boolean checkSharedVirtualWiki = this.useSharedVirtualWiki(virtualWiki, namespace);
 		String sharedVirtualWiki = Environment.getValue(Environment.PROP_SHARED_UPLOAD_VIRTUAL_WIKI);
 		if (checkSharedVirtualWiki) {
 			String sharedKey = this.cacheTopicKey(sharedVirtualWiki, namespace, pageName);
-			cacheElement = WikiCache.retrieveFromCache(CACHE_TOPIC_IDS_BY_NAME, sharedKey);
+			cacheElement = WikiCache.retrieveFromCache(CACHE_TOPIC_NAMES_BY_NAME, sharedKey);
 			if (cacheElement != null) {
-				return (Integer)cacheElement.getObjectValue();
+				return (String)cacheElement.getObjectValue();
 			}
 		}
-		Integer topicId = null;
+		String topicName = null;
 		try {
 			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-			topicId = this.queryHandler().lookupTopicId(virtualWikiId, virtualWiki, namespace, pageName);
-			if (topicId == null && checkSharedVirtualWiki) {
-				topicId = this.lookupTopicId(sharedVirtualWiki, namespace, pageName);
+			topicName = this.queryHandler().lookupTopicName(virtualWikiId, virtualWiki, namespace, pageName);
+			if (topicName == null && checkSharedVirtualWiki) {
+				topicName = this.lookupTopicName(sharedVirtualWiki, namespace, pageName);
 			}
-			WikiCache.addToCache(CACHE_TOPIC_IDS_BY_NAME, key, topicId);
+			WikiCache.addToCache(CACHE_TOPIC_NAMES_BY_NAME, key, topicName);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
@@ -986,7 +990,7 @@ public class AnsiDataHandler implements DataHandler {
 				logger.fine("Slow topic existence lookup for: " + Topic.buildTopicName(virtualWiki, namespace, pageName) + " (" +  (execution / 1000.000) + " s)");
 			}
 		}
-		return topicId;
+		return topicName;
 	}
 
 	/**

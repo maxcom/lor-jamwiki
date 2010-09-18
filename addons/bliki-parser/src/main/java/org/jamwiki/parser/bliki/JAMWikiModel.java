@@ -129,7 +129,7 @@ public class JAMWikiModel extends AbstractWikiModel {
 				// do not check existence for section links
 			} else {
 				String articleName = topic.replace('_', ' ');
-				if (!LinkUtil.isExistingArticle(virtualWiki, articleName)) {
+				if (LinkUtil.isExistingArticle(virtualWiki, articleName) == null) {
 					style = "edit";
 					href = LinkUtil.buildEditLinkUrl(fContextPath, virtualWiki, topic, query, -1);
 				}

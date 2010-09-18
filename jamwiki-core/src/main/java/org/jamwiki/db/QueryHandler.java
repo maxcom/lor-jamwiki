@@ -764,10 +764,11 @@ public interface QueryHandler {
 	int lookupTopicCount(int virtualWikiId, int namespaceStart, int namespaceEnd) throws SQLException;
 
 	/**
-	 * Given a topic name and virtual wiki, return the corresponding topic ID, or
-	 * <code>null</code> if no matching topic exists.  This method will return only
-	 * non-deleted topics and performs better for cases where a caller only needs to
-	 * know if a topic exists, but does not need a full Topic object.
+	 * This method is used primarily to determine if a topic with a given name exists,
+	 * taking as input a topic name and virtual wiki and returning the corresponding
+	 * topic name, or <code>null</code> if no matching topic exists.  This method will
+	 * return only non-deleted topics and performs better for cases where a caller only
+	 * needs to know if a topic exists, but does not need a full Topic object.
 	 *
 	 * @param virtualWikiId The ID of the virtual wiki for the topic being queried.
 	 * @param virtualWikiName The name of the virtual wiki for the virtual wiki of
@@ -775,11 +776,11 @@ public interface QueryHandler {
 	 * @param namespace The Namespace for the topic being retrieved.
 	 * @param pageName The topic pageName (topic name without the namespace) for
 	 *  the topic being retrieved.
-	 * @return The ID of the Topic object that matches the given virtual wiki and topic
+	 * @return The name of the Topic object that matches the given virtual wiki and topic
 	 * name, or <code>null</code> if no matching topic exists.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	Integer lookupTopicId(int virtualWikiId, String virtualWikiName, Namespace namespace, String pageName) throws SQLException;
+	String lookupTopicName(int virtualWikiId, String virtualWikiName, Namespace namespace, String pageName) throws SQLException;
 
 	/**
 	 * Find the names for all topics that link to a specified topic.

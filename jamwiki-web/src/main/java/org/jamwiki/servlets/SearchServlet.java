@@ -58,8 +58,9 @@ public class SearchServlet extends JAMWikiServlet {
 	private void jumpTo(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		String topic = request.getParameter("text");
-		if (LinkUtil.isExistingArticle(virtualWiki, topic)) {
-			ServletUtil.redirect(next, virtualWiki, topic);
+		String targetTopic = LinkUtil.isExistingArticle(virtualWiki, topic);
+		if (targetTopic != null) {
+			ServletUtil.redirect(next, virtualWiki, targetTopic);
 		} else {
 			next.addObject("notopic", topic);
 			this.search(request, next, pageInfo);
