@@ -152,7 +152,8 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 	}
 
 	/**
-	 * Utility method for replacing a namespace.
+	 * Utility method for replacing the original namespaces from the XML with
+	 * namespaces configured for the current JAMWiki instance.
 	 */
 	private void replaceNamespace(StringBuilder builder, String jamwikiNamespace, String patternString) {
 		Pattern mediawikiPattern = Pattern.compile(patternString, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);

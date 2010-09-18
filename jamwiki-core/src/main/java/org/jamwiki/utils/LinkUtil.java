@@ -252,7 +252,7 @@ public class LinkUtil {
 		if (wikiLink.getNamespace().getId().equals(Namespace.MEDIA_ID)) {
 			// for the "Media:" namespace, link directly to the file
 			String filename = Namespace.namespace(Namespace.FILE_ID).getLabel(virtualWiki) + Namespace.SEPARATOR + wikiLink.getArticle();
-			url = ImageUtil.buildImageFileUrl(context, virtualWiki, filename);
+			url = ImageUtil.buildImageFileUrl(virtualWiki, filename);
 			if (url == null) {
 				url = LinkUtil.buildTopicUrlNoEdit(context, virtualWiki, "Special:Upload", null, "?topic=" + filename);
 			}

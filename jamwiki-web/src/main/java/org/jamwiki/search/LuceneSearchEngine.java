@@ -73,8 +73,6 @@ public class LuceneSearchEngine implements SearchEngine {
 	private static final String ITYPE_CONTENT_PLAIN = "content_plain";
 	/** Id stored with documents to indicate the topic name. */
 	private static final String ITYPE_TOPIC_PLAIN = "topic_plain";
-	/** Id stored with the document to indicate the search names of topics linked from the page.  */
-	private static final String ITYPE_TOPIC_LINK = "topic_link";
 	/** Lucene compatibility version. */
 	private static final Version USE_LUCENE_VERSION = Version.LUCENE_30;
 	/** Maximum number of results to return per search. */

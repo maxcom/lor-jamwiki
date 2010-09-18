@@ -76,25 +76,24 @@ public class ImageUtil {
 	 * page).  If the file does not exist then this method will return
 	 * <code>null</code>.
 	 *
-	 * @param context The current servlet context.
 	 * @param virtualWiki The virtual wiki for the URL that is being created.
 	 * @param topicName The name of the image for which a link is being created.
 	 * @return The URL to an image file (not the image topic) or <code>null</code>
 	 *  if the file does not exist.
 	 * @throws DataAccessException Thrown if any error occurs while retrieving file info.
 	 */
-	public static String buildImageFileUrl(String context, String virtualWiki, String topicName) throws DataAccessException {
+	public static String buildImageFileUrl(String virtualWiki, String topicName) throws DataAccessException {
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
 		if (wikiFile == null) {
 			return null;
 		}
-		return buildRelativeImageUrl(context, wikiFile.getUrl());
+		return buildRelativeImageUrl(wikiFile.getUrl());
 	}
 
 	/**
 	 *
 	 */
-	private static String buildRelativeImageUrl(String context, String filename) {
+	private static String buildRelativeImageUrl(String filename) {
 		String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + filename);
 		return FilenameUtils.separatorsToUnix(url);
 	}
@@ -123,7 +122,7 @@ public class ImageUtil {
 	 * @throws IOException Thrown if any error occurs while reading image information.
 	 */
 	public static String buildImageLinkHtml(String context, String linkVirtualWiki, String topicName, ImageMetadata imageMetadata, String style, boolean escapeHtml) throws DataAccessException, IOException {
-		String url = ImageUtil.buildImageFileUrl(context, linkVirtualWiki, topicName);
+		String url = ImageUtil.buildImageFileUrl(linkVirtualWiki, topicName);
 		if (url == null) {
 			return ImageUtil.buildUploadLink(context, linkVirtualWiki, topicName);
 		}
@@ -175,7 +174,7 @@ public class ImageUtil {
 			style += " thumbborder";
 		}
 		html.append("<img class=\"").append(style).append("\" src=\"");
-		html.append(buildRelativeImageUrl(context, wikiImage.getUrl()));
+		html.append(buildRelativeImageUrl(wikiImage.getUrl()));
 		html.append('\"');
 		html.append(" width=\"").append(wikiImage.getWidth()).append('\"');
 		html.append(" height=\"").append(wikiImage.getHeight()).append('\"');
@@ -281,8 +280,7 @@ public class ImageUtil {
 	 */
 	private static int calculateImageIncrement(double dimension) {
 		int increment = Environment.getIntValue(Environment.PROP_IMAGE_RESIZE_INCREMENT);
-		double result = Math.ceil(dimension / (double)increment) * increment;
-		return (int)result;
+		return (int)(Math.ceil(dimension / (double)increment) * increment);
 	}
 
 	/**
