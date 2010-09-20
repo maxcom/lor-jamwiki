@@ -172,11 +172,24 @@
 				<artifactId>ehcache-core</artifactId>
 				<version>2.1.0</version>
 			</dependency>
-			<!-- slf4j is an ehcache dependency -->
+			<!-- slf4j unifies logging.  ehcache depends on it, and this replaces spring's dependency on commons-logging -->
 			<dependency>
 				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-jdk14</artifactId>
+				<artifactId>jcl-over-slf4j</artifactId>
 				<version>1.5.8</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>0.9.20</version>
+			</dependency>
+			<!-- explicitly exclude commons-logging, which would otherwise be included by Spring -->
+			<dependency>
+				<groupId>commons-logging</groupId>
+				<artifactId>commons-logging</artifactId>
+				<version>1.0.4</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.lucene</groupId>

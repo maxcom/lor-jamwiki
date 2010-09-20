@@ -290,6 +290,6 @@ public class WikiConfiguration {
 	 * @param child
 	 */
 	private void logUnknownChild(Node node, Node child) {
-		logger.finest("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
+		logger.finer("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
 	}
 }
