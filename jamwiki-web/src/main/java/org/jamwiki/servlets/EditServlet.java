@@ -274,7 +274,7 @@ public class EditServlet extends JAMWikiServlet {
 			sectionName = parserOutput.getSectionName();
 		}
 		if (contents == null) {
-			logger.warning("The topic " + topicName + " has no content");
+			logger.warn("The topic " + topicName + " has no content");
 			throw new WikiException(new WikiMessage("edit.exception.nocontent", topicName));
 		}
 		// strip line feeds

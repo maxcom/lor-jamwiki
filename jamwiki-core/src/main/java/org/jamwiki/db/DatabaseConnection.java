@@ -127,7 +127,7 @@ public class DatabaseConnection {
 				((BasicDataSource) testDataSource).close();
 			}
 		} catch (SQLException e) {
-			logger.severe("Unable to close connection pool", e);
+			logger.error("Unable to close connection pool", e);
 			throw e;
 		}
 		// clear references to prevent them being reused (& allow garbage collection)
@@ -197,12 +197,12 @@ public class DatabaseConnection {
 			int result = stmt.executeUpdate(sql);
 			long execution = System.currentTimeMillis() - start;
 			if (execution > DatabaseConnection.SLOW_QUERY_LIMIT) {
-				logger.warning("Slow query: " + sql + " (" + (execution / 1000.000) + " s.)");
+				logger.warn("Slow query: " + sql + " (" + (execution / 1000.000) + " s.)");
 			}
-			logger.fine("Executed " + sql + " (" + (execution / 1000.000) + " s.)");
+			logger.debug("Executed " + sql + " (" + (execution / 1000.000) + " s.)");
 			return result;
 		} catch (SQLException e) {
-			logger.severe("Failure while executing " + sql, e);
+			logger.error("Failure while executing " + sql, e);
 			throw e;
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
@@ -234,7 +234,7 @@ public class DatabaseConnection {
 				// Use an internal "LocalDataSource" configured from the Environment
 				targetDataSource = new LocalDataSource();
 			} catch (ClassNotFoundException e) {
-				logger.severe("Failure while configuring local data source", e);
+				logger.error("Failure while configuring local data source", e);
 				throw new SQLException("Failure while configuring local data source: " + e.toString());
 			}
 		} else {
@@ -244,7 +244,7 @@ public class DatabaseConnection {
 				Context ctx = new InitialContext();
 				targetDataSource = (DataSource)ctx.lookup(url);
 			} catch (NamingException e) {
-				logger.severe("Failure while configuring JNDI data source with URL: " + url, e);
+				logger.error("Failure while configuring JNDI data source with URL: " + url, e);
 				throw new SQLException("Unable to configure JNDI data source with URL " + url + ": " + e.toString());
 			}
 		}
@@ -305,7 +305,7 @@ public class DatabaseConnection {
 				// TODO: Try appending "java:comp/env/" to the JNDI Name if it is missing?
 				testDataSource = (DataSource) ctx.lookup(url);
 			} catch (NamingException e) {
-				logger.severe("Failure while configuring JNDI data source with URL: " + url, e);
+				logger.error("Failure while configuring JNDI data source with URL: " + url, e);
 				throw new SQLException("Unable to configure JNDI data source with URL " + url + ": " + e.toString());
 			}
 			return testDataSource.getConnection();
@@ -343,7 +343,7 @@ public class DatabaseConnection {
 	 * @throws TransactionException in case of a rollback error
 	 */
 	protected static void rollbackOnException(TransactionStatus status, Throwable ex) throws TransactionException {
-		logger.fine("Initiating transaction rollback on application exception", ex);
+		logger.debug("Initiating transaction rollback on application exception", ex);
 		if (status == null) {
 			logger.info("TransactionStatus is null, unable to rollback");
 			return;
@@ -351,14 +351,14 @@ public class DatabaseConnection {
 		try {
 			transactionManager.rollback(status);
 		} catch (TransactionSystemException ex2) {
-			logger.severe("Application exception overridden by rollback exception", ex);
+			logger.error("Application exception overridden by rollback exception", ex);
 			ex2.initApplicationException(ex);
 			throw ex2;
 		} catch (RuntimeException ex2) {
-			logger.severe("Application exception overridden by rollback exception", ex);
+			logger.error("Application exception overridden by rollback exception", ex);
 			throw ex2;
 		} catch (Error err) {
-			logger.severe("Application exception overridden by rollback error", ex);
+			logger.error("Application exception overridden by rollback error", ex);
 			throw err;
 		}
 	}

@@ -75,18 +75,18 @@ public class Utilities {
 			return text;
 		}
 		if (StringUtils.isBlank(fromEncoding)) {
-			logger.warning("No character encoding specified to convert from, using UTF-8");
+			logger.warn("No character encoding specified to convert from, using UTF-8");
 			fromEncoding = "UTF-8";
 		}
 		if (StringUtils.isBlank(toEncoding)) {
-			logger.warning("No character encoding specified to convert to, using UTF-8");
+			logger.warn("No character encoding specified to convert to, using UTF-8");
 			toEncoding = "UTF-8";
 		}
 		try {
 			text = new String(text.getBytes(fromEncoding), toEncoding);
 		} catch (UnsupportedEncodingException e) {
 			// bad encoding
-			logger.warning("Unable to convert value " + text + " from " + fromEncoding + " to " + toEncoding, e);
+			logger.warn("Unable to convert value " + text + " from " + fromEncoding + " to " + toEncoding, e);
 		}
 		return text;
 	}
@@ -333,7 +333,7 @@ public class Utilities {
 		try {
 			loader = Thread.currentThread().getContextClassLoader();
 		} catch (SecurityException e) {
-			logger.fine("Unable to retrieve thread class loader, trying default");
+			logger.debug("Unable to retrieve thread class loader, trying default");
 		}
 		if (loader == null) {
 			loader = Utilities.class.getClassLoader();
@@ -434,7 +434,7 @@ public class Utilities {
 		if (StringUtils.isBlank(className)) {
 			throw new IllegalArgumentException("Cannot call instantiateClass with an empty class name");
 		}
-		logger.fine("Instantiating class: " + className);
+		logger.debug("Instantiating class: " + className);
 		try {
 			Class clazz = ClassUtils.getClass(className);
 			Class[] parameterTypes = new Class[0];

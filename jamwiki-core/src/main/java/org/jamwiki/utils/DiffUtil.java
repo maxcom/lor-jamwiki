@@ -264,7 +264,7 @@ public class DiffUtil {
 				addedCurrent++;
 			}
 			if (oldText == null && newText == null) {
-				logger.fine("Possible DIFF bug: no elements post-buffered.  position: " + position + " / deletedCurrent: " + deletedCurrent + " / addedCurrent " + addedCurrent + " / numIterations: " + numIterations);
+				logger.debug("Possible DIFF bug: no elements post-buffered.  position: " + position + " / deletedCurrent: " + deletedCurrent + " / addedCurrent " + addedCurrent + " / numIterations: " + numIterations);
 				break;
 			}
 			wikiDiffs.add(new WikiDiff(oldText, newText, position));
@@ -322,7 +322,7 @@ public class DiffUtil {
 				addedCurrent++;
 			}
 			if (oldText == null && newText == null) {
-				logger.fine("Possible DIFF bug: no elements pre-buffered.  position: " + position + " / deletedCurrent: " + deletedCurrent + " / addedCurrent " + addedCurrent + " / numIterations: " + numIterations);
+				logger.debug("Possible DIFF bug: no elements pre-buffered.  position: " + position + " / deletedCurrent: " + deletedCurrent + " / addedCurrent " + addedCurrent + " / numIterations: " + numIterations);
 				break;
 			}
 			wikiDiffs.add(new WikiDiff(oldText, newText, position));
@@ -335,7 +335,7 @@ public class DiffUtil {
 	 * @param oldVersion The String that is being compared against.
 	 */
 	private static List<WikiDiff> process(String newVersion, String oldVersion) {
-		logger.finer("Diffing: " + oldVersion + " against: " + newVersion);
+		logger.trace("Diffing: " + oldVersion + " against: " + newVersion);
 		if (newVersion.equals(oldVersion)) {
 			return new ArrayList<WikiDiff>();
 		}
@@ -382,7 +382,7 @@ public class DiffUtil {
 			// FIXME - this shouldn't be necessary
 			count++;
 			if (count > 5000) {
-				logger.warning("Infinite loop in DiffUtils.processDifference");
+				logger.warn("Infinite loop in DiffUtils.processDifference");
 				break;
 			}
 		}

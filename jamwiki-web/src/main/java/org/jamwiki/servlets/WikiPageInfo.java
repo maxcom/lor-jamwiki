@@ -63,7 +63,7 @@ public class WikiPageInfo {
 	protected WikiPageInfo(HttpServletRequest request) {
 		this.virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
 		if (this.virtualWikiName == null) {
-			logger.severe("No virtual wiki available for page request " + request.getRequestURI());
+			logger.error("No virtual wiki available for page request " + request.getRequestURI());
 			this.virtualWikiName = VirtualWiki.defaultVirtualWiki().getName();
 		}
 	}
@@ -416,7 +416,7 @@ public class WikiPageInfo {
 		try {
 			virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(this.getVirtualWikiName());
 		} catch (DataAccessException e) {
-			logger.severe("Failure while retrieving virtual wiki: " + this.getVirtualWikiName(), e);
+			logger.error("Failure while retrieving virtual wiki: " + this.getVirtualWikiName(), e);
 		}
 		return virtualWiki;
 	}

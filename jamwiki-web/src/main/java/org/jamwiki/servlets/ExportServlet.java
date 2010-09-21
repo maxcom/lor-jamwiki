@@ -87,10 +87,10 @@ public class ExportServlet extends JAMWikiServlet {
 			success = true;
 			file.delete();
 		} catch (IOException e) {
-			logger.severe("Failure while exporting to file", e);
+			logger.error("Failure while exporting to file", e);
 			errors.add(new WikiMessage("export.error.migration", e.getMessage()));
 		} catch (MigrationException e) {
-			logger.severe("Failure while exporting from file", e);
+			logger.error("Failure while exporting from file", e);
 			errors.add(new WikiMessage("export.error.migration", e.getMessage()));
 		} catch (WikiException e) {
 			errors.add(e.getWikiMessage());

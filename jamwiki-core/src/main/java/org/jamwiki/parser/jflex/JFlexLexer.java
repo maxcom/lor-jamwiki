@@ -120,7 +120,7 @@ public abstract class JFlexLexer {
 	protected void endState() {
 		// revert to previous state
 		if (states.empty()) {
-			logger.warning("Attempt to call endState for an empty stack with text: " + yytext());
+			logger.warn("Attempt to call endState for an empty stack with text: " + yytext());
 			return;
 		}
 		int next = states.pop();
@@ -266,7 +266,7 @@ public abstract class JFlexLexer {
 	 */
 	protected JFlexTagItem popTag(String tagType) {
 		if (this.tagStack.size() <= 1) {
-			logger.warning("popTag called on an empty tag stack or on the root stack element.  Please report this error on jamwiki.org, and provide the wiki syntax for the topic being parsed.");
+			logger.warn("popTag called on an empty tag stack or on the root stack element.  Please report this error on jamwiki.org, and provide the wiki syntax for the topic being parsed.");
 		}
 		// verify that the tag being closed is the tag that is currently open.  if not
 		// there are two options - first is that the user entered unbalanced HTML such

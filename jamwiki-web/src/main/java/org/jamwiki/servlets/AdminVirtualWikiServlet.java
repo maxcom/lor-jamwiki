@@ -89,7 +89,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 		} catch (WikiException e) {
 			errors.add(e.getWikiMessage());
 		} catch (DataAccessException e) {
-			logger.severe("Failure while adding interwiki record", e);
+			logger.error("Failure while adding interwiki record", e);
 			errors.add(new WikiMessage("error.unknown", e.getMessage()));
 		}
 		if (!errors.isEmpty()) {
@@ -128,7 +128,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 		} catch (WikiException e) {
 			errors.add(e.getWikiMessage());
 		} catch (DataAccessException e) {
-			logger.severe("Failure while creating new namespace", e);
+			logger.error("Failure while creating new namespace", e);
 			errors.add(new WikiMessage("error.unknown", e.getMessage()));
 		}
 		if (!errors.isEmpty()) {
@@ -152,7 +152,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			try {
 				Environment.saveProperties();
 			} catch (IOException e) {
-				logger.severe("Failure while updating default virtual wiki", e);
+				logger.error("Failure while updating default virtual wiki", e);
 				errors.add(new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
 			}
 			next.addObject("message", new WikiMessage("admin.message.vwiki.defaultupdated", defaultVirtualWiki));
@@ -185,7 +185,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			WikiBase.getDataHandler().writeNamespaceTranslations(namespaces, virtualWiki);
 			next.addObject("message", new WikiMessage("admin.vwiki.message.namespacesuccess", virtualWiki));
 		} catch (DataAccessException e) {
-			logger.severe("Failure while retrieving adding/updating namespace translations", e);
+			logger.error("Failure while retrieving adding/updating namespace translations", e);
 			List<WikiMessage> errors = new ArrayList<WikiMessage>();
 			errors.add(new WikiMessage("admin.vwiki.error.addnamespacefail", e.getMessage()));
 			next.addObject("errors", errors);
@@ -221,7 +221,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 				} catch (WikiException e) {
 					errors.add(e.getWikiMessage());
 				} catch (DataAccessException e) {
-					logger.severe("Failure while adding interwiki record", e);
+					logger.error("Failure while adding interwiki record", e);
 					errors.add(new WikiMessage("error.unknown", e.getMessage()));
 				}
 			}
@@ -246,7 +246,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			try {
 				virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(selected);
 			} catch (DataAccessException e) {
-				logger.severe("Failure while retrieving virtual wiki", e);
+				logger.error("Failure while retrieving virtual wiki", e);
 				errors.add(new WikiMessage("error.unknown", e.getMessage()));
 			}
 			if (virtualWiki != null) {
@@ -264,7 +264,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			List<Interwiki> interwikis = WikiBase.getDataHandler().lookupInterwikis();
 			next.addObject("interwikis", interwikis);
 		} catch (DataAccessException e) {
-			logger.severe("Failure while retrieving database records", e);
+			logger.error("Failure while retrieving database records", e);
 			errors.add(new WikiMessage("error.unknown", e.getMessage()));
 		}
 		pageInfo.setContentJsp(JSP_ADMIN_VIRTUAL_WIKI);
@@ -305,7 +305,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 				next.addObject("message", new WikiMessage("admin.message.virtualwikiupdated", virtualWiki.getName()));
 			}
 		} catch (DataAccessException e) {
-			logger.severe("Failure while adding virtual wiki", e);
+			logger.error("Failure while adding virtual wiki", e);
 			errors.add(new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
 		} catch (WikiException e) {
 			errors.add(e.getWikiMessage());

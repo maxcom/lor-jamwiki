@@ -83,10 +83,10 @@ public class ImportServlet extends JAMWikiServlet {
 				break;
 			}
 		} catch (MigrationException e) {
-			logger.severe("Failure while importing from file", e);
+			logger.error("Failure while importing from file", e);
 			errors.add(new WikiMessage("import.error.migration", e.getMessage()));
 		} catch (WikiException e) {
-			logger.severe("Failure while importing from file", e);
+			logger.error("Failure while importing from file", e);
 			errors.add(e.getWikiMessage());
 		}
 		next.addObject("errors", errors);
@@ -118,7 +118,7 @@ public class ImportServlet extends JAMWikiServlet {
 		try {
 			item.write(xmlFile);
 		} catch (Exception e) {
-			logger.severe("Failure while saving uploaded file item", e);
+			logger.error("Failure while saving uploaded file item", e);
 			throw new WikiException(new WikiMessage("error.unknown", e.getMessage()));
 		}
 		return xmlFile;

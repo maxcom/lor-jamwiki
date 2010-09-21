@@ -117,13 +117,13 @@ public class JFlexParser extends AbstractParser {
 			while ((line = lexer.yylex()) != null) {
 				lexer.append(line);
 				current = System.currentTimeMillis();
-				if (logger.isFineEnabled() && (current - previous) > TIME_LIMIT_PARSE) {
+				if (logger.isDebugEnabled() && (current - previous) > TIME_LIMIT_PARSE) {
 					// took too long, log a message
 					String message = "Slow parsing (" + ((current - previous) / 1000.000) + " s) for topic: " + this.parserInput.getTopicName() + " / state: " + lexer.yystate();
 					if (raw != null && raw.length() < 300) {
 						message += " / content: " + raw;
 					}
-					logger.fine(message);
+					logger.debug(message);
 				}
 				previous = current;
 			}
@@ -345,7 +345,7 @@ public class JFlexParser extends AbstractParser {
 		lexer.setTargetSection(targetSection);
 		String output = this.lex(lexer, raw, parserOutput, JFlexParser.MODE_SLICE);
 		String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
-		logger.fine("Parse time (parseSlice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		logger.debug("Parse time (parseSlice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return output;
 	}
 
@@ -374,7 +374,7 @@ public class JFlexParser extends AbstractParser {
 		lexer.setTargetSection(targetSection);
 		String output = this.lex(lexer, raw, parserOutput, JFlexParser.MODE_SPLICE);
 		String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
-		logger.fine("Parse time (parseSplice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		logger.debug("Parse time (parseSplice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return output;
 	}
 

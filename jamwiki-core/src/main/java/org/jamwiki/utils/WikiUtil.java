@@ -98,7 +98,7 @@ public class WikiUtil {
 	public static DataHandler dataHandlerInstance() throws IOException {
 		if (StringUtils.isBlank(Environment.getValue(Environment.PROP_DB_TYPE))) {
 			// this is a problem, but it should never occur
-			logger.warning("WikiUtil.dataHandlerInstance called without a valid PROP_DB_TYPE value");
+			logger.warn("WikiUtil.dataHandlerInstance called without a valid PROP_DB_TYPE value");
 		}
 		String dataHandlerClass = Environment.getValue(Environment.PROP_DB_TYPE);
 		try {
@@ -190,7 +190,7 @@ public class WikiUtil {
 			try {
 				virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
 			} catch (DataAccessException e) {
-				logger.warning("Unable to retrieve default topic for virtual wiki", e);
+				logger.warn("Unable to retrieve default topic for virtual wiki", e);
 			}
 		}
 		return "/" + virtualWiki.getName() + "/" + virtualWiki.getRootTopicName();
@@ -211,7 +211,7 @@ public class WikiUtil {
 		int count = attempts;
 		String target = parent.getRedirectTo();
 		if (parent.getTopicType() != TopicType.REDIRECT || StringUtils.isBlank(target)) {
-			logger.severe("getRedirectTarget() called for non-redirect topic " + parent.getName());
+			logger.error("getRedirectTarget() called for non-redirect topic " + parent.getName());
 			return parent;
 		}
 		// avoid infinite redirection
@@ -363,7 +363,7 @@ public class WikiUtil {
 		if (pos != -1) {
 			// strip everything after and including '#'
 			if (pos == 0) {
-				logger.warning("No topic in URL: " + request.getRequestURI());
+				logger.warn("No topic in URL: " + request.getRequestURI());
 				return null;
 			}
 			topic = topic.substring(0, pos);
@@ -372,7 +372,7 @@ public class WikiUtil {
 		if (pos != -1) {
 			// strip everything after and including '?'
 			if (pos == 0) {
-				logger.warning("No topic in URL: " + request.getRequestURI());
+				logger.warn("No topic in URL: " + request.getRequestURI());
 				return null;
 			}
 			topic = topic.substring(0, pos);
@@ -381,7 +381,7 @@ public class WikiUtil {
 		if (pos != -1) {
 			// some servlet containers return parameters of the form ";jsessionid=1234" when getRequestURI is called.
 			if (pos == 0) {
-				logger.warning("No topic in URL: " + request.getRequestURI());
+				logger.warn("No topic in URL: " + request.getRequestURI());
 				return null;
 			}
 			topic = topic.substring(0, pos);

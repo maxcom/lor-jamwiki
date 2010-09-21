@@ -89,7 +89,7 @@ public class MigrationUtil {
 			}
 			throw e;
 		}
-		logger.fine("Parsed XML " + file.getAbsolutePath() + " in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
+		logger.debug("Parsed XML " + file.getAbsolutePath() + " in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 		if (parsedTopics.isEmpty()) {
 			throw new WikiException(new WikiMessage("import.error.notopic"));
 		}

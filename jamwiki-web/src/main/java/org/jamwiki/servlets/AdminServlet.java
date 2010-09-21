@@ -123,7 +123,7 @@ public class AdminServlet extends JAMWikiServlet {
 		} catch (WikiException e) {
 			errors.add(e.getWikiMessage());
 		} catch (Exception e) {
-			logger.severe("Failure while create new user account", e);
+			logger.error("Failure while create new user account", e);
 			errors.add(new WikiMessage("admin.message.adduserfail", e.getMessage()));
 		}
 		if (!errors.isEmpty()) {
@@ -147,7 +147,7 @@ public class AdminServlet extends JAMWikiServlet {
 			WikiCache.initialize();
 			next.addObject("message", new WikiMessage("admin.message.cache"));
 		} catch (Exception e) {
-			logger.severe("Failure while clearing cache", e);
+			logger.error("Failure while clearing cache", e);
 			List<WikiMessage> errors = new ArrayList<WikiMessage>();
 			errors.add(new WikiMessage("admin.cache.message.clearfailed", e.getMessage()));
 			next.addObject("errors", errors);
@@ -166,7 +166,7 @@ public class AdminServlet extends JAMWikiServlet {
 		} catch (WikiException e) {
 			errors.add(e.getWikiMessage());
 		} catch (DataAccessException e) {
-			logger.severe("Failure while regenerating topic metadata", e);
+			logger.error("Failure while regenerating topic metadata", e);
 			errors.add(new WikiMessage("admin.maintenance.error.linksfail", e.getMessage()));
 		}
 		if (!errors.isEmpty()) {
@@ -183,7 +183,7 @@ public class AdminServlet extends JAMWikiServlet {
 			WikiBase.getDataHandler().reloadLogItems();
 			next.addObject("message", new WikiMessage("admin.message.logitems"));
 		} catch (Exception e) {
-			logger.severe("Failure while loading log items", e);
+			logger.error("Failure while loading log items", e);
 			List<WikiMessage> errors = new ArrayList<WikiMessage>();
 			errors.add(new WikiMessage("admin.message.logitemsfail", e.getMessage()));
 			next.addObject("errors", errors);
@@ -219,7 +219,7 @@ public class AdminServlet extends JAMWikiServlet {
 				next.addObject("message", new WikiMessage("admin.message.migratedatabase", Environment.getValue(Environment.PROP_DB_URL)));
 			}
 		} catch (Exception e) {
-			logger.severe("Failure while migrating to a new database", e);
+			logger.error("Failure while migrating to a new database", e);
 			errors.add(new WikiMessage("admin.message.migrationfailure", e.getMessage()));
 		}
 		next.addObject("errors", errors);
@@ -234,7 +234,7 @@ public class AdminServlet extends JAMWikiServlet {
 			int numUpdated = WikiDatabase.fixIncorrectTopicNamespaces();
 			next.addObject("message", new WikiMessage("admin.maintenance.message.topicsUpdated", Integer.toString(numUpdated)));
 		} catch (DataAccessException e) {
-			logger.severe("Failure while fixing incorrect topic namespaces", e);
+			logger.error("Failure while fixing incorrect topic namespaces", e);
 			List<WikiMessage> errors = new ArrayList<WikiMessage>();
 			errors.add(new WikiMessage("admin.maintenance.error.namespacefail", e.getMessage()));
 			next.addObject("errors", errors);
@@ -261,7 +261,7 @@ public class AdminServlet extends JAMWikiServlet {
 		} catch (WikiException e) {
 			errors.add(e.getWikiMessage());
 		} catch (Exception e) {
-			logger.severe("Failure while updating user password", e);
+			logger.error("Failure while updating user password", e);
 			errors.add(new WikiMessage("error.unknown", e.getMessage()));
 		}
 		if (!errors.isEmpty()) {
@@ -356,7 +356,7 @@ public class AdminServlet extends JAMWikiServlet {
 				next.addObject("message", new WikiMessage("admin.message.changessaved"));
 			}
 		} catch (Exception e) {
-			logger.severe("Failure while processing property values", e);
+			logger.error("Failure while processing property values", e);
 			errors.add(new WikiMessage("admin.message.propertyfailure", e.getMessage()));
 		}
 		next.addObject("errors", errors);
@@ -371,7 +371,7 @@ public class AdminServlet extends JAMWikiServlet {
 			WikiBase.getDataHandler().reloadRecentChanges();
 			next.addObject("message", new WikiMessage("admin.message.recentchanges"));
 		} catch (Exception e) {
-			logger.severe("Failure while loading recent changes", e);
+			logger.error("Failure while loading recent changes", e);
 			List<WikiMessage> errors = new ArrayList<WikiMessage>();
 			errors.add(new WikiMessage("admin.message.recentchangesfail", e.getMessage()));
 			next.addObject("errors", errors);
@@ -387,7 +387,7 @@ public class AdminServlet extends JAMWikiServlet {
 			WikiBase.getSearchEngine().refreshIndex();
 			next.addObject("message", new WikiMessage("admin.message.indexrefreshed"));
 		} catch (Exception e) {
-			logger.severe("Failure while refreshing search index", e);
+			logger.error("Failure while refreshing search index", e);
 			List<WikiMessage> errors = new ArrayList<WikiMessage>();
 			errors.add(new WikiMessage("admin.message.searchrefresh", e.getMessage()));
 			next.addObject("errors", errors);
@@ -472,7 +472,7 @@ public class AdminServlet extends JAMWikiServlet {
 			SpamFilter.reload();
 			next.addObject("message", new WikiMessage("admin.message.spamfilter"));
 		} catch (Exception e) {
-			logger.severe("Failure while reloading spam filter patterns", e);
+			logger.error("Failure while reloading spam filter patterns", e);
 			List<WikiMessage> errors = new ArrayList<WikiMessage>();
 			errors.add(new WikiMessage("admin.message.spamfilterfail", e.getMessage()));
 			next.addObject("errors", errors);
@@ -520,7 +520,7 @@ public class AdminServlet extends JAMWikiServlet {
 			List<VirtualWiki> virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList();
 			next.addObject("virtualwikis", virtualWikiList);
 		} catch (DataAccessException e) {
-			logger.severe("Failure while retrieving database records", e);
+			logger.error("Failure while retrieving database records", e);
 			errors.add(new WikiMessage("error.unknown", e.getMessage()));
 		}
 		next.addObject("errors", errors);

@@ -83,19 +83,19 @@ wikisignature      = ([~]{3,5})
 /* ----- nowiki ----- */
 
 <YYINITIAL, WIKIPRE>{nowiki} {
-    if (logger.isFinerEnabled()) logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("nowiki: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
 
 /* ----- pre ----- */
 
 <YYINITIAL>{htmlpre} {
-    if (logger.isFinerEnabled()) logger.finer("htmlpre: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("htmlpre: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
 
 <YYINITIAL, WIKIPRE>^{wikiprestart} {
-    if (logger.isFinerEnabled()) logger.finer("wikiprestart: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("wikiprestart: " + yytext() + " (" + yystate() + ")");
     // rollback the one non-pre character so it can be processed
     yypushback(yytext().length() - 1);
     if (yystate() != WIKIPRE) {
@@ -105,7 +105,7 @@ wikisignature      = ([~]{3,5})
 }
 
 <WIKIPRE>^{wikipreend} {
-    if (logger.isFinerEnabled()) logger.finer("wikipreend: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("wikipreend: " + yytext() + " (" + yystate() + ")");
     endState();
     // rollback the one non-pre character so it can be processed
     yypushback(1);
@@ -115,7 +115,7 @@ wikisignature      = ([~]{3,5})
 /* ----- templates ----- */
 
 <YYINITIAL, TEMPLATE>{templatestart} {
-    if (logger.isFinerEnabled()) logger.finer("templatestart: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("templatestart: " + yytext() + " (" + yystate() + ")");
     // push back the one non-template character that matched
     yypushback(1);
     String raw = yytext();
@@ -130,7 +130,7 @@ wikisignature      = ([~]{3,5})
 }
 
 <TEMPLATE>{templateendchar} {
-    if (logger.isFinerEnabled()) logger.finer("templateendchar: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("templateendchar: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     this.templateString += raw;
     if (Utilities.findMatchingEndTag(this.templateString, 0, "{", "}") != -1) {
@@ -143,7 +143,7 @@ wikisignature      = ([~]{3,5})
 }
 
 <YYINITIAL>{templateparam} {
-    if (logger.isFinerEnabled()) logger.finer("templateparam: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("templateparam: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
 
@@ -160,25 +160,25 @@ wikisignature      = ([~]{3,5})
 }
 
 <TEMPLATE>{includeonly} {
-    if (logger.isFinerEnabled()) logger.finer("includeonly: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("includeonly: " + yytext() + " (" + yystate() + ")");
     this.templateString += this.parse(TAG_TYPE_INCLUDE_ONLY, yytext());
     return "";
 }
 
 <YYINITIAL>{includeonly} {
-    if (logger.isFinerEnabled()) logger.finer("includeonly: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("includeonly: " + yytext() + " (" + yystate() + ")");
     return this.parse(TAG_TYPE_INCLUDE_ONLY, yytext());
 }
 
 <YYINITIAL, TEMPLATE>{noinclude} {
-    if (logger.isFinerEnabled()) logger.finer("noinclude: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("noinclude: " + yytext() + " (" + yystate() + ")");
     return this.parse(TAG_TYPE_NO_INCLUDE, yytext());
 }
 
 /* ----- processing commands ----- */
 
 <YYINITIAL>{noeditsection} {
-    if (logger.isFinerEnabled()) logger.finer("noeditsection: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("noeditsection: " + yytext() + " (" + yystate() + ")");
     this.parserInput.setAllowSectionEdit(false);
     return (this.mode < JFlexParser.MODE_PREPROCESS) ? yytext() : "";
 }
@@ -186,26 +186,26 @@ wikisignature      = ([~]{3,5})
 /* ----- wiki links ----- */
 
 <YYINITIAL>{wikilink} {
-    if (logger.isFinerEnabled()) logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("wikilink: " + yytext() + " (" + yystate() + ")");
     return this.parse(TAG_TYPE_WIKI_LINK, yytext());
 }
 
 <YYINITIAL>{nestedwikilink} {
-    if (logger.isFinerEnabled()) logger.finer("nestedwikilink: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("nestedwikilink: " + yytext() + " (" + yystate() + ")");
     return this.parse(TAG_TYPE_WIKI_LINK, yytext(), "nested");
 }
 
 /* ----- signatures ----- */
 
 <YYINITIAL>{wikisignature} {
-    if (logger.isFinerEnabled()) logger.finer("wikisignature: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("wikisignature: " + yytext() + " (" + yystate() + ")");
     return this.parse(TAG_TYPE_WIKI_SIGNATURE, yytext());
 }
 
 /* ----- comments ----- */
 
 <YYINITIAL>{htmlcomment} {
-    if (logger.isFinerEnabled()) logger.finer("htmlcomment: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("htmlcomment: " + yytext() + " (" + yystate() + ")");
     if (this.mode < JFlexParser.MODE_PREPROCESS) {
         return yytext();
     }

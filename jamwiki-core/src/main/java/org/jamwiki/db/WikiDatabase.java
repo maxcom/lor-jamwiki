@@ -107,7 +107,7 @@ public class WikiDatabase {
 			// use existing DataHandler
 			return WikiBase.getDataHandler();
 		}
-		logger.fine("Using NEW data handler: " + handlerClassName);
+		logger.debug("Using NEW data handler: " + handlerClassName);
 		return (DataHandler)Utilities.instantiateClass(handlerClassName);
 	}
 
@@ -169,7 +169,7 @@ public class WikiDatabase {
 		if (newDataHandler instanceof AnsiDataHandler) {
 			AnsiDataHandler dataHandler = (AnsiDataHandler)newDataHandler;
 			newQueryHandler = dataHandler.queryHandler();
-			logger.fine("Using NEW query handler: " + newQueryHandler.getClass().getName());
+			logger.debug("Using NEW query handler: " + newQueryHandler.getClass().getName());
 		} else {
 			newQueryHandler = queryHandler();
 		}
@@ -296,12 +296,12 @@ public class WikiDatabase {
 				update.executeUpdate();
 			}
 		} catch (Exception e) {
-			logger.severe("Error attempting to migrate the database", e);
+			logger.error("Error attempting to migrate the database", e);
 			errors.add(new WikiMessage("error.unknown", e.getMessage()));
 			try {
 				newQueryHandler.dropTables(conn);
 			} catch (Exception ex) {
-				logger.warning("Unable to drop tables in NEW database following failed migration", ex);
+				logger.warn("Unable to drop tables in NEW database following failed migration", ex);
 			}
 		} finally {
 			if (conn != null) {
@@ -341,7 +341,7 @@ public class WikiDatabase {
 			// this clears out any existing connection pool, so that a new one will be created on first access
 			DatabaseConnection.closeConnectionPool();
 		} catch (Exception e) {
-			logger.severe("Unable to initialize database", e);
+			logger.error("Unable to initialize database", e);
 		}
 	}
 
@@ -381,19 +381,19 @@ public class WikiDatabase {
 			return null;
 		} catch (Exception ex) {
 			// we expect this exception as the JAMWiki tables don't exist
-			logger.fine("NEW Database does not contain any JAMWiki instance");
+			logger.debug("NEW Database does not contain any JAMWiki instance");
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
 		}
 		try {
 			newQueryHandler.createTables(conn);
 		} catch (Exception e) {
-			logger.severe("Error attempting to migrate the database", e);
+			logger.error("Error attempting to migrate the database", e);
 			errors.add(new WikiMessage("error.unknown", e.getMessage()));
 			try {
 				newQueryHandler.dropTables(conn);
 			} catch (Exception ex) {
-				logger.warning("Unable to drop tables in NEW database following failed migration", ex);
+				logger.warn("Unable to drop tables in NEW database following failed migration", ex);
 			}
 			if (conn != null) {
 				try {
@@ -408,7 +408,7 @@ public class WikiDatabase {
 		try {
 			DatabaseConnection.closeConnectionPool();
 		} catch (Exception e) {
-			logger.severe("Unable to close the connection pool on shutdown", e);
+			logger.error("Unable to close the connection pool on shutdown", e);
 		}
 	}
 
@@ -482,7 +482,7 @@ public class WikiDatabase {
 				filename = subdirectory + File.separator + WikiUtil.encodeForFilename(pageName) + ".txt";
 				contents = Utilities.readFile(filename);
 			} catch (IOException e) {
-				logger.warning("Default topic initialization file " + filename + " could not be read", e);
+				logger.warn("Default topic initialization file " + filename + " could not be read", e);
 				throw e;
 			}
 		}
@@ -507,13 +507,13 @@ public class WikiDatabase {
 			for (String topicName : topicNames) {
 				topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
 				if (topic == null) {
-					logger.warning("Invalid topic record found, possible database integrity issue: " + virtualWiki.getName() + " / " + topicName);
+					logger.warn("Invalid topic record found, possible database integrity issue: " + virtualWiki.getName() + " / " + topicName);
 					continue;
 				}
 				try {
 					parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki.getName(), topicName);
 				} catch (ParserException e) {
-					logger.severe("Failure while regenerating topic metadata", e);
+					logger.error("Failure while regenerating topic metadata", e);
 					continue;
 				}
 				WikiBase.getDataHandler().writeTopic(topic, null, parserOutput.getCategories(), parserOutput.getLinks());
@@ -589,7 +589,7 @@ public class WikiDatabase {
 			WikiDatabase.setupSpecialPages(locale, user);
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
-			logger.severe("Unable to set up database tables", e);
+			logger.error("Unable to set up database tables", e);
 			// clean up anything that might have been created
 			try {
 				Connection conn = DatabaseConnection.getConnection();
@@ -598,7 +598,7 @@ public class WikiDatabase {
 			throw new DataAccessException(e);
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
-			logger.severe("Unable to set up database tables", e);
+			logger.error("Unable to set up database tables", e);
 			// clean up anything that might have been created
 			try {
 				Connection conn = DatabaseConnection.getConnection();
@@ -607,7 +607,7 @@ public class WikiDatabase {
 			throw e;
 		} catch (WikiException e) {
 			DatabaseConnection.rollbackOnException(status, e);
-			logger.severe("Unable to set up database tables", e);
+			logger.error("Unable to set up database tables", e);
 			// clean up anything that might have been created
 			try {
 				Connection conn = DatabaseConnection.getConnection();
@@ -627,7 +627,7 @@ public class WikiDatabase {
 			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 		}
 		if (WikiBase.getDataHandler().lookupWikiUser(user.getUserId()) != null) {
-			logger.warning("Admin user already exists");
+			logger.warn("Admin user already exists");
 		}
 		WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword);
 		List<String> roles = new ArrayList<String>();

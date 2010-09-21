@@ -137,7 +137,7 @@ public class TableOfContents {
 			count++;
 			candidate = name + "_" + count;
 		}
-		logger.warning("Unable to find appropriate TOC name after " + count + " iterations for value " + name);
+		logger.warn("Unable to find appropriate TOC name after " + count + " iterations for value " + name);
 		return candidate;
 	}
 

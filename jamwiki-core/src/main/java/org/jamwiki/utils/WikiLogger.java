@@ -41,7 +41,7 @@ public class WikiLogger {
 	}
 
 	/**
-	 *
+	 * Return the path to the default system log file.
 	 */
 	public static String getDefaultLogFile() {
 		// by default the log configuration uses a relative path which initializes in the "user.dir" directory
@@ -49,7 +49,7 @@ public class WikiLogger {
 	}
 
 	/**
-	 *
+	 * Return the path to the default logback.xml configuration file.
 	 */
 	public static String getLogConfigFile() {
 		return System.getProperty("file.separator") + "WEB-INF" + System.getProperty("file.separator") + "classes" + System.getProperty("file.separator") + LOG_PROPERTIES_FILENAME;
@@ -67,77 +67,54 @@ public class WikiLogger {
 	}
 
 	/**
-	 * Log a message at the {@link java.util.logging.Level#CONFIG} level,
-	 * provided that the current log level is {@link java.util.logging.Level#CONFIG}
+	 * Log a message at the {@link org.slf4j.Logger#DEBUG} level,
+	 * provided that the current log level is {@link org.slf4j.Logger#DEBUG}
 	 * or greater.
 	 *
 	 * @param msg The message to be written to the log.
 	 */
-	public void config(String msg) {
-		this.logger.info(msg);
-	}
-
-	/**
-	 * Log a message and an exception at the {@link java.util.logging.Level#CONFIG}
-	 * level, provided that the current log level is {@link java.util.logging.Level#CONFIG}
-	 * or greater.
-	 *
-	 * @param msg The message to be written to the log.
-	 * @param thrown An exception to be written to the log.
-	 */
-	public void config(String msg, Throwable thrown) {
-		this.logger.info(msg, thrown);
-	}
-
-	/**
-	 * Log a message at the {@link java.util.logging.Level#FINE} level,
-	 * provided that the current log level is {@link java.util.logging.Level#FINE}
-	 * or greater.
-	 *
-	 * @param msg The message to be written to the log.
-	 */
-	public void fine(String msg) {
+	public void debug(String msg) {
 		this.logger.debug(msg);
 	}
 
 	/**
-	 * Log a message and an exception at the {@link java.util.logging.Level#FINE}
-	 * level, provided that the current log level is {@link java.util.logging.Level#FINE}
+	 * Log a message and an exception at the {@link org.slf4j.Logger#DEBUG}
+	 * level, provided that the current log level is {@link org.slf4j.Logger#DEBUG}
 	 * or greater.
 	 *
 	 * @param msg The message to be written to the log.
 	 * @param thrown An exception to be written to the log.
 	 */
-	public void fine(String msg, Throwable thrown) {
+	public void debug(String msg, Throwable thrown) {
 		this.logger.debug(msg, thrown);
 	}
 
 	/**
-	 * Log a message at the {@link java.util.logging.Level#FINER} level,
-	 * provided that the current log level is {@link java.util.logging.Level#FINER}
+	 * Log a message at the {@link org.slf4j.Logger#ERROR} level,
+	 * provided that the current log level is {@link org.slf4j.Logger#ERROR}
 	 * or greater.
 	 *
 	 * @param msg The message to be written to the log.
 	 */
-	public void finer(String msg) {
-		this.logger.trace(msg);
+	public void error(String msg) {
+		this.logger.error(msg);
 	}
 
 	/**
-	 * Log a message and an exception at the {@link java.util.logging.Level#FINER}
-	 * level, provided that the current log level is {@link java.util.logging.Level#FINER}
+	 * Log a message and an exception at the {@link org.slf4j.Logger#ERROR}
+	 * level, provided that the current log level is {@link org.slf4j.Logger#ERROR}
 	 * or greater.
 	 *
 	 * @param msg The message to be written to the log.
 	 * @param thrown An exception to be written to the log.
 	 */
-	public void finer(String msg, Throwable thrown) {
-		this.logger.trace(msg, thrown);
+	public void error(String msg, Throwable thrown) {
+		this.logger.error(msg, thrown);
 	}
 
 	/**
-	 * Log a message at the {@link java.util.logging.Level#INFO} level,
-	 * provided that the current log level is {@link java.util.logging.Level#INFO}
+	 * Log a message at the {@link org.slf4j.Logger#INFO} level,
+	 * provided that the current log level is {@link org.slf4j.Logger#INFO}
 	 * or greater.
 	 *
 	 * @param msg The message to be written to the log.
@@ -147,8 +124,8 @@ public class WikiLogger {
 	}
 
 	/**
-	 * Log a message and an exception at the {@link java.util.logging.Level#INFO}
-	 * level, provided that the current log level is {@link java.util.logging.Level#INFO}
+	 * Log a message and an exception at the {@link org.slf4j.Logger#INFO}
+	 * level, provided that the current log level is {@link org.slf4j.Logger#INFO}
 	 * or greater.
 	 *
 	 * @param msg The message to be written to the log.
@@ -159,76 +136,72 @@ public class WikiLogger {
 	}
 
 	/**
-	 * Return <code>true</code> if a log message of level CONFIG can be logged.
+	 * Return <code>true</code> if a log message of level {@link org.slf4j.Logger#DEBUG}
+	 * can be logged.
 	 */
-	public boolean isConfigEnabled() {
-		return this.logger.isInfoEnabled();
-	}
-
-	/**
-	 * Return <code>true</code> if a log message of level FINE can be logged.
-	 */
-	public boolean isFineEnabled() {
+	public boolean isDebugEnabled() {
 		return this.logger.isDebugEnabled();
 	}
 
 	/**
-	 * Return <code>true</code> if a log message of level FINER can be logged.
-	 */
-	public boolean isFinerEnabled() {
-		return this.logger.isTraceEnabled();
-	}
-
-	/**
-	 * Return <code>true</code> if a log message of level INFO can be logged.
+	 * Return <code>true</code> if a log message of level {@link org.slf4j.Logger#INFO}
+	 * can be logged.
 	 */
 	public boolean isInfoEnabled() {
 		return this.logger.isInfoEnabled();
 	}
 
 	/**
-	 * Log a message at the {@link java.util.logging.Level#SEVERE} level,
-	 * provided that the current log level is {@link java.util.logging.Level#SEVERE}
+	 * Return <code>true</code> if a log message of level {@link org.slf4j.Logger#TRACE}
+	 * can be logged.
+	 */
+	public boolean isTraceEnabled() {
+		return this.logger.isTraceEnabled();
+	}
+
+	/**
+	 * Log a message at the {@link org.slf4j.Logger#TRACE} level,
+	 * provided that the current log level is {@link org.slf4j.Logger#TRACE}
 	 * or greater.
 	 *
 	 * @param msg The message to be written to the log.
 	 */
-	public void severe(String msg) {
-		this.logger.error(msg);
+	public void trace(String msg) {
+		this.logger.trace(msg);
 	}
 
 	/**
-	 * Log a message and an exception at the {@link java.util.logging.Level#SEVERE}
-	 * level, provided that the current log level is {@link java.util.logging.Level#SEVERE}
+	 * Log a message and an exception at the {@link org.slf4j.Logger#TRACE}
+	 * level, provided that the current log level is {@link org.slf4j.Logger#TRACE}
 	 * or greater.
 	 *
 	 * @param msg The message to be written to the log.
 	 * @param thrown An exception to be written to the log.
 	 */
-	public void severe(String msg, Throwable thrown) {
-		this.logger.error(msg, thrown);
+	public void trace(String msg, Throwable thrown) {
+		this.logger.trace(msg, thrown);
 	}
 
 	/**
-	 * Log a message at the {@link java.util.logging.Level#WARNING} level,
-	 * provided that the current log level is {@link java.util.logging.Level#WARNING}
+	 * Log a message at the {@link org.slf4j.Logger#WARN} level,
+	 * provided that the current log level is {@link org.slf4j.Logger#WARN}
 	 * or greater.
 	 *
 	 * @param msg The message to be written to the log.
 	 */
-	public void warning(String msg) {
+	public void warn(String msg) {
 		this.logger.warn(msg);
 	}
 
 	/**
-	 * Log a message and an exception at the {@link java.util.logging.Level#WARNING}
-	 * level, provided that the current log level is {@link java.util.logging.Level#WARNING}
+	 * Log a message and an exception at the {@link org.slf4j.Logger#WARN}
+	 * level, provided that the current log level is {@link org.slf4j.Logger#WARN}
 	 * or greater.
 	 *
 	 * @param msg The message to be written to the log.
 	 * @param thrown An exception to be written to the log.
 	 */
-	public void warning(String msg, Throwable thrown) {
+	public void warn(String msg, Throwable thrown) {
 		this.logger.warn(msg, thrown);
 	}
 }

@@ -75,7 +75,7 @@ public class Encryption {
 		try {
 			md = MessageDigest.getInstance(encryptionAlgorithm);
 		} catch (NoSuchAlgorithmException e) {
-			logger.warning("JDK does not support the " + encryptionAlgorithm + " encryption algorithm.  Weaker encryption will be attempted.");
+			logger.warn("JDK does not support the " + encryptionAlgorithm + " encryption algorithm.  Weaker encryption will be attempted.");
 		}
 		if (md == null) {
 			// fallback to weaker encryption algorithm if nothing better is available
@@ -98,7 +98,7 @@ public class Encryption {
 			byte raw[] = md.digest();
 			return encrypt64(raw);
 		} catch (GeneralSecurityException e) {
-			logger.severe("Encryption failure", e);
+			logger.error("Encryption failure", e);
 			throw new IllegalStateException("Failure while encrypting value");
 		} catch (UnsupportedEncodingException e) {
 			// this should never happen
@@ -167,16 +167,16 @@ public class Encryption {
 		} catch (GeneralSecurityException e) {
 			String value = Environment.getValue(name);
 			if (props != null || StringUtils.isBlank(value)) {
-				logger.severe("Encryption failure or no value available for property: " + name, e);
+				logger.error("Encryption failure or no value available for property: " + name, e);
 				throw new IllegalStateException("Failure while retrieving encrypted property: " + name);
 			}
 			// the property might have been unencrypted in the property file, so encrypt, save, and return the value
-			logger.warning("Found unencrypted property file value: " + name + ".  Assuming that this value manually un-encrypted in the property file so re-encrypting and re-saving.");
+			logger.warn("Found unencrypted property file value: " + name + ".  Assuming that this value manually un-encrypted in the property file so re-encrypting and re-saving.");
 			Encryption.setEncryptedProperty(name, value, null);
 			try {
 				Environment.saveProperties();
 			} catch (IOException ex) {
-				logger.severe("Failure while saving properties", ex);
+				logger.error("Failure while saving properties", ex);
 				throw new IllegalStateException("Failure while saving properties");
 			}
 			return value;
@@ -200,7 +200,7 @@ public class Encryption {
 				unencryptedBytes = value.getBytes("UTF8");
 				encrypted = Encryption.encrypt64(unencryptedBytes);
 			} catch (GeneralSecurityException e) {
-				logger.severe("Encryption failure", e);
+				logger.error("Encryption failure", e);
 				throw new IllegalStateException("Failure while encrypting value");
 			} catch (UnsupportedEncodingException e) {
 				// this should never happen

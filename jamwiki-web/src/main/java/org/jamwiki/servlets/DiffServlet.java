@@ -72,14 +72,14 @@ public class DiffServlet extends JAMWikiServlet {
 		TopicVersion version2 = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId2);
 		if (version1 == null && version2 == null) {
 			String msg = "Versions " + topicVersionId1 + " and " + topicVersionId2 + " not found for " + topicName;
-			logger.severe(msg);
+			logger.error(msg);
 			throw new Exception(msg);
 		}
 		String contents1 = (version1 != null) ? version1.getVersionContent() : null;
 		String contents2 = (version2 != null) ? version2.getVersionContent() : null;
 		if (contents1 == null && contents2 == null) {
 			String msg = "No versions found for " + topicVersionId1 + " against " + topicVersionId2;
-			logger.severe(msg);
+			logger.error(msg);
 			throw new Exception(msg);
 		}
 		List<WikiDiff> diffs = DiffUtil.diff(contents1, contents2);

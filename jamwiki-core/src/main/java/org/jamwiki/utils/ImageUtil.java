@@ -139,7 +139,7 @@ public class ImageUtil {
 			wikiImage = ImageUtil.initializeWikiImage(wikiFile, imageMetadata);
 		} catch (FileNotFoundException e) {
 			// do not log the full exception as the logs can fill up very for this sort of error, and it is generally due to a bad configuration.  instead log a warning message so that the administrator can try to fix the problem
-			logger.warning("File not found while parsing image link for topic: " + topic.getVirtualWiki() + " / " + topicName + ".  Make sure that the following file exists and is readable by the JAMWiki installation: " + e.getMessage());
+			logger.warn("File not found while parsing image link for topic: " + topic.getVirtualWiki() + " / " + topicName + ".  Make sure that the following file exists and is readable by the JAMWiki installation: " + e.getMessage());
 			return ImageUtil.buildUploadLink(context, topic.getVirtualWiki(), topicName);
 		}
 		if (wikiImage == null) {

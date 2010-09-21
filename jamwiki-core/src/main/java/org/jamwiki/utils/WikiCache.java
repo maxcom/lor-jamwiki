@@ -134,7 +134,7 @@ public class WikiCache {
 				WikiCache.cacheManager = new CacheManager(configuration);
 			}
 		} catch (Exception e) {
-			logger.severe("Failure while initializing cache", e);
+			logger.error("Failure while initializing cache", e);
 			throw new RuntimeException(e);
 		}
 		logger.info("Initializing cache 9");

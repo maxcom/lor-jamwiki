@@ -109,10 +109,10 @@ public class WikiLinkTag implements JFlexParserTag {
 			// do not escape text html - already done by parser
 			return LinkUtil.buildInternalLinkHtml(lexer.getParserInput().getContext(), virtualWiki, wikiLink, wikiLink.getText(), null, null, false);
 		} catch (DataAccessException e) {
-			logger.severe("Failure while parsing link " + raw, e);
+			logger.error("Failure while parsing link " + raw, e);
 			return "";
 		} catch (ParserException e) {
-			logger.severe("Failure while parsing link " + raw, e);
+			logger.error("Failure while parsing link " + raw, e);
 			return "";
 		}
 	}

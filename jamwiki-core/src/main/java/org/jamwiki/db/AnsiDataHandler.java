@@ -882,10 +882,10 @@ public class AnsiDataHandler implements DataHandler {
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
-		if (logger.isFineEnabled()) {
+		if (logger.isDebugEnabled()) {
 			long execution = (System.currentTimeMillis() - start);
 			if (execution > TIME_LIMIT_TOPIC_LOOKUP) {
-				logger.fine("Slow topic lookup for: " + Topic.buildTopicName(virtualWiki, namespace, pageName) + " (" + (execution / 1000.000) + " s)");
+				logger.debug("Slow topic lookup for: " + Topic.buildTopicName(virtualWiki, namespace, pageName) + " (" + (execution / 1000.000) + " s)");
 			}
 		}
 		return (topic == null || (!deleteOK && topic.getDeleteDate() != null)) ? null : topic;
@@ -984,10 +984,10 @@ public class AnsiDataHandler implements DataHandler {
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
-		if (logger.isFineEnabled()) {
+		if (logger.isDebugEnabled()) {
 			long execution = (System.currentTimeMillis() - start);
 			if (execution > TIME_LIMIT_TOPIC_LOOKUP) {
-				logger.fine("Slow topic existence lookup for: " + Topic.buildTopicName(virtualWiki, namespace, pageName) + " (" +  (execution / 1000.000) + " s)");
+				logger.debug("Slow topic existence lookup for: " + Topic.buildTopicName(virtualWiki, namespace, pageName) + " (" +  (execution / 1000.000) + " s)");
 			}
 		}
 		return topicName;
@@ -1912,7 +1912,7 @@ public class AnsiDataHandler implements DataHandler {
 		DatabaseConnection.commit(status);
 		// update the cache AFTER the commit
 		this.cacheTopicRefresh(topic);
-		logger.fine("Wrote topic " + topic.getName() + " with params [categories is null: " + (categories == null) + "] / [links is null: " + (links == null) + "] in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
+		logger.debug("Wrote topic " + topic.getName() + " with params [categories is null: " + (categories == null) + "] / [links is null: " + (links == null) + "] in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 	}
 
 	/**

@@ -87,10 +87,10 @@ public class ImageLinkTag implements JFlexParserTag {
 				return result;
 			}
 		} catch (DataAccessException e) {
-			logger.severe("Failure while parsing link " + raw, e);
+			logger.error("Failure while parsing link " + raw, e);
 			return "";
 		} catch (ParserException e) {
-			logger.severe("Failure while parsing link " + raw, e);
+			logger.error("Failure while parsing link " + raw, e);
 			return "";
 		}
 	}
@@ -111,7 +111,7 @@ public class ImageLinkTag implements JFlexParserTag {
 			return ImageUtil.buildImageLinkHtml(context, virtualWiki, wikiLink.getDestination(), imageMetadata, null, false);
 		} catch (IOException e) {
 			// FIXME - display a broken image icon or something better
-			logger.warning("I/O Failure while parsing image link: " + e.getMessage(), e);
+			logger.warn("I/O Failure while parsing image link: " + e.getMessage(), e);
 			return wikiLink.getDestination();
 		}
 	}

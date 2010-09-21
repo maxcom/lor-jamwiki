@@ -49,7 +49,7 @@ public class JAMWikiAuthenticationConfiguration {
 		} catch (DataAccessException e) {
 			// FIXME - without default roles bad things happen, so should this throw the
 			// error to the calling method?
-			logger.severe("Unable to retrieve default roles for " + WikiGroup.GROUP_REGISTERED_USER, e);
+			logger.error("Unable to retrieve default roles for " + WikiGroup.GROUP_REGISTERED_USER, e);
 		}
 		return null;
 	}
@@ -65,7 +65,7 @@ public class JAMWikiAuthenticationConfiguration {
 		try {
 			return JAMWikiAuthenticationConfiguration.roleToGrantedAuthority(WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_ANONYMOUS));
 		} catch (DataAccessException e) {
-			logger.severe("Failure while initializing JAMWiki anonymous user authorities", e);
+			logger.error("Failure while initializing JAMWiki anonymous user authorities", e);
 		}
 		return null;
 	}

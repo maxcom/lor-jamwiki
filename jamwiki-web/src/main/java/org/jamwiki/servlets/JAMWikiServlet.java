@@ -69,7 +69,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	private void buildLayout(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws DataAccessException {
 		String virtualWikiName = pageInfo.getVirtualWikiName();
 		if (virtualWikiName == null) {
-			logger.severe("No virtual wiki available for page request " + request.getRequestURI());
+			logger.error("No virtual wiki available for page request " + request.getRequestURI());
 			virtualWikiName = VirtualWiki.defaultVirtualWiki().getName();
 		}
 		VirtualWiki virtualWiki = ServletUtil.retrieveVirtualWiki(virtualWikiName);
@@ -155,7 +155,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 				String printLink = "Special:Print?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 				links.put(printLink, new WikiMessage("tab.common.print"));
 			} catch (WikiException e) {
-				logger.severe("Unable to build tabbed menu links", e);
+				logger.error("Unable to build tabbed menu links", e);
 			}
 		}
 		pageInfo.setTabMenu(links);
@@ -343,7 +343,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 */
 	private ModelAndView viewError(HttpServletRequest request, HttpServletResponse response, Throwable t) {
 		if (!(t instanceof WikiException)) {
-			logger.severe("Servlet error", t);
+			logger.error("Servlet error", t);
 		}
 		response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		ModelAndView next = new ModelAndView("wiki");
@@ -363,12 +363,12 @@ public abstract class JAMWikiServlet extends AbstractController {
 			WikiMessage wm = new WikiMessage("error.unknown", errorMessage);
 			pageInfo.setException(wm);
 			next.addObject("messageObject", wm);
-			logger.severe("Failure while loading JSP: " + request.getServletPath(), t);
+			logger.error("Failure while loading JSP: " + request.getServletPath(), t);
 		}
 		try {
 			this.loadLayout(request, next, pageInfo);
 		} catch (Exception err) {
-			logger.severe("Unable to load default layout", err);
+			logger.error("Unable to load default layout", err);
 		}
 		next.addObject(ServletUtil.PARAMETER_PAGE_INFO, pageInfo);
 		return next;

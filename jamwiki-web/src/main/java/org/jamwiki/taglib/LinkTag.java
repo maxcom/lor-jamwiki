@@ -70,10 +70,10 @@ public class LinkTag extends BodyTagSupport {
 			}
 			this.pageContext.getOut().print(url);
 		} catch (DataAccessException e) {
-			logger.severe("Failure while building url " + url + " with value " + this.value + " and text " + this.text, e);
+			logger.error("Failure while building url " + url + " with value " + this.value + " and text " + this.text, e);
 			throw new JspException(e);
 		} catch (IOException e) {
-			logger.severe("Failure while building url " + url + " with value " + this.value + " and text " + this.text, e);
+			logger.error("Failure while building url " + url + " with value " + this.value + " and text " + this.text, e);
 			throw new JspException(e);
 		} finally {
 			this.queryParams = "";

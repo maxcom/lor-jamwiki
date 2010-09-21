@@ -37,7 +37,7 @@ public class WikiVersionTag extends TagSupport {
 		try {
 			this.pageContext.getOut().print(WikiVersion.CURRENT_WIKI_VERSION);
 		} catch (IOException e) {
-			logger.severe("Failure while retrieving Wiki version", e);
+			logger.error("Failure while retrieving Wiki version", e);
 			throw new JspException(e);
 		}
 		return EVAL_PAGE;

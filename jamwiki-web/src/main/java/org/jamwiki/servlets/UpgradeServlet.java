@@ -117,7 +117,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 						messages.add(new WikiMessage("upgrade.message.100.topic.links"));
 					}
 				} catch (DataAccessException e) {
-					logger.warning("Failure during upgrade while generating topic link records.  Please use the tools on the Special:Maintenance page to complete this step.", e);
+					logger.warn("Failure during upgrade while generating topic link records.  Please use the tools on the Special:Maintenance page to complete this step.", e);
 					messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 				}
 			}
@@ -134,7 +134,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 				// where that might be...
 				WikiBase.reload();
 			} catch (Exception e) {
-				logger.severe("Failure during upgrade while saving properties and executing WikiBase.reload()", e);
+				logger.error("Failure during upgrade while saving properties and executing WikiBase.reload()", e);
 				throw new WikiException(new WikiMessage("upgrade.error.nonfatal", e.toString()));
 			}
 		} catch (WikiException e) {
@@ -166,7 +166,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 		} catch (DataAccessException e) {
 			// building a link to the start page shouldn't fail, but if it does display a message
 			wm = new WikiMessage("upgrade.error.nonfatal", e.toString());
-			logger.warning("Upgrade complete, but unable to build redirect link to the start page.", e);
+			logger.warn("Upgrade complete, but unable to build redirect link to the start page.", e);
 		}
 		next.addObject("successMessage", wm);
 		// force logout to ensure current user will be re-validated.  this is
@@ -207,12 +207,12 @@ public class UpgradeServlet extends JAMWikiServlet {
 			}
 			return true;
 		} catch (WikiException e) {
-			logger.warning("Failure while updating JAMWiki stylesheet", e);
+			logger.warn("Failure while updating JAMWiki stylesheet", e);
 			messages.add(e.getWikiMessage());
 			messages.add(new WikiMessage("upgrade.message.stylesheet.failure",  e.getMessage()));
 			return false;
 		} catch (DataAccessException e) {
-			logger.warning("Failure while updating JAMWiki stylesheet", e);
+			logger.warn("Failure while updating JAMWiki stylesheet", e);
 			messages.add(new WikiMessage("upgrade.message.stylesheet.failure",  e.getMessage()));
 			return false;
 		}

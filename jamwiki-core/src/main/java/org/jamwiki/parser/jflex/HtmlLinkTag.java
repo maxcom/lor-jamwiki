@@ -129,8 +129,8 @@ public class HtmlLinkTag implements JFlexParserTag {
 	 * "http://www.site.com/" and return the resulting HTML output.
 	 */
 	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
-		if (logger.isFinerEnabled()) {
-			logger.finer("htmllink: " + raw + " (" + lexer.yystate() + ")");
+		if (logger.isTraceEnabled()) {
+			logger.trace("htmllink: " + raw + " (" + lexer.yystate() + ")");
 		}
 		if (raw == null || StringUtils.isBlank(raw)) {
 			// no link to display

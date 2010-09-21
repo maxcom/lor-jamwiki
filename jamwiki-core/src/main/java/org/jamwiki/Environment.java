@@ -125,12 +125,12 @@ public class Environment {
 	 */
 	private Environment() {
 		initDefaultProperties();
-		logger.fine("Default properties initialized: " + defaults.toString());
+		logger.debug("Default properties initialized: " + defaults.toString());
 		props = loadProperties(PROPERTY_FILE_NAME, defaults);
 		if ("true".equals(System.getProperty("jamwiki.override.file.properties"))) {
 			overrideFromSystemProperties();
 		}
-		logger.fine("JAMWiki properties initialized: " + props.toString());
+		logger.debug("JAMWiki properties initialized: " + props.toString());
 	}
 
 	/**
@@ -284,7 +284,7 @@ public class Environment {
 	public static int getIntValue(String name) {
 		int value = NumberUtils.toInt(getValue(name), -1);
 		if (value == -1) {
-			logger.warning("Invalid integer property " + name + " with value " + value);
+			logger.warn("Invalid integer property " + name + " with value " + value);
 		}
 		// FIXME - should this otherwise indicate an invalid property?
 		return value;
@@ -299,7 +299,7 @@ public class Environment {
 	public static long getLongValue(String name) {
 		long value = NumberUtils.toLong(getValue(name), -1);
 		if (value == -1) {
-			logger.warning("Invalid long property " + name + " with value " + value);
+			logger.warn("Invalid long property " + name + " with value " + value);
 		}
 		// FIXME - should this otherwise indicate an invalid property?
 		return value;
@@ -344,16 +344,16 @@ public class Environment {
 		try {
 			file = findProperties(propertyFile);
 			if (file == null) {
-				logger.warning("Property file " + propertyFile + " does not exist");
+				logger.warn("Property file " + propertyFile + " does not exist");
 			} else if (!file.exists()) {
-				logger.warning("Property file " + file.getPath() + " does not exist");
+				logger.warn("Property file " + file.getPath() + " does not exist");
 			} else {
-				logger.config("Loading properties from " + file.getPath());
+				logger.info("Loading properties from " + file.getPath());
 				fis = new FileInputStream(file);
 				properties.load(fis);
 			}
 		} catch (IOException e) {
-			logger.severe("Failure while trying to load properties file " + file.getPath(), e);
+			logger.error("Failure while trying to load properties file " + file.getPath(), e);
 		} finally {
 			if (fis != null) {
 				try {
@@ -375,7 +375,7 @@ public class Environment {
 		try {
 			return "/" + Utilities.getWebappRoot().getName() + "/upload/";
 		} catch (FileNotFoundException e) {
-			logger.severe("Failure while trying to retrieve default file upload directory", e);
+			logger.error("Failure while trying to retrieve default file upload directory", e);
 		}
 		return "";
 	}
@@ -389,7 +389,7 @@ public class Environment {
 		try {
 			return new File(Utilities.getWebappRoot(), "upload").getPath();
 		} catch (FileNotFoundException e) {
-			logger.severe("Failure while trying to retrieve default file upload directory", e);
+			logger.error("Failure while trying to retrieve default file upload directory", e);
 		}
 		return "";
 	}
@@ -413,7 +413,7 @@ public class Environment {
 		try {
 			return new File(Utilities.getClassLoaderRoot(), filename);
 		} catch (FileNotFoundException e) {
-			logger.severe("Error while searching for resource " + filename, e);
+			logger.error("Error while searching for resource " + filename, e);
 		}
 		return null;
 	}

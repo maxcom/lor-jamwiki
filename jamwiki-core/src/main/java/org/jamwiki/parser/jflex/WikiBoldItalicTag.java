@@ -31,8 +31,8 @@ public class WikiBoldItalicTag implements JFlexParserTag {
 	 * "<noinclude>text</noinclude>" and return the resulting output.
 	 */
 	public String parse(JFlexLexer lexer, String raw, Object... args) {
-		if (logger.isFinerEnabled()) {
-			logger.finer("bold / italic: " + raw + " (" + lexer.yystate() + ")");
+		if (logger.isTraceEnabled()) {
+			logger.trace("bold / italic: " + raw + " (" + lexer.yystate() + ")");
 		}
 		if (args.length == 0) {
 			throw new IllegalArgumentException("Must pass heading depth to WikiHeadingTag.parse");

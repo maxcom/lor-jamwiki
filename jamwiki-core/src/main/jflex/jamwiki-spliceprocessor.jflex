@@ -113,7 +113,7 @@ htmlcomment        = "<!--" ~"-->"
 /* ----- parsing tags ----- */
 
 <YYINITIAL, PRE>{nowiki} {
-    if (logger.isFinerEnabled()) logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("nowiki: " + yytext() + " (" + yystate() + ")");
     return returnText(yytext());
 }
 

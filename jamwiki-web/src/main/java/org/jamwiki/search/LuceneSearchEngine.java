@@ -94,11 +94,11 @@ public class LuceneSearchEngine implements SearchEngine {
 			IndexWriter writer = this.retrieveIndexWriter(topic.getVirtualWiki(), false);
 			this.addToIndex(writer, topic);
 			writer.commit();
-			if (logger.isFineEnabled()) {
-				logger.fine("Add to search index for topic " + topic.getName() + " in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Add to search index for topic " + topic.getName() + " in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 			}
 		} catch (Exception e) {
-			logger.severe("Exception while adding topic " + topic.getName(), e);
+			logger.error("Exception while adding topic " + topic.getName(), e);
 		}
 	}
 
@@ -144,11 +144,11 @@ public class LuceneSearchEngine implements SearchEngine {
 			IndexWriter writer = this.retrieveIndexWriter(topic.getVirtualWiki(), false);
 			this.deleteFromIndex(writer, topic);
 			writer.commit();
-			if (logger.isFineEnabled()) {
-				logger.fine("Delete from search index for topic " + topic.getName() + " in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Delete from search index for topic " + topic.getName() + " in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 			}
 		} catch (Exception e) {
-			logger.severe("Exception while adding topic " + topic.getName(), e);
+			logger.error("Exception while adding topic " + topic.getName(), e);
 		}
 	}
 
@@ -174,7 +174,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	public List<SearchResultEntry> findResults(String virtualWiki, String text) {
 		StandardAnalyzer analyzer = new StandardAnalyzer(USE_LUCENE_VERSION);
 		List<SearchResultEntry> results = new ArrayList<SearchResultEntry>();
-		logger.finer("search text: " + text);
+		logger.trace("search text: " + text);
 		try {
 			BooleanQuery query = new BooleanQuery();
 			QueryParser qp;
@@ -201,7 +201,7 @@ public class LuceneSearchEngine implements SearchEngine {
 				results.add(result);
 			}
 		} catch (Exception e) {
-			logger.severe("Exception while searching for " + text, e);
+			logger.error("Exception while searching for " + text, e);
 		}
 		return results;
 	}
@@ -219,7 +219,7 @@ public class LuceneSearchEngine implements SearchEngine {
 			}
 		} catch (Exception e) {
 			// probably a security exception
-			logger.warning("Unable to specify Lucene lock directory, default will be used: " + e.getMessage());
+			logger.warn("Unable to specify Lucene lock directory, default will be used: " + e.getMessage());
 		}
 		File child = new File(parent.getPath(), "index" + virtualWiki + File.separator);
 		if (!child.exists()) {
@@ -259,21 +259,21 @@ public class LuceneSearchEngine implements SearchEngine {
 					count++;
 				}
 			} catch (Exception ex) {
-				logger.severe("Failure while refreshing search index", ex);
+				logger.error("Failure while refreshing search index", ex);
 			} finally {
 				try {
 					if (writer != null) {
 						writer.optimize();
 					}
 				} catch (Exception e) {
-					logger.severe("Exception during optimize", e);
+					logger.error("Exception during optimize", e);
 				}
 				try {
 					if (writer != null) {
 						writer.close();
 					}
 				} catch (Exception e) {
-					logger.severe("Exception during close", e);
+					logger.error("Exception during close", e);
 				}
 			}
 			if (logger.isInfoEnabled()) {
@@ -353,11 +353,11 @@ public class LuceneSearchEngine implements SearchEngine {
 			this.deleteFromIndex(writer, topic);
 			this.addToIndex(writer, topic);
 			writer.commit();
-			if (logger.isFineEnabled()) {
-				logger.fine("Update search index for topic " + topic.getName() + " in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Update search index for topic " + topic.getName() + " in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 			}
 		} catch (Exception e) {
-			logger.severe("Exception while updating topic " + topic.getName(), e);
+			logger.error("Exception while updating topic " + topic.getName(), e);
 		}
 	}
 }

@@ -505,7 +505,7 @@ public class LinkUtil {
 			}
 		} catch (DataAccessException e) {
 			// this should not happen, if it does then swallow the error
-			logger.warning("Failure while trying to lookup interwiki: " + linkPrefix, e);
+			logger.warn("Failure while trying to lookup interwiki: " + linkPrefix, e);
 		}
 		return (wikiLink.getInterwiki() != null) ? processed.substring(prefixPosition + Namespace.SEPARATOR.length()).trim(): processed;
 	}
@@ -527,7 +527,7 @@ public class LinkUtil {
 			}
 		} catch (DataAccessException e) {
 			// this should not happen, if it does then swallow the error
-			logger.warning("Failure while trying to lookup virtual wiki: " + linkPrefix, e);
+			logger.warn("Failure while trying to lookup virtual wiki: " + linkPrefix, e);
 		}
 		return (wikiLink.getVirtualWiki() != null) ? processed.substring(prefixPosition + Namespace.SEPARATOR.length()).trim(): processed;
 	}

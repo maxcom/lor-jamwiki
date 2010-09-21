@@ -63,17 +63,17 @@ public class ImageLinkTag extends TagSupport {
 				html = ImageUtil.buildImageLinkHtml(request.getContextPath(), tagVirtualWiki, this.value, imageMetadata, this.style, true);
 			} catch (IOException e) {
 				// FIXME - display a broken image icon or something better
-				logger.warning("I/O Failure while parsing image link: " + e.getMessage(), e);
+				logger.warn("I/O Failure while parsing image link: " + e.getMessage(), e);
 				html = this.value;
 			} catch (DataAccessException e) {
-				logger.severe("Failure while building url " + html + " with value " + this.value, e);
+				logger.error("Failure while building url " + html + " with value " + this.value, e);
 				throw new JspException(e);
 			}
 			if (html != null) {
 				this.pageContext.getOut().print(html);
 			}
 		} catch (IOException e) {
-			logger.severe("Failure while building url " + html + " with value " + this.value, e);
+			logger.error("Failure while building url " + html + " with value " + this.value, e);
 			throw new JspException(e);
 		}
 		return EVAL_PAGE;

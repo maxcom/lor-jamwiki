@@ -176,7 +176,7 @@ public class WikiConfiguration {
 				logUnknownChild(node, child);
 			}
 		}
-		logger.config("Configuration values loaded from " + file.getPath());
+		logger.info("Configuration values loaded from " + file.getPath());
 	}
 
 	/**
@@ -290,6 +290,6 @@ public class WikiConfiguration {
 	 * @param child
 	 */
 	private void logUnknownChild(Node node, Node child) {
-		logger.finer("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
+		logger.trace("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
 	}
 }

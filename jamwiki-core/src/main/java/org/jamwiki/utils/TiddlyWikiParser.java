@@ -26,7 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
@@ -42,7 +41,7 @@ import org.jamwiki.model.WikiUser;
  */
 public class TiddlyWikiParser {
 
-	private static final Logger logger = Logger.getLogger(TiddlyWikiParser.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(TiddlyWikiParser.class.getName());
 
 	private static final String DIV_START = "<div tiddler";
 	private static final String DIV_END = "</div>";
@@ -142,10 +141,10 @@ public class TiddlyWikiParser {
 				start = line.indexOf(DIV_START);
 				if (start != -1 && (line.indexOf("<div tiddler=\"%0\"") == -1)) {
 					inTiddler = true;
-					logger.fine("Ignoring:\n" + line.substring(0, start));
+					logger.debug("Ignoring:\n" + line.substring(0, start));
 					line = line.substring(start);
 				} else {
-					logger.fine("Div tiddler not found in: \n" + line);
+					logger.debug("Div tiddler not found in: \n" + line);
 					line = br.readLine();
 				}
 			}
@@ -157,7 +156,7 @@ public class TiddlyWikiParser {
 	 *
 	 */
 	private void processContent(String content) throws DataAccessException, IOException, WikiException {
-		logger.fine("Content: " + content);
+		logger.debug("Content: " + content);
 		String name = findName(content, TIDLLER);
 		if (name == null|| "%0".equals(user)) {
 			return;
@@ -186,7 +185,7 @@ public class TiddlyWikiParser {
 		*/
 		int idx = content.indexOf('>');
 		if (idx == -1) {
-			logger.warning("No closing of tag");
+			logger.warn("No closing of tag");
 			messages.append("WARNING: corrupt line: ").append(content);
 			return;
 		}
@@ -194,7 +193,7 @@ public class TiddlyWikiParser {
 		wikicode = translator.translate(wikicode);
 		messages.append("Adding topic " + name + "\n");
 		saveTopic(name, lastMod, wikicode);
-		logger.fine("Code:" + wikicode);
+		logger.debug("Code:" + wikicode);
 	}
 
 	/**
@@ -218,13 +217,13 @@ public class TiddlyWikiParser {
 	private String findName(String content, String name) {
 		int startIdx = content.indexOf(name);
 		if (startIdx == -1) {
-			logger.warning("no tiddler name found");
+			logger.warn("no tiddler name found");
 			return null;
 		}
 		startIdx = content.indexOf('\"', startIdx);
 		int endIdx = content.indexOf('\"', startIdx+1);
 		String value = content.substring(startIdx+1, endIdx);
-		logger.fine(name + ":" + value);
+		logger.debug(name + ":" + value);
 		return value;
 	}
 

@@ -34,8 +34,8 @@ public class WikiReferencesTag implements JFlexParserTag {
 	 *
 	 */
 	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
-		if (logger.isFinerEnabled()) {
-			logger.finer("references: " + raw + " (" + lexer.yystate() + ")");
+		if (logger.isTraceEnabled()) {
+			logger.trace("references: " + raw + " (" + lexer.yystate() + ")");
 		}
 		if (lexer.getMode() < JFlexParser.MODE_POSTPROCESS) {
 			return raw;

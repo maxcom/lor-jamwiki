@@ -410,67 +410,67 @@ public class AnsiQueryHandler implements QueryHandler {
 		// actual work of the method more obvious.
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_INTERWIKI_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_WATCHLIST_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_RECENT_CHANGE_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_LOG_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_GROUP_AUTHORITIES_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_AUTHORITIES_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_ROLE_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_GROUP_MEMBERS_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_GROUP_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_CATEGORY_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_FILE_VERSION_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_FILE_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_LINKS_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_CURRENT_VERSION_CONSTRAINT, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_VERSION_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_NAMESPACE_TRANSLATION_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_NAMESPACE_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_USER_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_USERS_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_VIRTUAL_WIKI_TABLE, conn);
-		} catch (SQLException e) { logger.severe(e.getMessage()); }
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 	}
 
 	/**
@@ -2049,7 +2049,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			for (int mainNamespaceId : talkNamespaces.keySet()) {
 				Namespace mainNamespace = namespaces.get(mainNamespaceId);
 				if (mainNamespace == null) {
-					logger.warning("Invalid namespace reference - bad database data.  Namespace references invalid main namespace with ID " + mainNamespaceId);
+					logger.warn("Invalid namespace reference - bad database data.  Namespace references invalid main namespace with ID " + mainNamespaceId);
 				}
 				Namespace talkNamespace = talkNamespaces.get(mainNamespaceId);
 				talkNamespace.setMainNamespace(mainNamespace);

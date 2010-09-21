@@ -47,7 +47,7 @@ function cancel() {
 WikiLogger logger = WikiLogger.getLogger("org.jamwiki.jsp");
 String errorMessage = "";
 if (exception != null) {
-	logger.severe("Error in JSP page", exception);
+	logger.error("Error in JSP page", exception);
 	// escape XML to avoid potential XSS attacks such as /wiki/en/Special:Login?message=<script>alert("xss")</script>
 	errorMessage = StringEscapeUtils.escapeXml(exception.toString());
 	if (exception.getCause() != null) {

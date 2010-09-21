@@ -35,7 +35,7 @@ public class JavascriptTag implements JFlexParserTag {
 	 * Parse a Mediawiki HTML link of the form "<script>...</script>".
 	 */
 	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
-		if (logger.isFinerEnabled()) logger.finer("javascript: " + raw + " (" + lexer.yystate() + ")");
+		if (logger.isTraceEnabled()) logger.trace("javascript: " + raw + " (" + lexer.yystate() + ")");
 		if (StringUtils.isBlank(raw)) {
 			// no link to display
 			return raw;

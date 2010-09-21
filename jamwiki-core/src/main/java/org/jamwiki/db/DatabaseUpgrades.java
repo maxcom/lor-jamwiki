@@ -58,7 +58,7 @@ public class DatabaseUpgrades {
 		try {
 			return WikiBase.getDataHandler().authenticate(username, password);
 		} catch (DataAccessException e) {
-			logger.severe("Unable to authenticate user during upgrade", e);
+			logger.error("Unable to authenticate user during upgrade", e);
 			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
 		}
 	}
@@ -93,11 +93,11 @@ public class DatabaseUpgrades {
 			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic_version"));
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
-			logger.severe("Database failure during upgrade", e);
+			logger.error("Database failure during upgrade", e);
 			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
-			logger.severe("Database failure during upgrade", e);
+			logger.error("Database failure during upgrade", e);
 			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
 		}
 		DatabaseConnection.commit(status);
@@ -119,7 +119,7 @@ public class DatabaseUpgrades {
 			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 			// do not throw this error and halt the upgrade process - populating the field
 			// is not required for existing systems.
-			logger.warning("Failure while populating correct namespace_id values in the jam_topic table.  Try running the 'Fix Incorrect Topic Namespaces' from Special:Maintenance to complete this step.", e);
+			logger.warn("Failure while populating correct namespace_id values in the jam_topic table.  Try running the 'Fix Incorrect Topic Namespaces' from Special:Maintenance to complete this step.", e);
 			try {
 				DatabaseConnection.rollbackOnException(status, e);
 			} catch (Exception ex) {
@@ -130,7 +130,7 @@ public class DatabaseUpgrades {
 			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 			// do not throw this error and halt the upgrade process - populating the field
 			// is not required for existing systems.
-			logger.warning("Failure while populating correct namespace_id values in the jam_topic table.  Try running the 'Fix Incorrect Topic Namespaces' from Special:Maintenance to complete this step.", e);
+			logger.warn("Failure while populating correct namespace_id values in the jam_topic table.  Try running the 'Fix Incorrect Topic Namespaces' from Special:Maintenance to complete this step.", e);
 			try {
 				DatabaseConnection.rollbackOnException(status, e);
 			} catch (Exception ex) {
@@ -172,11 +172,11 @@ public class DatabaseUpgrades {
 			messages.add(new WikiMessage("upgrade.message.db.column.modified", "default_topic_name", "jam_virtual_wiki"));
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
-			logger.severe("Database failure during upgrade", e);
+			logger.error("Database failure during upgrade", e);
 			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
-			logger.severe("Database failure during upgrade", e);
+			logger.error("Database failure during upgrade", e);
 			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
 		}
 		DatabaseConnection.commit(status);
@@ -205,7 +205,7 @@ public class DatabaseUpgrades {
 			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 			// do not throw this error and halt the upgrade process - populating the field
 			// is not required for existing systems.
-			logger.warning("Non-fatal error while upgrading.", e);
+			logger.warn("Non-fatal error while upgrading.", e);
 			try {
 				DatabaseConnection.rollbackOnException(status, e);
 			} catch (Exception ex) {

@@ -119,10 +119,10 @@ public class ImageProcessor {
 			g2.dispose();
 			resized = tmp;
 		} while (width != targetWidth || height != targetHeight);
-		if (logger.isFineEnabled()) {
+		if (logger.isDebugEnabled()) {
 			long current = System.currentTimeMillis();
 			String message = "Image resize time (" + ((current - start) / 1000.000) + " s), dimensions: " + targetWidth + "x" + targetHeight + " for file: " + imageFile.getAbsolutePath();
-			logger.fine(message);
+			logger.debug(message);
 		}
 		return resized;
 	}

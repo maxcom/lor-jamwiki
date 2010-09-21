@@ -90,12 +90,12 @@ public class SetupServlet extends JAMWikiServlet {
 		// reset properties
 		Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, false);
 		if (!(e instanceof WikiException)) {
-			logger.severe("Setup error", e);
+			logger.error("Setup error", e);
 		}
 		try {
 			this.view(request, next, pageInfo);
 		} catch (Exception ex) {
-			logger.severe("Unable to set up page view object for setup.jsp", ex);
+			logger.error("Unable to set up page view object for setup.jsp", ex);
 		}
 		if (e instanceof WikiException) {
 			WikiException we = (WikiException)e;

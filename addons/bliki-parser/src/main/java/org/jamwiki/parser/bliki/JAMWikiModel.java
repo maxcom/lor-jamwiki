@@ -252,7 +252,7 @@ public class JAMWikiModel extends AbstractWikiModel {
 				url = LinkUtil.buildEditLinkUrl(fParserInput.getContext(), fParserInput.getVirtualWiki(), fParserInput.getTopicName(),
 						null, section + 1);
 			} catch (Exception e) {
-				logger.severe("Failure while building link for topic " + fParserInput.getVirtualWiki() + " / "
+				logger.error("Failure while building link for topic " + fParserInput.getVirtualWiki() + " / "
 						+ fParserInput.getTopicName(), e);
 			}
 			TagNode aTagNode = new TagNode("a");

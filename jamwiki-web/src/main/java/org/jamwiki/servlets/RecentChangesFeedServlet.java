@@ -136,7 +136,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		try {
 			String feedType = ServletRequestUtils.getStringParameter(request, FEED_TYPE, defaultFeedType);
-			logger.finer("Serving xml feed of type " + feedType);
+			logger.trace("Serving xml feed of type " + feedType);
 			SyndFeed feed = getFeed(request);
 			feed.setFeedType(feedType);
 			response.setContentType(MIME_TYPE);
@@ -144,7 +144,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 			SyndFeedOutput output = new SyndFeedOutput();
 			output.output(feed, response.getWriter());
 		} catch (Exception e) {
-			logger.severe("Could not generate feed: " + e.getMessage(), e);
+			logger.error("Could not generate feed: " + e.getMessage(), e);
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Could not generate feed: "
 					+ e.getMessage());
 		}

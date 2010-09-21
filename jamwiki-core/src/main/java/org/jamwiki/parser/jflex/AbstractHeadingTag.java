@@ -54,7 +54,7 @@ public abstract class AbstractHeadingTag implements JFlexParserTag {
 		try {
 			url = LinkUtil.buildEditLinkUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserInput.getTopicName(), null, section);
 		} catch (DataAccessException e) {
-			logger.severe("Failure while building link for topic " + parserInput.getVirtualWiki() + " / " + parserInput.getTopicName(), e);
+			logger.error("Failure while building link for topic " + parserInput.getVirtualWiki() + " / " + parserInput.getTopicName(), e);
 		}
 		StringBuilder output = new StringBuilder("<span class=\"editsection\">[<a href=\"").append(url).append("\">");
 		output.append(Utilities.formatMessage("common.sectionedit", parserInput.getLocale()));
@@ -117,8 +117,8 @@ public abstract class AbstractHeadingTag implements JFlexParserTag {
 	 * resulting HTML output.
 	 */
 	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
-		if (logger.isFinerEnabled()) {
-			logger.finer("heading: " + raw + " (" + lexer.yystate() + ")");
+		if (logger.isTraceEnabled()) {
+			logger.trace("heading: " + raw + " (" + lexer.yystate() + ")");
 		}
 		int level = this.generateTagLevel(raw, args);
 		String tagText = this.generateTagText(raw, args);

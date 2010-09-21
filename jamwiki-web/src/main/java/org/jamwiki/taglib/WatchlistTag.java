@@ -43,7 +43,7 @@ public class WatchlistTag extends BodyTagSupport {
 			try {
 				this.pageContext.getOut().print("<strong>");
 			} catch (IOException e) {
-				logger.severe("Failure processing watchlist item " + this.topic, e);
+				logger.error("Failure processing watchlist item " + this.topic, e);
 				throw new JspException(e);
 			}
 		}
@@ -58,7 +58,7 @@ public class WatchlistTag extends BodyTagSupport {
 			try {
 				this.pageContext.getOut().print("</strong>");
 			} catch (IOException e) {
-				logger.severe("Failure processing watchlist item " + this.topic, e);
+				logger.error("Failure processing watchlist item " + this.topic, e);
 				throw new JspException(e);
 			}
 		}
@@ -75,7 +75,7 @@ public class WatchlistTag extends BodyTagSupport {
 			Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
 			return (watchlist.containsTopic(this.topic));
 		} catch (WikiException e) {
-			logger.severe("Failure processing watchlist item " + this.topic, e);
+			logger.error("Failure processing watchlist item " + this.topic, e);
 			throw new JspException(e);
 		}
 	}
