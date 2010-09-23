@@ -180,8 +180,6 @@ public class TemplateTag implements JFlexParserTag {
 			}
 		}
 		parserInput.decrementTemplateDepth();
-		logger.info("raw: " + raw);
-		logger.info("result: " + result);
 		return result;
 	}
 
