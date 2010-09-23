@@ -107,8 +107,7 @@ public class JFlexParser extends AbstractParser {
 		// avoid infinite loops
 		if (this.parserInput.getDepth() > MAX_PARSER_ITERATIONS) {
 			this.parserInput.decrementDepth();
-			String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
-			throw new ParserException("Infinite parsing loop - over " + this.parserInput.getDepth() + " parser iterations while parsing topic " + topicName);
+			throw new ExcessiveNestingException("Potential infinite parsing loop - over " + this.parserInput.getDepth() + " parser iterations while parsing topic " + this.parserInput.getTopicName());
 		}
 		long previous, current = 0;
 		String line;
