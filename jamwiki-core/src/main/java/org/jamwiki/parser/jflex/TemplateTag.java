@@ -45,6 +45,8 @@ public class TemplateTag implements JFlexParserTag {
 	private static final WikiLogger logger = WikiLogger.getLogger(TemplateTag.class.getName());
 	/** Maximum depth to which templates can be included for a single parsing run. */
 	private static final int MAX_TEMPLATE_DEPTH = 100;
+	/** Maximum number of template inclusions allowed on a page. */
+	private static final int MAX_INCLUSION_DEPTH = 250;
 	protected static final String TEMPLATE_INCLUSION = "template-inclusion";
 	private static Pattern PARAM_NAME_VALUE_PATTERN = Pattern.compile("[\\s]*([A-Za-z0-9_\\ \\-]+)[\\s]*\\=([\\s\\S]*)");
 
@@ -78,10 +80,20 @@ public class TemplateTag implements JFlexParserTag {
 			throw new ParserException("Empty template text");
 		}
 		if (!raw.startsWith("{{") || !raw.endsWith("}}")) {
-			throw new ParserException ("Invalid template text: " + raw);
+			throw new ParserException("Invalid template text: " + raw);
 		}
 		try {
 			return this.parseTemplateOutput(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), raw, true);
+		} catch (ExcessiveNestingException e) {
+			logger.warning("Excessive template nesting in topic " + lexer.getParserInput().getTopicName());
+			// convert to a link so that the user can fix the template
+			String templateContent = raw.substring("{{".length(), raw.length() - "}}".length());
+			WikiLink wikiLink = this.parseTemplateName(lexer.getParserInput().getVirtualWiki(), templateContent);
+			String templateName = wikiLink.getDestination();
+			if (!wikiLink.getColon() && !wikiLink.getNamespace().equals(Namespace.namespace(Namespace.TEMPLATE_ID))) {
+				templateName = Namespace.namespace(Namespace.TEMPLATE_ID).getLabel(lexer.getParserInput().getVirtualWiki()) + Namespace.SEPARATOR + StringUtils.capitalize(templateName);
+			}
+			return "[[" + templateName + "]]";
 		} catch (DataAccessException e) {
 			throw new ParserException("Data access exception while parsing: " + raw, e);
 		}
@@ -98,30 +110,31 @@ public class TemplateTag implements JFlexParserTag {
 		parserInput.incrementTemplateDepth();
 		if (parserInput.getTemplateDepth() > MAX_TEMPLATE_DEPTH) {
 			parserInput.decrementTemplateDepth();
-			String topicName = (!StringUtils.isBlank(parserInput.getTopicName())) ? parserInput.getTopicName() : null;
-			throw new ParserException("Infinite parsing loop - over " + parserInput.getTemplateDepth() + " template inclusions while parsing topic " + topicName);
+			throw new ExcessiveNestingException("Potentially infinite parsing loop - over " + parserInput.getTemplateDepth() + " template inclusions while parsing topic " + parserInput.getTopicName());
 		}
 		// parse for nested templates, signatures, etc.
 		templateContent = JFlexParserUtil.parseFragment(parserInput, templateContent, mode);
-		parserInput.decrementTemplateDepth();
 		// update the raw value to handle cases such as a signature in the template content
 		raw = "{{" + templateContent + "}}";
 		// check for substitution ("{{subst:Template}}")
 		String subst = this.parseSubstitution(parserInput, parserOutput, mode, raw, templateContent);
 		if (subst != null) {
+			parserInput.decrementTemplateDepth();
 			return subst;
 		}
 		// check for magic word or parser function
 		String[] parserFunctionInfo = ParserFunctionUtil.parseParserFunctionInfo(templateContent);
+		String result = null;
 		if (MagicWordUtil.isMagicWord(templateContent) || parserFunctionInfo != null) {
 			if (mode <= JFlexParser.MODE_MINIMAL) {
-				return raw;
-			}
-			if (MagicWordUtil.isMagicWord(templateContent)) {
-				return MagicWordUtil.processMagicWord(parserInput, templateContent);
+				result = raw;
+			} else if (MagicWordUtil.isMagicWord(templateContent)) {
+				result = MagicWordUtil.processMagicWord(parserInput, templateContent);
 			} else {
-				return ParserFunctionUtil.processParserFunction(parserInput, parserOutput, parserFunctionInfo[0], parserFunctionInfo[1]);
+				result = ParserFunctionUtil.processParserFunction(parserInput, parserOutput, parserFunctionInfo[0], parserFunctionInfo[1]);
 			}
+			parserInput.decrementTemplateDepth();
+			return result;
 		}
 		// extract the template name
 		WikiLink wikiLink = this.parseTemplateName(parserInput.getVirtualWiki(), templateContent);
@@ -145,9 +158,7 @@ public class TemplateTag implements JFlexParserTag {
 			inclusion = (templateTopic != null || wikiLink.getColon());
 		}
 		// get the parsed template body
-		parserInput.incrementTemplateDepth();
 		this.processTemplateMetadata(parserInput, parserOutput, templateTopic, raw, name);
-		String result = null;
 		if (mode <= JFlexParser.MODE_MINIMAL) {
 			result = raw;
 		} else {
@@ -169,6 +180,8 @@ public class TemplateTag implements JFlexParserTag {
 			}
 		}
 		parserInput.decrementTemplateDepth();
+		logger.info("raw: " + raw);
+		logger.info("result: " + result);
 		return result;
 	}
 
@@ -258,7 +271,7 @@ public class TemplateTag implements JFlexParserTag {
 	}
 
 	/**
-	 * Given a template call of the form "{{template|param|param}}", return
+	 * Given a template call of the form "template|param|param", return
 	 * the template name.
 	 */
 	private WikiLink parseTemplateName(String virtualWiki, String raw) throws ParserException {
@@ -338,7 +351,11 @@ public class TemplateTag implements JFlexParserTag {
 			return "[[" + name + "]]";
 		}
 		// FIXME - disable section editing
-		parserInput.getTempParams().put(TEMPLATE_INCLUSION, "true");
+		int inclusion = (parserInput.getTempParams().get(TEMPLATE_INCLUSION) == null) ? 1 : (Integer)parserInput.getTempParams().get(TEMPLATE_INCLUSION) + 1;
+		if (inclusion > MAX_INCLUSION_DEPTH) {
+			throw new ExcessiveNestingException("Potentially infinite inclusions - over " + inclusion + " template inclusions while parsing topic " + parserInput.getTopicName());
+		}
+		parserInput.getTempParams().put(TEMPLATE_INCLUSION, inclusion);
 		return this.processTemplateContent(parserInput, parserOutput, templateTopic, templateContent, name);
 	}
 
