@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
+import org.jamwiki.Environment;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
@@ -39,8 +40,6 @@ public class JFlexParser extends AbstractParser {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexParser.class.getName());
 
-	/** Maximum number of parser iterations allowed for a single parsing run. */
-	private static final int MAX_PARSER_ITERATIONS = 100;
 	/** Any parsing that takes longer than the specified time (in ms) will trigger a log message. */
 	private static final int TIME_LIMIT_PARSE = 15;
 	/** Splice mode is used when inserting an edited topic section back into the full topic content. */
@@ -105,7 +104,7 @@ public class JFlexParser extends AbstractParser {
 		validate(lexer);
 		this.parserInput.incrementDepth();
 		// avoid infinite loops
-		if (this.parserInput.getDepth() > MAX_PARSER_ITERATIONS) {
+		if (this.parserInput.getDepth() > Environment.getIntValue(Environment.PROP_PARSER_MAX_PARSER_ITERATIONS)) {
 			this.parserInput.decrementDepth();
 			throw new ExcessiveNestingException("Potential infinite parsing loop - over " + this.parserInput.getDepth() + " parser iterations while parsing topic " + this.parserInput.getTopicName());
 		}
