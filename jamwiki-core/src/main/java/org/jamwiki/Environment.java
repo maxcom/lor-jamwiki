@@ -84,6 +84,12 @@ public class Environment {
 	public static final String PROP_PARSER_ALLOW_JAVASCRIPT = "allow-javascript";
 	public static final String PROP_PARSER_ALLOW_TEMPLATES = "allow-templates";
 	public static final String PROP_PARSER_CLASS = "parser";
+	/** Maximum number of template inclusions allowed on a page. */
+	public static final String PROP_PARSER_MAX_INCLUSIONS = "parser-max-inclusions";
+	/** Maximum number of parser iterations allowed for a single parsing run. */
+	public static final String PROP_PARSER_MAX_PARSER_ITERATIONS = "parser-max-iterations";
+	/** Maximum depth to which templates can be included for a single parsing run. */
+	public static final String PROP_PARSER_MAX_TEMPLATE_DEPTH = "parser-max-template-depth";
 	public static final String PROP_PARSER_SIGNATURE_DATE_PATTERN = "signature-date";
 	public static final String PROP_PARSER_SIGNATURE_USER_PATTERN = "signature-user";
 	public static final String PROP_PARSER_TOC = "allow-toc";
@@ -221,6 +227,9 @@ public class Environment {
 		defaults.setProperty(PROP_PARSER_ALLOW_JAVASCRIPT, Boolean.FALSE.toString());
 		defaults.setProperty(PROP_PARSER_ALLOW_TEMPLATES, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.jflex.JFlexParser");
+		defaults.setProperty(PROP_PARSER_MAX_INCLUSIONS, "250");
+		defaults.setProperty(PROP_PARSER_MAX_PARSER_ITERATIONS, "100");
+		defaults.setProperty(PROP_PARSER_MAX_TEMPLATE_DEPTH, "100");
 		defaults.setProperty(PROP_PARSER_SIGNATURE_DATE_PATTERN, "dd-MMM-yyyy HH:mm zzz");
 		defaults.setProperty(PROP_PARSER_SIGNATURE_USER_PATTERN, "[[{0}|{4}]]");
 		defaults.setProperty(PROP_PARSER_TOC, Boolean.TRUE.toString());

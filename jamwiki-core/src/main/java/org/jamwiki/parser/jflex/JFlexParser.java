@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
+import org.jamwiki.Environment;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
@@ -103,7 +104,7 @@ public class JFlexParser extends AbstractParser {
 		validate(lexer);
 		this.parserInput.incrementDepth();
 		// avoid infinite loops
-		if (this.parserInput.getDepth() > 100) {
+		if (this.parserInput.getDepth() > Environment.getIntValue(Environment.PROP_PARSER_MAX_PARSER_ITERATIONS)) {
 			this.parserInput.decrementDepth();
 			throw new ExcessiveNestingException("Potential infinite parsing loop - over " + this.parserInput.getDepth() + " parser iterations while parsing topic " + this.parserInput.getTopicName());
 		}

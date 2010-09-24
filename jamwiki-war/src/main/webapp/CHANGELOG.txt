@@ -1,6 +1,11 @@
 ﻿0.9.3
 =====
 
+New Features:
+
+  * Convert parser limits for maximum transclusions, template depth and parser
+    iterations to property values to allow more control for sites that need it.
+
 Bugfixes:
 
   * Fix a potential infinite loop with nested template includes.  Inclusions

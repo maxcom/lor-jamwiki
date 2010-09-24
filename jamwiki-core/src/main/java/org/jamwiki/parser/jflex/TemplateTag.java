@@ -23,6 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
@@ -43,10 +44,6 @@ import org.jamwiki.utils.WikiUtil;
 public class TemplateTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(TemplateTag.class.getName());
-	/** Maximum depth to which templates can be included for a single parsing run. */
-	private static final int MAX_TEMPLATE_DEPTH = 100;
-	/** Maximum number of template inclusions allowed on a page. */
-	private static final int MAX_INCLUSION_DEPTH = 250;
 	protected static final String TEMPLATE_INCLUSION = "template-inclusion";
 	private static Pattern PARAM_NAME_VALUE_PATTERN = Pattern.compile("[\\s]*([A-Za-z0-9_\\ \\-]+)[\\s]*\\=([\\s\\S]*)");
 
@@ -108,7 +105,7 @@ public class TemplateTag implements JFlexParserTag {
 	private String parseTemplateOutput(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw, boolean allowTemplateEdit) throws DataAccessException, ParserException {
 		String templateContent = raw.substring("{{".length(), raw.length() - "}}".length());
 		parserInput.incrementTemplateDepth();
-		if (parserInput.getTemplateDepth() > MAX_TEMPLATE_DEPTH) {
+		if (parserInput.getTemplateDepth() > Environment.getIntValue(Environment.PROP_PARSER_MAX_TEMPLATE_DEPTH)) {
 			parserInput.decrementTemplateDepth();
 			throw new ExcessiveNestingException("Potentially infinite parsing loop - over " + parserInput.getTemplateDepth() + " template inclusions while parsing topic " + parserInput.getTopicName());
 		}
@@ -350,7 +347,7 @@ public class TemplateTag implements JFlexParserTag {
 		}
 		// FIXME - disable section editing
 		int inclusion = (parserInput.getTempParams().get(TEMPLATE_INCLUSION) == null) ? 1 : (Integer)parserInput.getTempParams().get(TEMPLATE_INCLUSION) + 1;
-		if (inclusion > MAX_INCLUSION_DEPTH) {
+		if (inclusion > Environment.getIntValue(Environment.PROP_PARSER_MAX_INCLUSIONS)) {
 			throw new ExcessiveNestingException("Potentially infinite inclusions - over " + inclusion + " template inclusions while parsing topic " + parserInput.getTopicName());
 		}
 		parserInput.getTempParams().put(TEMPLATE_INCLUSION, inclusion);
