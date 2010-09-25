@@ -421,18 +421,6 @@ public class Utilities {
 	}
 
 	/**
-	 * Retrieve the webapp root.
-	 *
-	 * @return The default webapp root directory.
-	 */
-	// FIXME - there HAS to be a utility method available in Spring or some other
-	// common library that offers this functionality.
-	public static File getWebappRoot() throws FileNotFoundException {
-		// webapp root is two levels above /WEB-INF/classes/
-		return Utilities.getClassLoaderRoot().getParentFile().getParentFile();
-	}
-
-	/**
 	 * Given a String representation of a class name (for example, org.jamwiki.db.AnsiDataHandler)
 	 * return an instance of the class.  The constructor for the class being instantiated must
 	 * not take any arguments.
