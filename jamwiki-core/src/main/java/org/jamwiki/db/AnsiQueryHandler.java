@@ -1220,8 +1220,10 @@ public class AnsiQueryHandler implements QueryHandler {
 
 	/**
 	 *
+	 * had to override the insertTopicVersion method for the Caché implementation
+	 * need this to be public so that CacheQueryHandler can use it
 	 */
-	private LogItem initLogItem(ResultSet rs, String virtualWikiName) throws SQLException {
+	public LogItem initLogItem(ResultSet rs, String virtualWikiName) throws SQLException {
 		LogItem logItem = new LogItem();
 		int userId = rs.getInt("wiki_user_id");
 		if (userId > 0) {
@@ -1246,8 +1248,10 @@ public class AnsiQueryHandler implements QueryHandler {
 
 	/**
 	 *
+	 * had to override the insertTopicVersion method for the Caché implementation
+	 * need this to be public so that CacheQueryHandler can use it
 	 */
-	private RecentChange initRecentChange(ResultSet rs) throws SQLException {
+	public RecentChange initRecentChange(ResultSet rs) throws SQLException {
 		RecentChange change = new RecentChange();
 		int topicVersionId = rs.getInt("topic_version_id");
 		if (topicVersionId > 0) {
@@ -2503,8 +2507,11 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *  from this method.
 	 * @return The next available topic version id from the topic version table.
 	 * @throws SQLException Thrown if any error occurs during method execution.
+	 * 
+	 * had to override the insertTopicVersion method for the Caché implementation
+	 * need this to be public so that CacheQueryHandler can use it
 	 */
-	private int nextTopicVersionId(Connection conn) throws SQLException {
+	public int nextTopicVersionId(Connection conn) throws SQLException {
 		int nextId = DatabaseConnection.executeSequenceQuery(STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE, "topic_version_id", conn);
 		// note - this returns the last id in the system, so add one
 		return nextId + 1;
