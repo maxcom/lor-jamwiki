@@ -69,6 +69,8 @@ public interface DataHandler {
 	public static final String DATA_HANDLER_POSTGRES = "org.jamwiki.db.PostgresDataHandler";
 	/** Sybase ASA data handler class */
 	public static final String DATA_HANDLER_ASA = "org.jamwiki.db.SybaseASADataHandler";
+	/** Intersystems Cache data handler class */
+	public static final String DATA_HANDLER_CACHE = "org.jamwiki.db.CacheDataHandler";
 
 	/**
 	 * Determine if a value matching the given username and password exists in
