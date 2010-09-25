@@ -117,26 +117,21 @@ public class Environment {
 	// Lookup properties file location from system properties first.
 	private static final String PROPERTY_FILE_NAME = System.getProperty("jamwiki.property.file", "jamwiki.properties");
 
-	private static Properties defaults = null;
-	private static Environment instance = null; // NOPMD instanciated and used
-	private static SortedProperties props = null;
-
-	// initialize the singleton instance
-	static {
-		instance = new Environment();
-	}
+	private static Environment ENVIRONMENT_INSTANCE = null;
+	private Properties defaults = null;
+	private SortedProperties props = null;
 
 	/**
 	 * The constructor loads property values from the property file.
 	 */
 	private Environment() {
-		initDefaultProperties();
-		logger.debug("Default properties initialized: " + defaults.toString());
-		props = loadProperties(PROPERTY_FILE_NAME, defaults);
+		this.initDefaultProperties();
+		logger.debug("Default properties initialized: " + this.defaults.toString());
+		this.props = loadProperties(PROPERTY_FILE_NAME, this.defaults);
 		if ("true".equals(System.getProperty("jamwiki.override.file.properties"))) {
 			overrideFromSystemProperties();
 		}
-		logger.debug("JAMWiki properties initialized: " + props.toString());
+		logger.debug("JAMWiki properties initialized: " + this.props.toString());
 	}
 
 	/**
@@ -147,12 +142,12 @@ public class Environment {
 	*/
 	private void overrideFromSystemProperties() {
 		logger.info("Overriding file properties with system properties.");
-		Enumeration properties = props.propertyNames();
+		Enumeration properties = this.props.propertyNames();
 		while (properties.hasMoreElements()) {
 			String property = String.valueOf(properties.nextElement());
 			String value = System.getProperty("jamwiki." + property);
 			if (value != null) {
-				props.setProperty(property, value);
+				this.props.setProperty(property, value);
 				logger.info("Replaced property " + property + " with value: " + value);
 			}
 		}
@@ -182,83 +177,83 @@ public class Environment {
 	/**
 	 * Initialize the default property values.
 	 */
-	private static void initDefaultProperties() {
-		defaults = new Properties();
-		defaults.setProperty(PROP_BASE_COOKIE_EXPIRE, "31104000");
-		defaults.setProperty(PROP_BASE_DEFAULT_TOPIC, "StartingPoints");
-		defaults.setProperty(PROP_BASE_FILE_DIR, "");
-		defaults.setProperty(PROP_BASE_INITIALIZED, Boolean.FALSE.toString());
-		defaults.setProperty(PROP_BASE_LOGO_IMAGE, "logo_oliver.gif");
-		defaults.setProperty(PROP_BASE_META_DESCRIPTION, "");
-		defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, WikiBase.PERSISTENCE_INTERNAL);
-		defaults.setProperty(PROP_BASE_SEARCH_ENGINE, SearchEngine.SEARCH_ENGINE_LUCENE);
-		defaults.setProperty(PROP_BASE_WIKI_VERSION, "0.0.0");
-		defaults.setProperty(PROP_CACHE_INDIVIDUAL_SIZE, "1500");
-		defaults.setProperty(PROP_CACHE_MAX_AGE, "300");
-		defaults.setProperty(PROP_CACHE_MAX_IDLE_AGE, "150");
-		defaults.setProperty(PROP_CACHE_TOTAL_SIZE, "3000");
-		defaults.setProperty(PROP_DB_DRIVER, "");
-		defaults.setProperty(PROP_DB_PASSWORD, "");
-		defaults.setProperty(PROP_DB_TYPE, "");
-		defaults.setProperty(PROP_DB_URL, "");
-		defaults.setProperty(PROP_DB_USERNAME, "");
-		defaults.setProperty(PROP_DBCP_MAX_ACTIVE, "15");
-		defaults.setProperty(PROP_DBCP_MAX_IDLE, "5");
-		defaults.setProperty(PROP_DBCP_MIN_EVICTABLE_IDLE_TIME, "600");
-		defaults.setProperty(PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN, "5");
-		defaults.setProperty(PROP_DBCP_TEST_ON_BORROW, Boolean.TRUE.toString());
-		defaults.setProperty(PROP_DBCP_TEST_ON_RETURN, Boolean.TRUE.toString());
-		defaults.setProperty(PROP_DBCP_TEST_WHILE_IDLE, Boolean.FALSE.toString());
-		defaults.setProperty(PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS, "120");
-		defaults.setProperty(PROP_DBCP_WHEN_EXHAUSTED_ACTION, String.valueOf(GenericObjectPool.WHEN_EXHAUSTED_GROW));
-		defaults.setProperty(PROP_EMAIL_REPLY_ADDRESS, "");
-		defaults.setProperty(PROP_EMAIL_SMTP_HOST, "");
-		defaults.setProperty(PROP_EMAIL_SMTP_PASSWORD, "");
-		defaults.setProperty(PROP_EMAIL_SMTP_USERNAME, "");
-		defaults.setProperty(PROP_ENCRYPTION_ALGORITHM, "SHA-512");
-		defaults.setProperty(PROP_EXTERNAL_LINK_NEW_WINDOW, Boolean.FALSE.toString());
-		defaults.setProperty(PROP_FILE_BLACKLIST, "bat,bin,exe,htm,html,js,jsp,php,sh");
-		defaults.setProperty(PROP_FILE_BLACKLIST_TYPE, String.valueOf(WikiBase.UPLOAD_BLACKLIST));
-		defaults.setProperty(PROP_FILE_DIR_FULL_PATH, Environment.retrieveDefaultUploadDirectory());
-		defaults.setProperty(PROP_FILE_DIR_RELATIVE_PATH, Environment.retrieveDefaultRelativeUploadDirectory());
+	private void initDefaultProperties() {
+		this.defaults = new Properties();
+		this.defaults.setProperty(PROP_BASE_COOKIE_EXPIRE, "31104000");
+		this.defaults.setProperty(PROP_BASE_DEFAULT_TOPIC, "StartingPoints");
+		this.defaults.setProperty(PROP_BASE_FILE_DIR, "");
+		this.defaults.setProperty(PROP_BASE_INITIALIZED, Boolean.FALSE.toString());
+		this.defaults.setProperty(PROP_BASE_LOGO_IMAGE, "logo_oliver.gif");
+		this.defaults.setProperty(PROP_BASE_META_DESCRIPTION, "");
+		this.defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, WikiBase.PERSISTENCE_INTERNAL);
+		this.defaults.setProperty(PROP_BASE_SEARCH_ENGINE, SearchEngine.SEARCH_ENGINE_LUCENE);
+		this.defaults.setProperty(PROP_BASE_WIKI_VERSION, "0.0.0");
+		this.defaults.setProperty(PROP_CACHE_INDIVIDUAL_SIZE, "1500");
+		this.defaults.setProperty(PROP_CACHE_MAX_AGE, "300");
+		this.defaults.setProperty(PROP_CACHE_MAX_IDLE_AGE, "150");
+		this.defaults.setProperty(PROP_CACHE_TOTAL_SIZE, "3000");
+		this.defaults.setProperty(PROP_DB_DRIVER, "");
+		this.defaults.setProperty(PROP_DB_PASSWORD, "");
+		this.defaults.setProperty(PROP_DB_TYPE, "");
+		this.defaults.setProperty(PROP_DB_URL, "");
+		this.defaults.setProperty(PROP_DB_USERNAME, "");
+		this.defaults.setProperty(PROP_DBCP_MAX_ACTIVE, "15");
+		this.defaults.setProperty(PROP_DBCP_MAX_IDLE, "5");
+		this.defaults.setProperty(PROP_DBCP_MIN_EVICTABLE_IDLE_TIME, "600");
+		this.defaults.setProperty(PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN, "5");
+		this.defaults.setProperty(PROP_DBCP_TEST_ON_BORROW, Boolean.TRUE.toString());
+		this.defaults.setProperty(PROP_DBCP_TEST_ON_RETURN, Boolean.TRUE.toString());
+		this.defaults.setProperty(PROP_DBCP_TEST_WHILE_IDLE, Boolean.FALSE.toString());
+		this.defaults.setProperty(PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS, "120");
+		this.defaults.setProperty(PROP_DBCP_WHEN_EXHAUSTED_ACTION, String.valueOf(GenericObjectPool.WHEN_EXHAUSTED_GROW));
+		this.defaults.setProperty(PROP_EMAIL_REPLY_ADDRESS, "");
+		this.defaults.setProperty(PROP_EMAIL_SMTP_HOST, "");
+		this.defaults.setProperty(PROP_EMAIL_SMTP_PASSWORD, "");
+		this.defaults.setProperty(PROP_EMAIL_SMTP_USERNAME, "");
+		this.defaults.setProperty(PROP_ENCRYPTION_ALGORITHM, "SHA-512");
+		this.defaults.setProperty(PROP_EXTERNAL_LINK_NEW_WINDOW, Boolean.FALSE.toString());
+		this.defaults.setProperty(PROP_FILE_BLACKLIST, "bat,bin,exe,htm,html,js,jsp,php,sh");
+		this.defaults.setProperty(PROP_FILE_BLACKLIST_TYPE, String.valueOf(WikiBase.UPLOAD_BLACKLIST));
+		this.defaults.setProperty(PROP_FILE_DIR_FULL_PATH, Environment.retrieveDefaultUploadDirectory());
+		this.defaults.setProperty(PROP_FILE_DIR_RELATIVE_PATH, Environment.retrieveDefaultRelativeUploadDirectory());
 		// size is in bytes
-		defaults.setProperty(PROP_FILE_MAX_FILE_SIZE, "2000000");
-		defaults.setProperty(PROP_FILE_SERVER_URL, "");
-		defaults.setProperty(PROP_FILE_WHITELIST, "bmp,gif,jpeg,jpg,pdf,png,properties,svg,txt,zip");
-		defaults.setProperty(PROP_IMAGE_RESIZE_INCREMENT, "100");
-		defaults.setProperty(PROP_MAX_TOPIC_VERSION_EXPORT, "200");
-		defaults.setProperty(PROP_PARSER_ALLOW_CAPITALIZATION, Boolean.TRUE.toString());
-		defaults.setProperty(PROP_PARSER_ALLOW_HTML, Boolean.TRUE.toString());
-		defaults.setProperty(PROP_PARSER_ALLOW_JAVASCRIPT, Boolean.FALSE.toString());
-		defaults.setProperty(PROP_PARSER_ALLOW_TEMPLATES, Boolean.TRUE.toString());
-		defaults.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.jflex.JFlexParser");
-		defaults.setProperty(PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE, Boolean.FALSE.toString());
-		defaults.setProperty(PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE, Boolean.FALSE.toString());
-		defaults.setProperty(PROP_PARSER_MAX_INCLUSIONS, "250");
-		defaults.setProperty(PROP_PARSER_MAX_PARSER_ITERATIONS, "100");
-		defaults.setProperty(PROP_PARSER_MAX_TEMPLATE_DEPTH, "100");
-		defaults.setProperty(PROP_PARSER_SIGNATURE_DATE_PATTERN, "dd-MMM-yyyy HH:mm zzz");
-		defaults.setProperty(PROP_PARSER_SIGNATURE_USER_PATTERN, "[[{0}|{4}]]");
-		defaults.setProperty(PROP_PARSER_TOC, Boolean.TRUE.toString());
-		defaults.setProperty(PROP_PARSER_TOC_DEPTH, "5");
-		defaults.setProperty(PROP_PATTERN_INVALID_NAMESPACE_NAME, "([\\n\\r\\\\<>\\[\\]\\:_%/?&#]+)");
-		defaults.setProperty(PROP_PATTERN_INVALID_ROLE_NAME, "([A-Za-z0-9_]+)");
-		defaults.setProperty(PROP_PATTERN_INVALID_TOPIC_NAME, "([\\n\\r\\\\<>\\[\\]?#]+)");
-		defaults.setProperty(PROP_PATTERN_VALID_USER_LOGIN, "([A-Za-z0-9_]+)");
-		defaults.setProperty(PROP_PATTERN_VALID_VIRTUAL_WIKI, "([A-Za-z0-9_]+)");
-		defaults.setProperty(PROP_PRINT_NEW_WINDOW, Boolean.FALSE.toString());
-		defaults.setProperty(PROP_RECENT_CHANGES_NUM, "100");
-		defaults.setProperty(PROP_RSS_ALLOWED, Boolean.TRUE.toString());
-		defaults.setProperty(PROP_RSS_TITLE, "Wiki Recent Changes");
-		defaults.setProperty(PROP_SERVER_URL, "");
-		defaults.setProperty(PROP_SHARED_UPLOAD_VIRTUAL_WIKI, "");
-		defaults.setProperty(PROP_SITE_NAME, "JAMWiki");
+		this.defaults.setProperty(PROP_FILE_MAX_FILE_SIZE, "2000000");
+		this.defaults.setProperty(PROP_FILE_SERVER_URL, "");
+		this.defaults.setProperty(PROP_FILE_WHITELIST, "bmp,gif,jpeg,jpg,pdf,png,properties,svg,txt,zip");
+		this.defaults.setProperty(PROP_IMAGE_RESIZE_INCREMENT, "100");
+		this.defaults.setProperty(PROP_MAX_TOPIC_VERSION_EXPORT, "200");
+		this.defaults.setProperty(PROP_PARSER_ALLOW_CAPITALIZATION, Boolean.TRUE.toString());
+		this.defaults.setProperty(PROP_PARSER_ALLOW_HTML, Boolean.TRUE.toString());
+		this.defaults.setProperty(PROP_PARSER_ALLOW_JAVASCRIPT, Boolean.FALSE.toString());
+		this.defaults.setProperty(PROP_PARSER_ALLOW_TEMPLATES, Boolean.TRUE.toString());
+		this.defaults.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.jflex.JFlexParser");
+		this.defaults.setProperty(PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE, Boolean.FALSE.toString());
+		this.defaults.setProperty(PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE, Boolean.FALSE.toString());
+		this.defaults.setProperty(PROP_PARSER_MAX_INCLUSIONS, "250");
+		this.defaults.setProperty(PROP_PARSER_MAX_PARSER_ITERATIONS, "100");
+		this.defaults.setProperty(PROP_PARSER_MAX_TEMPLATE_DEPTH, "100");
+		this.defaults.setProperty(PROP_PARSER_SIGNATURE_DATE_PATTERN, "dd-MMM-yyyy HH:mm zzz");
+		this.defaults.setProperty(PROP_PARSER_SIGNATURE_USER_PATTERN, "[[{0}|{4}]]");
+		this.defaults.setProperty(PROP_PARSER_TOC, Boolean.TRUE.toString());
+		this.defaults.setProperty(PROP_PARSER_TOC_DEPTH, "5");
+		this.defaults.setProperty(PROP_PATTERN_INVALID_NAMESPACE_NAME, "([\\n\\r\\\\<>\\[\\]\\:_%/?&#]+)");
+		this.defaults.setProperty(PROP_PATTERN_INVALID_ROLE_NAME, "([A-Za-z0-9_]+)");
+		this.defaults.setProperty(PROP_PATTERN_INVALID_TOPIC_NAME, "([\\n\\r\\\\<>\\[\\]?#]+)");
+		this.defaults.setProperty(PROP_PATTERN_VALID_USER_LOGIN, "([A-Za-z0-9_]+)");
+		this.defaults.setProperty(PROP_PATTERN_VALID_VIRTUAL_WIKI, "([A-Za-z0-9_]+)");
+		this.defaults.setProperty(PROP_PRINT_NEW_WINDOW, Boolean.FALSE.toString());
+		this.defaults.setProperty(PROP_RECENT_CHANGES_NUM, "100");
+		this.defaults.setProperty(PROP_RSS_ALLOWED, Boolean.TRUE.toString());
+		this.defaults.setProperty(PROP_RSS_TITLE, "Wiki Recent Changes");
+		this.defaults.setProperty(PROP_SERVER_URL, "");
+		this.defaults.setProperty(PROP_SHARED_UPLOAD_VIRTUAL_WIKI, "");
+		this.defaults.setProperty(PROP_SITE_NAME, "JAMWiki");
 		// FIXME - hard coding
-		defaults.setProperty(PROP_TOPIC_EDITOR, "toolbar");
-		defaults.setProperty(PROP_TOPIC_SPAM_FILTER, Boolean.TRUE.toString());
-		defaults.setProperty(PROP_TOPIC_USE_PREVIEW, Boolean.TRUE.toString());
-		defaults.setProperty(PROP_TOPIC_USE_SHOW_CHANGES, Boolean.TRUE.toString());
-		defaults.setProperty(PROP_VIRTUAL_WIKI_DEFAULT, "en");
+		this.defaults.setProperty(PROP_TOPIC_EDITOR, "toolbar");
+		this.defaults.setProperty(PROP_TOPIC_SPAM_FILTER, Boolean.TRUE.toString());
+		this.defaults.setProperty(PROP_TOPIC_USE_PREVIEW, Boolean.TRUE.toString());
+		this.defaults.setProperty(PROP_TOPIC_USE_SHOW_CHANGES, Boolean.TRUE.toString());
+		this.defaults.setProperty(PROP_VIRTUAL_WIKI_DEFAULT, "en");
 	}
 
 	/**
@@ -281,7 +276,11 @@ public class Environment {
 	 * @return Returns an instance of the current system properties.
 	 */
 	public static Properties getInstance() {
-		return props;
+		if (ENVIRONMENT_INSTANCE == null) {
+			// initialize the singleton instance
+			ENVIRONMENT_INSTANCE = new Environment();
+	}
+		return ENVIRONMENT_INSTANCE.props;
 	}
 
 	/**
@@ -321,7 +320,7 @@ public class Environment {
 	 * @return The value of the property.
 	 */
 	public static String getValue(String name) {
-		return props.getProperty(name);
+		return getInstance().getProperty(name);
 	}
 
 	/**
@@ -382,9 +381,10 @@ public class Environment {
 	 */
 	private static String retrieveDefaultRelativeUploadDirectory() {
 		try {
-			return "/" + Utilities.getWebappRoot().getName() + "/upload/";
-		} catch (FileNotFoundException e) {
-			logger.error("Failure while trying to retrieve default file upload directory", e);
+			File webappRoot = Utilities.getClassLoaderRoot().getParentFile().getParentFile();
+			return "/" + webappRoot.getName() + "/upload/";
+		} catch (Throwable t) {
+			logger.error("Failure while trying to retrieve default file upload directory", t);
 		}
 		return "";
 	}
@@ -396,9 +396,10 @@ public class Environment {
 	 */
 	private static String retrieveDefaultUploadDirectory() {
 		try {
-			return new File(Utilities.getWebappRoot(), "upload").getPath();
-		} catch (FileNotFoundException e) {
-			logger.error("Failure while trying to retrieve default file upload directory", e);
+			File webappRoot = Utilities.getClassLoaderRoot().getParentFile().getParentFile();
+			return new File(webappRoot, "upload").getPath();
+		} catch (Throwable t) {
+			logger.error("Failure while trying to retrieve default file upload directory", t);
 		}
 		return "";
 	}
@@ -434,7 +435,7 @@ public class Environment {
 	 *  error occurs.
 	 */
 	public static void saveProperties() throws IOException {
-		Environment.saveProperties(PROPERTY_FILE_NAME, props, null);
+		Environment.saveProperties(PROPERTY_FILE_NAME, getInstance(), null);
 	}
 
 	/**
@@ -446,7 +447,7 @@ public class Environment {
 	 * @throws IOException Thrown if the file cannot be found or if an I/O
 	 *  error occurs.
 	 */
-	public static void saveProperties(String propertyFile, SortedProperties properties, String comments) throws IOException {
+	public static void saveProperties(String propertyFile, Properties properties, String comments) throws IOException {
 		File file = findProperties(propertyFile);
 		FileOutputStream out = null;
 		try {
@@ -470,7 +471,7 @@ public class Environment {
 	 * @param value The value of the property being set.
 	 */
 	public static void setBooleanValue(String name, boolean value) {
-		props.setProperty(name, Boolean.toString(value));
+		getInstance().setProperty(name, Boolean.toString(value));
 	}
 
 	/**
@@ -480,7 +481,7 @@ public class Environment {
 	 * @param value The value of the property being set.
 	 */
 	public static void setIntValue(String name, int value) {
-		props.setProperty(name, Integer.toString(value));
+		getInstance().setProperty(name, Integer.toString(value));
 	}
 
 	/**
@@ -494,6 +495,6 @@ public class Environment {
 		if (value == null) {
 			value = "";
 		}
-		props.setProperty(name, value);
+		getInstance().setProperty(name, value);
 	}
 }
