@@ -89,6 +89,11 @@
 		<class>org.jamwiki.db.DB2400DataHandler</class>
 		<state>experimental</state>
 	</data-handler>
+	<data-handler>
+		<name>Cache</name>
+		<class>org.jamwiki.db.CacheDataHandler</class>
+		<state>experimental</state>
+	</data-handler>
 </data-handlers>
 
 <!--

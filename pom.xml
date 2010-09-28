@@ -332,6 +332,13 @@
 				<role>developer</role>
 			</roles>
 		</developer>
+		<developer>
+			<id>DanPrekker</id>
+			<name>Dan Prekker</name>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
 	</developers>
 	<contributors>
 		<contributor><name>Fernando Fernandes</name><email>leandes</email><roles><role>translator (Portugese - Brazilian)</role></roles></contributor>
@@ -379,14 +386,28 @@
 		<contributor><name>Sasha Kotlo</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
 		<contributor><name>Michael (mindweb)</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
 	</contributors>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<reporting>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>1.6</source>
+					<target>1.6</target>
 					<encoding>ISO-8859-1</encoding>
 					<showDeprecation>true</showDeprecation>
 					<compilerArgument>-Xlint:unchecked</compilerArgument>
@@ -395,6 +416,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.7</version>
 				<configuration>
 					<aggregate>true</aggregate>
 					<encoding>UTF-8</encoding>
@@ -402,6 +424,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-pmd-plugin</artifactId>
+				<version>2.5</version>
 				<configuration>
 					<aggregate>true</aggregate>
 					<excludes>
@@ -426,6 +449,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.2</version>
 				<reportSets>
 					<reportSet>
 						<reports>
@@ -444,6 +468,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>taglist-maven-plugin</artifactId>
+				<version>2.4</version>
 				<configuration>
 					<aggregate>true</aggregate>
 					<encoding>UTF-8</encoding>
@@ -458,6 +483,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.6</version>
 				<configuration>
 					<aggregate>true</aggregate>
 				</configuration>
@@ -465,6 +491,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.2</version>
 				<configuration>
 					<aggregate>true</aggregate>
 				</configuration>
@@ -472,6 +499,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>javancss-maven-plugin</artifactId>
+				<version>2.0</version>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -491,10 +519,12 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jdepend-maven-plugin</artifactId>
+				<version>2.0-beta-2</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-changelog-plugin</artifactId>
+				<version>2.2</version>
 				<reportSets>
 					<reportSet>
 						<id>dual-report</id>
