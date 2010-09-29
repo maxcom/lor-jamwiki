@@ -337,9 +337,6 @@ public class LinkUtil {
 		if (StringUtils.isBlank(text)) {
 			text = wikiLink.getDestination();
 		}
-		if (StringUtils.isBlank(text)) {
-			text = wikiLink.getInterwiki().getInterwikiPrefix();
-		}
 		return "<a class=\"interwiki\" title=\"" + text + "\" href=\"" + url + "\">" + text + "</a>";
 	}
 

@@ -20,6 +20,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.WikiReference;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
@@ -89,8 +90,14 @@ public class JFlexParserUtil {
 		String virtualWiki = parserInput.getVirtualWiki();
 		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, raw);
 		if (wikiLink.getVirtualWiki() != null && !StringUtils.equals(wikiLink.getVirtualWiki().getName(), virtualWiki) && StringUtils.isBlank(wikiLink.getDestination())) {
-			// use the current topic name as the destination
-			wikiLink.setDestination(parserInput.getTopicName());
+			// use the root topic name as the destination
+			wikiLink.setDestination(wikiLink.getVirtualWiki().getRootTopicName());
+			if (StringUtils.isBlank(wikiLink.getText())) {
+				wikiLink.setText(wikiLink.getVirtualWiki().getName() + Namespace.SEPARATOR);
+			}
+		}
+		if (wikiLink.getInterwiki() != null && StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getText())) {
+			wikiLink.setText(wikiLink.getInterwiki().getInterwikiPrefix() + Namespace.SEPARATOR);
 		}
 		wikiLink.setColon(colon);
 		if (text != null) {

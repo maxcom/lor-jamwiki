@@ -49,10 +49,9 @@ Bugfixes:
 
   * Fix template parsing when <includeonly>|</includeonly> is used.
   * Fix template parsing for syntax like "{{{template}}".
-  * Interwiki links with no topic name of the form "[[interwiki:]]" should link
-    to the root page of the interwiki target site.
-  * Virtual wiki links with no topic name of the form "[[:virtualwiki:]]"
-    should link to the virtual wiki page of the same name as the current page.
+  * Interwiki links and virtual wiki links with no topic name of the form
+    "[[interwiki:]]" or "[[:virtualwiki:]]" should link to the root page of
+    the link target.
   * Images with multiple captions ([[Image:Example.gif|caption1|caption2]])
     should only render the last caption value specified.
   * Fix a design flaw in processing of nested metadata, such as categories
