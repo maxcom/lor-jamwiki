@@ -88,7 +88,8 @@ public class WikiDatabase {
 		{"jam_log", null},
 		{"jam_watchlist", null},
 		{"jam_topic_links", null},
-		{"jam_interwiki", null}
+		{"jam_interwiki", null},
+		{"jam_configuration", null}
 	};
 
 	/**

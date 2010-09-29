@@ -16,7 +16,6 @@
  */
 package org.jamwiki.utils;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -29,6 +28,7 @@ import javax.crypto.spec.DESKeySpec;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiException;
 
 /**
  * Provide capability for encrypting and decrypting values.  Inspired by an
@@ -88,8 +88,9 @@ public class Encryption {
 			// still use passwords encrypted with the weaker algorithm
 			Environment.setValue(Environment.PROP_ENCRYPTION_ALGORITHM, "SHA-1");
 			try {
-				Environment.saveProperties();
-			} catch (IOException e) {
+				Environment.saveConfiguration();
+			} catch (WikiException e) {
+				// FIXME - shouldn't this be better handled ???
 				logger.info("Failure while saving encryption algorithm property", e);
 			}
 		}
@@ -174,8 +175,8 @@ public class Encryption {
 			logger.warn("Found unencrypted property file value: " + name + ".  Assuming that this value manually un-encrypted in the property file so re-encrypting and re-saving.");
 			Encryption.setEncryptedProperty(name, value, null);
 			try {
-				Environment.saveProperties();
-			} catch (IOException ex) {
+				Environment.saveConfiguration();
+			} catch (WikiException ex) {
 				logger.error("Failure while saving properties", ex);
 				throw new IllegalStateException("Failure while saving properties");
 			}

@@ -128,7 +128,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 			errors = ServletUtil.validateSystemSettings(Environment.getInstance());
 			try {
 				Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
-				Environment.saveProperties();
+				Environment.saveConfiguration();
 				// reset data handler and other instances.  this probably hides a bug
 				// elsewhere since no reset should be needed, but it's anyone's guess
 				// where that might be...

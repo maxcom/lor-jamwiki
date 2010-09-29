@@ -21,13 +21,15 @@ import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import org.apache.commons.lang.math.NumberUtils;
 // FIXME - remove this import
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.jamwiki.utils.Utilities;
 
 /**
@@ -142,13 +144,12 @@ public class Environment {
 	*/
 	private void overrideFromSystemProperties() {
 		logger.info("Overriding file properties with system properties.");
-		Enumeration properties = this.props.propertyNames();
-		while (properties.hasMoreElements()) {
-			String property = String.valueOf(properties.nextElement());
-			String value = System.getProperty("jamwiki." + property);
+		Map<String, String> properties = propertiesToMap(this.props);
+		for (String key : properties.keySet()) {
+			String value = System.getProperty("jamwiki." + key);
 			if (value != null) {
-				this.props.setProperty(property, value);
-				logger.info("Replaced property " + property + " with value: " + value);
+				this.props.setProperty(key, value);
+				logger.info("Replaced property " + key + " with value: " + value);
 			}
 		}
 	}
@@ -375,6 +376,17 @@ public class Environment {
 	}
 
 	/**
+	 * Convert a Properties object to a Map object.
+	 */
+	private static Map<String, String> propertiesToMap(Properties properties) {
+		Map<String, String> map = new HashMap<String, String>();
+		for (Object key : properties.keySet()) {
+			map.put(key.toString(), properties.get(key).toString());
+		}
+		return map;
+	}
+
+	/**
 	 * Return the default relative upload directory (/context/upload/) as a String.
 	 *
 	 * @return The default relative upload directory (/context/upload/) as a String.
@@ -429,13 +441,22 @@ public class Environment {
 	}
 
 	/**
-	 * Save the current Wiki system properties to the filesystem.
+	 * Persist the current wiki system configuration and reload all values.
 	 *
-	 * @throws IOException Thrown if the file cannot be found or if an I/O
-	 *  error occurs.
+	 * @throws WikiException Thrown if a failure occurs while saving the
+	 *  configuration values.
 	 */
-	public static void saveProperties() throws IOException {
-		Environment.saveProperties(PROPERTY_FILE_NAME, getInstance(), null);
+	public static void saveConfiguration() throws WikiException {
+		try {
+			Environment.saveProperties(PROPERTY_FILE_NAME, getInstance(), null);
+			// do not use WikiBase.getDataHandler() directly since properties are
+			// being changed
+			WikiUtil.dataHandlerInstance().writeConfiguration(propertiesToMap(getInstance()));
+		} catch (IOException e) {
+			throw new WikiException(new WikiMessage("error.unknown", e.getMessage()));
+		} catch (DataAccessException e) {
+			throw new WikiException(new WikiMessage("error.unknown", e.getMessage()));
+		}
 	}
 
 	/**

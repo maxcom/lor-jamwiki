@@ -169,15 +169,9 @@ public class DatabaseUpgrades {
 			// populate the jam_interwiki table
 			WikiDatabase.setupDefaultInterwikis();
 			messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_interwiki"));
-			// update jam_virtual_wiki to add new columns
-			// the following three schema updates were moved up to upgrade 90 to facilitate upgrades from
-			// 0.8.4
-			//WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_ADD_VIRTUAL_WIKI_LOGO_URL", conn);
-			//messages.add(new WikiMessage("upgrade.message.db.column.added", "logo_image_url", "jam_virtual_wiki"));
-			//WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_ADD_VIRTUAL_WIKI_SITE_NAME", conn);
-			//messages.add(new WikiMessage("upgrade.message.db.column.added", "site_name", "jam_virtual_wiki"));
-			//WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_ADD_VIRTUAL_WIKI_META_DESCRIPTION", conn);
-			//messages.add(new WikiMessage("upgrade.message.db.column.added", "meta_description", "jam_virtual_wiki"));
+			// add the jam_configuration table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_CONFIGURATION_TABLE", conn);
+			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_configuration"));
 			// drop the not null constraints for jam_virtual_wiki.default_topic_name
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_DROP_VIRTUAL_WIKI_DEFAULT_TOPIC_NOT_NULL", conn);
 			messages.add(new WikiMessage("upgrade.message.db.column.modified", "default_topic_name", "jam_virtual_wiki"));

@@ -391,6 +391,16 @@ public interface DataHandler {
 	List<Category> lookupCategoryTopics(String virtualWiki, String categoryName) throws DataAccessException;
 
 	/**
+	 * Return a map of key-value pairs corresponding to all configuration values
+	 * currently set up for the system.
+	 *
+	 * @return A map of key-value pairs corresponding to all configuration values
+	 * currently set up for the system.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	public Map<String, String> lookupConfiguration() throws DataAccessException;
+
+	/**
 	 * Given an interwiki prefix, return the Interwiki that corresponds to that prefix,
 	 * or <code>null</code> if no match exists.
 	 *
@@ -767,6 +777,19 @@ public interface DataHandler {
 	 */
 	// FIXME - move this to another location
 	void updateSpecialPage(Locale locale, String virtualWiki, String topicName, String userDisplay) throws DataAccessException, WikiException;
+
+	/**
+	 * Replace the existing configuration records with a new set of values.  This
+	 * method will delete all existing records and replace them with the records
+	 * specified.
+	 *
+	 * @param configuration A map of key-value pairs corresponding to the new
+	 *  configuration information.  These values will replace all existing
+	 *  configuration values in the system.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the configuration information is invalid.
+	 */
+	public void writeConfiguration(Map<String, String> configuration) throws DataAccessException, WikiException;
 
 	/**
 	 * Add or update a WikiFile object.  This method will add a new record if

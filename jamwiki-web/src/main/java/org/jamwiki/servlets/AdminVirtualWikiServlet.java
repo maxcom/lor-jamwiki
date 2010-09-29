@@ -16,7 +16,6 @@
  */
 package org.jamwiki.servlets;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -150,12 +149,11 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 		if (!StringUtils.isBlank(defaultVirtualWiki)) {
 			Environment.setValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT, defaultVirtualWiki);
 			try {
-				Environment.saveProperties();
-			} catch (IOException e) {
-				logger.error("Failure while updating default virtual wiki", e);
-				errors.add(new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
+				Environment.saveConfiguration();
+				next.addObject("message", new WikiMessage("admin.message.vwiki.defaultupdated", defaultVirtualWiki));
+			} catch (WikiException e) {
+				errors.add(e.getWikiMessage());
 			}
-			next.addObject("message", new WikiMessage("admin.message.vwiki.defaultupdated", defaultVirtualWiki));
 		}
 		next.addObject("errors", errors);
 		view(request, next, pageInfo);

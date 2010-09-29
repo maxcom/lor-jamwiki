@@ -65,6 +65,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_CREATE_AUTHORITIES_TABLE = null;
 	protected static String STATEMENT_CREATE_CATEGORY_TABLE = null;
 	protected static String STATEMENT_CREATE_CATEGORY_INDEX = null;
+	protected static String STATEMENT_CREATE_CONFIGURATION_TABLE = null;
 	protected static String STATEMENT_CREATE_GROUP_AUTHORITIES_TABLE = null;
 	protected static String STATEMENT_CREATE_GROUP_MEMBERS_TABLE = null;
 	protected static String STATEMENT_CREATE_GROUP_TABLE = null;
@@ -96,6 +97,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_CREATE_WIKI_USER_TABLE = null;
 	protected static String STATEMENT_CREATE_WIKI_USER_LOGIN_INDEX = null;
 	protected static String STATEMENT_DELETE_AUTHORITIES = null;
+	protected static String STATEMENT_DELETE_CONFIGURATION = null;
 	protected static String STATEMENT_DELETE_GROUP_AUTHORITIES = null;
 	protected static String STATEMENT_DELETE_INTERWIKI = null;
 	protected static String STATEMENT_DELETE_LOG_ITEMS = null;
@@ -107,6 +109,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DELETE_WATCHLIST_ENTRY = null;
 	protected static String STATEMENT_DROP_AUTHORITIES_TABLE = null;
 	protected static String STATEMENT_DROP_CATEGORY_TABLE = null;
+	protected static String STATEMENT_DROP_CONFIGURATION_TABLE = null;
 	protected static String STATEMENT_DROP_GROUP_AUTHORITIES_TABLE = null;
 	protected static String STATEMENT_DROP_GROUP_MEMBERS_TABLE = null;
 	protected static String STATEMENT_DROP_GROUP_TABLE = null;
@@ -128,6 +131,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DROP_WIKI_USER_TABLE = null;
 	protected static String STATEMENT_INSERT_AUTHORITY = null;
 	protected static String STATEMENT_INSERT_CATEGORY = null;
+	protected static String STATEMENT_INSERT_CONFIGURATION = null;
 	protected static String STATEMENT_INSERT_GROUP = null;
 	protected static String STATEMENT_INSERT_GROUP_AUTO_INCREMENT = null;
 	protected static String STATEMENT_INSERT_GROUP_AUTHORITY = null;
@@ -166,6 +170,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_AUTHORITIES_USER = null;
 	protected static String STATEMENT_SELECT_CATEGORIES = null;
 	protected static String STATEMENT_SELECT_CATEGORY_TOPICS = null;
+	protected static String STATEMENT_SELECT_CONFIGURATION = null;
 	protected static String STATEMENT_SELECT_GROUP = null;
 	protected static String STATEMENT_SELECT_GROUP_AUTHORITIES = null;
 	protected static String STATEMENT_SELECT_GROUPS_AUTHORITIES = null;
@@ -298,6 +303,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_RECENT_CHANGE_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WATCHLIST_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_INTERWIKI_TABLE, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_CONFIGURATION_TABLE, conn);
 	}
 
 	/**
@@ -408,6 +414,9 @@ public class AnsiQueryHandler implements QueryHandler {
 		// catch errors that might result from a partial failure during install.  also
 		// note that the coding style violation here is intentional since it makes the
 		// actual work of the method more obvious.
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_CONFIGURATION_TABLE, conn);
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_INTERWIKI_TABLE, conn);
 		} catch (SQLException e) { logger.error(e.getMessage()); }
@@ -1043,6 +1052,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected void init(Properties properties) {
 		this.props = properties;
 		STATEMENT_CONNECTION_VALIDATION_QUERY    = props.getProperty("STATEMENT_CONNECTION_VALIDATION_QUERY");
+		STATEMENT_CREATE_CONFIGURATION_TABLE     = props.getProperty("STATEMENT_CREATE_CONFIGURATION_TABLE");
 		STATEMENT_CREATE_GROUP_TABLE             = props.getProperty("STATEMENT_CREATE_GROUP_TABLE");
 		STATEMENT_CREATE_INTERWIKI_TABLE         = props.getProperty("STATEMENT_CREATE_INTERWIKI_TABLE");
 		STATEMENT_CREATE_NAMESPACE_TABLE         = props.getProperty("STATEMENT_CREATE_NAMESPACE_TABLE");
@@ -1077,6 +1087,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_CREATE_RECENT_CHANGE_TABLE     = props.getProperty("STATEMENT_CREATE_RECENT_CHANGE_TABLE");
 		STATEMENT_CREATE_WATCHLIST_TABLE         = props.getProperty("STATEMENT_CREATE_WATCHLIST_TABLE");
 		STATEMENT_DELETE_AUTHORITIES             = props.getProperty("STATEMENT_DELETE_AUTHORITIES");
+		STATEMENT_DELETE_CONFIGURATION           = props.getProperty("STATEMENT_DELETE_CONFIGURATION");
 		STATEMENT_DELETE_GROUP_AUTHORITIES       = props.getProperty("STATEMENT_DELETE_GROUP_AUTHORITIES");
 		STATEMENT_DELETE_INTERWIKI               = props.getProperty("STATEMENT_DELETE_INTERWIKI");
 		STATEMENT_DELETE_LOG_ITEMS               = props.getProperty("STATEMENT_DELETE_LOG_ITEMS");
@@ -1088,6 +1099,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_DELETE_WATCHLIST_ENTRY         = props.getProperty("STATEMENT_DELETE_WATCHLIST_ENTRY");
 		STATEMENT_DROP_AUTHORITIES_TABLE         = props.getProperty("STATEMENT_DROP_AUTHORITIES_TABLE");
 		STATEMENT_DROP_CATEGORY_TABLE            = props.getProperty("STATEMENT_DROP_CATEGORY_TABLE");
+		STATEMENT_DROP_CONFIGURATION_TABLE       = props.getProperty("STATEMENT_DROP_CONFIGURATION_TABLE");
 		STATEMENT_DROP_GROUP_AUTHORITIES_TABLE   = props.getProperty("STATEMENT_DROP_GROUP_AUTHORITIES_TABLE");
 		STATEMENT_DROP_GROUP_MEMBERS_TABLE       = props.getProperty("STATEMENT_DROP_GROUP_MEMBERS_TABLE");
 		STATEMENT_DROP_GROUP_TABLE               = props.getProperty("STATEMENT_DROP_GROUP_TABLE");
@@ -1109,6 +1121,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_DROP_WIKI_FILE_VERSION_TABLE   = props.getProperty("STATEMENT_DROP_WIKI_FILE_VERSION_TABLE");
 		STATEMENT_INSERT_AUTHORITY               = props.getProperty("STATEMENT_INSERT_AUTHORITY");
 		STATEMENT_INSERT_CATEGORY                = props.getProperty("STATEMENT_INSERT_CATEGORY");
+		STATEMENT_INSERT_CONFIGURATION           = props.getProperty("STATEMENT_INSERT_CONFIGURATION");
 		STATEMENT_INSERT_GROUP                   = props.getProperty("STATEMENT_INSERT_GROUP");
 		STATEMENT_INSERT_GROUP_AUTO_INCREMENT    = props.getProperty("STATEMENT_INSERT_GROUP_AUTO_INCREMENT");
 		STATEMENT_INSERT_GROUP_AUTHORITY         = props.getProperty("STATEMENT_INSERT_GROUP_AUTHORITY");
@@ -1147,6 +1160,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_AUTHORITIES_USER        = props.getProperty("STATEMENT_SELECT_AUTHORITIES_USER");
 		STATEMENT_SELECT_CATEGORIES              = props.getProperty("STATEMENT_SELECT_CATEGORIES");
 		STATEMENT_SELECT_CATEGORY_TOPICS         = props.getProperty("STATEMENT_SELECT_CATEGORY_TOPICS");
+		STATEMENT_SELECT_CONFIGURATION           = props.getProperty("STATEMENT_SELECT_CONFIGURATION");
 		STATEMENT_SELECT_GROUP                   = props.getProperty("STATEMENT_SELECT_GROUP");
 		STATEMENT_SELECT_GROUP_AUTHORITIES       = props.getProperty("STATEMENT_SELECT_GROUP_AUTHORITIES");
 		STATEMENT_SELECT_GROUPS_AUTHORITIES      = props.getProperty("STATEMENT_SELECT_GROUPS_AUTHORITIES");
@@ -1994,6 +2008,27 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	public Map<String, String> lookupConfiguration() throws SQLException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Map<String, String> configuration = new HashMap<String, String>();
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_CONFIGURATION);
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				configuration.put(rs.getString("key"), rs.getString("value"));
+			}
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
+		return configuration;
+	}
+
+	/**
+	 *
+	 */
 	public List<Interwiki> lookupInterwikis(Connection conn) throws SQLException {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -2685,6 +2720,28 @@ public class AnsiQueryHandler implements QueryHandler {
 		DatabaseConnection.executeUpdate(STATEMENT_DELETE_RECENT_CHANGES, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES_VERSIONS, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES_LOGS, conn);
+	}
+
+	/**
+	 *
+	 */
+	public void updateConfiguration(Map<String, String> configuration, Connection conn) throws SQLException {
+		Statement stmt = null;
+		PreparedStatement pstmt = null;
+		try {
+			stmt = conn.createStatement();
+			stmt.executeUpdate(STATEMENT_DELETE_CONFIGURATION);
+			pstmt = conn.prepareStatement(STATEMENT_INSERT_CONFIGURATION);
+			for (String key : configuration.keySet()) {
+				pstmt.setString(1, key);
+				pstmt.setString(2, configuration.get(key));
+				pstmt.addBatch();
+			}
+			pstmt.executeBatch();
+		} finally {
+			DatabaseConnection.closeStatement(pstmt);
+			DatabaseConnection.closeStatement(stmt);
+		}
 	}
 
 	/**

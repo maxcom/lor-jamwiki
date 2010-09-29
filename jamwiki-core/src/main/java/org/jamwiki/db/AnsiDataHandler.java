@@ -727,6 +727,17 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public Map<String, String> lookupConfiguration() throws DataAccessException {
+		try {
+			return this.queryHandler().lookupConfiguration();
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		}
+	}
+
+	/**
+	 *
+	 */
 	public Interwiki lookupInterwiki(String interwikiPrefix) throws DataAccessException {
 		if (interwikiPrefix == null) {
 			return null;
@@ -1531,6 +1542,16 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	protected void validateConfiguration(Map<String, String> configuration) throws WikiException {
+		for (String key : configuration.keySet()) {
+			checkLength(key, 50);
+			checkLength(configuration.get(key), 500);
+		}
+	}
+
+	/**
+	 *
+	 */
 	protected void validateLogItem(LogItem logItem) throws WikiException {
 		checkLength(logItem.getUserDisplayName(), 200);
 		checkLength(logItem.getLogParamString(), 500);
@@ -1661,6 +1682,23 @@ public class AnsiDataHandler implements DataHandler {
 		checkLength(user.getEmail(), 100);
 		checkLength(user.getEditor(), 50);
 		checkLength(user.getSignature(), 255);
+	}
+
+	/**
+	 *
+	 */
+	public void writeConfiguration(Map<String, String> configuration) throws DataAccessException, WikiException {
+		this.validateConfiguration(configuration);
+		TransactionStatus status = null;
+		try {
+			status = DatabaseConnection.startTransaction();
+			Connection conn = DatabaseConnection.getConnection();
+			this.queryHandler().updateConfiguration(configuration, conn);
+		} catch (SQLException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			throw new DataAccessException(e);
+		}
+		DatabaseConnection.commit(status);
 	}
 
 	/**

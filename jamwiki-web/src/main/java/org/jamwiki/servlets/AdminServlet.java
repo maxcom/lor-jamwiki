@@ -410,7 +410,7 @@ public class AdminServlet extends JAMWikiServlet {
 			String value = props.getProperty(key);
 			Environment.setValue(key, value);
 		}
-		Environment.saveProperties();
+		Environment.saveConfiguration();
 		// re-initialize to reset database settings (if needed)
 		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {

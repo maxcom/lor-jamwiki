@@ -142,7 +142,7 @@ public class SetupServlet extends JAMWikiServlet {
 		String newPassword = request.getParameter("newPassword");
 		String encryptedPassword = Encryption.encrypt(newPassword);
 		WikiBase.reset(request.getLocale(), user, username, encryptedPassword);
-		Environment.saveProperties();
+		Environment.saveConfiguration();
 		// the setup process does not add new topics to the index (currently)
 		// TODO - remove this once setup uses safe connection handling
 		WikiBase.getSearchEngine().refreshIndex();

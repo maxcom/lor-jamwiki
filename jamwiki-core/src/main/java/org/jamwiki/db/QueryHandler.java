@@ -669,6 +669,16 @@ public interface QueryHandler {
 	List<Category> lookupCategoryTopics(int virtualWikiId, String virtualWikiName, String categoryName) throws SQLException;
 
 	/**
+	 * Return a map of key-value pairs corresponding to all configuration values
+	 * currently set up for the system.
+	 *
+	 * @return A map of key-value pairs corresponding to all configuration values
+	 * currently set up for the system.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	public Map<String, String> lookupConfiguration() throws SQLException;
+
+	/**
 	 * Return all interwiki records currently available for the wiki.
 	 *
 	 * @param conn A database connection to use when connecting to the database
@@ -953,6 +963,20 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	void reloadRecentChanges(Connection conn) throws SQLException;
+
+	/**
+	 * Replace the existing configuration records with a new set of values.  This
+	 * method will delete all existing records and replace them with the records
+	 * specified.
+	 *
+	 * @param configuration A map of key-value pairs corresponding to the new
+	 *  configuration information.  These values will replace all existing
+	 *  configuration values in the system.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	public void updateConfiguration(Map<String, String> configuration, Connection conn) throws SQLException;
 
 	/**
 	 * Add or update a namespace.  This method will add a new record if the
