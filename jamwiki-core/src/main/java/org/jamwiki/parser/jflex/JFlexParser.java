@@ -48,14 +48,16 @@ public class JFlexParser extends AbstractParser {
 	public static final int MODE_SLICE = 2;
 	/** Minimal mode is used to do a bare minimum of parsing, usually just converting signature tags, prior to saving to the database. */
 	public static final int MODE_MINIMAL = 3;
-	/** Pre-process mode is currently equivalent to metadata mode and indicates that that the JFlex pre-processor parser should be run in full. */
-	public static final int MODE_PREPROCESS = 4;
+	/** Template mode indicates that template processing is occurring. */
+	public static final int MODE_TEMPLATE = 4;
+	/** Pre-process mode indicates that that the JFlex pre-processor parser should be run in full. */
+	public static final int MODE_PREPROCESS = 5;
 	/** Processing mode indicates that the pre-processor and processor should be run, parsing all Wiki syntax into formatted output but NOT parsing paragraph tags. */
-	public static final int MODE_PROCESS = 5;
+	public static final int MODE_PROCESS = 6;
 	/** Layout mode indicates that the pre-processor and processor should be run in full, parsing all Wiki syntax into formatted output and adding layout tags such as paragraphs. */
-	public static final int MODE_LAYOUT = 6;
+	public static final int MODE_LAYOUT = 7;
 	/** Post-process mode indicates that the pre-processor, processor and post-processor should be run in full, parsing all Wiki syntax into formatted output and adding layout tags such as paragraphs and TOC. */
-	public static final int MODE_POSTPROCESS = 7;
+	public static final int MODE_POSTPROCESS = 8;
 
 	/** Pattern to determine if the topic is a redirect. */
 	private static final Pattern REDIRECT_PATTERN = Pattern.compile("#REDIRECT[ ]*\\[\\[([^\\n\\r\\]]+)\\]\\]", Pattern.CASE_INSENSITIVE);
@@ -148,15 +150,15 @@ public class JFlexParser extends AbstractParser {
 	 * @throws ParserException Thrown if any error occurs during parsing.
 	 */
 	public String parseFragment(ParserOutput parserOutput, String raw, int mode) throws ParserException {
-		// maintain the original output, which has all of the category and link info
-		int preMode = (mode > JFlexParser.MODE_PREPROCESS) ? JFlexParser.MODE_PREPROCESS : mode;
 		String output = raw;
+		// maintain the original output, which has all of the category and link info
+		int preMode = (mode > JFlexParser.MODE_TEMPLATE) ? JFlexParser.MODE_TEMPLATE : mode;
+		output = this.parseTemplate(parserOutput, output, preMode);
+		preMode = (mode > JFlexParser.MODE_PREPROCESS) ? JFlexParser.MODE_PREPROCESS : mode;
 		output = this.parsePreProcess(parserOutput, output, preMode);
-		if (mode >= JFlexParser.MODE_PROCESS) {
-			// layout should not be done while parsing fragments
-			preMode = JFlexParser.MODE_PROCESS;
-			output = this.parseProcess(parserOutput, output, preMode);
-		}
+		// layout should not be done while parsing fragments
+		preMode = (mode > JFlexParser.MODE_PROCESS) ? JFlexParser.MODE_PROCESS : mode;
+		output = this.parseProcess(parserOutput, output, preMode);
 		return output;
 	}
 
@@ -174,6 +176,7 @@ public class JFlexParser extends AbstractParser {
 		// some parser expressions require that lines end in a newline, so add a newline
 		// to the end of the content for good measure
 		String output = raw + '\n';
+		output = this.parseTemplate(parserOutput, output, JFlexParser.MODE_TEMPLATE);
 		output = this.parsePreProcess(parserOutput, output, JFlexParser.MODE_PREPROCESS);
 		output = this.parseProcess(parserOutput, output, JFlexParser.MODE_LAYOUT);
 		output = this.parsePostProcess(parserOutput, output, JFlexParser.MODE_POSTPROCESS);
@@ -202,6 +205,7 @@ public class JFlexParser extends AbstractParser {
 		// some parser expressions require that lines end in a newline, so add a newline
 		// to the end of the content for good measure
 		String output = raw + '\n';
+		output = this.parseTemplate(parserOutput, output, JFlexParser.MODE_TEMPLATE);
 		output = this.parsePreProcess(parserOutput, output, JFlexParser.MODE_PREPROCESS);
 		if (logger.isInfoEnabled()) {
 			String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
@@ -222,15 +226,30 @@ public class JFlexParser extends AbstractParser {
 		long start = System.currentTimeMillis();
 		String output = raw;
 		ParserOutput parserOutput = new ParserOutput();
-		output = this.parsePreProcess(parserOutput, output, JFlexParser.MODE_MINIMAL);
+		output = this.parseTemplate(parserOutput, output, JFlexParser.MODE_MINIMAL);
 		String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 		logger.info("Parse time (parseHTML) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return output;
 	}
 
 	/**
-	 * First stage of the parser, this method parses templates and signatures
-	 * and builds metadata.
+	 * First stage of the parser, this method parses templates and signatures.
+	 *
+	 * @param parserOutput A ParserOutput object containing parser
+	 *  metadata output.
+	 * @param raw The raw Wiki syntax to be converted into HTML.
+	 * @return The parsed content.
+	 * @throws ParserException Thrown if any error occurs during parsing.
+	 */
+	private String parseTemplate(ParserOutput parserOutput, String raw, int mode) throws ParserException {
+		StringReader reader = toStringReader(raw);
+		JAMWikiTemplateProcessor lexer = new JAMWikiTemplateProcessor(reader);
+		int preMode = (mode > JFlexParser.MODE_TEMPLATE) ? JFlexParser.MODE_TEMPLATE : mode;
+		return this.lex(lexer, raw, parserOutput, preMode);
+	}
+
+	/**
+	 * Second stage of the parser, this method builds metadata.
 	 *
 	 * @param parserOutput A ParserOutput object containing parser
 	 *  metadata output.
@@ -239,6 +258,9 @@ public class JFlexParser extends AbstractParser {
 	 * @throws ParserException Thrown if any error occurs during parsing.
 	 */
 	private String parsePreProcess(ParserOutput parserOutput, String raw, int mode) throws ParserException {
+		if (mode < JFlexParser.MODE_PREPROCESS) {
+			return raw;
+		}
 		StringReader reader = toStringReader(raw);
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(reader);
 		int preMode = (mode > JFlexParser.MODE_PREPROCESS) ? JFlexParser.MODE_PREPROCESS : mode;
@@ -256,7 +278,7 @@ public class JFlexParser extends AbstractParser {
 	}
 
 	/**
-	 * Second stage of the parser, this method parses most Wiki syntax, validates
+	 * Third stage of the parser, this method parses most Wiki syntax, validates
 	 * HTML, and performs the majority of the parser conversion.
 	 *
 	 * @param parserOutput A ParserOutput object containing parser
@@ -266,14 +288,17 @@ public class JFlexParser extends AbstractParser {
 	 * @throws ParserException Thrown if any error occurs during parsing.
 	 */
 	private String parseProcess(ParserOutput parserOutput, String raw, int mode) throws ParserException {
+		if (mode < JFlexParser.MODE_PROCESS) {
+			return raw;
+		}
 		StringReader reader = toStringReader(raw);
 		JAMWikiProcessor lexer = new JAMWikiProcessor(reader);
 		return this.lex(lexer, raw, parserOutput, mode);
 	}
 
 	/**
-	 * In most cases this method is the second and final stage of the parser,
-	 * adding paragraph tags and other layout elements that for various reasons
+	 * In most cases this method is the final stage of the parser, adding
+	 * paragraph tags and other layout elements that for various reasons
 	 * cannot be added during the first parsing stage.
 	 *
 	 * @param parserOutput A ParserOutput object containing parser
@@ -283,6 +308,9 @@ public class JFlexParser extends AbstractParser {
 	 * @throws ParserException Thrown if any error occurs during parsing.
 	 */
 	private String parsePostProcess(ParserOutput parserOutput, String raw, int mode) throws ParserException {
+		if (mode < JFlexParser.MODE_POSTPROCESS) {
+			return raw;
+		}
 		StringReader reader = toStringReader(raw);
 		JAMWikiPostProcessor lexer = new JAMWikiPostProcessor(reader);
 		return this.lex(lexer, raw, parserOutput, mode);

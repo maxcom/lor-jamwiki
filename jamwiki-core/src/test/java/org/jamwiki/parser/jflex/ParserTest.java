@@ -59,7 +59,9 @@ public class ParserTest extends JAMWikiUnitTest {
 	 */
 	@Test
 	public void testCategory() throws Throwable {
-		this.executeCategoryTest("WikiCategory");
+		ParserOutput parserOutput = this.executeCategoryTest("WikiCategory");
+		assertEquals("Expected one category", 1, parserOutput.getCategories().size());
+		assertNotNull("Category:Test expected", parserOutput.getCategories().get("Category:Test"));
 	}
 
 	/**
@@ -67,17 +69,39 @@ public class ParserTest extends JAMWikiUnitTest {
 	 */
 	@Test
 	public void testCategoryNested() throws Throwable {
-		this.executeCategoryTest("TemplateIncludeCategory");
+		ParserOutput parserOutput = this.executeCategoryTest("TemplateIncludeCategory");
+		assertEquals("Expected one category", 1, parserOutput.getCategories().size());
+		assertNotNull("Category:Test expected", parserOutput.getCategories().get("Category:Test"));
 	}
 
 	/**
 	 *
 	 */
-	private void executeCategoryTest(String topicName) throws Throwable {
+	@Test
+	public void testCategoryTemplate1() throws Throwable {
+		ParserOutput parserOutput = this.executeCategoryTest("TemplateCategory1");
+		assertEquals("Expected one category", 1, parserOutput.getCategories().size());
+		assertNotNull("Category:Test Example1 expected", parserOutput.getCategories().get("Category:Test Example1"));
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testCategoryTemplate2() throws Throwable {
+		ParserOutput parserOutput = this.executeCategoryTest("TemplateCategory2");
+		assertEquals("Expected two categories", 2, parserOutput.getCategories().size());
+		assertNotNull("Category:Test Example1 expected", parserOutput.getCategories().get("Category:Test Example1"));
+		assertNotNull("Category:Test Example2 expected", parserOutput.getCategories().get("Category:Test Example2"));
+	}
+
+	/**
+	 *
+	 */
+	private ParserOutput executeCategoryTest(String topicName) throws Throwable {
 		ParserOutput parserOutput = new ParserOutput();
 		String parserResult = this.parserResult(parserOutput, topicName);
-		assertEquals("Category Parsing", 1, parserOutput.getCategories().size());
-		assertNotNull("Category Parsing", parserOutput.getCategories().get("Category:Test"));
+		return parserOutput;
 	}
 
 	/**

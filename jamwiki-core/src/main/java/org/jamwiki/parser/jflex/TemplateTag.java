@@ -191,7 +191,7 @@ public class TemplateTag implements JFlexParserTag {
 		// the first parameter to avoid having to implement special table logic
 		String param1 = tokens.get(0);
 		String value = raw.substring(param1.length() + 1);
-		return JFlexParserUtil.parseFragment(parserInput, parserOutput, value, JFlexParser.MODE_PREPROCESS);
+		return JFlexParserUtil.parseFragment(parserInput, parserOutput, value, JFlexParser.MODE_TEMPLATE);
 	}
 
 	/**
@@ -223,9 +223,9 @@ public class TemplateTag implements JFlexParserTag {
 		if (substContent.length() == 0) {
 			return null;
 		}
-		// re-parse the substitution value.  make sure it is parsed in at least MODE_PREPROCESS
+		// re-parse the substitution value.  make sure it is parsed in at least MODE_TEMPLATE
 		// so that values are properly replaced prior to saving.
-		String output = this.parseTemplateOutput(parserInput, parserOutput, JFlexParser.MODE_PREPROCESS, "{{" + substContent + "}}", false);
+		String output = this.parseTemplateOutput(parserInput, parserOutput, JFlexParser.MODE_TEMPLATE, "{{" + substContent + "}}", false);
 		return (output == null) ? raw : output;
 	}
 
@@ -283,7 +283,7 @@ public class TemplateTag implements JFlexParserTag {
 			output.append(this.applyParameter(parserInput, parserOutput, param, parameterValues));
 			pos = endPos - 1;
 		}
-		return JFlexParserUtil.parseFragment(parserInput, parserOutput, output.toString().trim(), JFlexParser.MODE_PREPROCESS);
+		return JFlexParserUtil.parseFragment(parserInput, parserOutput, output.toString().trim(), JFlexParser.MODE_TEMPLATE);
 	}
 
 	/**

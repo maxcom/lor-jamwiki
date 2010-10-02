@@ -1,12 +1,9 @@
 /*
- * The pre-processor performs initial parsing steps used to initialize
- * metadata, replace syntax that should not be saved to the database,
- * and prepare the document for the full parsing by the processor.
+ * The pre-processor performs processes metadata and prepares the
+ * document for the full parsing by the processor.
  */
 package org.jamwiki.parser.jflex;
 
-import org.apache.commons.lang.StringUtils;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 %%
@@ -18,21 +15,9 @@ import org.jamwiki.utils.WikiLogger;
 %unicode
 %ignorecase
 
-/* code called after parsing is completed */
-%eofval{
-    StringBuilder output = new StringBuilder();
-    if (!StringUtils.isBlank(this.templateString)) {
-        // FIXME - this leaves unparsed text
-        output.append(this.templateString);
-        this.templateString = "";
-    }
-    return (output.length() == 0) ? null : output.toString();
-%eofval}
-
 /* code copied verbatim into the generated .java file */
 %{
     private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiPreProcessor.class.getName());
-    protected String templateString = "";
 %}
 
 /* character expressions */
@@ -51,9 +36,6 @@ htmlpre            = ({htmlprestart}) ~({htmlpreend})
 wikiprestart       = (" ")+ ([^ \t\n])
 wikipreend         = ([^ ]) | ({newline})
 
-/* comments */
-htmlcomment        = "<!--" ~"-->"
-
 /* processing commands */
 noeditsection      = ({newline})? "__NOEDITSECTION__"
 
@@ -66,17 +48,7 @@ wikilinkcontent    = [^\n\]] | "]" [^\n\]] | {htmllink}
 wikilink           = "[[" ({wikilinkcontent})+ "]]" [a-z]*
 nestedwikilink     = "[[" ({wikilinkcontent})+ "|" ({wikilinkcontent} | {wikilink})+ "]]"
 
-/* templates */
-templatestart      = "{{" [^\{]
-templateendchar    = "}"
-templateparam      = "{{{" [^\{\}\n]+ "}}}"
-includeonly        = (<[ ]*includeonly[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*includeonly[ ]*>)
-noinclude          = (<[ ]*noinclude[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*noinclude[ ]*>)
-
-/* signatures */
-wikisignature      = ([~]{3,5})
-
-%state WIKIPRE, TEMPLATE
+%state WIKIPRE
 
 %%
 
@@ -112,69 +84,6 @@ wikisignature      = ([~]{3,5})
     return yytext();
 }
 
-/* ----- templates ----- */
-
-<YYINITIAL, TEMPLATE>{templatestart} {
-    if (logger.isTraceEnabled()) logger.trace("templatestart: " + yytext() + " (" + yystate() + ")");
-    // push back the one non-template character that matched
-    yypushback(1);
-    String raw = yytext();
-    if (!allowTemplates()) {
-        return yytext();
-    }
-    this.templateString += raw;
-    if (yystate() != TEMPLATE) {
-        beginState(TEMPLATE);
-    }
-    return "";
-}
-
-<TEMPLATE>{templateendchar} {
-    if (logger.isTraceEnabled()) logger.trace("templateendchar: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    this.templateString += raw;
-    if (Utilities.findMatchingEndTag(this.templateString, 0, "{", "}") != -1) {
-        endState();
-        String value = this.templateString;
-        this.templateString = "";
-        return this.parse(TAG_TYPE_TEMPLATE, value);
-    }
-    return "";
-}
-
-<YYINITIAL>{templateparam} {
-    if (logger.isTraceEnabled()) logger.trace("templateparam: " + yytext() + " (" + yystate() + ")");
-    return yytext();
-}
-
-<TEMPLATE>{whitespace} {
-    // no need to log this
-    this.templateString += yytext();
-    return "";
-}
-
-<TEMPLATE>. {
-    // no need to log this
-    this.templateString += yytext();
-    return "";
-}
-
-<TEMPLATE>{includeonly} {
-    if (logger.isTraceEnabled()) logger.trace("includeonly: " + yytext() + " (" + yystate() + ")");
-    this.templateString += this.parse(TAG_TYPE_INCLUDE_ONLY, yytext());
-    return "";
-}
-
-<YYINITIAL>{includeonly} {
-    if (logger.isTraceEnabled()) logger.trace("includeonly: " + yytext() + " (" + yystate() + ")");
-    return this.parse(TAG_TYPE_INCLUDE_ONLY, yytext());
-}
-
-<YYINITIAL, TEMPLATE>{noinclude} {
-    if (logger.isTraceEnabled()) logger.trace("noinclude: " + yytext() + " (" + yystate() + ")");
-    return this.parse(TAG_TYPE_NO_INCLUDE, yytext());
-}
-
 /* ----- processing commands ----- */
 
 <YYINITIAL>{noeditsection} {
@@ -193,24 +102,6 @@ wikisignature      = ([~]{3,5})
 <YYINITIAL>{nestedwikilink} {
     if (logger.isTraceEnabled()) logger.trace("nestedwikilink: " + yytext() + " (" + yystate() + ")");
     return this.parse(TAG_TYPE_WIKI_LINK, yytext(), "nested");
-}
-
-/* ----- signatures ----- */
-
-<YYINITIAL>{wikisignature} {
-    if (logger.isTraceEnabled()) logger.trace("wikisignature: " + yytext() + " (" + yystate() + ")");
-    return this.parse(TAG_TYPE_WIKI_SIGNATURE, yytext());
-}
-
-/* ----- comments ----- */
-
-<YYINITIAL>{htmlcomment} {
-    if (logger.isTraceEnabled()) logger.trace("htmlcomment: " + yytext() + " (" + yystate() + ")");
-    if (this.mode < JFlexParser.MODE_PREPROCESS) {
-        return yytext();
-    }
-    // strip out the comment
-    return "";
 }
 
 /* ----- other ----- */

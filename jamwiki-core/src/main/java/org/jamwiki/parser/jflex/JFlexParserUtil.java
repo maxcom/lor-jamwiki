@@ -75,7 +75,7 @@ public class JFlexParserUtil {
 		// private static final Pattern WIKI_LINK_PATTERN = Pattern.compile("\\[\\[\\s*(\\:\\s*)?\\s*(.+?)(\\s*\\|\\s*(.+))?\\s*\\]\\]([a-z]*)");
 		raw = raw.substring(raw.indexOf("[[") + 2, raw.lastIndexOf("]]")).trim();
 		// parse in case there is a template or magic word - [[{{PAGENAME}}]]
-		raw = JFlexParserUtil.parseFragment(parserInput, parserOutput, raw, JFlexParser.MODE_PREPROCESS);
+		raw = JFlexParserUtil.parseFragment(parserInput, parserOutput, raw, JFlexParser.MODE_TEMPLATE);
 		boolean colon = false;
 		if (raw.startsWith(":")) {
 			colon = true;

@@ -66,6 +66,8 @@ Bugfixes:
     a link to the image file rather than an upload link or error message.
   * When importing topics with Special:Import convert from Mediawiki to JAMWiki
     namespace for additional patterns including "[[:", "{{", and "{{:".
+  * Fix parsing of category when the category name is a template parameter
+    such as "[[Category: {{{1}}}]]".
 
 Translation Updates:
 

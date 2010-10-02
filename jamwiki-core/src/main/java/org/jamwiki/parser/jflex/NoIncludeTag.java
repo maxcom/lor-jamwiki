@@ -41,6 +41,6 @@ public class NoIncludeTag implements JFlexParserTag {
 		String content = JFlexParserUtil.tagContent(raw);
 		// run the pre-processor against the noinclude content
 		JFlexParser parser = new JFlexParser(lexer.getParserInput());
-		return parser.parseFragment(lexer.getParserOutput(), content, JFlexParser.MODE_PREPROCESS);
+		return parser.parseFragment(lexer.getParserOutput(), content, JFlexParser.MODE_TEMPLATE);
 	}
 }

@@ -284,9 +284,9 @@ public class ParserFunctionUtil {
 		boolean condition = ((parserFunctionArgumentArray.length >= 1) ? !StringUtils.isBlank(parserFunctionArgumentArray[0]) : false);
 		// parse to handle any embedded templates
 		if (condition) {
-			return (parserFunctionArgumentArray.length >= 2) ? JFlexParserUtil.parseFragment(parserInput, parserOutput, parserFunctionArgumentArray[1], JFlexParser.MODE_PREPROCESS) : "";
+			return (parserFunctionArgumentArray.length >= 2) ? JFlexParserUtil.parseFragment(parserInput, parserOutput, parserFunctionArgumentArray[1], JFlexParser.MODE_TEMPLATE) : "";
 		} else {
-			return (parserFunctionArgumentArray.length >= 3) ? JFlexParserUtil.parseFragment(parserInput, parserOutput, parserFunctionArgumentArray[2], JFlexParser.MODE_PREPROCESS) : "";
+			return (parserFunctionArgumentArray.length >= 3) ? JFlexParserUtil.parseFragment(parserInput, parserOutput, parserFunctionArgumentArray[2], JFlexParser.MODE_TEMPLATE) : "";
 		}
 	}
 
@@ -307,9 +307,9 @@ public class ParserFunctionUtil {
 		}
 		// parse to handle any embedded templates
 		if (equals) {
-			return JFlexParserUtil.parseFragment(parserInput, parserOutput, result1, JFlexParser.MODE_PREPROCESS);
+			return JFlexParserUtil.parseFragment(parserInput, parserOutput, result1, JFlexParser.MODE_TEMPLATE);
 		} else {
-			return JFlexParserUtil.parseFragment(parserInput, parserOutput, result2, JFlexParser.MODE_PREPROCESS);
+			return JFlexParserUtil.parseFragment(parserInput, parserOutput, result2, JFlexParser.MODE_TEMPLATE);
 		}
 	}
 
@@ -323,9 +323,9 @@ public class ParserFunctionUtil {
 		String topicName = Utilities.decodeAndEscapeTopicName(parserFunctionArgumentArray[0], true);
 		// parse to handle any embedded templates
 		if (WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), topicName, false, null) != null) {
-			return (parserFunctionArgumentArray.length >= 2) ? JFlexParserUtil.parseFragment(parserInput, parserOutput, parserFunctionArgumentArray[1], JFlexParser.MODE_PREPROCESS) : "";
+			return (parserFunctionArgumentArray.length >= 2) ? JFlexParserUtil.parseFragment(parserInput, parserOutput, parserFunctionArgumentArray[1], JFlexParser.MODE_TEMPLATE) : "";
 		} else {
-			return (parserFunctionArgumentArray.length >= 3) ? JFlexParserUtil.parseFragment(parserInput, parserOutput, parserFunctionArgumentArray[2], JFlexParser.MODE_PREPROCESS) : "";
+			return (parserFunctionArgumentArray.length >= 3) ? JFlexParserUtil.parseFragment(parserInput, parserOutput, parserFunctionArgumentArray[2], JFlexParser.MODE_TEMPLATE) : "";
 		}
 	}
 
