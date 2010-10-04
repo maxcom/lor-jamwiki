@@ -48,8 +48,6 @@ htmlpreattribute   = ([ ]+) {htmlpreattributes} ([ ]*=[^>\n]+[ ]*)*
 htmlprestart       = (<[ ]*pre ({htmlpreattribute})* [ ]* (\/)? [ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
 htmlpre            = ({htmlprestart}) ~({htmlpreend})
-wikiprestart       = (" ")+ ([^ \t\n])
-wikipreend         = ([^ ]) | ({newline})
 
 /* comments */
 htmlcomment        = "<!--" ~"-->"
@@ -64,13 +62,13 @@ noinclude          = (<[ ]*noinclude[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*noinclude[ ]*>)
 /* signatures */
 wikisignature      = ([~]{3,5})
 
-%state WIKIPRE, TEMPLATE
+%state TEMPLATE
 
 %%
 
 /* ----- nowiki ----- */
 
-<YYINITIAL, WIKIPRE>{nowiki} {
+<YYINITIAL>{nowiki} {
     if (logger.isTraceEnabled()) logger.trace("nowiki: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
@@ -79,24 +77,6 @@ wikisignature      = ([~]{3,5})
 
 <YYINITIAL>{htmlpre} {
     if (logger.isTraceEnabled()) logger.trace("htmlpre: " + yytext() + " (" + yystate() + ")");
-    return yytext();
-}
-
-<YYINITIAL, WIKIPRE>^{wikiprestart} {
-    if (logger.isTraceEnabled()) logger.trace("wikiprestart: " + yytext() + " (" + yystate() + ")");
-    // rollback the one non-pre character so it can be processed
-    yypushback(yytext().length() - 1);
-    if (yystate() != WIKIPRE) {
-        beginState(WIKIPRE);
-    }
-    return yytext();
-}
-
-<WIKIPRE>^{wikipreend} {
-    if (logger.isTraceEnabled()) logger.trace("wikipreend: " + yytext() + " (" + yystate() + ")");
-    endState();
-    // rollback the one non-pre character so it can be processed
-    yypushback(1);
     return yytext();
 }
 
@@ -183,12 +163,12 @@ wikisignature      = ([~]{3,5})
 
 /* ----- other ----- */
 
-<YYINITIAL, WIKIPRE>{whitespace} {
+<YYINITIAL>{whitespace} {
     // no need to log this
     return yytext();
 }
 
-<YYINITIAL, WIKIPRE>. {
+<YYINITIAL>. {
     // no need to log this
     return yytext();
 }

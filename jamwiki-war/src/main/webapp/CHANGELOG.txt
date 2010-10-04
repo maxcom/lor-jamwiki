@@ -68,6 +68,9 @@ Bugfixes:
     namespace for additional patterns including "[[:", "{{", and "{{:".
   * Fix parsing of category when the category name is a template parameter
     such as "[[Category: {{{1}}}]]".
+  * Templates and signatures should be expanded when using wiki preformatted
+    sytnax (" ~~~~") but not when using HTML preformatted syntax
+    ("<pre>~~~~</pre>).
 
 Translation Updates:
 
