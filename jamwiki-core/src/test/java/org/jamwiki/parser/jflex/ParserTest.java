@@ -132,6 +132,18 @@ public class ParserTest extends JAMWikiUnitTest {
 	 *
 	 */
 	@Test
+	public void testVirtualWiki2() throws Throwable {
+		ParserOutput parserOutput = new ParserOutput();
+		String parserResult = this.parserResult(parserOutput, "VirtualWiki1");
+		assertEquals("Expected no categories", 0, parserOutput.getCategories().size());
+		assertEquals("Expected one virtual wiki", 1, parserOutput.getVirtualWikiLinks().size());
+		assertEquals("Interwiki1", "<a href=\"/wiki/test/Category:Category1\" title=\"Category:Category1\">test:Category:Category1</a>", parserOutput.getVirtualWikiLinks().get(0));
+	}
+
+	/**
+	 *
+	 */
+	@Test
 	public void testMagicWordDisplayTitleValid() throws Throwable {
 		String topicName = "Magic Words Display Title";
 		String displayTitle = "Magic_Words Display_Title";

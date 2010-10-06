@@ -121,6 +121,10 @@ public class WikiLinkTag implements JFlexParserTag {
 	 *
 	 */
 	private String processLinkMetadata(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw, WikiLink wikiLink) throws ParserException {
+		if (wikiLink.getInterwiki() != null || (wikiLink.getVirtualWiki() != null && !StringUtils.equals(wikiLink.getVirtualWiki().getName(), parserInput.getVirtualWiki()))) {
+			// no link metadata for interwiki or virtual wiki links
+			return raw;
+		}
 		String result = raw;
 		if (!wikiLink.getColon() && wikiLink.getNamespace().getId().equals(Namespace.CATEGORY_ID)) {
 			String sortKey = wikiLink.getText();
