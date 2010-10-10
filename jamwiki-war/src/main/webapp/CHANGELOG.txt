@@ -12,7 +12,7 @@ Bugfixes:
     are now limited to a maximum of 250 per page.
   * Setting the default file upload properties could cause initialization
     failures in cases where JAMWiki was deployed without the JAMWiki WAR, such
-    as on the Liferay server.  Reported with proposed fixes by Ivan.
+    as on the Liferay server.  Reported with proposed fixes by Igor Spasic.
 
 
 0.9.2
