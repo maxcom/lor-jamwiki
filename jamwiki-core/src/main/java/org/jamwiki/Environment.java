@@ -215,8 +215,6 @@ public class Environment {
 		this.defaults.setProperty(PROP_EXTERNAL_LINK_NEW_WINDOW, Boolean.FALSE.toString());
 		this.defaults.setProperty(PROP_FILE_BLACKLIST, "bat,bin,exe,htm,html,js,jsp,php,sh");
 		this.defaults.setProperty(PROP_FILE_BLACKLIST_TYPE, String.valueOf(WikiBase.UPLOAD_BLACKLIST));
-		this.defaults.setProperty(PROP_FILE_DIR_FULL_PATH, Environment.retrieveDefaultUploadDirectory());
-		this.defaults.setProperty(PROP_FILE_DIR_RELATIVE_PATH, Environment.retrieveDefaultRelativeUploadDirectory());
 		// size is in bytes
 		this.defaults.setProperty(PROP_FILE_MAX_FILE_SIZE, "2000000");
 		this.defaults.setProperty(PROP_FILE_SERVER_URL, "");
@@ -255,6 +253,7 @@ public class Environment {
 		this.defaults.setProperty(PROP_TOPIC_USE_PREVIEW, Boolean.TRUE.toString());
 		this.defaults.setProperty(PROP_TOPIC_USE_SHOW_CHANGES, Boolean.TRUE.toString());
 		this.defaults.setProperty(PROP_VIRTUAL_WIKI_DEFAULT, "en");
+		this.processDefaultUploadDirectories();
 	}
 
 	/**
@@ -387,33 +386,33 @@ public class Environment {
 	}
 
 	/**
-	 * Return the default relative upload directory (/context/upload/) as a String.
-	 *
-	 * @return The default relative upload directory (/context/upload/) as a String.
+	 * Set values related to file uploads.  The file upload directory is the default
+	 * folder into which uploads are stored, such as /home/user/wiki/upload.  The
+	 * relative upload directory is a prefix that will be added to upload URLs that
+	 * corresponds to the file upload directory, so in the previous example if files
+	 * are being uploaded to /home/user/wiki/upload then the relative uploaded
+	 * directory would be /wiki/upload/.
 	 */
-	private static String retrieveDefaultRelativeUploadDirectory() {
+	private void processDefaultUploadDirectories() {
+		String defaultUploadDirectory = "";
+		String defaultRelativeUploadDirectory = "";
 		try {
-			File webappRoot = Utilities.getClassLoaderRoot().getParentFile().getParentFile();
-			return "/" + webappRoot.getName() + "/upload/";
+			File webAppRoot = Utilities.getClassLoaderRoot();
+			// the class loader root should be /WEB-INF/classes, but if deployed as anything
+			// other than a WAR then it might just be the temp directory.
+			if (webAppRoot.getParentFile() != null && webAppRoot.getName().toLowerCase().equals("classes")) {
+				webAppRoot = webAppRoot.getParentFile();
+				if (webAppRoot.getParentFile() != null && webAppRoot.getName().toLowerCase().equals("web-inf")) {
+					webAppRoot = webAppRoot.getParentFile();
+				}
+			}
+			defaultRelativeUploadDirectory = "/" + webAppRoot.getName() + "/upload/";
+			defaultUploadDirectory = new File(webAppRoot, "upload").getPath();
 		} catch (Throwable t) {
-			logger.error("Failure while trying to retrieve default file upload directory", t);
+			logger.error("Failure while setting file upload defaults", t);
 		}
-		return "";
-	}
-
-	/**
-	 * Return the default upload directory (/webapp-root/upload/) as a String.
-	 *
-	 * @return The default upload directory (/webapp-root/upload/) as a String.
-	 */
-	private static String retrieveDefaultUploadDirectory() {
-		try {
-			File webappRoot = Utilities.getClassLoaderRoot().getParentFile().getParentFile();
-			return new File(webappRoot, "upload").getPath();
-		} catch (Throwable t) {
-			logger.error("Failure while trying to retrieve default file upload directory", t);
-		}
-		return "";
+		this.defaults.setProperty(PROP_FILE_DIR_FULL_PATH, defaultUploadDirectory);
+		this.defaults.setProperty(PROP_FILE_DIR_RELATIVE_PATH, defaultRelativeUploadDirectory);
 	}
 
 	/**
