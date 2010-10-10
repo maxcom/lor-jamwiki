@@ -10,9 +10,9 @@ Bugfixes:
 
   * Fix a potential infinite loop with nested template includes.  Inclusions
     are now limited to a maximum of 250 per page.
-  * Retrieval of the default file upload directory could fail on some systems,
-    causing property file initialization failure and preventing the application
-    server from starting.  Reported by Ivan.
+  * Setting the default file upload properties could cause initialization
+    failures in cases where JAMWiki was deployed without the JAMWiki WAR, such
+    as on the Liferay server.  Reported with proposed fixes by Ivan.
 
 
 0.9.2
