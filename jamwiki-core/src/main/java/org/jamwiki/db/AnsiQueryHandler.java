@@ -2115,17 +2115,21 @@ public class AnsiQueryHandler implements QueryHandler {
 			if (conn == null) {
 				conn = DatabaseConnection.getConnection();
 			}
-			if (namespace.isCaseSensitive()) {
-				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC);
-				stmt.setString(1, pageName);
-			} else {
-				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_LOWER);
-				stmt.setString(1, pageName.toLowerCase());
-			}
+			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC);
+			stmt.setString(1, pageName);
 			stmt.setInt(2, virtualWikiId);
 			stmt.setInt(3, namespace.getId());
 			rs = stmt.executeQuery();
-			return (rs.next()) ? this.initTopic(rs, virtualWikiName) : null;
+			Topic topic = (rs.next() ? this.initTopic(rs, virtualWikiName) : null);
+			if (topic == null && !namespace.isCaseSensitive() && !pageName.toLowerCase().equals(pageName)) {
+				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_LOWER);
+				stmt.setString(1, pageName.toLowerCase());
+				stmt.setInt(2, virtualWikiId);
+				stmt.setInt(3, namespace.getId());
+				rs = stmt.executeQuery();
+				topic = (rs.next() ? this.initTopic(rs, virtualWikiName) : null);
+			}
+			return topic;
 		} finally {
 			if (closeConnection) {
 				DatabaseConnection.closeConnection(conn, stmt, rs);
@@ -2225,17 +2229,21 @@ public class AnsiQueryHandler implements QueryHandler {
 		ResultSet rs = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			if (namespace.isCaseSensitive()) {
-				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_NAME);
-				stmt.setString(1, pageName);
-			} else {
-				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_NAME_LOWER);
-				stmt.setString(1, pageName.toLowerCase());
-			}
+			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_NAME);
+			stmt.setString(1, pageName);
 			stmt.setInt(2, virtualWikiId);
 			stmt.setInt(3, namespace.getId());
 			rs = stmt.executeQuery();
-			return (rs.next()) ? rs.getString("topic_name") : null;
+			String topicName = (rs.next() ? rs.getString("topic_name") : null);
+			if (topicName == null && !namespace.isCaseSensitive() && !pageName.toLowerCase().equals(pageName)) {
+				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_NAME_LOWER);
+				stmt.setString(1, pageName.toLowerCase());
+				stmt.setInt(2, virtualWikiId);
+				stmt.setInt(3, namespace.getId());
+				rs = stmt.executeQuery();
+				topicName = (rs.next() ? rs.getString("topic_name") : null);
+			}
+			return topicName;
 		} finally {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}

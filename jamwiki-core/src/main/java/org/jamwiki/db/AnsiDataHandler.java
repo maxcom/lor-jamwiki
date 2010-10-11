@@ -313,7 +313,7 @@ public class AnsiDataHandler implements DataHandler {
 		if (topicName.length() != 0) {
 			topicName += Namespace.SEPARATOR;
 		}
-		topicName += (namespace.isCaseSensitive() ? pageName : pageName.toLowerCase());
+		topicName += pageName;
 		return WikiCache.key(virtualWiki, topicName);
 	}
 
