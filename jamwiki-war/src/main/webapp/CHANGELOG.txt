@@ -93,6 +93,8 @@ Bugfixes:
   * Setting the default file upload properties could cause initialization
     failures in cases where JAMWiki was deployed without the JAMWiki WAR, such
     as on the Liferay server.  Reported with proposed fixes by Igor Spasic.
+  * The {{DISPLAYTITLE}} magic word should affect page title during editing
+    and preview.  Reported by an anonymous user.
 
 
 0.9.2
