@@ -72,6 +72,14 @@ otherwise noted.  For example, if upgrading from version 0.5.0 to version
 0.5.3, you should apply the upgrade steps for 0.5.1, followed by 0.5.2,
 followed by 0.5.3.
 
+
+  JAMWiki 0.7.2
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.7.2".
+
+
   JAMWiki 0.7.1
   =============
 
@@ -94,6 +102,9 @@ followed by 0.5.3.
             Oracle:
               alter table jam_recent_change add (characters_changed INTEGER);
               alter table jam_topic_version add (characters_changed INTEGER);
+            MS SQL:
+              alter table jam_recent_change add [characters_changed] int;
+              alter table jam_topic_version add [characters_changed] int;
             Other Databases:
               alter table jam_recent_change add column characters_changed INTEGER;
               alter table jam_topic_version add column characters_changed INTEGER;
@@ -106,6 +117,12 @@ followed by 0.5.3.
                     on current_version.previous_topic_version_id = previous_version.topic_version_id 
                     where jam_topic_version.topic_version_id = current_version.topic_version_id
               );
+            MS SQL:
+              update jam_topic_version
+                    set characters_changed = (datalength(jam_topic_version.version_content) - datalength(previous_version.version_content))
+                    from jam_topic_version 
+                    left outer join jam_topic_version previous_version 
+                    on jam_topic_version.previous_topic_version_id = previous_version.topic_version_id 
             Other Databases:
               update jam_topic_version set characters_changed = (
                     select (char_length(current_version.version_content) - char_length(coalesce(previous_version.version_content, ''))) 
@@ -121,6 +138,10 @@ followed by 0.5.3.
               alter table jam_wiki_user add (email VARCHAR(100));
               alter table jam_wiki_user add (editor VARCHAR(50));
               alter table jam_wiki_user add (signature VARCHAR(255));
+            MS SQL:
+              alter table jam_wiki_user add email VARCHAR(100);
+              alter table jam_wiki_user add editor VARCHAR(50);
+              alter table jam_wiki_user add signature VARCHAR(255);
             Other Databases:
               alter table jam_wiki_user add column email VARCHAR(100);
               alter table jam_wiki_user add column editor VARCHAR(50);

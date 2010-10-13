@@ -17,6 +17,9 @@
 package org.jamwiki.db;
 
 import java.sql.Connection;
+import java.sql.Types;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -102,7 +105,7 @@ public class DatabaseUpgrades {
 			WikiDatabase.setupRoles();
 			messages.add("Added basic wiki roles.");
 			// setup basic groups
-			WikiDatabase.setupGroups();
+			DatabaseUpgrades.setupGroups();
 			messages.add("Added basic wiki groups.");
 			// convert old-style admins to new
 			// assign admins all permissions during upgrades just to be safe.  for
@@ -160,6 +163,64 @@ public class DatabaseUpgrades {
 		}
 		DatabaseConnection.commit(status);
 		return messages;
+	}
+
+	/**
+	 *
+	 */
+	private static void setupGroups() throws Exception {
+		WikiGroup group = new WikiGroup();
+		group.setName(WikiGroup.GROUP_ANONYMOUS);
+		// FIXME - use message key
+		group.setDescription("All non-logged in users are automatically assigned to the anonymous group.");
+		WikiBase.getDataHandler().writeWikiGroup(group);
+		List anonymousRoles = new Vector();
+		anonymousRoles.add(Role.ROLE_EDIT_EXISTING.getAuthority());
+		anonymousRoles.add(Role.ROLE_EDIT_NEW.getAuthority());
+		anonymousRoles.add(Role.ROLE_UPLOAD.getAuthority());
+		anonymousRoles.add(Role.ROLE_VIEW.getAuthority());
+		DatabaseUpgrades.writeRoleMapGroup(group.getGroupId(), anonymousRoles, null);
+		group = new WikiGroup();
+		group.setName(WikiGroup.GROUP_REGISTERED_USER);
+		// FIXME - use message key
+		group.setDescription("All logged in users are automatically assigned to the registered user group.");
+		WikiBase.getDataHandler().writeWikiGroup(group);
+		List userRoles = new Vector();
+		userRoles.add(Role.ROLE_EDIT_EXISTING.getAuthority());
+		userRoles.add(Role.ROLE_EDIT_NEW.getAuthority());
+		userRoles.add(Role.ROLE_MOVE.getAuthority());
+		userRoles.add(Role.ROLE_UPLOAD.getAuthority());
+		userRoles.add(Role.ROLE_VIEW.getAuthority());
+		DatabaseUpgrades.writeRoleMapGroup(group.getGroupId(), userRoles, null);
+	}
+
+	/**
+	 *
+	 */
+	private static void writeRoleMapGroup(int groupId, List roles, Object transactionObject) throws Exception {
+		TransactionStatus status = DatabaseConnection.startTransaction();
+		try {
+			Connection conn = DatabaseConnection.getConnection();
+			WikiPreparedStatement stmt = new WikiPreparedStatement("delete from jam_role_map where group_id = ?");
+			stmt.setInt(1, groupId);
+			stmt.executeUpdate(conn);
+			Iterator roleIterator = roles.iterator();
+			while (roleIterator.hasNext()) {
+				String role = (String)roleIterator.next();
+				stmt = new WikiPreparedStatement("insert into jam_role_map (role_name, wiki_user_id, group_id) values (?, ?, ?)");
+				stmt.setString(1, role);
+				stmt.setNull(2, Types.INTEGER);
+				stmt.setInt(3, groupId);
+				stmt.executeUpdate(conn);
+			}
+		} catch (Exception e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			throw e;
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
+		}
+		DatabaseConnection.commit(status);
 	}
 
 	/**
@@ -265,6 +326,8 @@ public class DatabaseUpgrades {
 			// add characters_changed column to jam_topic_version
 			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
 				sql = "alter table jam_topic_version add (characters_changed INTEGER) ";
+			} else if (dbType.equals(WikiBase.DATA_HANDLER_MSSQL)) {
+				sql = "alter table jam_recent_change add [characters_changed] int ";
 			} else {
 				sql = "alter table jam_topic_version add column characters_changed INTEGER ";
 			}
@@ -273,6 +336,8 @@ public class DatabaseUpgrades {
 			// add characters_changed column to jam_recent_change
 			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
 				sql = "alter table jam_recent_change add (characters_changed INTEGER) ";
+			} else if (dbType.equals(WikiBase.DATA_HANDLER_MSSQL)) {
+				sql = "alter table jam_topic_version add [characters_changed] int ";
 			} else {
 				sql = "alter table jam_recent_change add column characters_changed INTEGER ";
 			}
@@ -281,6 +346,8 @@ public class DatabaseUpgrades {
 			// copy columns from jam_wiki_user_info into jam_wiki_user
 			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
 				sql = "alter table jam_wiki_user add (email VARCHAR(100)) ";
+			} else if (dbType.equals(WikiBase.DATA_HANDLER_MSSQL)) {
+				sql = "alter table jam_wiki_user add email VARCHAR(100) ";
 			} else {
 				sql = "alter table jam_wiki_user add column email VARCHAR(100) ";
 			}
@@ -295,12 +362,16 @@ public class DatabaseUpgrades {
 			// add new columns to jam_wiki_user
 			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
 				sql = "alter table jam_wiki_user add (editor VARCHAR(50)) ";
+			} else if (dbType.equals(WikiBase.DATA_HANDLER_MSSQL)) {
+				sql = "alter table jam_wiki_user add editor VARCHAR(50) ";
 			} else {
 				sql = "alter table jam_wiki_user add column editor VARCHAR(50) ";
 			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
 				sql = "alter table jam_wiki_user add (signature VARCHAR(255)) ";
+			} else if (dbType.equals(WikiBase.DATA_HANDLER_MSSQL)) {
+				sql = "alter table jam_wiki_user add signature VARCHAR(255) ";
 			} else {
 				sql = "alter table jam_wiki_user add column signature VARCHAR(255) ";
 			}

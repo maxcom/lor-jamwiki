@@ -29,7 +29,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title><fmt:message key="${pageInfo.pageTitle.key}" ><fmt:param value="${pageInfo.pageTitle.params[0]}" /><fmt:param value="${pageInfo.pageTitle.params[1]}" /></fmt:message></title>
+	<title><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /></fmt:message></title>
 <style>
 body {
 	background: #f9f9f9;
@@ -78,7 +78,7 @@ function onPersistenceType() {
 <body>
 <div id="setup-container">
 
-<h3><fmt:message key="${pageInfo.pageTitle.key}" ><fmt:param value="${pageInfo.pageTitle.params[0]}" /><fmt:param value="${pageInfo.pageTitle.params[1]}" /></fmt:message></h3>
+<h3><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /></fmt:message></h3>
 
 <c:if test="${!empty messageObject}"><p class="red"><fmt:message key="${messageObject.key}"><fmt:param value="${messageObject.params[0]}" /><fmt:param value="${messageObject.params[1]}" /></fmt:message></p></c:if>
 
