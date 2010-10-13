@@ -33,36 +33,6 @@
 <!--
    ====================================================================
 
-   User authentication mechanisms that can be used with JAMWiki:
-
-   name  - A human-readable name for the authentication mechanism.
-   class - The fully qualified class name for the authentication class.
-   key   - The ApplicationResources translation key for the authentication
-           mechanism name.  If this value is not specified then the "name"
-           value is used when displaying the authentication mechanism name.
-   state - An optional parameter that can be set to "experimental" to warn
-           site administrators that an authentication mechanism is a
-           work-in-progress.
-
-   ======================================================================
--->
-<user-handlers>
-	<user-handler>
-		<name>Database</name>
-		<class>org.jamwiki.db.DatabaseUserHandler</class>
-		<key>admin.usergrouptype.database</key>
-	</user-handler>
-	<user-handler>
-		<name>LDAP</name>
-		<class>org.jamwiki.ldap.LdapUserHandler</class>
-		<key>admin.usergrouptype.ldap</key>
-		<state>experimental</state>
-	</user-handler>
-</user-handlers>
-
-<!--
-   ====================================================================
-
    Data handlers that can be used with JAMWiki:
 
    name  - A human-readable name for the data handler.

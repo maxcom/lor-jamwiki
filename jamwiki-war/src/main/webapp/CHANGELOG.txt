@@ -1,4 +1,70 @@
-﻿0.6.7
+﻿0.7.0
+=====
+
+New Features:
+
+  * Login and authentication completely rewritten to take better advantage
+    of Spring Security capabilities.
+  * Special:OrphanedPages added to display un-linked pages (hanspeterklapf).
+  * Remove ability to automatically upgrade from versions prior to 0.5.0.
+  * "Next" and "prev" diff links added to Special:History to match Mediawiki.
+  * Number of characters changed in a diff is now displayed on recent changes,
+    history and other pages to match Mediawiki.
+  * Signficant (5-10x or more) performance improvement of image rendering by
+    making better use of cache.  Suggestions from Jim.
+  * Allow users to create custom signatures, rather than using the same
+    signature pattern for all users.
+  * Modify Special:Specialpages so that it is localized for each visitor,
+    rather than always defaulting to the language for which the wiki was setup.
+  * Provide the capability to redirect to a virtual wiki using syntax of the
+    form "#REDIRECT [[:virtual:Topic]].  Requested by tfschueller.
+  * Login will now always take the user back to the page from which 'login' was
+    clicked, as requested by many users and as implemented by Mediawiki.
+  * Allow updating of account information on Special:Register without entering
+    the old password EXCEPT when changing password.
+  * Update CSS / HTML to use semantic code when possible - no visible changes.
+  * Update the UI of the upgrade screen to provide additional information.
+  * Initial implementation of Mediawiki parser functions including
+    anchorencode, filepath, fullurl, localurl, lc, lcfirst, uc, ucfirst and
+    urlencode.
+  * Add support for the {{SITENAME}} and {{SERVER}} magic words.
+  * Allow nesting of templates ("{{template1|content={{template2}}}}").
+  * Support categories on #REDIRECT pages to match Mediawiki.
+  * Add "H2" as a database configuration option.
+  * Updated spam filter patterns.
+  * Upgrade to Lucene Search 2.4.0.
+  * Upgrade to Spring Framework 2.5.6.
+  * Upgrade to Spring Security 2.0.4.
+
+Bugfixes:
+
+  * Fix category pagination when using MS SQL (hanspeterklapf).
+  * Fix broken links to Lucene search help on the search page (hanspeterklapf).
+  * Ensure that URI parameters of the form ";jsessionid=1234" are not included
+    in topic names.  Affects Jetty and possibly other containers, reported by
+    spiralmike.
+  * Use a default MIME type of "application/unknown" for file uploads without
+    MIME types to prevent database errors.  Reported by Tim.
+  * Fix incorrect paragraph parsing when there is a blank line containing
+    one or more whitespace characters between the paragraphs.  Reported by
+    James Teer.
+  * Fix parsing of multiple newlines to match Mediawiki.
+  * Fix parsing of links containing parantheses such as
+    http://example.com/page_(page).  Reported by  Michael Habbert.
+  * Fix parsing of nested tags of the form <tt><tt>test</tt></tt> which were
+    producing an extra closing tag.
+  * Fix issues with the database migration code that could cause failures
+    when migrating categories or migrating very large data sets.
+  * Fix a case-sensitivity issue when building on UNIX machines (marcust).
+
+Translation Updates:
+
+  * Added Portugese (Brazilian) translations (leandes).
+  * Updated Chinese translations (hfl).
+  * Updated German translations (axelclk).
+
+
+0.6.7
 =====
 
 New Features:
@@ -52,7 +118,7 @@ New Features:
     passwords.
   * Utility added to Special:Maintenance to allow administrators to export
     internal database data to CSV.
-  * Utility added to Special:Maintenance to allow administartors to migrate
+  * Utility added to Special:Maintenance to allow administrators to migrate
     data from one database to another (dallas).
   * The Special:History page now implements the same UI as Mediawiki with radio
     buttons instead of checkboxes.

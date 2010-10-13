@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -50,12 +52,22 @@ public class TopicServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String topic = WikiUtil.getTopicFromURI(request);
-		if (StringUtils.isBlank(topic)) {
-			String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
+		String topicName = WikiUtil.getTopicFromURI(request);
+		if (StringUtils.isBlank(topicName)) {
+			String virtualWikiName = pageInfo.getVirtualWikiName();
 			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
-			topic = virtualWiki.getDefaultTopicName();
+			topicName = virtualWiki.getDefaultTopicName();
 		}
-		ServletUtil.viewTopic(request, next, pageInfo, topic);
+		String virtualWiki = pageInfo.getVirtualWikiName();
+		if (StringUtils.isBlank(virtualWiki)) {
+			virtualWiki = WikiBase.DEFAULT_VWIKI;
+		}
+		Topic topic = ServletUtil.initializeTopic(virtualWiki, topicName);
+		if (topic.getTopicId() <= 0) {
+			// topic does not exist, display empty page
+			next.addObject("notopic", new WikiMessage("topic.notcreated", topicName));
+		}
+		WikiMessage pageTitle = new WikiMessage("topic.title", topicName);
+		ServletUtil.viewTopic(request, next, pageInfo, pageTitle, topic, true);
 	}
 }

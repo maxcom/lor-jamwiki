@@ -1,21 +1,21 @@
 <!-- test parsing of wiki links -->
-[[Example]]
+[[Example1]]
 
-[[Example|text]]
+[[Example1|text]]
 
-[[Example]]s
+[[Example1]]s
 
-[[Example|text]]s
+[[Example1|text]]s
 
-[[Example]]S
+[[Example1]]S
 
-[[Example|text]]S
+[[Example1|text]]S
 
-[[Example]]9
+[[Example1]]9
 
-[[Example|text]]9
+[[Example1|text]]9
 
-[[Comments:Example]]9
+[[Comments:Example1]]9
 
 [[#Section]]
 

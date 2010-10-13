@@ -18,9 +18,9 @@
 --%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="f" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://jamwiki.org/taglib" prefix="jamwiki" %>
-<%@ taglib uri="/WEB-INF/authz.tld" prefix="authz" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="security" %>
 
 <%
 // no-cache headers
@@ -28,7 +28,7 @@ response.setHeader("Cache-Control", "private, s-maxage=0, max-age=0, must-revali
 response.setHeader("Expires", "Thu, 01 Jan 1970 00:00:00 GMT");
 response.setHeader("Pragma", "no-cache");
 %>
-<f:setBundle basename="ApplicationResources" />
+<fmt:setBundle basename="ApplicationResources" />
 <%
 response.setContentType("text/html");
 response.setCharacterEncoding("UTF-8");

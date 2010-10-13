@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Default security configuration.
+   - User accounts and roles are handled by JAMWiki
+-->
+
+<b:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:b="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
+
+	<!--
+	This section contains the basic Spring Security configuration settings.  The intercept-url elements
+	define what URLs are protected and what permission is required to access those URLs.  The remember-me
+	element enables a cookie to be stored to remember user logins across sessions, and the anonymous
+	element implements Spring Security's basic anonymous user permissions - note that these will be updated
+	by the JAMWikiAnonymousProcessingFilter.
+	-->
+	<http auto-config="false" entry-point-ref="authenticationEntryPoint">
+		<!--
+		The intercept-url element defines the roles or authentication states that are required
+		to access a URL path.  Roles should be comma-delimited.  To restrict pages by user type
+		instead of user role the following values can be used:
+		  * IS_AUTHENTICATED_ANONYMOUSLY - Allow access to any user.
+		  * IS_AUTHENTICATED_REMEMBERED - Allow access to logged-in users or users with a "remember me" cookie.
+		  * IS_AUTHENTICATED_FULLY - Allow access to logged-in users.
+		To remove all Spring Security processing from a page use the filters="none" attribute.
+		-->
+		<intercept-url pattern="/**/Special:Admin" access="ROLE_SYSADMIN" />
+		<intercept-url pattern="/**/Special:Edit" access="ROLE_EDIT_EXISTING,ROLE_EDIT_NEW" />
+		<intercept-url pattern="/**/Special:Login" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<intercept-url pattern="/**/Special:Maintenance" access="ROLE_SYSADMIN" />
+		<intercept-url pattern="/**/Special:Manage" access="ROLE_ADMIN" />
+		<intercept-url pattern="/**/Special:Move" access="ROLE_MOVE" />
+		<intercept-url pattern="/**/Special:RecentChangesFeed" filters="none" />
+		<intercept-url pattern="/**/Special:Roles" access="ROLE_SYSADMIN" />
+		<intercept-url pattern="/**/Special:Setup" filters="none" />
+		<intercept-url pattern="/**/Special:Translation" access="ROLE_TRANSLATE" />
+		<intercept-url pattern="/**/Special:Upload" access="ROLE_UPLOAD" />
+		<intercept-url pattern="/**/Special:Upgrade" filters="none" />
+		<intercept-url pattern="/**/*.jsp" filters="none" />
+		<intercept-url pattern="/**/*.css" filters="none" />
+		<intercept-url pattern="/images/**" filters="none" />
+		<intercept-url pattern="/js/**" filters="none" />
+		<intercept-url pattern="/upload/**" filters="none" />
+		<intercept-url pattern="/**" access="ROLE_VIEW" />
+		<remember-me key="jam35Wiki" />
+		<anonymous key="jam35Wiki" />
+		<!-- note that the JAMWiki LoginServlet will add the appropriate logout success URL to the request during logout -->
+		<logout />
+	</http>
+
+	<!--
+	The authentication processing filter controls where a user will be sent when he tries to
+	access a protected URL and how that user will be authenticated after trying to login.
+	-->
+	<b:bean id="authenticationProcessingFilter" class="org.jamwiki.authentication.JAMWikiAuthenticationProcessingFilter">
+		<b:property name="authenticationManager" ref="authenticationManager" />
+		<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilter adds it -->
+		<b:property name="authenticationFailureUrl" value="/Special:Login?message=error.login" />
+		<!-- special hard-coded constant indicating default for virtual wiki -->
+		<b:property name="defaultTargetUrl" value="/DEFAULT_VIRTUAL_WIKI" />
+		<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilter adds it -->
+		<b:property name="filterProcessesUrl" value="/j_spring_security_check" />
+		<b:property name="rememberMeServices" ref="_rememberMeServices" />
+		<custom-filter position="AUTHENTICATION_PROCESSING_FILTER" />
+	</b:bean>
+	<authentication-manager alias="authenticationManager" />
+
+	<!--
+	The authentication provider is the element which is passed user login attempts for verification.
+	-->
+	<authentication-provider user-service-ref="jamWikiAuthenticationDao">
+		<password-encoder ref="jamwikiPasswordEncoder" />
+	</authentication-provider>
+	<b:bean id="jamWikiAuthenticationDao" class="org.jamwiki.authentication.JAMWikiDaoImpl" />
+	<b:bean id="jamwikiPasswordEncoder" class="org.jamwiki.authentication.JAMWikiPasswordEncoder" />
+	<!--
+	LDAP.  See the Spring Security documentation for configuration information.  When using LDAP comment
+	out the authentication provider configuration above.
+	-->
+	<!--
+	<ldap-server id="ldapServer" ldif="classpath:users.ldif" port="33389"/>
+	<authentication-provider>
+		<ldap-user-service server-ref="ldapServer" group-search-filter="member={0}" group-search-base="ou=groups" user-search-base="ou=people" user-search-filter="uid={0}" />
+	</authentication-provider>
+	-->
+
+	<!--
+	The error message provider adds a page-specific error message to be used when a user is denied
+	access to a page.  For example, a different error is shown to users who are not allowed to edit
+	a page than to those who are denied access to the admin pages.
+	-->
+	<b:bean id="errorMessageProvider" class="org.jamwiki.authentication.JAMWikiErrorMessageProvider">
+		<b:property name="urlPatterns">
+			<b:value><![CDATA[
+				PATTERN_TYPE_APACHE_ANT
+				/**/Special:Admin=login.message.admin
+				/**/Special:Edit=login.message.edit
+				/**/Special:Maintenance=login.message.admin
+				/**/Special:Manage=login.message.admin
+				/**/Special:Move=login.message.move
+				/**/Special:Roles=login.message.admin
+				/**/Special:Translation=login.message.admin
+				/**/*=login.message.default
+			]]></b:value>
+		</b:property>
+	</b:bean>
+
+	<!--
+	This method executes after the default Spring exception translation filter and adds any
+	message from the errorMessageProvider to the redirect.
+	-->
+	<b:bean id="exceptionTranslationFilter" class="org.jamwiki.authentication.JAMWikiExceptionTranslationFilter">
+		<b:property name="errorMessageProvider" ref="errorMessageProvider" />
+		<custom-filter after="EXCEPTION_TRANSLATION_FILTER" />
+	</b:bean>
+
+	<!--
+	The entry point is the page to which users are redirected when login is required.
+	-->
+	<b:bean id="authenticationEntryPoint" class="org.jamwiki.authentication.JAMWikiAuthenticationProcessingFilterEntryPoint">
+		<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilterEntryPoint adds it -->
+		<b:property name="loginFormUrl" value="/Special:Login" />
+		<!-- a PortMapper has to be configured if this is true and we are not using default ports -->
+		<b:property name="forceHttps" value="false" />
+	</b:bean>
+
+	<!--
+	This filter is executed after the user has been authenticated.  It performs two functions:
+	
+	1. For users authenticated by LDAP or another system, this filter will create the necessary
+	   JAMWiki user database records automatically.
+	2. If anonymous users are allowed then this filter will automatically add the roles from the
+	   JAMWiki GROUP_ANONYMOUS group.  These roles can be configured through the Special:Roles
+	   admin page.  Set the useJAMWikiAnonymousRoles property to false if JAMWiki anonymous
+	   roles should not be assigned.
+	-->
+	<b:bean id="jamwikiPostAuthenticationFilter" class="org.jamwiki.authentication.JAMWikiPostAuthenticationFilter">
+		<b:property name="key" value="jam35Wiki" />
+		<custom-filter before="EXCEPTION_TRANSLATION_FILTER" />
+		<b:property name="useJAMWikiAnonymousRoles" value="true" />
+	</b:bean>
+
+	<!--
+	Standard Spring Security integration with EhCache is available to implement object caching.
+	-->
+	<!-- disable for now until configuration issues are resolved
+	<b:bean id="userCache" class="org.springframework.security.providers.dao.cache.EhCacheBasedUserCache">
+		<b:property name="cache" ref="userCacheBackend" />
+	</b:bean>
+	<b:bean id="userCacheBackend" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+		<b:property name="cacheManager" ref="cacheManager" />
+		<b:property name="cacheName" value="userCache" />
+	</b:bean>
+	<b:bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" />
+	-->
+</b:beans>

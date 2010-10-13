@@ -22,85 +22,62 @@
 
 <%@ include file="page-init.jsp" %>
 
-<div class="message"><f:message key="register.form.info" /></div>
-
-<fieldset>
-<legend><f:message key="${pageInfo.pageTitle.key}" /></legend>
-
+<div class="message"><fmt:message key="register.form.info" /></div>
 <form name="form1" method="post" action="<jamwiki:link value="Special:Account" />">
 <input type="hidden" name="userId" value="<c:out value="${newuser.userId}" />" />
 <c:if test="${!empty errors}">
-<div class="message red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
+<c:if test="${!empty updateMessage}">
+<div class="message green"><fmt:message key="${updateMessage.key}" /></div>
+</c:if>
+<fieldset>
+<legend><fmt:message key="register.caption.accountdetails" /></legend>
+
+<%-- new user --%>
+
 <c:if test="${newuser.userId < 1}">
 <div class="formentry">
-	<span class="formcaption"><label for="registerLogin"><f:message key="common.login" /></label>:</span>
-	<span class="formelement"><input type="text" name="login" value="<c:out value="${newuser.username}" />" id="registerLogin" /></span>
+	<span class="formcaption"><label for="registerLogin"><fmt:message key="common.login" /></label>:</span>
+	<span class="formelement"><input type="text" name="login" value="<c:out value="${newuser.username}" />" id="registerLogin" size="50" /></span>
+</div>
+<div class="formentry">
+	<span class="formcaption"><label for="registerNewPassword"><fmt:message key="register.caption.newpassword" /></label>:</span>
+	<span class="formelement"><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" id="registerNewPassword" size="50" /></span>
+</div>
+<div class="formentry">
+	<span class="formcaption"><label for="registerConfirmPassword"><fmt:message key="register.caption.confirmpassword" /></label>:</span>
+	<span class="formelement"><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="registerConfirmPassword" size="50" /></span>
 </div>
 </c:if>
+
+<%-- existing user --%>
+
 <c:if test="${newuser.userId > 0}">
 <div class="formentry">
 	<input type="hidden" name="login" value="<c:out value="${newuser.username}" />" />
-	<span class="formcaption"><f:message key="common.login" />:</span>
+	<span class="formcaption"><fmt:message key="common.login" />:</span>
 	<span class="formelement"><c:out value="${newuser.username}" /></span>
 </div>
-<div class="formentry">
-	<span class="formcaption"><label for="registerOldPassword"><f:message key="register.caption.oldpassword" /></label>:</span>
-	<span class="formelement"><input type="password" name="oldPassword" value="<c:out value="${oldPassword}" />" id="registerOldPassword" /></span>
-</div>
 </c:if>
-<c:if test="${newuserinfo.writeable || newuser.userId < 1}">
+
+<%-- new or existing user --%>
+
 <div class="formentry">
-	<span class="formcaption"><label for="registerNewPassword"><f:message key="register.caption.newpassword" /></label>:</span>
-	<span class="formelement"><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" id="registerNewPassword" /></span>
+	<span class="formcaption"><label for="registerEmail"><fmt:message key="register.caption.email" /></label>:</span>
+	<span class="formelement"><input type="text" name="email" value="<c:out value="${newuser.email}" />" id="registerEmail" size="50" /></span>
+	<div class="formhelp"><fmt:message key="register.help.email" /></div>
 </div>
-</c:if>
-<c:if test="${newuserinfo.writeable}">
+</fieldset>
+<fieldset>
+<legend><fmt:message key="register.caption.userpreferences" /></legend>
 <div class="formentry">
-	<span class="formcaption"><label for="registerConfirmPassword"><f:message key="register.caption.confirmpassword" /></label>:</span>
-	<span class="formelement"><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="registerConfirmPassword" /></span>
-</div>
-<div class="formentry">
-	<span class="formcaption"><label for="registerFirstName"><f:message key="register.caption.firstname" /></label>:</span>
-	<span class="formelement"><input type="text" name="firstName" value="<c:out value="${newuserinfo.firstName}" />" id="registerFirstName" /></span>
-	<div class="formhelp"><f:message key="register.help.firstname" /></div>
-</div>
-<div class="formentry">
-	<span class="formcaption"><label for="registerLastName"><f:message key="register.caption.lastname" /></label>:</span>
-	<span class="formelement"><input type="text" name="lastName" value="<c:out value="${newuserinfo.lastName}" />" id="registerLastName" /></span>
-	<div class="formhelp"><f:message key="register.help.lastname" /></div>
-</div>
-</c:if>
-<c:if test="${!newuserinfo.writeable && newuser.userId > 0}">
-<div class="formentry">
-	<span class="formcaption"><f:message key="register.caption.firstname" />:</span>
-	<span class="formelement"><c:out value="${newuserinfo.firstName}" /></span>
+	<span class="formcaption"><label for="registerDisplayName"><fmt:message key="register.caption.displayname" /></label>:</span>
+	<span class="formelement"><input type="text" name="displayName" value="<c:out value="${newuser.displayName}" />" id="registerDisplayName" size="50" /></span>
+	<div class="formhelp"><fmt:message key="register.help.displayname" /></div>
 </div>
 <div class="formentry">
-	<span class="formcaption"><f:message key="register.caption.lastname" />:</span>
-	<span class="formelement"><c:out value="${newuserinfo.lastName}" /></span>
-</div>
-</c:if>
-<div class="formentry">
-	<span class="formcaption"><label for="registerDisplayName"><f:message key="register.caption.displayname" /></label>:</span>
-	<span class="formelement"><input type="text" name="displayName" value="<c:out value="${newuser.displayName}" />" id="registerDisplayName" /></span>
-	<div class="formhelp"><f:message key="register.help.displayname" /></div>
-</div>
-<c:if test="${newuserinfo.writeable}">
-<div class="formentry">
-	<span class="formcaption"><label for="registerEmail"><f:message key="register.caption.email" /></label>:</span>
-	<span class="formelement"><input type="text" name="email" value="<c:out value="${newuserinfo.email}" />" id="registerEmail" /></span>
-	<div class="formhelp"><f:message key="register.help.email" /></div>
-</div>
-</c:if>
-<c:if test="${!newuserinfo.writeable && newuser.userId > 0}">
-<div class="formentry">
-	<span class="formcaption"><f:message key="register.caption.email" />:</span>
-	<span class="formelement"><c:out value="${newuserinfo.email}" /></span>
-</div>
-</c:if>
-<div class="formentry">
-	<span class="formcaption"><f:message key="register.caption.locale" />:</span>
+	<span class="formcaption"><fmt:message key="register.caption.locale" />:</span>
 	<span class="formelement">
 		<select name="defaultLocale" id="registerDefaultLocale">
 		<c:forEach items="${locales}" var="defaultLocale">
@@ -108,12 +85,47 @@
 		</c:forEach>
 		</select>
 	</span>
-	<div class="formhelp"><f:message key="register.help.locale" /></div>
+	<div class="formhelp"><fmt:message key="register.help.locale" /></div>
 </div>
 <div class="formentry">
+	<span class="formcaption"><label for="registerEditor"><fmt:message key="register.caption.editor" /></label>:</span>
+	<span class="formelement">
+		<select name="editor" id="registerEditor">
+		<c:forEach items="${editors}" var="editor">
+		<option value="<c:out value="${editor.key}" />"<c:if test="${newuser.editor == editor.key}"> selected</c:if>><c:out value="${editor.value}" /></option>
+		</c:forEach>
+		</select>
+	</span>
+	<div class="formhelp"><fmt:message key="register.help.editor" /></div>
+</div>
+<div class="formentry">
+	<span class="formcaption"><label for="registerSignature"><fmt:message key="register.caption.signature" /></label>:</span>
+	<span class="formelement"><input type="text" name="signature" value="<c:out value="${newuser.signature}" />" id="registerSignature" size="50" /></span>
+	<div class="formhelp"><fmt:message key="register.help.signature" /></div>
+</div>
+</fieldset>
+
+<%-- existing user --%>
+
+<c:if test="${newuser.userId > 0}">
+<fieldset>
+<legend><fmt:message key="register.caption.changepassword" /></legend>
+<div class="formentry">
+	<span class="formcaption"><label for="registerOldPassword"><fmt:message key="register.caption.oldpassword" /></label>:</span>
+	<span class="formelement"><input type="password" name="oldPassword" value="<c:out value="${oldPassword}" />" id="registerOldPassword" size="50" /></span>
+</div>
+<div class="formentry">
+	<span class="formcaption"><label for="registerNewPassword"><fmt:message key="register.caption.newpassword" /></label>:</span>
+	<span class="formelement"><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" id="registerNewPassword" size="50" /></span>
+</div>
+<div class="formentry">
+	<span class="formcaption"><label for="registerConfirmPassword"><fmt:message key="register.caption.confirmpassword" /></label>:</span>
+	<span class="formelement"><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="registerConfirmPassword" size="50" /></span>
+</div>
+</fieldset>
+</c:if>
+<div class="formentry">
 	<span class="formcaption">&#160;</span>
-	<span class="formelement"><input type="submit" name="function" value="<f:message key="common.save" />"></span>
+	<span class="formelement"><input type="submit" name="function" value="<fmt:message key="common.save" />"></span>
 </div>
 </form>
-
-</fieldset>

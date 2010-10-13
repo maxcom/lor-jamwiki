@@ -23,9 +23,6 @@ import java.util.Locale;
 import junit.framework.TestCase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-/* FIXME - re-enable
-import org.jamwiki.db.DatabaseUserHandler;
-*/
 import org.jamwiki.model.Topic;
 
 public class WikiUtilTest extends TestCase {
@@ -107,16 +104,6 @@ public class WikiUtilTest extends TestCase {
 	/**
 	 *
 	 */
-	/* FIXME - re-enable
-	public void testUserHandlerInstance() throws Throwable {
-		DatabaseUserHandler result = (DatabaseUserHandler) WikiUtil.userHandlerInstance();
-		assertTrue("result.isWriteable()", result.isWriteable());
-	}
-	*/
-
-	/**
-	 *
-	 */
 	public void testValidateDirectory1() throws Throwable {
 		WikiMessage result = WikiUtil.validateDirectory("testUtilitiesName");
 		assertEquals("result.getKey()", "error.directoryinvalid", result.getKey());
@@ -128,9 +115,9 @@ public class WikiUtilTest extends TestCase {
 	public void testExtractCommentsLinkThrowsException() throws Throwable {
 		try {
 			WikiUtil.extractCommentsLink("");
-			fail("Expected Exception to be thrown");
-		} catch (Exception ex) {
-			assertEquals("ex.getMessage()", "Empty topic name ", ex.getMessage());
+			fail("Expected IllegalArgumentException to be thrown");
+		} catch (IllegalArgumentException ex) {
+			assertEquals("ex.getMessage()", "Topic name must not be empty in extractCommentsLink", ex.getMessage());
 		}
 	}
 
@@ -140,9 +127,9 @@ public class WikiUtilTest extends TestCase {
 	public void testExtractTopicLinkThrowsException() throws Throwable {
 		try {
 			WikiUtil.extractTopicLink("");
-			fail("Expected Exception to be thrown");
-		} catch (Exception ex) {
-			assertEquals("ex.getMessage()", "Empty topic name ", ex.getMessage());
+			fail("Expected IllegalArgumentException to be thrown");
+		} catch (IllegalArgumentException ex) {
+			assertEquals("ex.getMessage()", "Topic name must not be empty in extractTopicLink", ex.getMessage());
 		}
 	}
 

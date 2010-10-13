@@ -21,13 +21,27 @@ package org.jamwiki;
  * Custom exception class for JAMWiki servlet errors.
  */
 public class WikiException extends Exception {
+
 	private final WikiMessage wikiMessage;
 
 	/**
 	 * Constructor for a WikiException containing a Wiki message value.
+	 *
+	 * @param wikiMessage The message information for the exception.
 	 */
 	public WikiException(WikiMessage wikiMessage) {
 		super();
+		this.wikiMessage = wikiMessage;
+	}
+
+	/**
+	 * Constructor for a WikiException containing a Wiki message value.
+	 *
+	 * @param wikiMessage The message information for the exception.
+	 * @param t The exception that is the cause of this WikiException.
+	 */
+	public WikiException(WikiMessage wikiMessage, Throwable t) {
+		super(t);
 		this.wikiMessage = wikiMessage;
 	}
 

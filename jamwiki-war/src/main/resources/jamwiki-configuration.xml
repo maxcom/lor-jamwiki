@@ -33,36 +33,6 @@
 <!--
    ====================================================================
 
-   User authentication mechanisms that can be used with JAMWiki:
-
-   name  - A human-readable name for the authentication mechanism.
-   class - The fully qualified class name for the authentication class.
-   key   - The ApplicationResources translation key for the authentication
-           mechanism name.  If this value is not specified then the "name"
-           value is used when displaying the authentication mechanism name.
-   state - An optional parameter that can be set to "experimental" to warn
-           site administrators that an authentication mechanism is a
-           work-in-progress.
-
-   ======================================================================
--->
-<user-handlers>
-	<user-handler>
-		<name>Database</name>
-		<class>org.jamwiki.db.DatabaseUserHandler</class>
-		<key>admin.usergrouptype.database</key>
-	</user-handler>
-	<user-handler>
-		<name>LDAP</name>
-		<class>org.jamwiki.ldap.LdapUserHandler</class>
-		<key>admin.usergrouptype.ldap</key>
-		<state>experimental</state>
-	</user-handler>
-</user-handlers>
-
-<!--
-   ====================================================================
-
    Data handlers that can be used with JAMWiki:
 
    name  - A human-readable name for the data handler.
@@ -79,6 +49,10 @@
 	<data-handler>
 		<name>ansi</name>
 		<class>org.jamwiki.db.AnsiDataHandler</class>
+	</data-handler>
+	<data-handler>
+		<name>h2</name>
+		<class>org.jamwiki.db.H2DataHandler</class>
 	</data-handler>
 	<data-handler>
 		<name>hsql</name>
@@ -115,6 +89,29 @@
 		<state>experimental</state>
 	</data-handler>
 </data-handlers>
+
+<!--
+   ====================================================================
+
+   Editors are used when editing topics and define which of the available
+   editing tools the user will use.
+
+   name  - The name of the editing tool.
+   key   - A string that will be stored in the user preferences if the
+           editing tool is selected.
+
+   ======================================================================
+-->
+<editors>
+	<editor>
+		<name>None</name>
+		<key>none</key>
+	</editor>
+	<editor>
+		<name>Toolbar</name>
+		<key>toolbar</key>
+	</editor>
+</editors>
 
 <!--
    ====================================================================
@@ -274,6 +271,9 @@
 	</pseudotopic>
 	<pseudotopic>
 		<name>Special:Move</name>
+	</pseudotopic>
+	<pseudotopic>
+		<name>Special:OrphanedPages</name>
 	</pseudotopic>
 	<pseudotopic>
 		<name>Special:Print</name>

@@ -16,13 +16,19 @@
  */
 package org.jamwiki.servlets;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
+import org.jamwiki.authentication.JAMWikiAuthenticationConstants;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * Used to handle requests or redirects to the login page.
+ * Used to handle requests or redirects to the login page, as well as requests to logout.
  */
 public class LoginServlet extends JAMWikiServlet {
 
@@ -33,6 +39,38 @@ public class LoginServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		return ServletUtil.viewLogin(request, pageInfo, null, null);
+		// FIXME - hard coding
+		if (ServletUtil.isTopic(request, "Special:Logout")) {
+			// redirect to the Spring Security logout
+			viewLogout(request, response, pageInfo);
+			return null;
+		}
+		// retrieve the URL to redirect to after successful login (if one is defined)
+		String loginSuccessTarget = request.getParameter(PARAM_LOGIN_SUCCESS_TARGET);
+		return ServletUtil.viewLogin(request, pageInfo, loginSuccessTarget, null);
+	}
+
+	/**
+	 * Redirect to the default Spring Security logout URL after adding a "successful logout"
+	 * URL to the request.  See the Spring Security LogoutFilter.determineTargetUrl() for
+	 * further details.
+	 */
+	private void viewLogout(HttpServletRequest request, HttpServletResponse response, WikiPageInfo pageInfo) throws IOException {
+		String virtualWikiName = pageInfo.getVirtualWikiName();
+		String logoutSuccessUrl = WikiUtil.findDefaultVirtualWikiUrl(virtualWikiName);
+		try {
+			logoutSuccessUrl = URLEncoder.encode(logoutSuccessUrl, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// this should never happen
+			throw new IllegalStateException("Unsupporting encoding UTF-8");
+		}
+		String springSecurityLogoutUrl = request.getContextPath();
+		if (StringUtils.equals(request.getContextPath(), "/")) {
+			springSecurityLogoutUrl = "";
+		}
+		springSecurityLogoutUrl += JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGOUT_URL;
+		springSecurityLogoutUrl += "?" + JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGOUT_REDIRECT_QUERY_PARAM;
+		springSecurityLogoutUrl += "=" + logoutSuccessUrl;
+		response.sendRedirect(response.encodeRedirectURL(springSecurityLogoutUrl));
 	}
 }

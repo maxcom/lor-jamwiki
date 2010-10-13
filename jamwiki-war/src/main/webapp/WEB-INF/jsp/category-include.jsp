@@ -19,8 +19,8 @@
 
 <c:if test="${!empty categoryName}">
 	<c:if test="${numSubCategories > 0}">
-<h3><f:message key="topic.category.subcategories"><f:param value="${categoryName}" /></f:message></h3>
-<div class="message"><f:message key="topic.category.numsubcategories"><f:param value="${numSubCategories}" /><f:param value="${categoryName}" /></f:message></div>
+<h3><fmt:message key="topic.category.subcategories"><fmt:param value="${categoryName}" /></fmt:message></h3>
+<div class="message"><fmt:message key="topic.category.numsubcategories"><fmt:param value="${numSubCategories}" /><fmt:param value="${categoryName}" /></fmt:message></div>
 
 <table width="100%"><tr><td>
 <ul>
@@ -39,8 +39,8 @@
 	</c:if>
 
 	<c:if test="${numCategoryImages > 0}">
-<h3><f:message key="topic.category.images"><f:param value="${categoryName}" /></f:message></h3>
-<div class="message"><f:message key="topic.category.numimages"><f:param value="${numCategoryImages}" /><f:param value="${categoryName}" /></f:message></div>
+<h3><fmt:message key="topic.category.images"><fmt:param value="${categoryName}" /></fmt:message></h3>
+<div class="message"><fmt:message key="topic.category.numimages"><fmt:param value="${numCategoryImages}" /><fmt:param value="${categoryName}" /></fmt:message></div>
 
 <table class="gallery" cellpadding="0" cellspacing="0"><tr>
 		<%-- FIXME - number of columns and max image size are hard-coded --%>
@@ -56,8 +56,8 @@
 </tr></table>
 	</c:if>
 
-<h3><f:message key="topic.category.topics"><f:param value="${categoryName}" /></f:message></h3>
-<div class="message"><f:message key="topic.category.numtopics"><f:param value="${numCategoryTopics}" /><f:param value="${categoryName}" /></f:message></div>
+<h3><fmt:message key="topic.category.topics"><fmt:param value="${categoryName}" /></fmt:message></h3>
+<div class="message"><fmt:message key="topic.category.numtopics"><fmt:param value="${numCategoryTopics}" /><fmt:param value="${categoryName}" /></fmt:message></div>
 	<c:if test="${numCategoryTopics > 0}">
 <table width="100%"><tr><td>
 <ul>

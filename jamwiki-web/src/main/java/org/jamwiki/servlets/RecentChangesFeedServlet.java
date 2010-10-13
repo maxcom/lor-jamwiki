@@ -129,14 +129,13 @@ public class RecentChangesFeedServlet extends AbstractController {
 		this.defaultLinkToVersion = linkToVersion;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Handle the servlet request, generating appropriate output.
 	 *
 	 * @see org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal(javax.servlet.http.HttpServletRequest,
 	 *      javax.servlet.http.HttpServletResponse)
 	 */
-	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		try {
 			String feedType = ServletRequestUtils.getStringParameter(request, FEED_TYPE, defaultFeedType);
 			logger.fine("Serving xml feed of type " + feedType);
@@ -242,5 +241,4 @@ public class RecentChangesFeedServlet extends AbstractController {
 		Pagination pagination = WikiUtil.buildPagination(request);
 		return WikiBase.getDataHandler().getRecentChanges(virtualWiki, pagination, true);
 	}
-
 }

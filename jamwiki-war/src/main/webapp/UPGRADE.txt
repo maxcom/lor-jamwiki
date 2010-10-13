@@ -29,17 +29,17 @@ To upgrade using this automated process follow these steps:
             custom modifications. 
   3.  (Optional) Back up all database data prior to upgrading. This step is
       optional but highly recommended.
-  4.  Remove the old JAMWiki installation by deleting your existing JAMWiki web
+  4.  Remove the old JAMWiki installation by deleting the existing JAMWiki web
       application. For some web application servers you may also want to clear
       the application server's cache.
-  5.  Install the new JAMWiki WAR file. See your web application server's
+  5.  Install the new JAMWiki WAR file. See the web application server's
       documentation for instructions. Note that WAR files should be deployed as
       exploded WAR files as some application servers will lose configuration
       information otherwise.
   6.  Restore the files that were backed up in steps two and three to their
       previous locations under the /upload/, /WEB-INF/ and /WEB-INF/classes/
       directories, overwriting any new files.
-  7.  (Optional) If using an external database, make sure that your JDBC driver
+  7.  (Optional) If using an external database, make sure that the JDBC driver
       is available in the web application server's classpath.
   8.  Verify that the web application server process has permisson to read and
       write all files in the new JAMWiki installation.
@@ -72,6 +72,117 @@ otherwise noted.  For example, if upgrading from version 0.5.0 to version
 0.5.3, you should apply the upgrade steps for 0.5.1, followed by 0.5.2,
 followed by 0.5.3.
 
+  JAMWiki 0.7.0
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.7.0".
+  2. CSS styles have changed during this release.  An up-to-date version of
+     the default StyleSheet topic can be found in the
+     /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
+     can only be edited AFTER all other upgrade steps have been completed.
+  3. Update the database schema by executing the following SQL statements:
+       a) Add the characters_changed column to the jam_topic_version and
+          jam_recent_change tables.
+            Oracle:
+              alter table jam_recent_change add (characters_changed INTEGER);
+              alter table jam_topic_version add (characters_changed INTEGER);
+            Other Databases:
+              alter table jam_recent_change add column characters_changed INTEGER;
+              alter table jam_topic_version add column characters_changed INTEGER;
+       b) Populate the new characters_changed column for topic versions.
+            Oracle:
+              update jam_topic_version set characters_changed = (
+                    select (dbms_lob.getlength(current_version.version_content) - dbms_lob.getlength(previous_version.version_content)) 
+                    from jam_topic_version current_version 
+                    left outer join jam_topic_version previous_version 
+                    on current_version.previous_topic_version_id = previous_version.topic_version_id 
+                    where jam_topic_version.topic_version_id = current_version.topic_version_id
+              );
+            Other Databases:
+              update jam_topic_version set characters_changed = (
+                    select (char_length(current_version.version_content) - char_length(coalesce(previous_version.version_content, ''))) 
+                    from jam_topic_version current_version 
+                    left outer join jam_topic_version previous_version 
+                    on current_version.previous_topic_version_id = previous_version.topic_version_id 
+                    where jam_topic_version.topic_version_id = current_version.topic_version_id
+              );
+       c) Populate the new characters_changed column for recent changes by
+          reloading recent changes from the Special:Maintenance page.
+       d) Add several new columns to the jam_wiki_user table.
+            Oracle:
+              alter table jam_wiki_user add (email VARCHAR(100));
+              alter table jam_wiki_user add (editor VARCHAR(50));
+              alter table jam_wiki_user add (signature VARCHAR(255));
+            Other Databases:
+              alter table jam_wiki_user add column email VARCHAR(100);
+              alter table jam_wiki_user add column editor VARCHAR(50);
+              alter table jam_wiki_user add column signature VARCHAR(255);
+       e) Populate the new email column for the jam_wiki_user table.
+              update jam_wiki_user set email = (
+                    select email from jam_wiki_user_info
+                    where jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id
+              );
+       f) Create the jam_users table.
+              CREATE TABLE jam_users (
+                    username varchar(100) NOT NULL,
+                    password varchar(100) NOT NULL,
+                    enabled INTEGER DEFAULT 1 NOT NULL,
+                    CONSTRAINT jam_p_users PRIMARY KEY (username)
+              )
+       g) Populate the jam_users table.
+              insert into jam_users ( username, password )
+                    select login, encoded_password
+                    from jam_wiki_user_info
+       h) Drop the unused remember_key column from the jam_wiki_user table.
+              alter table jam_wiki_user drop column remember_key;
+       i) Drop the obsolete jam_wiki_user_info table.
+              drop table jam_wiki_user_info;
+       j) Create the jam_authorities table:
+              CREATE TABLE jam_authorities (
+                   username VARCHAR(100) NOT NULL,
+                   authority VARCHAR(30) NOT NULL,
+                   CONSTRAINT jam_u_auth UNIQUE (username, authority),
+                   CONSTRAINT jam_f_auth_username FOREIGN KEY (username) REFERENCES jam_users(username),
+                   CONSTRAINT jam_f_auth_authority FOREIGN KEY (authority) REFERENCES jam_role(role_name)
+              );
+       k) Populate the jam_group_authorities table.
+              insert into jam_authorities (
+                   username, authority
+              )
+              select jam_wiki_user.login, jam_role_map.role_name
+              from jam_wiki_user, jam_role_map
+              where jam_wiki_user.wiki_user_id = jam_role_map.wiki_user_id;
+       l) Create the jam_group_members table.
+              CREATE TABLE jam_group_members (
+                   id INTEGER NOT NULL,
+                   username VARCHAR(100) NOT NULL,
+                   group_id INTEGER NOT NULL,
+                   CONSTRAINT jam_p_gmemb PRIMARY KEY (id),
+                   CONSTRAINT jam_f_gmemb_username FOREIGN KEY (username) REFERENCES jam_users(username),
+                   CONSTRAINT jam_f_gmemb_group FOREIGN KEY (group_id) REFERENCES jam_group(group_id)
+              );
+       m) Create the jam_group_authorities table.
+              CREATE TABLE jam_group_authorities (
+                   group_id INTEGER NOT NULL,
+                   authority VARCHAR(30) NOT NULL,
+                   CONSTRAINT jam_u_gauth UNIQUE (group_id, authority),
+                   CONSTRAINT jam_f_gauth_group FOREIGN KEY (group_id) REFERENCES jam_group(group_id),
+                   CONSTRAINT jam_f_gauth_authority FOREIGN KEY (authority) REFERENCES jam_role(role_name)
+              );
+       n) Populate the jam_group_authorities table.
+              insert into jam_group_authorities (
+                   group_id, authority
+              )
+              select jam_group.group_id, jam_role_map.role_name
+              from jam_group, jam_role_map
+              where jam_group.group_id = jam_role_map.group_id;
+       o) Drop the obsolete jam_role_map table.
+              drop table jam_role_map;
+       p) Add required constraint to jam_wiki_user.
+              alter table jam_wiki_user add constraint jam_u_wuser_users
+                    foreign key (login) references jam_users (username)
+
 
   JAMWiki 0.6.7
   =============
@@ -79,7 +190,7 @@ followed by 0.5.3.
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.6.7".
   2. CSS styles have changed during this release.  An up-to-date version of
-     the default the StyleSheet topic can be found in the
+     the default StyleSheet topic can be found in the
      /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
      can only be edited AFTER all other upgrade steps have been completed.
 
@@ -90,7 +201,7 @@ followed by 0.5.3.
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.6.6".
   2. CSS styles have changed during this release.  An up-to-date version of
-     the default the StyleSheet topic can be found in the
+     the default StyleSheet topic can be found in the
      /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
      can only be edited AFTER all other upgrade steps have been completed.
 
@@ -115,7 +226,7 @@ followed by 0.5.3.
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.6.3".
   2. CSS styles have changed during this release.  An up-to-date version of
-     the default the StyleSheet topic can be found in the
+     the default StyleSheet topic can be found in the
      /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
      can only be edited AFTER all other upgrade steps have been completed.
   3. (Optional) Update the database schema by executing the following SQL
@@ -150,7 +261,7 @@ followed by 0.5.3.
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.6.2".
   2. CSS styles have changed during this release.  An up-to-date version of
-     the default the StyleSheet topic can be found in the
+     the default StyleSheet topic can be found in the
      /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
      can only be edited AFTER all other upgrade steps have been completed.
 
@@ -166,7 +277,7 @@ followed by 0.5.3.
        b) Delete values from the jam_role table:
               DELETE from jam_role where role_name = 'ROLE_DELETE';
   3. CSS styles have changed during this release.  An up-to-date version of
-     the default the StyleSheet topic can be found in the
+     the default StyleSheet topic can be found in the
      /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
      can only be edited AFTER all other upgrade steps have been completed.
 
@@ -177,7 +288,7 @@ followed by 0.5.3.
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.6.0".
   2. CSS styles have changed during this release.  An up-to-date version of
-     the default the StyleSheet topic can be found in the
+     the default StyleSheet topic can be found in the
      /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
      can only be edited AFTER all other upgrade steps have been completed.
   3. Update the database schema by executing the following SQL statements:
@@ -265,7 +376,7 @@ followed by 0.5.3.
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.5.2".
   2. CSS styles have changed during this release.  An up-to-date version of
-     the default the StyleSheet topic can be found in the
+     the default StyleSheet topic can be found in the
      /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
      can only be edited AFTER all other upgrade steps have been completed.
 
@@ -366,7 +477,7 @@ followed by 0.5.3.
                    where jam_topic_version.topic_id = jam_topic.topic_id
               );
   3. The #change CSS style should be modified to remove the font-weight
-     property.  An up-to-date version of the default the StyleSheet topic can
+     property.  An up-to-date version of the default StyleSheet topic can
      be found in the /WEB-INF/classes/pages/StyleSheet file.  Note that the
      StyleSheet topic can only be edited AFTER all other upgrade steps have
      been completed.
@@ -408,7 +519,7 @@ followed by 0.5.3.
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.3.5".
   2. A new CSS style, "a.interwiki:after", should be added to the JAMWiki
-     StyleSheet topic.  An up-to-date version of the default the StyleSheet
+     StyleSheet topic.  An up-to-date version of the default StyleSheet
      topic can be found in the /WEB-INF/classes/pages/StyleSheet file.  Note
      that the StyleSheet topic can only be edited AFTER all other upgrade
      steps have been completed.

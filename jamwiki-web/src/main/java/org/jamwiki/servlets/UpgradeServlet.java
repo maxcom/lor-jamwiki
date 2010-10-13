@@ -21,18 +21,19 @@ import java.util.Iterator;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.acegisecurity.context.SecurityContextHolder;
+import org.springframework.security.context.SecurityContextHolder;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
-import org.jamwiki.authentication.WikiUserAuth;
+import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
 import org.jamwiki.db.DatabaseUpgrades;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -47,6 +48,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class UpgradeServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(UpgradeServlet.class.getName());
+	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_UPGRADE = "upgrade.jsp";
 
 	/**
@@ -84,125 +86,110 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private boolean login(HttpServletRequest request) throws Exception {
 		String password = request.getParameter("password");
 		String username = request.getParameter("username");
-		WikiUser user = null;
-		if (!WikiBase.getUserHandler().authenticate(username, password)) {
-			return false;
-		}
-		user = DatabaseUpgrades.getWikiUser(username);
-		return (user != null);
+		return DatabaseUpgrades.login(username, password);
 	}
 
 	/**
 	 *
 	 */
-	private void upgrade(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		if (!this.login(request)) {
-			next.addObject("error", new WikiMessage("error.login"));
-			pageInfo.setContentJsp(JSP_UPGRADE);
-			pageInfo.setSpecial(true);
-			pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
-			return;
-		}
-		Vector messages = new Vector();
-		boolean success = true;
-		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
-		if (oldVersion.before(0, 4, 0)) {
-			messages.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.4.0"));
-			success = false;
-		} else {
+	private void upgrade(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
+		try {
+			if (!this.login(request)) {
+				next.addObject("error", new WikiMessage("error.login"));
+				this.view(request, next, pageInfo);
+				return;
+			}
+			WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
+			if (oldVersion.before(0, 5, 0)) {
+				Vector errors = new Vector();
+				errors.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.5.0"));
+				next.addObject("errors", errors);
+				return;
+			}
+			Vector messages = new Vector();
+			boolean success = true;
 			// first perform database upgrades
-			if (!Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("FILE")) {
-				try {
-					if (oldVersion.before(0, 4, 2)) {
-						messages = DatabaseUpgrades.upgrade042(messages);
-					}
-					if (oldVersion.before(0, 5, 0)) {
-						messages = DatabaseUpgrades.upgrade050(messages);
-					}
-					if (oldVersion.before(0, 6, 0)) {
-						messages = DatabaseUpgrades.upgrade060(messages);
-					}
-					if (oldVersion.before(0, 6, 1)) {
-						messages = DatabaseUpgrades.upgrade061(messages);
-					}
-					if (oldVersion.before(0, 6, 3)) {
-						messages = DatabaseUpgrades.upgrade063(messages);
-					}
-				} catch (Exception e) {
-					// FIXME - hard coding
-					String msg = "Unable to complete upgrade to new JAMWiki version.";
-					logger.severe(msg, e);
-					messages.add(msg + ": " + e.getMessage());
-					success = false;
-				}
-			}
-			// then perform other needed upgrades
-			boolean stylesheet = false;
-			if (oldVersion.before(0, 4, 2)) {
-				stylesheet = true;
-			}
-			if (oldVersion.before(0, 5, 1)) {
-				stylesheet = true;
-			}
-			if (oldVersion.before(0, 6, 0)) {
-				stylesheet = true;
-			}
-			if (oldVersion.before(0, 6, 1)) {
-				stylesheet = true;
-			}
-			if (oldVersion.before(0, 6, 2)) {
-				stylesheet = true;
-			}
-			if (oldVersion.before(0, 6, 3)) {
-				stylesheet = true;
-			}
-			if (oldVersion.before(0, 6, 6)) {
-				stylesheet = true;
-			}
-			if (oldVersion.before(0, 6, 7)) {
-				stylesheet = true;
-			}
-			if (stylesheet) {
-				// upgrade stylesheet
+			this.upgradeDatabase(true, messages);
+			// upgrade stylesheet
+			if (this.upgradeStyleSheetRequired()) {
 				if (!upgradeStyleSheet(request, messages)) {
 					success = false;
 				}
+			}
+			// perform any additional upgrades required
+			if (oldVersion.before(0, 7, 0)) {
+				Environment.setValue(Environment.PROP_FILE_SERVER_URL, Utilities.getServerUrl(request));
+				Environment.setValue(Environment.PROP_SERVER_URL, Utilities.getServerUrl(request));
 			}
 			Vector errors = ServletUtil.validateSystemSettings(Environment.getInstance());
 			if (!errors.isEmpty()) {
 				next.addObject("errors", errors);
 				success = false;
 			}
+			if (success) {
+				Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
+				Environment.saveProperties();
+				// reset data handler and other instances.  this probably hides a bug
+				// elsewhere since no reset should be needed, but it's anyone's guess
+				// where that might be...
+				WikiBase.reload();
+				VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(WikiBase.DEFAULT_VWIKI);
+				WikiLink wikiLink = new WikiLink();
+				wikiLink.setDestination(virtualWiki.getDefaultTopicName());
+				String htmlLink = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki.getName(), wikiLink, virtualWiki.getDefaultTopicName(), null, null, true);
+				WikiMessage wm = new WikiMessage("upgrade.caption.upgradecomplete");
+				// do not escape the HTML link
+				wm.setParamsWithoutEscaping(new String[]{htmlLink});
+				next.addObject("successMessage", wm);
+				// force logout to ensure current user will be re-validated.  this is
+				// necessary because the upgrade may have changed underlying data structures.
+				SecurityContextHolder.clearContext();
+				// force group permissions to reset
+				JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
+				JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
+			} else {
+				next.addObject("error", new WikiMessage("upgrade.caption.upgradefailed"));
+				next.addObject("failure", "true");
+			}
+			next.addObject("messages", messages);
+		} catch (Exception e) {
+			next.addObject("error", new WikiMessage("error.unknown", e.toString()));
+			logger.severe("Unable to complete upgrade to new JAMWiki version.", e);
 		}
-		if (success) {
-			Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
-			Environment.saveProperties();
-			// reset data handler and other instances.  this probably hides a bug
-			// elsewhere since no reset should be needed, but it's anyone's guess
-			// where that might be...
-			WikiBase.reload();
-			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(WikiBase.DEFAULT_VWIKI);
-			WikiLink wikiLink = new WikiLink();
-			wikiLink.setDestination(virtualWiki.getDefaultTopicName());
-			String htmlLink = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki.getName(), wikiLink, virtualWiki.getDefaultTopicName(), null, null, true);
-			WikiMessage wm = new WikiMessage("upgrade.caption.upgradecomplete");
-			// do not escape the HTML link
-			wm.setParamsWithoutEscaping(new String[]{htmlLink});
-			next.addObject("message", wm);
-			// force logout to ensure current user will be re-validated.  this is
-			// necessary because the upgrade may have changed underlying data structures.
-			SecurityContextHolder.clearContext();
-			// force group permissions to reset
-			WikiUserAuth.resetDefaultGroupRoles();
-			WikiUserAuth.resetAnonymousGroupRoles();
-		} else {
-			next.addObject("error", new WikiMessage("upgrade.caption.upgradefailed"));
-			next.addObject("failure", "true");
+		this.view(request, next, pageInfo);
+	}
+
+	/**
+	 *
+	 */
+	private boolean upgradeDatabase(boolean performUpgrade, Vector messages) throws Exception {
+		boolean upgradeRequired = false;
+		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
+		if (oldVersion.before(0, 6, 0)) {
+			upgradeRequired = true;
+			if (performUpgrade) {
+				messages = DatabaseUpgrades.upgrade060(messages);
+			}
 		}
-		next.addObject("messages", messages);
-		pageInfo.setContentJsp(JSP_UPGRADE);
-		pageInfo.setSpecial(true);
-		pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
+		if (oldVersion.before(0, 6, 1)) {
+			upgradeRequired = true;
+			if (performUpgrade) {
+				messages = DatabaseUpgrades.upgrade061(messages);
+			}
+		}
+		if (oldVersion.before(0, 6, 3)) {
+			upgradeRequired = true;
+			if (performUpgrade) {
+				messages = DatabaseUpgrades.upgrade063(messages);
+			}
+		}
+		if (oldVersion.before(0, 7, 0)) {
+			upgradeRequired = true;
+			if (performUpgrade) {
+				messages = DatabaseUpgrades.upgrade070(messages);
+			}
+		}
+		return upgradeRequired;
 	}
 
 	/**
@@ -210,11 +197,10 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 */
 	private boolean upgradeStyleSheet(HttpServletRequest request, Vector messages) throws Exception {
 		try {
-			WikiUser user = ServletUtil.currentUser();
-			Collection virtualWikis = WikiBase.getDataHandler().getVirtualWikiList(null);
+			Collection virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
 			for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
 				VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
-				WikiBase.getDataHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user, ServletUtil.getIpAddress(request), null);
+				WikiBase.getDataHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, ServletUtil.getIpAddress(request));
 				messages.add("Updated stylesheet for virtual wiki " + virtualWiki.getName());
 			}
 			return true;
@@ -230,15 +216,61 @@ public class UpgradeServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	private boolean upgradeStyleSheetRequired() {
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
-		if (oldVersion.before(0, 4, 0)) {
+		if (oldVersion.before(0, 5, 1)) {
+			return true;
+		}
+		if (oldVersion.before(0, 6, 0)) {
+			return true;
+		}
+		if (oldVersion.before(0, 6, 1)) {
+			return true;
+		}
+		if (oldVersion.before(0, 6, 2)) {
+			return true;
+		}
+		if (oldVersion.before(0, 6, 3)) {
+			return true;
+		}
+		if (oldVersion.before(0, 6, 6)) {
+			return true;
+		}
+		if (oldVersion.before(0, 6, 7)) {
+			return true;
+		}
+		if (oldVersion.before(0, 7, 0)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 *
+	 */
+	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
+		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
+		if (oldVersion.before(0, 5, 0)) {
 			Vector errors = new Vector();
-			errors.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.4.0"));
+			errors.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.5.0"));
 			next.addObject("errors", errors);
 		}
+		Vector upgradeDetails = new Vector();
+		try {
+			if (this.upgradeDatabase(false, null)) {
+				upgradeDetails.add(new WikiMessage("upgrade.caption.database"));
+			}
+		} catch (Exception e) {
+			// never thrown when the first parameter is false
+		}
+		if (this.upgradeStyleSheetRequired()) {
+			upgradeDetails.add(new WikiMessage("upgrade.caption.stylesheet"));
+		}
+		upgradeDetails.add(new WikiMessage("upgrade.caption.releasenotes"));
+		upgradeDetails.add(new WikiMessage("upgrade.caption.manual"));
+		next.addObject("upgradeDetails", upgradeDetails);
 		pageInfo.setContentJsp(JSP_UPGRADE);
 		pageInfo.setSpecial(true);
-		pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
+		pageInfo.setPageTitle(new WikiMessage("upgrade.title", Environment.getValue(Environment.PROP_BASE_WIKI_VERSION), WikiVersion.CURRENT_WIKI_VERSION));
 	}
 }

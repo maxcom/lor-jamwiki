@@ -16,7 +16,7 @@ import org.jamwiki.utils.WikiLogger;
 
 /* code copied verbatim into the generated .java file */
 %{
-    protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiPostProcessor.class.getName());
+    private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiPostProcessor.class.getName());
 %}
 
 /* character expressions */

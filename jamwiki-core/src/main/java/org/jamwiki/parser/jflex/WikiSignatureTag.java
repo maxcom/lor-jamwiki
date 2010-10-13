@@ -20,9 +20,7 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.NamespaceHandler;
@@ -43,33 +41,7 @@ public class WikiSignatureTag {
 		try {
 			String signature = "";
 			if (includeUser) {
-				String login = parserInput.getUserIpAddress();
-				String email = parserInput.getUserIpAddress();
-				String displayName = parserInput.getUserIpAddress();
-				String userId = "-1";
-				WikiUser user = parserInput.getWikiUser();
-				if (user != null && !StringUtils.isBlank(user.getUsername())) {
-					login = user.getUsername();
-					displayName = (!StringUtils.isBlank(user.getDisplayName())) ? user.getDisplayName() : login;
-					WikiUserInfo userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(login);
-					email = userInfo.getEmail();
-					userId = Integer.toString(user.getUserId());
-				}
-				if (login == null || email == null || displayName == null) {
-					logger.info("Signature tagged parsed without user information available, returning empty");
-					return "";
-				}
-				MessageFormat formatter = new MessageFormat(Environment.getValue(Environment.PROP_PARSER_SIGNATURE_USER_PATTERN));
-				Object params[] = new Object[7];
-				params[0] = NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + login;
-				// FIXME - hard coding
-				params[1] = NamespaceHandler.NAMESPACE_SPECIAL + NamespaceHandler.NAMESPACE_SEPARATOR + "Contributions?contributor=" + login;
-				params[2] = NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + login;
-				params[3] = login;
-				params[4] = displayName;
-				params[5] = email;
-				params[6] = userId;
-				signature = formatter.format(params);
+				signature = this.retrieveUserSignature(parserInput);
 				// parse signature as link in order to store link metadata
 				WikiLinkTag wikiLinkTag = new WikiLinkTag();
 				wikiLinkTag.parse(parserInput, parserOutput, mode, signature);
@@ -108,5 +80,40 @@ public class WikiSignatureTag {
 			return this.buildWikiSignature(parserInput, parserOutput, mode, false, true);
 		}
 		return raw;
+	}
+	
+	/**
+	 *
+	 */
+	private String retrieveUserSignature(ParserInput parserInput) {
+		WikiUser user = parserInput.getWikiUser();
+		if (user != null && !StringUtils.isBlank(user.getSignature())) {
+			return user.getSignature();
+		}
+		String login = parserInput.getUserIpAddress();
+		String email = parserInput.getUserIpAddress();
+		String displayName = parserInput.getUserIpAddress();
+		String userId = "-1";
+		if (user != null && !StringUtils.isBlank(user.getUsername())) {
+			login = user.getUsername();
+			displayName = (!StringUtils.isBlank(user.getDisplayName())) ? user.getDisplayName() : login;
+			email = user.getEmail();
+			userId = Integer.toString(user.getUserId());
+		}
+		if (login == null || email == null || displayName == null) {
+			logger.info("Signature tagged parsed without user information available, returning empty");
+			return "";
+		}
+		MessageFormat formatter = new MessageFormat(Environment.getValue(Environment.PROP_PARSER_SIGNATURE_USER_PATTERN));
+		Object params[] = new Object[7];
+		params[0] = NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + login;
+		// FIXME - hard coding
+		params[1] = NamespaceHandler.NAMESPACE_SPECIAL + NamespaceHandler.NAMESPACE_SEPARATOR + "Contributions?contributor=" + login;
+		params[2] = NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + login;
+		params[3] = login;
+		params[4] = displayName;
+		params[5] = email;
+		params[6] = userId;
+		return formatter.format(params);
 	}
 }

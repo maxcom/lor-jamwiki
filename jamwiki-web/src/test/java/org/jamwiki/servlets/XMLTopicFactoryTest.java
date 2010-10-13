@@ -19,9 +19,6 @@
 package org.jamwiki.servlets;
 
 import junit.framework.TestCase;
-import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.GrantedAuthority;
-import org.jamwiki.authentication.WikiUserAuth;
 import org.jamwiki.model.WikiUser;
 
 /**
@@ -99,12 +96,7 @@ public class XMLTopicFactoryTest extends TestCase {
 	 */
 	public void testCharactersThrowsNullPointerException() throws Throwable {
 		char[] buf = new char[1];
-		GrantedAuthority grantedAuthorityImpl = new GrantedAuthorityImpl("testXMLTopicFactoryRole");
-		GrantedAuthority[] authorities = new GrantedAuthority[3];
-		authorities[0] = grantedAuthorityImpl;
-		authorities[1] = grantedAuthorityImpl;
-		authorities[2] = new GrantedAuthorityImpl("testXMLTopicFactoryRole1");
-		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUserAuth("testXMLTopicFactoryUsername", "testXMLTopicFactoryPassword", true, false, false, false, authorities), "testXMLTopicFactoryAuthorIpAddress");
+		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(), "testXMLTopicFactoryAuthorIpAddress");
 		try {
 			xMLTopicFactory.characters(buf, 100, 1000);
 			fail("Expected NullPointerException to be thrown");
@@ -124,13 +116,7 @@ public class XMLTopicFactoryTest extends TestCase {
 	 *
 	 */
 	public void testEndElementThrowsNullPointerException1() throws Throwable {
-		GrantedAuthority grantedAuthorityImpl = new GrantedAuthorityImpl("testXMLTopicFactoryRole1");
-		GrantedAuthority[] authorities = new GrantedAuthority[4];
-		authorities[0] = new GrantedAuthorityImpl("testXMLTopicFactoryRole");
-		authorities[1] = grantedAuthorityImpl;
-		authorities[2] = grantedAuthorityImpl;
-		authorities[3] = new GrantedAuthorityImpl("testXMLTopicFactoryRole2");
-		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUserAuth("testXMLTopicFactoryUsername", "testXMLTopicFactoryPassword", true, false, false, false, authorities), "testXMLTopicFactoryAuthorIpAddress");
+		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(), "testXMLTopicFactoryAuthorIpAddress");
 		try {
 			xMLTopicFactory.endElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactorySName", "title");
 			fail("Expected NullPointerException to be thrown");
@@ -209,12 +195,7 @@ public class XMLTopicFactoryTest extends TestCase {
 	 *
 	 */
 	public void testStartElementThrowsNullPointerException2() throws Throwable {
-		GrantedAuthority grantedAuthorityImpl = new GrantedAuthorityImpl("testXMLTopicFactoryRole");
-		GrantedAuthority[] authorities = new GrantedAuthority[3];
-		authorities[0] = grantedAuthorityImpl;
-		authorities[1] = grantedAuthorityImpl;
-		authorities[2] = new GrantedAuthorityImpl("testXMLTopicFactoryRole1");
-		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUserAuth("testXMLTopicFactoryUsername", "testXMLTopicFactoryPassword", true, false, false, false, authorities), "testXMLTopicFactoryAuthorIpAddress");
+		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(), "testXMLTopicFactoryAuthorIpAddress");
 		try {
 			xMLTopicFactory.startElement("testXMLTopicFactoryNamespaceURI", "", "testXMLTopicFactoryQName", null);
 			fail("Expected NullPointerException to be thrown");

@@ -20,7 +20,7 @@ import java.util.Locale;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.acegisecurity.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.AuthenticationCredentialsNotFoundException;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.WikiLogger;
 import org.apache.commons.lang.LocaleUtils;
@@ -39,7 +39,7 @@ public class JAMWikiLocaleInterceptor extends LocaleChangeInterceptor {
 	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiServlet.class.getName());
 
 	/**
-	 *
+	 * Ensure that the session locale value is set.
 	 */
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException {
 		Locale locale = (Locale)request.getSession().getAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME);
@@ -61,7 +61,7 @@ public class JAMWikiLocaleInterceptor extends LocaleChangeInterceptor {
 	private Locale retrieveUserLocale(HttpServletRequest request) throws ServletException {
 		Locale locale = null;
 		try {
-			WikiUser user = ServletUtil.currentUser();
+			WikiUser user = ServletUtil.currentWikiUser();
 			locale = LocaleUtils.toLocale(user.getDefaultLocale());
 		} catch (AuthenticationCredentialsNotFoundException e) {
 			// do nothing, just use a default locale

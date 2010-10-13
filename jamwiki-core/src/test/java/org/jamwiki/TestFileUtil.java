@@ -30,8 +30,26 @@ import org.jamwiki.utils.WikiLogger;
 public class TestFileUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(TestFileUtil.class.getName());
-	public static final String TEST_TOPICS_DIR = "data/topics/";
 	public static final String TEST_RESULTS_DIR = "data/results/";
+	public static final String TEST_TOPICS_DIR = "data/topics/";
+
+	/**
+	 *
+	 */
+	public static String decodeTopicName(String fileName) {
+		// files containing colons aren't allowed, so they are replaced with "_-_"
+		String result = StringUtils.replace(fileName, "_-_", ":");
+		return StringUtils.replace(result, "_", " ");
+	}
+
+	/**
+	 *
+	 */
+	public static String encodeTopicName(String topicName) {
+		// files containing colons aren't allowed, so they are replaced with "_-_"
+		String result = StringUtils.replace(topicName, ":", "_-_");
+		return StringUtils.replace(result, " ", "_");
+	}
 
 	/**
 	 *
@@ -49,10 +67,7 @@ public class TestFileUtil {
 	 *
 	 */
 	private static File retrieveFile(String directory, String fileName) {
-		// files containing colons aren't allowed, so replace with "_-_"
-		fileName = StringUtils.replace(fileName, ":", "_-_");
-		// replace spaces with underscores
-		fileName = StringUtils.replace(fileName, " ", "_");
+		fileName = encodeTopicName(fileName);
 		String fullName = directory + fileName;
 		File file = null;
 		try {

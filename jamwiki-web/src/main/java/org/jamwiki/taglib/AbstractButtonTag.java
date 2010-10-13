@@ -23,8 +23,8 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
- * This abstract class implements both the "radio" tag and "checkbox" tag,
- * as they are very similar.
+ * This abstract class implements functionality for both the "radio" tag and
+ * "checkbox" tag as they are very similar.
  *
  * @see CheckboxTag
  * @see RadioTag
@@ -48,7 +48,7 @@ public abstract class AbstractButtonTag extends TagSupport {
 	}
 
 	/**
-	 *
+	 * Generate the tag HTML output.
 	 */
 	public int doEndTag() throws JspException {
 		String output = "";
@@ -110,98 +110,98 @@ public abstract class AbstractButtonTag extends TagSupport {
 	}
 
 	/**
-	 *
+	 * Return the form tag checked value.
 	 */
 	public String getChecked() {
 		return this.checked;
 	}
 
 	/**
-	 *
+	 * Set the form tag checked value.
 	 */
 	public void setChecked(String checked) {
 		this.checked = checked;
 	}
 
 	/**
-	 *
+	 * Return the form tag ID value.
 	 */
 	public String getId() {
 		return this.id;
 	}
 
 	/**
-	 *
+	 * Set the form tag ID value.
 	 */
 	public void setId(String id) {
 		this.id = id;
 	}
 
 	/**
-	 *
+	 * Return the form tag name value.
 	 */
 	public String getName() {
 		return this.name;
 	}
 
 	/**
-	 *
+	 * Set the form tag name value.
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	/**
-	 *
+	 * Return the form tag onchange value.
 	 */
 	public String getOnchange() {
 		return this.onchange;
 	}
 
 	/**
-	 *
+	 * Set the form tag onchange value.
 	 */
 	public void setOnchange(String onchange) {
 		this.onchange = onchange;
 	}
 
 	/**
-	 *
+	 * Return the form tag onclick value.
 	 */
 	public String getOnclick() {
 		return this.onclick;
 	}
 
 	/**
-	 *
+	 * Set the form tag onclick value.
 	 */
 	public void setOnclick(String onclick) {
 		this.onclick = onclick;
 	}
 
 	/**
-	 *
+	 * Return the form tag CSS style value.
 	 */
 	public String getStyle() {
 		return this.style;
 	}
 
 	/**
-	 *
+	 * Set the form tag CSS style value.
 	 */
 	public void setStyle(String style) {
 		this.style = style;
 	}
 
 	/**
-	 *
+	 * Set the form tag value (if any).
 	 */
 	public String getValue() {
 		return this.value;
 	}
 
 	/**
-	 *
+	 * Returns the form tag value (if any).
 	 */
 	public void setValue(String value) {
 		this.value = value;

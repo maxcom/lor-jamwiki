@@ -35,7 +35,6 @@ import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -46,6 +45,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class TranslationServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(TranslationServlet.class.getName());
+	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_ADMIN_TRANSLATION = "admin-translation.jsp";
 
 	/**
@@ -58,7 +58,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String function = request.getParameter("function");
 		if (!StringUtils.isBlank(function)) {
-			translate(request);
+			translate(request, pageInfo);
 		}
 		view(request, next, pageInfo);
 		return next;
@@ -83,7 +83,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	private String retrieveLanguage(HttpServletRequest request) {
 		String language = request.getParameter("language");
 		if (StringUtils.isBlank(language)) {
-			WikiUser user = ServletUtil.currentUser();
+			WikiUser user = ServletUtil.currentWikiUser();
 			if (!StringUtils.isBlank(user.getDefaultLocale())) {
 				language = user.getDefaultLocale().split("_")[0];
 			} else if (request.getLocale() != null) {
@@ -129,7 +129,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void translate(HttpServletRequest request) throws Exception {
+	private void translate(HttpServletRequest request, WikiPageInfo pageInfo) throws Exception {
 		// first load existing translations
 		SortedProperties translations = new SortedProperties();
 		String language = this.retrieveLanguage(request);
@@ -150,7 +150,7 @@ public class TranslationServlet extends JAMWikiServlet {
 			translations.setProperty(key, value);
 		}
 		Environment.saveProperties(filename(language), translations, null);
-		this.writeTopic(request, null);
+		this.writeTopic(request, pageInfo);
 	}
 
 	/**
@@ -185,8 +185,8 @@ public class TranslationServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	protected void writeTopic(HttpServletRequest request, String editComment) throws Exception {
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+	private void writeTopic(HttpServletRequest request, WikiPageInfo pageInfo) throws Exception {
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		String language = request.getParameter("language");
 		String topicName = NamespaceHandler.NAMESPACE_JAMWIKI + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeTopicName(filename(language), true);
 		String contents = "<pre><nowiki>\n" + Utilities.readFile(filename(language)) + "\n</nowiki></pre>";
@@ -196,11 +196,12 @@ public class TranslationServlet extends JAMWikiServlet {
 			topic.setVirtualWiki(virtualWiki);
 			topic.setName(topicName);
 		}
+		int charactersChanged = StringUtils.length(contents) - StringUtils.length(topic.getTopicContent());
 		topic.setTopicContent(contents);
 		topic.setReadOnly(true);
 		topic.setTopicType(Topic.TYPE_SYSTEM_FILE);
-		WikiUser user = ServletUtil.currentUser();
-		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), editComment, contents);
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true, null);
+		WikiUser user = ServletUtil.currentWikiUser();
+		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), null, contents, charactersChanged);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true);
 	}
 }

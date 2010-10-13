@@ -18,7 +18,10 @@ package org.jamwiki.utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -30,7 +33,10 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -52,7 +58,7 @@ public class Utilities {
 		try {
 			VALID_IPV4_PATTERN = Pattern.compile(ipv4Pattern, Pattern.CASE_INSENSITIVE);
 			VALID_IPV6_PATTERN = Pattern.compile(ipv6Pattern, Pattern.CASE_INSENSITIVE);
-		} catch (Exception e) {
+		} catch (PatternSyntaxException e) {
 			logger.severe("Unable to compile pattern", e);
 		}
 	}
@@ -85,7 +91,7 @@ public class Utilities {
 		}
 		try {
 			text = new String(text.getBytes(fromEncoding), toEncoding);
-		} catch (Exception e) {
+		} catch (UnsupportedEncodingException e) {
 			// bad encoding
 			logger.warning("Unable to convert value " + text + " from " + fromEncoding + " to " + toEncoding, e);
 		}
@@ -103,7 +109,7 @@ public class Utilities {
 	 */
 	public static String decodeTopicName(String url, boolean decodeUnderlines) {
 		if (StringUtils.isBlank(url)) {
-			throw new IllegalArgumentException("Topic name not specified in decodeTopicName");
+			return url;
 		}
 		return (decodeUnderlines) ? StringUtils.replace(url, "_", " ") : url;
 	}
@@ -122,7 +128,7 @@ public class Utilities {
 	 */
 	public static String decodeAndEscapeTopicName(String url, boolean decodeUnderlines) {
 		if (StringUtils.isBlank(url)) {
-			throw new IllegalArgumentException("Topic name not specified in decodeAndEscapeTopicName");
+			return url;
 		}
 		String result = url;
 		try {
@@ -143,7 +149,7 @@ public class Utilities {
 	 */
 	public static String encodeTopicName(String url) {
 		if (StringUtils.isBlank(url)) {
-			throw new IllegalArgumentException("Topic name not specified in encodeTopicName");
+			return url;
 		}
 		return StringUtils.replace(url, " ", "_");
 	}
@@ -158,7 +164,7 @@ public class Utilities {
 	 */
 	public static String encodeAndEscapeTopicName(String url) {
 		if (StringUtils.isBlank(url)) {
-			throw new IllegalArgumentException("Topic name not specified in encodeAndEscapeTopicName");
+			return url;
 		}
 		String result = Utilities.encodeTopicName(url);
 		try {
@@ -175,29 +181,80 @@ public class Utilities {
 	}
 
 	/**
-	 * Returns any trailing period, comma, semicolon, or colon characters
-	 * from the given string.  This method is useful when parsing raw HTML
-	 * links, in which case trailing punctuation must be removed.
+	 * Search through content, starting at a specific position, and search for the
+	 * first position after a matching end tag for a specified start tag.  For instance,
+	 * if called with a start tag of "<b>" and an end tag of "</b>", this method
+	 * will operate as follows:
 	 *
-	 * @param text The text from which trailing punctuation should be returned.
-	 * @return Any trailing punctuation from the given text, or an empty string
-	 *  otherwise.
+	 * "01<b>567</b>23" returns 12.
+	 * "01<b>56<b>01</b>67</b>23" returns 22.
+	 *
+	 * @param content The string to be searched.
+	 * @param start The position within the string to start searching from.
+	 * @param startToken The opening tag to match.
+	 * @param endToken The closing tag to match.
+	 * @return -1 if no matching end tag is found, or the index within the string of the first
+	 *  character immediately following the end tag.
 	 */
-	public static String extractTrailingPunctuation(String text) {
-		StringBuffer buffer = new StringBuffer();
-		for (int i = text.length() - 1; i >= 0; i--) {
-			char c = text.charAt(i);
-			if (c == '.' || c == ';' || c == ',' || c == ':' || c == ')' || c == '(' || c == ']' || c == '[') {
-				buffer.append(c);
+	public static int findMatchingEndTag(String content, int start, String startToken, String endToken) {
+		return Utilities.findMatchingTag(content, start, startToken, endToken, false);
+	}
+
+	/**
+	 * Search through content, starting at a specific position, and search backwards for the
+	 * first position before a matching start tag for a specified end tag.  For instance,
+	 * if called with an end tag of "</b>" and a start tag of "<b>", this method
+	 * will operate as follows:
+	 *
+	 * "01<b>567</b>23" returns 1.
+	 * "01234567</b>23" returns -1.
+	 *
+	 * @param content The string to be searched.
+	 * @param start The position within the string to start searching from.
+	 * @param startToken The opening tag to match.
+	 * @param endToken The closing tag to match.
+	 * @return -1 if no matching start tag is found, or the index within the string of the first
+	 *  character immediately preceding the start tag.
+	 */
+	public static int findMatchingStartTag(String content, int start, String startToken, String endToken) {
+		return Utilities.findMatchingTag(content, start, startToken, endToken, true);
+	}
+
+	/**
+	 * Find a matching start/end tag.
+	 */
+	private static int findMatchingTag(String content, int start, String startToken, String endToken, boolean reverse) {
+		if (StringUtils.isBlank(content) || start >= content.length()) {
+			return -1;
+		}
+		int pos = start;
+		int count = 0;
+		String substring = null;
+		boolean atLeastOneMatch = false;
+		while (pos >= 0 && pos < content.length()) {
+			substring = (reverse) ? content.substring(0, pos + 1) : content.substring(pos);
+			if (!reverse && substring.startsWith(startToken)) {
+				count++;
+				atLeastOneMatch = true;
+				pos += startToken.length();
+			} else if (!reverse && substring.startsWith(endToken)) {
+				count--;
+				pos += endToken.length();
+			} else if (reverse && substring.endsWith(endToken)) {
+				count++;
+				atLeastOneMatch = true;
+				pos -= endToken.length();
+			} else if (reverse && substring.endsWith(startToken)) {
+				count--;
+				pos -= startToken.length();
 			} else {
-				break;
+				pos = (reverse) ? (pos - 1) : (pos + 1);
+			}
+			if (atLeastOneMatch && count == 0) {
+				return pos;
 			}
 		}
-		if (buffer.length() == 0) {
-			return "";
-		}
-		buffer = buffer.reverse();
-		return buffer.toString();
+		return -1;
 	}
 
 	/**
@@ -264,7 +321,7 @@ public class Utilities {
 		ClassLoader loader = null;
 		try {
 			loader = Thread.currentThread().getContextClassLoader();
-		} catch (Exception e) {
+		} catch (SecurityException e) {
 			logger.fine("Unable to retrieve thread class loader, trying default");
 		}
 		if (loader == null) {
@@ -280,10 +337,10 @@ public class Utilities {
 	 * @param filename The name of the file (relative to the classpath) that is
 	 *  to be retrieved.
 	 * @return A file object representing the requested filename
-	 * @throws Exception Thrown if the classloader can not be found or if
+	 * @throws FileNotFoundException Thrown if the classloader can not be found or if
 	 *  the file can not be found in the classpath.
 	 */
-	public static File getClassLoaderFile(String filename) throws Exception {
+	public static File getClassLoaderFile(String filename) throws FileNotFoundException {
 		// note that this method is used when initializing logging, so it must
 		// not attempt to log anything.
 		File file = null;
@@ -293,11 +350,11 @@ public class Utilities {
 			url = ClassLoader.getSystemResource(filename);
 		}
 		if (url == null) {
-			throw new Exception("Unable to find " + filename);
+			throw new FileNotFoundException("Unable to find " + filename);
 		}
 		file = FileUtils.toFile(url);
 		if (file == null || !file.exists()) {
-			throw new Exception("Found invalid root class loader for file " + filename);
+			throw new FileNotFoundException("Found invalid root class loader for file " + filename);
 		}
 		return file;
 	}
@@ -308,15 +365,24 @@ public class Utilities {
 	 * and then returning its parent directory.
 	 *
 	 * @return Returns a file indicating the directory of the class loader.
-	 * @throws Exception Thrown if the class loader can not be found.
+	 * @throws FileNotFoundException Thrown if the class loader can not be found.
 	 */
-	public static File getClassLoaderRoot() throws Exception {
+	public static File getClassLoaderRoot() throws FileNotFoundException {
 		// The file hard-coded here MUST be in the class loader directory.
 		File file = Utilities.getClassLoaderFile("ApplicationResources.properties");
 		if (!file.exists()) {
-			throw new Exception("Unable to find class loader root");
+			throw new FileNotFoundException("Unable to find class loader root");
 		}
 		return file.getParentFile();
+	}
+
+	/**
+	 * Given a request, determine the server URL.
+	 *
+	 * @return A Server URL of the form http://www.example.com/
+	 */
+	public static String getServerUrl(HttpServletRequest request) {
+		return request.getScheme() + "://" + request.getServerName() + ((request.getServerPort() != 80) ? ":" + request.getServerPort() : "");
 	}
 
 	/**
@@ -326,9 +392,41 @@ public class Utilities {
 	 */
 	// FIXME - there HAS to be a utility method available in Spring or some other
 	// common library that offers this functionality.
-	public static File getWebappRoot() throws Exception {
+	public static File getWebappRoot() throws FileNotFoundException {
 		// webapp root is two levels above /WEB-INF/classes/
 		return Utilities.getClassLoaderRoot().getParentFile().getParentFile();
+	}
+
+	/**
+	 * Given a String representation of a class name (for example, org.jamwiki.db.AnsiDataHandler)
+	 * return an instance of the class.  The constructor for the class being instantiated must
+	 * not take any arguments.
+	 *
+	 * @param className The name of the class being instantiated.
+	 * @return A Java Object representing an instance of the specified class.
+	 */
+	public static Object instantiateClass(String className) {
+		if (StringUtils.isBlank(className)) {
+			throw new IllegalArgumentException("Cannot call instantiateClass with an empty class name");
+		}
+		logger.fine("Instantiating class: " + className);
+		try {
+			Class clazz = ClassUtils.getClass(className);
+			Class[] parameterTypes = new Class[0];
+			Constructor constructor = clazz.getConstructor(parameterTypes);
+			Object[] initArgs = new Object[0];
+			return constructor.newInstance(initArgs);
+		} catch (ClassNotFoundException e) {
+			throw new IllegalStateException("Invalid class name specified: " + className);
+		} catch (NoSuchMethodException e) {
+			throw new IllegalStateException("Specified class does not have a valid constructor: " + className);
+		} catch (IllegalAccessException e) {
+			throw new IllegalStateException("Specified class does not have a valid constructor: " + className);
+		} catch (InvocationTargetException e) {
+			throw new IllegalStateException("Specified class does not have a valid constructor: " + className);
+		} catch (InstantiationException e) {
+			throw new IllegalStateException("Specified class could not be instantiated: " + className);
+		}
 	}
 
 	/**
@@ -393,10 +491,10 @@ public class Utilities {
 	 * @param filename The name of the file to be read, either as an absolute file
 	 *  path or relative to the classpath.
 	 * @return A string representation of the file contents.
-	 * @throws Exception Thrown if the file cannot be found or if an I/O exception
+	 * @throws FileNotFoundException Thrown if the file cannot be found or if an I/O exception
 	 *  occurs.
 	 */
-	public static String readFile(String filename) throws Exception {
+	public static String readFile(String filename) throws IOException {
 		File file = new File(filename);
 		if (file.exists()) {
 			// file passed in as full path
@@ -421,6 +519,6 @@ public class Utilities {
 	 * @return The value submitted to this method with all HTML tags removed from it.
 	 */
 	public static String stripMarkup(String value) {
-		return value.replaceAll("<[^>]+>", "");
+		return StringUtils.trim(value.replaceAll("<[^>]+>", ""));
 	}
 }

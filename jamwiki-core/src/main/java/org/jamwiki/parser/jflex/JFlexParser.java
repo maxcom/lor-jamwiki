@@ -20,13 +20,15 @@ import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.WikiBase;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
-import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
+import org.jamwiki.utils.WikiLogger;
 
 /**
  * Implementation of {@link org.jamwiki.parser.AbstractParser} that uses
@@ -90,11 +92,13 @@ public class JFlexParser extends AbstractParser {
 	/**
 	 *
 	 */
-	protected String isRedirect(String content) {
-		if (StringUtils.isBlank(content)) {
+	protected String isRedirect(ParserInput parserInput, String raw, int mode) throws Exception {
+		if (StringUtils.isBlank(raw) || mode <= JFlexParser.MODE_PREPROCESS) {
 			return null;
 		}
-		Matcher m = REDIRECT_PATTERN.matcher(content.trim());
+		// pre-process parse to handle categories, HTML comments, etc.
+		String preprocessed = JFlexParserUtil.parseFragment(parserInput, raw, JFlexParser.MODE_PREPROCESS);
+		Matcher m = REDIRECT_PATTERN.matcher(preprocessed.trim());
 		return (m.matches()) ? Utilities.decodeAndEscapeTopicName(m.group(1).trim(), true) : null;
 	}
 
@@ -118,10 +122,6 @@ public class JFlexParser extends AbstractParser {
 			lexer.append(line);
 		}
 		this.parserInput.decrementDepth();
-		String redirect = this.isRedirect(raw);
-		if (!StringUtils.isBlank(redirect)) {
-			parserOutput.setRedirect(redirect);
-		}
 		return lexer.popAllTags();
 	}
 
@@ -169,7 +169,7 @@ public class JFlexParser extends AbstractParser {
 		output = this.parsePreProcess(parserOutput, output, JFlexParser.MODE_PREPROCESS);
 		output = this.parseProcess(parserOutput, output, JFlexParser.MODE_LAYOUT);
 		output = this.parsePostProcess(parserOutput, output, JFlexParser.MODE_POSTPROCESS);
-		if (!StringUtils.isBlank(this.isRedirect(raw))) {
+		if (!StringUtils.isBlank(parserOutput.getRedirect())) {
 			// redirects are parsed differently
 			output = this.parseRedirect(parserOutput, raw);
 		}
@@ -247,6 +247,15 @@ public class JFlexParser extends AbstractParser {
 	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
 	private String parseProcess(ParserOutput parserOutput, String raw, int mode) throws Exception {
+		// if the topic is a redirect store the redirect target
+		String redirect = this.isRedirect(parserInput, raw, mode);
+		if (!StringUtils.isBlank(redirect)) {
+			boolean colon = (redirect.length() > 1 && redirect.startsWith(":"));
+			if (colon) {
+				redirect = redirect.substring(1);
+			}
+			parserOutput.setRedirect(redirect);
+		}
 		StringReader reader = toStringReader(raw);
 		JAMWikiProcessor lexer = new JAMWikiProcessor(reader);
 		return this.lex(lexer, raw, parserOutput, mode);
@@ -281,14 +290,21 @@ public class JFlexParser extends AbstractParser {
 	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
 	protected String parseRedirect(ParserOutput parserOutput, String raw) throws Exception {
-		String redirect = this.isRedirect(raw);
+		String redirect = this.isRedirect(parserInput, raw, JFlexParser.MODE_LAYOUT);
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink("[[" + redirect + "]]");
 		String style = "redirect";
-		if (!LinkUtil.isExistingArticle(this.parserInput.getVirtualWiki(), redirect.trim())) {
+		String virtualWiki = this.parserInput.getVirtualWiki();
+		// see if the redirect link starts with a virtual wiki
+		if (wikiLink.getColon() && !StringUtils.isBlank(wikiLink.getNamespace())) {
+			if (WikiBase.getDataHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
+				virtualWiki = wikiLink.getNamespace();
+				wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
+			}
+		}
+		if (!LinkUtil.isExistingArticle(virtualWiki, wikiLink.getDestination())) {
 			style = "edit redirect";
 		}
-		WikiLink wikiLink = new WikiLink();
-		wikiLink.setDestination(redirect);
-		return LinkUtil.buildInternalLinkHtml(this.parserInput.getContext(), this.parserInput.getVirtualWiki(), wikiLink, null, style, null, false);
+		return LinkUtil.buildInternalLinkHtml(this.parserInput.getContext(), virtualWiki, wikiLink, null, style, null, false);
 	}
 
 	/**

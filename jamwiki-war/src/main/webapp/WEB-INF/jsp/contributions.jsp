@@ -24,7 +24,7 @@
 
 <div id="change">
 
-<div class="message"><f:message key="common.caption.view" />: <jamwiki:pagination total="${numContributions}" rootUrl="Special:Contributions?contributor=${contributor}" /></div>
+<div class="message"><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${numContributions}" rootUrl="Special:Contributions?contributor=${contributor}" /></div>
 
 <form name="num-changes" method="get" action="<jamwiki:link value="Special:Contributions" />">
 <input type="hidden" name="contributor" value="<c:out value="${contributor}" />" />
@@ -33,13 +33,16 @@
 
 <c:forEach items="${contributions}" var="change">
 <li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
-	(<jamwiki:link value="Special:Diff"><jamwiki:linkParam key="topic" value="${change.topicName}" /><jamwiki:linkParam key="version2"><c:out value="${change.previousTopicVersionId}" /></jamwiki:linkParam><jamwiki:linkParam key="version1" value="${change.topicVersionId}" /><f:message key="common.caption.diff" /></jamwiki:link>)
+	(<jamwiki:link value="Special:Diff"><jamwiki:linkParam key="topic" value="${change.topicName}" /><jamwiki:linkParam key="version2"><c:out value="${change.previousTopicVersionId}" /></jamwiki:linkParam><jamwiki:linkParam key="version1" value="${change.topicVersionId}" /><fmt:message key="common.caption.diff" /></jamwiki:link>)
 	&#160;
-	(<jamwiki:link value="Special:History"><jamwiki:linkParam key="topic" value="${change.topicName}" /><f:message key="common.caption.history" /></jamwiki:link>)
+	(<jamwiki:link value="Special:History"><jamwiki:linkParam key="topic" value="${change.topicName}" /><fmt:message key="common.caption.history" /></jamwiki:link>)
 	&#160;
 	<%-- FIXME: do not hardcode date pattern --%>
-	<f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" />
-	&#160;
+	<fmt:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" />
+	&#160;.&#160;.&#160;
+	<%-- the "+" symbol could be added using a pattern attribute, but there does not seem to be a way to avoid having "+0" show up when that approach is used. --%>
+	(<c:if test="${change.charactersChanged > 0}">+</c:if><fmt:formatNumber value="${change.charactersChanged}" />)
+	&#160;.&#160;.&#160;
 	<jamwiki:watchlist topic="${change.topicName}">
 	<c:if test="${!change.delete}"><jamwiki:link value="${change.topicName}" text="${change.topicName}" /></c:if>
 	<c:if test="${change.delete}"><c:out value="${change.topicName}" /></c:if>

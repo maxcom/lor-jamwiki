@@ -58,7 +58,7 @@ public class HtmlLinkTag {
 	private String buildHtmlLinkRaw(ParserInput parserInput, int mode, String raw) throws Exception {
 		String link = raw.trim();
 		// search for link text (space followed by text)
-		String punctuation = Utilities.extractTrailingPunctuation(link);
+		String punctuation = this.extractTrailingPunctuation(link);
 		String text = null;
 		int pos = link.indexOf(' ');
 		if (pos == -1) {
@@ -73,6 +73,49 @@ public class HtmlLinkTag {
 		}
 		String html = this.linkHtml(parserInput, mode, link, text, punctuation);
 		return (html == null) ? raw : html;
+	}
+
+	/**
+	 * Returns any trailing period, comma, semicolon, or colon characters
+	 * from the given string.  This method is useful when parsing raw HTML
+	 * links, in which case trailing punctuation must be removed.  Note that
+	 * only punctuation that is not previously matched is trimmed - if the
+	 * input is "http://example.com/page_(page)" then the trailing parantheses
+	 * will not be trimmed.
+	 *
+	 * @param text The text from which trailing punctuation should be returned.
+	 * @return Any trailing punctuation from the given text, or an empty string
+	 *  otherwise.
+	 */
+	private String extractTrailingPunctuation(String text) {
+		if (StringUtils.isBlank(text)) {
+			return "";
+		}
+		StringBuffer buffer = new StringBuffer();
+		for (int i = text.length() - 1; i >= 0; i--) {
+			char c = text.charAt(i);
+			if (c == '.' || c == ';' || c == ',' || c == ':' || c == '(' || c == '[' || c == '{') {
+				buffer.append(c);
+				continue;
+			}
+			// if the value ends with ), ] or } then strip it UNLESS there is a matching
+			// opening tag
+			if (c == ')' || c == ']' || c == '}') {
+				String closeChar = String.valueOf(c);
+				String openChar = (c == ')') ? "(" : ((c == ']') ? "[" : "{");
+				int pos = Utilities.findMatchingStartTag(text, i, openChar, closeChar);
+				if (pos == -1) {
+					buffer.append(c);
+					continue;
+				}
+			}
+			break;
+		}
+		if (buffer.length() == 0) {
+			return "";
+		}
+		buffer = buffer.reverse();
+		return buffer.toString();
 	}
 
 	/**

@@ -34,7 +34,7 @@ called it means that a catastrophic error has occurred.
 
 <html>
 <head>
-<title><f:message key="common.sitename" /> - <f:message key="error.title" /></title>
+<title><fmt:message key="common.sitename" /> - <fmt:message key="error.title" /></title>
 <script type="text/javascript">
 function cancel() {
 	history.go(-1);
@@ -51,7 +51,7 @@ if (exception != null) {
 }
 %>
 
-<p><f:message key="error.heading" /></p>
+<p><fmt:message key="error.heading" /></p>
 <p><font style="color: red;font-weight:bold"><%= errorMessage %></font></p>
 <%
 if (exception != null) {
@@ -60,7 +60,7 @@ if (exception != null) {
 <%
 }
 %>
-<form action=""><input type="button" onClick="cancel();" value="<f:message key="common.back" />" /></form>
+<form action=""><input type="button" onClick="cancel();" value="<fmt:message key="common.back" />" /></form>
 
 </body>
 </html>

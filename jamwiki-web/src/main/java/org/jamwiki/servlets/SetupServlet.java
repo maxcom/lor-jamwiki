@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.acegisecurity.context.SecurityContextHolder;
+import org.springframework.security.context.SecurityContextHolder;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.jamwiki.Environment;
@@ -29,12 +29,12 @@ import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
-import org.jamwiki.authentication.WikiUserAuth;
+import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.db.WikiDatabase;
-import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
@@ -48,6 +48,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class SetupServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(SetupServlet.class.getName());
+	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_SETUP = "setup.jsp";
 	private static final int MINIMUM_JDK_VERSION = 140;
 
@@ -116,7 +117,7 @@ public class SetupServlet extends JAMWikiServlet {
 	 */
 	private boolean initialize(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		setProperties(request, next);
-		WikiUserAuth user = setAdminUser(request);
+		WikiUser user = setAdminUser(request);
 		Vector errors = validate(request, user);
 		if (!errors.isEmpty()) {
 			this.view(request, next, pageInfo);
@@ -136,12 +137,12 @@ public class SetupServlet extends JAMWikiServlet {
 		}
 		Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
 		Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
-		if (user == null || !user.hasRole(Role.ROLE_USER)) {
-			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUserAuth object to setupAdminUser");
-		}
-		WikiBase.reset(request.getLocale(), user);
-		WikiUserAuth.resetAnonymousGroupRoles();
-		WikiUserAuth.resetDefaultGroupRoles();
+		String username = request.getParameter("username");
+		String newPassword = request.getParameter("newPassword");
+		String encryptedPassword = Encryption.encrypt(newPassword);
+		WikiBase.reset(request.getLocale(), user, username, encryptedPassword);
+		JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
+		JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
 		Environment.saveProperties();
 		// the setup process does not add new topics to the index (currently)
 		// TODO - remove this once setup uses safe connection handling
@@ -171,13 +172,9 @@ public class SetupServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private WikiUserAuth setAdminUser(HttpServletRequest request) throws Exception {
+	private WikiUser setAdminUser(HttpServletRequest request) throws Exception {
 		String username = request.getParameter("username");
-		WikiUserAuth user = new WikiUserAuth(username);
-		String newPassword = request.getParameter("newPassword");
-		if (!StringUtils.isBlank(newPassword)) {
-			user.setPassword(Encryption.encrypt(newPassword));
-		}
+		WikiUser user = new WikiUser(username);
 		user.setCreateIpAddress(ServletUtil.getIpAddress(request));
 		user.setLastLoginIpAddress(ServletUtil.getIpAddress(request));
 		return user;
@@ -201,6 +198,8 @@ public class SetupServlet extends JAMWikiServlet {
 		} else {
 			WikiDatabase.setupDefaultDatabase(Environment.getInstance());
 		}
+		Environment.setValue(Environment.PROP_FILE_SERVER_URL, Utilities.getServerUrl(request));
+		Environment.setValue(Environment.PROP_SERVER_URL, Utilities.getServerUrl(request));
 	}
 
 	/**
@@ -231,7 +230,7 @@ public class SetupServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		pageInfo.setContentJsp(JSP_SETUP);
 		pageInfo.setSpecial(true);
-		pageInfo.setPageTitle(new WikiMessage("setup.title"));
+		pageInfo.setPageTitle(new WikiMessage("setup.title", WikiVersion.CURRENT_WIKI_VERSION));
 		Collection dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
 		next.addObject("dataHandlers", dataHandlers);
 		WikiMessage logMessage = new WikiMessage("setup.help.logfile", WikiLogger.getDefaultLogFile(), WikiLogger.getLogConfigFile());

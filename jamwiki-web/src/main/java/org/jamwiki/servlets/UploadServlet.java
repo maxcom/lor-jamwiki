@@ -50,6 +50,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class UploadServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(UploadServlet.class.getName());
+	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_UPLOAD = "upload.jsp";
 
 	/**
@@ -214,7 +215,7 @@ public class UploadServlet extends JAMWikiServlet {
 				isImage = ImageUtil.isImage(uploadedFile);
 			}
 		}
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		String topicName = NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeAndEscapeTopicName(fileName, true);
 		if (this.handleSpam(request, next, pageInfo, topicName, contents)) {
 			// FIXME - the uploaded content should be deleted
@@ -222,11 +223,13 @@ public class UploadServlet extends JAMWikiServlet {
 			return;
 		}
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+		int charactersChanged = 0;
 		if (topic == null) {
 			topic = new Topic();
 			topic.setVirtualWiki(virtualWiki);
 			topic.setName(topicName);
 			topic.setTopicContent(contents);
+			charactersChanged = StringUtils.length(contents);
 		}
 		if (isImage) {
 			topic.setTopicType(Topic.TYPE_IMAGE);
@@ -236,13 +239,13 @@ public class UploadServlet extends JAMWikiServlet {
 		WikiFileVersion wikiFileVersion = new WikiFileVersion();
 		wikiFileVersion.setUploadComment(contents);
 		wikiFileVersion.setAuthorIpAddress(ServletUtil.getIpAddress(request));
-		WikiUser user = ServletUtil.currentUser();
+		WikiUser user = ServletUtil.currentWikiUser();
 		Integer authorId = null;
 		if (user.getUserId() > 0) {
 			authorId = new Integer(user.getUserId());
 		}
 		wikiFileVersion.setAuthorId(authorId);
-		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), contents, topic.getTopicContent());
+		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), contents, topic.getTopicContent(), charactersChanged);
 		if (fileName == null) {
 			throw new WikiException(new WikiMessage("upload.error.filenotfound"));
 		}
@@ -259,9 +262,9 @@ public class UploadServlet extends JAMWikiServlet {
 		wikiFileVersion.setFileSize(fileSize);
 		wikiFile.setFileSize(fileSize);
 		ParserOutput parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki, topicName);
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true, null);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true);
 		wikiFile.setTopicId(topic.getTopicId());
-		WikiBase.getDataHandler().writeFile(wikiFile, wikiFileVersion, null);
+		WikiBase.getDataHandler().writeFile(wikiFile, wikiFileVersion);
 		ServletUtil.redirect(next, virtualWiki, topicName);
 	}
 

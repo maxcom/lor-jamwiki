@@ -27,6 +27,7 @@ public class RecentChange {
 	private static final WikiLogger logger = WikiLogger.getLogger(RecentChange.class.getName());
 	private Integer authorId = null;
 	private String authorName = null;
+	private int charactersChanged = 0;
 	private String editComment = null;
 	private Timestamp editDate = null;
 	private int editType = -1;
@@ -52,6 +53,7 @@ public class RecentChange {
 		this.previousTopicVersionId = topicVersion.getPreviousTopicVersionId();
 		this.authorId = topicVersion.getAuthorId();
 		this.authorName = authorName;
+		this.charactersChanged = topicVersion.getCharactersChanged();
 		this.editComment = topicVersion.getEditComment();
 		this.editDate = topicVersion.getEditDate();
 		this.editType = topicVersion.getEditType();
@@ -104,6 +106,20 @@ public class RecentChange {
 			changeTypeNotification += "u";
 		}
 		return changeTypeNotification;
+	}
+
+	/**
+	 *
+	 */
+	public int getCharactersChanged() {
+		return this.charactersChanged;
+	}
+
+	/**
+	 *
+	 */
+	public void setCharactersChanged(int charactersChanged) {
+		this.charactersChanged = charactersChanged;
 	}
 
 	/**

@@ -24,18 +24,19 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Used to display search results.
  *
- * @see org.jamwiki.search.SearchEngine
+ * @see org.jamwiki.SearchEngine
  */
 public class SearchServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(SearchServlet.class.getName());
+	/** The name of the JSP file used to render the servlet output when searching. */
 	protected static final String JSP_SEARCH = "search.jsp";
+	/** The name of the JSP file used to render the servlet output when displaying search results. */
 	protected static final String JSP_SEARCH_RESULTS = "search-results.jsp";
 
 	/**
@@ -54,7 +55,7 @@ public class SearchServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void jumpTo(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		String topic = request.getParameter("text");
 		if (LinkUtil.isExistingArticle(virtualWiki, topic)) {
 			ServletUtil.redirect(next, virtualWiki, topic);
@@ -68,7 +69,7 @@ public class SearchServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void search(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		String searchField = request.getParameter("text");
 		if (request.getParameter("text") == null) {
 			pageInfo.setPageTitle(new WikiMessage("search.title"));

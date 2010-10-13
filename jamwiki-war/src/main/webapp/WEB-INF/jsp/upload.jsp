@@ -23,21 +23,21 @@
 <%@ include file="page-init.jsp" %>
 
 <c:if test="${!empty uploadSpam}">
-<div class="message red"><f:message key="${spam.key}"><f:param value="${spam.params[0]}" /></f:message></div>
+<div class="message red"><fmt:message key="${spam.key}"><fmt:param value="${spam.params[0]}" /></fmt:message></div>
 </c:if>
 
 <form name="form1" method="post" action="<jamwiki:link value="Special:Upload" />" enctype="multipart/form-data">
 <table border="0">
 <tr>
-	<td><label for="uploadSource"><f:message key="import.caption.source" /></label>:</td>
+	<td><label for="uploadSource"><fmt:message key="import.caption.source" /></label>:</td>
 	<td><input type="file" name="contents" size="50" id="uploadSource" /></td>
 </tr>
 <tr>
-	<td><label for="uploadDescription"><f:message key="upload.caption.filedescription" /></label>:</td>
+	<td><label for="uploadDescription"><fmt:message key="upload.caption.filedescription" /></label>:</td>
 	<td><textarea name="description" rows="6" cols="80" id="uploadDescription"><c:out value="${contents}" escapeXml="true" /></textarea></td>
 </tr>
 <tr>
-	<td colspan="2" align="center"><input type="submit" name="save" value="<f:message key="common.save" />" /></td>
+	<td colspan="2" align="center"><input type="submit" name="save" value="<fmt:message key="common.save" />" /></td>
 </tr>
 </table>
 </form>

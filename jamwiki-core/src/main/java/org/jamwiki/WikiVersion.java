@@ -31,7 +31,7 @@ public class WikiVersion {
 	private final int patch;
 
 	/** Current software version.  If this differs from the version in the properties an upgrade is performed. */
-	public final static String CURRENT_WIKI_VERSION = "0.6.7";
+	public final static String CURRENT_WIKI_VERSION = "0.7.0";
 
 	/**
 	 * Constructor to create a new Wiki version object using a version string of
@@ -39,13 +39,13 @@ public class WikiVersion {
 	 *
 	 * @param version A version string of the form "0.3.5".
 	 */
-	public WikiVersion(String version) throws Exception {
+	public WikiVersion(String version) {
 		if (StringUtils.isBlank(version)) {
-			throw new Exception("Invalid Wiki version: " + version);
+			throw new IllegalArgumentException("Invalid Wiki version: " + version);
 		}
 		String[] tokens = version.split("\\.");
 		if (tokens.length != 3) {
-			throw new Exception("Invalid Wiki version: " + version);
+			throw new IllegalArgumentException("Invalid Wiki version: " + version);
 		}
 		this.major = new Integer(tokens[0]).intValue();
 		this.minor = new Integer(tokens[1]).intValue();

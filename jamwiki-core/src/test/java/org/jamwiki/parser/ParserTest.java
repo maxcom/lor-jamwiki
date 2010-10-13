@@ -61,18 +61,18 @@ public class ParserTest extends TestCase {
 	/**
 	 *
 	 */
-	private void executeParserTest(String topicName) throws Exception {
-		String parserResult = this.parserResult(topicName);
-		String expectedResult = this.expectedResult(topicName);
-		assertEquals(parserResult, expectedResult);
+	private void executeParserTest(String fileName) throws Exception {
+		String parserResult = this.parserResult(fileName);
+		String expectedResult = this.expectedResult(fileName);
+		assertEquals("Testing file " + fileName,expectedResult, parserResult);
 	}
 
 	/**
 	 *
 	 */
-	private String expectedResult(String topicName) throws Exception {
-		String raw = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_TOPICS_DIR, topicName);
-		return this.parse(topicName, raw);
+	private String expectedResult(String fileName) throws Exception {
+		String result = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_RESULTS_DIR, fileName);
+		return this.sanitize(result);
 	}
 
 	/**
@@ -81,13 +81,18 @@ public class ParserTest extends TestCase {
 	// TODO - handle failure cases better.
 	private boolean knownFailure(String fileName) {
 		ArrayList failures = new ArrayList();
+		failures.add("Heading5");
+		failures.add("HtmlCommentTest2");
+		failures.add("HtmlMismatchTest3");
 		failures.add("HtmlXSS1");
+		failures.add("ImageLink2"); // bad paragraph parsing - no <p> around <div> tags
 		failures.add("NestedTable1");
 		failures.add("NestedTable2");
-		failures.add("HtmlMismatchTest3");
-		failures.add("UnbalancedTag1");
-		failures.add("Paragraph6");
+		failures.add("Paragraph13");
+		failures.add("Paragraph15"); // failure parsing of empty paragraphs with <nowiki>
 		failures.add("PreformattedInvalid1");
+		failures.add("UnbalancedTag1");
+		failures.add("UnbalancedTag3");
 		return (failures.indexOf(fileName) != -1);
 	}
 
@@ -117,9 +122,10 @@ public class ParserTest extends TestCase {
 	/**
 	 *
 	 */
-	private String parserResult(String topicName) throws Exception {
-		String result = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_RESULTS_DIR, topicName);
-		return this.sanitize(result);
+	private String parserResult(String fileName) throws Exception {
+		String raw = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_TOPICS_DIR, fileName);
+		String topicName = TestFileUtil.decodeTopicName(fileName);
+		return this.parse(topicName, raw);
 	}
 
 	/**

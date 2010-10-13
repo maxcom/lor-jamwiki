@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+import org.apache.commons.lang.math.NumberUtils;
 // FIXME - remove this import
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.jamwiki.utils.SortedProperties;
@@ -44,7 +45,6 @@ public class Environment {
 	public static final String PROP_BASE_META_DESCRIPTION = "meta-description";
 	public static final String PROP_BASE_PERSISTENCE_TYPE = "persistenceType";
 	public static final String PROP_BASE_SEARCH_ENGINE = "search-engine";
-	public static final String PROP_BASE_USER_HANDLER = "user-handler";
 	public static final String PROP_BASE_WIKI_VERSION = "wiki-version";
 	public static final String PROP_CACHE_INDIVIDUAL_SIZE = "cache-individual-size";
 	public static final String PROP_CACHE_MAX_AGE = "cache-max-age";
@@ -75,18 +75,9 @@ public class Environment {
 	public static final String PROP_FILE_DIR_FULL_PATH = "file-dir-full-path";
 	public static final String PROP_FILE_DIR_RELATIVE_PATH = "file-dir-relative-path";
 	public static final String PROP_FILE_MAX_FILE_SIZE = "max-file-size";
+	public static final String PROP_FILE_SERVER_URL = "file-server-url";
 	public static final String PROP_FILE_WHITELIST = "file-whitelist";
 	public static final String PROP_IMAGE_RESIZE_INCREMENT = "image-resize-increment";
-	public static final String PROP_LDAP_FACTORY_CLASS = "ldap-factory-class";
-	public static final String PROP_LDAP_CONTEXT = "ldap-context";
-	public static final String PROP_LDAP_FIELD_EMAIL = "ldap-field-email";
-	public static final String PROP_LDAP_FIELD_FIRST_NAME = "ldap-field-first-name";
-	public static final String PROP_LDAP_FIELD_LAST_NAME = "ldap-field-last-name";
-	public static final String PROP_LDAP_FIELD_USERID = "ldap-field-login";
-	public static final String PROP_LDAP_LOGIN = "ldap-login";
-	public static final String PROP_LDAP_PASSWORD = "ldap-password";
-	public static final String PROP_LDAP_SECURITY_AUTHENTICATION = "ldap-security";
-	public static final String PROP_LDAP_URL = "ldap-url";
 	public static final String PROP_PARSER_ALLOW_HTML = "allowHTML";
 	public static final String PROP_PARSER_ALLOW_JAVASCRIPT = "allow-javascript";
 	public static final String PROP_PARSER_ALLOW_TEMPLATES = "allow-templates";
@@ -102,13 +93,14 @@ public class Environment {
 	public static final String PROP_RECENT_CHANGES_NUM = "recent-changes-days";
 	public static final String PROP_RSS_ALLOWED = "rss-allowed";
 	public static final String PROP_RSS_TITLE = "rss-title";
+	public static final String PROP_SERVER_URL = "server-url";
+	public static final String PROP_TOPIC_EDITOR = "default-editor";
 	// FIXME - this property can be removed once the abilitity to upgrade to 0.6.0 is removed
 	public static final String PROP_TOPIC_FORCE_USERNAME = "force-username";
 	// FIXME - this property can be removed once the abilitity to upgrade to 0.6.0 is removed
 	public static final String PROP_TOPIC_NON_ADMIN_TOPIC_MOVE = "non-admin-redirect";
 	public static final String PROP_TOPIC_SPAM_FILTER = "use-spam-filter";
 	public static final String PROP_TOPIC_USE_PREVIEW = "use-preview";
-	public static final String PROP_TOPIC_WYSIWYG = "wysiwyg-editor";
 	private static final String PROPERTY_FILE_NAME = "jamwiki.properties";
 
 	private static Properties defaults = null;
@@ -124,14 +116,10 @@ public class Environment {
 	 * The constructor loads property values from the property file.
 	 */
 	private Environment() {
-		try {
-			initDefaultProperties();
-			logger.fine("Default properties initialized: " + defaults.toString());
-			props = loadProperties(PROPERTY_FILE_NAME, defaults);
-			logger.fine("JAMWiki properties initialized: " + props.toString());
-		} catch (Exception e) {
-			logger.severe("Failure while initializing property values", e);
-		}
+		initDefaultProperties();
+		logger.fine("Default properties initialized: " + defaults.toString());
+		props = loadProperties(PROPERTY_FILE_NAME, defaults);
+		logger.fine("JAMWiki properties initialized: " + props.toString());
 	}
 
 	/**
@@ -168,7 +156,6 @@ public class Environment {
 		defaults.setProperty(PROP_BASE_META_DESCRIPTION, "");
 		defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, WikiBase.PERSISTENCE_INTERNAL);
 		defaults.setProperty(PROP_BASE_SEARCH_ENGINE, WikiBase.SEARCH_ENGINE_LUCENE);
-		defaults.setProperty(PROP_BASE_USER_HANDLER, WikiBase.USER_HANDLER_DATABASE);
 		defaults.setProperty(PROP_BASE_WIKI_VERSION, "0.0.0");
 		defaults.setProperty(PROP_CACHE_INDIVIDUAL_SIZE, "500");
 		defaults.setProperty(PROP_CACHE_MAX_AGE, "300");
@@ -200,18 +187,9 @@ public class Environment {
 		defaults.setProperty(PROP_FILE_DIR_RELATIVE_PATH, Environment.retrieveDefaultRelativeUploadDirectory());
 		// size is in bytes
 		defaults.setProperty(PROP_FILE_MAX_FILE_SIZE, "2000000");
+		defaults.setProperty(PROP_FILE_SERVER_URL, "");
 		defaults.setProperty(PROP_FILE_WHITELIST, "bmp,gif,jpeg,jpg,pdf,png,properties,svg,txt,zip");
 		defaults.setProperty(PROP_IMAGE_RESIZE_INCREMENT, "100");
-		defaults.setProperty(PROP_LDAP_CONTEXT, "ou=users,dc=mycompany,dc=com");
-		defaults.setProperty(PROP_LDAP_FACTORY_CLASS, "com.sun.jndi.ldap.LdapCtxFactory");
-		defaults.setProperty(PROP_LDAP_FIELD_EMAIL, "mail");
-		defaults.setProperty(PROP_LDAP_FIELD_FIRST_NAME, "givenName");
-		defaults.setProperty(PROP_LDAP_FIELD_LAST_NAME, "sn");
-		defaults.setProperty(PROP_LDAP_FIELD_USERID, "uid");
-		defaults.setProperty(PROP_LDAP_LOGIN, "");
-		defaults.setProperty(PROP_LDAP_PASSWORD, "");
-		defaults.setProperty(PROP_LDAP_SECURITY_AUTHENTICATION, "DIGEST-MD5");
-		defaults.setProperty(PROP_LDAP_URL, "ldap://localhost:389");
 		defaults.setProperty(PROP_PARSER_ALLOW_HTML, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_PARSER_ALLOW_JAVASCRIPT, Boolean.FALSE.toString());
 		defaults.setProperty(PROP_PARSER_ALLOW_TEMPLATES, Boolean.TRUE.toString());
@@ -227,9 +205,11 @@ public class Environment {
 		defaults.setProperty(PROP_RECENT_CHANGES_NUM, "100");
 		defaults.setProperty(PROP_RSS_ALLOWED, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_RSS_TITLE, "Wiki Recent Changes");
+		defaults.setProperty(PROP_SERVER_URL, "");
+		// FIXME - hard coding
+		defaults.setProperty(PROP_TOPIC_EDITOR, "toolbar");
 		defaults.setProperty(PROP_TOPIC_SPAM_FILTER, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_TOPIC_USE_PREVIEW, Boolean.TRUE.toString());
-		defaults.setProperty(PROP_TOPIC_WYSIWYG, Boolean.TRUE.toString());
 	}
 
 	/**
@@ -242,14 +222,7 @@ public class Environment {
 	 * @return The value of the property.
 	 */
 	public static boolean getBooleanValue(String name) {
-		String value = getValue(name);
-		try {
-			return Boolean.valueOf(value).booleanValue(); //NOPMD there is already a FIX ME
-		} catch (Exception e) {
-			logger.severe("Invalid boolean property " + name + " with value " + value);
-		}
-		// FIXME - should this otherwise indicate an invalid property?
-		return false;
+		return Boolean.valueOf(getValue(name)).booleanValue();
 	}
 
 	/**
@@ -269,14 +242,12 @@ public class Environment {
 	 * @return The value of the property.
 	 */
 	public static int getIntValue(String name) {
-		String value = getValue(name);
-		try {
-			 return Integer.parseInt(value); //NOPMD
-		} catch (Exception e) {
+		int value = NumberUtils.toInt(getValue(name), -1);
+		if (value == -1) {
 			logger.warning("Invalid integer property " + name + " with value " + value);
 		}
 		// FIXME - should this otherwise indicate an invalid property?
-		return -1;
+		return value;
 	}
 
 	/**
@@ -286,14 +257,12 @@ public class Environment {
 	 * @return The value of the property.
 	 */
 	public static long getLongValue(String name) {
-		String value = getValue(name);
-		try {
-			 return Long.parseLong(value); //NOPMD
-		} catch (Exception e) {
+		long value = NumberUtils.toLong(getValue(name), -1);
+		if (value == -1) {
 			logger.warning("Invalid long property " + name + " with value " + value);
 		}
 		// FIXME - should this otherwise indicate an invalid property?
-		return -1;
+		return value;
 	}
 
 	/**
@@ -343,7 +312,7 @@ public class Environment {
 				fis = new FileInputStream(file);
 				properties.load(fis);
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			logger.severe("Failure while trying to load properties file " + file.getPath(), e);
 		} finally {
 			if (fis != null) {
@@ -365,7 +334,7 @@ public class Environment {
 	private static String retrieveDefaultRelativeUploadDirectory() {
 		try {
 			return "/" + Utilities.getWebappRoot().getName() + "/upload/";
-		} catch (Exception e) {
+		} catch (FileNotFoundException e) {
 			logger.severe("Failure while trying to retrieve default file upload directory", e);
 		}
 		return "";
@@ -379,7 +348,7 @@ public class Environment {
 	private static String retrieveDefaultUploadDirectory() {
 		try {
 			return new File(Utilities.getWebappRoot(), "upload").getPath();
-		} catch (Exception e) {
+		} catch (FileNotFoundException e) {
 			logger.severe("Failure while trying to retrieve default file upload directory", e);
 		}
 		return "";
@@ -399,14 +368,14 @@ public class Environment {
 		File file = null;
 		try {
 			file = Utilities.getClassLoaderFile(filename);
-			return file; //NOPMD
-		} catch (Exception e) {
+			return file;
+		} catch (FileNotFoundException e) {
 			// NOPMD file might not exist
 		}
 		try {
 			file = new File(Utilities.getClassLoaderRoot(), filename);
-			return file; //NOPMD
-		} catch (Exception e) {
+			return file;
+		} catch (FileNotFoundException e) {
 			logger.severe("Error while searching for resource " + filename, e);
 		}
 		return null;
@@ -441,7 +410,7 @@ public class Environment {
 			if (out != null) {
 				try {
 					out.close();
-				} catch (Exception e) {
+				} catch (IOException e) {
 					// NOPMD ignore, unimportant if a close fails
 				}
 			}
@@ -477,7 +446,7 @@ public class Environment {
 	public static void setValue(String name, String value) {
 		// it is invalid to set a property value null, so convert to empty string
 		if (value == null) {
-			value = ""; //NOPMD
+			value = "";
 		}
 		props.setProperty(name, value);
 	}

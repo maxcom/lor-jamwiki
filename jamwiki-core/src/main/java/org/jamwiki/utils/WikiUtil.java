@@ -19,27 +19,26 @@ package org.jamwiki.utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Constructor;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataHandler;
 import org.jamwiki.Environment;
 import org.jamwiki.SearchEngine;
-import org.jamwiki.UserHandler;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.VirtualWiki;
 
 /**
  * This class provides a variety of general utility methods for handling
@@ -61,7 +60,7 @@ public class WikiUtil {
 			INVALID_ROLE_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_ROLE_NAME));
 			INVALID_TOPIC_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_TOPIC_NAME));
 			VALID_USER_LOGIN_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_VALID_USER_LOGIN));
-		} catch (Exception e) {
+		} catch (PatternSyntaxException e) {
 			logger.severe("Unable to compile pattern", e);
 		}
 	}
@@ -71,8 +70,6 @@ public class WikiUtil {
 	 * request.
 	 *
 	 * @param request The servlet request object.
-	 * @param next A ModelAndView object corresponding to the page being
-	 *  constructed.
 	 * @return A Pagination object constructed from parameters found in the
 	 *  request object.
 	 */
@@ -80,16 +77,16 @@ public class WikiUtil {
 		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_NUM);
 		if (request.getParameter("num") != null) {
 			try {
-				num = new Integer(request.getParameter("num")).intValue();
-			} catch (Exception e) {
+				num = Integer.parseInt(request.getParameter("num"));
+			} catch (NumberFormatException e) {
 				// invalid number
 			}
 		}
 		int offset = 0;
 		if (request.getParameter("offset") != null) {
 			try {
-				offset = new Integer(request.getParameter("offset")).intValue();
-			} catch (Exception e) {
+				offset = Integer.parseInt(request.getParameter("offset"));
+			} catch (NumberFormatException e) {
 				// invalid number
 			}
 		}
@@ -103,7 +100,7 @@ public class WikiUtil {
 	 * @throws Exception Thrown if a data handler instance can not be
 	 *  instantiated.
 	 */
-	public static DataHandler dataHandlerInstance() throws Exception {
+	public static DataHandler dataHandlerInstance() throws IOException {
 		// FIXME - remove this conditional after the ability to upgrade to
 		// 0.5.0 is removed.
 		if (Environment.getValue(Environment.PROP_DB_TYPE) == null) {
@@ -137,12 +134,11 @@ public class WikiUtil {
 		    Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_ASA);
 		}
 		String dataHandlerClass = Environment.getValue(Environment.PROP_DB_TYPE);
-		logger.fine("Using data handler: " + dataHandlerClass);
-		Class clazz = ClassUtils.getClass(dataHandlerClass);
-		Class[] parameterTypes = new Class[0];
-		Constructor constructor = clazz.getConstructor(parameterTypes);
-		Object[] initArgs = new Object[0];
-		return (DataHandler)constructor.newInstance(initArgs);
+		try {
+			return (DataHandler)Utilities.instantiateClass(dataHandlerClass);
+		} catch (ClassCastException e) {
+			throw new IllegalStateException("Data handler specified in jamwiki.properties does not implement org.jamwiki.DataHandler: " + dataHandlerClass);
+		}
 	}
 
 	/**
@@ -178,9 +174,9 @@ public class WikiUtil {
 	 *  be constructed.
 	 * @return The comments article name for the article name.
 	 */
-	public static String extractCommentsLink(String name) throws Exception {
+	public static String extractCommentsLink(String name) {
 		if (StringUtils.isBlank(name)) {
-			throw new Exception("Empty topic name " + name);
+			throw new IllegalArgumentException("Topic name must not be empty in extractCommentsLink");
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
 		if (StringUtils.isBlank(wikiLink.getNamespace())) {
@@ -200,9 +196,9 @@ public class WikiUtil {
 	 *  constructed.
 	 * @return The topic article name for the article name.
 	 */
-	public static String extractTopicLink(String name) throws Exception {
+	public static String extractTopicLink(String name) {
 		if (StringUtils.isBlank(name)) {
-			throw new Exception("Empty topic name " + name);
+			throw new IllegalArgumentException("Topic name must not be empty in extractTopicLink");
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
 		if (StringUtils.isBlank(wikiLink.getNamespace())) {
@@ -214,11 +210,29 @@ public class WikiUtil {
 	}
 
 	/**
+	 * Determine the URL for the default virtual wiki topic, not including the application server context.
+	 */
+	public static String findDefaultVirtualWikiUrl(String virtualWikiName) {
+		if (StringUtils.isBlank(virtualWikiName)) {
+			virtualWikiName = WikiBase.DEFAULT_VWIKI;
+		}
+		String target = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
+		try {
+			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
+			target = virtualWiki.getDefaultTopicName();
+		} catch (Exception e) {
+			logger.warning("Unable to retrieve default topic for virtual wiki", e);
+		}
+		return "/" + virtualWikiName + "/" + target;
+	}
+
+	/**
 	 *
 	 */
 	public static Topic findRedirectedTopic(Topic parent, int attempts) throws Exception {
 		int count = attempts;
-		if (parent.getTopicType() != Topic.TYPE_REDIRECT || StringUtils.isBlank(parent.getRedirectTo())) {
+		String target = parent.getRedirectTo();
+		if (parent.getTopicType() != Topic.TYPE_REDIRECT || StringUtils.isBlank(target)) {
 			logger.severe("getRedirectTarget() called for non-redirect topic " + parent.getName());
 			return parent;
 		}
@@ -226,9 +240,18 @@ public class WikiUtil {
 		count++;
 		if (count > 10) {
 			//TODO throw new WikiException(new WikiMessage("topic.redirect.infinite"));
+			return parent;
+		}
+		String virtualWiki = parent.getVirtualWiki();
+		WikiLink wikiLink = LinkUtil.parseWikiLink(target);
+		if (!StringUtils.isBlank(wikiLink.getNamespace())) {
+			if (WikiBase.getDataHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
+				virtualWiki = wikiLink.getNamespace();
+				wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
+			}
 		}
 		// get the topic that is being redirected to
-		Topic child = WikiBase.getDataHandler().lookupTopic(parent.getVirtualWiki(), parent.getRedirectTo(), false, null);
+		Topic child = WikiBase.getDataHandler().lookupTopic(virtualWiki, wikiLink.getDestination(), false, null);
 		if (child == null) {
 			// child being redirected to doesn't exist, return parent
 			return parent;
@@ -237,11 +260,7 @@ public class WikiUtil {
 			// found a topic that is not a redirect, return
 			return child;
 		}
-		if (WikiBase.getDataHandler().lookupTopic(child.getVirtualWiki(), child.getRedirectTo(), false, null) == null) {
-			// child is a redirect, but its target does not exist
-			return child;
-		}
-		// topic is a redirect, keep looking
+		// child is a redirect, keep looking
 		return findRedirectedTopic(child, count);
 	}
 
@@ -256,7 +275,7 @@ public class WikiUtil {
 	 *  be automatically converted to spaces.
 	 * @return The decoded parameter value retrieved from the request.
 	 */
-	public static String getParameterFromRequest(HttpServletRequest request, String name, boolean decodeUnderlines) throws Exception {
+	public static String getParameterFromRequest(HttpServletRequest request, String name, boolean decodeUnderlines) {
 		String value = null;
 		if (request.getMethod().equalsIgnoreCase("GET")) {
 			// parameters passed via the URL are URL encoded, so request.getParameter may
@@ -295,7 +314,7 @@ public class WikiUtil {
 	 * @param request The servlet request object.
 	 * @return The decoded topic name retrieved from the request.
 	 */
-	public static String getTopicFromRequest(HttpServletRequest request) throws Exception {
+	public static String getTopicFromRequest(HttpServletRequest request) {
 		return WikiUtil.getParameterFromRequest(request, WikiUtil.PARAMETER_TOPIC, true);
 	}
 
@@ -321,7 +340,7 @@ public class WikiUtil {
 				logger.warning("No topic in URL: " + request.getRequestURI());
 				return null;
 			}
-			topic = topic.substring(0, topic.indexOf('#'));
+			topic = topic.substring(0, pos);
 		}
 		pos = topic.indexOf('?');
 		if (pos != -1) {
@@ -330,7 +349,16 @@ public class WikiUtil {
 				logger.warning("No topic in URL: " + request.getRequestURI());
 				return null;
 			}
-			topic = topic.substring(0, topic.indexOf('?'));
+			topic = topic.substring(0, pos);
+		}
+		pos = topic.indexOf(';');
+		if (pos != -1) {
+			// some servlet containers return parameters of the form ";jsessionid=1234" when getRequestURI is called.
+			if (pos == 0) {
+				logger.warning("No topic in URL: " + request.getRequestURI());
+				return null;
+			}
+			topic = topic.substring(0, pos);
 		}
 		if (!StringUtils.isBlank(topic)) {
 			topic = Utilities.decodeAndEscapeTopicName(topic, true);
@@ -422,7 +450,7 @@ public class WikiUtil {
 	 * @return <code>true</code> if the system has been upgraded, <code>false</code>
 	 *  otherwise.
 	 */
-	public static boolean isUpgrade() throws Exception {
+	public static boolean isUpgrade() {
 		if (WikiUtil.isFirstUse()) {
 			return false;
 		}
@@ -438,7 +466,7 @@ public class WikiUtil {
 	 * @param locale The locale for the user viewing the special page.
 	 * @param pageName The name of the special page being retrieved.
 	 */
-	public static String readSpecialPage(Locale locale, String pageName) throws Exception {
+	public static String readSpecialPage(Locale locale, String pageName) throws IOException {
 		String contents = null;
 		String filename = null;
 		String language = null;
@@ -453,7 +481,7 @@ public class WikiUtil {
 				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language + "_" + country).getPath();
 				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
 				contents = Utilities.readFile(filename);
-			} catch (Exception e) {
+			} catch (IOException e) {
 				logger.info("File " + filename + " does not exist");
 			}
 		}
@@ -462,7 +490,7 @@ public class WikiUtil {
 				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language).getPath();
 				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
 				contents = Utilities.readFile(filename);
-			} catch (Exception e) {
+			} catch (IOException e) {
 				logger.info("File " + filename + " does not exist");
 			}
 		}
@@ -471,7 +499,7 @@ public class WikiUtil {
 				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR).getPath();
 				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
 				contents = Utilities.readFile(filename);
-			} catch (Exception e) {
+			} catch (IOException e) {
 				logger.warning("File " + filename + " could not be read", e);
 				throw e;
 			}
@@ -548,34 +576,14 @@ public class WikiUtil {
 	 * Utility method to retrieve an instance of the current search engine.
 	 *
 	 * @return An instance of the current search engine.
-	 * @throws Exception Thrown if a user handler instance can not be
-	 *  instantiated.
 	 */
-	public static SearchEngine searchEngineInstance() throws Exception {
+	public static SearchEngine searchEngineInstance() {
 		String searchEngineClass = Environment.getValue(Environment.PROP_BASE_SEARCH_ENGINE);
-		logger.fine("Search engine: " + searchEngineClass);
-		Class clazz = ClassUtils.getClass(searchEngineClass);
-		Class[] parameterTypes = new Class[0];
-		Constructor constructor = clazz.getConstructor(parameterTypes);
-		Object[] initArgs = new Object[0];
-		return (SearchEngine)constructor.newInstance(initArgs);
-	}
-
-	/**
-	 * Utility method to retrieve an instance of the current user handler.
-	 *
-	 * @return An instance of the current user handler.
-	 * @throws Exception Thrown if a user handler instance can not be
-	 *  instantiated.
-	 */
-	public static UserHandler userHandlerInstance() throws Exception {
-		String userHandlerClass = Environment.getValue(Environment.PROP_BASE_USER_HANDLER);
-		logger.fine("Using user handler: " + userHandlerClass);
-		Class clazz = ClassUtils.getClass(userHandlerClass);
-		Class[] parameterTypes = new Class[0];
-		Constructor constructor = clazz.getConstructor(parameterTypes);
-		Object[] initArgs = new Object[0];
-		return (UserHandler)constructor.newInstance(initArgs);
+		try {
+			return (SearchEngine)Utilities.instantiateClass(searchEngineClass);
+		} catch (ClassCastException e) {
+			throw new IllegalStateException("Search engine specified in jamwiki.properties does not implement org.jamwiki.SearchEngine: " + searchEngineClass);
+		}
 	}
 
 	/**
@@ -597,7 +605,7 @@ public class WikiUtil {
 		try {
 			// attempt to write a temp file to the directory
 			FileUtils.writeStringToFile(file, text, "UTF-8");
-		} catch (Exception e) {
+		} catch (IOException e) {
 			return new WikiMessage("error.directorywrite", name, e.getMessage());
 		}
 		try {
@@ -606,13 +614,13 @@ public class WikiUtil {
 			if (read == null || !text.equals(read)) {
 				throw new IOException();
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			return new WikiMessage("error.directoryread", name, e.getMessage());
 		}
 		try {
 			// attempt to delete the file
 			FileUtils.forceDelete(file);
-		} catch (Exception e) {
+		} catch (IOException e) {
 			return new WikiMessage("error.directorydelete", name, e.getMessage());
 		}
 		return null;
@@ -665,16 +673,17 @@ public class WikiUtil {
 	 * Utility method for determining if a password is valid for use on the wiki.
 	 *
 	 * @param password The password value.
-	 * @param passwordConfirmation The password confirmation.
+	 * @param confirmPassword Passwords must be entered twice to avoid tying errors.
+	 *  This field represents the confirmed password entry.
 	 */
 	public static void validatePassword(String password, String confirmPassword) throws WikiException {
 		if (StringUtils.isBlank(password)) {
 			throw new WikiException(new WikiMessage("error.newpasswordempty"));
 		}
-		if (WikiBase.getUserHandler().isWriteable() && StringUtils.isBlank(confirmPassword)) {
+		if (StringUtils.isBlank(confirmPassword)) {
 			throw new WikiException(new WikiMessage("error.passwordconfirm"));
 		}
-		if (WikiBase.getUserHandler().isWriteable() && !password.equals(confirmPassword)) {
+		if (!password.equals(confirmPassword)) {
 			throw new WikiException(new WikiMessage("admin.message.passwordsnomatch"));
 		}
 	}

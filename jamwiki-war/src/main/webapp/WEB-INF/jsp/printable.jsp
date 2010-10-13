@@ -25,9 +25,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title><f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /></f:message> - <f:message key="common.sitename" /></title>
+	<title><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /></fmt:message> - <fmt:message key="common.sitename" /></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="DC.Title" content="<f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /></f:message> - <f:message key="common.sitename" />" />
+	<meta name="DC.Title" content="<fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /></fmt:message> - <fmt:message key="common.sitename" />" />
 <c:if test="${!empty pageInfo.metaDescription}">
 	<meta name="description" content="<c:out value="${pageInfo.metaDescription}" />" />
 </c:if>
@@ -39,7 +39,7 @@
 </head>
 <body style="background:none">
 
-<div id="contents-header"><f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /></f:message></div>
+<h1 id="contents-header"><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /></fmt:message></h1>
 
 <%@ include file="category-include.jsp" %>
 <%@ include file="view-topic-include.jsp" %>

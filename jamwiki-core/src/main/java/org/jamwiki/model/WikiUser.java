@@ -17,6 +17,8 @@
 package org.jamwiki.model;
 
 import java.sql.Timestamp;
+import org.apache.commons.lang.StringUtils;
+import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -30,16 +32,20 @@ public class WikiUser {
 	private String createIpAddress = "0.0.0.0";
 	private String defaultLocale = null;
 	private String displayName = null;
+	/** The user's preferred editor (if any). */
+	private String editor = Environment.getValue(Environment.PROP_TOPIC_EDITOR);
+	private String email = null;
 	private Timestamp lastLoginDate = new Timestamp(System.currentTimeMillis());
 	private String lastLoginIpAddress = "0.0.0.0";
+	/** The user's custom signature (if any). */
+	private String signature = null;
 	private String username = null;
 	private int userId = -1;
-	private String password = null;
 
 	/**
 	 *
 	 */
-	protected WikiUser() {
+	public WikiUser() {
 	}
 
 	/**
@@ -108,6 +114,34 @@ public class WikiUser {
 	/**
 	 *
 	 */
+	public String getEditor() {
+		return (StringUtils.isBlank(this.editor)) ? Environment.getValue(Environment.PROP_TOPIC_EDITOR) : this.editor;
+	}
+
+	/**
+	 *
+	 */
+	public void setEditor(String editor) {
+		this.editor = editor;
+	}
+
+	/**
+	 *
+	 */
+	public String getEmail() {
+		return this.email;
+	}
+
+	/**
+	 *
+	 */
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	/**
+	 *
+	 */
 	public Timestamp getLastLoginDate() {
 		return this.lastLoginDate;
 	}
@@ -136,6 +170,20 @@ public class WikiUser {
 	/**
 	 *
 	 */
+	public String getSignature() {
+		return this.signature;
+	}
+
+	/**
+	 *
+	 */
+	public void setSignature(String signature) {
+		this.signature = signature;
+	}
+
+	/**
+	 *
+	 */
 	public int getUserId() {
 		return this.userId;
 	}
@@ -145,20 +193,6 @@ public class WikiUser {
 	 */
 	public void setUserId(int userId) {
 		this.userId = userId;
-	}
-
-	/**
-	 *
-	 */
-	public String getPassword() {
-		return password;
-	}
-
-	/**
-	 *
-	 */
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	/**

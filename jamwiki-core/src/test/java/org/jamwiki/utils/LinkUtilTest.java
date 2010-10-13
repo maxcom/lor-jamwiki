@@ -92,8 +92,8 @@ public class LinkUtilTest extends TestCase {
 	/**
 	 *
 	 */
-	public void testBuildInternalLinkUrl() throws Throwable {
-		String result = LinkUtil.buildInternalLinkUrl("testLinkUtilContext", "testLinkUtilVirtualWiki", "");
+	public void testbuildTopicUrl() throws Throwable {
+		String result = LinkUtil.buildTopicUrl("testLinkUtilContext", "testLinkUtilVirtualWiki", "", true);
 		assertNull("result", result);
 	}
 

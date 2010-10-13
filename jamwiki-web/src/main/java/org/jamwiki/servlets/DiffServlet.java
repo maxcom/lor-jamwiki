@@ -32,6 +32,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class DiffServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(DiffServlet.class.getName());
+	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_DIFF = "diff.jsp";
 
 	/**
@@ -45,7 +46,7 @@ public class DiffServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	protected void diff(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	private void diff(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
 		int topicVersionId1 = 0;
 		if (!StringUtils.isBlank(request.getParameter("version1"))) {

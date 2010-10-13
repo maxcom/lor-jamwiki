@@ -17,9 +17,9 @@
 
 --%>
 
-<div id="user-menu">
+<div id="user-menu"><ul>
 <c:forEach items="${pageInfo.userMenu}" var="menuItem">
-	<div class="menu-item"><jamwiki:link value="${menuItem.key}"><f:message key="${menuItem.value.key}"><f:param value="${menuItem.value.params[0]}" /></f:message></jamwiki:link></div>
+	<li><jamwiki:link value="${menuItem.key}"><fmt:message key="${menuItem.value.key}"><fmt:param value="${menuItem.value.params[0]}" /></fmt:message></jamwiki:link></li>
 </c:forEach>
-</div>
+</ul></div>
 <div class="clear"></div>

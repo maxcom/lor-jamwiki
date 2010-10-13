@@ -22,10 +22,11 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.WikiUserAuth;
+import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -37,14 +38,15 @@ import org.springframework.web.servlet.ModelAndView;
 public class MoveServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(MoveServlet.class.getName());
+	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_MOVE = "move.jsp";
 
 	/**
 	 *
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		WikiUserAuth user = ServletUtil.currentUser();
-		if (!user.hasRole(Role.ROLE_MOVE)) {
+		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		if (!userDetails.hasRole(Role.ROLE_MOVE)) {
 			WikiMessage messageObject = new WikiMessage("login.message.move");
 			return ServletUtil.viewLogin(request, pageInfo, WikiUtil.getTopicFromURI(request), messageObject);
 		}
@@ -80,7 +82,7 @@ public class MoveServlet extends JAMWikiServlet {
 				}
 			}
 		}
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		ServletUtil.redirect(next, virtualWiki, moveDestination);
 	}
 
@@ -88,7 +90,7 @@ public class MoveServlet extends JAMWikiServlet {
 	 *
 	 */
 	private boolean movePage(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String moveFrom, String moveDestination) throws Exception {
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		Topic fromTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, moveFrom, false, null);
 		if (fromTopic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
@@ -98,8 +100,8 @@ public class MoveServlet extends JAMWikiServlet {
 			next.addObject("messageObject", new WikiMessage("move.exception.nodestination"));
 			return false;
 		}
-		WikiUserAuth user = ServletUtil.currentUser();
-		if (!ServletUtil.isMoveable(virtualWiki, moveFrom, user)) {
+		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		if (!ServletUtil.isMoveable(virtualWiki, moveFrom, userDetails)) {
 			pageInfo.setContentJsp(JSP_MOVE);
 			next.addObject("messageObject", new WikiMessage("move.exception.permission", moveFrom));
 			return false;
@@ -115,9 +117,10 @@ public class MoveServlet extends JAMWikiServlet {
 		if (!StringUtils.isBlank(request.getParameter("moveComment"))) {
 			moveComment += " (" + request.getParameter("moveComment") + ")";
 		}
-		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), moveComment, fromTopic.getTopicContent());
+		WikiUser user = ServletUtil.currentWikiUser();
+		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), moveComment, fromTopic.getTopicContent(), 0);
 		topicVersion.setEditType(TopicVersion.EDIT_MOVE);
-		WikiBase.getDataHandler().moveTopic(fromTopic, topicVersion, moveDestination, null);
+		WikiBase.getDataHandler().moveTopic(fromTopic, topicVersion, moveDestination);
 		return true;
 	}
 
@@ -126,7 +129,7 @@ public class MoveServlet extends JAMWikiServlet {
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		if (StringUtils.isBlank(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}

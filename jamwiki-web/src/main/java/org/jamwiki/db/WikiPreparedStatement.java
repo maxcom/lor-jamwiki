@@ -19,6 +19,7 @@ package org.jamwiki.db;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import org.apache.commons.lang.StringUtils;
@@ -54,7 +55,7 @@ public class WikiPreparedStatement {
 	/**
 	 *
 	 */
-	public WikiResultSet executeQuery() throws Exception {
+	public WikiResultSet executeQuery() throws SQLException {
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
@@ -67,7 +68,7 @@ public class WikiPreparedStatement {
 	/**
 	 *
 	 */
-	public WikiResultSet executeQuery(Connection conn) throws Exception {
+	public WikiResultSet executeQuery(Connection conn) throws SQLException {
 		ResultSet rs = null;
 		try {
 			long start = System.currentTimeMillis();
@@ -80,8 +81,9 @@ public class WikiPreparedStatement {
 			}
 			logger.fine("Executed " + this.sql + " (" + (execution / 1000.000) + " s.)");
 			return new WikiResultSet(rs);
-		} catch (Exception e) {
-			throw new Exception("Failure while executing " + this.sql, e);
+		} catch (SQLException e) {
+			logger.severe("Failure while executing " + this.sql, e);
+			throw e;
 		} finally {
 			DatabaseConnection.closeConnection(null, this.statement, rs);
 		}
@@ -90,7 +92,7 @@ public class WikiPreparedStatement {
 	/**
 	 *
 	 */
-	public int executeUpdate() throws Exception {
+	public int executeUpdate() throws SQLException {
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
@@ -103,7 +105,7 @@ public class WikiPreparedStatement {
 	/**
 	 *
 	 */
-	public int executeUpdate(Connection conn) throws Exception {
+	public int executeUpdate(Connection conn) throws SQLException {
 		try {
 			long start = System.currentTimeMillis();
 			this.statement = conn.prepareStatement(this.sql);
@@ -115,8 +117,9 @@ public class WikiPreparedStatement {
 			}
 			logger.fine("Executed " + this.sql + " (" + (execution / 1000.000) + " s.)");
 			return result;
-		} catch (Exception e) {
-			throw new Exception("Failure while executing " + this.sql, e);
+		} catch (SQLException e) {
+			logger.severe("Failure while executing " + this.sql, e);
+			throw e;
 		} finally {
 			DatabaseConnection.closeConnection(null, this.statement);
 		}
@@ -125,7 +128,7 @@ public class WikiPreparedStatement {
 	/**
 	 *
 	 */
-	private void loadStatement() throws Exception {
+	private void loadStatement() throws SQLException {
 		for (int i = 0; i < this.paramTypes.length; i++) {
 			if (params[i] == null) {
 				this.statement.setNull(i+1, paramTypes[i]);
@@ -151,9 +154,9 @@ public class WikiPreparedStatement {
 	 *
 	 * @param parameterIndex The first parameter is 1, the second is 2, ...
 	 * @param x The parameter value.
-	 * @throws Exception If a parameter is invalid.
+	 * @throws IndexOutOfBoundsException If a parameter is invalid.
 	 */
-	public void setChar(int parameterIndex, char x) throws Exception {
+	public void setChar(int parameterIndex, char x) {
 		this.verifyParams(parameterIndex);
 		this.paramTypes[parameterIndex - 1] = Types.CHAR;
 		this.params[parameterIndex - 1] = new Character(x);
@@ -165,9 +168,9 @@ public class WikiPreparedStatement {
 	 *
 	 * @param parameterIndex The first parameter is 1, the second is 2, ...
 	 * @param x The parameter value.
-	 * @throws Exception If a parameter is invalid.
+	 * @throws IndexOutOfBoundsException If a parameter is invalid.
 	 */
-	public void setInt(int parameterIndex, int x) throws Exception {
+	public void setInt(int parameterIndex, int x) {
 		this.verifyParams(parameterIndex);
 		this.paramTypes[parameterIndex - 1] = Types.INTEGER;
 		this.params[parameterIndex - 1] = new Integer(x);
@@ -179,9 +182,9 @@ public class WikiPreparedStatement {
 	 *
 	 * @param parameterIndex The first parameter is 1, the second is 2, ...
 	 * @param x The parameter value.
-	 * @throws Exception If a parameter is invalid.
+	 * @throws IndexOutOfBoundsException If a parameter is invalid.
 	 */
-	public void setInt(int parameterIndex, long x) throws Exception {
+	public void setInt(int parameterIndex, long x) {
 		// this is a bit kludgy - cast the long to an int.  problem for very big values.
 		this.verifyParams(parameterIndex);
 		this.paramTypes[parameterIndex - 1] = Types.INTEGER;
@@ -195,9 +198,9 @@ public class WikiPreparedStatement {
 	 *
 	 * @param parameterIndex The first parameter is 1, the second is 2, ...
 	 * @param sqlType The SQL type code defined in java.sql.Types
-	 * @throws Exception If a parameter is invalid.
+	 * @throws IndexOutOfBoundsException If a parameter is invalid.
 	 */
-	public void setNull(int parameterIndex, int sqlType) throws Exception {
+	public void setNull(int parameterIndex, int sqlType) {
 		this.verifyParams(parameterIndex);
 		this.paramTypes[parameterIndex - 1] = sqlType;
 		this.params[parameterIndex - 1] = null;
@@ -211,9 +214,9 @@ public class WikiPreparedStatement {
 	 *
 	 * @param parameterIndex The first parameter is 1, the second is 2, ...
 	 * @param x The parameter value.
-	 * @throws Exception If a parameter is invalid.
+	 * @throws IndexOutOfBoundsException If a parameter is invalid.
 	 */
-	public void setString(int parameterIndex, String x) throws Exception {
+	public void setString(int parameterIndex, String x) {
 		this.verifyParams(parameterIndex);
 		this.paramTypes[parameterIndex - 1] = Types.VARCHAR;
 		this.params[parameterIndex - 1] = x;
@@ -225,9 +228,9 @@ public class WikiPreparedStatement {
 	 *
 	 * @param parameterIndex The first parameter is 1, the second is 2, ...
 	 * @param x The parameter value.
-	 * @throws Exception If a parameter is invalid.
+	 * @throws IndexOutOfBoundsException If a parameter is invalid.
 	 */
-	public void setTimestamp(int parameterIndex, Timestamp x) throws Exception {
+	public void setTimestamp(int parameterIndex, Timestamp x) {
 		this.verifyParams(parameterIndex);
 		this.paramTypes[parameterIndex - 1] = Types.TIMESTAMP;
 		this.params[parameterIndex - 1] = x;
@@ -236,9 +239,9 @@ public class WikiPreparedStatement {
 	/**
 	 *
 	 */
-	private void verifyParams(int pos) throws Exception {
+	private void verifyParams(int pos) {
 		if (pos <= 0) {
-			throw new Exception("Invalid PreparedStatement index " + pos);
+			throw new IndexOutOfBoundsException("Invalid PreparedStatement index " + pos);
 		}
 	}
 }

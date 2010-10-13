@@ -17,6 +17,7 @@
 package org.jamwiki;
 
 import java.util.Locale;
+import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.WikiUtil;
 import org.jamwiki.utils.WikiCache;
@@ -28,8 +29,7 @@ import org.jamwiki.utils.WikiLogger;
  * for resetting core structures including caches and permissions.
  *
  * @see org.jamwiki.DataHandler
- * @see org.jamwiki.UserHandler
- * @see org.jamwiki.search.SearchEngine
+ * @see org.jamwiki.SearchEngine
  */
 public class WikiBase {
 
@@ -39,13 +39,13 @@ public class WikiBase {
 	private static WikiBase instance = null;
 	/** The data handler that looks after read/write operations. */
 	private static DataHandler dataHandler = null;
-	/** The handler for user login/authentication. */
-	private static UserHandler userHandler = null;
 	/** The search engine instance. */
 	private static SearchEngine searchEngine = null;
 
 	/** Cache name for the cache of parsed topic content. */
 	public static final String CACHE_PARSED_TOPIC_CONTENT = "org.jamwiki.WikiBase.CACHE_PARSED_TOPIC_CONTENT";
+	/** Cache name for the cache of image dimensions. */
+	public static final String CACHE_IMAGE_DIMENSIONS = "org.jamwiki.WikiBase.CACHE_IMAGE_DIMENSIONS";
 	/** Ansi data handler class */
 	public static final String DATA_HANDLER_ANSI = "org.jamwiki.db.AnsiDataHandler";
 	/** DB2 data handler class */
@@ -67,6 +67,8 @@ public class WikiBase {
 	/** Name of the default wiki */
 	// FIXME - make this configurable
 	public static final String DEFAULT_VWIKI = "en";
+	/** Default group for registered users. */
+	private static WikiGroup GROUP_REGISTERED_USER = null;
 	/** Data stored using an external database */
 	public static final String PERSISTENCE_EXTERNAL = "DATABASE";
 	/** Data stored using an internal copy of the HSQL database */
@@ -82,8 +84,6 @@ public class WikiBase {
 	/** Name of the default footer topic. */
 	public static final String SPECIAL_PAGE_BOTTOM_AREA = "BottomArea";
 	/** Name of the default jamwiki.css topic. */
-	public static final String SPECIAL_PAGE_SPECIAL_PAGES = "SpecialPages";
-	/** Name of the default jamwiki.css topic. */
 	public static final String SPECIAL_PAGE_STYLESHEET = "StyleSheet";
 	/** Allow file uploads of any file type. */
 	public static final int UPLOAD_ALL = 0;
@@ -93,10 +93,6 @@ public class WikiBase {
 	public static final int UPLOAD_NONE = 1;
 	/** Use a whitelist to determine what file types can be uploaded. */
 	public static final int UPLOAD_WHITELIST = 3;
-	/** Database user handler class */
-	public static final String USER_HANDLER_DATABASE = "org.jamwiki.db.DatabaseUserHandler";
-	/** LDAP user handler class */
-	public static final String USER_HANDLER_LDAP = "org.jamwiki.ldap.LdapUserHandler";
 
 	static {
 		try {
@@ -127,6 +123,23 @@ public class WikiBase {
 	}
 
 	/**
+	 *
+	 */
+	public static WikiGroup getGroupRegisteredUser() {
+		if (WikiUtil.isFirstUse() || WikiUtil.isUpgrade()) {
+			throw new IllegalStateException("Cannot retrieve group information prior to completing setup/upgrade");
+		}
+		if (WikiBase.GROUP_REGISTERED_USER == null) {
+			try {
+				WikiBase.GROUP_REGISTERED_USER = WikiBase.getDataHandler().lookupWikiGroup(WikiGroup.GROUP_REGISTERED_USER);
+			} catch (Exception e) {
+				throw new RuntimeException("Unable to retrieve registered users group", e);
+			}
+		}
+		return WikiBase.GROUP_REGISTERED_USER;
+	}
+
+	/**
 	 * Get an instance of the current search engine.
 	 *
 	 * @return The current search engine instance.
@@ -136,19 +149,11 @@ public class WikiBase {
 	}
 
 	/**
-	 *
-	 */
-	public static UserHandler getUserHandler() {
-		return WikiBase.userHandler;
-	}
-
-	/**
 	 * Reload the data handler, user handler, and other basic wiki
 	 * data structures.
 	 */
 	public static void reload() throws Exception {
 		WikiBase.dataHandler = WikiUtil.dataHandlerInstance();
-		WikiBase.userHandler = WikiUtil.userHandlerInstance();
 		WikiBase.searchEngine = WikiUtil.searchEngineInstance();
 	}
 
@@ -160,11 +165,14 @@ public class WikiBase {
 	 *  as a part of the initialization process.
 	 * @param user A sysadmin user to be used in case any system pages need to
 	 *  be created as a part of the initialization process.
+	 * @param username The admin user's username (login).
+	 * @param encryptedPassword The admin user's encrypted password.  This value
+	 *  is only required when creating a new admin user.
 	 * @throws Exception Thrown if an error occurs during re-initialization.
 	 */
-	public static void reset(Locale locale, WikiUser user) throws Exception {
+	public static void reset(Locale locale, WikiUser user, String username, String encryptedPassword) throws Exception {
 		WikiBase.instance = new WikiBase();
 		WikiCache.initialize();
-		WikiBase.dataHandler.setup(locale, user);
+		WikiBase.dataHandler.setup(locale, user, username, encryptedPassword);
 	}
 }

@@ -40,8 +40,8 @@
 	<form method="post" action="<jamwiki:link value="Special:Search" />">
 	<input type="text" name="text" size="20" value="" />
 	<br />
-	<input type="submit" name="search" value='<f:message key="generalmenu.search"/>'/>
-	<input type="submit" name="jumpto" value='<f:message key="generalmenu.jumpto"/>'/>
+	<input type="submit" name="search" value='<fmt:message key="generalmenu.search"/>'/>
+	<input type="submit" name="jumpto" value='<fmt:message key="generalmenu.jumpto"/>'/>
 	</form>
 	</div>
 </div>
@@ -49,10 +49,9 @@
 	<%@ include file="user-menu.jsp"%>
 	<%@ include file="top-menu.jsp"%>
 	<div id="contents" >
-	<div id="contents-header"><f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /></f:message></div>
-	<c:if test="${!empty pageInfo.redirectName}">
-	<c:set var="redirectUrl"><jamwiki:link value="${pageInfo.redirectName}"><jamwiki:linkParam key="redirect" value="no" /><c:out value="${pageInfo.redirectName}" /></jamwiki:link></c:set>
-	<div id="contents-subheader"><f:message key="topic.redirect.from"><f:param value="${redirectUrl}" /></f:message></div>
+	<h1 id="contents-header"><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /></fmt:message></h1>
+	<c:if test="${!empty pageInfo.redirectUrl}">
+	<div id="contents-subheader"><fmt:message key="topic.redirect.from"><fmt:param><a href="<c:out value="${pageInfo.redirectUrl}" />"><c:out value="${pageInfo.redirectName}" /></a></fmt:param></fmt:message></div>
 	</c:if>
 <c:set var="contentJsp" scope="page" value="${pageInfo.contentJsp}" />
 <%
@@ -67,7 +66,7 @@ String contentJsp = (String)pageContext.getAttribute("contentJsp");
 	<hr width="99%" />
 	<c:out value="${bottomArea}" escapeXml="false" />
 	<br/>
-	<font size="-3"><a href="http://jamwiki.org/">JAMWiki</a> <f:message key="footer.message.version" /> <jamwiki:wiki-version/></font>
+	<font size="-3"><a href="http://jamwiki.org/">JAMWiki</a> <fmt:message key="footer.message.version" /> <jamwiki:wiki-version/></font>
 </div>
 </div>
 

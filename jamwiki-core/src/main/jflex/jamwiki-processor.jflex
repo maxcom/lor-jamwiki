@@ -6,7 +6,6 @@
 package org.jamwiki.parser.jflex;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
@@ -22,16 +21,17 @@ import org.jamwiki.utils.WikiLogger;
 
 /* code copied verbatim into the generated .java file */
 %{
-    protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiProcessor.class.getName());
+    private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiProcessor.class.getName());
 %}
 
 /* character expressions */
 newline            = "\n"
 whitespace         = [ \n\t\f]
 entity             = (&#([0-9]{2,4});) | (&[A-Za-z]{2,6};)
+emptyline          = ([ \t])* ({newline})
 
 /* non-container expressions */
-hr                 = "----"
+hr                 = ({newline})? "----" ({newline})
 wikiheading        = [\=]+ ([^\n\=]+|[^\n\=][^\n]+[^\n\=]) [\=]+
 bold               = "'''"
 bolditalic         = "'''''"
@@ -94,7 +94,7 @@ tablecaption       = "|+" | "|+" ({tableattribute})+ "|" [^\|]
 wikilink           = "[[" [^\]\n]+ "]]" [a-z]*
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
 htmllinkwiki       = "[" ({protocol}) ([^\]\n]+) "]"
-htmllinkraw        = ({protocol}) ([^ \n\t]+)
+htmllinkraw        = ({protocol}) ([^ <'\n\t]+)
 htmllink           = ({htmllinkwiki}) | ({htmllinkraw})
 /* FIXME - hard-coding of image namespace */
 imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\]\[]* ({wikilink} | {htmllinkwiki}) [^\n\]\[]*)+ "]]"
@@ -106,16 +106,38 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* paragraphs */
 /* TODO: this pattern does not match text such as "< is a less than sign" */
-startparagraph     = ([^< \n])|{inlinetagopen}|{imagelinkcaption}|{wikilink}|{htmllink}|{bold}|{bolditalic}|{italic}|{entity}
-startparagraphempty = ({newline}) ({newline})+ ({startparagraph})
+startparagraph     = ({emptyline})? ({emptyline})? ([^< \n])|{inlinetagopen}|{imagelinkcaption}|{wikilink}|{htmllink}|{bold}|{bolditalic}|{italic}|{entity}|{nowiki}
+paragraphempty     = ({emptyline}) ({emptyline})+
 endparagraph1      = ({newline}){1,2} ({hr}|{wikiheading}|{listitem}|{wikiprestart}|{tablestart})
-endparagraph2      = ({newline}){2}
+endparagraph2      = (({newline})([ \t]*)){2}
 endparagraph3      = {blockleveltagopen}|{htmlprestart}|{blockleveltagclose}
 endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 %state TABLE, LIST, PRE, JAVASCRIPT, WIKIPRE, PARAGRAPH
 
 %%
+
+/* ----- paragraphs ----- */
+
+<YYINITIAL>^{startparagraph} {
+    logger.finer("startparagraph: " + yytext() + " (" + yystate() + ")");
+    this.parseParagraphStart(yytext());
+    beginState(PARAGRAPH);
+    return "";
+}
+
+<YYINITIAL>^{paragraphempty} {
+    logger.finer("paragraphempty: " + yytext() + " (" + yystate() + ")");
+    this.parseParagraphEmpty(yytext());
+    return "";
+}
+
+<PARAGRAPH>{endparagraph} {
+    logger.finer("endparagraph: " + yytext() + " (" + yystate() + ")");
+    this.parseParagraphEnd(yytext());
+    endState();
+    return "";
+}
 
 /* ----- nowiki ----- */
 
@@ -310,7 +332,9 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 <YYINITIAL>^{hr} {
     logger.finer("hr: " + yytext() + " (" + yystate() + ")");
-    return "<hr />\n";
+    // pushback the closing newline
+    yypushback(1);
+    return "<hr />";
 }
 
 <YYINITIAL, PARAGRAPH>^{wikiheading} {
@@ -363,29 +387,6 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
         return "";
     }
     return yytext();
-}
-
-/* ----- paragraphs ----- */
-
-<YYINITIAL>^{startparagraph} {
-    logger.finer("startparagraph: " + yytext() + " (" + yystate() + ")");
-    this.parseParagraphStart(yytext());
-    beginState(PARAGRAPH);
-    return "";
-}
-
-<YYINITIAL>^{startparagraphempty} {
-    logger.finer("startparagraphempty: " + yytext() + " (" + yystate() + ")");
-    this.parseParagraphStartEmpty(yytext());
-    beginState(PARAGRAPH);
-    return "";
-}
-
-<PARAGRAPH>{endparagraph} {
-    logger.finer("endparagraph: " + yytext() + " (" + yystate() + ")");
-    this.parseParagraphEnd(yytext());
-    endState();
-    return "";
 }
 
 /* ----- wiki links ----- */
@@ -553,6 +554,16 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
         return raw;
     }
     return StringEscapeUtils.escapeHtml(raw);
+}
+
+<YYINITIAL>^{emptyline} {
+    // suppress superfluous empty lines
+    return "";
+}
+
+<PARAGRAPH>{newline} {
+    // convert newlines within paragraphs to spaces
+    return " ";
 }
 
 <YYINITIAL, WIKIPRE, PRE, LIST, TABLE, JAVASCRIPT, PARAGRAPH>{whitespace} {

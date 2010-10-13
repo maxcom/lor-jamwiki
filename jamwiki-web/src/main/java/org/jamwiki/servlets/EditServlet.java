@@ -23,11 +23,12 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.WikiUserAuth;
+import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.Watchlist;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
@@ -46,6 +47,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class EditServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(EditServlet.class.getName());
+	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_EDIT = "edit.jsp";
 
 	/**
@@ -69,7 +71,7 @@ public class EditServlet extends JAMWikiServlet {
 	 */
 	private void edit(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		Topic topic = loadTopic(virtualWiki, topicName);
 		// topic name might be updated by loadTopic
 		topicName = topic.getName();
@@ -85,7 +87,7 @@ public class EditServlet extends JAMWikiServlet {
 		if (!StringUtils.isBlank(request.getParameter("topicVersionId"))) {
 			// editing an older version
 			Integer topicVersionId = new Integer(request.getParameter("topicVersionId"));
-			TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId.intValue(), null);
+			TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId.intValue());
 			if (topicVersion == null) {
 				throw new WikiException(new WikiMessage("common.exception.notopic"));
 			}
@@ -101,6 +103,9 @@ public class EditServlet extends JAMWikiServlet {
 			// editing a full new or existing topic
 			contents = (topic == null) ? "" : topic.getTopicContent();
 		}
+		WikiUser user = ServletUtil.currentWikiUser();
+		String editor = user.getEditor();
+		next.addObject("editor", editor);
 		next.addObject("contents", contents);
 	}
 
@@ -114,7 +119,7 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		WikiMessage spam = new WikiMessage("edit.exception.spam", result);
 		next.addObject("spam", spam);
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		next.addObject("contents", contents);
 		loadEdit(request, next, pageInfo, virtualWiki, topicName, false);
 		next.addObject("editSpam", "true");
@@ -178,8 +183,8 @@ public class EditServlet extends JAMWikiServlet {
 	 */
 	private ModelAndView loginRequired(HttpServletRequest request, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
-		WikiUserAuth user = ServletUtil.currentUser();
+		String virtualWiki = pageInfo.getVirtualWikiName();
+		WikiUserDetails user = ServletUtil.currentUserDetails();
 		if (ServletUtil.isEditable(virtualWiki, topicName, user)) {
 			return null;
 		}
@@ -212,7 +217,7 @@ public class EditServlet extends JAMWikiServlet {
 	 */
 	private void preview(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		String contents = (String)request.getParameter("contents");
 		Topic previewTopic = new Topic();
 		previewTopic.setName(topicName);
@@ -229,7 +234,7 @@ public class EditServlet extends JAMWikiServlet {
 	 */
 	private void resolve(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		Topic lastTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		String contents1 = lastTopic.getTopicContent();
 		String contents2 = request.getParameter("contents");
@@ -255,7 +260,7 @@ public class EditServlet extends JAMWikiServlet {
 	 */
 	private void save(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		Topic topic = loadTopic(virtualWiki, topicName);
 		Topic lastTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (lastTopic != null && !lastTopic.getCurrentVersionId().equals(retrieveLastTopicVersionId(request, topic))) {
@@ -288,7 +293,7 @@ public class EditServlet extends JAMWikiServlet {
 			return;
 		}
 		// parse for signatures and other syntax that should not be saved in raw form
-		WikiUserAuth user = ServletUtil.currentUser();
+		WikiUser user = ServletUtil.currentWikiUser();
 		ParserInput parserInput = new ParserInput();
 		parserInput.setContext(request.getContextPath());
 		parserInput.setLocale(request.getLocale());
@@ -309,17 +314,19 @@ public class EditServlet extends JAMWikiServlet {
 			topic.setRedirectTo(null);
 			topic.setTopicType(Topic.TYPE_ARTICLE);
 		}
-		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), request.getParameter("editComment"), contents);
+		int charactersChanged = StringUtils.length(contents) - StringUtils.length(lastTopicContent);
+		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), request.getParameter("editComment"), contents, charactersChanged);
 		if (request.getParameter("minorEdit") != null) {
 			topicVersion.setEditType(TopicVersion.EDIT_MINOR);
 		}
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true, null);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true);
 		// update watchlist
-		if (user.hasRole(Role.ROLE_USER)) {
+		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		if (!userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 			Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
 			boolean watchTopic = (request.getParameter("watchTopic") != null);
 			if (watchlist.containsTopic(topicName) != watchTopic) {
-				WikiBase.getDataHandler().writeWatchlistEntry(watchlist, virtualWiki, topicName, user.getUserId(), null);
+				WikiBase.getDataHandler().writeWatchlistEntry(watchlist, virtualWiki, topicName, user.getUserId());
 			}
 		}
 		// redirect to prevent user from refreshing and re-submitting

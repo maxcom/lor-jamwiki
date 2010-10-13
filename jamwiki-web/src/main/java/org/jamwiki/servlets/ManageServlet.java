@@ -36,6 +36,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class ManageServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(ManageServlet.class.getName());
+	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_ADMIN_MANAGE = "admin-manage.jsp";
 
 	/**
@@ -77,18 +78,19 @@ public class ManageServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void deletePage(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName) throws Exception {
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, null);
 		if (topic.getDeleted()) {
 			logger.warning("Attempt to delete a topic that is already deleted: " + virtualWiki + " / " + topicName);
 			return;
 		}
+		int charactersChanged = 0 - StringUtils.length(topic.getTopicContent());
 		String contents = "";
 		topic.setTopicContent(contents);
-		WikiUser user = ServletUtil.currentUser();
-		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), request.getParameter("deleteComment"), contents);
+		WikiUser user = ServletUtil.currentWikiUser();
+		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), request.getParameter("deleteComment"), contents, charactersChanged);
 		topicVersion.setEditType(TopicVersion.EDIT_DELETE);
-		WikiBase.getDataHandler().deleteTopic(topic, topicVersion, true, null);
+		WikiBase.getDataHandler().deleteTopic(topic, topicVersion, true);
 	}
 
 	/**
@@ -96,7 +98,7 @@ public class ManageServlet extends JAMWikiServlet {
 	 */
 	private void permissions(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		if (topicName == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
@@ -106,10 +108,10 @@ public class ManageServlet extends JAMWikiServlet {
 		}
 		topic.setReadOnly(request.getParameter("readOnly") != null);
 		topic.setAdminOnly(request.getParameter("adminOnly") != null);
-		WikiUser user = ServletUtil.currentUser();
-		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), Utilities.formatMessage("manage.message.permissions", request.getLocale()), topic.getTopicContent());
+		WikiUser user = ServletUtil.currentWikiUser();
+		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), Utilities.formatMessage("manage.message.permissions", request.getLocale()), topic.getTopicContent(), 0);
 		topicVersion.setEditType(TopicVersion.EDIT_PERMISSION);
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true, null);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true);
 		next.addObject("message", new WikiMessage("manage.message.updated", topicName));
 		view(request, next, pageInfo);
 	}
@@ -137,23 +139,24 @@ public class ManageServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void undeletePage(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName) throws Exception {
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, null);
 		if (!topic.getDeleted()) {
 			logger.warning("Attempt to undelete a topic that is not deleted: " + virtualWiki + " / " + topicName);
 			return;
 		}
-		TopicVersion previousVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId().intValue(), null);
+		TopicVersion previousVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId().intValue());
 		while (previousVersion != null && previousVersion.getPreviousTopicVersionId() != null && previousVersion.getEditType() == TopicVersion.EDIT_DELETE) {
 			// loop back to find the last non-delete edit
-			previousVersion = WikiBase.getDataHandler().lookupTopicVersion(previousVersion.getPreviousTopicVersionId().intValue(), null);
+			previousVersion = WikiBase.getDataHandler().lookupTopicVersion(previousVersion.getPreviousTopicVersionId().intValue());
 		}
 		String contents = previousVersion.getVersionContent();
 		topic.setTopicContent(contents);
-		WikiUser user = ServletUtil.currentUser();
-		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), request.getParameter("undeleteComment"), contents);
+		WikiUser user = ServletUtil.currentWikiUser();
+		int charactersChanged = StringUtils.length(contents);
+		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), request.getParameter("undeleteComment"), contents, charactersChanged);
 		topicVersion.setEditType(TopicVersion.EDIT_UNDELETE);
-		WikiBase.getDataHandler().undeleteTopic(topic, topicVersion, true, null);
+		WikiBase.getDataHandler().undeleteTopic(topic, topicVersion, true);
 	}
 
 	/**
@@ -161,7 +164,7 @@ public class ManageServlet extends JAMWikiServlet {
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, null);
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));

@@ -17,11 +17,11 @@
 package org.jamwiki;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.utils.WikiLogger;
@@ -48,18 +48,20 @@ public class WikiConfiguration {
 	private static WikiConfiguration instance = null;
 
 	private List dataHandlers = null;
+	private Map editors = null;
 	private Map namespaces = null;
 	private List parsers = null;
 	private List pseudotopics = null;
 	private List searchEngines = null;
 	private Map translations = null;
-	private List userHandlers = null;
 
 	/** Name of the configuration file. */
 	public static final String JAMWIKI_CONFIGURATION_FILE = "jamwiki-configuration.xml";
 	private static final String XML_CONFIGURATION_ROOT = "configuration";
 	private static final String XML_DATA_HANDLER = "data-handler";
 	private static final String XML_DATA_HANDLER_ROOT = "data-handlers";
+	private static final String XML_EDITOR = "editor";
+	private static final String XML_EDITOR_ROOT = "editors";
 	private static final String XML_NAMESPACE = "namespace";
 	private static final String XML_NAMESPACE_COMMENTS = "comments";
 	private static final String XML_NAMESPACE_MAIN = "main";
@@ -76,8 +78,6 @@ public class WikiConfiguration {
 	private static final String XML_SEARCH_ENGINE_ROOT = "search-engines";
 	private static final String XML_TRANSLATION = "translation";
 	private static final String XML_TRANSLATION_ROOT = "translations";
-	private static final String XML_USER_HANDLER = "user-handler";
-	private static final String XML_USER_HANDLER_ROOT = "user-handlers";
 
 	/**
 	 *
@@ -101,6 +101,13 @@ public class WikiConfiguration {
 	 */
 	public Collection getDataHandlers() {
 		return this.dataHandlers;
+	}
+
+	/**
+	 *
+	 */
+	public Map getEditors() {
+		return this.editors;
 	}
 
 	/**
@@ -141,22 +148,15 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
-	public Collection getUserHandlers() {
-		return this.userHandlers;
-	}
-
-	/**
-	 *
-	 */
 	private void initialize() {
 		try {
-			this.dataHandlers = new Vector();
-			this.namespaces = new HashMap();
-			this.parsers = new Vector();
-			this.pseudotopics = new Vector();
-			this.searchEngines = new Vector();
-			this.translations = new HashMap();
-			this.userHandlers = new Vector();
+			this.dataHandlers = new ArrayList();
+			this.editors = new LinkedHashMap();
+			this.namespaces = new LinkedHashMap();
+			this.parsers = new ArrayList();
+			this.pseudotopics = new ArrayList();
+			this.searchEngines = new ArrayList();
+			this.translations = new LinkedHashMap();
 			File file = Utilities.getClassLoaderFile(JAMWIKI_CONFIGURATION_FILE);
 			Document document = XMLUtil.parseXML(file, false);
 			Node node = document.getElementsByTagName(XML_CONFIGURATION_ROOT).item(0);
@@ -168,16 +168,16 @@ public class WikiConfiguration {
 					this.parsers = this.parseConfigurationObjects(child, XML_PARSER);
 				} else if (child.getNodeName().equals(XML_DATA_HANDLER_ROOT)) {
 					this.dataHandlers = this.parseConfigurationObjects(child, XML_DATA_HANDLER);
+				} else if (child.getNodeName().equals(XML_EDITOR_ROOT)) {
+					this.parseMapNodes(child, this.editors, XML_EDITOR);
 				} else if (child.getNodeName().equals(XML_SEARCH_ENGINE_ROOT)) {
 					this.searchEngines = this.parseConfigurationObjects(child, XML_SEARCH_ENGINE);
-				} else if (child.getNodeName().equals(XML_USER_HANDLER_ROOT)) {
-					this.userHandlers = this.parseConfigurationObjects(child, XML_USER_HANDLER);
 				} else if (child.getNodeName().equals(XML_NAMESPACE_ROOT)) {
 					this.parseNamespaces(child);
 				} else if (child.getNodeName().equals(XML_PSEUDOTOPIC_ROOT)) {
 					this.parsePseudotopics(child);
 				} else if (child.getNodeName().equals(XML_TRANSLATION_ROOT)) {
-					this.parseTranslations(child);
+					this.parseMapNodes(child, this.translations, XML_TRANSLATION);
 				} else {
 					logUnknownChild(node, child);
 				}
@@ -215,7 +215,7 @@ public class WikiConfiguration {
 	 *
 	 */
 	private List parseConfigurationObjects(Node node, String name) throws Exception {
-		List results = new Vector();
+		List results = new ArrayList();
 		NodeList children = node.getChildNodes();
 		for (int j = 0; j < children.getLength(); j++) {
 			Node child = children.item(j);
@@ -226,6 +226,41 @@ public class WikiConfiguration {
 			}
 		}
 		return results;
+	}
+
+	/**
+	 * Utility method for parsing a key-value node.
+	 */
+	private void parseMapNode(Node node, Map resultMap) throws Exception {
+		NodeList children = node.getChildNodes();
+		String name = "";
+		String key = "";
+		for (int j = 0; j < children.getLength(); j++) {
+			Node child = children.item(j);
+			if (child.getNodeName().equals(XML_PARAM_NAME)) {
+				name = XMLUtil.getTextContent(child);
+			} else if (child.getNodeName().equals(XML_PARAM_KEY)) {
+				key = XMLUtil.getTextContent(child);
+			} else {
+				logUnknownChild(node, child);
+			}
+		}
+		resultMap.put(key, name);
+	}
+
+	/**
+	 * Utility method for parsing nodes that are collections of key-value pairs.
+	 */
+	private void parseMapNodes(Node node, Map resultsMap, String childNodeName) throws Exception {
+		NodeList children = node.getChildNodes();
+		for (int j = 0; j < children.getLength(); j++) {
+			Node child = children.item(j);
+			if (child.getNodeName().equals(childNodeName)) {
+				this.parseMapNode(child, resultsMap);
+			} else {
+				logUnknownChild(node, child);
+			}
+		}
 	}
 
 	/**
@@ -290,41 +325,6 @@ public class WikiConfiguration {
 			Node child = children.item(j);
 			if (child.getNodeName().equals(XML_PSEUDOTOPIC)) {
 				this.parsePseudotopic(child);
-			} else {
-				logUnknownChild(node, child);
-			}
-		}
-	}
-
-	/**
-	 *
-	 */
-	private void parseTranslation(Node node) throws Exception {
-		NodeList children = node.getChildNodes();
-		String name = "";
-		String key = "";
-		for (int j = 0; j < children.getLength(); j++) {
-			Node child = children.item(j);
-			if (child.getNodeName().equals(XML_PARAM_NAME)) {
-				name = XMLUtil.getTextContent(child);
-			} else if (child.getNodeName().equals(XML_PARAM_KEY)) {
-				key = XMLUtil.getTextContent(child);
-			} else {
-				logUnknownChild(node, child);
-			}
-		}
-		this.translations.put(key, name);
-	}
-
-	/**
-	 *
-	 */
-	private void parseTranslations(Node node) throws Exception {
-		NodeList children = node.getChildNodes();
-		for (int j = 0; j < children.getLength(); j++) {
-			Node child = children.item(j);
-			if (child.getNodeName().equals(XML_TRANSLATION)) {
-				this.parseTranslation(child);
 			} else {
 				logUnknownChild(node, child);
 			}

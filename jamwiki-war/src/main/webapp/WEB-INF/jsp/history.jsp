@@ -24,7 +24,7 @@
 
 <div id="change">
 
-<div class="message"><f:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:History?topic=${pageInfo.topicName}" /></div>
+<div class="message"><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:History?topic=${pageInfo.topicName}" /></div>
 
 <form action="<jamwiki:link value="Special:History" />" method="get" name="historyForm">
 <input type="hidden" name="topic" value='<c:out value="${pageInfo.topicName}"/>'/>
@@ -34,13 +34,19 @@
 <form action="<jamwiki:link value="Special:Diff" />" method="get" name="diffForm">
 <input type="hidden" name="topic" value='<c:out value="${pageInfo.topicName}" />' />
 
-<input type="submit" value='<f:message key="history.diff" />' />
+<input type="submit" value='<fmt:message key="history.diff" />' />
 
 <br /><br />
 
 <ul>
+<c:set var="nextTopicVersionId" value="" />
 <c:forEach items="${changes}" var="change" varStatus="status">
 <li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
+	<c:if test="${!empty nextTopicVersionId}">(<jamwiki:link value="Special:Diff"><jamwiki:linkParam key="topic" value="${change.topicName}" /><jamwiki:linkParam key="version2" value="${change.topicVersionId}" /><jamwiki:linkParam key="version1" value="${nextTopicVersionId}" /><fmt:message key="history.caption.diffnext" /></jamwiki:link>)</c:if>
+	<c:if test="${empty nextTopicVersionId}">(<fmt:message key="history.caption.diffnext" />)</c:if>
+	<c:if test="${!empty change.previousTopicVersionId}">(<jamwiki:link value="Special:Diff"><jamwiki:linkParam key="topic" value="${change.topicName}" /><jamwiki:linkParam key="version2" value="${change.previousTopicVersionId}" /><jamwiki:linkParam key="version1" value="${change.topicVersionId}" /><fmt:message key="history.caption.diffprevious" /></jamwiki:link>)</c:if>
+	<c:if test="${empty change.previousTopicVersionId}">(<fmt:message key="history.caption.diffprevious" />)</c:if>
+	<c:set var="nextTopicVersionId" value="${change.topicVersionId}" />
 	<c:if test="${numChanges > 1}">
 	&#160;
 	<input type="radio" name="version2" id="ver2_<c:out value="${change.topicVersionId}" />" onclick="historyRadio(this, 'version1', true)" value="<c:out value="${change.topicVersionId}" />" <c:if test="${status.index == 1}">checked="checked"</c:if> <c:if test="${status.first}">style="visibility:hidden"</c:if> />
@@ -49,10 +55,13 @@
 	</c:if>
 	&#160;
 	<%-- FIXME: do not hardcode date pattern --%>
-	<jamwiki:link value="Special:History"><jamwiki:linkParam key="topicVersionId" value="${change.topicVersionId}" /><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></jamwiki:link>
+	<jamwiki:link value="Special:History"><jamwiki:linkParam key="topicVersionId" value="${change.topicVersionId}" /><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><fmt:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></jamwiki:link>
+	&#160;.&#160;.&#160;
+	<%-- the "+" symbol could be added using a pattern attribute, but there does not seem to be a way to avoid having "+0" show up when that approach is used. --%>
+	(<c:if test="${change.charactersChanged > 0}">+</c:if><fmt:formatNumber value="${change.charactersChanged}" />)
 	&#160;.&#160;.&#160;
 	<jamwiki:link value="User:${change.authorName}" text="${change.authorName}" />
-	(<jamwiki:link value="User comments:${change.authorName}"><f:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${change.authorName}" /><f:message key="recentchanges.caption.contributions" /></jamwiki:link>)
+	(<jamwiki:link value="User comments:${change.authorName}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${change.authorName}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
 	<c:if test="${!empty change.changeTypeNotification}">&#160;<b><c:out value="${change.changeTypeNotification}" /></b></c:if>
 	<c:if test="${!empty change.editComment}">
 	<label for="<c:out value="diff:${change.topicVersionId}" />">&#160;(<i><c:out value="${change.editComment}" /></i>)</label>
@@ -69,7 +78,7 @@ historyRadio(document.getElementById('ver2_<c:out value="${changes[1].topicVersi
 
 <br />
 
-<input type="submit" value='<f:message key="history.diff"/>'/>
+<input type="submit" value='<fmt:message key="history.diff"/>'/>
 </form>
 
 </div>

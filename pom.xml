@@ -7,7 +7,7 @@
 	<groupId>org.jamwiki</groupId>
 	<artifactId>jamwiki</artifactId>
 	<packaging>pom</packaging>
-	<version>0.6.7</version>
+	<version>0.7.0</version>
 	<name>Jamwiki Super POM</name>
 	<description>
 		JAMWiki is a Java-based Wiki engine which offers many of the
@@ -31,6 +31,12 @@
 		<system>Wiki</system>
 		<url>http://jamwiki.org/wiki/en/Bug_Reports</url>
 	</issueManagement>
+	<distributionManagement>
+		<site>
+			<id>test-site</id>
+			<url>file:/var/www/jamwiki</url>
+		</site>
+	</distributionManagement>
 	<licenses>
 		<license>
 			<name>LGPL</name>
@@ -39,26 +45,15 @@
 		</license>
 	</licenses>
 	<properties>
-		<jamwiki.version>0.6.7</jamwiki.version>
-		<dependency.spring.version>2.5.4</dependency.spring.version>
+		<jamwiki.version>0.7.0</jamwiki.version>
+		<dependency.spring.version>2.5.6</dependency.spring.version>
+		<dependency.spring.security.version>2.0.4</dependency.spring.security.version>
 	</properties>
 	<repositories>
 		<repository>
 			<id>java.net</id>
 			<url>http://download.java.net/maven/1</url>
 			<layout>legacy</layout>
-		</repository>
-		<repository>
-			<id>org.jamwiki</id>
-			<name>Maven Repository for Jamwiki</name>
-			<layout>default</layout>
-			<url>file://${basedir}/../repository</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
 		</repository>
 	</repositories>
 	<dependencyManagement>
@@ -79,28 +74,19 @@
 				<version>1.0.5</version>
 			</dependency>
 			<dependency>
-				<groupId>org.acegisecurity</groupId>
-				<artifactId>acegi-security</artifactId>
-				<version>1.0.7</version>
-				<!-- FIXME: The Maven dependencies have not been updated for Spring 2.5 -->
-				<exclusions>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-dao</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-jdbc</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-remoting</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-support</artifactId>
-					</exclusion>
-				</exclusions>
+				<groupId>org.springframework.ldap</groupId>
+				<artifactId>spring-ldap</artifactId>
+				<version>1.2.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-core</artifactId>
+				<version>${dependency.spring.security.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-taglibs</artifactId>
+				<version>${dependency.spring.security.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-codec</groupId>
@@ -178,16 +164,21 @@
 			<dependency>
 				<groupId>org.apache.lucene</groupId>
 				<artifactId>lucene-core</artifactId>
-				<version>2.3.2</version>
+				<version>2.4.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.lucene</groupId>
 				<artifactId>lucene-highlighter</artifactId>
-				<version>2.3.2</version>
+				<version>2.4.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-aop</artifactId>
+				<version>${dependency.spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
 				<version>${dependency.spring.version}</version>
 			</dependency>
 			<dependency>
@@ -212,8 +203,9 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
-				<artifactId>spring-support</artifactId>
+				<artifactId>spring-test</artifactId>
 				<version>${dependency.spring.version}</version>
+				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
@@ -320,7 +312,8 @@
 		</developer>
 	</developers>
 	<contributors>
-		<contributor><name>Martin Östmark</name><email>Martin</email><roles><role>translator (Swedish)</role></roles></contributor>
+		<contributor><name>Fernando Fernandes</name><email>leandes</email><roles><role>translator (Portugese - Brazilian)</role></roles></contributor>
+		<contributor><name>Martin Östmark</name><email>martin</email><roles><role>translator (Swedish)</role></roles></contributor>
 		<contributor><name>Jiading</name><email>ewen0930</email><roles><role>translator (Chinese)</role></roles></contributor>
 		<contributor><name>Feilong Huang</name><email>hfl</email><roles><role>translator (Chinese)</role></roles></contributor>
 		<contributor><name>Marija Susovic</name><roles><role>translator (Croatian)</role></roles></contributor>
@@ -343,6 +336,7 @@
 		<contributor><name>Luzius Thöny</name><email>luzi</email></contributor>
 		<contributor><name>Oliver</name><email>okohll</email><roles><role>graphics designer</role></roles></contributor>
 		<contributor><name>Carsten Seiffert</name><email>carsten</email><roles><role>bugfixer</role></roles></contributor>
+		<contributor><name>Hanspeter Klapf</name><email>hanspeterklapf</email></contributor>
 		<!--  VQWiki developers and contributors -->
 		<contributor><name>Martijn van der Kleijn</name><organization>VQWiki project</organization><email>mvdkleijn at users.sourceforge.net</email><roles><role>VQWiki project lead</role></roles></contributor>
 		<contributor><name>Andreas Studer</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>

@@ -35,14 +35,12 @@ import org.jamwiki.utils.WikiLogger;
 public class WikiLinkTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiLinkTag.class.getName());
-	private static Pattern WIKI_LINK_PATTERN = null;
 	private static Pattern IMAGE_SIZE_PATTERN = null;
 	// FIXME - make configurable
 	private static final int DEFAULT_THUMBNAIL_SIZE = 180;
 
 	static {
 		try {
-			WIKI_LINK_PATTERN = Pattern.compile("\\[\\[[ ]*(\\:[ ]*)?[ ]*([^\\n\\r\\|]+)([ ]*\\|[ ]*([^\\n\\r]+))?[ ]*\\]\\]([a-z]*)");
 			// look for image size info in image tags
 			IMAGE_SIZE_PATTERN = Pattern.compile("([0-9]+)[ ]*px", Pattern.CASE_INSENSITIVE);
 		} catch (Exception e) {
@@ -57,7 +55,7 @@ public class WikiLinkTag {
 		String context = parserInput.getContext();
 		String virtualWiki = parserInput.getVirtualWiki();
 		try {
-			WikiLink wikiLink = this.parseWikiLink(raw);
+			WikiLink wikiLink = JFlexParserUtil.parseWikiLink(raw);
 			if (wikiLink == null) {
 				// invalid link
 				return raw;
@@ -104,7 +102,7 @@ public class WikiLinkTag {
 	 */
 	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
 		try {
-			this.processLinkMetadata(parserOutput, raw);
+			raw = this.processLinkMetadata(parserOutput, mode, raw);
 			if (mode <= JFlexParser.MODE_PREPROCESS) {
 				// do not parse to HTML when in preprocess mode
 				return raw;
@@ -171,47 +169,13 @@ public class WikiLinkTag {
 	}
 
 	/**
-	 * Parse a raw Wiki link of the form "[[link|text]]", and return a WikiLink
-	 * object representing the link.
-	 *
-	 * @param raw The raw Wiki link text.
-	 * @return A WikiLink object that represents the link.
-	 */
-	private WikiLink parseWikiLink(String raw) {
-		if (StringUtils.isBlank(raw)) {
-			return new WikiLink();
-		}
-		Matcher m = WIKI_LINK_PATTERN.matcher(raw.trim());
-		if (!m.matches()) {
-			return new WikiLink();
-		}
-		String url = m.group(2);
-		WikiLink wikiLink = LinkUtil.parseWikiLink(url);
-		wikiLink.setColon((m.group(1) != null));
-		wikiLink.setText(m.group(4));
-		String suffix = m.group(5);
-		if (!StringUtils.isBlank(suffix)) {
-			if (StringUtils.isBlank(wikiLink.getText())) {
-				wikiLink.setText(wikiLink.getDestination() + suffix);
-			} else {
-				wikiLink.setText(wikiLink.getText() + suffix);
-			}
-		}
-		return wikiLink;
-	}
-
-	/**
 	 *
 	 */
 	private String processLinkContent(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
-		WikiLink wikiLink = this.parseWikiLink(raw);
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(raw);
 		if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
 			// no destination or section
 			return raw;
-		}
-		if (!wikiLink.getColon() && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
-			// category tag, but not a category link
-			return "";
 		}
 		return this.buildInternalLinkUrl(parserInput, mode, raw);
 	}
@@ -219,16 +183,22 @@ public class WikiLinkTag {
 	/**
 	 *
 	 */
-	private void processLinkMetadata(ParserOutput parserOutput, String raw) {
-		WikiLink wikiLink = this.parseWikiLink(raw);
+	private String processLinkMetadata(ParserOutput parserOutput, int mode, String raw) {
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(raw);
 		if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
-			return;
+			return raw;
 		}
-		if (!wikiLink.getColon() && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
+		String result = raw;
+		if (!wikiLink.getColon() && StringUtils.equals(wikiLink.getNamespace(), NamespaceHandler.NAMESPACE_CATEGORY)) {
 			parserOutput.addCategory(wikiLink.getDestination(), wikiLink.getText());
+			if (mode > JFlexParser.MODE_MINIMAL) {
+				// keep the category around in minimal parsing mode, otherwise suppress it from the output
+				result = "";
+			}
 		}
 		if (!StringUtils.isBlank(wikiLink.getDestination())) {
 			parserOutput.addLink(wikiLink.getDestination());
 		}
+		return result;
 	}
 }

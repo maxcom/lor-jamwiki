@@ -24,26 +24,26 @@
 <%@ include file="page-init.jsp" %>
 
 <div class="submenu">
-<a href="#virtualwiki"><f:message key="admin.title.virtualwiki" /></a> | <a href="#search"><f:message key="admin.title.refresh" /></a> | <a href="#recentchanges"><f:message key="admin.title.recentchanges" /></a> | <a href="#cache"><f:message key="admin.title.cache" /></a><br />
-<jamwiki:enabled property="PROP_TOPIC_SPAM_FILTER"><a href="#spam"><f:message key="admin.title.spamfilter" /></a> | </jamwiki:enabled><a href="#password"><f:message key="admin.title.password" /></a> | <c:if test="${allowExport}"><a href="#export"><f:message key="admin.title.exportcsv" /></a> | </c:if><a href="#migrate"><f:message key="admin.title.migratedatabase" /></a>
+<a href="#virtualwiki"><fmt:message key="admin.title.virtualwiki" /></a> | <a href="#search"><fmt:message key="admin.title.refresh" /></a> | <a href="#recentchanges"><fmt:message key="admin.title.recentchanges" /></a> | <a href="#cache"><fmt:message key="admin.title.cache" /></a><br />
+<jamwiki:enabled property="PROP_TOPIC_SPAM_FILTER"><a href="#spam"><fmt:message key="admin.title.spamfilter" /></a> | </jamwiki:enabled><a href="#password"><fmt:message key="admin.title.password" /></a> | <c:if test="${allowExport}"><a href="#export"><fmt:message key="admin.title.exportcsv" /></a> | </c:if><a href="#migrate"><fmt:message key="admin.title.migratedatabase" /></a>
 </div>
 
 <!-- Virtual Wikis -->
 <a name="virtualwiki"></a>
 
 <c:if test="${!empty message && function == 'virtualwiki'}">
-<div class="message red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div>
+<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'virtualwiki'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
 
 <fieldset>
-<legend><f:message key="admin.title.virtualwiki" /></legend>
+<legend><fmt:message key="admin.title.virtualwiki" /></legend>
 <table border="0" class="contents" width="99%">
 <tr class="darkbg">
-	<th><f:message key="common.name" /></th>
-	<th><f:message key="admin.caption.defaulttopic" /></th>
+	<th><fmt:message key="common.name" /></th>
+	<th><fmt:message key="admin.caption.defaulttopic" /></th>
 	<th>&#160;</th>
 </tr>
 <c:forEach items="${wikis}" var="wiki">
@@ -55,7 +55,7 @@
 	<%-- FIXME: need label element --%>
 	<td class="formelement" style="width:150px"><c:out value="${wiki.name}" /></td>
 	<td class="formelement" style="width:200px"><input type="text" name="defaultTopicName" value="<c:out value="${wiki.defaultTopicName}" />" size="30" /></td>
-	<td class="formelement"><input type="submit" value="<f:message key="common.update" />" /></td>
+	<td class="formelement"><input type="submit" value="<fmt:message key="common.update" />" /></td>
 </tr>
 </form>
 </c:forEach>
@@ -64,7 +64,7 @@
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="virtualwiki" />">
 	<td class="formelement"><input type="text" name="name" /></td>
 	<td class="formelement"><input type="text" name="defaultTopicName" value="<%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>" size="30" /></td>
-	<td class="formelement"><input type="submit" value="<f:message key="common.add" />" /></td>
+	<td class="formelement"><input type="submit" value="<fmt:message key="common.add" />" /></td>
 </tr>
 </form>
 <tr><td colspan="3">&nbsp;</td></tr>
@@ -75,19 +75,19 @@
 <a name="search"></a>
 
 <c:if test="${!empty message && function == 'search'}">
-<div class="message red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div>
+<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'search'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
 
 <fieldset>
-<legend><f:message key="admin.title.refresh" /></legend>
+<legend><fmt:message key="admin.title.refresh" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />#search" method="post">
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="search" />">
-	<span class="formcaption"><f:message key="admin.title.refresh" /></span>
-	<span class="formelement"><input type="submit" name="submit" value="<f:message key="admin.action.refresh" />" /></span>
-	<div class="formhelp"><f:message key="admin.help.rebuildsearch" /></div>
+	<span class="formcaption"><fmt:message key="admin.title.refresh" /></span>
+	<span class="formelement"><input type="submit" name="submit" value="<fmt:message key="admin.action.refresh" />" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.rebuildsearch" /></div>
 </div>
 <input type="hidden" name="function" value="search" />
 </form>
@@ -97,19 +97,19 @@
 <a name="recentchanges"></a>
 
 <c:if test="${!empty message && function == 'recentchanges'}">
-<div class="message red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div>
+<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'recentchanges'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
 
 <fieldset>
-<legend><f:message key="admin.title.recentchanges" /></legend>
+<legend><fmt:message key="admin.title.recentchanges" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />#recentchanges" method="post">
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="recentchanges" />">
-	<span class="formcaption"><f:message key="admin.caption.recentchanges" /></span>
-	<span class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></span>
-	<div class="formhelp"><f:message key="admin.help.reloadrecentchanges" /></div>
+	<span class="formcaption"><fmt:message key="admin.caption.recentchanges" /></span>
+	<span class="formelement"><input type="submit" value="<fmt:message key="admin.caption.reset" />" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.reloadrecentchanges" /></div>
 </div>
 <input type="hidden" name="function" value="recentchanges" />
 </form>
@@ -119,19 +119,19 @@
 <a name="cache"></a>
 
 <c:if test="${!empty message && function == 'cache'}">
-<div class="message red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div>
+<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'cache'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
 
 <fieldset>
-<legend><f:message key="admin.title.cache" /></legend>
+<legend><fmt:message key="admin.title.cache" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />#cache" method="post">
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="cache" />">
-	<span class="formcaption"><f:message key="admin.cache.caption" /></span>
-	<span class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></span>
-	<div class="formhelp"><f:message key="admin.help.clearcache" /></div>
+	<span class="formcaption"><fmt:message key="admin.cache.caption" /></span>
+	<span class="formelement"><input type="submit" value="<fmt:message key="admin.caption.reset" />" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.clearcache" /></div>
 </div>
 <input type="hidden" name="function" value="cache" />
 </form>
@@ -143,19 +143,19 @@
 <a name="spam"></a>
 
 <c:if test="${!empty message && function == 'spam'}">
-<div class="message red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div>
+<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'spam'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
 
 <fieldset>
-<legend><f:message key="admin.title.spamfilter" /></legend>
+<legend><fmt:message key="admin.title.spamfilter" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />#spam" method="post">
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="spam" />">
-	<span class="formcaption"><f:message key="admin.caption.spamfilter" /></span>
-	<span class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></span>
-	<div class="formhelp"><f:message key="admin.help.reloadspamfilter" /></div>
+	<span class="formcaption"><fmt:message key="admin.caption.spamfilter" /></span>
+	<span class="formelement"><input type="submit" value="<fmt:message key="admin.caption.reset" />" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.reloadspamfilter" /></div>
 </div>
 <input type="hidden" name="function" value="spam" />
 </form>
@@ -167,31 +167,31 @@
 <a name="password"></a>
 
 <c:if test="${!empty message && function == 'password'}">
-<div class="message red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div>
+<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'password'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
 
 <fieldset>
-<legend><f:message key="admin.title.password" /></legend>
+<legend><fmt:message key="admin.title.password" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />#password" method="post">
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="password" />">
-	<span class="formcaption"><f:message key="admin.password.caption.login" /></span>
+	<span class="formcaption"><fmt:message key="admin.password.caption.login" /></span>
 	<span class="formelement"><input type="text" name="passwordLogin" value="<c:out value="${passwordLogin}" />" size="30" /></span>
 </div>
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="password" />">
-	<span class="formcaption"><f:message key="admin.password.caption.password" /></span>
+	<span class="formcaption"><fmt:message key="admin.password.caption.password" /></span>
 	<span class="formelement"><input type="password" name="passwordPassword" value="<c:out value="${passwordPassword}" />" size="30" /></span>
 </div>
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="password" />">
-	<span class="formcaption"><f:message key="admin.password.caption.passwordconfirm" /></span>
+	<span class="formcaption"><fmt:message key="admin.password.caption.passwordconfirm" /></span>
 	<span class="formelement"><input type="password" name="passwordPasswordConfirm" value="<c:out value="${passwordPasswordConfirm}" />" size="30" /></span>
 </div>
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="password" />">
-	<span class="formcaption"><f:message key="admin.password.caption.reset" /></span>
-	<span class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></span>
-	<div class="formhelp"><f:message key="admin.password.help.reset" /></div>
+	<span class="formcaption"><fmt:message key="admin.password.caption.reset" /></span>
+	<span class="formelement"><input type="submit" value="<fmt:message key="admin.caption.reset" />" /></span>
+	<div class="formhelp"><fmt:message key="admin.password.help.reset" /></div>
 </div>
 <input type="hidden" name="function" value="password" />
 </form>
@@ -203,19 +203,19 @@
 <a name="export"></a>
 
 <c:if test="${!empty message && function == 'export'}">
-<div class="message red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div>
+<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'export'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
 
 <fieldset>
-<legend><f:message key="admin.title.exportcsv" /> (<f:message key="common.caption.experimental" />)</legend>
+<legend><fmt:message key="admin.title.exportcsv" /> (<fmt:message key="common.caption.experimental" />)</legend>
 <form action="<jamwiki:link value="Special:Maintenance" />#export" method="post">
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="export" />">
-	<span class="formcaption"><f:message key="admin.caption.exportcsv" /></span>
-	<span class="formelement"><input type="submit" value="<f:message key="common.export" />" /></span>
-	<div class="formhelp"><f:message key="admin.help.exportcsv" /></div>
+	<span class="formcaption"><fmt:message key="admin.caption.exportcsv" /></span>
+	<span class="formelement"><input type="submit" value="<fmt:message key="common.export" />" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.exportcsv" /></div>
 </div>
 <input type="hidden" name="function" value="export" />
 </form>
@@ -227,62 +227,62 @@
 <a name="migrate"></a>
 
 <c:if test="${!empty message && function == 'migrate'}">
-<div class="message red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div>
+<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
 </c:if>
 <c:if test="${!empty errors && function == 'migrate'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
 </c:if>
 
 <fieldset>
-<legend><f:message key="admin.title.migratedatabase" /> (<f:message key="common.caption.experimental" />)</legend>
+<legend><fmt:message key="admin.title.migratedatabase" /> (<fmt:message key="common.caption.experimental" />)</legend>
 <form action="<jamwiki:link value="Special:Maintenance" />#migrate" method="post">
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="migrate" />">
-	<div class="formhelp"><f:message key="admin.help.migratedatabase" /></div>
+	<div class="formhelp"><fmt:message key="admin.help.migratedatabase" /></div>
 <table style="border:none;">
 <tr><td colspan="2">&#160;</td></tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>"><f:message key="admin.persistence.caption" /></label>:</td>
+	<td class="formcaption"><label for="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>"><fmt:message key="admin.persistence.caption" /></label>:</td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" id="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" onchange="onPersistenceType()">
 		<c:set var="persistenceType"><%= Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE) %></c:set>
 		<c:set var="persistenceTypeInternal"><%= WikiBase.PERSISTENCE_INTERNAL %></c:set>
 		<c:set var="persistenceTypeExternal"><%= WikiBase.PERSISTENCE_EXTERNAL %></c:set>
-		<option value="<%= WikiBase.PERSISTENCE_INTERNAL %>"<c:if test="${persistenceType == persistenceTypeInternal}"> selected</c:if>><f:message key="admin.persistencetype.internal"/></option>
-		<option value="<%= WikiBase.PERSISTENCE_EXTERNAL %>"<c:if test="${persistenceType == persistenceTypeExternal}"> selected</c:if>><f:message key="admin.persistencetype.database"/></option>
+		<option value="<%= WikiBase.PERSISTENCE_INTERNAL %>"<c:if test="${persistenceType == persistenceTypeInternal}"> selected</c:if>><fmt:message key="admin.persistencetype.internal"/></option>
+		<option value="<%= WikiBase.PERSISTENCE_EXTERNAL %>"<c:if test="${persistenceType == persistenceTypeExternal}"> selected</c:if>><fmt:message key="admin.persistencetype.database"/></option>
 		</select>
 	</td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_DB_DRIVER %>"><f:message key="admin.persistence.caption.driver" /></label>:</td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_DB_DRIVER %>" id="<%= Environment.PROP_DB_DRIVER %>" value="<%= Environment.getValue(Environment.PROP_DB_DRIVER) %>" size="50"></td>
-</tr>
-<tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_DB_TYPE %>"><f:message key="admin.persistence.caption.type" /></label>:</td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_TYPE %>"><fmt:message key="admin.persistence.caption.type" /></label>:</td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_DB_TYPE %>" id="<%= Environment.PROP_DB_TYPE %>">
 		<c:set var="selectedDataHandler"><%= Environment.getValue(Environment.PROP_DB_TYPE) %></c:set>
 		<c:forEach items="${dataHandlers}" var="dataHandler">
-		<option value="<c:out value="${dataHandler.clazz}" />"<c:if test="${selectedDataHandler == dataHandler.clazz}"> selected</c:if>><c:if test="${!empty dataHandler.key}"><f:message key="${dataHandler.key}" /></c:if><c:if test="${empty dataHandler.key}"><c:out value="${dataHandler.name}" /></c:if><c:if test="${dataHandler.experimental}"> (<f:message key="common.caption.experimental" />)</c:if></option>
+		<option value="<c:out value="${dataHandler.clazz}" />"<c:if test="${selectedDataHandler == dataHandler.clazz}"> selected</c:if>><c:if test="${!empty dataHandler.key}"><fmt:message key="${dataHandler.key}" /></c:if><c:if test="${empty dataHandler.key}"><c:out value="${dataHandler.name}" /></c:if><c:if test="${dataHandler.experimental}"> (<fmt:message key="common.caption.experimental" />)</c:if></option>
 		</c:forEach>
 		</select>
 	</td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_DB_URL %>"><f:message key="admin.persistence.caption.url" /></label>:</td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_DRIVER %>"><fmt:message key="admin.persistence.caption.driver" /></label>:</td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_DB_DRIVER %>" id="<%= Environment.PROP_DB_DRIVER %>" value="<%= Environment.getValue(Environment.PROP_DB_DRIVER) %>" size="50"></td>
+</tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_URL %>"><fmt:message key="admin.persistence.caption.url" /></label>:</td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_DB_URL %>" id="<%= Environment.PROP_DB_URL %>" value="<%= Environment.getValue(Environment.PROP_DB_URL) %>" size="50"></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_DB_USERNAME %>"><f:message key="admin.persistence.caption.user" /></label>:</td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_USERNAME %>"><fmt:message key="admin.persistence.caption.user" /></label>:</td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_DB_USERNAME %>" id="<%= Environment.PROP_DB_USERNAME %>" value="<%= Environment.getValue(Environment.PROP_DB_USERNAME) %>" size="15"></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_DB_PASSWORD %>"><f:message key="admin.persistence.caption.pass" /></label>:</td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_PASSWORD %>"><fmt:message key="admin.persistence.caption.pass" /></label>:</td>
 	<td class="formelement"><input type="password" name="<%= Environment.PROP_DB_PASSWORD %>" id="<%= Environment.PROP_DB_PASSWORD %>" value="<c:out value="${dbPassword}" />" size="15"></td>
 </tr>
 <tr><td colspan="2">&#160;</td></tr>
 <tr>
- <td><span class="formcaption"><f:message key="admin.caption.migratedatabase" /></span></td>
- <td><span class="formelement"><input type="submit" value="<f:message key="common.migrate" />" /></span></td></tr>
+ <td><span class="formcaption"><fmt:message key="admin.caption.migratedatabase" /></span></td>
+ <td><span class="formelement"><input type="submit" value="<fmt:message key="common.migrate" />" /></span></td></tr>
 </table>
 </div>
 <input type="hidden" name="function" value="migrate" />

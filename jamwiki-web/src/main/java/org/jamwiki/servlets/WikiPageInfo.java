@@ -18,13 +18,16 @@ package org.jamwiki.servlets;
 
 import java.text.MessageFormat;
 import java.util.LinkedHashMap;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 
 /**
  * The <code>WikiPageInfo</code> class provides an object containing common
@@ -33,20 +36,28 @@ import org.jamwiki.utils.WikiLogger;
 public class WikiPageInfo {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiPageInfo.class.getName());
+	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_TOPIC = "topic.jsp";
 	private boolean admin = false;
 	private String contentJsp = JSP_TOPIC;
 	private WikiMessage pageTitle = null;
 	private String redirectName = null;
+	private String redirectUrl = null;
 	private boolean special = false;
 	private LinkedHashMap tabMenu = new LinkedHashMap();
 	private String topicName = "";
 	private LinkedHashMap userMenu = new LinkedHashMap();
+	private String virtualWikiName = null;
 
 	/**
 	 *
 	 */
-	protected WikiPageInfo() {
+	protected WikiPageInfo(HttpServletRequest request) {
+		this.virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
+		if (this.virtualWikiName == null) {
+			logger.severe("No virtual wiki available for page request " + request.getRequestURI());
+			this.virtualWikiName = WikiBase.DEFAULT_VWIKI;
+		}
 	}
 
 	/**
@@ -172,14 +183,29 @@ public class WikiPageInfo {
 
 	/**
 	 * If the topic currently being displayed is the result of a redirect from
-	 * another topic, set the name of the topic that is being redirected
-	 * from.
+	 * another topic, return the full (relative) URL back to the redirection
+	 * topic.
 	 *
+	 * @return The full (relative) URL of the topic being redirected from, or
+	 *  <code>null</code> if the current page is not the result of a redirect.
+	 */
+	public String getRedirectUrl() {
+		return this.redirectUrl;
+	}
+
+	/**
+	 * If the topic currently being displayed is the result of a redirect from
+	 * another topic, set the name and full (relative) URL of the topic that is
+	 * being redirected from.
+	 *
+	 * @param redirectUrl The full (relative) URL of the topic being redirected
+	 *  from, or <code>null</code> if the current page is not the result of a redirect.
 	 * @param redirectName The name of the topic being redirected from, or
 	 *  <code>null</code> if the current page is not the result of a redirect.
 	 */
-	public void setRedirectName(String redirectName) {
+	public void setRedirectInfo(String redirectUrl, String redirectName) {
 		this.redirectName = redirectName;
+		this.redirectUrl = redirectUrl;
 	}
 
 	/**
@@ -231,8 +257,8 @@ public class WikiPageInfo {
 	}
 
 	/**
-	 * Return the name of the page, i.e. the name of the topic displayed by
-	 * the current page, without the namespace.
+	 * Return the name of the current page, which is the name of the topic
+	 * being viewed (without the namespace).
 	 *
 	 * @return Name of the page.
 	 */
@@ -302,6 +328,31 @@ public class WikiPageInfo {
 	 */
 	public void setUserMenu(LinkedHashMap userMenu) {
 		this.userMenu = userMenu;
+	}
+
+	/**
+	 * Return the name of the virtual wiki associated with the page info being
+	 * created.  This will normally be taken directly from the request and default
+	 * to the wiki default virtual wiki, although in rare cases (such as redirects
+	 * to other virtual wikis) it may differ.
+	 */
+	public String getVirtualWikiName() {
+		if (StringUtils.isBlank(virtualWikiName)) {
+			throw new IllegalArgumentException("Cannot pass a null or empty virtual wiki name");
+		}
+		return this.virtualWikiName;
+	}
+
+	/**
+	 * Return the name of the virtual wiki associated with the page info being
+	 * created.  This will normally be taken directly from the request and default
+	 * to the wiki default virtual wiki, although in rare cases (such as redirects
+	 * to other virtual wikis) it may differ.
+	 *
+	 * @param virtualWikiName The name of the virtual wiki to set.
+	 */
+	public void setVirtualWikiName(String virtualWikiName) {
+		this.virtualWikiName = virtualWikiName;
 	}
 
 	/**

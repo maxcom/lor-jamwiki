@@ -16,26 +16,18 @@
  */
 package org.jamwiki.parser.jflex;
 
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.TimeZone;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
-import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Topic;
-import org.jamwiki.model.TopicVersion;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
-import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
-import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 
@@ -46,81 +38,6 @@ import org.jamwiki.utils.WikiUtil;
 public class TemplateTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(TemplateTag.class.getName());
-	// current date values
-	private static final String MAGIC_CURRENT_DAY = "CURRENTDAY";
-	private static final String MAGIC_CURRENT_DAY2 = "CURRENTDAY2";
-	private static final String MAGIC_CURRENT_DAY_NAME = "CURRENTDAYNAME";
-	private static final String MAGIC_CURRENT_DAY_OF_WEEK = "CURRENTDOW";
-	private static final String MAGIC_CURRENT_MONTH = "CURRENTMONTH";
-	private static final String MAGIC_CURRENT_MONTH_ABBR = "CURRENTMONTHABBREV";
-	private static final String MAGIC_CURRENT_MONTH_NAME = "CURRENTMONTHNAME";
-	private static final String MAGIC_CURRENT_TIME = "CURRENTTIME";
-	private static final String MAGIC_CURRENT_HOUR = "CURRENTHOUR";
-	private static final String MAGIC_CURRENT_WEEK = "CURRENTWEEK";
-	private static final String MAGIC_CURRENT_YEAR = "CURRENTYEAR";
-	private static final String MAGIC_CURRENT_TIMESTAMP = "CURRENTTIMESTAMP";
-	// local date values
-	private static final String MAGIC_LOCAL_DAY = "LOCALDAY";
-	private static final String MAGIC_LOCAL_DAY2 = "LOCALDAY2";
-	private static final String MAGIC_LOCAL_DAY_NAME = "LOCALDAYNAME";
-	private static final String MAGIC_LOCAL_DAY_OF_WEEK = "LOCALDOW";
-	private static final String MAGIC_LOCAL_MONTH = "LOCALMONTH";
-	private static final String MAGIC_LOCAL_MONTH_ABBR = "LOCALMONTHABBREV";
-	private static final String MAGIC_LOCAL_MONTH_NAME = "LOCALMONTHNAME";
-	private static final String MAGIC_LOCAL_TIME = "LOCALTIME";
-	private static final String MAGIC_LOCAL_HOUR = "LOCALHOUR";
-	private static final String MAGIC_LOCAL_WEEK = "LOCALWEEK";
-	private static final String MAGIC_LOCAL_YEAR = "LOCALYEAR";
-	private static final String MAGIC_LOCAL_TIMESTAMP = "LOCALTIMESTAMP";
-	// statistics
-	private static final String MAGIC_CURRENT_VERSION = "CURRENTVERSION";
-	private static final String MAGIC_NUMBER_ARTICLES = "NUMBEROFARTICLES";
-	private static final String MAGIC_NUMBER_ARTICLES_R = "NUMBEROFARTICLES:R";
-	private static final String MAGIC_NUMBER_PAGES = "NUMBEROFPAGES";
-	private static final String MAGIC_NUMBER_PAGES_R = "NUMBEROFPAGES:R";
-	private static final String MAGIC_NUMBER_FILES = "NUMBEROFFILES";
-	private static final String MAGIC_NUMBER_FILES_R = "NUMBEROFFILES:R";
-	private static final String MAGIC_NUMBER_USERS = "NUMBEROFUSERS";
-	private static final String MAGIC_NUMBER_USERS_R = "NUMBEROFUSERS:R";
-	private static final String MAGIC_NUMBER_ADMINS = "NUMBEROFADMINS";
-	private static final String MAGIC_NUMBER_ADMINS_R = "NUMBEROFADMINS:R";
-	private static final String MAGIC_PAGES_IN_NAMESPACE = "PAGESINNAMESPACE";
-	private static final String MAGIC_PAGES_IN_NAMESPACE_NS = "PAGESINNS:ns";
-	private static final String MAGIC_PAGES_IN_NAMESPACE_NS_R = "PAGESINNS:ns:R";
-	// page values
-	private static final String MAGIC_PAGE_NAME = "PAGENAME";
-	private static final String MAGIC_PAGE_NAME_E = "PAGENAMEE";
-	private static final String MAGIC_SUB_PAGE_NAME = "SUBPAGENAME";
-	private static final String MAGIC_SUB_PAGE_NAME_E = "SUBPAGENAMEE";
-	private static final String MAGIC_BASE_PAGE_NAME = "BASEPAGENAME";
-	private static final String MAGIC_BASE_PAGE_NAME_E = "BASEPAGENAMEE";
-	private static final String MAGIC_NAMESPACE = "NAMESPACE";
-	private static final String MAGIC_NAMESPACE_E = "NAMESPACEE";
-	private static final String MAGIC_FULL_PAGE_NAME = "FULLPAGENAME";
-	private static final String MAGIC_FULL_PAGE_NAME_E = "FULLPAGENAMEE";
-	private static final String MAGIC_TALK_SPACE = "TALKSPACE";
-	private static final String MAGIC_TALK_SPACE_E = "TALKSPACEE";
-	private static final String MAGIC_SUBJECT_SPACE = "SUBJECTSPACE";
-	private static final String MAGIC_SUBJECT_SPACE_E = "SUBJECTSPACEE";
-	private static final String MAGIC_ARTICLE_SPACE = "ARTICLESPACE";
-	private static final String MAGIC_ARTICLE_SPACE_E = "ARTICLESPACEE";
-	private static final String MAGIC_TALK_PAGE_NAME = "TALKPAGENAME";
-	private static final String MAGIC_TALK_PAGE_NAME_E = "TALKPAGENAMEE";
-	private static final String MAGIC_SUBJECT_PAGE_NAME = "SUBJECTPAGENAME";
-	private static final String MAGIC_SUBJECT_PAGE_NAME_E = "SUBJECTPAGENAMEE";
-	private static final String MAGIC_ARTICLE_PAGE_NAME = "ARTICLEPAGENAME";
-	private static final String MAGIC_ARTICLE_PAGE_NAME_E = "ARTICLEPAGENAMEE";
-	private static final String MAGIC_REVISION_ID = "REVISIONID";
-	private static final String MAGIC_REVISION_DAY = "REVISIONDAY";
-	private static final String MAGIC_REVISION_DAY2 = "REVISIONDAY2";
-	private static final String MAGIC_REVISION_MONTH = "REVISIONMONTH";
-	private static final String MAGIC_REVISION_YEAR = "REVISIONYEAR";
-	private static final String MAGIC_REVISION_TIMESTAMP = "REVISIONTIMESTAMP";
-	private static final String MAGIC_SITE_NAME = "SITENAME";
-	private static final String MAGIC_SERVER = "SERVER";
-	private static final String MAGIC_SCRIPT_PATH = "SCRIPTPATH";
-	private static final String MAGIC_SERVER_NAME = "SERVERNAME";
-	private static Vector MAGIC_WORDS = new Vector();
 	protected static final String TEMPLATE_INCLUSION = "template-inclusion";
 	private static Pattern PARAM_NAME_VALUE_PATTERN = null;
 
@@ -132,80 +49,6 @@ public class TemplateTag {
 		} catch (Exception e) {
 			logger.severe("Unable to compile pattern", e);
 		}
-		// current date values
-		MAGIC_WORDS.add(MAGIC_CURRENT_DAY);
-		MAGIC_WORDS.add(MAGIC_CURRENT_DAY2);
-		MAGIC_WORDS.add(MAGIC_CURRENT_DAY_NAME);
-		MAGIC_WORDS.add(MAGIC_CURRENT_DAY_OF_WEEK);
-		MAGIC_WORDS.add(MAGIC_CURRENT_MONTH);
-		MAGIC_WORDS.add(MAGIC_CURRENT_MONTH_ABBR);
-		MAGIC_WORDS.add(MAGIC_CURRENT_MONTH_NAME);
-		MAGIC_WORDS.add(MAGIC_CURRENT_TIME);
-		MAGIC_WORDS.add(MAGIC_CURRENT_HOUR);
-		MAGIC_WORDS.add(MAGIC_CURRENT_WEEK);
-		MAGIC_WORDS.add(MAGIC_CURRENT_YEAR);
-		MAGIC_WORDS.add(MAGIC_CURRENT_TIMESTAMP);
-		// local date values
-		MAGIC_WORDS.add(MAGIC_LOCAL_DAY);
-		MAGIC_WORDS.add(MAGIC_LOCAL_DAY2);
-		MAGIC_WORDS.add(MAGIC_LOCAL_DAY_NAME);
-		MAGIC_WORDS.add(MAGIC_LOCAL_DAY_OF_WEEK);
-		MAGIC_WORDS.add(MAGIC_LOCAL_MONTH);
-		MAGIC_WORDS.add(MAGIC_LOCAL_MONTH_ABBR);
-		MAGIC_WORDS.add(MAGIC_LOCAL_MONTH_NAME);
-		MAGIC_WORDS.add(MAGIC_LOCAL_TIME);
-		MAGIC_WORDS.add(MAGIC_LOCAL_HOUR);
-		MAGIC_WORDS.add(MAGIC_LOCAL_WEEK);
-		MAGIC_WORDS.add(MAGIC_LOCAL_YEAR);
-		MAGIC_WORDS.add(MAGIC_LOCAL_TIMESTAMP);
-		// statistics
-		MAGIC_WORDS.add(MAGIC_CURRENT_VERSION);
-		MAGIC_WORDS.add(MAGIC_NUMBER_ARTICLES);
-		MAGIC_WORDS.add(MAGIC_NUMBER_ARTICLES_R);
-		MAGIC_WORDS.add(MAGIC_NUMBER_PAGES);
-		MAGIC_WORDS.add(MAGIC_NUMBER_PAGES_R);
-		MAGIC_WORDS.add(MAGIC_NUMBER_FILES);
-		MAGIC_WORDS.add(MAGIC_NUMBER_FILES_R);
-		MAGIC_WORDS.add(MAGIC_NUMBER_USERS);
-		MAGIC_WORDS.add(MAGIC_NUMBER_USERS_R);
-		MAGIC_WORDS.add(MAGIC_NUMBER_ADMINS);
-		MAGIC_WORDS.add(MAGIC_NUMBER_ADMINS_R);
-		MAGIC_WORDS.add(MAGIC_PAGES_IN_NAMESPACE);
-		MAGIC_WORDS.add(MAGIC_PAGES_IN_NAMESPACE_NS);
-		MAGIC_WORDS.add(MAGIC_PAGES_IN_NAMESPACE_NS_R);
-		// page values
-		MAGIC_WORDS.add(MAGIC_PAGE_NAME);
-		MAGIC_WORDS.add(MAGIC_PAGE_NAME_E);
-		MAGIC_WORDS.add(MAGIC_SUB_PAGE_NAME);
-		MAGIC_WORDS.add(MAGIC_SUB_PAGE_NAME_E);
-		MAGIC_WORDS.add(MAGIC_BASE_PAGE_NAME);
-		MAGIC_WORDS.add(MAGIC_BASE_PAGE_NAME_E);
-		MAGIC_WORDS.add(MAGIC_NAMESPACE);
-		MAGIC_WORDS.add(MAGIC_NAMESPACE_E);
-		MAGIC_WORDS.add(MAGIC_FULL_PAGE_NAME);
-		MAGIC_WORDS.add(MAGIC_FULL_PAGE_NAME_E);
-		MAGIC_WORDS.add(MAGIC_TALK_SPACE);
-		MAGIC_WORDS.add(MAGIC_TALK_SPACE_E);
-		MAGIC_WORDS.add(MAGIC_SUBJECT_SPACE);
-		MAGIC_WORDS.add(MAGIC_SUBJECT_SPACE_E);
-		MAGIC_WORDS.add(MAGIC_ARTICLE_SPACE);
-		MAGIC_WORDS.add(MAGIC_ARTICLE_SPACE_E);
-		MAGIC_WORDS.add(MAGIC_TALK_PAGE_NAME);
-		MAGIC_WORDS.add(MAGIC_TALK_PAGE_NAME_E);
-		MAGIC_WORDS.add(MAGIC_SUBJECT_PAGE_NAME);
-		MAGIC_WORDS.add(MAGIC_SUBJECT_PAGE_NAME_E);
-		MAGIC_WORDS.add(MAGIC_ARTICLE_PAGE_NAME);
-		MAGIC_WORDS.add(MAGIC_ARTICLE_PAGE_NAME_E);
-		MAGIC_WORDS.add(MAGIC_REVISION_ID);
-		MAGIC_WORDS.add(MAGIC_REVISION_DAY);
-		MAGIC_WORDS.add(MAGIC_REVISION_DAY2);
-		MAGIC_WORDS.add(MAGIC_REVISION_MONTH);
-		MAGIC_WORDS.add(MAGIC_REVISION_YEAR);
-		MAGIC_WORDS.add(MAGIC_REVISION_TIMESTAMP);
-		MAGIC_WORDS.add(MAGIC_SITE_NAME);
-		MAGIC_WORDS.add(MAGIC_SERVER);
-		MAGIC_WORDS.add(MAGIC_SCRIPT_PATH);
-		MAGIC_WORDS.add(MAGIC_SERVER_NAME);
 	}
 
 	/**
@@ -232,63 +75,38 @@ public class TemplateTag {
 	}
 
 	/**
-	 * Search through content, starting at a specific position, and search for the
-	 * first position after a matching end tag for a specified start tag.  For instance,
-	 * if called with a start tag of "<b>" and an end tag of "</b>", this method
-	 * will operate as follows:
-	 *
-	 * "01<b>567</b>23" returns 12.
-	 * "01<b>56<b>01</b>67</b>23" returns 22.
-	 */
-	private int findMatchingEndTag(String content, int start, String startToken, String endToken) {
-		int pos = start;
-		int count = 0;
-		String substring = "";
-		while (pos < content.length()) {
-			substring = content.substring(pos);
-			if (substring.startsWith(startToken)) {
-				count++;
-				pos += startToken.length();
-			} else if (substring.startsWith(endToken)) {
-				count--;
-				pos += endToken.length();
-			} else {
-				pos++;
-			}
-			if (count == 0) {
-				return pos;
-			}
-		}
-		return -1;
-	}
-
-	/**
-	 * Determine if a template name corresponds to a magic word requiring
-	 * special handling.  See http://meta.wikimedia.org/wiki/Help:Magic_words
-	 * for a list of Mediawiki magic words.
-	 */
-	private boolean isMagicWord(String name) {
-		return MAGIC_WORDS.contains(name);
-	}
-
-	/**
 	 * Parse a call to a Mediawiki template of the form "{{template|param1|param2}}"
 	 * and return the resulting template output.
 	 */
 	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
 		try {
 			parserInput.incrementTemplateDepth();
-			// extract the template name
-			String name = this.parseTemplateName(raw);
-			if (this.isMagicWord(name)) {
+			// validate and extract the template content
+			if (StringUtils.isBlank(raw)) {
+				throw new Exception("Empty template text");
+			}
+			if (!raw.startsWith("{{") || !raw.endsWith("}}")) {
+				throw new Exception ("Invalid template text: " + raw);
+			}
+			String templateContent = raw.substring("{{".length(), raw.length() - "}}".length());
+			// parse for nested templates
+			templateContent = JFlexParserUtil.parseFragment(parserInput, templateContent, mode);
+			// check for magic word or parser function
+			String[] parserFunctionInfo = ParserFunctionUtil.parseParserFunctionInfo(templateContent);
+			if (MagicWordUtil.isMagicWord(templateContent) || parserFunctionInfo != null) {
 				if (mode <= JFlexParser.MODE_MINIMAL) {
 					parserInput.decrementTemplateDepth();
 					return raw;
 				}
-				String output = this.processMagicWord(parserInput, name);
 				parserInput.decrementTemplateDepth();
-				return output;
+				if (MagicWordUtil.isMagicWord(templateContent)) {
+					return MagicWordUtil.processMagicWord(parserInput, templateContent);
+				} else {
+					return ParserFunctionUtil.processParserFunction(parserInput, parserFunctionInfo[0], parserFunctionInfo[1]);
+				}
 			}
+			// extract the template name
+			String name = this.parseTemplateName(templateContent);
 			boolean inclusion = false;
 			if (name.startsWith(NamespaceHandler.NAMESPACE_SEPARATOR)) {
 				name = name.substring(1);
@@ -311,11 +129,11 @@ public class TemplateTag {
 				templateTopic = null;
 			}
 			if (inclusion) {
-				String output = this.processTemplateInclusion(parserInput, parserOutput, templateTopic, raw, name);
+				String output = this.processTemplateInclusion(parserInput, parserOutput, mode, templateTopic, raw, name);
 				parserInput.decrementTemplateDepth();
 				return output;
 			}
-			String output = this.processTemplateContent(parserInput, parserOutput, templateTopic, raw, name);
+			String output = this.processTemplateContent(parserInput, parserOutput, templateTopic, templateContent, name);
 			parserInput.decrementTemplateDepth();
 			return output;
 		} catch (Throwable t) {
@@ -372,7 +190,7 @@ public class TemplateTag {
 			String substring = content.substring(pos);
 			if (substring.startsWith("{{{")) {
 				// template
-				int endPos = findMatchingEndTag(content, pos, "{{{", "}}}");
+				int endPos = Utilities.findMatchingEndTag(content, pos, "{{{", "}}}");
 				if (endPos != -1) {
 					String param = content.substring(pos, endPos);
 					output.append(this.applyParameter(parserInput, param));
@@ -391,23 +209,12 @@ public class TemplateTag {
 	 * the template name.
 	 */
 	private String parseTemplateName(String raw) throws Exception {
-		if (StringUtils.isBlank(raw)) {
-			throw new Exception("Empty template text");
-		}
-		if (!raw.startsWith("{{") || !raw.endsWith("}}")) {
-			throw new Exception ("Invalid template text: " + raw);
-		}
+		String name = raw;
 		int pos = raw.indexOf('|');
-		String name = null;
 		if (pos != -1) {
-			name = raw.substring("{{".length(), pos);
-		} else {
-			name = raw.substring("{{".length(), raw.length() - "}}".length());
+			name = name.substring(0, pos);
 		}
 		name = Utilities.decodeTopicName(name.trim(), true);
-		if (this.isMagicWord(name)) {
-			return name;
-		}
 		if (StringUtils.isBlank(name)) {
 			// FIXME - no need for an exception
 			throw new Exception("No template name specified");
@@ -418,7 +225,7 @@ public class TemplateTag {
 				throw new Exception("No template name specified");
 			}
 		} else if (!name.startsWith(NamespaceHandler.NAMESPACE_TEMPLATE + NamespaceHandler.NAMESPACE_SEPARATOR)) {
-			name = NamespaceHandler.NAMESPACE_TEMPLATE + NamespaceHandler.NAMESPACE_SEPARATOR + name;
+			name = NamespaceHandler.NAMESPACE_TEMPLATE + NamespaceHandler.NAMESPACE_SEPARATOR + StringUtils.capitalize(name);
 		}
 		return name;
 	}
@@ -427,11 +234,10 @@ public class TemplateTag {
 	 * Given a template call of the form "{{name|param=value|param=value}}"
 	 * parse the parameter names and values.
 	 */
-	private void parseTemplateParameterValues(ParserInput parserInput, String raw) throws Exception {
-		String content = raw.substring("{{".length(), raw.length() - "}}".length());
-		Vector tokens = this.tokenizeParams(content);
+	private void parseTemplateParameterValues(ParserInput parserInput, String templateContent) throws Exception {
+		Vector tokens = this.tokenizeParams(templateContent);
 		if (tokens.isEmpty()) {
-			throw new Exception("No template name found in " + raw);
+			throw new Exception("No template name found in " + templateContent);
 		}
 		int count = -1;
 		for (Iterator iterator = tokens.iterator(); iterator.hasNext();) {
@@ -446,295 +252,21 @@ public class TemplateTag {
 			if (name == null) {
 				name = Integer.toString(count);
 			}
-			String value = (nameValue[1] == null) ? null : JFlexParserUtil.parseFragment(parserInput, nameValue[1].trim(), JFlexParser.MODE_PREPROCESS);
+			String value = (nameValue[1] == null) ? null : nameValue[1].trim();
 			this.parameterValues.put(name, value);
 		}
-	}
-
-	/**
-	 * Process a magic word, returning the value corresponding to the magic
-	 * word value.  See http://meta.wikimedia.org/wiki/Help:Magic_words for a
-	 * list of Mediawiki magic words.
-	 */
-	private String processMagicWord(ParserInput parserInput, String name) throws Exception {
-		SimpleDateFormat formatter = new SimpleDateFormat();
-		TimeZone utc = TimeZone.getTimeZone("GMT+00");
-		Date current = new Date(System.currentTimeMillis());
-		// local date values
-		if (name.equals(MAGIC_LOCAL_DAY)) {
-			formatter.applyPattern("d");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_LOCAL_DAY2)) {
-			formatter.applyPattern("dd");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_LOCAL_DAY_NAME)) {
-			formatter.applyPattern("EEEE");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_LOCAL_DAY_OF_WEEK)) {
-			formatter.applyPattern("F");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_LOCAL_MONTH)) {
-			formatter.applyPattern("MM");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_LOCAL_MONTH_ABBR)) {
-			formatter.applyPattern("MMM");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_LOCAL_MONTH_NAME)) {
-			formatter.applyPattern("MMMM");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_LOCAL_TIME)) {
-			formatter.applyPattern("HH:mm");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_LOCAL_HOUR)) {
-			formatter.applyPattern("HH");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_LOCAL_WEEK)) {
-			formatter.applyPattern("w");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_LOCAL_YEAR)) {
-			formatter.applyPattern("yyyy");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_LOCAL_TIMESTAMP)) {
-			formatter.applyPattern("yyyyMMddHHmmss");
-			return formatter.format(current);
-		}
-		// current date values
-		formatter.setTimeZone(utc);
-		if (name.equals(MAGIC_CURRENT_DAY)) {
-			formatter.applyPattern("d");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_CURRENT_DAY2)) {
-			formatter.applyPattern("dd");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_CURRENT_DAY_NAME)) {
-			formatter.applyPattern("EEEE");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_CURRENT_DAY_OF_WEEK)) {
-			formatter.applyPattern("F");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_CURRENT_MONTH)) {
-			formatter.applyPattern("MM");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_CURRENT_MONTH_ABBR)) {
-			formatter.applyPattern("MMM");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_CURRENT_MONTH_NAME)) {
-			formatter.applyPattern("MMMM");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_CURRENT_TIME)) {
-			formatter.applyPattern("HH:mm");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_CURRENT_HOUR)) {
-			formatter.applyPattern("HH");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_CURRENT_WEEK)) {
-			formatter.applyPattern("w");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_CURRENT_YEAR)) {
-			formatter.applyPattern("yyyy");
-			return formatter.format(current);
-		}
-		if (name.equals(MAGIC_CURRENT_TIMESTAMP)) {
-			formatter.applyPattern("yyyyMMddHHmmss");
-			return formatter.format(current);
-		}
-		// statistics
-		NumberFormat numFormatter = NumberFormat.getInstance();
-		if (name.equals(MAGIC_CURRENT_VERSION)) {
-			return WikiVersion.CURRENT_WIKI_VERSION;
-		}
-		/*
-		if (name.equals(MAGIC_NUMBER_ARTICLES)) {
-		}
-		if (name.equals(MAGIC_NUMBER_ARTICLES_R)) {
-		}
-		*/
-		if (name.equals(MAGIC_NUMBER_PAGES)) {
-			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki());
-			return numFormatter.format(results);
-		}
-		if (name.equals(MAGIC_NUMBER_PAGES_R)) {
-			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki());
-			return Integer.toString(results);
-		}
-		if (name.equals(MAGIC_NUMBER_FILES)) {
-			int results = WikiBase.getDataHandler().lookupWikiFileCount(parserInput.getVirtualWiki());
-			return numFormatter.format(results);
-		}
-		if (name.equals(MAGIC_NUMBER_FILES_R)) {
-			int results = WikiBase.getDataHandler().lookupWikiFileCount(parserInput.getVirtualWiki());
-			return Integer.toString(results);
-		}
-		if (name.equals(MAGIC_NUMBER_USERS)) {
-			int results = WikiBase.getDataHandler().lookupWikiUserCount();
-			return numFormatter.format(results);
-		}
-		if (name.equals(MAGIC_NUMBER_USERS_R)) {
-			int results = WikiBase.getDataHandler().lookupWikiUserCount();
-			return Integer.toString(results);
-		}
-		/*
-		if (name.equals(MAGIC_NUMBER_ADMINS)) {
-		}
-		if (name.equals(MAGIC_NUMBER_ADMINS_R)) {
-		}
-		if (name.equals(MAGIC_PAGES_IN_NAMESPACE)) {
-		}
-		if (name.equals(MAGIC_PAGES_IN_NAMESPACE_NS)) {
-		}
-		if (name.equals(MAGIC_PAGES_IN_NAMESPACE_NS_R)) {
-		}
-		*/
-		// page values
-		WikiLink wikiLink = LinkUtil.parseWikiLink(parserInput.getTopicName());
-		if (name.equals(MAGIC_FULL_PAGE_NAME)) {
-			return parserInput.getTopicName();
-		}
-		if (name.equals(MAGIC_FULL_PAGE_NAME_E)) {
-			return Utilities.encodeAndEscapeTopicName(parserInput.getTopicName());
-		}
-		if (name.equals(MAGIC_PAGE_NAME)) {
-			return wikiLink.getArticle();
-		}
-		if (name.equals(MAGIC_PAGE_NAME_E)) {
-			return Utilities.encodeAndEscapeTopicName(wikiLink.getArticle());
-		}
-		if (name.equals(MAGIC_SUB_PAGE_NAME)) {
-			String topic = wikiLink.getArticle();
-			int pos = topic.lastIndexOf('/');
-			if (pos != -1 && pos < topic.length()) {
-				topic = topic.substring(pos + 1);
-			}
-			return topic;
-		}
-		if (name.equals(MAGIC_SUB_PAGE_NAME_E)) {
-			String topic = wikiLink.getArticle();
-			int pos = topic.lastIndexOf('/');
-			if (pos != -1 && pos < topic.length()) {
-				topic = topic.substring(pos + 1);
-			}
-			return Utilities.encodeAndEscapeTopicName(topic);
-		}
-		if (name.equals(MAGIC_BASE_PAGE_NAME)) {
-			String topic = wikiLink.getArticle();
-			int pos = topic.lastIndexOf('/');
-			if (pos != -1 && pos < topic.length()) {
-				topic = topic.substring(0, pos);
-			}
-			return topic;
-		}
-		if (name.equals(MAGIC_BASE_PAGE_NAME_E)) {
-			String topic = wikiLink.getArticle();
-			int pos = topic.lastIndexOf('/');
-			if (pos != -1 && pos < topic.length()) {
-				topic = topic.substring(0, pos);
-			}
-			return Utilities.encodeAndEscapeTopicName(topic);
-		}
-		if (name.equals(MAGIC_NAMESPACE)) {
-			return wikiLink.getNamespace();
-		}
-		if (name.equals(MAGIC_NAMESPACE_E)) {
-			return Utilities.encodeAndEscapeTopicName(wikiLink.getNamespace());
-		}
-		if (name.equals(MAGIC_TALK_SPACE)) {
-			String namespace = wikiLink.getNamespace();
-			return NamespaceHandler.getCommentsNamespace(namespace);
-		}
-		if (name.equals(MAGIC_TALK_SPACE_E)) {
-			String namespace = wikiLink.getNamespace();
-			return Utilities.encodeAndEscapeTopicName(NamespaceHandler.getCommentsNamespace(namespace));
-		}
-		if (name.equals(MAGIC_SUBJECT_SPACE) || name.equals(MAGIC_ARTICLE_SPACE)) {
-			String namespace = wikiLink.getNamespace();
-			return NamespaceHandler.getMainNamespace(namespace);
-		}
-		if (name.equals(MAGIC_SUBJECT_SPACE_E) || name.equals(MAGIC_ARTICLE_SPACE_E)) {
-			String namespace = wikiLink.getNamespace();
-			return Utilities.encodeAndEscapeTopicName(NamespaceHandler.getMainNamespace(namespace));
-		}
-		if (name.equals(MAGIC_TALK_PAGE_NAME)) {
-			return WikiUtil.extractCommentsLink(parserInput.getTopicName());
-		}
-		if (name.equals(MAGIC_TALK_PAGE_NAME_E)) {
-			return Utilities.encodeAndEscapeTopicName(WikiUtil.extractCommentsLink(parserInput.getTopicName()));
-		}
-		if (name.equals(MAGIC_SUBJECT_PAGE_NAME) || name.equals(MAGIC_ARTICLE_PAGE_NAME)) {
-			return WikiUtil.extractTopicLink(parserInput.getTopicName());
-		}
-		if (name.equals(MAGIC_SUBJECT_PAGE_NAME_E) || name.equals(MAGIC_ARTICLE_PAGE_NAME_E)) {
-			return Utilities.encodeAndEscapeTopicName(WikiUtil.extractTopicLink(parserInput.getTopicName()));
-		}
-		Topic topic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), parserInput.getTopicName(), false, null);
-		TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId().intValue(), null);
-		Date revision = topicVersion.getEditDate();
-		formatter.setTimeZone(utc);
-		if (name.equals(MAGIC_REVISION_DAY)) {
-			formatter.applyPattern("d");
-			return formatter.format(revision);
-		}
-		if (name.equals(MAGIC_REVISION_DAY2)) {
-			formatter.applyPattern("dd");
-			return formatter.format(revision);
-		}
-		if (name.equals(MAGIC_REVISION_MONTH)) {
-			formatter.applyPattern("MM");
-			return formatter.format(revision);
-		}
-		if (name.equals(MAGIC_REVISION_YEAR)) {
-			formatter.applyPattern("yyyy");
-			return formatter.format(revision);
-		}
-		if (name.equals(MAGIC_REVISION_TIMESTAMP)) {
-			formatter.applyPattern("yyyyMMddHHmmss");
-			return formatter.format(revision);
-		}
-		/*
-		if (name.equals(MAGIC_REVISION_ID)) {
-		}
-		if (name.equals(MAGIC_SITE_NAME)) {
-		}
-		if (name.equals(MAGIC_SERVER)) {
-		}
-		if (name.equals(MAGIC_SCRIPT_PATH)) {
-		}
-		if (name.equals(MAGIC_SERVER_NAME)) {
-		}
-		*/
-		return name;
 	}
 
 	/**
 	 * Given a template call of the form "{{name|param|param}}" return the
 	 * parsed output.
 	 */
-	private String processTemplateContent(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String raw, String name) throws Exception {
+	private String processTemplateContent(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String templateContent, String name) throws Exception {
 		if (templateTopic == null) {
 			return "[[" + name + "]]";
 		}
 		// set template parameter values
-		this.parseTemplateParameterValues(parserInput, raw);
+		this.parseTemplateParameterValues(parserInput, templateContent);
 		return this.parseTemplateBody(parserInput, templateTopic.getTopicContent());
 	}
 
@@ -742,13 +274,13 @@ public class TemplateTag {
 	 * Given a template call of the form "{{:name}}" parse the template
 	 * inclusion.
 	 */
-	private String processTemplateInclusion(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String raw, String name) throws Exception {
+	private String processTemplateInclusion(ParserInput parserInput, ParserOutput parserOutput, int mode, Topic templateTopic, String raw, String name) throws Exception {
 		if (templateTopic == null) {
 			return "[[" + name + "]]";
 		}
 		// FIXME - disable section editing
 		parserInput.getTempParams().put(TEMPLATE_INCLUSION, "true");
-		return templateTopic.getTopicContent();
+		return (StringUtils.isBlank(templateTopic.getTopicContent())) ? templateTopic.getTopicContent() : JFlexParserUtil.parseFragment(parserInput, templateTopic.getTopicContent(), mode);
 	}
 
 	/**
@@ -790,16 +322,16 @@ public class TemplateTag {
 			endPos = -1;
 			if (substring.startsWith("{{{")) {
 				// template parameter
-				endPos = findMatchingEndTag(content, pos, "{{{", "}}}");
+				endPos = Utilities.findMatchingEndTag(content, pos, "{{{", "}}}");
 			} else if (substring.startsWith("{{")) {
 				// template
-				endPos = findMatchingEndTag(content, pos, "{{", "}}");
+				endPos = Utilities.findMatchingEndTag(content, pos, "{{", "}}");
 			} else if (substring.startsWith("[[")) {
 				// link
-				endPos = findMatchingEndTag(content, pos, "[[", "]]");
+				endPos = Utilities.findMatchingEndTag(content, pos, "[[", "]]");
 			} else if (substring.startsWith("{|")) {
 				// table
-				endPos = findMatchingEndTag(content, pos, "{|", "|}");
+				endPos = Utilities.findMatchingEndTag(content, pos, "{|", "|}");
 			} else if (content.charAt(pos) == '|') {
 				// new token
 				tokens.add(new String(value));

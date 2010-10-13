@@ -18,10 +18,10 @@ package org.jamwiki.authentication;
 
 import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
-import org.acegisecurity.ConfigAttribute;
-import org.acegisecurity.ConfigAttributeDefinition;
-import org.acegisecurity.intercept.web.FilterInvocationDefinitionSourceEditor;
-import org.acegisecurity.intercept.web.PathBasedFilterInvocationDefinitionMap;
+import org.springframework.security.ConfigAttribute;
+import org.springframework.security.ConfigAttributeDefinition;
+import org.springframework.security.intercept.web.FilterInvocationDefinitionSourceEditor;
+import org.springframework.security.intercept.web.DefaultFilterInvocationDefinitionSource;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -58,23 +58,23 @@ public class JAMWikiErrorMessageProvider {
 		}
 		FilterInvocationDefinitionSourceEditor editor = new FilterInvocationDefinitionSourceEditor();
 		editor.setAsText(this.getUrlPatterns());
-		PathBasedFilterInvocationDefinitionMap map = (PathBasedFilterInvocationDefinitionMap)editor.getValue();
-		return map.lookupAttributes(uri);
-    }
+		DefaultFilterInvocationDefinitionSource map = (DefaultFilterInvocationDefinitionSource)editor.getValue();
+		return map.lookupAttributes(uri, null);
+	}
 
 	/**
 	 *
 	 */
 	private String retrieveErrorKey(HttpServletRequest request) {
-        ConfigAttributeDefinition attrs = this.retrieveConfigAttributeDefinition(request);
-        if (attrs != null) {
-			Iterator configIterator = attrs.getConfigAttributes();
+		ConfigAttributeDefinition attrs = this.retrieveConfigAttributeDefinition(request);
+		if (attrs != null) {
+			Iterator configIterator = attrs.getConfigAttributes().iterator();
 			if (configIterator.hasNext()) {
 				ConfigAttribute attr = (ConfigAttribute)configIterator.next();
 				return attr.getAttribute();
 			}
- 		}
- 		return null;
+		}
+		return null;
 	}
 
 	/**

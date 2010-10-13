@@ -23,20 +23,20 @@ import java.util.TreeMap;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
-import org.acegisecurity.ui.WebAuthenticationDetails;
+import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import org.springframework.security.ui.WebAuthenticationDetails;
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.WikiUserAuth;
+import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
+import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -49,6 +49,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 public class RegisterServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(RegisterServlet.class.getName());
+	/** The name of the JSP file used to render the servlet output when searching. */
 	protected static final String JSP_REGISTER = "register.jsp";
 
 	/**
@@ -66,7 +67,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void loadDefaults(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, WikiUser user, WikiUserInfo userInfo) throws Exception {
+	private void loadDefaults(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, WikiUser user) throws Exception {
 		if (StringUtils.isBlank(user.getDefaultLocale()) && request.getLocale() != null) {
 			user.setDefaultLocale(request.getLocale().toString());
 		}
@@ -85,8 +86,9 @@ public class RegisterServlet extends JAMWikiServlet {
 			locales.put(value, key);
 		}
 		next.addObject("locales", locales);
+		Map editors = WikiConfiguration.getInstance().getEditors();
+		next.addObject("editors", editors);
 		next.addObject("newuser", user);
-		next.addObject("newuserinfo", userInfo);
 		pageInfo.setSpecial(true);
 		pageInfo.setContentJsp(JSP_REGISTER);
 		pageInfo.setPageTitle(new WikiMessage("register.title"));
@@ -95,8 +97,9 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void login(HttpServletRequest request, WikiUserAuth user) {
-		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
+	private void login(HttpServletRequest request, String username, String password) {
+		WikiUserDetails userDetails = new WikiUserDetails(username, password, true, true, true, true, JAMWikiAuthenticationConfiguration.getDefaultGroupRoles());
+		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 		authentication.setDetails(new WebAuthenticationDetails(request));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
@@ -105,11 +108,10 @@ public class RegisterServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void register(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
-		WikiUserAuth user = this.setWikiUser(request);
-		WikiUserInfo userInfo = this.setWikiUserInfo(request);
+		String virtualWikiName = pageInfo.getVirtualWikiName();
+		WikiUser user = this.setWikiUser(request);
+		boolean isUpdate = (user.getUserId() != -1);
 		next.addObject("newuser", user);
-		next.addObject("newuserinfo", userInfo);
 		Vector errors = validate(request, user);
 		if (!errors.isEmpty()) {
 			next.addObject("errors", errors);
@@ -125,72 +127,57 @@ public class RegisterServlet extends JAMWikiServlet {
 			if (confirmPassword != null) {
 				next.addObject("confirmPassword", confirmPassword);
 			}
-			this.loadDefaults(request, next, pageInfo, user, userInfo);
+			this.loadDefaults(request, next, pageInfo, user);
 		} else {
-			WikiBase.getDataHandler().writeWikiUser(user, userInfo, null);
-			// login the user
-			this.login(request, user);
+			String username = request.getParameter("login");
+			String newPassword = request.getParameter("newPassword");
+			String encryptedPassword = null;
+			if (!StringUtils.isBlank(newPassword)) {
+				encryptedPassword = Encryption.encrypt(newPassword);
+			}
+			WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword);
+			if (!StringUtils.isBlank(newPassword)) {
+				// login the user
+				this.login(request, user.getUsername(), newPassword);
+			}
 			// update the locale key since the user may have changed default locale
 			if (!StringUtils.isBlank(user.getDefaultLocale())) {
 				Locale locale = LocaleUtils.toLocale(user.getDefaultLocale());
 				request.getSession().setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, locale);
 			}
-			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
-			String topic = virtualWiki.getDefaultTopicName();
-			ServletUtil.redirect(next, virtualWikiName, topic);
+			if (isUpdate) {
+				next.addObject("updateMessage", new WikiMessage("register.caption.updatesuccess"));
+				this.view(request, next, pageInfo);
+			} else {
+				VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
+				String topic = virtualWiki.getDefaultTopicName();
+				ServletUtil.redirect(next, virtualWikiName, topic);
+			}
 		}
 	}
 
 	/**
 	 *
 	 */
-	private WikiUserAuth setWikiUser(HttpServletRequest request) throws Exception {
+	private WikiUser setWikiUser(HttpServletRequest request) throws Exception {
 		String username = request.getParameter("login");
-		WikiUserAuth user = new WikiUserAuth(username);
+		WikiUser user = new WikiUser(username);
 		String userIdString = request.getParameter("userId");
 		if (!StringUtils.isBlank(userIdString)) {
 			int userId = new Integer(userIdString).intValue();
 			if (userId > 0) {
-				user = new WikiUserAuth(WikiBase.getDataHandler().lookupWikiUser(userId, null));
+				user = WikiBase.getDataHandler().lookupWikiUser(userId);
 			}
 		}
 		user.setDisplayName(request.getParameter("displayName"));
-		String newPassword = request.getParameter("newPassword");
-		if (!StringUtils.isBlank(newPassword)) {
-			user.setPassword(Encryption.encrypt(newPassword));
-		}
 		user.setDefaultLocale(request.getParameter("defaultLocale"));
+		user.setEmail(request.getParameter("email"));
+		user.setEditor(request.getParameter("editor"));
+		user.setSignature(request.getParameter("signature"));
 		// FIXME - need to distinguish between add & update
 		user.setCreateIpAddress(ServletUtil.getIpAddress(request));
 		user.setLastLoginIpAddress(ServletUtil.getIpAddress(request));
 		return user;
-	}
-
-	/**
-	 *
-	 */
-	private WikiUserInfo setWikiUserInfo(HttpServletRequest request) throws Exception {
-		WikiUserInfo userInfo = new WikiUserInfo();
-		String username = request.getParameter("login");
-		String userIdString = request.getParameter("userId");
-		if (!StringUtils.isBlank(userIdString)) {
-			int userId = new Integer(userIdString).intValue();
-			if (userId > 0) {
-				userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(username);
-			}
-		}
-		if (!WikiBase.getUserHandler().isWriteable()) {
-			return userInfo;
-		}
-		userInfo.setUsername(username);
-		userInfo.setEmail(request.getParameter("email"));
-		userInfo.setFirstName(request.getParameter("firstName"));
-		userInfo.setLastName(request.getParameter("lastName"));
-		String newPassword = request.getParameter("newPassword");
-		if (!StringUtils.isBlank(newPassword)) {
-			userInfo.setEncodedPassword(Encryption.encrypt(newPassword));
-		}
-		return userInfo;
 	}
 
 	/**
@@ -204,7 +191,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			errors.add(e.getWikiMessage());
 		}
 		String oldPassword = request.getParameter("oldPassword");
-		if (user.getUserId() > 0 && !WikiBase.getUserHandler().authenticate(user.getUsername(), oldPassword)) {
+		if (user.getUserId() > 0 && !StringUtils.isBlank(oldPassword) && !WikiBase.getDataHandler().authenticate(user.getUsername(), oldPassword)) {
 			errors.add(new WikiMessage("register.error.oldpasswordinvalid"));
 		}
 		String newPassword = request.getParameter("newPassword");
@@ -212,17 +199,17 @@ public class RegisterServlet extends JAMWikiServlet {
 		if (user.getUserId() < 1 && StringUtils.isBlank(newPassword)) {
 			errors.add(new WikiMessage("register.error.passwordempty"));
 		}
-		if (!WikiBase.getUserHandler().isWriteable() && !WikiBase.getUserHandler().authenticate(user.getUsername(), newPassword)) {
-			errors.add(new WikiMessage("register.error.oldpasswordinvalid"));
-		}
 		if (!StringUtils.isBlank(newPassword) || !StringUtils.isBlank(confirmPassword)) {
+			if (user.getUserId() > 0 && StringUtils.isBlank(oldPassword)) {
+				errors.add(new WikiMessage("register.error.oldpasswordinvalid"));
+			}
 			try {
 				WikiUtil.validatePassword(newPassword, confirmPassword);
 			} catch (WikiException e) {
 				errors.add(e.getWikiMessage());
 			}
 		}
-		if (user.getUserId() < 1 && WikiBase.getDataHandler().lookupWikiUser(user.getUsername(), null) != null) {
+		if (user.getUserId() < 1 && WikiBase.getDataHandler().lookupWikiUser(user.getUsername()) != null) {
 			errors.add(new WikiMessage("register.error.logininvalid", user.getUsername()));
 		}
 		return errors;
@@ -233,12 +220,10 @@ public class RegisterServlet extends JAMWikiServlet {
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		// FIXME - i suspect initializing with a null login is bad
-		WikiUser user = new WikiUser("");
-		WikiUserInfo userInfo = new WikiUserInfo();
-		if (ServletUtil.currentUser().hasRole(Role.ROLE_USER)) {
-			user = ServletUtil.currentUser();
-			userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(user.getUsername());
+		WikiUser user = new WikiUser();
+		if (!ServletUtil.currentUserDetails().hasRole(Role.ROLE_ANONYMOUS)) {
+			user = ServletUtil.currentWikiUser();
 		}
-		this.loadDefaults(request, next, pageInfo, user, userInfo);
+		this.loadDefaults(request, next, pageInfo, user);
 	}
 }

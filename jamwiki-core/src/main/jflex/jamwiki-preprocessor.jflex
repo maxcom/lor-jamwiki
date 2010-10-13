@@ -30,7 +30,7 @@ import org.jamwiki.utils.WikiLogger;
 
 /* code copied verbatim into the generated .java file */
 %{
-    protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiPreProcessor.class.getName());
+    private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiPreProcessor.class.getName());
     protected int templateCharCount = 0;
     protected String templateString = "";
 %}

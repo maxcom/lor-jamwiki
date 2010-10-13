@@ -38,6 +38,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class RolesServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(RolesServlet.class.getName());
+	/** The name of the JSP file used to render the servlet output when searching. */
 	protected static final String JSP_ADMIN_ROLES = "admin-roles.jsp";
 
 	/**
@@ -111,22 +112,24 @@ public class RolesServlet extends JAMWikiServlet {
 				for (int i = 0; i < candidateGroups.length; i++) {
 					int groupId = Integer.parseInt(candidateGroups[i]);
 					List roles = buildRoleArray(-1, groupId, groupRoles);
-					WikiBase.getDataHandler().writeRoleMapGroup(groupId, roles, null);
+					WikiBase.getDataHandler().writeRoleMapGroup(groupId, roles);
 				}
 				next.addObject("message", new WikiMessage("roles.message.grouproleupdate"));
 			}
 			// now do the same for user roles.
 			String[] candidateUsers = request.getParameterValues("candidateUser");
+			String[] candidateUsernames = request.getParameterValues("candidateUsername");
 			String[] userRoles = request.getParameterValues("userRole");
 			if (candidateUsers != null) {
 				for (int i = 0; i < candidateUsers.length; i++) {
 					int userId = Integer.parseInt(candidateUsers[i]);
+					String username = candidateUsernames[i];
 					List roles = buildRoleArray(userId, -1, userRoles);
-					if (userId == ServletUtil.currentUser().getUserId() && !roles.contains(Role.ROLE_SYSADMIN)) {
+					if (userId == ServletUtil.currentWikiUser().getUserId() && !roles.contains(Role.ROLE_SYSADMIN)) {
 						errors.add(new WikiMessage("roles.message.sysadminremove"));
 						roles.add(Role.ROLE_SYSADMIN.getAuthority());
 					}
-					WikiBase.getDataHandler().writeRoleMapUser(userId, roles, null);
+					WikiBase.getDataHandler().writeRoleMapUser(username, roles);
 				}
 				next.addObject("message", new WikiMessage("roles.message.userroleupdate"));
 			}
@@ -157,7 +160,7 @@ public class RolesServlet extends JAMWikiServlet {
 				role = new Role(roleName);
 				role.setDescription(request.getParameter("roleDescription"));
 				WikiUtil.validateRole(role);
-				WikiBase.getDataHandler().writeRole(role, null, update);
+				WikiBase.getDataHandler().writeRole(role, update);
 				if (!StringUtils.isBlank(updateRole) && updateRole.equals(role.getAuthority())) {
 					next.addObject("message", new WikiMessage("roles.message.roleupdated", role.getAuthority()));
 				} else {

@@ -216,7 +216,7 @@ public abstract class JFlexLexer {
 		tag.setTagAttributes(tagAttributes);
 		// many HTML tags cannot nest (ie "<li><li></li></li>" is invalid), so if a non-nesting
 		// tag is being added and the previous tag is of the same type, close the previous tag
-		if (!JFlexParserUtil.isNestingTag(tagType) && this.peekTag().getTagType().equals(tagType)) {
+		if (JFlexParserUtil.isNonNestingTag(tagType) && this.peekTag().getTagType().equals(tagType)) {
 			this.popTag(tagType);
 		}
 		this.tagStack.push(tag);
@@ -357,7 +357,7 @@ public abstract class JFlexLexer {
 	 * and HTML <td> or <th> tag.
 	 *
 	 * @param text The text to be parsed.
-	 * @param tag The HTML tag text, either "td" or "th".
+	 * @param tagType The HTML tag type, either "td" or "th".
 	 * @param markup The Wiki markup for the tag, either "|", "|+" or "!"
 	 */
 	protected void parseTableCell(String text, String tagType, String markup) {
@@ -448,46 +448,57 @@ public abstract class JFlexLexer {
 			// closed explicitly with a "</p>".
 			this.popTag("p");
 		}
-		// push back everything except for any opening newlines that were matched
-		yypushback(StringUtils.stripStart(raw, "\n\r\t").length());
+		// push back everything except for any opening newline that was matched
+		int pushback = raw.length();
+		int pos = raw.indexOf("\n");
+		if (pos != -1 && pos < raw.length()) {
+			pushback = raw.substring(pos + 1).length();
+		}
+		yypushback(pushback);
 	}
 
 	/**
 	 *
 	 */
 	protected void parseParagraphStart(String raw) {
+		int pushback = raw.length();
 		if (this.mode >= JFlexParser.MODE_LAYOUT) {
 			this.pushTag("p", null);
+			int newlineCount = StringUtils.countMatches(raw, "\n");
+			if (newlineCount > 0) {
+				pushback = StringUtils.stripStart(raw, " \n\r\t").length();
+			}
+			if (newlineCount == 2) {
+				// if the pattern matched two opening newlines then start the paragraph with a <br /> tag
+				this.append("<br />\n");
+			}
 		}
-		yypushback(yytext().length());
+		yypushback(pushback);
 	}
 
 	/**
 	 *
 	 */
-	protected void parseParagraphStartEmpty(String raw) {
-		// push back everything except for any opening newlines that were matched
-		yypushback(StringUtils.stripStart(raw, "\n\r\t").length());
+	protected void parseParagraphEmpty(String raw) {
+		// push back everything up to the last of the opening newlines that were matched
+		yypushback(StringUtils.stripStart(raw, " \n\r\t").length() + 1);
 		if (this.mode < JFlexParser.MODE_LAYOUT) {
 			return;
 		}
-		if (this.peekTag().getTagType().equals("p")) {
-			// if a paragraph is already opened, close it before opening a new paragraph
-			this.popTag("p");
-		}
-		this.pushTag("p", null);
-		this.append("<br />\n");
+		int newlineCount = 0;
 		for (int i = 0; i < raw.length(); i++) {
-			// if more than three newlines start this pattern create additional empty paragraphs
 			if (raw.charAt(i) != '\n') {
-				break;
-			}
-			if (i < 4) {
+				// only count newlines for paragraph creation
 				continue;
 			}
-			this.popTag("p");
+			newlineCount++;
+			if (newlineCount % 2 != 0) {
+				// two newlines are required to create a paragraph
+				continue;
+			}
 			this.pushTag("p", null);
 			this.append("<br />\n");
+			this.popTag("p");
 		}
 	}
 

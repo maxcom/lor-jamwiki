@@ -32,6 +32,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class ContributionsServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(ContributionsServlet.class.getName());
+	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_CONTRIBUTIONS = "contributions.jsp";
 
 	/**
@@ -46,7 +47,7 @@ public class ContributionsServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void contributions(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		String userString = WikiUtil.getParameterFromRequest(request, "contributor", false);
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		Collection contributions = WikiBase.getDataHandler().getUserContributions(virtualWiki, userString, pagination, true);

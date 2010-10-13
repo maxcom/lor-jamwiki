@@ -22,20 +22,20 @@
 
 <%@ include file="page-init.jsp" %>
 
-<div style="margin:10px 30px 10px 30px;padding:10px;color:red;text-align:center;border:1px dashed red;"><f:message key="common.warning.experimental" /></div>
+<div style="margin:10px 30px 10px 30px;padding:10px;color:red;text-align:center;border:1px dashed red;"><fmt:message key="common.warning.experimental" /></div>
 
 <c:if test="${!empty error}">
-<div class="message red"><f:message key="${error.key}"><f:param value="${error.params[0]}" /></f:message></div>
+<div class="message red"><fmt:message key="${error.key}"><fmt:param value="${error.params[0]}" /></fmt:message></div>
 </c:if>
 
 <form name="form1" method="post" action="<jamwiki:link value="Special:ImportTiddly" />" enctype="multipart/form-data">
 <table border="0">
 <tr>
-	<td><label for="importFile"><f:message key="import.caption.source" /></label>:</td>
+	<td><label for="importFile"><fmt:message key="import.caption.source" /></label>:</td>
 	<td><input type="file" name="contents" size="50" id="importFile" /></td>
 </tr>
 <tr>
-	<td colspan="2" align="center"><input type="submit" name="save" value="<f:message key="import.button.import" />" /></td>
+	<td colspan="2" align="center"><input type="submit" name="save" value="<fmt:message key="import.button.import" />" /></td>
 </tr>
 </table>
 </form>

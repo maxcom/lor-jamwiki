@@ -16,11 +16,16 @@
  */
 package org.jamwiki.authentication;
 
-import org.acegisecurity.userdetails.UserDetails;
-import org.acegisecurity.userdetails.UserDetailsService;
-import org.acegisecurity.userdetails.UsernameNotFoundException;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.userdetails.UserDetailsService;
+import org.springframework.security.userdetails.UsernameNotFoundException;
 
 /**
  * Loads user data from JAMWiki database.
@@ -34,21 +39,47 @@ public class JAMWikiDaoImpl implements UserDetailsService {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.acegisecurity.userdetails.UserDetailsService#loadUserByUsername(java.lang.String)
+	 * @see org.springframework.security.userdetails.UserDetailsService#loadUserByUsername(java.lang.String)
 	 */
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-		UserDetails loadedUser;
+		if (StringUtils.isBlank(username)) {
+			throw new UsernameNotFoundException("Cannot retrieve user without a valid username");
+		}
+		String encryptedPassword = null;
 		try {
-			loadedUser = new WikiUserAuth(WikiBase.getDataHandler().lookupWikiUser(username, null));
+			encryptedPassword = WikiBase.getDataHandler().lookupWikiUserEncryptedPassword(username);
 		} catch (Exception e) {
-			// FIXME - for now throw an exception that Acegi can handle, but
-			// this should be handled with the Acegi ExceptionTranslationFilter
-//			throw new DataAccessResourceFailureException(e.getMessage(), e);
-			throw new UsernameNotFoundException("Failure retrieving user information for " + username, e);
+			throw new DataAccessResourceFailureException("Unable to retrieve authorities for user: " + username, e);
 		}
-		if (loadedUser == null) {
-			throw new UsernameNotFoundException("User with name '" + username + "' not found in JAMWiki database.");
+		if (encryptedPassword == null) {
+			throw new UsernameNotFoundException("Failure retrieving user information for " + username);
 		}
-		return loadedUser;
+		GrantedAuthority[] authorities = this.retrieveUserAuthorities(username);
+		return new WikiUserDetails(username, encryptedPassword, true, true, true, true, authorities);
+	}
+
+	/**
+	 *
+	 */
+	private GrantedAuthority[] retrieveUserAuthorities(String username) throws DataAccessException {
+		if (WikiUtil.isFirstUse() || WikiUtil.isUpgrade()) {
+			return new GrantedAuthority[0];
+		}
+		// add authorities given to all users
+		GrantedAuthority[] groupAuthorities = new GrantedAuthority[0];
+		if (JAMWikiAuthenticationConfiguration.getDefaultGroupRoles() != null) {
+			groupAuthorities = JAMWikiAuthenticationConfiguration.getDefaultGroupRoles();
+		}
+		// add authorities specific to this user
+		GrantedAuthority[] userAuthorities = new GrantedAuthority[0];
+		if (!StringUtils.isBlank(username)) {
+			// FIXME - log error for blank username?  RegisterServlet will trigger that.
+			try {
+				userAuthorities = WikiBase.getDataHandler().getRoleMapUser(username);
+			} catch (Exception e) {
+				throw new DataAccessResourceFailureException("Unable to retrieve authorities for user: " + username, e);
+			}
+		}
+		return (GrantedAuthority[])ArrayUtils.addAll(groupAuthorities, userAuthorities);
 	}
 }
