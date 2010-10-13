@@ -20,7 +20,6 @@ import java.sql.SQLException;
 import java.util.Properties;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.Pagination;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -32,15 +31,13 @@ public class OracleQueryHandler extends AnsiQueryHandler {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(OracleQueryHandler.class.getName());
 	private static final String SQL_PROPERTY_FILE_NAME = "sql.oracle.properties";
-	private static Properties props = null;
-	private static Properties defaults = null;
 
 	/**
 	 *
 	 */
 	protected OracleQueryHandler() {
-		defaults = Environment.loadProperties(AnsiQueryHandler.SQL_PROPERTY_FILE_NAME);
-		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
+		Properties defaults = Environment.loadProperties(AnsiQueryHandler.SQL_PROPERTY_FILE_NAME);
+		Properties props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
 		super.init(props);
 	}
 
@@ -52,6 +49,25 @@ public class OracleQueryHandler extends AnsiQueryHandler {
 		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, pagination.getEnd());
 		stmt.setInt(3, pagination.getStart());
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet getLogItems(int virtualWikiId, int logType, Pagination pagination, boolean descending) throws SQLException {
+		WikiPreparedStatement stmt = null;
+		int index = 1;
+		if (logType == -1) {
+			stmt = new WikiPreparedStatement(STATEMENT_SELECT_LOG_ITEMS);
+		} else {
+			stmt = new WikiPreparedStatement(STATEMENT_SELECT_LOG_ITEMS_BY_TYPE);
+			stmt.setInt(index++, logType);
+		}
+		stmt.setInt(index++, virtualWikiId);
+		stmt.setInt(index++, pagination.getEnd());
+		stmt.setInt(index++, pagination.getStart());
+		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
 
@@ -70,8 +86,8 @@ public class OracleQueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws SQLException {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES_TOPIC);
+	public WikiResultSet getTopicHistory(int topicId, Pagination pagination, boolean descending) throws SQLException {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_HISTORY);
 		stmt.setInt(1, topicId);
 		stmt.setInt(2, pagination.getEnd());
 		stmt.setInt(3, pagination.getStart());
@@ -93,15 +109,23 @@ public class OracleQueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws SQLException {
-		WikiPreparedStatement stmt = null;
-		if (Utilities.isIpAddress(userString)) {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
-		} else {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN);
-		}
+	public WikiResultSet getUserContributionsByLogin(String virtualWiki, String login, Pagination pagination, boolean descending) throws SQLException {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN);
 		stmt.setString(1, virtualWiki);
-		stmt.setString(2, userString);
+		stmt.setString(2, login);
+		stmt.setInt(3, pagination.getEnd());
+		stmt.setInt(4, pagination.getStart());
+		// FIXME - sort order ignored
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet getUserContributionsByUserDisplay(String virtualWiki, String userDisplay, Pagination pagination, boolean descending) throws SQLException {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
+		stmt.setString(1, virtualWiki);
+		stmt.setString(2, userDisplay);
 		stmt.setInt(3, pagination.getEnd());
 		stmt.setInt(4, pagination.getStart());
 		// FIXME - sort order ignored

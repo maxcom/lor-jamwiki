@@ -1,9 +1,0 @@
-<!-- http://findbugs.sourceforge.net/manual/filter.html -->
-<FindBugsFilter>
-	<Match>
-		<Class name="~Test$" />
-	</Match>
-	<Match>
-		<Class name="~TestSuite$" />
-	</Match>
-</FindBugsFilter>

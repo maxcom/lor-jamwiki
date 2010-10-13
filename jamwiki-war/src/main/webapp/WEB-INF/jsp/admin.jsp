@@ -66,10 +66,24 @@ function onRSS() {
 </div>
 
 <c:if test="${!empty message}">
-<div class="message red"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message red">
+	<fmt:message key="${message.key}">
+		<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
+		<fmt:param><c:if test="${message.paramsLength >= 1}">${message.params[0]}</c:if></fmt:param>
+		<fmt:param><c:if test="${message.paramsLength >= 2}">${message.params[1]}</c:if></fmt:param>
+	</fmt:message>
+</div>
 </c:if>
 <c:if test="${!empty errors}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+<div class="message red">
+	<c:forEach items="${errors}" var="message">
+		<fmt:message key="${message.key}">
+			<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
+			<fmt:param><c:if test="${message.paramsLength >= 1}">${message.params[0]}</c:if></fmt:param>
+			<fmt:param><c:if test="${message.paramsLength >= 2}">${message.params[1]}</c:if></fmt:param>
+		</fmt:message>
+	</c:forEach>
+</div>
 </c:if>
 
 <!-- BEGIN GENERAL SETTINGS -->
@@ -81,6 +95,12 @@ function onRSS() {
 	<c:set var="PROP_SERVER_URL"><%= Environment.PROP_SERVER_URL %></c:set>
 	<span class="formelement"><jamwiki:text name="${PROP_SERVER_URL}" value="${props[PROP_SERVER_URL]}" size="50" id="${PROP_SERVER_URL}" /></span>
 	<div class="formhelp"><fmt:message key="admin.help.serverurl" /></div>
+</div>
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
+	<span class="formcaption"><label for="<%= Environment.PROP_SITE_NAME %>"><fmt:message key="admin.caption.sitename" /></label></span>
+	<c:set var="PROP_SITE_NAME"><%= Environment.PROP_SITE_NAME %></c:set>
+	<span class="formelement"><jamwiki:text name="${PROP_SITE_NAME}" value="${props[PROP_SITE_NAME]}" size="50" id="${PROP_SITE_NAME}" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.sitename" /></div>
 </div>
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
 	<span class="formcaption"><label for="<%= Environment.PROP_BASE_DEFAULT_TOPIC %>"><fmt:message key="admin.caption.defaulttopic" /></label></span>
@@ -115,6 +135,11 @@ function onRSS() {
 	<span class="formcaption"><label for="<%= Environment.PROP_TOPIC_USE_PREVIEW %>"><fmt:message key="admin.caption.usepreview" /></label></span>
 	<c:set var="PROP_TOPIC_USE_PREVIEW"><%= Environment.PROP_TOPIC_USE_PREVIEW %></c:set>
 	<span class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_USE_PREVIEW}" value="true" checked="${props[PROP_TOPIC_USE_PREVIEW]}" id="${PROP_TOPIC_USE_PREVIEW}" /></span>
+</div>
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
+	<span class="formcaption"><label for="<%= Environment.PROP_TOPIC_USE_SHOW_CHANGES %>"><fmt:message key="admin.caption.useshowchanges" /></label></span>
+	<c:set var="PROP_TOPIC_USE_SHOW_CHANGES"><%= Environment.PROP_TOPIC_USE_SHOW_CHANGES %></c:set>
+	<span class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_USE_SHOW_CHANGES}" value="true" checked="${props[PROP_TOPIC_USE_SHOW_CHANGES]}" id="${PROP_TOPIC_USE_SHOW_CHANGES}" /></span>
 </div>
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
 	<span class="formcaption"><label for="<%= Environment.PROP_TOPIC_EDITOR %>"><fmt:message key="admin.caption.editor" /></label></span>
@@ -156,6 +181,12 @@ function onRSS() {
 		</c:forEach>
 		</select>
 	</span>
+</div>
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
+	<span class="formcaption"><label for="<%= Environment.PROP_MAX_TOPIC_VERSION_EXPORT %>"><fmt:message key="admin.caption.maxversionexport" /></label></span>
+	<c:set var="PROP_MAX_TOPIC_VERSION_EXPORT"><%= Environment.PROP_MAX_TOPIC_VERSION_EXPORT %></c:set>
+	<span class="formelement"><jamwiki:text name="${PROP_MAX_TOPIC_VERSION_EXPORT}" size="5" maxlength="4" value="${props[PROP_MAX_TOPIC_VERSION_EXPORT]}" id="${PROP_IMAGE_RESIZE_INCREMENT}" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.maxversionexport" /></div>
 </div>
 </fieldset>
 <!-- END GENERAL SETTINGS -->

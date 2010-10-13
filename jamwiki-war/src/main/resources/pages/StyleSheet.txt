@@ -102,6 +102,7 @@ dd {
 ul {
 	line-height: 1.5em;
 	list-style-type: square;
+	list-style-image: url(../images/bullet.gif);
 	margin: .3em 0 0 1.5em;
 	padding: 0;
 }
@@ -215,6 +216,7 @@ div.submenu {
 #nav-menu ul {
 	padding: 8px;
 	list-style-type: none;
+	list-style-image: none;
 	border-bottom: 1px solid #D8D8E7;
 	margin-left: 0;
 }
@@ -244,7 +246,7 @@ div.submenu {
 .diff-delete {
 	float: left;
 	position: relative;
-	background: #ee7777;
+	background: #eeee88;
 	font-weight: bold;
 	padding: 0.1em;
 	width: 48%;
@@ -253,7 +255,7 @@ div.submenu {
 .diff-add {
 	float: left;
 	position: relative;
-	background: #77ee77;
+	background: #88ee88;
 	font-weight: bold;
 	padding: 0.1em;
 	width: 48%;
@@ -284,6 +286,10 @@ div.submenu {
 	clear: both;
 	margin: 1px;
 	padding: 1px;
+}
+.diff-change {
+	font-weight: bold;
+	color: red;
 }
 
 /* topic elements */
@@ -348,6 +354,7 @@ div.submenu {
 #user-menu li {
 	display: inline;
 	list-style-type: none;
+	list-style-image: none;
 	padding: 0 0.8em;
 	font-size: 90%;
 }
@@ -369,11 +376,23 @@ li.standardchange {
 li.deletechange {
 	color: #770000;
 }
+li.importchange {
+	color: #007777;
+}
 li.movechange {
 	color: #777777;
 }
 li.undeletechange {
 	color: #007777;
+}
+span.edit-comment {
+	text-decoration: italic;
+}
+span.section-link {
+	color: #999;
+}
+span.section-link a {
+	color: #333;
 }
 
 /* topic pages */

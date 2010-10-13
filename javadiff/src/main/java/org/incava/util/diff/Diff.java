@@ -4,34 +4,34 @@ import java.util.*;
 
 
 /**
- * Compares two collections, returning a list of the additions, changes, and
- * deletions between them. A <code>Comparator</code> may be passed as an
- * argument to the constructor, and will thus be used. If not provided, the
- * initial value in the <code>a</code> ("from") collection will be looked at to
- * see if it supports the <code>Comparable</code> interface. If so, its
- * <code>equals</code> and <code>compareTo</code> methods will be invoked on the
- * instances in the "from" and "to" collections; otherwise, for speed, hash
- * codes from the objects will be used instead for comparison.
+ * Compares two lists, returning a list of the additions, changes, and deletions
+ * between them. A <code>Comparator</code> may be passed as an argument to the
+ * constructor, and will thus be used. If not provided, the initial value in the
+ * <code>a</code> ("from") list will be looked at to see if it supports the
+ * <code>Comparable</code> interface. If so, its <code>equals</code> and
+ * <code>compareTo</code> methods will be invoked on the instances in the "from"
+ * and "to" lists; otherwise, for speed, hash codes from the objects will be
+ * used instead for comparison.
  *
  * <p>The file FileDiff.java shows an example usage of this class, in an
  * application similar to the Unix "diff" program.</p>
  */
-public class Diff
+public class Diff<Type>
 {
     /**
-     * The source array, AKA the "from" values.
+     * The source list, AKA the "from" values.
      */
-    protected Object[] a;
+    protected List<Type> a;
 
     /**
-     * The target array, AKA the "to" values.
+     * The target list, AKA the "to" values.
      */
-    protected Object[] b;
+    protected List<Type> b;
 
     /**
      * The list of differences, as <code>Difference</code> instances.
      */
-    protected List diffs = new ArrayList();
+    protected List<Difference> diffs = new ArrayList<Difference>();
 
     /**
      * The pending, uncommitted difference.
@@ -41,22 +41,19 @@ public class Diff
     /**
      * The comparator used, if any.
      */
-    private Comparator comparator;
+    private Comparator<Type> comparator;
 
     /**
      * The thresholds.
      */
-    private TreeMap thresh;
+    private TreeMap<Integer, Integer> thresh;
 
     /**
      * Constructs the Diff object for the two arrays, using the given comparator.
      */
-    public Diff(Object[] a, Object[] b, Comparator comp)
+    public Diff(Type[] a, Type[] b, Comparator<Type> comp)
     {
-        this.a = a;
-        this.b = b;
-        this.comparator = comp;
-        this.thresh = null;     // created in getLongestCommonSubsequences
+        this(Arrays.asList(a), Arrays.asList(b), comp);
     }
 
     /**
@@ -64,26 +61,28 @@ public class Diff
      * comparison mechanism between the objects, such as <code>equals</code> and
      * <code>compareTo</code>.
      */
-    public Diff(Object[] a, Object[] b)
+    public Diff(Type[] a, Type[] b)
     {
         this(a, b, null);
     }
 
     /**
-     * Constructs the Diff object for the two collections, using the given
-     * comparator.
+     * Constructs the Diff object for the two lists, using the given comparator.
      */
-    public Diff(Collection a, Collection b, Comparator comp)
+    public Diff(List<Type> a, List<Type> b, Comparator<Type> comp)
     {
-        this(a.toArray(), b.toArray(), comp);
+        this.a = a;
+        this.b = b;
+        this.comparator = comp;
+        this.thresh = null;
     }
 
     /**
-     * Constructs the Diff object for the two collections, using the default
+     * Constructs the Diff object for the two lists, using the default
      * comparison mechanism between the objects, such as <code>equals</code> and
      * <code>compareTo</code>.
      */
-    public Diff(Collection a, Collection b)
+    public Diff(List<Type> a, List<Type> b)
     {
         this(a, b, null);
     }
@@ -91,7 +90,7 @@ public class Diff
     /**
      * Runs diff and returns the results.
      */
-    public List diff()
+    public List<Difference> diff()
     {
         traverseSequences();
 
@@ -112,8 +111,8 @@ public class Diff
     {
         Integer[] matches = getLongestCommonSubsequences();
 
-        int lastA = a.length - 1;
-        int lastB = b.length - 1;
+        int lastA = a.size() - 1;
+        int lastB = b.size() - 1;
         int bi = 0;
         int ai;
 
@@ -126,7 +125,7 @@ public class Diff
                 onANotB(ai, bi);
             }
             else {
-                while (bi < bLine.intValue()) {
+                while (bi < bLine) {
                     onBNotA(ai, bi++);
                 }
 
@@ -253,7 +252,7 @@ public class Diff
      * Compares the two objects, using the comparator provided with the
      * constructor, if any.
      */
-    protected boolean equals(Object x, Object y)
+    protected boolean equals(Type x, Type y)
     {
         return comparator == null ? x.equals(y) : comparator.compare(x, y) == 0;
     }
@@ -264,61 +263,63 @@ public class Diff
     public Integer[] getLongestCommonSubsequences()
     {
         int aStart = 0;
-        int aEnd = a.length - 1;
+        int aEnd = a.size() - 1;
 
         int bStart = 0;
-        int bEnd = b.length - 1;
+        int bEnd = b.size() - 1;
 
-        TreeMap matches = new TreeMap();
+        TreeMap<Integer, Integer> matches = new TreeMap<Integer, Integer>();
 
-        while (aStart <= aEnd && bStart <= bEnd && equals(a[aStart], b[bStart])) {
-            matches.put(new Integer(aStart++), new Integer(bStart++));
+        while (aStart <= aEnd && bStart <= bEnd && equals(a.get(aStart), b.get(bStart))) {
+            matches.put(aStart++, bStart++);
         }
 
-        while (aStart <= aEnd && bStart <= bEnd && equals(a[aEnd], b[bEnd])) {
-            matches.put(new Integer(aEnd--), new Integer(bEnd--));
+        while (aStart <= aEnd && bStart <= bEnd && equals(a.get(aEnd), b.get(bEnd))) {
+            matches.put(aEnd--, bEnd--);
         }
 
-        Map bMatches = null;
+        Map<Type, List<Integer>> bMatches = null;
         if (comparator == null) {
-            if (a.length > 0 && a[0] instanceof Comparable) {
+            if (a.size() > 0 && a.get(0) instanceof Comparable) {
                 // this uses the Comparable interface
-                bMatches = new TreeMap();
+                bMatches = new TreeMap<Type, List<Integer>>();
             }
             else {
                 // this just uses hashCode()
-                bMatches = new HashMap();
+                bMatches = new HashMap<Type, List<Integer>>();
             }
         }
         else {
             // we don't really want them sorted, but this is the only Map
             // implementation (as of JDK 1.4) that takes a comparator.
-            bMatches = new TreeMap(comparator);
+            bMatches = new TreeMap<Type, List<Integer>>(comparator);
         }
 
         for (int bi = bStart; bi <= bEnd; ++bi) {
-            Object element   = b[bi];
-            Object key       = element;
-            List   positions = (List)bMatches.get(key);
+            Type         element    = b.get(bi);
+            Type          key       = element;
+            List<Integer> positions = bMatches.get(key);
+            
             if (positions == null) {
-                positions = new ArrayList();
+                positions = new ArrayList<Integer>();
                 bMatches.put(key, positions);
             }
-            positions.add(new Integer(bi));
+            
+            positions.add(bi);
         }
 
-        thresh = new TreeMap();
-        Map links = new HashMap();
+        thresh = new TreeMap<Integer, Integer>();
+        Map<Integer, Object[]> links = new HashMap<Integer, Object[]>();
 
         for (int i = aStart; i <= aEnd; ++i) {
-            Object aElement  = a[i]; // keygen here.
-            List   positions = (List)bMatches.get(aElement);
+            Type aElement  = a.get(i);
+            List<Integer> positions = bMatches.get(aElement);
 
             if (positions != null) {
-                Integer  k   = new Integer(0);
-                ListIterator pit = positions.listIterator(positions.size());
+                Integer  k   = 0;
+                ListIterator<Integer> pit = positions.listIterator(positions.size());
                 while (pit.hasPrevious()) {
-                    Integer j = (Integer)pit.previous();
+                    Integer j = pit.previous();
 
                     k = insert(j, k);
 
@@ -326,15 +327,15 @@ public class Diff
                         // nothing
                     }
                     else {
-                        Object value = k.intValue() > 0 ? links.get(new Integer(k.intValue() - 1)) : null;
-                        links.put(k, new Object[] { value, new Integer(i), j });
+                        Object value = k > 0 ? links.get(k - 1) : null;
+                        links.put(k, new Object[] { value, i, j });
                     }   
                 }
             }
         }
 
         if (thresh.size() > 0) {
-            Integer  ti   = (Integer)thresh.lastKey();
+            Integer  ti   = thresh.lastKey();
             Object[] link = (Object[])links.get(ti);
             while (link != null) {
                 Integer x = (Integer)link[1];
@@ -344,22 +345,11 @@ public class Diff
             }
         }
 
-        return toArray(matches);        
-    }
-
-    /**
-     * Converts the map (indexed by java.lang.Integers) into an array.
-     */
-    protected static Integer[] toArray(TreeMap map)
-    {
-        int       size = map.size() == 0 ? 0 : 1 + ((Integer)map.lastKey()).intValue();
+        int       size = matches.size() == 0 ? 0 : 1 + matches.lastKey();
         Integer[] ary  = new Integer[size];
-        Iterator  it   = map.keySet().iterator();
-        
-        while (it.hasNext()) {
-            Integer idx = (Integer)it.next();
-            Integer val = (Integer)map.get(idx);
-            ary[idx.intValue()] = val;
+        for (Integer idx : matches.keySet()) {
+            Integer val = matches.get(idx);
+            ary[idx] = val;
         }
         return ary;
     }
@@ -369,7 +359,7 @@ public class Diff
      */
     protected static boolean isNonzero(Integer i)
     {
-        return i != null && i.intValue() != 0;
+        return i != null && i != 0;
     }
 
     /**
@@ -378,7 +368,7 @@ public class Diff
      */
     protected boolean isGreaterThan(Integer index, Integer val)
     {
-        Integer lhs = (Integer)thresh.get(index);
+        Integer lhs = thresh.get(index);
         return lhs != null && val != null && lhs.compareTo(val) > 0;
     }
 
@@ -388,7 +378,7 @@ public class Diff
      */
     protected boolean isLessThan(Integer index, Integer val)
     {
-        Integer lhs = (Integer)thresh.get(index);
+        Integer lhs = thresh.get(index);
         return lhs != null && (val == null || lhs.compareTo(val) < 0);
     }
 
@@ -397,7 +387,7 @@ public class Diff
      */
     protected Integer getLastValue()
     {
-        return (Integer)thresh.get(thresh.lastKey());
+        return thresh.get(thresh.lastKey());
     }
 
     /**
@@ -408,11 +398,11 @@ public class Diff
     {
         Integer addIdx = null;
         if (thresh.size() == 0) {
-            addIdx = new Integer(0);
+            addIdx = 0;
         }
         else {
-            Integer lastKey = (Integer)thresh.lastKey();
-            addIdx = new Integer(lastKey.intValue() + 1);
+            Integer lastKey = thresh.lastKey();
+            addIdx = lastKey + 1;
         }
         thresh.put(addIdx, value);
     }
@@ -422,50 +412,49 @@ public class Diff
      */
     protected Integer insert(Integer j, Integer k)
     {
-        if (isNonzero(k) && isGreaterThan(k, j) && isLessThan(new Integer(k.intValue() - 1), j)) {
+        if (isNonzero(k) && isGreaterThan(k, j) && isLessThan(k - 1, j)) {
             thresh.put(k, j);
         }
         else {
-            int hi = -1;
+            int high = -1;
             
             if (isNonzero(k)) {
-                hi = k.intValue();
+                high = k;
             }
             else if (thresh.size() > 0) {
-                hi = ((Integer)thresh.lastKey()).intValue();
+                high = thresh.lastKey();
             }
 
             // off the end?
-            if (hi == -1 || j.compareTo(getLastValue()) > 0) {
+            if (high == -1 || j.compareTo(getLastValue()) > 0) {
                 append(j);
-                k = new Integer(hi + 1);
+                k = high + 1;
             }
             else {
                 // binary search for insertion point:
-                int lo = 0;
+                int low = 0;
         
-                while (lo <= hi) {
-                    int     index = (hi + lo) / 2;
-                    Integer val   = (Integer)thresh.get(new Integer(index));
+                while (low <= high) {
+                    int     index = (high + low) / 2;
+                    Integer val   = thresh.get(index);
                     int     cmp   = j.compareTo(val);
 
                     if (cmp == 0) {
                         return null;
                     }
                     else if (cmp > 0) {
-                        lo = index + 1;
+                        low = index + 1;
                     }
                     else {
-                        hi = index - 1;
+                        high = index - 1;
                     }
                 }
         
-                thresh.put(new Integer(lo), j);
-                k = new Integer(lo);
+                thresh.put(low, j);
+                k = low;
             }
         }
 
         return k;
     }
-
 }

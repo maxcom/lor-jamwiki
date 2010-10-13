@@ -25,20 +25,27 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Vector;
+import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import junit.framework.TestCase;
+import org.jamwiki.DataAccessException;
+import org.jamwiki.WikiException;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class TiddlyWikiParserTest extends TestCase {
+public class TiddlyWikiParserTest {
 
 	private static final String NAME = "MyTopic";
 	private static final String DATUM  = "200701020304";
 	private static final String CONTENT  = "Content"; 
 
+	/**
+	 *
+	 */
+	@Test
 	public void testParse() throws Exception {
 		Handler[] h = Logger.getLogger("").getHandlers();
 		for (int i = 0; i < h.length; i++) {
@@ -61,10 +68,10 @@ public class TiddlyWikiParserTest extends TestCase {
 	}
 
 	private class WikiBaseMock implements TiddlyWikiParser.WikiBaseFascade {
-		public ArrayList topics = new ArrayList();
-		public ArrayList versions = new ArrayList();
+		public ArrayList<Topic> topics = new ArrayList<Topic>();
+		public ArrayList<TopicVersion> versions = new ArrayList<TopicVersion>();
 
-		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, Vector links, boolean userVisible, Object transactionObject) throws Exception {
+		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, List<String> links, Object transactionObject) throws DataAccessException, WikiException {
 			topics.add(topic);
 			versions.add(topicVersion);
 		}

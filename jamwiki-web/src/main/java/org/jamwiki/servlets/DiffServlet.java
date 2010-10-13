@@ -16,11 +16,14 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.Collection;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.WikiDiff;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -50,13 +53,27 @@ public class DiffServlet extends JAMWikiServlet {
 		String topicName = WikiUtil.getTopicFromRequest(request);
 		int topicVersionId1 = 0;
 		if (!StringUtils.isBlank(request.getParameter("version1"))) {
-			topicVersionId1 = new Integer(request.getParameter("version1")).intValue();
+			topicVersionId1 = Integer.valueOf(request.getParameter("version1"));
 		}
 		int topicVersionId2 = 0;
 		if (!StringUtils.isBlank(request.getParameter("version2"))) {
-			topicVersionId2 = new Integer(request.getParameter("version2")).intValue();
+			topicVersionId2 = Integer.valueOf(request.getParameter("version2"));
 		}
-		Collection diffs = DiffUtil.diffTopicVersions(topicName, topicVersionId1, topicVersionId2);
+		TopicVersion version1 = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId1);
+		TopicVersion version2 = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId2);
+		if (version1 == null && version2 == null) {
+			String msg = "Versions " + topicVersionId1 + " and " + topicVersionId2 + " not found for " + topicName;
+			logger.severe(msg);
+			throw new Exception(msg);
+		}
+		String contents1 = (version1 != null) ? version1.getVersionContent() : null;
+		String contents2 = (version2 != null) ? version2.getVersionContent() : null;
+		if (contents1 == null && contents2 == null) {
+			String msg = "No versions found for " + topicVersionId1 + " against " + topicVersionId2;
+			logger.severe(msg);
+			throw new Exception(msg);
+		}
+		List<WikiDiff> diffs = DiffUtil.diff(contents1, contents2);
 		next.addObject("diffs", diffs);
 		pageInfo.setPageTitle(new WikiMessage("diff.title", topicName));
 		pageInfo.setTopicName(topicName);

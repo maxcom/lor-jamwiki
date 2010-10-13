@@ -16,16 +16,17 @@
  */
 package org.jamwiki.taglib;
 
+import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
  * JSP tag used to generate a pagination object.
@@ -41,18 +42,9 @@ public class PaginationTag extends BodyTagSupport {
 	 *
 	 */
 	public int doEndTag() throws JspException {
-		String baseUrl = null;
-		int count = 0;
-		// Resin throws ClassCastException with evaluateString for values like "1", so use tmp variable
-		Object tmp = null;
 		try {
-			tmp = ExpressionEvaluationUtils.evaluate("rootUrl", this.rootUrl, pageContext);
-			if (tmp != null) {
-				baseUrl = tmp.toString();
-			}
-			count = ExpressionEvaluationUtils.evaluateInteger("total", this.total, pageContext);
-			this.pageContext.getOut().print(pagination(baseUrl, count));
-		} catch (Exception e) {
+			this.pageContext.getOut().print(pagination(this.rootUrl, Integer.valueOf(this.total)));
+		} catch (IOException e) {
 			logger.severe("Failure while building pagination object", e);
 			throw new JspException(e);
 		}
@@ -65,24 +57,25 @@ public class PaginationTag extends BodyTagSupport {
 	private StringBuffer buildOption(int num, Pagination pagination, String baseUrl) {
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		StringBuffer output = new StringBuffer();
-		try {
-			if (num == pagination.getNumResults()) {
-				output.append(num);
-				return output;
-			}
-			output.append("<a href=\"");
-			String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
-			WikiLink wikiLink = LinkUtil.parseWikiLink(baseUrl);
-			String query = LinkUtil.appendQueryParam(wikiLink.getQuery(), "num", Integer.toString(num));
-			query += "&amp;offset=0";
-			wikiLink.setQuery(query);
-			output.append(LinkUtil.buildTopicUrl(request.getContextPath(), virtualWiki, wikiLink));
-			output.append("\">");
+		if (num == pagination.getNumResults()) {
 			output.append(num);
-			output.append("</a>");
-		} catch (Exception e) {
-			logger.warning("Failure while building pagination element", e);
+			return output;
 		}
+		output.append("<a href=\"");
+		String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(baseUrl);
+		String query = LinkUtil.appendQueryParam(wikiLink.getQuery(), "num", Integer.toString(num));
+		query += "&amp;offset=0";
+		wikiLink.setQuery(query);
+		try {
+			output.append(LinkUtil.buildTopicUrl(request.getContextPath(), virtualWiki, wikiLink));
+		} catch (DataAccessException e) {
+			logger.warning("Failure while building pagination element", e);
+			return new StringBuffer();
+		}
+		output.append("\">");
+		output.append(num);
+		output.append("</a>");
 		return output;
 	}
 
@@ -106,41 +99,42 @@ public class PaginationTag extends BodyTagSupport {
 	private StringBuffer nextPage(Pagination pagination, String baseUrl, int count, boolean previous) {
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		StringBuffer output = new StringBuffer();
-		try {
-			Object[] objects = new Object[1];
-			objects[0] = new Integer(pagination.getNumResults());
-			if (pagination.getOffset() == 0 && previous) {
-				output.append(Utilities.formatMessage("common.pagination.previous", request.getLocale(), objects));
-				return output;
-			}
-			if (pagination.getNumResults() != count && !previous) {
-				output.append(Utilities.formatMessage("common.pagination.next", request.getLocale(), objects));
-				return output;
-			}
-			output.append("<a href=\"");
-			String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
-			WikiLink wikiLink = LinkUtil.parseWikiLink(baseUrl);
-			int offset = pagination.getOffset() + pagination.getNumResults();
-			if (previous) {
-				offset = pagination.getOffset() - pagination.getNumResults();
-				if (offset < 0) {
-					offset = 0;
-				}
-			}
-			String query = LinkUtil.appendQueryParam(wikiLink.getQuery(), "num", Integer.toString(pagination.getNumResults()));
-			query += "&amp;offset=" + offset;
-			wikiLink.setQuery(query);
-			output.append(LinkUtil.buildTopicUrl(request.getContextPath(), virtualWiki, wikiLink));
-			output.append("\">");
-			if (previous) {
-				output.append(Utilities.formatMessage("common.pagination.previous", request.getLocale(), objects));
-			} else {
-				output.append(Utilities.formatMessage("common.pagination.next", request.getLocale(), objects));
-			}
-			output.append("</a>");
-		} catch (Exception e) {
-			logger.warning("Failure while building pagination element", e);
+		Object[] objects = new Object[1];
+		objects[0] = pagination.getNumResults();
+		if (pagination.getOffset() == 0 && previous) {
+			output.append(Utilities.formatMessage("common.pagination.previous", request.getLocale(), objects));
+			return output;
 		}
+		if (pagination.getNumResults() != count && !previous) {
+			output.append(Utilities.formatMessage("common.pagination.next", request.getLocale(), objects));
+			return output;
+		}
+		output.append("<a href=\"");
+		String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(baseUrl);
+		int offset = pagination.getOffset() + pagination.getNumResults();
+		if (previous) {
+			offset = pagination.getOffset() - pagination.getNumResults();
+			if (offset < 0) {
+				offset = 0;
+			}
+		}
+		String query = LinkUtil.appendQueryParam(wikiLink.getQuery(), "num", Integer.toString(pagination.getNumResults()));
+		query += "&amp;offset=" + offset;
+		wikiLink.setQuery(query);
+		try {
+			output.append(LinkUtil.buildTopicUrl(request.getContextPath(), virtualWiki, wikiLink));
+		} catch (DataAccessException e) {
+			logger.warning("Failure while building pagination element", e);
+			return new StringBuffer();
+		}
+		output.append("\">");
+		if (previous) {
+			output.append(Utilities.formatMessage("common.pagination.previous", request.getLocale(), objects));
+		} else {
+			output.append(Utilities.formatMessage("common.pagination.next", request.getLocale(), objects));
+		}
+		output.append("</a>");
 		return output;
 	}
 

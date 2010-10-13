@@ -50,6 +50,8 @@ public class Role extends GrantedAuthorityImpl {
 	 * LDAP or other system that performs user authentication.
 	 */
 	public static final Role ROLE_EMBEDDED = new Role("ROLE_EMBEDDED");
+	/** Role used to control who can import new topics to the wiki using Special:Import. */
+	public static final Role ROLE_IMPORT = new Role("ROLE_IMPORT");
 	public static final Role ROLE_MOVE = new Role("ROLE_MOVE");
 	/**
 	 * ROLE_NO_ACCOUNT is meant for use with installations that do not allow

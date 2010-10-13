@@ -17,10 +17,7 @@
 package org.jamwiki.servlets;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
@@ -28,6 +25,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Role;
+import org.jamwiki.model.RoleMap;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
@@ -69,8 +67,8 @@ public class RolesServlet extends JAMWikiServlet {
 	 * @return A List of role names for the given id, or an empty
 	 *  List if no matching values are found.
 	 */
-	private static List buildRoleArray(int userId, int groupId, String[] valueArray) {
-		List results = new Vector();
+	private static List<String> buildRoleArray(int userId, int groupId, String[] valueArray) {
+		List<String> results = new ArrayList<String>();
 		if (valueArray == null) {
 			return results;
 		}
@@ -104,14 +102,14 @@ public class RolesServlet extends JAMWikiServlet {
 		// "userid|groupid|role".  process both, deleting all old roles for the
 		// candidate group array and adding the new roles in the groupRole
 		// array.
-		ArrayList errors = new ArrayList();
+		ArrayList<WikiMessage> errors = new ArrayList<WikiMessage>();
 		try {
 			String[] candidateGroups = request.getParameterValues("candidateGroup");
 			String[] groupRoles = request.getParameterValues("groupRole");
 			if (candidateGroups != null) {
 				for (int i = 0; i < candidateGroups.length; i++) {
 					int groupId = Integer.parseInt(candidateGroups[i]);
-					List roles = buildRoleArray(-1, groupId, groupRoles);
+					List<String> roles = buildRoleArray(-1, groupId, groupRoles);
 					WikiBase.getDataHandler().writeRoleMapGroup(groupId, roles);
 				}
 				next.addObject("message", new WikiMessage("roles.message.grouproleupdate"));
@@ -124,7 +122,7 @@ public class RolesServlet extends JAMWikiServlet {
 				for (int i = 0; i < candidateUsers.length; i++) {
 					int userId = Integer.parseInt(candidateUsers[i]);
 					String username = candidateUsernames[i];
-					List roles = buildRoleArray(userId, -1, userRoles);
+					List<String> roles = buildRoleArray(userId, -1, userRoles);
 					if (userId == ServletUtil.currentWikiUser().getUserId() && !roles.contains(Role.ROLE_SYSADMIN)) {
 						errors.add(new WikiMessage("roles.message.sysadminremove"));
 						roles.add(Role.ROLE_SYSADMIN.getAuthority());
@@ -139,7 +137,7 @@ public class RolesServlet extends JAMWikiServlet {
 			logger.severe("Failure while adding role", e);
 			errors.add(new WikiMessage("roles.message.rolefail", e.getMessage()));
 		}
-		if (errors.size() > 0) {
+		if (!errors.isEmpty()) {
 			next.addObject("errors", errors);
 		}
 		this.view(request, next, pageInfo);
@@ -175,10 +173,8 @@ public class RolesServlet extends JAMWikiServlet {
 		} else if (!StringUtils.isBlank(updateRole)) {
 			// FIXME - use a cached list of roles instead of iterating
 			// load details for the selected role
-			Collection roles = WikiBase.getDataHandler().getAllRoles();
-			Iterator roleIterator = roles.iterator();
-			while (roleIterator.hasNext()) {
-				Role tempRole = (Role)roleIterator.next();
+			List<Role> roles = WikiBase.getDataHandler().getAllRoles();
+			for (Role tempRole : roles) {
 				if (tempRole.getAuthority().equals(updateRole)) {
 					role = tempRole;
 				}
@@ -197,7 +193,7 @@ public class RolesServlet extends JAMWikiServlet {
 	private void searchRole(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		try {
 			String searchLogin = request.getParameter("searchLogin");
-			Collection roleMapUsers = null;
+			List<RoleMap> roleMapUsers = null;
 			if (!StringUtils.isBlank(searchLogin)) {
 				roleMapUsers = WikiBase.getDataHandler().getRoleMapByLogin(searchLogin);
 				next.addObject("searchLogin", searchLogin);
@@ -218,10 +214,10 @@ public class RolesServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		Collection roles = WikiBase.getDataHandler().getAllRoles();
+		List<Role> roles = WikiBase.getDataHandler().getAllRoles();
 		next.addObject("roles", roles);
-		next.addObject("roleCount", new Integer(roles.size()));
-		Collection roleMapGroups = WikiBase.getDataHandler().getRoleMapGroups();
+		next.addObject("roleCount", roles.size());
+		List<RoleMap> roleMapGroups = WikiBase.getDataHandler().getRoleMapGroups();
 		next.addObject("roleMapGroups", roleMapGroups);
 		pageInfo.setAdmin(true);
 		pageInfo.setContentJsp(JSP_ADMIN_ROLES);

@@ -16,7 +16,6 @@
  */
 package org.jamwiki.parser;
 
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
@@ -54,7 +53,7 @@ public class TableOfContents {
 	 * example, if the TOC contains only h3 and h4 entries, this value would be 3.
 	 */
 	private int minLevel = 4;
-	private final Map entries = new LinkedHashMap();
+	private final Map<String, TableOfContentsEntry> entries = new LinkedHashMap<String, TableOfContentsEntry>();
 	private int status = STATUS_TOC_UNINITIALIZED;
 	/** The minimum number of headings that must be present for a TOC to appear, unless forceTOC is set to true. */
 	private static final int MINIMUM_HEADINGS = 4;
@@ -182,7 +181,7 @@ public class TableOfContents {
 			this.tocPrefixes[i] = 0;
 		}
 		// generate next prefix of the form 1.1.1
-		String prefix = new Integer(this.tocPrefixes[0]).toString();
+		String prefix = Integer.valueOf(this.tocPrefixes[0]).toString();
 		for (int i = 1; i <= depth; i++) {
 			prefix += "." + this.tocPrefixes[i];
 		}
@@ -245,12 +244,9 @@ public class TableOfContents {
 	public String toHTML() {
 		StringBuffer text = new StringBuffer();
 		text.append("<table id=\"toc\">\n<tr>\n<td>\n");
-		TableOfContentsEntry entry = null;
 		int adjustedLevel = 0;
 		int previousLevel = 0;
-		Iterator tocIterator = this.entries.values().iterator();
-		while (tocIterator.hasNext()) {
-			entry = (TableOfContentsEntry)tocIterator.next();
+		for (TableOfContentsEntry entry : this.entries.values()) {
 			// adjusted level determines how far to indent the list
 			adjustedLevel = ((entry.level - minLevel) + 1);
 			// cannot increase TOC indent level more than one level at a time

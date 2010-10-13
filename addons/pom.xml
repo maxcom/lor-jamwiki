@@ -7,39 +7,12 @@
 	<parent>
 		<groupId>org.jamwiki</groupId>
 		<artifactId>jamwiki</artifactId>
-		<version>0.7.2</version>
+		<version>0.8.0</version>
 	</parent>
 	<artifactId>addons</artifactId>
 	<packaging>pom</packaging>
 	<name>JAMWiki Addons</name>
-	<!-- FIXME - this code is messy.  there must be a better way to test for JDK 1.5+ -->
-	<profiles>
-		<profile>
-			<id>jdk-1.5</id>
-			<activation>
-				<jdk>1.5</jdk>
-			</activation>
-			<modules>
-				<module>bliki-parser</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>jdk-1.6</id>
-			<activation>
-				<jdk>1.6</jdk>
-			</activation>
-			<modules>
-				<module>bliki-parser</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>jdk-1.7</id>
-			<activation>
-				<jdk>1.7</jdk>
-			</activation>
-			<modules>
-				<module>bliki-parser</module>
-			</modules>
-		</profile>
-	</profiles>
+	<modules>
+		<module>bliki-parser</module>
+	</modules>
 </project>

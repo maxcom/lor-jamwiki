@@ -17,9 +17,11 @@
 package org.jamwiki.parser;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
 import org.apache.commons.lang.ClassUtils;
 import org.jamwiki.Environment;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.utils.WikiLogger;
@@ -41,9 +43,9 @@ public class ParserUtil {
 	 *  during parsing will not be available to the calling method.
 	 * @param content The raw topic content that is to be parsed.
 	 * @return The parsed content.
-	 * @throws Exception Thrown if there are any parsing errors.
+	 * @throws ParserException Thrown if there are any parsing errors.
 	 */
-	public static String parse(ParserInput parserInput, ParserOutput parserOutput, String content) throws Exception {
+	public static String parse(ParserInput parserInput, ParserOutput parserOutput, String content) throws ParserException {
 		if (content == null) {
 			return null;
 		}
@@ -62,9 +64,9 @@ public class ParserUtil {
 	 * @param content The raw topic content.
 	 * @return Returns a minimal ParserOutput object initialized primarily with
 	 *  parser metadata such as links.
-	 * @throws Exception Thrown if a parser error occurs.
+	 * @throws ParserException Thrown if a parser error occurs.
 	 */
-	public static ParserOutput parserOutput(String content, String virtualWiki, String topicName) throws Exception {
+	public static ParserOutput parserOutput(String content, String virtualWiki, String topicName) throws ParserException {
 		ParserInput parserInput = new ParserInput();
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setTopicName(topicName);
@@ -81,9 +83,9 @@ public class ParserUtil {
 	 * @param content The raw topic content that is to be parsed.
 	 * @return Returns a ParserOutput object with minimally parsed topic content
 	 *  and other parser output fields set.
-	 * @throws Exception Thrown if there are any parsing errors.
+	 * @throws ParserException Thrown if there are any parsing errors.
 	 */
-	public static ParserOutput parseMetadata(ParserInput parserInput, String content) throws Exception {
+	public static ParserOutput parseMetadata(ParserInput parserInput, String content) throws ParserException {
 		AbstractParser parser = parserInstance(parserInput);
 		ParserOutput parserOutput = new ParserOutput();
 		parser.parseMetadata(parserOutput, content);
@@ -99,9 +101,9 @@ public class ParserUtil {
 	 *  information.
 	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 * @return The parsed content.
-	 * @throws Exception Thrown if any error occurs during parsing.
+	 * @throws ParserException Thrown if any error occurs during parsing.
 	 */
-	public static String parseMinimal(ParserInput parserInput, String raw) throws Exception {
+	public static String parseMinimal(ParserInput parserInput, String raw) throws ParserException {
 		AbstractParser parser = parserInstance(parserInput);
 		return parser.parseMinimal(raw);
 	}
@@ -112,18 +114,30 @@ public class ParserUtil {
 	 * @param parserInput A ParserInput object that contains parser configuration
 	 *  information.
 	 * @return An instance of the system parser.
-	 * @throws Exception Thrown if a parser instance can not be instantiated.
+	 * @throws ParserException Thrown if a parser instance can not be instantiated.
 	 */
-	private static AbstractParser parserInstance(ParserInput parserInput) throws Exception {
+	private static AbstractParser parserInstance(ParserInput parserInput) throws ParserException {
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
 		logger.fine("Using parser: " + parserClass);
-		Class clazz = ClassUtils.getClass(parserClass);
-		Class[] parameterTypes = new Class[1];
-		parameterTypes[0] = ClassUtils.getClass("org.jamwiki.parser.ParserInput");
-		Constructor constructor = clazz.getConstructor(parameterTypes);
-		Object[] initArgs = new Object[1];
-		initArgs[0] = parserInput;
-		return (AbstractParser)constructor.newInstance(initArgs);
+		try {
+			Class clazz = ClassUtils.getClass(parserClass);
+			Class[] parameterTypes = new Class[1];
+			parameterTypes[0] = ClassUtils.getClass("org.jamwiki.parser.ParserInput");
+			Constructor constructor = clazz.getConstructor(parameterTypes);
+			Object[] initArgs = new Object[1];
+			initArgs[0] = parserInput;
+			return (AbstractParser)constructor.newInstance(initArgs);
+		} catch (ClassNotFoundException e) {
+			throw new ParserException(e);
+		} catch (NoSuchMethodException e) {
+			throw new ParserException(e);
+		} catch (IllegalAccessException e) {
+			throw new ParserException(e);
+		} catch (InstantiationException e) {
+			throw new ParserException(e);
+		} catch (InvocationTargetException e) {
+			throw new ParserException(e);
+		}
 	}
 
 	/**
@@ -132,10 +146,10 @@ public class ParserUtil {
 	 *
 	 * @param topicName The name of the topic that is being redirected to.
 	 * @return A string containing the syntax indicating a redirect.
-	 * @throws Exception Thrown if a parser instance cannot be instantiated or
+	 * @throws ParserException Thrown if a parser instance cannot be instantiated or
 	 *  if any other parser error occurs.
 	 */
-	public static String parserRedirectContent(String topicName) throws Exception {
+	public static String parserRedirectContent(String topicName) throws ParserException {
 		AbstractParser parser = parserInstance(null);
 		return parser.buildRedirectContent(topicName);
 	}
@@ -149,22 +163,13 @@ public class ParserUtil {
 	 * @param virtualWiki The virtual wiki for the topic being parsed.
 	 * @param topicName The name of the topic being parsed.
 	 * @param section The section to be sliced and returned.
-	 * @return Returns the raw topic content for the target section.
-	 * @throws Exception Thrown if a parser error occurs.
+	 * @return Returns A string array consisting of the section name and the raw topic
+	 *  content for the target section.
+	 * @throws ParserException Thrown if a parser error occurs.
 	 */
-	public static String parseSlice(String context, Locale locale, String virtualWiki, String topicName, int section) throws Exception {
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
-		if (topic == null || topic.getTopicContent() == null) {
-			return null;
-		}
-		ParserInput parserInput = new ParserInput();
-		parserInput.setContext(context);
-		parserInput.setLocale(locale);
-		parserInput.setTopicName(topicName);
-		parserInput.setVirtualWiki(virtualWiki);
-		AbstractParser parser = ParserUtil.parserInstance(parserInput);
+	public static String[] parseSlice(String context, Locale locale, String virtualWiki, String topicName, int section) throws ParserException {
 		ParserOutput parserOutput = new ParserOutput();
-		return parser.parseSlice(parserOutput, topic.getTopicContent(), section);
+		return ParserUtil.executeSliceOrSplice(parserOutput, context, locale, virtualWiki, topicName, section, null, true);
 	}
 
 	/**
@@ -180,11 +185,25 @@ public class ParserUtil {
 	 * @param targetSection The section to be sliced and returned.
 	 * @param replacementText The edited content that is to be spliced back into
 	 *  the raw topic.
-	 * @return The raw topic content including the new replacement text.
-	 * @throws Exception Thrown if a parser error occurs.
+	 * @return Returns A string array consisting of the section name and the raw topic
+	 *  content including the new replacement text.
+	 * @throws ParserException Thrown if a parser error occurs.
 	 */
-	public static String parseSplice(ParserOutput parserOutput, String context, Locale locale, String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+	public static String[] parseSplice(ParserOutput parserOutput, String context, Locale locale, String virtualWiki, String topicName, int targetSection, String replacementText) throws ParserException {
+		return ParserUtil.executeSliceOrSplice(parserOutput, context, locale, virtualWiki, topicName, targetSection, replacementText, false);
+	}
+
+	/**
+	 * The slice and splice parser code is very similar, so this method simply consolidates
+	 * that code to avoid duplication.
+	 */
+	private static String[] executeSliceOrSplice(ParserOutput parserOutput, String context, Locale locale, String virtualWiki, String topicName, int targetSection, String replacementText, boolean isSlice) throws ParserException {
+		Topic topic = null;
+		try {
+			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+		} catch (DataAccessException e) {
+			throw new ParserException(e);
+		}
 		if (topic == null || topic.getTopicContent() == null) {
 			return null;
 		}
@@ -194,6 +213,13 @@ public class ParserUtil {
 		parserInput.setTopicName(topicName);
 		parserInput.setVirtualWiki(virtualWiki);
 		AbstractParser parser = ParserUtil.parserInstance(parserInput);
-		return parser.parseSplice(parserOutput, topic.getTopicContent(), targetSection, replacementText);
+		String content = null;
+		if (isSlice) {
+			content = parser.parseSlice(parserOutput, topic.getTopicContent(), targetSection);
+		} else {
+			content = parser.parseSplice(parserOutput, topic.getTopicContent(), targetSection, replacementText);
+		}
+		String sectionName = parserOutput.getSectionName();
+		return new String[]{sectionName, content};
 	}
 }

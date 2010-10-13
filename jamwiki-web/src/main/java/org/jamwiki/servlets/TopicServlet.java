@@ -71,6 +71,6 @@ public class TopicServlet extends JAMWikiServlet {
 			next.addObject("notopic", wikiMessage);
 		}
 		WikiMessage pageTitle = new WikiMessage("topic.title", topicName);
-		ServletUtil.viewTopic(request, next, pageInfo, pageTitle, topic, true);
+		ServletUtil.viewTopic(request, next, pageInfo, pageTitle, topic, true, true);
 	}
 }

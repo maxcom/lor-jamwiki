@@ -16,19 +16,26 @@
  */
 package org.jamwiki.model;
 
+import java.io.Serializable;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- * Provides an object representing the difference between two topic versions,
- * as created by {@link org.jamwiki.utils.DiffUtil}.
+ * Provides an object representing the difference between two objects as created
+ * by {@link org.jamwiki.utils.DiffUtil}.
  */
-public class WikiDiff {
+public class WikiDiff implements Serializable {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiDiff.class.getName());
-	private boolean change = false;
-	private String newLine = null;
-	private String oldLine = null;
-	private int lineNumber = -1;
+	/** The newly modified text, or <code>null</code> if text was deleted. */
+	private String newText = null;
+	/** The old text that was changed, or <code>null</code> if new text was added. */
+	private String oldText = null;
+	/** The zero-based position of the text that was changed. */
+	private int position = -1;
+	/** The diff may (optionally) contain a list of sub-diffs, such as when diffing two topics and then further showing what changed on a line. */
+	private List<WikiDiff> subDiffs = null;
 
 	/**
 	 *
@@ -39,66 +46,72 @@ public class WikiDiff {
 	/**
 	 *
 	 */
-	public WikiDiff(String oldLine, String newLine, int lineNumber, boolean change) {
-		this.oldLine = oldLine;
-		this.newLine = newLine;
-		this.lineNumber = lineNumber;
-		this.change = change;
+	public WikiDiff(String oldText, String newText, int position) {
+		this.oldText = oldText;
+		this.newText = newText;
+		this.position = position;
 	}
 
 	/**
 	 *
 	 */
 	public boolean getChange() {
-		return this.change;
+		return !StringUtils.equals(this.oldText, this.newText);
 	}
 
 	/**
 	 *
 	 */
-	public void setChange(boolean change) {
-		this.change = change;
+	public String getNewText() {
+		return this.newText;
 	}
 
 	/**
 	 *
 	 */
-	public int getLineNumber() {
-		return this.lineNumber;
+	public void setNewText(String newText) {
+		this.newText = newText;
 	}
 
 	/**
 	 *
 	 */
-	public void setLineNumber(int lineNumber) {
-		this.lineNumber = lineNumber;
+	public String getOldText() {
+		return this.oldText;
 	}
 
 	/**
 	 *
 	 */
-	public String getNewLine() {
-		return this.newLine;
+	public void setOldText(String oldText) {
+		this.oldText = oldText;
 	}
 
 	/**
 	 *
 	 */
-	public void setNewLine(String newLine) {
-		this.newLine = newLine;
+	public int getPosition() {
+		return this.position;
 	}
 
 	/**
 	 *
 	 */
-	public String getOldLine() {
-		return this.oldLine;
+	public void setPosition(int position) {
+		this.position = position;
 	}
 
 	/**
 	 *
 	 */
-	public void setOldLine(String oldLine) {
-		this.oldLine = oldLine;
+	public List<WikiDiff> getSubDiffs() {
+		return this.subDiffs;
+	}
+
+	/**
+	 *
+	 */
+	public void setSubDiffs(List<WikiDiff> subDiffs) {
+		this.subDiffs = subDiffs;
 	}
 }

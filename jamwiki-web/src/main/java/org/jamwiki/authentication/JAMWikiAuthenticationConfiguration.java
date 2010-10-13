@@ -16,6 +16,7 @@
  */
 package org.jamwiki.authentication;
 
+import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.utils.WikiLogger;
@@ -46,7 +47,7 @@ public class JAMWikiAuthenticationConfiguration {
 		if (JAMWikiAuthenticationConfiguration.defaultGroupRoles == null) {
 			try {
 				JAMWikiAuthenticationConfiguration.defaultGroupRoles = WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_REGISTERED_USER);
-			} catch (Exception e) {
+			} catch (DataAccessException e) {
 				// FIXME - without default roles bad things happen, so should this throw the
 				// error to the calling method?
 				logger.severe("Unable to retrieve default roles for " + WikiGroup.GROUP_REGISTERED_USER, e);
@@ -66,7 +67,7 @@ public class JAMWikiAuthenticationConfiguration {
 		if (JAMWikiAuthenticationConfiguration.jamwikiAnonymousAuthorities == null) {
 			try {
 				JAMWikiAuthenticationConfiguration.jamwikiAnonymousAuthorities = WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_ANONYMOUS);
-			} catch (Exception e) {
+			} catch (DataAccessException e) {
 				logger.severe("Failure while initializing JAMWiki anonymous user authorities", e);
 			}
 		}

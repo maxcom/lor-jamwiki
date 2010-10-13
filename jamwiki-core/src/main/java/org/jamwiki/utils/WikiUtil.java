@@ -20,15 +20,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.DataHandler;
 import org.jamwiki.Environment;
 import org.jamwiki.SearchEngine;
@@ -48,6 +49,8 @@ public class WikiUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiUtil.class.getName());
 
+	/** webapp context path, initialized from JAMWikiFilter. */
+	public static String WEBAPP_CONTEXT_PATH = null;
 	private static Pattern INVALID_ROLE_NAME_PATTERN = null;
 	private static Pattern INVALID_TOPIC_NAME_PATTERN = null;
 	private static Pattern VALID_USER_LOGIN_PATTERN = null;
@@ -97,41 +100,13 @@ public class WikiUtil {
 	 * Utility method to retrieve an instance of the current data handler.
 	 *
 	 * @return An instance of the current data handler.
-	 * @throws Exception Thrown if a data handler instance can not be
+	 * @throws IOException Thrown if a data handler instance can not be
 	 *  instantiated.
 	 */
 	public static DataHandler dataHandlerInstance() throws IOException {
-		// FIXME - remove this conditional after the ability to upgrade to
-		// 0.5.0 is removed.
 		if (Environment.getValue(Environment.PROP_DB_TYPE) == null) {
 			// this is a problem, but it should never occur
 			logger.warning("WikiUtil.dataHandlerInstance called without a valid PROP_DB_TYPE value");
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("ansi")) {
-			Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_ANSI);
-			Environment.saveProperties();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("hsql")) {
-			Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_HSQL);
-			Environment.saveProperties();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("mssql")) {
-			Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_MSSQL);
-			Environment.saveProperties();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("mysql")) {
-			Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_MYSQL);
-			Environment.saveProperties();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("oracle")) {
-			Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_ORACLE);
-			Environment.saveProperties();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("postgres")) {
-			Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_POSTGRES);
-			Environment.saveProperties();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("db2")) {
-			Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_DB2);
-			Environment.saveProperties();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("db2/400")) {
-			Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_DB2400);
-			Environment.saveProperties();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("asa")) {
-		    Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_ASA);
 		}
 		String dataHandlerClass = Environment.getValue(Environment.PROP_DB_TYPE);
 		try {
@@ -220,16 +195,46 @@ public class WikiUtil {
 		try {
 			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
 			target = virtualWiki.getDefaultTopicName();
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			logger.warning("Unable to retrieve default topic for virtual wiki", e);
 		}
 		return "/" + virtualWikiName + "/" + target;
 	}
 
 	/**
+	 * Given a topic type, determine the namespace name.
 	 *
+	 * @param topicType The topic type.
+	 * @return The namespace that matches the topic type.
 	 */
-	public static Topic findRedirectedTopic(Topic parent, int attempts) throws Exception {
+	public static String findNamespaceForTopicType(int topicType) {
+		switch (topicType) {
+			case Topic.TYPE_IMAGE:
+			case Topic.TYPE_FILE:
+				return NamespaceHandler.NAMESPACE_IMAGE;
+			case Topic.TYPE_CATEGORY:
+				return NamespaceHandler.NAMESPACE_CATEGORY;
+			case Topic.TYPE_SYSTEM_FILE:
+				return NamespaceHandler.NAMESPACE_JAMWIKI;
+			case Topic.TYPE_TEMPLATE:
+				return NamespaceHandler.NAMESPACE_TEMPLATE;
+			default:
+				return "";
+		}
+	}
+
+	/**
+	 * Given a topic, if that topic is a redirect find the target topic of the redirection.
+	 *
+	 * @param parent The topic being queried.  If this topic is a redirect then the redirect
+	 *  target will be returned, otherwise the topic itself is returned.
+	 * @param attempts The maximum number of child topics to follow.  This parameter prevents
+	 *  infinite loops if topics redirect back to one another.
+	 * @return If the parent topic is a redirect then this method returns the target topic that
+	 *  is being redirected to, otherwise the parent topic is returned.
+	 * @throws DataAccessException Thrown if any error occurs while retrieving data.
+	 */
+	public static Topic findRedirectedTopic(Topic parent, int attempts) throws DataAccessException {
 		int count = attempts;
 		String target = parent.getRedirectTo();
 		if (parent.getTopicType() != Topic.TYPE_REDIRECT || StringUtils.isBlank(target)) {
@@ -244,11 +249,9 @@ public class WikiUtil {
 		}
 		String virtualWiki = parent.getVirtualWiki();
 		WikiLink wikiLink = LinkUtil.parseWikiLink(target);
-		if (!StringUtils.isBlank(wikiLink.getNamespace())) {
-			if (WikiBase.getDataHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
-				virtualWiki = wikiLink.getNamespace();
-				wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
-			}
+		if (!StringUtils.isBlank(wikiLink.getNamespace()) && WikiBase.getDataHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
+			virtualWiki = wikiLink.getNamespace();
+			wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
 		}
 		// get the topic that is being redirected to
 		Topic child = WikiBase.getDataHandler().lookupTopic(virtualWiki, wikiLink.getDestination(), false, null);
@@ -262,6 +265,42 @@ public class WikiUtil {
 		}
 		// child is a redirect, keep looking
 		return findRedirectedTopic(child, count);
+	}
+
+	/**
+	 * Given a namespace name, determine the topic type.
+	 *
+	 * @param namespace The namespace name.
+	 * @return The topic type that matches the namespace.
+	 */
+	public static int findTopicTypeForNamespace(String namespace) {
+		if (namespace != null) {
+			if (namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
+				return Topic.TYPE_CATEGORY;
+			}
+			if (namespace.equals(NamespaceHandler.NAMESPACE_TEMPLATE)) {
+				return Topic.TYPE_TEMPLATE;
+			}
+			if (namespace.equals(NamespaceHandler.NAMESPACE_JAMWIKI)) {
+				return Topic.TYPE_SYSTEM_FILE;
+			}
+			if (namespace.equals(NamespaceHandler.NAMESPACE_IMAGE)) {
+				// FIXME - handle TYPE_FILE
+				return Topic.TYPE_IMAGE;
+			}
+		}
+		return Topic.TYPE_ARTICLE;
+	}
+
+	/**
+	 * Return the URL of the index page for the wiki.
+	 *
+	 * @throws DataAccessException Thrown if any error occurs while retrieving data.
+	 */
+	public static String getBaseUrl() throws DataAccessException {
+		String url = Environment.getValue(Environment.PROP_SERVER_URL);
+		url += LinkUtil.buildTopicUrl(WEBAPP_CONTEXT_PATH, WikiBase.DEFAULT_VWIKI, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC), true);
+		return url;
 	}
 
 	/**
@@ -304,6 +343,19 @@ public class WikiUtil {
 			return null;
 		}
 		return Utilities.decodeTopicName(value, decodeUnderlines);
+	}
+
+	/**
+	 * Retrieve a file that represents a "tmp" directory within the wiki system directory.
+	 * The caller should test directory.exists() to verify that the directory is available.
+	 */
+	public static File getTempDirectory() {
+		String subdirectory = "tmp";
+		File directory = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), subdirectory);
+		if (!directory.exists()) {
+			directory.mkdirs();
+		}
+		return directory;
 	}
 
 	/**
@@ -530,6 +582,9 @@ public class WikiUtil {
 		}
 		// make sure there are no instances of "//" in the URL
 		uri = uri.replaceAll("(/){2,}", "/");
+		if (uri.length() <= contextPath.length()) {
+			return null;
+		}
 		uri = uri.substring(contextPath.length() + 1);
 		int i = 0;
 		while (i < skipCount) {
@@ -553,7 +608,7 @@ public class WikiUtil {
 	 *  "txt", not ".txt".
 	 */
 	public static List retrieveUploadFileList() {
-		List list = new Vector();
+		List<String> list = new ArrayList<String>();
 		int blacklistType = Environment.getIntValue(Environment.PROP_FILE_BLACKLIST_TYPE);
 		String listString = "";
 		if (blacklistType == WikiBase.UPLOAD_BLACKLIST) {
@@ -659,8 +714,12 @@ public class WikiUtil {
 			throw new WikiException(new WikiMessage("common.exception.pseudotopic", name));
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
-		String namespace = wikiLink.getNamespace();
-		if (namespace != null && namespace.toLowerCase().trim().equals(NamespaceHandler.NAMESPACE_SPECIAL.toLowerCase())) {
+		String namespace = StringUtils.trimToNull(wikiLink.getNamespace());
+		String article = StringUtils.trimToNull(wikiLink.getArticle());
+		if (StringUtils.startsWith(namespace, "/") || StringUtils.startsWith(article, "/")) {
+			throw new WikiException(new WikiMessage("common.exception.name", name));
+		}
+		if (namespace != null && namespace.toLowerCase().equals(NamespaceHandler.NAMESPACE_SPECIAL.toLowerCase())) {
 			throw new WikiException(new WikiMessage("common.exception.name", name));
 		}
 		Matcher m = WikiUtil.INVALID_TOPIC_NAME_PATTERN.matcher(name);

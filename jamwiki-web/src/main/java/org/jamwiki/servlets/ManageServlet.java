@@ -64,8 +64,8 @@ public class ManageServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		deletePage(request, next, pageInfo, topicName);
-		if (!StringUtils.isBlank(request.getParameter("manageCommentsPage"))) {
-			String manageCommentsPage = Utilities.decodeTopicName(request.getParameter("manageCommentsPage"), true);
+		String manageCommentsPage = WikiUtil.getParameterFromRequest(request, "manageCommentsPage", true);
+		if (!StringUtils.isBlank(manageCommentsPage)) {
 			if (WikiUtil.isCommentsPage(manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
 				deletePage(request, next, pageInfo, manageCommentsPage);
 			}
@@ -90,7 +90,7 @@ public class ManageServlet extends JAMWikiServlet {
 		WikiUser user = ServletUtil.currentWikiUser();
 		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), request.getParameter("deleteComment"), contents, charactersChanged);
 		topicVersion.setEditType(TopicVersion.EDIT_DELETE);
-		WikiBase.getDataHandler().deleteTopic(topic, topicVersion, true);
+		WikiBase.getDataHandler().deleteTopic(topic, topicVersion);
 	}
 
 	/**
@@ -109,9 +109,9 @@ public class ManageServlet extends JAMWikiServlet {
 		topic.setReadOnly(request.getParameter("readOnly") != null);
 		topic.setAdminOnly(request.getParameter("adminOnly") != null);
 		WikiUser user = ServletUtil.currentWikiUser();
-		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), Utilities.formatMessage("manage.message.permissions", request.getLocale()), topic.getTopicContent(), 0);
+		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), null, topic.getTopicContent(), 0);
 		topicVersion.setEditType(TopicVersion.EDIT_PERMISSION);
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
 		next.addObject("message", new WikiMessage("manage.message.updated", topicName));
 		view(request, next, pageInfo);
 	}
@@ -125,8 +125,8 @@ public class ManageServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		undeletePage(request, next, pageInfo, topicName);
-		if (!StringUtils.isBlank(request.getParameter("manageCommentsPage"))) {
-			String manageCommentsPage = Utilities.decodeTopicName(request.getParameter("manageCommentsPage"), true);
+		String manageCommentsPage = WikiUtil.getParameterFromRequest(request, "manageCommentsPage", true);
+		if (!StringUtils.isBlank(manageCommentsPage)) {
 			if (WikiUtil.isCommentsPage(manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
 				undeletePage(request, next, pageInfo, manageCommentsPage);
 			}
@@ -145,10 +145,10 @@ public class ManageServlet extends JAMWikiServlet {
 			logger.warning("Attempt to undelete a topic that is not deleted: " + virtualWiki + " / " + topicName);
 			return;
 		}
-		TopicVersion previousVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId().intValue());
+		TopicVersion previousVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId());
 		while (previousVersion != null && previousVersion.getPreviousTopicVersionId() != null && previousVersion.getEditType() == TopicVersion.EDIT_DELETE) {
 			// loop back to find the last non-delete edit
-			previousVersion = WikiBase.getDataHandler().lookupTopicVersion(previousVersion.getPreviousTopicVersionId().intValue());
+			previousVersion = WikiBase.getDataHandler().lookupTopicVersion(previousVersion.getPreviousTopicVersionId());
 		}
 		String contents = previousVersion.getVersionContent();
 		topic.setTopicContent(contents);
@@ -156,7 +156,7 @@ public class ManageServlet extends JAMWikiServlet {
 		int charactersChanged = StringUtils.length(contents);
 		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), request.getParameter("undeleteComment"), contents, charactersChanged);
 		topicVersion.setEditType(TopicVersion.EDIT_UNDELETE);
-		WikiBase.getDataHandler().undeleteTopic(topic, topicVersion, true);
+		WikiBase.getDataHandler().undeleteTopic(topic, topicVersion);
 	}
 
 	/**
@@ -177,9 +177,9 @@ public class ManageServlet extends JAMWikiServlet {
 				next.addObject("manageCommentsPage", commentsPage);
 			}
 		}
-		next.addObject("readOnly", new Boolean(topic.getReadOnly()));
-		next.addObject("adminOnly", new Boolean(topic.getAdminOnly()));
-		next.addObject("deleted", new Boolean(topic.getDeleteDate() != null));
+		next.addObject("readOnly", topic.getReadOnly());
+		next.addObject("adminOnly", topic.getAdminOnly());
+		next.addObject("deleted", (topic.getDeleteDate() != null));
 		pageInfo.setTopicName(topicName);
 		pageInfo.setContentJsp(JSP_ADMIN_MANAGE);
 		pageInfo.setPageTitle(new WikiMessage("manage.title", topicName));

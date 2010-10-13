@@ -43,7 +43,7 @@
 </div>
 <div class="formentry">
 	<span class="formcaption-small">&#160;</span>
-	<span class="formelement"><input type="submit" name="function" value="<fmt:message key="common.login" />" /></span>
+	<span class="formelement"><input type="submit" name="function" value="<fmt:message key="login.submit" />" /></span>
 </div>
 </form>
 

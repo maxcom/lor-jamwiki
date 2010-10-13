@@ -17,12 +17,12 @@
 package org.jamwiki.servlets;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
@@ -37,6 +37,7 @@ import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
+import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.SpamFilter;
@@ -80,6 +81,8 @@ public class AdminServlet extends JAMWikiServlet {
 			properties(request, next, pageInfo);
 		} else if (function.equals("virtualwiki")) {
 			virtualWiki(request, next, pageInfo);
+		} else if (function.equals("logitems")) {
+			logItems(request, next, pageInfo);
 		} else if (function.equals("recentchanges")) {
 			recentChanges(request, next, pageInfo);
 		} else if (function.equals("spam")) {
@@ -126,8 +129,22 @@ public class AdminServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private void logItems(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		try {
+			WikiBase.getDataHandler().reloadLogItems();
+			next.addObject("message", new WikiMessage("admin.message.logitems"));
+		} catch (Exception e) {
+			logger.severe("Failure while loading log items", e);
+			next.addObject("message", new WikiMessage("admin.message.logitemsfail", e.getMessage()));
+		}
+		viewAdminSystem(request, next, pageInfo);
+	}
+
+	/**
+	 *
+	 */
 	private void migrateDatabase(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		Vector errors = new Vector();
+		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		Properties props = new Properties();
 		try {
 			setProperty(props, request, Environment.PROP_BASE_PERSISTENCE_TYPE);
@@ -147,27 +164,7 @@ public class AdminServlet extends JAMWikiServlet {
 			// Will return errors if the new database cannot be connected to,
 			// if it is already populated, or an error occurs copying the contents
 			WikiDatabase.migrateDatabase(props, errors);
-			if (!errors.isEmpty()) {
-				next.addObject("errors", errors);
-				next.addObject("message", new WikiMessage("admin.message.changesnotsaved"));
-			} else {
-				// all is well, save the properties
-				Iterator iterator = props.keySet().iterator();
-				while (iterator.hasNext()) {
-					String key = (String)iterator.next();
-					String value = props.getProperty(key);
-					Environment.setValue(key, value);
-				}
-				Environment.saveProperties();
-				// re-initialize to reset database settings (if needed)
-				WikiUserDetails userDetails = ServletUtil.currentUserDetails();
-				if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
-					throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
-				}
-				WikiUser user = ServletUtil.currentWikiUser();
-				WikiBase.reset(request.getLocale(), user, user.getUsername(), null);
-				JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
-				JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
+			if (this.saveProperties(request, next, pageInfo, props, errors)) {
 				next.addObject("message", new WikiMessage("admin.message.migratedatabase", Environment.getValue(Environment.PROP_DB_URL)));
 			}
 		} catch (Exception e) {
@@ -181,7 +178,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void password(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		Vector errors = new Vector();
+		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		String userLogin = request.getParameter("passwordLogin");
 		String newPassword = request.getParameter("passwordPassword");
 		String confirmPassword = request.getParameter("passwordPasswordConfirm");
@@ -213,21 +210,25 @@ public class AdminServlet extends JAMWikiServlet {
 	private void properties(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		Properties props = new Properties();
 		try {
+			List<WikiMessage> errors = new ArrayList<WikiMessage>();
 			setProperty(props, request, Environment.PROP_SERVER_URL);
+			setProperty(props, request, Environment.PROP_SITE_NAME);
 			setProperty(props, request, Environment.PROP_BASE_DEFAULT_TOPIC);
 			setProperty(props, request, Environment.PROP_BASE_LOGO_IMAGE);
 			setProperty(props, request, Environment.PROP_BASE_META_DESCRIPTION);
 			setProperty(props, request, Environment.PROP_TOPIC_EDITOR);
-			setProperty(props, request, Environment.PROP_IMAGE_RESIZE_INCREMENT);
-			setProperty(props, request, Environment.PROP_RECENT_CHANGES_NUM);
+			setNumericProperty(props, request, Environment.PROP_IMAGE_RESIZE_INCREMENT, errors);
+			setNumericProperty(props, request, Environment.PROP_MAX_TOPIC_VERSION_EXPORT, errors);
+			setNumericProperty(props, request, Environment.PROP_RECENT_CHANGES_NUM, errors);
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_SPAM_FILTER);
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_USE_PREVIEW);
+			setBooleanProperty(props, request, Environment.PROP_TOPIC_USE_SHOW_CHANGES);
 			setBooleanProperty(props, request, Environment.PROP_PRINT_NEW_WINDOW);
 			setBooleanProperty(props, request, Environment.PROP_EXTERNAL_LINK_NEW_WINDOW);
 			setProperty(props, request, Environment.PROP_BASE_SEARCH_ENGINE);
 			setProperty(props, request, Environment.PROP_PARSER_CLASS);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_TOC);
-			setProperty(props, request, Environment.PROP_PARSER_TOC_DEPTH);
+			setNumericProperty(props, request, Environment.PROP_PARSER_TOC_DEPTH, errors);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_HTML);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_JAVASCRIPT);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_TEMPLATES);
@@ -244,17 +245,22 @@ public class AdminServlet extends JAMWikiServlet {
 			} else {
 				WikiDatabase.setupDefaultDatabase(props);
 			}
-			setProperty(props, request, Environment.PROP_DBCP_MAX_ACTIVE);
-			setProperty(props, request, Environment.PROP_DBCP_MAX_IDLE);
+			setNumericProperty(props, request, Environment.PROP_DBCP_MAX_ACTIVE, errors);
+			setNumericProperty(props, request, Environment.PROP_DBCP_MAX_IDLE, errors);
 			setBooleanProperty(props, request, Environment.PROP_DBCP_TEST_ON_BORROW);
 			setBooleanProperty(props, request, Environment.PROP_DBCP_TEST_ON_RETURN);
 			setBooleanProperty(props, request, Environment.PROP_DBCP_TEST_WHILE_IDLE);
-			setProperty(props, request, Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME);
-			setProperty(props, request, Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS);
-			setProperty(props, request, Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN);
+			setNumericProperty(props, request, Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME, errors);
+			setNumericProperty(props, request, Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS, errors);
+			setNumericProperty(props, request, Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN, errors);
 			setProperty(props, request, Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION);
-			int maxFileSizeInKB = Integer.parseInt(request.getParameter(Environment.PROP_FILE_MAX_FILE_SIZE));
-			props.setProperty(Environment.PROP_FILE_MAX_FILE_SIZE, Integer.toString(maxFileSizeInKB * 1000));
+			String maxFileSizeString = request.getParameter(Environment.PROP_FILE_MAX_FILE_SIZE);
+			if (StringUtils.isBlank(maxFileSizeString) || !StringUtils.isNumeric(maxFileSizeString)) {
+				errors.add(new WikiMessage("admin.message.nonnumeric", Environment.PROP_FILE_MAX_FILE_SIZE, maxFileSizeString));
+			} else {
+				int maxFileSizeInKB = Integer.parseInt(maxFileSizeString);
+				props.setProperty(Environment.PROP_FILE_MAX_FILE_SIZE, Integer.toString(maxFileSizeInKB * 1000));
+			}
 			setProperty(props, request, Environment.PROP_FILE_DIR_FULL_PATH);
 			setProperty(props, request, Environment.PROP_FILE_DIR_RELATIVE_PATH);
 			setProperty(props, request, Environment.PROP_FILE_SERVER_URL);
@@ -267,34 +273,14 @@ public class AdminServlet extends JAMWikiServlet {
 			setPassword(props, request, next, Environment.PROP_EMAIL_SMTP_PASSWORD, "smtpPassword");
 			setProperty(props, request, Environment.PROP_EMAIL_REPLY_ADDRESS);
 			*/
-			setProperty(props, request, Environment.PROP_CACHE_INDIVIDUAL_SIZE);
-			setProperty(props, request, Environment.PROP_CACHE_MAX_AGE);
-			setProperty(props, request, Environment.PROP_CACHE_MAX_IDLE_AGE);
-			setProperty(props, request, Environment.PROP_CACHE_TOTAL_SIZE);
+			setNumericProperty(props, request, Environment.PROP_CACHE_INDIVIDUAL_SIZE, errors);
+			setNumericProperty(props, request, Environment.PROP_CACHE_MAX_AGE, errors);
+			setNumericProperty(props, request, Environment.PROP_CACHE_MAX_IDLE_AGE, errors);
+			setNumericProperty(props, request, Environment.PROP_CACHE_TOTAL_SIZE, errors);
 			setBooleanProperty(props, request, Environment.PROP_RSS_ALLOWED);
 			setProperty(props, request, Environment.PROP_RSS_TITLE);
-			Vector errors = ServletUtil.validateSystemSettings(props);
-			if (!errors.isEmpty()) {
-				next.addObject("errors", errors);
-				next.addObject("message", new WikiMessage("admin.message.changesnotsaved"));
-			} else {
-				// all is well, save the properties
-				Iterator iterator = props.keySet().iterator();
-				while (iterator.hasNext()) {
-					String key = (String)iterator.next();
-					String value = props.getProperty(key);
-					Environment.setValue(key, value);
-				}
-				Environment.saveProperties();
-				// re-initialize to reset database settings (if needed)
-				WikiUserDetails userDetails = ServletUtil.currentUserDetails();
-				if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
-					throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
-				}
-				WikiUser user = ServletUtil.currentWikiUser();
-				WikiBase.reset(request.getLocale(), user, user.getUsername(), null);
-				JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
-				JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
+			errors.addAll(ServletUtil.validateSystemSettings(props));
+			if (this.saveProperties(request, next, pageInfo, props, errors)) {
 				next.addObject("message", new WikiMessage("admin.message.changessaved"));
 			}
 		} catch (Exception e) {
@@ -335,6 +321,35 @@ public class AdminServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private boolean saveProperties(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, Properties props, List<WikiMessage> errors) throws Exception {
+		if (!errors.isEmpty()) {
+			next.addObject("errors", errors);
+			next.addObject("message", new WikiMessage("admin.message.changesnotsaved"));
+			return false;
+		}
+		// all is well, save the properties
+		Iterator iterator = props.keySet().iterator();
+		while (iterator.hasNext()) {
+			String key = (String)iterator.next();
+			String value = props.getProperty(key);
+			Environment.setValue(key, value);
+		}
+		Environment.saveProperties();
+		// re-initialize to reset database settings (if needed)
+		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
+			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
+		}
+		WikiUser user = ServletUtil.currentWikiUser();
+		WikiBase.reset(request.getLocale(), user, user.getUsername(), null);
+		JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
+		JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
+		return true;
+	}
+
+	/**
+	 *
+	 */
 	private static void setBooleanProperty(Properties props, HttpServletRequest request, String parameter) {
 		boolean value = (request.getParameter(parameter) != null);
 		props.setProperty(parameter, Boolean.toString(value));
@@ -351,6 +366,17 @@ public class AdminServlet extends JAMWikiServlet {
 		} else {
 			props.setProperty(parameter, Environment.getValue(parameter));
 		}
+	}
+
+	/**
+	 *
+	 */
+	private static void setNumericProperty(Properties props, HttpServletRequest request, String parameter, List<WikiMessage> errors) {
+		String value = request.getParameter(parameter);
+		if (StringUtils.isBlank(value) || !StringUtils.isNumeric(value)) {
+			errors.add(new WikiMessage("admin.message.nonnumeric", parameter, value));
+		}
+		props.setProperty(parameter, value);
 	}
 
 	/**
@@ -387,27 +413,27 @@ public class AdminServlet extends JAMWikiServlet {
 		pageInfo.setPageTitle(new WikiMessage("admin.title"));
 		Map editors = WikiConfiguration.getInstance().getEditors();
 		next.addObject("editors", editors);
-		Collection dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
+		List<WikiConfigurationObject> dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
 		next.addObject("dataHandlers", dataHandlers);
-		Collection searchEngines = WikiConfiguration.getInstance().getSearchEngines();
+		List<WikiConfigurationObject> searchEngines = WikiConfiguration.getInstance().getSearchEngines();
 		next.addObject("searchEngines", searchEngines);
-		Collection parsers = WikiConfiguration.getInstance().getParsers();
+		List<WikiConfigurationObject> parsers = WikiConfiguration.getInstance().getParsers();
 		next.addObject("parsers", parsers);
-		LinkedHashMap poolExhaustedMap = new LinkedHashMap();
-		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_FAIL), "admin.persistence.caption.whenexhaustedaction.fail");
-		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_BLOCK), "admin.persistence.caption.whenexhaustedaction.block");
-		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_GROW), "admin.persistence.caption.whenexhaustedaction.grow");
+		LinkedHashMap<Integer, String> poolExhaustedMap = new LinkedHashMap<Integer, String>();
+		poolExhaustedMap.put(Integer.valueOf(GenericObjectPool.WHEN_EXHAUSTED_FAIL), "admin.persistence.caption.whenexhaustedaction.fail");
+		poolExhaustedMap.put(Integer.valueOf(GenericObjectPool.WHEN_EXHAUSTED_BLOCK), "admin.persistence.caption.whenexhaustedaction.block");
+		poolExhaustedMap.put(Integer.valueOf(GenericObjectPool.WHEN_EXHAUSTED_GROW), "admin.persistence.caption.whenexhaustedaction.grow");
 		next.addObject("poolExhaustedMap", poolExhaustedMap);
-		LinkedHashMap blacklistTypesMap = new LinkedHashMap();
-		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_ALL), "admin.upload.caption.allowall");
-		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_NONE), "admin.upload.caption.allownone");
-		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_BLACKLIST), "admin.upload.caption.useblacklist");
-		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_WHITELIST), "admin.upload.caption.usewhitelist");
+		LinkedHashMap<Integer, String> blacklistTypesMap = new LinkedHashMap<Integer, String>();
+		blacklistTypesMap.put(Integer.valueOf(WikiBase.UPLOAD_ALL), "admin.upload.caption.allowall");
+		blacklistTypesMap.put(Integer.valueOf(WikiBase.UPLOAD_NONE), "admin.upload.caption.allownone");
+		blacklistTypesMap.put(Integer.valueOf(WikiBase.UPLOAD_BLACKLIST), "admin.upload.caption.useblacklist");
+		blacklistTypesMap.put(Integer.valueOf(WikiBase.UPLOAD_WHITELIST), "admin.upload.caption.usewhitelist");
 		next.addObject("blacklistTypes", blacklistTypesMap);
 		if (props == null) {
 			props = Environment.getInstance();
 		}
-		Integer maximumFileSize = new Integer(new Integer(props.getProperty(Environment.PROP_FILE_MAX_FILE_SIZE)).intValue()/1000);
+		int maximumFileSize = Integer.valueOf(props.getProperty(Environment.PROP_FILE_MAX_FILE_SIZE))/1000;
 		next.addObject("maximumFileSize", maximumFileSize);
 		next.addObject("props", props);
 	}
@@ -419,11 +445,11 @@ public class AdminServlet extends JAMWikiServlet {
 		pageInfo.setContentJsp(JSP_ADMIN_SYSTEM);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("admin.maintenance.title"));
-		Collection virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList();
+		List<VirtualWiki> virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList();
 		next.addObject("wikis", virtualWikiList);
 		boolean allowExport = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals(WikiBase.PERSISTENCE_INTERNAL);
-		next.addObject("allowExport", new Boolean(allowExport));
-		Collection dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
+		next.addObject("allowExport", allowExport);
+		List<WikiConfigurationObject> dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
 		next.addObject("dataHandlers", dataHandlers);
 	}
 
@@ -435,10 +461,11 @@ public class AdminServlet extends JAMWikiServlet {
 		try {
 			VirtualWiki virtualWiki = new VirtualWiki();
 			if (!StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
-				virtualWiki.setVirtualWikiId(new Integer(request.getParameter("virtualWikiId")).intValue());
+				virtualWiki.setVirtualWikiId(Integer.valueOf(request.getParameter("virtualWikiId")));
 			}
 			virtualWiki.setName(request.getParameter("name"));
-			virtualWiki.setDefaultTopicName(Utilities.decodeTopicName(request.getParameter("defaultTopicName"), true));
+			String defaultTopicName = WikiUtil.getParameterFromRequest(request, "defaultTopicName", true);
+			virtualWiki.setDefaultTopicName(defaultTopicName);
 			WikiBase.getDataHandler().writeVirtualWiki(virtualWiki);
 			if (StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
 				WikiBase.getDataHandler().setupSpecialPages(request.getLocale(), user, virtualWiki);

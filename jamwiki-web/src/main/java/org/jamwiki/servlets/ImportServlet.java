@@ -17,21 +17,25 @@
 package org.jamwiki.servlets;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringUtils;
-import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.migrate.MigrationException;
+import org.jamwiki.migrate.MigrationUtil;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * Used to import an XML file (in MediaWiki format), creating or updating a
- * topic as a result.
+ * Used to import an XML file creating a topic as a result.
  */
 public class ImportServlet extends JAMWikiServlet {
 
@@ -59,34 +63,40 @@ public class ImportServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void importFile(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = pageInfo.getVirtualWikiName();
-		Iterator iterator = ServletUtil.processMultipartRequest(request, Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
-		WikiUser user = ServletUtil.currentWikiUser();
-		XMLTopicFactory importer = new XMLTopicFactory(virtualWiki, user, ServletUtil.getIpAddress(request));
-		String topicName = null;
-		while (iterator.hasNext()) {
-			FileItem item = (FileItem)iterator.next();
-			if (item.isFormField()) {
-				continue;
+	private void importFile(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
+		List<WikiMessage> errors = new ArrayList<WikiMessage>();
+		try {
+			Iterator iterator = ServletUtil.processMultipartRequest(request, Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
+			while (iterator.hasNext()) {
+				FileItem item = (FileItem)iterator.next();
+				if (item.isFormField()) {
+					continue;
+				}
+				File file = saveFileItem(item);
+				WikiUser user = ServletUtil.currentWikiUser();
+				String virtualWiki = pageInfo.getVirtualWikiName();
+				String ipAddress = ServletUtil.getIpAddress(request);
+				Locale locale = request.getLocale();
+				List<String> successfulImports = MigrationUtil.importFromFile(file, virtualWiki, user, ipAddress, locale, errors);
+				file.delete();
+				next.addObject("successfulImports", successfulImports);
+				break;
 			}
-			File xmlFile = saveFileItem(item);
-			// FIXME - breaks if more than one topic imported
-			topicName = importer.importWikiXml(xmlFile);
-			xmlFile.delete();
+		} catch (MigrationException e) {
+			logger.severe("Failure while importing from file", e);
+			errors.add(new WikiMessage("import.error.migration", e.getMessage()));
+		} catch (WikiException e) {
+			logger.severe("Failure while importing from file", e);
+			errors.add(e.getWikiMessage());
 		}
-		if (!StringUtils.isBlank(topicName)) {
-			ServletUtil.redirect(next, virtualWiki, topicName);
-		} else {
-			next.addObject("error", new WikiMessage("import.caption.failure"));
-			view(request, next, pageInfo);
-		}
+		next.addObject("errors", errors);
+		view(request, next, pageInfo);
 	}
 
 	/**
 	 *
 	 */
-	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
 		pageInfo.setContentJsp(JSP_IMPORT);
 		pageInfo.setPageTitle(new WikiMessage("import.title"));
 		pageInfo.setSpecial(true);
@@ -95,18 +105,22 @@ public class ImportServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private File saveFileItem(FileItem item) throws Exception {
+	private File saveFileItem(FileItem item) throws WikiException {
 		// upload user file to the server
-		String subdirectory = "tmp";
-		File directory = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), subdirectory);
-		if (!directory.exists() && !directory.mkdirs()) {
+		File directory = WikiUtil.getTempDirectory();
+		if (!directory.exists()) {
 			throw new WikiException(new WikiMessage("upload.error.directorycreate", directory.getAbsolutePath()));
 		}
 		// use current timestamp as unique file name
 		String filename = System.currentTimeMillis() + ".xml";
 		File xmlFile = new File(directory, filename);
 		// transfer remote file
-		item.write(xmlFile);
+		try {
+			item.write(xmlFile);
+		} catch (Exception e) {
+			logger.severe("Failure while saving uploaded file item", e);
+			throw new WikiException(new WikiMessage("error.unknown", e.getMessage()));
+		}
 		return xmlFile;
 	}
 }

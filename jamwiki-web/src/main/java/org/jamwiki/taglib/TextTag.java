@@ -16,11 +16,11 @@
  */
 package org.jamwiki.taglib;
 
+import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
  * Utility tag for creating HTML text inputs.
@@ -39,54 +39,27 @@ public class TextTag extends TagSupport {
 	 *
 	 */
 	public int doEndTag() throws JspException {
-		String output = "";
-		String tagId = null;
-		int tagMaxlength = 0;
-		String tagName = null;
-		int tagSize = 0;
-		String tagStyle = null;
-		String tagValue = "";
-		// Resin throws ClassCastException with evaluateString for values like "1", so use tmp variable
-		Object tmp = null;
+		StringBuffer output = new StringBuffer();
+		output.append("<input type=\"text\"");
+		output.append(" name=\"").append(this.name).append('\"');
+		if (!StringUtils.isBlank(this.id)) {
+			output.append(" id=\"").append(this.id).append('\"');
+		}
+		if (!StringUtils.isBlank(this.maxlength)) {
+			output.append(" maxlength=\"").append(this.maxlength).append('\"');
+		}
+		if (!StringUtils.isBlank(this.size)) {
+			output.append(" size=\"").append(this.size).append('\"');
+		}
+		if (!StringUtils.isBlank(this.style)) {
+			output.append(" style=\"").append(this.style).append('\"');
+		}
+		String tagValue = (StringUtils.isBlank(this.value) ? "" : this.value);
+		output.append(" value=\"").append(tagValue).append('\"');
+		output.append(" />");
 		try {
-			output += "<input type=\"text\"";
-			tmp = ExpressionEvaluationUtils.evaluate("name", this.name, pageContext);
-			if (tmp != null) {
-				tagName = tmp.toString();
-			}
-			output += " name=\"" + tagName + "\"";
-			if (!StringUtils.isBlank(this.id)) {
-				tmp = ExpressionEvaluationUtils.evaluate("id", this.id, pageContext);
-				if (tmp != null) {
-					tagId = tmp.toString();
-				}
-				output += " id=\"" + tagId + "\"";
-			}
-			if (!StringUtils.isBlank(this.maxlength)) {
-				tagMaxlength = ExpressionEvaluationUtils.evaluateInteger("maxlength", this.maxlength, pageContext);
-				output += " maxlength=\"" + tagMaxlength + "\"";
-			}
-			if (!StringUtils.isBlank(this.size)) {
-				tagSize = ExpressionEvaluationUtils.evaluateInteger("size", this.size, pageContext);
-				output += " size=\"" + tagSize + "\"";
-			}
-			if (!StringUtils.isBlank(this.style)) {
-				tmp = ExpressionEvaluationUtils.evaluate("style", this.style, pageContext);
-				if (tmp != null) {
-					tagStyle = tmp.toString();
-				}
-				output += " style=\"" + tagStyle + "\"";
-			}
-			if (!StringUtils.isBlank(this.value)) {
-				tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
-				if (tmp != null) {
-					tagValue = tmp.toString();
-				}
-			}
-			output += " value=\"" + tagValue + "\"";
-			output += " />";
-			this.pageContext.getOut().print(output);
-		} catch (Exception e) {
+			this.pageContext.getOut().print(output.toString());
+		} catch (IOException e) {
 			logger.severe("Failure in checkbox tag for " + this.id + " / " + this.name + " / " + this.style + " / " + this.value, e);
 			throw new JspException(e);
 		}

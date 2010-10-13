@@ -19,16 +19,18 @@
 package org.jamwiki.utils;
 
 import java.util.Properties;
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  */
-public class EncryptionTest extends TestCase {
+public class EncryptionTest {
 
 	/**
 	 *
 	 */
+	@Test
 	public void testGetEncryptedProperty() throws Throwable {
 		Encryption.getEncryptedProperty("", null);
 		assertTrue("Test completed without Exception", true);
@@ -38,6 +40,7 @@ public class EncryptionTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testGetEncryptedProperty1() throws Throwable {
 		Properties props = new SortedProperties();
 		props.put("", "");
@@ -48,6 +51,7 @@ public class EncryptionTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testGetEncryptedProperty2() throws Throwable {
 		String result = Encryption.getEncryptedProperty("testEncryptionName", new Properties());
 		assertNull("result", result);
@@ -56,6 +60,7 @@ public class EncryptionTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testSetEncryptedProperty() throws Throwable {
 		Encryption.setEncryptedProperty("testEncryptionName", "", null);
 		assertTrue("Test completed without Exception", true);
@@ -64,6 +69,7 @@ public class EncryptionTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testSetEncryptedProperty1() throws Throwable {
 		Encryption.setEncryptedProperty("testEncryptionName", null, null);
 		assertTrue("Test completed without Exception", true);
@@ -72,6 +78,7 @@ public class EncryptionTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testSetEncryptedProperty2() throws Throwable {
 		Properties props = new Properties();
 		Encryption.setEncryptedProperty("testEncryptionName", "", props);
@@ -82,6 +89,7 @@ public class EncryptionTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testSetEncryptedProperty3() throws Throwable {
 		Properties props = new SortedProperties();
 		Encryption.setEncryptedProperty("testEncryptionName", null, props);
@@ -92,13 +100,9 @@ public class EncryptionTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test(expected=IllegalArgumentException.class)
 	public void testEncryptThrowsNullPointerException() throws Throwable {
-		try {
-			Encryption.encrypt(null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (IllegalArgumentException ex) {
-			// FIXME - do something here
-		}
+		Encryption.encrypt(null);
 	}
 }
 

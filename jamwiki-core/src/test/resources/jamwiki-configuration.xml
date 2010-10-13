@@ -51,6 +51,10 @@
 		<class>org.jamwiki.db.AnsiDataHandler</class>
 	</data-handler>
 	<data-handler>
+		<name>h2</name>
+		<class>org.jamwiki.db.H2DataHandler</class>
+	</data-handler>
+	<data-handler>
 		<name>hsql</name>
 		<class>org.jamwiki.db.HSqlDataHandler</class>
 	</data-handler>
@@ -71,6 +75,10 @@
 		<class>org.jamwiki.db.PostgresDataHandler</class>
 	</data-handler>
 	<data-handler>
+		<name>asa</name>
+		<class>org.jamwiki.db.SybaseASADataHandler</class>
+	</data-handler>
+	<data-handler>
 		<name>db2</name>
 		<class>org.jamwiki.db.DB2DataHandler</class>
 		<state>experimental</state>
@@ -81,6 +89,33 @@
 		<state>experimental</state>
 	</data-handler>
 </data-handlers>
+
+<!--
+   ====================================================================
+
+   Editors are used when editing topics and define which of the available
+   editing tools the user will use.
+
+   name  - The name of the editing tool.
+   key   - A string that will be stored in the user preferences if the
+           editing tool is selected.
+
+   ======================================================================
+-->
+<editors>
+	<editor>
+		<name>None</name>
+		<key>none</key>
+	</editor>
+	<editor>
+		<name>Toolbar</name>
+		<key>toolbar</key>
+	</editor>
+	<editor>
+		<name>FCKEditor (WYSIWYG)</name>
+		<key>fckeditor</key>
+	</editor>
+</editors>
 
 <!--
    ====================================================================
@@ -240,6 +275,9 @@
 	</pseudotopic>
 	<pseudotopic>
 		<name>Special:Move</name>
+	</pseudotopic>
+	<pseudotopic>
+		<name>Special:OrphanedPages</name>
 	</pseudotopic>
 	<pseudotopic>
 		<name>Special:Print</name>

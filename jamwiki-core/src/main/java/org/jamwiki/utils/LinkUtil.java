@@ -16,10 +16,12 @@
  */
 package org.jamwiki.utils;
 
-import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
@@ -58,7 +60,7 @@ public class LinkUtil {
 	public static String appendQueryParam(String query, String param, String value) {
 		String url = "";
 		if (!StringUtils.isBlank(query)) {
-			if (!query.startsWith("?")) {
+			if (query.charAt(0) != '?') {
 				query = "?" + query;
 			}
 			url = query + "&amp;";
@@ -91,9 +93,9 @@ public class LinkUtil {
 	 * @return A url that links to the edit page for the specified topic.
 	 *  Note that this method returns only the URL, not a fully-formed HTML
 	 *  anchor tag.
-	 * @throws Exception Thrown if any error occurs while builing the link URL.
+	 * @throws DataAccessException Thrown if any error occurs while builing the link URL.
 	 */
-	public static String buildEditLinkUrl(String context, String virtualWiki, String topic, String query, int section) throws Exception {
+	public static String buildEditLinkUrl(String context, String virtualWiki, String topic, String query, int section) throws DataAccessException {
 		query = LinkUtil.appendQueryParam(query, "topic", topic);
 		if (section > 0) {
 			query += "&amp;section=" + section;
@@ -115,9 +117,9 @@ public class LinkUtil {
 	 * @param topicName The name of the image for which a link is being created.
 	 * @return The URL to an image file (not the image topic) or <code>null</code>
 	 *  if the file does not exist.
-	 * @throws Exception Thrown if any error occurs while builing the image URL.
+	 * @throws DataAccessException Thrown if any error occurs while retrieving file info.
 	 */
-	public static String buildImageFileUrl(String context, String virtualWiki, String topicName) throws Exception {
+	public static String buildImageFileUrl(String context, String virtualWiki, String topicName) throws DataAccessException {
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
 		if (wikiFile == null) {
 			return null;
@@ -157,88 +159,95 @@ public class LinkUtil {
 	 *  malicious HTML code.
 	 * @return The full HTML required to display an image enclosed within an
 	 *  HTML anchor tag that links to the image topic page.
-	 * @throws Exception Thrown if any error occurs while builing the image
-	 *  HTML.
+	 * @throws DataAccessException Thrown if any error occurs while retrieving image
+	 *  information.
+	 * @throws IOException Thrown if any error occurs while reading image information.
 	 */
-	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, int maxDimension, boolean suppressLink, String style, boolean escapeHtml) throws Exception {
+	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, int maxDimension, boolean suppressLink, String style, boolean escapeHtml) throws DataAccessException, IOException {
 		String url = LinkUtil.buildImageFileUrl(context, virtualWiki, topicName);
 		if (url == null) {
-			WikiLink uploadLink = LinkUtil.parseWikiLink("Special:Upload");
-			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, uploadLink, topicName, "edit", null, true);
+			return LinkUtil.buildUploadLink(context, virtualWiki, topicName);
 		}
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
-		String html = "";
+		StringBuffer html = new StringBuffer();
 		if (topic.getTopicType() == Topic.TYPE_FILE) {
 			// file, not an image
 			if (StringUtils.isBlank(caption)) {
 				caption = topicName.substring(NamespaceHandler.NAMESPACE_IMAGE.length() + 1);
 			}
-			html += "<a href=\"" + url + "\">";
+			html.append("<a href=\"").append(url).append("\">");
 			if (escapeHtml) {
-				html += StringEscapeUtils.escapeHtml(caption);
+				html.append(StringEscapeUtils.escapeHtml(caption));
 			} else {
-				html += caption;
+				html.append(caption);
 			}
-			html += "</a>";
-			return html;
+			html.append("</a>");
+			return html.toString();
 		}
-		WikiImage wikiImage = ImageUtil.initializeImage(wikiFile, maxDimension);
+		WikiImage wikiImage = null;
+		try {
+			wikiImage = ImageUtil.initializeImage(wikiFile, maxDimension);
+		} catch (FileNotFoundException e) {
+			// do not log the full exception as the logs can fill up very for this sort of error, and it is generally due to a bad configuration.  instead log a warning message so that the administrator can try to fix the problem
+			logger.warning("File not found while parsing image link for topic: " + virtualWiki + " / " + topicName + ".  Make sure that the following file exists and is readable by the JAMWiki installation: " + e.getMessage());
+			return LinkUtil.buildUploadLink(context, virtualWiki, topicName);
+		}
 		if (caption == null) {
 			caption = "";
 		}
 		if (frame || thumb || !StringUtils.isBlank(align)) {
-			html += "<div class=\"";
+			html.append("<div class=\"");
 			if (thumb || frame) {
-				html += "imgthumb ";
+				html.append("imgthumb ");
 			}
 			if (align != null && align.equalsIgnoreCase("left")) {
-				html += "imgleft ";
+				html.append("imgleft ");
 			} else if (align != null && align.equalsIgnoreCase("center")) {
-				html += "imgcenter ";
+				html.append("imgcenter ");
 			} else if ((align != null && align.equalsIgnoreCase("right")) || thumb || frame) {
-				html += "imgright ";
+				html.append("imgright ");
 			} else {
 				// default alignment
-				html += "image "; 
+				html.append("image ");
 			}
-			html = html.trim() + "\">";
+			html = new StringBuffer(html.toString().trim()).append("\">");
 		}
 		if (wikiImage.getWidth() > 0) {
-			html += "<div style=\"width:" + (wikiImage.getWidth() + 2) + "px;\">";
+			html.append("<div style=\"width:").append((wikiImage.getWidth() + 2)).append("px;\">");
 		}
 		if (!suppressLink) {
-			html += "<a class=\"wikiimg\" href=\"" + LinkUtil.buildTopicUrl(context, virtualWiki, topicName, true) + "\">";
+			html.append("<a class=\"wikiimg\" href=\"").append(LinkUtil.buildTopicUrl(context, virtualWiki, topicName, true)).append("\">");
 		}
 		if (StringUtils.isBlank(style)) {
 			style = "wikiimg";
 		}
-		html += "<img class=\"" + style + "\" src=\"";
-		html += url;
-		html += "\"";
-		html += " width=\"" + wikiImage.getWidth() + "\"";
-		html += " height=\"" + wikiImage.getHeight() + "\"";
-		html += " alt=\"" + StringEscapeUtils.escapeHtml(caption) + "\"";
-		html += " />";
+		html.append("<img class=\"").append(style).append("\" src=\"");
+		html.append(url);
+		html.append('\"');
+		html.append(" width=\"").append(wikiImage.getWidth()).append('\"');
+		html.append(" height=\"").append(wikiImage.getHeight()).append('\"');
+		html.append(" alt=\"").append(StringEscapeUtils.escapeHtml(caption)).append('\"');
+		html.append(" />");
 		if (!suppressLink) {
-			html += "</a>";
+			html.append("</a>");
 		}
 		if (!StringUtils.isBlank(caption)) {
-			html += "<div class=\"imgcaption\">";
+			html.append("<div class=\"imgcaption\">");
 			if (escapeHtml) {
-				html += StringEscapeUtils.escapeHtml(caption);
+				html.append(StringEscapeUtils.escapeHtml(caption));
 			} else {
-				html += caption;
+				html.append(caption);
 			}
-			html += "</div>";
+			html.append("</div>");
 		}
 		if (wikiImage.getWidth() > 0) {
-			html += "</div>";
+			html.append("</div>");
 		}
 		if (frame || thumb || !StringUtils.isBlank(align)) {
-			html += "</div>";
+			html.append("</div>");
 		}
-		return html;
+		return html.toString();
 	}
 
 	/**
@@ -258,10 +267,10 @@ public class LinkUtil {
 	 *  where the caption is not guaranteed to be free from potentially
 	 *  malicious HTML code.
 	 * @return An HTML anchor link that matches the given input parameters.
-	 * @throws Exception Thrown if any error occurs while builing the link
-	 *  HTML.
+	 * @throws DataAccessException Thrown if any error occurs while retrieving
+	 *  topic information.
 	 */
-	public static String buildInternalLinkHtml(String context, String virtualWiki, WikiLink wikiLink, String text, String style, String target, boolean escapeHtml) throws Exception {
+	public static String buildInternalLinkHtml(String context, String virtualWiki, WikiLink wikiLink, String text, String style, String target, boolean escapeHtml) throws DataAccessException {
 		String url = LinkUtil.buildTopicUrl(context, virtualWiki, wikiLink);
 		String topic = wikiLink.getDestination();
 		if (StringUtils.isBlank(text)) {
@@ -287,14 +296,16 @@ public class LinkUtil {
 		if (StringUtils.isBlank(topic) && !StringUtils.isBlank(wikiLink.getSection())) {
 			topic = wikiLink.getSection();
 		}
-		String html = "<a href=\"" + url + "\"" + style + " title=\"" + StringEscapeUtils.escapeHtml(topic) + "\"" + target + ">";
+		StringBuffer html = new StringBuffer();
+		html.append("<a href=\"").append(url).append('\"').append(style);
+		html.append(" title=\"").append(StringEscapeUtils.escapeHtml(topic)).append('\"').append(target).append('>');
 		if (escapeHtml) {
-			html += StringEscapeUtils.escapeHtml(text);
+			html.append(StringEscapeUtils.escapeHtml(text));
 		} else {
-			html += text;
+			html.append(text);
 		}
-		html += "</a>";
-		return html;
+		html.append("</a>");
+		return html.toString();
 	}
 
 	/**
@@ -308,9 +319,10 @@ public class LinkUtil {
 	 * @param validateTopic Set to <code>true</code> if the topic must exist and
 	 *  must not be a "Special:" page.  If the topic does not exist then a link to
 	 *  an edit page will be returned.
-	 * @throws Exception Thrown if any error occurs while builing the link URL.
+	 * @throws DataAccessException Thrown if any error occurs while retrieving topic
+	 *  information.
 	 */
-	public static String buildTopicUrl(String context, String virtualWiki, String topic, boolean validateTopic) throws Exception {
+	public static String buildTopicUrl(String context, String virtualWiki, String topic, boolean validateTopic) throws DataAccessException {
 		if (StringUtils.isBlank(topic)) {
 			return null;
 		}
@@ -331,9 +343,10 @@ public class LinkUtil {
 	 * @param virtualWiki The virtual wiki for the link that is being created.
 	 * @param wikiLink The WikiLink object containing all relevant information
 	 *  about the link being generated.
-	 * @throws Exception Thrown if any error occurs while builing the link URL.
+	 * @throws DataAccessException Thrown if any error occurs while retrieving topic
+	 *  information.
 	 */
-	public static String buildTopicUrl(String context, String virtualWiki, WikiLink wikiLink) throws Exception {
+	public static String buildTopicUrl(String context, String virtualWiki, WikiLink wikiLink) throws DataAccessException {
 		String topic = wikiLink.getDestination();
 		String section = wikiLink.getSection();
 		String query = wikiLink.getQuery();
@@ -363,33 +376,41 @@ public class LinkUtil {
 	 * @param queryString Query string parameters to append to the link.
 	 * @throws Exception Thrown if any error occurs while builing the link URL.
 	 */
-	private static String buildTopicUrlNoEdit(String context, String virtualWiki, String topicName, String section, String queryString) throws Exception {
+	private static String buildTopicUrlNoEdit(String context, String virtualWiki, String topicName, String section, String queryString) {
 		if (StringUtils.isBlank(topicName) && !StringUtils.isBlank(section)) {
 			return "#" + Utilities.encodeAndEscapeTopicName(section);
 		}
-		String url = "";
+		StringBuffer url = new StringBuffer();
 		if (context != null) {
-			url += context;
+			url.append(context);
 		}
 		// context never ends with a "/" per servlet specification
-		url += "/";
+		url.append('/');
 		// get the virtual wiki, which should have been set by the parent servlet
-		url += Utilities.encodeAndEscapeTopicName(virtualWiki);
-		url += "/";
-		url += Utilities.encodeAndEscapeTopicName(topicName);
+		url.append(Utilities.encodeAndEscapeTopicName(virtualWiki));
+		url.append('/');
+		url.append(Utilities.encodeAndEscapeTopicName(topicName));
 		if (!StringUtils.isBlank(queryString)) {
-			if (!queryString.startsWith("?")) {
-				url += "?";
+			if (queryString.charAt(0) != '?') {
+				url.append('?');
 			}
-			url += queryString;
+			url.append(queryString);
 		}
 		if (!StringUtils.isBlank(section)) {
-			if (!section.startsWith("#")) {
-				url += "#";
+			if (section.charAt(0) != '#') {
+				url.append('#');
 			}
-			url += Utilities.encodeAndEscapeTopicName(section);
+			url.append(Utilities.encodeAndEscapeTopicName(section));
 		}
-		return url;
+		return url.toString();
+	}
+
+	/**
+	 *
+	 */
+	private static String buildUploadLink(String context, String virtualWiki, String topicName) throws DataAccessException {
+		WikiLink uploadLink = LinkUtil.parseWikiLink("Special:Upload?topic=" + topicName);
+		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, uploadLink, topicName, "edit", null, true);
 	}
 
 	/**
@@ -420,9 +441,9 @@ public class LinkUtil {
 	 * @param articleName The name of the article that is being checked.
 	 * @return <code>true</code> if there is an article that exists for the given
 	 *  name and virtual wiki.
-	 * @throws Exception Thrown if any error occurs during lookup.
+	 * @throws DataAccessException Thrown if an error occurs during lookup.
 	 */
-	public static boolean isExistingArticle(String virtualWiki, String articleName) throws Exception {
+	public static boolean isExistingArticle(String virtualWiki, String articleName) throws DataAccessException {
 		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(articleName)) {
 			return false;
 		}
@@ -436,8 +457,7 @@ public class LinkUtil {
 			// not initialized yet
 			return false;
 		}
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, articleName, false, null);
-		return (topic != null);
+		return (WikiBase.getDataHandler().lookupTopic(virtualWiki, articleName, false, null) != null);
 	}
 
 	/**

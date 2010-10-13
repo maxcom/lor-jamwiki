@@ -29,6 +29,7 @@
 		-->
 		<intercept-url pattern="/**/Special:Admin" access="ROLE_SYSADMIN" />
 		<intercept-url pattern="/**/Special:Edit" access="ROLE_EDIT_EXISTING,ROLE_EDIT_NEW" />
+		<intercept-url pattern="/**/Special:Import" access="ROLE_IMPORT" />
 		<intercept-url pattern="/**/Special:Login" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<intercept-url pattern="/**/Special:Maintenance" access="ROLE_SYSADMIN" />
 		<intercept-url pattern="/**/Special:Manage" access="ROLE_ADMIN" />
@@ -95,17 +96,16 @@
 	-->
 	<b:bean id="errorMessageProvider" class="org.jamwiki.authentication.JAMWikiErrorMessageProvider">
 		<b:property name="urlPatterns">
-			<b:value><![CDATA[
-				PATTERN_TYPE_APACHE_ANT
-				/**/Special:Admin=login.message.admin
-				/**/Special:Edit=login.message.edit
-				/**/Special:Maintenance=login.message.admin
-				/**/Special:Manage=login.message.admin
-				/**/Special:Move=login.message.move
-				/**/Special:Roles=login.message.admin
-				/**/Special:Translation=login.message.admin
-				/**/*=login.message.default
-			]]></b:value>
+			<b:map>
+				<b:entry key="/**/Special:Admin" value="login.message.admin" />
+				<b:entry key="/**/Special:Edit" value="login.message.edit" />
+				<b:entry key="/**/Special:Maintenance" value="login.message.admin" />
+				<b:entry key="/**/Special:Manage" value="login.message.admin" />
+				<b:entry key="/**/Special:Move" value="login.message.move" />
+				<b:entry key="/**/Special:Roles" value="login.message.admin" />
+				<b:entry key="/**/Special:Translation" value="login.message.admin" />
+				<b:entry key="/**/*" value="login.message.default" />
+			</b:map>
 		</b:property>
 	</b:bean>
 

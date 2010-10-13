@@ -16,10 +16,13 @@
  */
 package org.jamwiki.parser.jflex;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
+import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.InterWikiHandler;
@@ -35,18 +38,10 @@ import org.jamwiki.utils.WikiLogger;
 public class WikiLinkTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiLinkTag.class.getName());
-	private static Pattern IMAGE_SIZE_PATTERN = null;
+	// look for image size info in image tags
+	private static Pattern IMAGE_SIZE_PATTERN = Pattern.compile("([0-9]+)[ ]*px", Pattern.CASE_INSENSITIVE);
 	// FIXME - make configurable
 	private static final int DEFAULT_THUMBNAIL_SIZE = 180;
-
-	static {
-		try {
-			// look for image size info in image tags
-			IMAGE_SIZE_PATTERN = Pattern.compile("([0-9]+)[ ]*px", Pattern.CASE_INSENSITIVE);
-		} catch (Exception e) {
-			logger.severe("Unable to compile pattern", e);
-		}
-	}
 
 	/**
 	 *
@@ -54,16 +49,16 @@ public class WikiLinkTag {
 	private String buildInternalLinkUrl(ParserInput parserInput, int mode, String raw) {
 		String context = parserInput.getContext();
 		String virtualWiki = parserInput.getVirtualWiki();
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(raw);
+		if (wikiLink == null) {
+			// invalid link
+			return raw;
+		}
+		if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
+			// invalid topic
+			return raw;
+		}
 		try {
-			WikiLink wikiLink = JFlexParserUtil.parseWikiLink(raw);
-			if (wikiLink == null) {
-				// invalid link
-				return raw;
-			}
-			if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
-				// invalid topic
-				return raw;
-			}
 			if (!wikiLink.getColon() && !StringUtils.isBlank(wikiLink.getNamespace()) && wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_IMAGE)) {
 				// parse as an image
 				return this.parseImageLink(parserInput, mode, wikiLink);
@@ -90,7 +85,10 @@ public class WikiLinkTag {
 			}
 			// do not escape text html - already done by parser
 			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, wikiLink, wikiLink.getText(), null, null, false);
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
+			logger.severe("Failure while parsing link " + raw, e);
+			return "";
+		} catch (ParserException e) {
 			logger.severe("Failure while parsing link " + raw, e);
 			return "";
 		}
@@ -102,7 +100,7 @@ public class WikiLinkTag {
 	 */
 	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
 		try {
-			raw = this.processLinkMetadata(parserOutput, mode, raw);
+			raw = this.processLinkMetadata(parserInput, parserOutput, mode, raw);
 			if (mode <= JFlexParser.MODE_PREPROCESS) {
 				// do not parse to HTML when in preprocess mode
 				return raw;
@@ -117,7 +115,7 @@ public class WikiLinkTag {
 	/**
 	 *
 	 */
-	private String parseImageLink(ParserInput parserInput, int mode, WikiLink wikiLink) throws Exception {
+	private String parseImageLink(ParserInput parserInput, int mode, WikiLink wikiLink) throws DataAccessException, ParserException {
 		String context = parserInput.getContext();
 		String virtualWiki = parserInput.getVirtualWiki();
 		boolean thumb = false;
@@ -147,7 +145,7 @@ public class WikiLinkTag {
 				} else {
 					Matcher m = IMAGE_SIZE_PATTERN.matcher(token);
 					if (m.find()) {
-						maxDimension = new Integer(m.group(1)).intValue();
+						maxDimension = Integer.valueOf(m.group(1));
 					} else {
 						// FIXME - this is a hack.  images may contain piped links, so if
 						// there was previous caption info append the new info.
@@ -165,7 +163,11 @@ public class WikiLinkTag {
 			caption = JFlexParserUtil.parseFragment(parserInput, caption, mode);
 		}
 		// do not escape html for caption since parser does it above
-		return LinkUtil.buildImageLinkHtml(context, virtualWiki, wikiLink.getDestination(), frame, thumb, align, caption, maxDimension, false, null, false);
+		try {
+			return LinkUtil.buildImageLinkHtml(context, virtualWiki, wikiLink.getDestination(), frame, thumb, align, caption, maxDimension, false, null, false);
+		} catch (IOException e) {
+			throw new ParserException("I/O Failure while parsing image link", e);
+		}
 	}
 
 	/**
@@ -183,14 +185,18 @@ public class WikiLinkTag {
 	/**
 	 *
 	 */
-	private String processLinkMetadata(ParserOutput parserOutput, int mode, String raw) {
+	private String processLinkMetadata(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws ParserException {
 		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(raw);
 		if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
 			return raw;
 		}
 		String result = raw;
 		if (!wikiLink.getColon() && StringUtils.equals(wikiLink.getNamespace(), NamespaceHandler.NAMESPACE_CATEGORY)) {
-			parserOutput.addCategory(wikiLink.getDestination(), wikiLink.getText());
+			String sortKey = wikiLink.getText();
+			if (!StringUtils.isBlank(sortKey)) {
+				sortKey = JFlexParserUtil.parseFragment(parserInput, sortKey, JFlexParser.MODE_PREPROCESS);
+			}
+			parserOutput.addCategory(wikiLink.getDestination(), sortKey);
 			if (mode > JFlexParser.MODE_MINIMAL) {
 				// keep the category around in minimal parsing mode, otherwise suppress it from the output
 				result = "";

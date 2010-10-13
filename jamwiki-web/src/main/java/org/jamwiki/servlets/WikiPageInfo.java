@@ -218,6 +218,17 @@ public class WikiPageInfo {
 	}
 
 	/**
+	 * Return the property value set for the site name.  This value is appended to
+	 * page titles and used in XML exports.
+	 *
+	 * @return The property value corresponding to the configured name for the
+	 *  wiki.  This value is configurable through the Special:Admin interface.
+	 */
+	public String getSiteName() {
+		return Environment.getValue(Environment.PROP_SITE_NAME);
+	}
+
+	/**
 	 * Return a flag indicating whether or not the current page is a "Special:"
 	 * page, as opposed to a standard topic.
 	 *

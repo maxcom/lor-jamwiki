@@ -16,11 +16,11 @@
  */
 package org.jamwiki.taglib;
 
+import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
  * This abstract class implements functionality for both the "radio" tag and
@@ -51,59 +51,30 @@ public abstract class AbstractButtonTag extends TagSupport {
 	 * Generate the tag HTML output.
 	 */
 	public int doEndTag() throws JspException {
-		String output = "";
-		String tagChecked = null;
-		String tagId = null;
-		String tagName = null;
-		String tagStyle = null;
-		String tagValue = null;
-		// Resin throws ClassCastException with evaluateString for values like "1", so use tmp variable
-		Object tmp = null;
+		StringBuffer output = new StringBuffer();
+		output.append("<input type=\"").append(this.getButtonType()).append('\"');
+		output.append(" value=\"").append(this.value).append('\"');
+		output.append(" name=\"").append(this.name).append('\"');
+		if (!StringUtils.isBlank(this.id)) {
+			output.append(" id=\"").append(this.id).append('\"');
+		}
+		if (!StringUtils.isBlank(this.style)) {
+			output.append(" style=\"").append(this.style).append('\"');
+		}
+		if (!StringUtils.isBlank(this.onchange)) {
+			output.append(" onchange=\"").append(this.onchange).append('\"');
+		}
+		if (!StringUtils.isBlank(this.onclick)) {
+			output.append(" onclick=\"").append(this.onclick).append('\"');
+		}
+		if (!StringUtils.isBlank(this.checked) && this.checked.equals(this.value)) {
+			output.append(" checked=\"checked\"");
+		}
+		output.append(" />");
 		try {
-			output += "<input type=\""+getButtonType()+"\"";
-			tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
-			if (tmp != null) {
-				tagValue = tmp.toString();
-			}
-			output += " value=\"" + tagValue + "\"";
-			tmp = ExpressionEvaluationUtils.evaluate("name", this.name, pageContext);
-			if (tmp != null) {
-				tagName = tmp.toString();
-			}
-			output += " name=\"" + tagName + "\"";
-			if (!StringUtils.isBlank(this.id)) {
-				tmp = ExpressionEvaluationUtils.evaluate("id", this.id, pageContext);
-				if (tmp != null) {
-					tagId = tmp.toString();
-				}
-				output += " id=\"" + tagId + "\"";
-			}
-			if (!StringUtils.isBlank(this.style)) {
-				tmp = ExpressionEvaluationUtils.evaluate("style", this.style, pageContext);
-				if (tmp != null) {
-					tagStyle = tmp.toString();
-				}
-				output += " style=\"" + tagStyle + "\"";
-			}
-			if (!StringUtils.isBlank(this.onchange)) {
-				output += " onchange=\"" + this.onchange + "\"";
-			}
-			if (!StringUtils.isBlank(this.onclick)) {
-				output += " onclick=\"" + this.onclick + "\"";
-			}
-			if (!StringUtils.isBlank(this.checked)) {
-				tmp = ExpressionEvaluationUtils.evaluate("checked", this.checked, pageContext);
-				if (tmp != null) {
-					tagChecked = tmp.toString();
-				}
-				if (tagChecked.equals(tagValue)) {
-					output += " checked=\"checked\"";
-				}
-			}
-			output += " />";
-			this.pageContext.getOut().print(output);
-		} catch (Exception e) {
-			logger.severe("Failure in "+getButtonType()+" tag for " + this.id + " / " + this.name + " / " + this.style + " / " + this.value, e);
+			this.pageContext.getOut().print(output.toString());
+		} catch (IOException e) {
+			logger.severe("Failure in " + getButtonType() + " tag for " + this.id + " / " + this.name + " / " + this.style + " / " + this.value, e);
 			throw new JspException(e);
 		}
 		return EVAL_PAGE;

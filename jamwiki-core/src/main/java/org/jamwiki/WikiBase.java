@@ -16,6 +16,7 @@
  */
 package org.jamwiki;
 
+import java.io.IOException;
 import java.util.Locale;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
@@ -44,26 +45,6 @@ public class WikiBase {
 
 	/** Cache name for the cache of parsed topic content. */
 	public static final String CACHE_PARSED_TOPIC_CONTENT = "org.jamwiki.WikiBase.CACHE_PARSED_TOPIC_CONTENT";
-	/** Cache name for the cache of image dimensions. */
-	public static final String CACHE_IMAGE_DIMENSIONS = "org.jamwiki.WikiBase.CACHE_IMAGE_DIMENSIONS";
-	/** Ansi data handler class */
-	public static final String DATA_HANDLER_ANSI = "org.jamwiki.db.AnsiDataHandler";
-	/** DB2 data handler class */
-	public static final String DATA_HANDLER_DB2 = "org.jamwiki.db.DB2DataHandler";
-	/** DB2/400 data handler class */
-	public static final String DATA_HANDLER_DB2400 = "org.jamwiki.db.DB2400DataHandler";
-	/** HSql data handler class */
-	public static final String DATA_HANDLER_HSQL = "org.jamwiki.db.HSqlDataHandler";
-	/** MSSql data handler class */
-	public static final String DATA_HANDLER_MSSQL = "org.jamwiki.db.MSSqlDataHandler";
-	/** MySql data handler class */
-	public static final String DATA_HANDLER_MYSQL = "org.jamwiki.db.MySqlDataHandler";
-	/** Oracle data handler class */
-	public static final String DATA_HANDLER_ORACLE = "org.jamwiki.db.OracleDataHandler";
-	/** Postgres data handler class */
-	public static final String DATA_HANDLER_POSTGRES = "org.jamwiki.db.PostgresDataHandler";
-	/** Sybase ASA data handler class */
-	public static final String DATA_HANDLER_ASA = "org.jamwiki.db.SybaseASADataHandler";
 	/** Name of the default wiki */
 	// FIXME - make this configurable
 	public static final String DEFAULT_VWIKI = "en";
@@ -73,8 +54,6 @@ public class WikiBase {
 	public static final String PERSISTENCE_EXTERNAL = "DATABASE";
 	/** Data stored using an internal copy of the HSQL database */
 	public static final String PERSISTENCE_INTERNAL = "INTERNAL";
-	/** Lucene search engine class */
-	public static final String SEARCH_ENGINE_LUCENE = "org.jamwiki.search.LuceneSearchEngine";
 	/** Root directory within the WAR distribution that contains the default topic pages. */
 	public static final String SPECIAL_PAGE_DIR = "pages";
 	/** Name of the default starting points topic. */
@@ -106,9 +85,9 @@ public class WikiBase {
 	 * Creates an instance of <code>WikiBase</code>, initializing the default
 	 * data handler instance and search engine instance.
 	 *
-	 * @throws Exception If the instance cannot be instantiated.
+	 * @throws IOException If the instance cannot be instantiated.
 	 */
-	private WikiBase() throws Exception {
+	private WikiBase() throws IOException {
 		this.reload();
 	}
 
@@ -152,7 +131,7 @@ public class WikiBase {
 	 * Reload the data handler, user handler, and other basic wiki
 	 * data structures.
 	 */
-	public static void reload() throws Exception {
+	public static void reload() throws IOException {
 		WikiBase.dataHandler = WikiUtil.dataHandlerInstance();
 		WikiBase.searchEngine = WikiUtil.searchEngineInstance();
 	}
@@ -168,9 +147,11 @@ public class WikiBase {
 	 * @param username The admin user's username (login).
 	 * @param encryptedPassword The admin user's encrypted password.  This value
 	 *  is only required when creating a new admin user.
-	 * @throws Exception Thrown if an error occurs during re-initialization.
+	 * @throws DataAccessException Thrown if an error occurs during re-initialization.
+	 * @throws IOException Thrown if an error occurs during re-initialization.
+	 * @throws WikiException Thrown if an error occurs during re-initialization.
 	 */
-	public static void reset(Locale locale, WikiUser user, String username, String encryptedPassword) throws Exception {
+	public static void reset(Locale locale, WikiUser user, String username, String encryptedPassword) throws DataAccessException, IOException, WikiException {
 		WikiBase.instance = new WikiBase();
 		WikiCache.initialize();
 		WikiBase.dataHandler.setup(locale, user, username, encryptedPassword);

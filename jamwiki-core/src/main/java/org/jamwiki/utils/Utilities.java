@@ -26,8 +26,10 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -138,6 +140,24 @@ public class Utilities {
 			throw new IllegalStateException("Unsupporting encoding UTF-8");
 		}
 		return Utilities.decodeTopicName(result, decodeUnderlines);
+	}
+
+	/**
+	 * Convert a delimited string to a list.
+	 *
+	 * @param delimitedString A string consisting of the delimited list items.
+	 * @param delimiter The string used as the delimiter.
+	 * @return A list consisting of the delimited string items, or <code>null</code> if the
+	 *  string is <code>null</code> or empty.
+	 */
+	public static List<String> delimitedStringToList(String delimitedString, String delimiter) {
+		if (delimiter == null) {
+			throw new IllegalArgumentException("Attempt to call Utilities.delimitedStringToList with no delimiter specified");
+		}
+		if (StringUtils.isBlank(delimitedString)) {
+			return null;
+		}
+		return Arrays.asList(StringUtils.splitByWholeSeparator(delimitedString, delimiter));
 	}
 
 	/**
@@ -354,7 +374,15 @@ public class Utilities {
 		}
 		file = FileUtils.toFile(url);
 		if (file == null || !file.exists()) {
-			throw new FileNotFoundException("Found invalid root class loader for file " + filename);
+			try {
+				// url exists but file cannot be read, so perhaps it's not a "file:" url (an example
+				// would be a "jar:" url).  as a workaround, copy the file to a temp file and return
+				// the temp file.
+				file = File.createTempFile(filename, null);
+				FileUtils.copyURLToFile(url, file);
+			} catch (IOException e) {
+				throw new FileNotFoundException("Unable to load file with URL " + url);
+			}
 		}
 		return file;
 	}
@@ -417,15 +445,15 @@ public class Utilities {
 			Object[] initArgs = new Object[0];
 			return constructor.newInstance(initArgs);
 		} catch (ClassNotFoundException e) {
-			throw new IllegalStateException("Invalid class name specified: " + className);
+			throw new IllegalStateException("Invalid class name specified: " + className, e);
 		} catch (NoSuchMethodException e) {
-			throw new IllegalStateException("Specified class does not have a valid constructor: " + className);
+			throw new IllegalStateException("Specified class does not have a valid constructor: " + className, e);
 		} catch (IllegalAccessException e) {
-			throw new IllegalStateException("Specified class does not have a valid constructor: " + className);
+			throw new IllegalStateException("Specified class does not have a valid constructor: " + className, e);
 		} catch (InvocationTargetException e) {
-			throw new IllegalStateException("Specified class does not have a valid constructor: " + className);
+			throw new IllegalStateException("Specified class does not have a valid constructor: " + className, e);
 		} catch (InstantiationException e) {
-			throw new IllegalStateException("Specified class could not be instantiated: " + className);
+			throw new IllegalStateException("Specified class could not be instantiated: " + className, e);
 		}
 	}
 
@@ -482,6 +510,31 @@ public class Utilities {
 		}
 		Matcher m2 = Utilities.VALID_IPV6_PATTERN.matcher(ipAddress);
 		return m2.matches();
+	}
+
+	/**
+	 * Convert a list to a delimited string.
+	 *
+	 * @param list The list to convert to a string.
+	 * @param delimiter The string to use as a delimiter.
+	 * @return A string consisting of the delimited list items, or <code>null</code> if the
+	 *  list is <code>null</code> or empty.
+	 */
+	public static String listToDelimitedString(List<String> list, String delimiter) {
+		if (delimiter == null) {
+			throw new IllegalArgumentException("Attempt to call Utilities.delimitedStringToList with no delimiter specified");
+		}
+		if (list == null || list.isEmpty()) {
+			return null;
+		}
+		String result = "";
+		for (String item : list) {
+			if (result.length() > 0) {
+				result += delimiter;
+			}
+			result += item;
+		}
+		return result;
 	}
 
 	/**

@@ -21,8 +21,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -36,10 +37,10 @@ import org.jamwiki.utils.WikiLogger;
 public class WikiResultSet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiResultSet.class.getName());
-	private final Vector rows = new Vector();
+	private final List<LinkedHashMap<String, Object>> rows = new ArrayList<LinkedHashMap<String, Object>>();
 	private int rowPointer = -1;
 	private int totalRows = -1;
-	private LinkedHashMap currentRow = null;
+	private LinkedHashMap<String, Object> currentRow = null;
 
 	/**
 	 * Constructor used primarily for building new result sets.  Use this
@@ -60,7 +61,7 @@ public class WikiResultSet {
 		int size = rsmd.getColumnCount();
 		int type;
 		while (rs.next()) {
-			LinkedHashMap column = new LinkedHashMap();
+			LinkedHashMap<String, Object> column = new LinkedHashMap<String, Object>();
 			for (int i=1; i <= size; i++) {
 				String columnName = rsmd.getColumnLabel(i);
 				type = rsmd.getColumnType(i);
@@ -75,11 +76,11 @@ public class WikiResultSet {
 				case java.sql.Types.SMALLINT:
 				case java.sql.Types.TINYINT:
 					int integer = rs.getInt(columnName);
-					column.put(columnName.toLowerCase(), new Integer(integer));
+					column.put(columnName.toLowerCase(), integer);
 					break;
 				case java.sql.Types.BIGINT:
 					long longint = rs.getLong(columnName);
-					column.put(columnName.toLowerCase(), new Long(longint));
+					column.put(columnName.toLowerCase(), longint);
 					break;
 				case java.sql.Types.DATE:
 					Date date = rs.getDate(columnName);
@@ -166,7 +167,7 @@ public class WikiResultSet {
 		if (rs.rowPointer >= rs.totalRows) {
 			throw new IndexOutOfBoundsException("Attempt to access beyond final row of WikiResultSet");
 		}
-		this.rows.add(rs.rows.elementAt(rs.rowPointer));
+		this.rows.add(rs.rows.get(rs.rowPointer));
 		this.totalRows = this.rows.size();
 	}
 
@@ -233,7 +234,7 @@ public class WikiResultSet {
 		} catch (NullPointerException e) {
 			// ignore, probably null
 		}
-		return (value == null) ? '0' : value.charValue();
+		return (value == null) ? '0' : value;
 	}
 
 	/**
@@ -258,10 +259,10 @@ public class WikiResultSet {
 		} catch (Exception e) {
 			// is it a long?
 			try {
-				value = new Integer(((Long)this.currentRow.get(columnName.toLowerCase())).intValue());
+				value = ((Long)this.currentRow.get(columnName.toLowerCase())).intValue();
 			} catch (Exception ex) {}
 		}
-		return (value == null) ? 0 : value.intValue();
+		return (value == null) ? 0 : value;
 	}
 
 	/**
@@ -281,7 +282,7 @@ public class WikiResultSet {
 	public long getLong(String columnName) throws SQLException {
 		this.verifyColumn(columnName);
 		Long value = (Long)this.currentRow.get(columnName.toLowerCase());
-		return (value == null) ? 0 : value.longValue();
+		return (value == null) ? 0 : value;
 	}
 
 	/**
@@ -396,7 +397,7 @@ public class WikiResultSet {
 		if (this.rowPointer >= this.totalRows) {
 			throw new SQLException("Attempt to access beyond last row of result set");
 		}
-		this.currentRow = (LinkedHashMap)this.rows.elementAt(this.rowPointer);
+		this.currentRow = this.rows.get(this.rowPointer);
 		if (columnName == null || !this.currentRow.containsKey(columnName)) {
 			throw new SQLException("Invalid column name " + columnName);
 		}

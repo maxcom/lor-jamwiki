@@ -17,10 +17,10 @@
 package org.jamwiki.search;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.StringReader;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.TokenStream;
@@ -46,6 +46,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.jamwiki.Environment;
 import org.jamwiki.SearchEngine;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.parser.ParserOutput;
@@ -81,10 +82,10 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * Add a topic to the search index.
 	 *
 	 * @param topic The Topic object that is to be added to the index.
-	 * @param links A collection containing the topic names for all topics that link
+	 * @param links A list containing the topic names for all topics that link
 	 *  to the current topic.
 	 */
-	public synchronized void addToIndex(Topic topic, Collection links) {
+	public synchronized void addToIndex(Topic topic, List<String> links) {
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
 		IndexWriter writer = null;
@@ -121,7 +122,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * Create a basic Lucene document to add to the index that does treats
 	 * the topic content as a single keyword and does not tokenize it.
 	 */
-	private Document createKeywordDocument(Topic topic, Collection links) throws Exception {
+	private Document createKeywordDocument(Topic topic, List<String> links) {
 		String topicContent = topic.getTopicContent();
 		if (topicContent == null) {
 			topicContent = "";
@@ -130,11 +131,10 @@ public class LuceneSearchEngine implements SearchEngine {
 		// store topic name for later retrieval
 		doc.add(new Field(ITYPE_TOPIC_PLAIN, topic.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		if (links == null) {
-			links = new Vector();
+			links = new ArrayList<String>();
 		}
 		// index topic links for search purposes
-		for (Iterator iter = links.iterator(); iter.hasNext();) {
-			String linkTopic = (String)iter.next();
+		for (String linkTopic : links) {
 			doc.add(new Field(ITYPE_TOPIC_LINK, linkTopic, Field.Store.NO, Field.Index.NOT_ANALYZED));
 		}
 		return doc;
@@ -144,7 +144,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * Create a basic Lucene document to add to the index.  This document
 	 * is suitable to be parsed with the StandardAnalyzer.
 	 */
-	private Document createStandardDocument(Topic topic) throws Exception {
+	private Document createStandardDocument(Topic topic) {
 		String topicContent = topic.getTopicContent();
 		if (topicContent == null) {
 			topicContent = "";
@@ -193,11 +193,11 @@ public class LuceneSearchEngine implements SearchEngine {
 	 *
 	 * @param virtualWiki The virtual wiki for the topic.
 	 * @param topicName The name of the topic.
-	 * @return A collection of SearchResultEntry objects for all documents that
+	 * @return A list of SearchResultEntry objects for all documents that
 	 *  link to the topic.
 	 */
-	public Collection findLinkedTo(String virtualWiki, String topicName) {
-		Collection results = new Vector();
+	public List<SearchResultEntry> findLinkedTo(String virtualWiki, String topicName) {
+		List<SearchResultEntry> results = new ArrayList<SearchResultEntry>();
 		IndexSearcher searcher = null;
 		try {
 			PhraseQuery query = new PhraseQuery();
@@ -234,13 +234,13 @@ public class LuceneSearchEngine implements SearchEngine {
 	 *
 	 * @param virtualWiki The virtual wiki for the topic.
 	 * @param text The search term being searched for.
-	 * @return A collection of SearchResultEntry objects for all documents that
+	 * @return A list of SearchResultEntry objects for all documents that
 	 *  contain the search term.
 	 */
-	public Collection findResults(String virtualWiki, String text) {
+	public List<SearchResultEntry> findResults(String virtualWiki, String text) {
 		StandardAnalyzer analyzer = new StandardAnalyzer();
-		Collection results = new Vector();
-		logger.fine("search text: " + text);
+		List<SearchResultEntry> results = new ArrayList<SearchResultEntry>();
+		logger.finer("search text: " + text);
 		IndexSearcher searcher = null;
 		try {
 			BooleanQuery query = new BooleanQuery();
@@ -324,21 +324,19 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * @throws Exception Thrown if any error occurs while re-indexing the Wiki.
 	 */
 	public synchronized void refreshIndex() throws Exception {
-		Collection allWikis = WikiBase.getDataHandler().getVirtualWikiList();
+		List<VirtualWiki> allWikis = WikiBase.getDataHandler().getVirtualWikiList();
 		Topic topic;
-		for (Iterator iterator = allWikis.iterator(); iterator.hasNext();) {
+		for (VirtualWiki virtualWiki : allWikis) {
 			long start = System.currentTimeMillis();
 			int count = 0;
-			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
 			FSDirectory directory = FSDirectory.getDirectory(this.getSearchIndexPath(virtualWiki.getName()));
 			KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
 			IndexWriter writer = null;
 			// FIXME - move synchronization to the writer instance for this directory
 			try {
 				writer = new IndexWriter(directory, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-				Collection topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName());
-				for (Iterator iter = topicNames.iterator(); iter.hasNext();) {
-					String topicName = (String)iter.next();
+				List<String> topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName());
+				for (String topicName : topicNames) {
 					topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
 					Document standardDocument = createStandardDocument(topic);
 					writer.addDocument(standardDocument);
@@ -375,7 +373,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	/**
 	 *
 	 */
-	private String retrieveResultSummary(Document document, Highlighter highlighter, StandardAnalyzer analyzer) throws Exception {
+	private String retrieveResultSummary(Document document, Highlighter highlighter, StandardAnalyzer analyzer) throws IOException {
 		String content = document.get(ITYPE_CONTENT_PLAIN);
 		TokenStream tokenStream = analyzer.tokenStream(ITYPE_CONTENT_PLAIN, new StringReader(content));
 		String summary = highlighter.getBestFragments(tokenStream, content, 3, "...");

@@ -89,11 +89,7 @@ public class DatabaseConnection {
 	 * @param stmt A statement object that is to be closed.  May be <code>null</code>.
 	 */
 	protected static void closeConnection(Connection conn, Statement stmt) {
-		if (stmt != null) {
-			try {
-				stmt.close();
-			} catch (SQLException e) {}
-		}
+		DatabaseConnection.closeStatement(stmt);
 		DatabaseConnection.closeConnection(conn);
 	}
 
@@ -140,6 +136,20 @@ public class DatabaseConnection {
 	}
 
 	/**
+	 * Utility method for closing a statement that may or may not be <code>null</code>.
+	 * The statement SHOULD NOT have already been closed.
+	 *
+	 * @param stmt A statement object that is to be closed.  May be <code>null</code>.
+	 */
+	protected static void closeStatement(Statement stmt) {
+		if (stmt != null) {
+			try {
+				stmt.close();
+			} catch (SQLException e) {}
+		}
+	}
+
+	/**
 	 *
 	 */
 	protected static WikiResultSet executeQuery(String sql) throws SQLException {
@@ -179,11 +189,7 @@ public class DatabaseConnection {
 					rs.close();
 				} catch (SQLException e) {}
 			}
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {}
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -222,11 +228,7 @@ public class DatabaseConnection {
 			logger.severe("Failure while executing " + sql, e);
 			throw e;
 		} finally {
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {}
-			}
+			DatabaseConnection.closeStatement(stmt);
 		}
 	}
 
@@ -367,6 +369,10 @@ public class DatabaseConnection {
 	 */
 	protected static void rollbackOnException(TransactionStatus status, Throwable ex) throws TransactionException {
 		logger.fine("Initiating transaction rollback on application exception", ex);
+		if (status == null) {
+			logger.info("TransactionStatus is null, unable to rollback");
+			return;
+		}
 		try {
 			transactionManager.rollback(status);
 		} catch (TransactionSystemException ex2) {
@@ -390,6 +396,10 @@ public class DatabaseConnection {
 	 * @param status TransactionStatus representing the status of the transaction
 	 */
 	protected static void commit(TransactionStatus status) {
+		if (status == null) {
+			logger.info("TransactionStatus is null, unable to commit");
+			return;
+		}
 		transactionManager.commit(status);
 	}
 }

@@ -16,11 +16,11 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.context.SecurityContextHolder;
@@ -71,12 +71,10 @@ public class RegisterServlet extends JAMWikiServlet {
 		if (StringUtils.isBlank(user.getDefaultLocale()) && request.getLocale() != null) {
 			user.setDefaultLocale(request.getLocale().toString());
 		}
-		TreeMap locales = new TreeMap();
-		Map translations = WikiConfiguration.getInstance().getTranslations();
-		Iterator iterator = translations.keySet().iterator();
-		while (iterator.hasNext()) {
-			String key = (String)iterator.next();
-			String value = key + " - " + (String)translations.get(key);
+		TreeMap<String, String> locales = new TreeMap<String, String>();
+		Map<String, String> translations = WikiConfiguration.getInstance().getTranslations();
+		for (String key : translations.keySet()) {
+			String value = key + " - " + translations.get(key);
 			locales.put(value, key);
 		}
 		Locale[] localeArray = Locale.getAvailableLocales();
@@ -112,7 +110,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		WikiUser user = this.setWikiUser(request);
 		boolean isUpdate = (user.getUserId() != -1);
 		next.addObject("newuser", user);
-		Vector errors = validate(request, user);
+		List<WikiMessage> errors = validate(request, user);
 		if (!errors.isEmpty()) {
 			next.addObject("errors", errors);
 			String oldPassword = request.getParameter("oldPassword");
@@ -164,7 +162,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		WikiUser user = new WikiUser(username);
 		String userIdString = request.getParameter("userId");
 		if (!StringUtils.isBlank(userIdString)) {
-			int userId = new Integer(userIdString).intValue();
+			int userId = Integer.valueOf(userIdString);
 			if (userId > 0) {
 				user = WikiBase.getDataHandler().lookupWikiUser(userId);
 			}
@@ -183,8 +181,8 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private Vector validate(HttpServletRequest request, WikiUser user) throws Exception {
-		Vector errors = new Vector();
+	private List<WikiMessage> validate(HttpServletRequest request, WikiUser user) throws Exception {
+		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		try {
 			WikiUtil.validateUserName(user.getUsername());
 		} catch (WikiException e) {

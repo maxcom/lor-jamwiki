@@ -35,10 +35,10 @@ public class ParserInput {
 	/** Template inclusion tracks whether or not template code is being parsed.  A counter is used to deal with nested templates. */
 	private int templateDepth = 0;
 	/** Hashtable of generic temporary objects used during parsing. */
-	private final Hashtable tempParams = new Hashtable();
+	private final Hashtable<String, Object> tempParams = new Hashtable<String, Object>();
 	private String topicName = null;
-	/** IP address of the current user. */
-	private String userIpAddress = null;
+	/** Display value for the current user, typically the IP address. */
+	private String userDisplay = null;
 	private String virtualWiki = null;
 	/** Current WikiUser (if any). */
 	private WikiUser wikiUser = null;
@@ -57,7 +57,7 @@ public class ParserInput {
 		this.context = parserInput.context;
 		this.locale = parserInput.locale;
 		this.topicName = parserInput.topicName;
-		this.userIpAddress = parserInput.userIpAddress;
+		this.userDisplay = parserInput.userDisplay;
 		this.virtualWiki = parserInput.virtualWiki;
 		this.wikiUser = parserInput.wikiUser;
 	}
@@ -202,7 +202,7 @@ public class ParserInput {
 	 * @return The Hashtable of arbitrary temporary parameters associated with
 	 *  the current parser input instance.
 	 */
-	public Hashtable getTempParams() {
+	public Hashtable<String, Object> getTempParams() {
 		return this.tempParams;
 	}
 
@@ -263,27 +263,27 @@ public class ParserInput {
 	}
 
 	/**
-	 * Get the user IP address associated with the current parser input
-	 * instance.  The user IP address is used primarily when parsing
-	 * signatures.
+	 * Get the user display name associated with the current parser input
+	 * instance.  This value is typically the user IP address and is used
+	 * primarily when parsing signatures.
 	 *
-	 * @return The user IP address associated with the current parser input
-	 * instance.
+	 * @return The user display, typically the user IP address, associated
+	 *  with the current parser input instance.
 	 */
-	public String getUserIpAddress() {
-		return this.userIpAddress;
+	public String getUserDisplay() {
+		return this.userDisplay;
 	}
 
 	/**
-	 * Set the user IP address associated with the current parser input
-	 * instance.  The user IP address is used primarily when parsing
-	 * signatures.
+	 * Set the user display name associated with the current parser input
+	 * instance.  This value is typically the user IP address and is used
+	 * primarily when parsing signatures.
 	 *
-	 * @param userIpAddress The user IP address associated with the current
-	 *  parser input instance.
+	 * @param The user display, typically the user IP address, associated
+	 *  with the current parser input instance.
 	 */
-	public void setUserIpAddress(String userIpAddress) {
-		this.userIpAddress = userIpAddress;
+	public void setUserDisplay(String userDisplay) {
+		this.userDisplay = userDisplay;
 	}
 
 	/**

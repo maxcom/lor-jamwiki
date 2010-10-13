@@ -38,7 +38,7 @@
 
 <c:if test="${newuser.userId < 1}">
 <div class="formentry">
-	<span class="formcaption"><label for="registerLogin"><fmt:message key="common.login" /></label>:</span>
+	<span class="formcaption"><label for="registerLogin"><fmt:message key="login.username" /></label>:</span>
 	<span class="formelement"><input type="text" name="login" value="<c:out value="${newuser.username}" />" id="registerLogin" size="50" /></span>
 </div>
 <div class="formentry">
@@ -56,7 +56,7 @@
 <c:if test="${newuser.userId > 0}">
 <div class="formentry">
 	<input type="hidden" name="login" value="<c:out value="${newuser.username}" />" />
-	<span class="formcaption"><fmt:message key="common.login" />:</span>
+	<span class="formcaption"><fmt:message key="login.username" />:</span>
 	<span class="formelement"><c:out value="${newuser.username}" /></span>
 </div>
 </c:if>
@@ -81,7 +81,7 @@
 	<span class="formelement">
 		<select name="defaultLocale" id="registerDefaultLocale">
 		<c:forEach items="${locales}" var="defaultLocale">
-		<option value="<c:out value="${defaultLocale.value}" />"<c:if test="${newuser.defaultLocale == defaultLocale.value}"> selected</c:if>><c:out value="${defaultLocale.key}" /></option>
+		<option value="<c:out value="${defaultLocale.value}" />"<c:if test="${newuser.defaultLocale == defaultLocale.value}"> selected="selected"</c:if>><c:out value="${defaultLocale.key}" /></option>
 		</c:forEach>
 		</select>
 	</span>
@@ -92,7 +92,7 @@
 	<span class="formelement">
 		<select name="editor" id="registerEditor">
 		<c:forEach items="${editors}" var="editor">
-		<option value="<c:out value="${editor.key}" />"<c:if test="${newuser.editor == editor.key}"> selected</c:if>><c:out value="${editor.value}" /></option>
+		<option value="<c:out value="${editor.key}" />"<c:if test="${newuser.editor == editor.key}"> selected="selected"</c:if>><c:out value="${editor.value}" /></option>
 		</c:forEach>
 		</select>
 	</span>
@@ -126,6 +126,6 @@
 </c:if>
 <div class="formentry">
 	<span class="formcaption">&#160;</span>
-	<span class="formelement"><input type="submit" name="function" value="<fmt:message key="common.save" />"></span>
+	<span class="formelement"><input type="submit" name="function" value="<fmt:message key="common.save" />" /></span>
 </div>
 </form>

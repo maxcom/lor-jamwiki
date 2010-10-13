@@ -17,25 +17,25 @@
 package org.jamwiki.db;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
-import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.DataHandler;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
@@ -44,6 +44,7 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.transaction.TransactionStatus;
@@ -85,7 +86,7 @@ public class WikiDatabase {
 	 * Dump the database to a CSV file.  This is an HSQL-specific method useful
 	 * for individuals who want to convert from HSQL to another database.
 	 */
-	public static void exportToCsv() throws Exception {
+	public static void exportToCsv() throws DataAccessException, SQLException {
 		if (!(WikiBase.getDataHandler() instanceof HSqlDataHandler)) {
 			throw new IllegalStateException("Exporting to CSV is allowed only when the wiki is configured to use the internal database setting.");
 		}
@@ -127,10 +128,10 @@ public class WikiDatabase {
 			stmt.executeUpdate();
 		} catch (Exception e) {
 			DatabaseConnection.rollbackOnException(status, e);
-			throw e;
+			throw new DataAccessException(e);
 		} catch (Error err) {
 			DatabaseConnection.rollbackOnException(status, err);
-			throw err;
+			throw new DataAccessException(err);
 		}
 		DatabaseConnection.commit(status);
 	}
@@ -138,7 +139,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	private static DataHandler findNewDataHandler(Properties props) throws Exception {
+	private static DataHandler findNewDataHandler(Properties props) {
 		// find the DataHandler appropriate to the NEW database
 		String handlerClassName = props.getProperty(Environment.PROP_DB_TYPE);
 		if (handlerClassName.equals(Environment.getValue(Environment.PROP_DB_TYPE))) {
@@ -146,11 +147,7 @@ public class WikiDatabase {
 			return WikiBase.getDataHandler();
 		}
 		logger.fine("Using NEW data handler: " + handlerClassName);
-		Class clazz = ClassUtils.getClass(handlerClassName);
-		Class[] parameterTypes = new Class[0];
-		Constructor constructor = clazz.getConstructor(parameterTypes);
-		Object[] initArgs = new Object[0];
-		return (DataHandler)constructor.newInstance(initArgs);
+		return (DataHandler)Utilities.instantiateClass(handlerClassName);
 	}
 
 	/**
@@ -159,9 +156,9 @@ public class WikiDatabase {
 	 * of the existing database are transferred across.
 	 *
 	 * @param props Properties object containing the new database properties
-	 * @param errors Vector to add error messages to
+	 * @param errors List to add error messages to
 	 */
-	public static void migrateDatabase(Properties props, Vector errors) throws Exception {
+	public static void migrateDatabase(Properties props, List<WikiMessage> errors) throws DataAccessException {
 		// verify that new database is different from the old database
 		if (StringUtils.equalsIgnoreCase(Environment.getValue(Environment.PROP_DB_URL), props.getProperty(Environment.PROP_DB_URL))) {
 			errors.add(new WikiMessage("error.databaseconnection", "Cannot migrate to the same database"));
@@ -198,7 +195,7 @@ public class WikiDatabase {
 			from.setReadOnly(true);
 			from.setAutoCommit(true);
 			// used to track current_version_id for each jam_topic row inserted
-			Map topicVersions = new HashMap();
+			Map<Integer, Integer> topicVersions = new HashMap<Integer, Integer>();
 			for (int i = 0; i < JAMWIKI_DB_TABLE_INFO.length; i++) {
 				// these 3 variables are for special handling of the jam_topic.current_version_id field
 				// which cannot be loaded on initial insert due to the jam_f_topic_topicv constraint
@@ -209,7 +206,7 @@ public class WikiDatabase {
 				StringBuffer insert;
 				ResultSetMetaData md;
 				StringBuffer values;
-				String select;
+				StringBuffer select;
 				String columnName;
 				Integer topicId;
 				Integer currentVersionId;
@@ -217,23 +214,23 @@ public class WikiDatabase {
 				// cycle through at most RECORDS_PER_CYCLE records at a time to avoid blowing up the system
 				int RECORDS_PER_CYCLE = 25;
 				for (int j = 0; j <= maxIndex; j += RECORDS_PER_CYCLE) {
-					select = "SELECT * FROM " + JAMWIKI_DB_TABLE_INFO[i][0];
+					select = new StringBuffer("SELECT * FROM ").append(JAMWIKI_DB_TABLE_INFO[i][0]);
 					if (!StringUtils.isBlank(JAMWIKI_DB_TABLE_INFO[i][1])) {
-						select += " WHERE " + JAMWIKI_DB_TABLE_INFO[i][1] + " > " + j;
-						select += " AND " + JAMWIKI_DB_TABLE_INFO[i][1] + " <= " + (j + RECORDS_PER_CYCLE);
-						select += " ORDER BY " + JAMWIKI_DB_TABLE_INFO[i][1];
+						select.append(" WHERE ").append(JAMWIKI_DB_TABLE_INFO[i][1]).append(" > ").append(j);
+						select.append(" AND ").append(JAMWIKI_DB_TABLE_INFO[i][1]).append(" <= ").append(j + RECORDS_PER_CYCLE);
+						select.append(" ORDER BY ").append(JAMWIKI_DB_TABLE_INFO[i][1]);
 					}
 					insert = new StringBuffer();
 					stmt = from.createStatement();
-					logger.info(select);
-					rs = stmt.executeQuery(select);
+					logger.info(select.toString());
+					rs = stmt.executeQuery(select.toString());
 					md = rs.getMetaData();
-					insert.append("INSERT INTO ").append(JAMWIKI_DB_TABLE_INFO[i][0]).append("(");
+					insert.append("INSERT INTO ").append(JAMWIKI_DB_TABLE_INFO[i][0]).append('(');
 					values = new StringBuffer();
 					for (int k = 1; k <= md.getColumnCount(); k++) {
 						if (k > 1) {
-							insert.append(",");
-							values.append(",");
+							insert.append(',');
+							values.append(',');
 						}
 						columnName = md.getColumnLabel(k);
 						if (isTopicTable) {
@@ -248,9 +245,9 @@ public class WikiDatabase {
 							columnName = "\"" + columnName + "\"";
 						}
 						insert.append(columnName);
-						values.append("?");
+						values.append('?');
 					}
-					insert.append(") VALUES (").append(values).append(")");
+					insert.append(") VALUES (").append(values).append(')');
 					logger.info(insert.toString());
 					PreparedStatement insertStmt = conn.prepareStatement(insert.toString());
 					while (rs.next()) {
@@ -280,18 +277,16 @@ public class WikiDatabase {
 						}
 					}
 					rs.close();
-					stmt.close();
-					insertStmt.close();
+					DatabaseConnection.closeStatement(stmt);
+					DatabaseConnection.closeStatement(insertStmt);
 				}
 			}
 			// update the jam_topic.current_version_id field that we had to leave blank on initial insert
 			String updateSql = "UPDATE jam_topic SET current_version_id = ? WHERE topic_id = ?";
 			logger.info(updateSql);
 			PreparedStatement update = conn.prepareStatement(updateSql);
-			Iterator it = topicVersions.keySet().iterator();
-			while (it.hasNext()) {
-				Integer topicId = (Integer)it.next();
-				Integer topicVersionId = (Integer)topicVersions.get(topicId);
+			for (Integer topicId : topicVersions.keySet()) {
+				Integer topicVersionId = topicVersions.get(topicId);
 				update.setObject(1, topicVersionId);
 				update.setObject(2, topicId);
 				update.executeUpdate();
@@ -349,7 +344,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	private static Connection initializeNewDatabase(Properties props, Vector errors, QueryHandler newQueryHandler) {
+	private static Connection initializeNewDatabase(Properties props, List<WikiMessage> errors, QueryHandler newQueryHandler) {
 		String driver = props.getProperty(Environment.PROP_DB_DRIVER);
 		String url = props.getProperty(Environment.PROP_DB_URL);
 		String userName = props.getProperty(Environment.PROP_DB_USERNAME);
@@ -414,7 +409,7 @@ public class WikiDatabase {
 	 * when totally re-initializing a system.  To reiterate: CALLING THIS METHOD WILL
 	 * DELETE ALL WIKI DATA!
 	 */
-	protected static void purgeData(Connection conn) throws Exception {
+	protected static void purgeData(Connection conn) throws DataAccessException {
 		// BOOM!  Everything gone...
 		WikiDatabase.queryHandler().dropTables(conn);
 		try {
@@ -429,19 +424,19 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	protected static QueryHandler queryHandler() throws Exception {
+	protected static QueryHandler queryHandler() throws DataAccessException {
 		// FIXME - this is ugly
 		if (WikiBase.getDataHandler() instanceof AnsiDataHandler) {
 			AnsiDataHandler dataHandler = (AnsiDataHandler)WikiBase.getDataHandler();
 			return dataHandler.queryHandler();
 		}
-		throw new Exception("Unable to determine query handler");
+		throw new DataAccessException("Unable to determine query handler");
 	}
 
 	/**
 	 *
 	 */
-	protected static void releaseConnection(Connection conn, Object transactionObject) throws Exception {
+	protected static void releaseConnection(Connection conn, Object transactionObject) throws SQLException {
 		if (transactionObject instanceof Connection) {
 			// transaction objects will be released elsewhere
 			return;
@@ -452,7 +447,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	private static void releaseConnection(Connection conn) throws Exception {
+	private static void releaseConnection(Connection conn) throws SQLException {
 		if (conn == null) {
 			return;
 		}
@@ -479,9 +474,10 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	protected static void setup(Locale locale, WikiUser user, String username, String encryptedPassword) throws Exception {
-		TransactionStatus status = DatabaseConnection.startTransaction();
+	protected static void setup(Locale locale, WikiUser user, String username, String encryptedPassword) throws DataAccessException, WikiException {
+		TransactionStatus status = null;
 		try {
+			status = DatabaseConnection.startTransaction();
 			Connection conn = DatabaseConnection.getConnection();
 			// set up tables
 			WikiDatabase.queryHandler().createTables(conn);
@@ -490,7 +486,16 @@ public class WikiDatabase {
 			WikiDatabase.setupGroups();
 			WikiDatabase.setupAdminUser(user, username, encryptedPassword);
 			WikiDatabase.setupSpecialPages(locale, user);
-		} catch (Exception e) {
+		} catch (SQLException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			logger.severe("Unable to set up database tables", e);
+			// clean up anything that might have been created
+			try {
+				Connection conn = DatabaseConnection.getConnection();
+				WikiDatabase.queryHandler().dropTables(conn);
+			} catch (Exception e2) {}
+			throw new DataAccessException(e);
+		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			logger.severe("Unable to set up database tables", e);
 			// clean up anything that might have been created
@@ -499,9 +504,15 @@ public class WikiDatabase {
 				WikiDatabase.queryHandler().dropTables(conn);
 			} catch (Exception e2) {}
 			throw e;
-		} catch (Error err) {
-			DatabaseConnection.rollbackOnException(status, err);
-			throw err;
+		} catch (WikiException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			logger.severe("Unable to set up database tables", e);
+			// clean up anything that might have been created
+			try {
+				Connection conn = DatabaseConnection.getConnection();
+				WikiDatabase.queryHandler().dropTables(conn);
+			} catch (Exception e2) {}
+			throw e;
 		}
 		DatabaseConnection.commit(status);
 	}
@@ -509,7 +520,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	private static void setupAdminUser(WikiUser user, String username, String encryptedPassword) throws Exception {
+	private static void setupAdminUser(WikiUser user, String username, String encryptedPassword) throws DataAccessException, WikiException {
 		if (user == null) {
 			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 		}
@@ -517,8 +528,9 @@ public class WikiDatabase {
 			logger.warning("Admin user already exists");
 		}
 		WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword);
-		Vector roles = new Vector();
+		List<String> roles = new ArrayList<String>();
 		roles.add(Role.ROLE_ADMIN.getAuthority());
+		roles.add(Role.ROLE_IMPORT.getAuthority());
 		roles.add(Role.ROLE_SYSADMIN.getAuthority());
 		roles.add(Role.ROLE_TRANSLATE.getAuthority());
 		WikiBase.getDataHandler().writeRoleMapUser(user.getUsername(), roles);
@@ -529,7 +541,7 @@ public class WikiDatabase {
 	 */
 	public static void setupDefaultDatabase(Properties props) {
 		props.setProperty(Environment.PROP_DB_DRIVER, "org.hsqldb.jdbcDriver");
-		props.setProperty(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_HSQL);
+		props.setProperty(Environment.PROP_DB_TYPE, DataHandler.DATA_HANDLER_HSQL);
 		props.setProperty(Environment.PROP_DB_USERNAME, "sa");
 		props.setProperty(Environment.PROP_DB_PASSWORD, "");
 		File file = new File(props.getProperty(Environment.PROP_BASE_FILE_DIR), "database");
@@ -543,7 +555,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	private static void setupDefaultVirtualWiki() throws Exception {
+	private static void setupDefaultVirtualWiki() throws DataAccessException, WikiException {
 		VirtualWiki virtualWiki = new VirtualWiki();
 		virtualWiki.setName(WikiBase.DEFAULT_VWIKI);
 		virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
@@ -553,13 +565,13 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	protected static void setupGroups() throws Exception {
+	protected static void setupGroups() throws DataAccessException, WikiException {
 		WikiGroup group = new WikiGroup();
 		group.setName(WikiGroup.GROUP_ANONYMOUS);
 		// FIXME - use message key
 		group.setDescription("All non-logged in users are automatically assigned to the anonymous group.");
 		WikiBase.getDataHandler().writeWikiGroup(group);
-		List anonymousRoles = new Vector();
+		List<String> anonymousRoles = new ArrayList<String>();
 		anonymousRoles.add(Role.ROLE_EDIT_EXISTING.getAuthority());
 		anonymousRoles.add(Role.ROLE_EDIT_NEW.getAuthority());
 		anonymousRoles.add(Role.ROLE_UPLOAD.getAuthority());
@@ -570,7 +582,7 @@ public class WikiDatabase {
 		// FIXME - use message key
 		group.setDescription("All logged in users are automatically assigned to the registered user group.");
 		WikiBase.getDataHandler().writeWikiGroup(group);
-		List userRoles = new Vector();
+		List<String> userRoles = new ArrayList<String>();
 		userRoles.add(Role.ROLE_EDIT_EXISTING.getAuthority());
 		userRoles.add(Role.ROLE_EDIT_NEW.getAuthority());
 		userRoles.add(Role.ROLE_MOVE.getAuthority());
@@ -582,7 +594,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	protected static void setupRoles() throws Exception {
+	protected static void setupRoles() throws DataAccessException, WikiException {
 		Role role = Role.ROLE_ADMIN;
 		// FIXME - use message key
 		role.setDescription("Provides the ability to perform wiki maintenance tasks not available to normal users.");
@@ -594,6 +606,10 @@ public class WikiDatabase {
 		role = Role.ROLE_EDIT_NEW;
 		// FIXME - use message key
 		role.setDescription("Allows a user to create a new topic.");
+		WikiBase.getDataHandler().writeRole(role, false);
+		role = Role.ROLE_IMPORT;
+		// FIXME - use message key
+		role.setDescription("Allows a user to import data from a file.");
 		WikiBase.getDataHandler().writeRole(role, false);
 		role = Role.ROLE_MOVE;
 		// FIXME - use message key
@@ -620,12 +636,17 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	protected static void setupSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, boolean adminOnly) throws Exception {
+	protected static void setupSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, boolean adminOnly) throws DataAccessException, WikiException {
 		logger.info("Setting up special page " + virtualWiki + " / " + topicName);
 		if (user == null) {
 			throw new IllegalArgumentException("Cannot pass null WikiUser object to setupSpecialPage");
 		}
-		String contents = WikiUtil.readSpecialPage(locale, topicName);
+		String contents = null;
+		try {
+			contents = WikiUtil.readSpecialPage(locale, topicName);
+		} catch (IOException e) {
+			throw new DataAccessException(e);
+		}
 		Topic topic = new Topic();
 		topic.setName(topicName);
 		topic.setVirtualWiki(virtualWiki);
@@ -636,17 +657,16 @@ public class WikiDatabase {
 		TopicVersion topicVersion = new TopicVersion(user, user.getLastLoginIpAddress(), "Automatically created by system setup", contents, charactersChanged);
 		// FIXME - it is not connection-safe to parse for metadata since we are already holding a connection
 		// ParserOutput parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki, topicName);
-		// WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true);
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true);
+		// WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks());
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
 	}
 
 	/**
 	 *
 	 */
-	private static void setupSpecialPages(Locale locale, WikiUser user) throws Exception {
-		List all = WikiBase.getDataHandler().getVirtualWikiList();
-		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
-			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
+	private static void setupSpecialPages(Locale locale, WikiUser user) throws DataAccessException, WikiException {
+		List<VirtualWiki> all = WikiBase.getDataHandler().getVirtualWikiList();
+		for (VirtualWiki virtualWiki : all) {
 			// create the default topics
 			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STARTING_POINTS, user, false);
 			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_LEFT_MENU, user, true);

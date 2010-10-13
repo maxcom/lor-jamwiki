@@ -16,6 +16,7 @@
  */
 package org.jamwiki.parser.jflex;
 
+import org.jamwiki.DataAccessException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.TableOfContents;
@@ -48,17 +49,16 @@ public class WikiHeadingTag {
 		if (disallowInclusion) {
 			return "";
 		}
-		String output = "<span class=\"editsection\">[";
 		String url = "";
 		try {
 			url = LinkUtil.buildEditLinkUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserInput.getTopicName(), null, section);
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			logger.severe("Failure while building link for topic " + parserInput.getVirtualWiki() + " / " + parserInput.getTopicName(), e);
 		}
-		output += "<a href=\"" + url + "\">";
-		output += Utilities.formatMessage("common.sectionedit", parserInput.getLocale());
-		output += "</a>]</span>";
-		return output;
+		StringBuffer output = new StringBuffer("<span class=\"editsection\">[<a href=\"").append(url).append("\">");
+		output.append(Utilities.formatMessage("common.sectionedit", parserInput.getLocale()));
+		output.append("</a>]</span>");
+		return output.toString();
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class WikiHeadingTag {
 				level = 3;
 			} else if (raw.startsWith("==") && raw.endsWith("==")) {
 				level = 2;
-			} else if (raw.startsWith("=") && raw.endsWith("=")) {
+			} else if (raw.charAt(0) == '=' && raw.endsWith("=")) {
 				level = 1;
 			} else {
 				return raw;
@@ -92,13 +92,13 @@ public class WikiHeadingTag {
 				parserOutput.setSectionName(tagName);
 				return raw;
 			}
-			String output = this.updateToc(parserInput, tagName, tocText, level);
+			StringBuffer output = new StringBuffer(this.updateToc(parserInput, tagName, tocText, level));
 			int nextSection = parserInput.getTableOfContents().size();
-			output += "<a name=\"" + Utilities.encodeAndEscapeTopicName(tagName) + "\"></a>";
-			output += "<h" + level + ">";
-			output += this.buildSectionEditLink(parserInput, nextSection);
-			output += "<span>" + JFlexParserUtil.parseFragment(parserInput, tagText, mode) + "</span>";
-			output += "</h" + level + ">";
+			output.append("<a name=\"").append(Utilities.encodeAndEscapeTopicName(tagName)).append("\"></a>");
+			output.append("<h").append(level).append('>');
+			output.append(this.buildSectionEditLink(parserInput, nextSection));
+			output.append("<span>").append(JFlexParserUtil.parseFragment(parserInput, tagText, mode)).append("</span>");
+			output.append("</h").append(level).append('>');
 			return output.toString();
 		} catch (Throwable t) {
 			logger.info("Unable to parse " + raw, t);

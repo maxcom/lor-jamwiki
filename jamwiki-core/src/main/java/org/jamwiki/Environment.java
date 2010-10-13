@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Properties;
 import org.apache.commons.lang.math.NumberUtils;
 // FIXME - remove this import
@@ -78,6 +79,7 @@ public class Environment {
 	public static final String PROP_FILE_SERVER_URL = "file-server-url";
 	public static final String PROP_FILE_WHITELIST = "file-whitelist";
 	public static final String PROP_IMAGE_RESIZE_INCREMENT = "image-resize-increment";
+	public static final String PROP_MAX_TOPIC_VERSION_EXPORT = "max-topic-version-export";
 	public static final String PROP_PARSER_ALLOW_HTML = "allowHTML";
 	public static final String PROP_PARSER_ALLOW_JAVASCRIPT = "allow-javascript";
 	public static final String PROP_PARSER_ALLOW_TEMPLATES = "allow-templates";
@@ -94,6 +96,7 @@ public class Environment {
 	public static final String PROP_RSS_ALLOWED = "rss-allowed";
 	public static final String PROP_RSS_TITLE = "rss-title";
 	public static final String PROP_SERVER_URL = "server-url";
+	public static final String PROP_SITE_NAME = "site-name";
 	public static final String PROP_TOPIC_EDITOR = "default-editor";
 	// FIXME - this property can be removed once the abilitity to upgrade to 0.6.0 is removed
 	public static final String PROP_TOPIC_FORCE_USERNAME = "force-username";
@@ -101,7 +104,9 @@ public class Environment {
 	public static final String PROP_TOPIC_NON_ADMIN_TOPIC_MOVE = "non-admin-redirect";
 	public static final String PROP_TOPIC_SPAM_FILTER = "use-spam-filter";
 	public static final String PROP_TOPIC_USE_PREVIEW = "use-preview";
-	private static final String PROPERTY_FILE_NAME = "jamwiki.properties";
+	public static final String PROP_TOPIC_USE_SHOW_CHANGES = "use-show-changes";
+	/* Lookup properties file location from system properties first. */
+	private static final String PROPERTY_FILE_NAME = System.getProperty("jamwiki.property.file", "jamwiki.properties");
 
 	private static Properties defaults = null;
 	private static Environment instance = null; // NOPMD instanciated and used
@@ -119,7 +124,29 @@ public class Environment {
 		initDefaultProperties();
 		logger.fine("Default properties initialized: " + defaults.toString());
 		props = loadProperties(PROPERTY_FILE_NAME, defaults);
+		if ("true".equals(System.getProperty("jamwiki.override.file.properties"))) {
+			overrideFromSystemProperties();
+		}
 		logger.fine("JAMWiki properties initialized: " + props.toString());
+	}
+
+	/**
+	* Overrides file properties from system properties. Iterates over all properties
+	* and checks if application server has defined overriding property. System wide
+	* properties are prefixed with "jamwiki". These properties may be used to define
+	* dynamic runtime properties (eg. upload path depends on environment).
+	*/
+	private void overrideFromSystemProperties() {
+		logger.info("Overriding file properties with system properties.");
+		Enumeration properties = props.propertyNames();
+		while (properties.hasMoreElements()) {
+			String property = String.valueOf(properties.nextElement());
+			String value = System.getProperty("jamwiki." + property);
+			if (value != null) {
+				props.setProperty(property, value);
+				logger.info("Replaced property " + property + " with value: " + value);
+			}
+		}
 	}
 
 	/**
@@ -155,7 +182,7 @@ public class Environment {
 		defaults.setProperty(PROP_BASE_LOGO_IMAGE, "logo_oliver.gif");
 		defaults.setProperty(PROP_BASE_META_DESCRIPTION, "");
 		defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, WikiBase.PERSISTENCE_INTERNAL);
-		defaults.setProperty(PROP_BASE_SEARCH_ENGINE, WikiBase.SEARCH_ENGINE_LUCENE);
+		defaults.setProperty(PROP_BASE_SEARCH_ENGINE, SearchEngine.SEARCH_ENGINE_LUCENE);
 		defaults.setProperty(PROP_BASE_WIKI_VERSION, "0.0.0");
 		defaults.setProperty(PROP_CACHE_INDIVIDUAL_SIZE, "500");
 		defaults.setProperty(PROP_CACHE_MAX_AGE, "300");
@@ -163,7 +190,7 @@ public class Environment {
 		defaults.setProperty(PROP_CACHE_TOTAL_SIZE, "1000");
 		defaults.setProperty(PROP_DB_DRIVER, "org.postgresql.Driver");
 		defaults.setProperty(PROP_DB_PASSWORD, "");
-		defaults.setProperty(PROP_DB_TYPE, WikiBase.DATA_HANDLER_ANSI);
+		defaults.setProperty(PROP_DB_TYPE, DataHandler.DATA_HANDLER_ANSI);
 		defaults.setProperty(PROP_DB_URL, "jdbc:postgresql://localhost:5432/database");
 		defaults.setProperty(PROP_DB_USERNAME, "");
 		defaults.setProperty(PROP_DBCP_MAX_ACTIVE, "10");
@@ -190,6 +217,7 @@ public class Environment {
 		defaults.setProperty(PROP_FILE_SERVER_URL, "");
 		defaults.setProperty(PROP_FILE_WHITELIST, "bmp,gif,jpeg,jpg,pdf,png,properties,svg,txt,zip");
 		defaults.setProperty(PROP_IMAGE_RESIZE_INCREMENT, "100");
+		defaults.setProperty(PROP_MAX_TOPIC_VERSION_EXPORT, "200");
 		defaults.setProperty(PROP_PARSER_ALLOW_HTML, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_PARSER_ALLOW_JAVASCRIPT, Boolean.FALSE.toString());
 		defaults.setProperty(PROP_PARSER_ALLOW_TEMPLATES, Boolean.TRUE.toString());
@@ -206,10 +234,12 @@ public class Environment {
 		defaults.setProperty(PROP_RSS_ALLOWED, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_RSS_TITLE, "Wiki Recent Changes");
 		defaults.setProperty(PROP_SERVER_URL, "");
+		defaults.setProperty(PROP_SITE_NAME, "JAMWiki");
 		// FIXME - hard coding
 		defaults.setProperty(PROP_TOPIC_EDITOR, "toolbar");
 		defaults.setProperty(PROP_TOPIC_SPAM_FILTER, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_TOPIC_USE_PREVIEW, Boolean.TRUE.toString());
+		defaults.setProperty(PROP_TOPIC_USE_SHOW_CHANGES, Boolean.TRUE.toString());
 	}
 
 	/**
@@ -222,7 +252,7 @@ public class Environment {
 	 * @return The value of the property.
 	 */
 	public static boolean getBooleanValue(String name) {
-		return Boolean.valueOf(getValue(name)).booleanValue();
+		return Boolean.valueOf(getValue(name));
 	}
 
 	/**

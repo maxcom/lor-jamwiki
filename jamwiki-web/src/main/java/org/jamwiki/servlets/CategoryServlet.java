@@ -16,9 +16,8 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.WikiBase;
@@ -54,15 +53,14 @@ public class CategoryServlet extends JAMWikiServlet {
 	private void viewCategories(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		Collection categoryObjects = WikiBase.getDataHandler().getAllCategories(virtualWiki, pagination);
-		LinkedHashMap categories = new LinkedHashMap();
-		for (Iterator iterator = categoryObjects.iterator(); iterator.hasNext();) {
-			Category category = (Category)iterator.next();
+		List<Category> categoryObjects = WikiBase.getDataHandler().getAllCategories(virtualWiki, pagination);
+		LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>();
+		for (Category category : categoryObjects) {
 			String key = category.getName();
 			String value = key.substring(NamespaceHandler.NAMESPACE_CATEGORY.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
 			categories.put(key, value);
 		}
-		next.addObject("categoryCount", new Integer(categories.size()));
+		next.addObject("categoryCount", categories.size());
 		next.addObject("categories", categories);
 		pageInfo.setPageTitle(new WikiMessage("allcategories.title"));
 		pageInfo.setContentJsp(JSP_CATEGORIES);

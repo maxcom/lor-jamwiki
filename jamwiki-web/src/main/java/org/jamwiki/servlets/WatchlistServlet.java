@@ -16,7 +16,7 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.Collection;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
@@ -24,6 +24,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.WikiUserDetails;
+import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiUser;
@@ -90,8 +91,8 @@ public class WatchlistServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("watchlist.error.loginrequired"));
 		}
 		WikiUser user = ServletUtil.currentWikiUser();
-		Collection changes = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId(), pagination);
-		next.addObject("numChanges", new Integer(changes.size()));
+		List<RecentChange> changes = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId(), pagination);
+		next.addObject("numChanges", changes.size());
 		next.addObject("changes", changes);
 		pageInfo.setPageTitle(new WikiMessage("watchlist.title"));
 		pageInfo.setContentJsp(JSP_WATCHLIST);

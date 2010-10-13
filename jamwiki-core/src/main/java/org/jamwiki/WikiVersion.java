@@ -31,7 +31,7 @@ public class WikiVersion {
 	private final int patch;
 
 	/** Current software version.  If this differs from the version in the properties an upgrade is performed. */
-	public final static String CURRENT_WIKI_VERSION = "0.7.2";
+	public final static String CURRENT_WIKI_VERSION = "0.8.0";
 
 	/**
 	 * Constructor to create a new Wiki version object using a version string of
@@ -47,9 +47,9 @@ public class WikiVersion {
 		if (tokens.length != 3) {
 			throw new IllegalArgumentException("Invalid Wiki version: " + version);
 		}
-		this.major = new Integer(tokens[0]).intValue();
-		this.minor = new Integer(tokens[1]).intValue();
-		this.patch = new Integer(tokens[2]).intValue();
+		this.major = Integer.valueOf(tokens[0]);
+		this.minor = Integer.valueOf(tokens[1]);
+		this.patch = Integer.valueOf(tokens[2]);
 	}
 
 	/**

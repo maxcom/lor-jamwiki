@@ -18,13 +18,15 @@
  */
 package org.jamwiki;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class WikiMessageTest extends TestCase {
+public class WikiMessageTest {
 
 	/**
 	 *
 	 */
+	@Test
 	public void testConstructor() throws Throwable {
 		WikiMessage wikiMessage = new WikiMessage("testWikiMessageKey");
 		assertEquals("wikiMessage.getKey()", "testWikiMessageKey", wikiMessage.getKey());
@@ -34,6 +36,7 @@ public class WikiMessageTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testConstructor1() throws Throwable {
 		String[] strings = new String[1];
 		WikiMessage wikiMessage = new WikiMessage("testWikiMessageKey", strings);
@@ -44,6 +47,7 @@ public class WikiMessageTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testConstructor2() throws Throwable {
 		WikiMessage wikiMessage = new WikiMessage("testWikiMessageKey", (String[]) null);
 		assertEquals("wikiMessage.getKey()", "testWikiMessageKey", wikiMessage.getKey());
@@ -53,6 +57,7 @@ public class WikiMessageTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testConstructor3() throws Throwable {
 		String[] strings = new String[0];
 		WikiMessage wikiMessage = new WikiMessage("testWikiMessageKey", strings);
@@ -63,6 +68,7 @@ public class WikiMessageTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testConstructor4() throws Throwable {
 		WikiMessage wikiMessage = new WikiMessage("testWikiMessageKey", "testWikiMessageParam1");
 		assertEquals("wikiMessage.getKey()", "testWikiMessageKey", wikiMessage.getKey());
@@ -72,6 +78,7 @@ public class WikiMessageTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testConstructor5() throws Throwable {
 		WikiMessage wikiMessage = new WikiMessage("testWikiMessageKey", "testWikiMessageParam1", "testWikiMessageParam2");
 		assertEquals("wikiMessage.getKey()", "testWikiMessageKey", wikiMessage.getKey());
@@ -81,6 +88,7 @@ public class WikiMessageTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testGetKey() throws Throwable {
 		String result = new WikiMessage("testWikiMessageKey").getKey();
 		assertSame("result", "testWikiMessageKey", result);
@@ -89,6 +97,7 @@ public class WikiMessageTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testGetParams() throws Throwable {
 		String[] strings = new String[3];
 		WikiMessage wikiMessage = new WikiMessage("testWikiMessageKey");
@@ -101,6 +110,7 @@ public class WikiMessageTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testSetParamsWithoutEscaping() throws Throwable {
 		String[] strings = new String[3];
 		WikiMessage wikiMessage = new WikiMessage("testWikiMessageKey");

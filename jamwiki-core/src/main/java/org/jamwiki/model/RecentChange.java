@@ -17,6 +17,10 @@
 package org.jamwiki.model;
 
 import java.sql.Timestamp;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
+import org.jamwiki.WikiMessage;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -27,14 +31,17 @@ public class RecentChange {
 	private static final WikiLogger logger = WikiLogger.getLogger(RecentChange.class.getName());
 	private Integer authorId = null;
 	private String authorName = null;
-	private int charactersChanged = 0;
-	private String editComment = null;
-	private Timestamp editDate = null;
-	private int editType = -1;
+	private Integer charactersChanged = null;
+	private String changeComment = null;
+	private Timestamp changeDate = null;
+	private transient WikiMessage changeWikiMessage = null;
+	private Integer editType = null;
+	private Integer logType = null;
+	private List<String> params = null;
 	private Integer previousTopicVersionId = null;
-	private int topicId = -1;
+	private Integer topicId = null;
 	private String topicName = null;
-	private int topicVersionId = -1;
+	private Integer topicVersionId = null;
 	private String virtualWiki = null;
 
 	/**
@@ -46,18 +53,60 @@ public class RecentChange {
 	/**
 	 *
 	 */
-	public RecentChange(Topic topic, TopicVersion topicVersion, String authorName) {
-		this.topicId = topic.getTopicId();
-		this.topicName = topic.getName();
-		this.topicVersionId = topicVersion.getTopicVersionId();
-		this.previousTopicVersionId = topicVersion.getPreviousTopicVersionId();
-		this.authorId = topicVersion.getAuthorId();
-		this.authorName = authorName;
-		this.charactersChanged = topicVersion.getCharactersChanged();
-		this.editComment = topicVersion.getEditComment();
-		this.editDate = topicVersion.getEditDate();
-		this.editType = topicVersion.getEditType();
-		this.virtualWiki = topic.getVirtualWiki();
+	public static RecentChange initRecentChange(Topic topic, TopicVersion topicVersion, String authorName) {
+		RecentChange recentChange = new RecentChange();
+		recentChange.setTopicId(topic.getTopicId());
+		recentChange.setTopicName(topic.getName());
+		recentChange.setTopicVersionId(topicVersion.getTopicVersionId());
+		recentChange.setPreviousTopicVersionId(topicVersion.getPreviousTopicVersionId());
+		recentChange.setAuthorId(topicVersion.getAuthorId());
+		recentChange.setAuthorName(authorName);
+		recentChange.setCharactersChanged(topicVersion.getCharactersChanged());
+		recentChange.setChangeComment(topicVersion.getEditComment());
+		recentChange.setChangeDate(topicVersion.getEditDate());
+		recentChange.setEditType(topicVersion.getEditType());
+		recentChange.setVirtualWiki(topic.getVirtualWiki());
+		recentChange.setParamString(topicVersion.getVersionParamString());
+		recentChange.initChangeWikiMessageForVersion(topicVersion.getEditType(), topicVersion.getVersionParamString());
+		return recentChange;
+	}
+
+	/**
+	 *
+	 */
+	public static RecentChange initRecentChange(LogItem logItem) {
+		RecentChange recentChange = new RecentChange();
+		recentChange.setAuthorId(logItem.getUserId());
+		recentChange.setAuthorName(logItem.getUserDisplayName());
+		recentChange.setChangeComment(logItem.getLogComment());
+		recentChange.setChangeDate(logItem.getLogDate());
+		recentChange.setVirtualWiki(logItem.getVirtualWiki());
+		recentChange.setParamString(logItem.getLogParamString());
+		recentChange.setLogType(logItem.getLogType());
+		recentChange.initChangeWikiMessageForLog(logItem.getLogType(), logItem.getLogParamString());
+		return recentChange;
+	}
+
+	/**
+	 *
+	 */
+	public void initChangeWikiMessageForLog(int logType, String logParamString) {
+		this.setChangeWikiMessage(LogItem.retrieveLogWikiMessage(logType, logParamString));
+	}
+
+	/**
+	 *
+	 */
+	public void initChangeWikiMessageForVersion(int editType, String versionParamString) {
+		if (StringUtils.isBlank(versionParamString)) {
+			// older versions of JAMWiki did not have this field, so it may not always be populated as expected
+			return;
+		}
+		if (editType == TopicVersion.EDIT_MOVE) {
+			this.setChangeWikiMessage(new WikiMessage("move.editcomment", versionParamString.split("\\|")));
+		} else if (editType == TopicVersion.EDIT_PERMISSION) {
+			this.setChangeWikiMessage(new WikiMessage("manage.message.permissions"));
+		}
 	}
 
 	/**
@@ -91,105 +140,150 @@ public class RecentChange {
 	/**
 	 *
 	 */
-	public String getChangeTypeNotification() {
-		String changeTypeNotification = "";
-		if (this.previousTopicVersionId == null) {
-			changeTypeNotification += "n";
-		}
-		if (this.editType == TopicVersion.EDIT_MINOR) {
-			changeTypeNotification += "m";
-		}
-		if (this.editType == TopicVersion.EDIT_DELETE) {
-			changeTypeNotification += "d";
-		}
-		if (this.editType == TopicVersion.EDIT_UNDELETE) {
-			changeTypeNotification += "u";
-		}
-		return changeTypeNotification;
+	public String getChangeComment() {
+		return this.changeComment;
 	}
 
 	/**
 	 *
 	 */
-	public int getCharactersChanged() {
+	public void setChangeComment(String changeComment) {
+		this.changeComment = changeComment;
+	}
+
+	/**
+	 *
+	 */
+	public Timestamp getChangeDate() {
+		return this.changeDate;
+	}
+
+	/**
+	 *
+	 */
+	public void setChangeDate(Timestamp changeDate) {
+		this.changeDate = changeDate;
+	}
+
+	/**
+	 *
+	 */
+	public String getChangeTypeNotification() {
+		StringBuffer changeTypeNotification = new StringBuffer();
+		if (this.previousTopicVersionId == null) {
+			changeTypeNotification.append('n');
+		}
+		if (this.editType == null) {
+			return "";
+		}
+		if (this.editType == TopicVersion.EDIT_MINOR) {
+			changeTypeNotification.append('m');
+		}
+		if (this.editType == TopicVersion.EDIT_DELETE) {
+			changeTypeNotification.append('d');
+		}
+		if (this.editType == TopicVersion.EDIT_UNDELETE) {
+			changeTypeNotification.append('u');
+		}
+		if (this.editType == TopicVersion.EDIT_IMPORT) {
+			changeTypeNotification.append('i');
+		}
+		return changeTypeNotification.toString();
+	}
+
+	/**
+	 * This field is a generated field used to return a <code>WikiMessage</code> object
+	 * that represents any auto-generated message information for the recent change entry,
+	 * such as "Topic A renamed to Topic B" when renaming a topic.
+	 */
+	public WikiMessage getChangeWikiMessage() {
+		return this.changeWikiMessage;
+	}
+
+	/**
+	 * This field is a generated field used to return a <code>WikiMessage</code> object
+	 * that represents any auto-generated message information for the recent change entry,
+	 * such as "Topic A renamed to Topic B" when renaming a topic.
+	 */
+	public void setChangeWikiMessage(WikiMessage changeWikiMessage) {
+		this.changeWikiMessage = changeWikiMessage;
+	}
+
+	/**
+	 *
+	 */
+	public Integer getCharactersChanged() {
 		return this.charactersChanged;
 	}
 
 	/**
 	 *
 	 */
-	public void setCharactersChanged(int charactersChanged) {
+	public void setCharactersChanged(Integer charactersChanged) {
 		this.charactersChanged = charactersChanged;
 	}
 
 	/**
 	 *
 	 */
-	public boolean getDelete() {
-		return this.editType == TopicVersion.EDIT_DELETE;
-	}
-
-	/**
-	 *
-	 */
-	public String getEditComment() {
-		return this.editComment;
-	}
-
-	/**
-	 *
-	 */
-	public void setEditComment(String editComment) {
-		this.editComment = editComment;
-	}
-
-	/**
-	 *
-	 */
-	public Timestamp getEditDate() {
-		return this.editDate;
-	}
-
-	/**
-	 *
-	 */
-	public void setEditDate(Timestamp editDate) {
-		this.editDate = editDate;
-	}
-
-	/**
-	 *
-	 */
-	public int getEditType() {
+	public Integer getEditType() {
 		return this.editType;
 	}
 
 	/**
 	 *
 	 */
-	public void setEditType(int editType) {
+	public void setEditType(Integer editType) {
 		this.editType = editType;
 	}
 
 	/**
 	 *
 	 */
-	public boolean getMinor() {
-		return this.editType == TopicVersion.EDIT_MINOR;
+	public Integer getLogType() {
+		return this.logType;
 	}
 
 	/**
 	 *
 	 */
-	public boolean getMove() {
-		return this.editType == TopicVersion.EDIT_MOVE;
+	public void setLogType(Integer logType) {
+		this.logType = logType;
+	}
+
+	/**
+	 * Utility method for retrieving the log type caption for the specific log type.
+	 */
+	public String getLogWikiLinkCaption() {
+		return LogItem.LOG_TYPES.get(this.logType);
 	}
 
 	/**
 	 *
 	 */
-	public boolean getNormal() {
-		return this.editType == TopicVersion.EDIT_NORMAL;
+	public List<String> getParams() {
+		return this.params;
+	}
+
+	/**
+	 *
+	 */
+	public void setParams(List<String> params) {
+		this.params = params;
+	}
+
+	/**
+	 * Utility method for converting the params to a pipe-delimited string.
+	 */
+	public String getParamString() {
+		return Utilities.listToDelimitedString(this.params, "|");
+	}
+
+	/**
+	 * Utility method for converting a params pipe-delimited string to a list.
+	 */
+	public void setParamString(String paramsString) {
+		this.setParams(Utilities.delimitedStringToList(paramsString, "|"));
 	}
 
 	/**
@@ -209,14 +303,14 @@ public class RecentChange {
 	/**
 	 *
 	 */
-	public int getTopicId() {
+	public Integer getTopicId() {
 		return this.topicId;
 	}
 
 	/**
 	 *
 	 */
-	public void setTopicId(int topicId) {
+	public void setTopicId(Integer topicId) {
 		this.topicId = topicId;
 	}
 
@@ -237,22 +331,15 @@ public class RecentChange {
 	/**
 	 *
 	 */
-	public int getTopicVersionId() {
+	public Integer getTopicVersionId() {
 		return this.topicVersionId;
 	}
 
 	/**
 	 *
 	 */
-	public void setTopicVersionId(int topicVersionId) {
+	public void setTopicVersionId(Integer topicVersionId) {
 		this.topicVersionId = topicVersionId;
-	}
-
-	/**
-	 *
-	 */
-	public boolean getUndelete() {
-		return this.editType == TopicVersion.EDIT_UNDELETE;
 	}
 
 	/**
@@ -267,5 +354,86 @@ public class RecentChange {
 	 */
 	public void setVirtualWiki(String virtualWiki) {
 		this.virtualWiki = virtualWiki;
+	}
+
+	/**
+	 *
+	 */
+	public boolean isDelete() {
+		if (this.editType != null && this.editType == TopicVersion.EDIT_DELETE) {
+			return true;
+		} else if (this.logType != null && this.logType == LogItem.LOG_TYPE_DELETE) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 *
+	 */
+	public boolean isImport() {
+		if (this.editType != null && this.editType == TopicVersion.EDIT_IMPORT) {
+			return true;
+		} else if (this.logType != null && this.logType == LogItem.LOG_TYPE_IMPORT) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 *
+	 */
+	public boolean getMinor() {
+		return (this.editType != null && this.editType == TopicVersion.EDIT_MINOR);
+	}
+
+	/**
+	 *
+	 */
+	public boolean isMove() {
+		if (this.editType != null && this.editType == TopicVersion.EDIT_MOVE) {
+			return true;
+		} else if (this.logType != null && this.logType == LogItem.LOG_TYPE_MOVE) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 *
+	 */
+	public boolean isPermission() {
+		return (this.logType != null && this.logType == LogItem.LOG_TYPE_PERMISSION);
+	}
+
+	/**
+	 *
+	 */
+	public boolean isNormal() {
+		return (this.editType != null && this.editType == TopicVersion.EDIT_NORMAL);
+	}
+
+	/**
+	 *
+	 */
+	public boolean isUndelete() {
+		return (this.editType != null && this.editType == TopicVersion.EDIT_UNDELETE);
+	}
+
+	/**
+	 *
+	 */
+	public boolean isUpload() {
+		return (this.logType != null && this.logType == LogItem.LOG_TYPE_UPLOAD);
+	}
+
+	/**
+	 *
+	 */
+	public boolean isUser() {
+		return (this.logType != null && this.logType == LogItem.LOG_TYPE_USER_CREATION);
 	}
 }

@@ -22,66 +22,39 @@ import java.util.logging.LogRecord;
 import java.util.logging.Level;
 import java.util.PropertyResourceBundle;
 import java.io.ByteArrayInputStream;
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  */
-public class WikiLogFormatterTest extends TestCase {
+public class WikiLogFormatterTest {
 
 	/**
 	 *
 	 */
-	public void testConstructor() throws Throwable {
-		// FIXME - implement this
-	}
-
-	/**
-	 *
-	 */
-	public void testFormat() throws Throwable {
-		String result = new WikiLogFormatter("").format(new LogRecord(Level.ALL, "testWikiLogFormatterParam2"));
-		// FIXME
-//		assertEquals("result", " ALL: null - testWikiLogFormatterParam2\n", result);
-	}
-
-	/**
-	 *
-	 */
+	@Test(expected=IllegalArgumentException.class)
 	public void testFormatThrowsIllegalArgumentException() throws Throwable {
-		try {
-			new WikiLogFormatter("testWikiLogFormatterDatePattern").format(new LogRecord(Level.FINE, "testWikiLogFormatterParam2"));
-			fail("Expected IllegalArgumentException to be thrown");
-		} catch (IllegalArgumentException ex) {
-			assertEquals("ex.getMessage()", "Illegal pattern character 't'", ex.getMessage());
-		}
+		new WikiLogFormatter("testWikiLogFormatterDatePattern").format(new LogRecord(Level.FINE, "testWikiLogFormatterParam2"));
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testFormatThrowsNullPointerException() throws Throwable {
-		try {
-			new WikiLogFormatter("").format(null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		new WikiLogFormatter("").format(null);
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testFormatThrowsNullPointerException1() throws Throwable {
 		byte[] bytes = new byte[2];
 		LogRecord record = new LogRecord(Level.OFF, null);
 		record.setResourceBundle(new PropertyResourceBundle(new ByteArrayInputStream(bytes)));
-		try {
-			new WikiLogFormatter("").format(record);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		new WikiLogFormatter("").format(record);
 	}
 }
 

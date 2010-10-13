@@ -20,7 +20,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
  * JSP tag used within {@link org.jamwiki.taglib.LinkTag} tags to add query
@@ -38,18 +37,13 @@ public class LinkParamTag extends BodyTagSupport {
 	 */
 	public int doEndTag() throws JspException {
 		String tagValue = null;
-		// Resin 3.0, 3.1 throws ClassCastException with evaluateString for values like "1", so use tmp variable
-		Object tmp = null;
 		LinkTag parent = (LinkTag)this.getParent();
 		if (parent == null) {
 			throw new JspException("linkParam tag not nested within a link tag");
 		}
 		try {
 			if (!StringUtils.isBlank(this.value)) {
-				tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
-				if (tmp != null) {
-					tagValue = tmp.toString();
-				}
+				tagValue = this.value;
 			} else {
 				tagValue = this.getBodyContent().getString();
 			}

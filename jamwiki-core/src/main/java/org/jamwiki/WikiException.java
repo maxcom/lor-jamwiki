@@ -16,9 +16,9 @@
  */
 package org.jamwiki;
 
-
 /**
- * Custom exception class for JAMWiki servlet errors.
+ * Custom exception class for JAMWiki errors.  This exception type allows an error
+ * message key to be passed back to the front end for display to the user.
  */
 public class WikiException extends Exception {
 

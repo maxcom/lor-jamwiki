@@ -53,6 +53,9 @@ public class JAMWikiFilter implements Filter {
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		request.setCharacterEncoding("UTF-8");
+		if (WikiUtil.WEBAPP_CONTEXT_PATH == null && request instanceof HttpServletRequest) {
+			WikiUtil.WEBAPP_CONTEXT_PATH = ((HttpServletRequest)request).getContextPath();
+		}
 		if (redirectNeeded(request, response)) {
 			return;
 		}
@@ -81,31 +84,27 @@ public class JAMWikiFilter implements Filter {
 		if (!(servletRequest instanceof HttpServletRequest) || !(servletResponse instanceof HttpServletResponse)) {
 			return false;
 		}
-		try {
-			HttpServletRequest request = (HttpServletRequest)servletRequest;
-			HttpServletResponse response = (HttpServletResponse)servletResponse;
-			if (redirectSetup(request)) {
-				// redirect to setup page
-				String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Setup";
-				redirect(request, response, url);
-				return true;
-			}
-			if (redirectUpgrade(request)) {
-				// redirect to upgrade page
-				String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Upgrade";
-				redirect(request, response, url);
-				return true;
-			}
-			return false;
-		} catch (Exception e) {
-			throw new ServletException(e);
+		HttpServletRequest request = (HttpServletRequest)servletRequest;
+		HttpServletResponse response = (HttpServletResponse)servletResponse;
+		if (redirectSetup(request)) {
+			// redirect to setup page
+			String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Setup";
+			redirect(request, response, url);
+			return true;
 		}
+		if (redirectUpgrade(request)) {
+			// redirect to upgrade page
+			String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Upgrade";
+			redirect(request, response, url);
+			return true;
+		}
+		return false;
 	}
 
 	/**
 	 * Determine whether or not to redirect to the setup page.
 	 */
-	private boolean redirectSetup(HttpServletRequest request) throws Exception {
+	private boolean redirectSetup(HttpServletRequest request) {
 		if (!WikiUtil.isFirstUse()) {
 			return false;
 		}

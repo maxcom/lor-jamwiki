@@ -71,7 +71,7 @@ public class WikiCache {
 	 * @param value The object that is being stored in the cache.
 	 */
 	public static void addToCache(String cacheName, int key, Object value) {
-		WikiCache.addToCache(cacheName, new Integer(key), value);
+		WikiCache.addToCache(cacheName, Integer.valueOf(key), value);
 	}
 
 	/**
@@ -116,8 +116,8 @@ public class WikiCache {
 			defaultCacheConfiguration.setName("defaultCache");
 			configuration.addDefaultCache(defaultCacheConfiguration);
 			DiskStoreConfiguration diskStoreConfiguration = new DiskStoreConfiguration();
-//			diskStoreConfiguration.addExpiryThreadPool(new ThreadPoolConfiguration("", new Integer(5), new Integer(5)));
-//			diskStoreConfiguration.addSpoolThreadPool(new ThreadPoolConfiguration("", new Integer(5), new Integer(5)));
+//			diskStoreConfiguration.addExpiryThreadPool(new ThreadPoolConfiguration("", 5, 5));
+//			diskStoreConfiguration.addSpoolThreadPool(new ThreadPoolConfiguration("", 5, 5));
 			diskStoreConfiguration.setPath(directory.getPath());
 			configuration.addDiskStore(diskStoreConfiguration);
 			WikiCache.cacheManager = new CacheManager(configuration);
@@ -125,26 +125,24 @@ public class WikiCache {
 			logger.severe("Initialization error in WikiCache", e);
 		}
 	}
-	
+
 	public static void shutdown() {
-        if (WikiCache.cacheManager != null) {
-            WikiCache.cacheManager.shutdown();
-            WikiCache.cacheManager = null;
-        }
-	    
+		if (WikiCache.cacheManager != null) {
+			WikiCache.cacheManager.shutdown();
+			WikiCache.cacheManager = null;
+		}
 	}
 
 	/**
-	 * Given a virtual wiki name and a topic name, generate a unique key value
-	 * that can be used to store and retrieve cache objects.
+	 * Given two string values, generate a unique key value that can be used to
+	 * store and retrieve cache objects.
 	 *
-	 * @param virtualWiki The virtual wiki name for the key value being
-	 *  created.
-	 * @param topicName The name of the topic for the key value being created.
+	 * @param value1 The first value to use in the key name.
+	 * @param value2 The second value to use in the key name.
 	 * @return The generated key value.
 	 */
-	public static String key(String virtualWiki, String topicName) {
-		return virtualWiki + "/" + topicName;
+	public static String key(String value1, String value2) {
+		return value1 + "/" + value2;
 	}
 
 	/**
@@ -177,7 +175,7 @@ public class WikiCache {
 	 * @param key The key for the record that is being removed from the cache.
 	 */
 	public static void removeFromCache(String cacheName, int key) {
-		WikiCache.removeFromCache(cacheName, new Integer(key));
+		WikiCache.removeFromCache(cacheName, Integer.valueOf(key));
 	}
 
 	/**
@@ -212,6 +210,6 @@ public class WikiCache {
 	 *  object value.
 	 */
 	public static Element retrieveFromCache(String cacheName, int key) {
-		return WikiCache.retrieveFromCache(cacheName, new Integer(key));
+		return WikiCache.retrieveFromCache(cacheName, Integer.valueOf(key));
 	}
 }

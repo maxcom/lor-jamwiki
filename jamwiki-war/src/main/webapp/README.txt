@@ -13,23 +13,28 @@ PREREQUISITES
 JAMWiki requires a web application server (such as Tomcat or Websphere) that
 supports the following specifications:
 
-  JDK 1.4 or later
+  Java 5 or later
   Servlet 2.4 or later
+  JDBC 3.0 or later (if using an external database)
 
 JAMWiki can be configured to store its data either in an external database or
 using an embedded version of the HSQL database that is included in the
 distribution.  When running with an embedded database no additional software
 or configuration is required; when using an external database JAMWiki requires
 a database user with permission to create tables and sequences.  JAMWiki has
-tested with the following databases:
+built-in support for recent versions of the following databases:
 
-  Postgres 8.0
-  Postgres 7.4
-  MySQL 4.1
-  Oracle 10.2 (requires the 10g or later JDBC drivers)
-  H2 Database (ANSI mode)
+  H2
+  HSQL
+  MySQL
+  Oracle
+  Postgres
+  DB2 (experimental)
+  DB2/400 (experimental)
+  MS SQL Server (experimental)
+  Sybase (experimental)
 
-Note that JAMWiki may work with any ANSI compliant database.  Also note that
+Note that JAMWiki should work with any ANSI compliant database.  Also note that
 to support double-byte charaters the database should use UTF-8 encoding.
 
 
@@ -184,7 +189,7 @@ This command will copy the current development code (the "trunk") into a local
 directory named "jamwiki".
 
 The software can be built from the Maven build script provided.  To build the
-software, install Maven (http://maven.apache.org/) and a JDK version 1.4 or
+software, install Maven (http://maven.apache.org/) and a JDK version 1.5 or
 later.  Once Maven and the JDK are properly installed, run the following
 commands:
 

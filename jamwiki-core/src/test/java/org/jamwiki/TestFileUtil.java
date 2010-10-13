@@ -22,14 +22,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.Utilities;
-import org.jamwiki.utils.WikiLogger;
 
 /**
  *
  */
 public class TestFileUtil {
 
-	private static final WikiLogger logger = WikiLogger.getLogger(TestFileUtil.class.getName());
 	public static final String TEST_RESULTS_DIR = "data/results/";
 	public static final String TEST_TOPICS_DIR = "data/topics/";
 
@@ -54,10 +52,10 @@ public class TestFileUtil {
 	/**
 	 *
 	 */
-	public static File getClassLoaderFile(String fileName) throws Exception {
+	public static File getClassLoaderFile(String fileName) throws FileNotFoundException {
 		try {
 			return Utilities.getClassLoaderFile(fileName);
-		} catch (Exception e) {
+		} catch (FileNotFoundException e) {
 			// ignore
 		}
 		return new File(Utilities.getClassLoaderRoot(), fileName);
@@ -66,16 +64,15 @@ public class TestFileUtil {
 	/**
 	 *
 	 */
-	private static File retrieveFile(String directory, String fileName) {
+	public static File retrieveFile(String directory, String fileName) {
 		fileName = encodeTopicName(fileName);
 		String fullName = directory + fileName;
-		File file = null;
 		try {
 			return Utilities.getClassLoaderFile(fullName);
-		} catch (Exception e) { }
+		} catch (FileNotFoundException e) { }
 		try {
 			return new File(Utilities.getClassLoaderRoot(), fullName);
-		} catch (Exception e) { }
+		} catch (FileNotFoundException e) { }
 		return null;
 	}
 

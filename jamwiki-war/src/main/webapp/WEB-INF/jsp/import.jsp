@@ -22,20 +22,26 @@
 
 <%@ include file="page-init.jsp" %>
 
-<div style="margin:10px 30px 10px 30px;padding:10px;color:red;text-align:center;border:1px dashed red;"><fmt:message key="common.warning.experimental" /></div>
+<p><fmt:message key="import.caption.overview" /></p>
 
-<c:if test="${!empty error}">
-<div class="message red"><fmt:message key="${error.key}"><fmt:param value="${error.params[0]}" /></fmt:message></div>
+<c:if test="${!empty errors}">
+<div class="message red">
+	<c:forEach items="${errors}" var="error"><fmt:message key="${error.key}"><fmt:param value="${error.params[0]}" /></fmt:message><br /></c:forEach>
+</div>
+</c:if>
+<c:if test="${!empty successfulImports}">
+<div class="message">
+	<fmt:message key="import.message.success" />
+	<ul>
+	<c:forEach items="${successfulImports}" var="successfulImport"><li><jamwiki:link value="${successfulImport}" text="${successfulImport}" /></li></c:forEach>
+	</ul>
+</div>
 </c:if>
 
+<fieldset>
+<legend><fmt:message key="import.caption.source" /></legend>
 <form name="form1" method="post" action="<jamwiki:link value="Special:Import" />" enctype="multipart/form-data">
-<table border="0">
-<tr>
-	<td><label for="importFile"><fmt:message key="import.caption.source" /></label>:</td>
-	<td><input type="file" name="contents" size="50" id="importFile" /></td>
-</tr>
-<tr>
-	<td colspan="2" align="center"><input type="submit" name="save" value="<fmt:message key="import.button.import" />" /></td>
-</tr>
-</table>
+<input type="file" name="contents" size="50" id="importFile" />
+<input type="submit" name="save" value="<fmt:message key="import.button.import" />" />
 </form>
+</fieldset>

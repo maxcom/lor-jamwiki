@@ -16,14 +16,15 @@
  */
 package org.jamwiki.parser.jflex;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
+import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.NamespaceHandler;
@@ -39,17 +40,9 @@ public class TemplateTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(TemplateTag.class.getName());
 	protected static final String TEMPLATE_INCLUSION = "template-inclusion";
-	private static Pattern PARAM_NAME_VALUE_PATTERN = null;
+	private static Pattern PARAM_NAME_VALUE_PATTERN = Pattern.compile("[\\s]*([A-Za-z0-9_\\ \\-]+)[\\s]*\\=([\\s\\S]*)");
 
-	private final HashMap parameterValues = new HashMap();
-
-	static {
-		try {
-			PARAM_NAME_VALUE_PATTERN = Pattern.compile("[\\s]*([A-Za-z0-9_\\ \\-]+)[\\s]*\\=([\\s\\S]*)");
-		} catch (Exception e) {
-			logger.severe("Unable to compile pattern", e);
-		}
-	}
+	private final HashMap<String, String> parameterValues = new HashMap<String, String>();
 
 	/**
 	 * Once the template call has been parsed and the template values have been
@@ -58,7 +51,7 @@ public class TemplateTag {
 	 * voodoo magic that happens here to first parse any embedded values, and
 	 * to apply default values when no template value has been set.
 	 */
-	private String applyParameter(ParserInput parserInput, String param) throws Exception {
+	private String applyParameter(ParserInput parserInput, String param) throws ParserException {
 		if (this.parameterValues == null) {
 			return param;
 		}
@@ -67,7 +60,7 @@ public class TemplateTag {
 		content = this.parseTemplateBody(parserInput, content);
 		String name = this.parseParamName(content);
 		String defaultValue = this.parseParamDefaultValue(parserInput, content);
-		String value = (String)this.parameterValues.get(name);
+		String value = this.parameterValues.get(name);
 		if (value == null && defaultValue == null) {
 			return param;
 		}
@@ -89,8 +82,10 @@ public class TemplateTag {
 				throw new Exception ("Invalid template text: " + raw);
 			}
 			String templateContent = raw.substring("{{".length(), raw.length() - "}}".length());
-			// parse for nested templates
+			// parse for nested templates, signatures, etc.
 			templateContent = JFlexParserUtil.parseFragment(parserInput, templateContent, mode);
+			// update the raw value to handle cases such as a signature in the template content
+			raw = "{{" + templateContent + "}}";
 			// check for magic word or parser function
 			String[] parserFunctionInfo = ParserFunctionUtil.parseParserFunctionInfo(templateContent);
 			if (MagicWordUtil.isMagicWord(templateContent) || parserFunctionInfo != null) {
@@ -146,14 +141,14 @@ public class TemplateTag {
 	 * Given template parameter content of the form "name" or "name|default",
 	 * return the default value if it exists.
 	 */
-	private String parseParamDefaultValue(ParserInput parserInput, String raw) throws Exception {
-		Vector tokens = this.tokenizeParams(raw);
+	private String parseParamDefaultValue(ParserInput parserInput, String raw) throws ParserException {
+		List<String> tokens = this.tokenizeParams(raw);
 		if (tokens.size() < 2) {
 			return null;
 		}
 		// table elements mess up default processing, so just return anything after
 		// the first parameter to avoid having to implement special table logic
-		String param1 = (String)tokens.elementAt(0);
+		String param1 = tokens.get(0);
 		String value = raw.substring(param1.length() + 1);
 		return JFlexParserUtil.parseFragment(parserInput, value, JFlexParser.MODE_PREPROCESS);
 	}
@@ -162,7 +157,7 @@ public class TemplateTag {
 	 * Given template parameter content of the form "name" or "name|default",
 	 * return the parameter name.
 	 */
-	private String parseParamName(String raw) throws Exception {
+	private String parseParamName(String raw) throws ParserException {
 		int pos = raw.indexOf('|');
 		String name = null;
 		if (pos != -1) {
@@ -173,7 +168,7 @@ public class TemplateTag {
 		name = name.trim();
 		if (StringUtils.isBlank(name)) {
 			// FIXME - no need for an exception
-			throw new Exception("No parameter name specified");
+			throw new ParserException("No parameter name specified");
 		}
 		return name;
 	}
@@ -183,7 +178,7 @@ public class TemplateTag {
 	 * and replace parameters with parameter values or defaults, processing any
 	 * embedded parameters or templates.
 	 */
-	private String parseTemplateBody(ParserInput parserInput, String content) throws Exception {
+	private String parseTemplateBody(ParserInput parserInput, String content) throws ParserException {
 		StringBuffer output = new StringBuffer();
 		int pos = 0;
 		while (pos < content.length()) {
@@ -208,7 +203,7 @@ public class TemplateTag {
 	 * Given a template call of the form "{{template|param|param}}", return
 	 * the template name.
 	 */
-	private String parseTemplateName(String raw) throws Exception {
+	private String parseTemplateName(String raw) throws ParserException {
 		String name = raw;
 		int pos = raw.indexOf('|');
 		if (pos != -1) {
@@ -217,12 +212,12 @@ public class TemplateTag {
 		name = Utilities.decodeTopicName(name.trim(), true);
 		if (StringUtils.isBlank(name)) {
 			// FIXME - no need for an exception
-			throw new Exception("No template name specified");
+			throw new ParserException("No template name specified");
 		}
 		if (name.startsWith(NamespaceHandler.NAMESPACE_SEPARATOR)) {
 			if (name.length() == 1) {
 				// FIXME - no need for an exception
-				throw new Exception("No template name specified");
+				throw new ParserException("No template name specified");
 			}
 		} else if (!name.startsWith(NamespaceHandler.NAMESPACE_TEMPLATE + NamespaceHandler.NAMESPACE_SEPARATOR)) {
 			name = NamespaceHandler.NAMESPACE_TEMPLATE + NamespaceHandler.NAMESPACE_SEPARATOR + StringUtils.capitalize(name);
@@ -234,24 +229,20 @@ public class TemplateTag {
 	 * Given a template call of the form "{{name|param=value|param=value}}"
 	 * parse the parameter names and values.
 	 */
-	private void parseTemplateParameterValues(ParserInput parserInput, String templateContent) throws Exception {
-		Vector tokens = this.tokenizeParams(templateContent);
+	private void parseTemplateParameterValues(ParserInput parserInput, String templateContent) throws ParserException {
+		List<String> tokens = this.tokenizeParams(templateContent);
 		if (tokens.isEmpty()) {
-			throw new Exception("No template name found in " + templateContent);
+			throw new ParserException("No template name found in " + templateContent);
 		}
 		int count = -1;
-		for (Iterator iterator = tokens.iterator(); iterator.hasNext();) {
-			String token = (String)iterator.next();
+		for (String token : tokens) {
 			count++;
 			if (count == 0) {
 				// first token is template name
 				continue;
 			}
 			String[] nameValue = this.tokenizeNameValue(token);
-			String name = nameValue[0];
-			if (name == null) {
-				name = Integer.toString(count);
-			}
+			String name = (StringUtils.isBlank(nameValue[0]) ? Integer.toString(count) : nameValue[0].trim());
 			String value = (nameValue[1] == null) ? null : nameValue[1].trim();
 			this.parameterValues.put(name, value);
 		}
@@ -261,7 +252,7 @@ public class TemplateTag {
 	 * Given a template call of the form "{{name|param|param}}" return the
 	 * parsed output.
 	 */
-	private String processTemplateContent(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String templateContent, String name) throws Exception {
+	private String processTemplateContent(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String templateContent, String name) throws ParserException {
 		if (templateTopic == null) {
 			return "[[" + name + "]]";
 		}
@@ -274,7 +265,7 @@ public class TemplateTag {
 	 * Given a template call of the form "{{:name}}" parse the template
 	 * inclusion.
 	 */
-	private String processTemplateInclusion(ParserInput parserInput, ParserOutput parserOutput, int mode, Topic templateTopic, String raw, String name) throws Exception {
+	private String processTemplateInclusion(ParserInput parserInput, ParserOutput parserOutput, int mode, Topic templateTopic, String raw, String name) throws ParserException {
 		if (templateTopic == null) {
 			return "[[" + name + "]]";
 		}
@@ -286,7 +277,7 @@ public class TemplateTag {
 	/**
 	 * Process template values, setting link and other metadata output values.
 	 */
-	private void processTemplateMetadata(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String raw, String name) throws Exception {
+	private void processTemplateMetadata(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String raw, String name) {
 		name = (templateTopic != null) ? templateTopic.getName() : name;
 		parserOutput.addLink(name);
 		parserOutput.addTemplate(name);
@@ -311,8 +302,8 @@ public class TemplateTag {
 	 * Parse a template string of the form "param1|param2|param3" into
 	 * tokens (param1, param2, and param3 in the example).
 	 */
-	private Vector tokenizeParams(String content) {
-		Vector tokens = new Vector();
+	private List<String> tokenizeParams(String content) {
+		List<String> tokens = new ArrayList<String>();
 		int pos = 0;
 		int endPos = -1;
 		String substring = "";
@@ -334,7 +325,7 @@ public class TemplateTag {
 				endPos = Utilities.findMatchingEndTag(content, pos, "{|", "|}");
 			} else if (content.charAt(pos) == '|') {
 				// new token
-				tokens.add(new String(value));
+				tokens.add(value);
 				value = "";
 				pos++;
 				continue;
@@ -348,7 +339,7 @@ public class TemplateTag {
 			}
 		}
 		// add the last one
-		tokens.add(new String(value));
+		tokens.add(value);
 		return tokens;
 	}
 }

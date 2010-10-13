@@ -18,16 +18,18 @@
  */
 package org.jamwiki.utils;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  */
-public class WikiLinkTest extends TestCase {
+public class WikiLinkTest {
 
 	/**
 	 *
 	 */
+	@Test
 	public void testConstructor() throws Throwable {
 		WikiLink wikiLink = new WikiLink();
 		assertNull("wikiLink.getQuery()", wikiLink.getQuery());
@@ -42,6 +44,7 @@ public class WikiLinkTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testSetArticle() throws Throwable {
 		WikiLink wikiLink = new WikiLink();
 		wikiLink.setArticle("testWikiLinkArticle");
@@ -51,6 +54,7 @@ public class WikiLinkTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testSetColon() throws Throwable {
 		WikiLink wikiLink = new WikiLink();
 		wikiLink.setColon(true);
@@ -60,6 +64,7 @@ public class WikiLinkTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testSetDestination() throws Throwable {
 		WikiLink wikiLink = new WikiLink();
 		wikiLink.setDestination("testWikiLinkDestination");
@@ -69,6 +74,7 @@ public class WikiLinkTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testSetNamespace() throws Throwable {
 		WikiLink wikiLink = new WikiLink();
 		wikiLink.setNamespace("testWikiLinkNamespace");
@@ -78,6 +84,7 @@ public class WikiLinkTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testSetQuery() throws Throwable {
 		WikiLink wikiLink = new WikiLink();
 		wikiLink.setQuery("testWikiLinkQuery");
@@ -87,6 +94,7 @@ public class WikiLinkTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testSetSection() throws Throwable {
 		WikiLink wikiLink = new WikiLink();
 		wikiLink.setSection("testWikiLinkSection");
@@ -96,6 +104,7 @@ public class WikiLinkTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testSetText() throws Throwable {
 		WikiLink wikiLink = new WikiLink();
 		wikiLink.setText("testWikiLinkText");

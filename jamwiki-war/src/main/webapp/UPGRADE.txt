@@ -26,9 +26,13 @@ To upgrade using this automated process follow these steps:
             is necessary only if the default file upload directory is being
             used.
         4.  (Optional) Any other files in the /WEB-INF/ directory that have
-            custom modifications. 
-  3.  (Optional) Back up all database data prior to upgrading. This step is
-      optional but highly recommended.
+            custom modifications.
+  3.  Back up all database data prior to upgrading. If you skip this step you
+      do so at your own risk - the upgrade process may modify the database
+      schema, and a failure can leave your wiki in an unusable state. User who
+      are not using an external database should back up all files in the wiki
+      system folder, which is specified by the Special:Admin#database
+      "File-system directory" property.
   4.  Remove the old JAMWiki installation by deleting the existing JAMWiki web
       application. For some web application servers you may also want to clear
       the application server's cache.
@@ -39,19 +43,19 @@ To upgrade using this automated process follow these steps:
   6.  Restore the files that were backed up in steps two and three to their
       previous locations under the /upload/, /WEB-INF/ and /WEB-INF/classes/
       directories, overwriting any new files.
-  7.  (Optional) If using an external database, make sure that the JDBC driver
-      is available in the web application server's classpath.
+  7.  If using an external database, make sure that the JDBC driver is
+      available in the web application server's classpath.
   8.  Verify that the web application server process has permisson to read and
       write all files in the new JAMWiki installation.
   9.  Restart the web application server and view any page on the Wiki. You
       will be redirected to the upgrade page and any required upgrade steps
       will be automatically performed.
-  10. (Optional) The upgrade process will automatically upgrade the StyleSheet
-      topic if modifications are required, and any customizations will be
-      overwritten. The previous version of the topic can easily be restored by
-      viewing the "History" tab for the topic (for example:
+  10. The upgrade process will automatically upgrade the StyleSheet topic if
+      modifications are required, and any customizations will be overwritten.
+      The previous version of the topic can easily be restored by viewing the
+      "History" tab for the StyleSheet topic (for example: 
       http://jamwiki.org/wiki/en/Special:History?topic=StyleSheet), selecting
-      the pre-upgrade version, and then editing and saving that version. 
+      the pre-upgrade version, and then editing and saving that version.
 
 If the upgrade fails see below for instructions to manually upgrade. If the
 problem persists please report it on http://jamwiki.org/wiki/en/Bug_Reports and
@@ -68,9 +72,217 @@ MANUAL UPGRADES
 Manual upgrades should only be performed if an error occurs while upgrading
 JAMWiki automatically.  When upgrading manually, you should perform all
 upgrade steps sequentially for each version that is being upgraded,  unless
-otherwise noted.  For example, if upgrading from version 0.5.0 to version
-0.5.3, you should apply the upgrade steps for 0.5.1, followed by 0.5.2,
-followed by 0.5.3.
+otherwise noted.  For example, if upgrading from version 0.6.0 to version
+0.6.3, you should apply the upgrade steps for 0.6.1, followed by 0.6.2,
+followed by 0.6.3.
+
+
+  JAMWiki 0.8.0
+  =============
+
+  NOTE: This version of JAMWiki requires Java 5 or later and database
+  drivers that support JDBC 3.0 or later.
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.8.0".
+  2. CSS styles have changed during this release.  An up-to-date version of
+     the default StyleSheet topic can be found in the
+     /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
+     can only be edited AFTER all other upgrade steps have been completed.
+  3. Update the database schema by executing the following SQL statements:
+       a) Update primary keys to auto increment.
+            MySql:
+              alter table jam_group modify column group_id INTEGER AUTO_INCREMENT;
+              alter table jam_group_members modify column id INTEGER AUTO_INCREMENT;
+              alter table jam_topic modify column topic_id INTEGER AUTO_INCREMENT;
+              alter table jam_topic_version modify column topic_version_id INTEGER AUTO_INCREMENT;
+              alter table jam_virtual_wiki modify column virtual_wiki_id INTEGER AUTO_INCREMENT;
+              alter table jam_file modify column file_id INTEGER AUTO_INCREMENT;
+              alter table jam_file_version modify column file_version_id INTEGER AUTO_INCREMENT;
+              alter table jam_wiki_user modify column wiki_user_id INTEGER AUTO_INCREMENT;
+            Postgres:
+              create sequence jam_group_pk_seq owned by jam_group.group_id;
+              alter table jam_group alter column group_id set default nextval('jam_group_pk_seq');
+              select setval('jam_group_pk_seq', max(group_id)) from jam_group;
+              create sequence jam_gmemb_pk_seq owned by jam_group_members.id;
+              alter table jam_group_members alter column id set default nextval('jam_gmemb_pk_seq');
+              select setval('jam_gmemb_pk_seq', max(id)) from jam_group_members;
+              create sequence jam_topic_pk_seq owned by jam_topic.topic_id;
+              alter table jam_topic alter column topic_id set default nextval('jam_topic_pk_seq');
+              select setval('jam_topic_pk_seq', max(topic_id)) from jam_topic;
+              create sequence jam_topic_ver_pk_seq owned by jam_topic_version.topic_version_id;
+              alter table jam_topic_version alter column topic_version_id set default nextval('jam_topic_ver_pk_seq');
+              select setval('jam_topic_ver_pk_seq', max(topic_version_id)) from jam_topic_version;
+              create sequence jam_vwiki_pk_seq owned by jam_virtual_wiki.virtual_wiki_id;
+              alter table jam_virtual_wiki alter column virtual_wiki_id set default nextval('jam_vwiki_pk_seq');
+              select setval('jam_vwiki_pk_seq', max(virtual_wiki_id)) from jam_virtual_wiki;
+              create sequence jam_file_pk_seq owned by jam_file.file_id;
+              alter table jam_file alter column file_id set default nextval('jam_file_pk_seq');
+              select setval('jam_file_pk_seq', max(file_id)) from jam_file;
+              create sequence jam_filev_pk_seq owned by jam_file_version.file_version_id;
+              alter table jam_file_version alter column file_version_id set default nextval('jam_filev_pk_seq');
+              select setval('jam_filev_pk_seq', max(file_version_id)) from jam_file_version;
+              create sequence jam_wuser_pk_seq owned by jam_wiki_user.wiki_user_id;
+              alter table jam_wiki_user alter column wiki_user_id set default nextval('jam_wuser_pk_seq');
+              select setval('jam_wuser_pk_seq', max(wiki_user_id)) from jam_wiki_user;
+       b) Create the jam_log table.
+            Asa:
+              CREATE TABLE jam_log (
+                log_date TIMESTAMP NOT NULL DEFAULT CURRENT TIMESTAMP,
+                virtual_wiki_id INTEGER NOT NULL,
+                wiki_user_id INTEGER NULL,
+                display_name VARCHAR(200) NOT NULL,
+                topic_id INTEGER NULL,
+                topic_version_id INTEGER NULL,
+                log_type INTEGER NOT NULL,
+                log_comment VARCHAR(200) NULL,
+                log_params VARCHAR(500) NULL,
+                CONSTRAINT jam_f_log_wuser FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_log_topic_ver FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version(topic_version_id),
+                CONSTRAINT jam_f_log_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id),
+                CONSTRAINT jam_f_log_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id)
+              )
+            MS SQL:
+              CREATE TABLE jam_log (
+                log_date DATETIME DEFAULT GETDATE() NOT NULL,
+                virtual_wiki_id INTEGER NOT NULL,
+                wiki_user_id INTEGER,
+                display_name VARCHAR(200) NOT NULL,
+                topic_id INTEGER,
+                topic_version_id INTEGER,
+                log_type INTEGER NOT NULL,
+                log_comment VARCHAR(200),
+                log_params VARCHAR(500),
+                CONSTRAINT jam_f_log_wuser FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_log_topic_ver FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version(topic_version_id),
+                CONSTRAINT jam_f_log_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id),
+                CONSTRAINT jam_f_log_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id)
+              )
+            Oracle:
+              CREATE TABLE jam_log (
+                log_date TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
+                virtual_wiki_id INTEGER NOT NULL,
+                wiki_user_id INTEGER,
+                display_name VARCHAR(200) NOT NULL,
+                topic_id INTEGER,
+                topic_version_id INTEGER,
+                log_type INTEGER NOT NULL,
+                log_comment VARCHAR(200),
+                log_params VARCHAR(500),
+                CONSTRAINT jam_f_log_wuser FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_log_topic_ver FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version(topic_version_id),
+                CONSTRAINT jam_f_log_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id),
+                CONSTRAINT jam_f_log_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id)
+              )
+            Other Databases:
+              CREATE TABLE jam_log (
+                log_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                virtual_wiki_id INTEGER NOT NULL,
+                wiki_user_id INTEGER,
+                display_name VARCHAR(200) NOT NULL,
+                topic_id INTEGER,
+                topic_version_id INTEGER,
+                log_type INTEGER NOT NULL,
+                log_comment VARCHAR(200),
+                log_params VARCHAR(500),
+                CONSTRAINT jam_f_log_wuser FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_log_topic_ver FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version(topic_version_id),
+                CONSTRAINT jam_f_log_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id),
+                CONSTRAINT jam_f_log_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id)
+              )
+       c) Add the wiki_user_display column to the jam_topic_version,
+          jam_recent_change and jam_file_version tables.
+            Oracle:
+              alter table jam_topic_version add (wiki_user_display VARCHAR(100));
+              alter table jam_file_version add (wiki_user_display VARCHAR(100));
+            MS SQL:
+              alter table jam_topic_version add wiki_user_display VARCHAR(100);
+              alter table jam_file_version add wiki_user_display VARCHAR(100);
+            Other Databases:
+              alter table jam_topic_version add column wiki_user_display VARCHAR(100);
+              alter table jam_file_version add column wiki_user_display VARCHAR(100);
+       d) Populate the new wiki_user_display columns in the jam_topic_version,
+          jam_recent_change and jam_file_version tables.
+              update jam_topic_version set wiki_user_display = wiki_user_ip_address;
+              update jam_file_version set wiki_user_display = wiki_user_ip_address;
+       e) Drop the unused wiki_user_ip_address column from the jam_topic_version,
+          jam_recent_change and jam_file_version tables.
+              alter table jam_topic_version drop column wiki_user_ip_address;
+              alter table jam_file_version drop column wiki_user_ip_address;
+       f) Add the version_params column to the jam_topic_version table.
+            Oracle:
+              alter table jam_topic_version add (version_params VARCHAR(500));
+            MS SQL:
+              alter table jam_topic_version add [version_params] VARCHAR(500);
+            Other Databases:
+              alter table jam_topic_version add column version_params VARCHAR(500);
+       g) Update the edit type for topic versions created for uploads:
+              update jam_topic_version set edit_type = 9
+                    where jam_topic_version.topic_version_id in (
+                      select jam_topic_version.topic_version_id
+                      from jam_topic_version, jam_file, jam_file_version
+                      where jam_topic_version.topic_id = jam_file.topic_id
+                      and jam_file.file_id = jam_file_version.file_id
+                      and extract(year from jam_topic_version.edit_date) = extract(year from jam_file_version.upload_date)
+                      and extract(month from jam_topic_version.edit_date) = extract(month from jam_file_version.upload_date)
+                      and extract(day from jam_topic_version.edit_date) = extract(day from jam_file_version.upload_date)
+                      and extract(hour from jam_topic_version.edit_date) = extract(hour from jam_file_version.upload_date)
+                      and extract(minute from jam_topic_version.edit_date) = extract(minute from jam_file_version.upload_date)
+                      and (abs(extract(second from jam_topic_version.edit_date) - extract(second from jam_file_version.upload_date)) < 3)
+                    );
+       h) Add the new ROLE_IMPORT:
+              INSERT into jam_role (role_name) values ('ROLE_IMPORT');
+       i) Assign ROLE_IMPORT to all users with ROLE_ADMIN:
+              INSERT into jam_authorities (authority, username)
+                   select 'ROLE_IMPORT', username
+                   from jam_authorities where authority = 'ROLE_ADMIN';
+       j) Drop the jam_recent_change table:
+              DROP TABLE jam_recent_change
+       k) Re-add the jam_recent_change table with the new schema:
+            Asa:
+              CREATE TABLE jam_recent_change (
+                topic_version_id INTEGER NULL,
+                previous_topic_version_id INTEGER NULL,
+                topic_id INTEGER NULL,
+                topic_name VARCHAR(200) NULL,
+                change_date TIMESTAMP NOT NULL DEFAULT CURRENT TIMESTAMP,
+                change_comment VARCHAR(200) NULL,
+                wiki_user_id INTEGER NULL,
+                display_name VARCHAR(200) NOT NULL,
+                edit_type INTEGER NULL,
+                log_type INTEGER NULL,
+                log_params VARCHAR(500) NULL,
+                virtual_wiki_id INTEGER NOT NULL,
+                virtual_wiki_name VARCHAR(100) NOT NULL,
+                characters_changed INTEGER NULL,
+                CONSTRAINT jam_f_rc_topic_ver FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version(topic_version_id),
+                CONSTRAINT jam_f_rc_p_topic_v FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id),
+                CONSTRAINT jam_f_rc_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id),
+                CONSTRAINT jam_f_rc_wuser FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_rc_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id)
+              )
+            Other Databases:
+              CREATE TABLE jam_recent_change (
+                topic_version_id INTEGER,
+                previous_topic_version_id INTEGER,
+                topic_id INTEGER,
+                topic_name VARCHAR(200),
+                change_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                change_comment VARCHAR(200),
+                wiki_user_id INTEGER,
+                display_name VARCHAR(200) NOT NULL,
+                edit_type INTEGER,
+                log_type INTEGER,
+                log_params VARCHAR(500),
+                virtual_wiki_id INTEGER NOT NULL,
+                virtual_wiki_name VARCHAR(100) NOT NULL,
+                characters_changed INTEGER,
+                CONSTRAINT jam_f_rc_topic_ver FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version(topic_version_id),
+                CONSTRAINT jam_f_rc_p_topic_v FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id),
+                CONSTRAINT jam_f_rc_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id),
+                CONSTRAINT jam_f_rc_wuser FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_rc_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id)
+              )
 
 
   JAMWiki 0.7.2
@@ -111,24 +323,24 @@ followed by 0.5.3.
        b) Populate the new characters_changed column for topic versions.
             Oracle:
               update jam_topic_version set characters_changed = (
-                    select (dbms_lob.getlength(current_version.version_content) - dbms_lob.getlength(previous_version.version_content)) 
-                    from jam_topic_version current_version 
-                    left outer join jam_topic_version previous_version 
-                    on current_version.previous_topic_version_id = previous_version.topic_version_id 
+                    select (dbms_lob.getlength(current_version.version_content) - dbms_lob.getlength(previous_version.version_content))
+                    from jam_topic_version current_version
+                    left outer join jam_topic_version previous_version
+                    on current_version.previous_topic_version_id = previous_version.topic_version_id
                     where jam_topic_version.topic_version_id = current_version.topic_version_id
               );
             MS SQL:
               update jam_topic_version
                     set characters_changed = (datalength(jam_topic_version.version_content) - datalength(previous_version.version_content))
-                    from jam_topic_version 
-                    left outer join jam_topic_version previous_version 
-                    on jam_topic_version.previous_topic_version_id = previous_version.topic_version_id 
+                    from jam_topic_version
+                    left outer join jam_topic_version previous_version
+                    on jam_topic_version.previous_topic_version_id = previous_version.topic_version_id
             Other Databases:
               update jam_topic_version set characters_changed = (
-                    select (char_length(current_version.version_content) - char_length(coalesce(previous_version.version_content, ''))) 
-                    from jam_topic_version current_version 
-                    left outer join jam_topic_version previous_version 
-                    on current_version.previous_topic_version_id = previous_version.topic_version_id 
+                    select (char_length(current_version.version_content) - char_length(coalesce(previous_version.version_content, '')))
+                    from jam_topic_version current_version
+                    left outer join jam_topic_version previous_version
+                    on current_version.previous_topic_version_id = previous_version.topic_version_id
                     where jam_topic_version.topic_version_id = current_version.topic_version_id
               );
        c) Populate the new characters_changed column for recent changes by

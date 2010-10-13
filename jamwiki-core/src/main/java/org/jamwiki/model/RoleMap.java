@@ -16,10 +16,9 @@
  */
 package org.jamwiki.model;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -32,7 +31,7 @@ public class RoleMap {
 	private static final WikiLogger logger = WikiLogger.getLogger(RoleMap.class.getName());
 	private Integer groupId = null;
 	private String groupName = null;
-	private Collection roleNames = null;
+	private List<String> roleNames = null;
 	private Integer userId = null;
 	private String userLogin = null;
 
@@ -75,7 +74,7 @@ public class RoleMap {
 	 */
 	public void addRole(String roleName) {
 		if (this.roleNames == null) {
-			this.roleNames = new Vector();
+			this.roleNames = new ArrayList<String>();
 		}
 		this.roleNames.add(roleName);
 	}
@@ -83,14 +82,14 @@ public class RoleMap {
 	/**
 	 *
 	 */
-	 public Collection getRoleNames() {
+	 public List<String> getRoleNames() {
 		return this.roleNames;
 	}
 
 	/**
 	 *
 	 */
-	public void setRoleNames(Collection roleNames) {
+	public void setRoleNames(List<String> roleNames) {
 		this.roleNames = roleNames;
 	}
 
@@ -126,14 +125,12 @@ public class RoleMap {
 	 * This method is simply a utility method to be used with JSTL for
 	 * determining if the current list of roles contains a specific role.
 	 */
-	 public HashMap getRoleNamesMap() {
-		HashMap results = new HashMap();
+	 public HashMap<String, String> getRoleNamesMap() {
+		HashMap<String, String> results = new HashMap<String, String>();
 		if (this.roleNames == null) {
 			return results;
 		}
-		Iterator roleNameIterator = this.roleNames.iterator();
-		while (roleNameIterator.hasNext()) {
-			String key = (String)roleNameIterator.next();
+		for (String key : this.roleNames) {
 			String value = this.getUserGroup() + "|" + key;
 			results.put(key, value);
 		}
@@ -145,18 +142,18 @@ public class RoleMap {
 	 * user and group id values for use with JSTL.
 	 */
 	public String getUserGroup() {
-		String result = "";
+		StringBuffer result = new StringBuffer();
 		if (this.userId != null) {
-			result += this.userId;
+			result.append(this.userId);
 		} else {
-			result += "0";
+			result.append(0);
 		}
-		result += "|";
+		result.append('|');
 		if (this.groupId != null) {
-			result += this.groupId;
+			result.append(this.groupId);
 		} else {
-			result += "0";
+			result.append(0);
 		}
-		return result;
+		return result.toString();
 	}
 }

@@ -18,26 +18,21 @@
  */
 package org.jamwiki.utils;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  */
-public class WikiCacheTest extends TestCase {
+public class WikiCacheTest {
 
 	/**
 	 *
 	 */
+	@Test
 	public void testKey() throws Throwable {
 		String result = WikiCache.key("testWikiCacheVirtualWiki", "testWikiCacheTopicName");
 		assertEquals("result", "testWikiCacheVirtualWiki/testWikiCacheTopicName", result);
-	}
-
-	/**
-	 *
-	 */
-	public void testRetrieveFromCache() throws Throwable {
-		// FIXME - implement this
 	}
 }
 

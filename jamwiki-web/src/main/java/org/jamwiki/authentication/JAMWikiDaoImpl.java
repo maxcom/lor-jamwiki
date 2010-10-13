@@ -48,7 +48,7 @@ public class JAMWikiDaoImpl implements UserDetailsService {
 		String encryptedPassword = null;
 		try {
 			encryptedPassword = WikiBase.getDataHandler().lookupWikiUserEncryptedPassword(username);
-		} catch (Exception e) {
+		} catch (org.jamwiki.DataAccessException e) {
 			throw new DataAccessResourceFailureException("Unable to retrieve authorities for user: " + username, e);
 		}
 		if (encryptedPassword == null) {
@@ -76,7 +76,7 @@ public class JAMWikiDaoImpl implements UserDetailsService {
 			// FIXME - log error for blank username?  RegisterServlet will trigger that.
 			try {
 				userAuthorities = WikiBase.getDataHandler().getRoleMapUser(username);
-			} catch (Exception e) {
+			} catch (org.jamwiki.DataAccessException e) {
 				throw new DataAccessResourceFailureException("Unable to retrieve authorities for user: " + username, e);
 			}
 		}

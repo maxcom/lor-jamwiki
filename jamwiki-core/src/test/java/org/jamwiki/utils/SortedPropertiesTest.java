@@ -19,16 +19,18 @@
 package org.jamwiki.utils;
 
 import java.util.Properties;
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  */
-public class SortedPropertiesTest extends TestCase {
+public class SortedPropertiesTest {
 
 	/**
 	 *
 	 */
+	@Test
 	public void testConstructor() throws Throwable {
 		Properties properties = new SortedProperties();
 		new SortedProperties(properties);
@@ -38,20 +40,9 @@ public class SortedPropertiesTest extends TestCase {
 	/**
 	 *
 	 */
-	public void testKeys() throws Throwable {
-		// FIXME - implement
-	}
-
-	/**
-	 *
-	 */
+	@Test(expected=NullPointerException.class)
 	public void testConstructorThrowsNullPointerException() throws Throwable {
-		try {
-			new SortedProperties(null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		new SortedProperties(null);
 	}
 }
 

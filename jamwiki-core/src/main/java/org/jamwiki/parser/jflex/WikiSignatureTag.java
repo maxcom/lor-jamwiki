@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.NamespaceHandler;
@@ -37,9 +38,7 @@ public class WikiSignatureTag {
 	/**
 	 *
 	 */
-	private String buildWikiSignature(ParserInput parserInput, ParserOutput parserOutput, int mode, boolean includeUser,
-			boolean includeDate) {
-		try {
+	private String buildWikiSignature(ParserInput parserInput, ParserOutput parserOutput, int mode, boolean includeUser, boolean includeDate) {
 			String signature = "";
 			if (includeUser) {
 				signature = this.retrieveUserSignature(parserInput);
@@ -47,7 +46,13 @@ public class WikiSignatureTag {
 				WikiLinkTag wikiLinkTag = new WikiLinkTag();
 				wikiLinkTag.parse(parserInput, parserOutput, mode, signature);
 				if (mode != JFlexParser.MODE_MINIMAL) {
-					signature = JFlexParserUtil.parseFragment(parserInput, signature, mode);
+					try {
+						signature = JFlexParserUtil.parseFragment(parserInput, signature, mode);
+					} catch (ParserException e) {
+						logger.severe("Failure while building wiki signature", e);
+						// FIXME - return empty or a failure indicator?
+						return "";
+					}
 				}
 			}
 			if (includeUser && includeDate) {
@@ -59,11 +64,6 @@ public class WikiSignatureTag {
 				signature += format.format(new java.util.Date());
 			}
 			return signature;
-		} catch (Exception e) {
-			logger.severe("Failure while building wiki signature", e);
-			// FIXME - return empty or a failure indicator?
-			return "";
-		}
 	}
 
 	/**
@@ -91,9 +91,9 @@ public class WikiSignatureTag {
 		if (user != null && !StringUtils.isBlank(user.getSignature())) {
 			return user.getSignature();
 		}
-		String login = parserInput.getUserIpAddress();
-		String email = parserInput.getUserIpAddress();
-		String displayName = parserInput.getUserIpAddress();
+		String login = parserInput.getUserDisplay();
+		String email = parserInput.getUserDisplay();
+		String displayName = parserInput.getUserDisplay();
 		String userId = "-1";
 		if (user != null && !StringUtils.isBlank(user.getUsername())) {
 			login = user.getUsername();

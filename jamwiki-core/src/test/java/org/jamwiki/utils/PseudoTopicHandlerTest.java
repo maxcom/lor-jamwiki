@@ -18,16 +18,18 @@
  */
 package org.jamwiki.utils;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  */
-public class PseudoTopicHandlerTest extends TestCase {
+public class PseudoTopicHandlerTest {
 
 	/**
 	 *
 	 */
+	@Test
 	public void testIsPseudoTopic() throws Throwable {
 		boolean result = PseudoTopicHandler.isPseudoTopic("testPseudoTopicHandlerPseudotopicName");
 		assertFalse("result", result);

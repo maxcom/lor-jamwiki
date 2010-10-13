@@ -35,7 +35,13 @@ function cancel() {
 
 <div class="contents">
 	<div class="message"><fmt:message key="error.caption" /></div>
-	<div class="message red"><fmt:message key="${messageObject.key}"><fmt:param value="${messageObject.params[0]}" /><fmt:param value="${messageObject.params[1]}" /></fmt:message></div>
+	<div class="message red">
+		<fmt:message key="${messageObject.key}">
+			<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
+			<fmt:param><c:if test="${messageObject.paramsLength >= 1}">${messageObject.params[0]}</c:if></fmt:param>
+			<fmt:param><c:if test="${messageObject.paramsLength >= 2}">${messageObject.params[1]}</c:if></fmt:param>
+		</fmt:message>
+	</div>
 	<form><input type="button" onClick="cancel();" value="<fmt:message key="common.back" />" /></form>
 </div>
 

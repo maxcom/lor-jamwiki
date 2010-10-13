@@ -17,6 +17,7 @@
 package org.jamwiki.parser;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
@@ -44,14 +45,14 @@ public class ParserTest extends TestCase {
 	/**
 	 *
 	 */
-	private String parse(String topicName, String raw) throws Exception {
+	private String parse(String topicName, String raw) throws ParserException {
 		// set dummy values for parser input
 		ParserInput parserInput = new ParserInput();
 		parserInput.setContext("/wiki");
 		parserInput.setLocale(LocaleUtils.toLocale("en_US"));
 		parserInput.setWikiUser(null);
 		parserInput.setTopicName(topicName);
-		parserInput.setUserIpAddress("0.0.0.0");
+		parserInput.setUserDisplay("0.0.0.0");
 		parserInput.setVirtualWiki("en");
 		parserInput.setAllowSectionEdit(true);
 		ParserOutput parserOutput = new ParserOutput();
@@ -61,7 +62,7 @@ public class ParserTest extends TestCase {
 	/**
 	 *
 	 */
-	private void executeParserTest(String fileName) throws Exception {
+	private void executeParserTest(String fileName) throws IOException, ParserException {
 		String parserResult = this.parserResult(fileName);
 		String expectedResult = this.expectedResult(fileName);
 		assertEquals("Testing file " + fileName,expectedResult, parserResult);
@@ -70,7 +71,7 @@ public class ParserTest extends TestCase {
 	/**
 	 *
 	 */
-	private String expectedResult(String fileName) throws Exception {
+	private String expectedResult(String fileName) throws IOException, ParserException {
 		String result = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_RESULTS_DIR, fileName);
 		return this.sanitize(result);
 	}
@@ -80,7 +81,7 @@ public class ParserTest extends TestCase {
 	 */
 	// TODO - handle failure cases better.
 	private boolean knownFailure(String fileName) {
-		ArrayList failures = new ArrayList();
+		ArrayList<String> failures = new ArrayList<String>();
 		failures.add("Heading5");
 		failures.add("HtmlCommentTest2");
 		failures.add("HtmlMismatchTest3");
@@ -122,7 +123,7 @@ public class ParserTest extends TestCase {
 	/**
 	 *
 	 */
-	private String parserResult(String fileName) throws Exception {
+	private String parserResult(String fileName) throws IOException, ParserException {
 		String raw = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_TOPICS_DIR, fileName);
 		String topicName = TestFileUtil.decodeTopicName(fileName);
 		return this.parse(topicName, raw);

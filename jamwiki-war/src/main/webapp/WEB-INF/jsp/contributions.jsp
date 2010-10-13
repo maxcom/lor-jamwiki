@@ -32,13 +32,13 @@
 <ul>
 
 <c:forEach items="${contributions}" var="change">
-<li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
+<li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.import}"> class="importchange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
 	(<jamwiki:link value="Special:Diff"><jamwiki:linkParam key="topic" value="${change.topicName}" /><jamwiki:linkParam key="version2"><c:out value="${change.previousTopicVersionId}" /></jamwiki:linkParam><jamwiki:linkParam key="version1" value="${change.topicVersionId}" /><fmt:message key="common.caption.diff" /></jamwiki:link>)
 	&#160;
 	(<jamwiki:link value="Special:History"><jamwiki:linkParam key="topic" value="${change.topicName}" /><fmt:message key="common.caption.history" /></jamwiki:link>)
 	&#160;
 	<%-- FIXME: do not hardcode date pattern --%>
-	<fmt:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" />
+	<fmt:formatDate value="${change.changeDate}" type="both" pattern="dd-MMM-yyyy HH:mm" />
 	&#160;.&#160;.&#160;
 	<%-- the "+" symbol could be added using a pattern attribute, but there does not seem to be a way to avoid having "+0" show up when that approach is used. --%>
 	(<c:if test="${change.charactersChanged > 0}">+</c:if><fmt:formatNumber value="${change.charactersChanged}" />)
@@ -48,7 +48,15 @@
 	<c:if test="${change.delete}"><c:out value="${change.topicName}" /></c:if>
 	</jamwiki:watchlist>
 	<c:if test="${!empty change.changeTypeNotification}">&#160;<b><c:out value="${change.changeTypeNotification}" /></b></c:if>
-	<c:if test="${!empty change.editComment}">&#160;(<i><c:out value="${change.editComment}" /></i>)</c:if>
+	<c:if test="${!empty change.changeWikiMessage}">
+		&#160;
+		<fmt:message key="${change.changeWikiMessage.key}">
+			<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
+			<fmt:param><c:if test="${change.changeWikiMessage.paramsLength >= 1}"><jamwiki:link value="${change.changeWikiMessage.params[0]}" text="${change.changeWikiMessage.params[0]}" /></c:if></fmt:param>
+			<fmt:param><c:if test="${change.changeWikiMessage.paramsLength >= 2}"><jamwiki:link value="${change.changeWikiMessage.params[1]}" text="${change.changeWikiMessage.params[1]}" /></c:if></fmt:param>
+		</fmt:message>
+	</c:if>
+	<c:if test="${!empty change.changeComment}">&#160;(<span class="edit-comment"><jamwiki:editComment comment="${change.changeComment}" topic="${change.topicName}" /></span>)</c:if>
 </li>
 </c:forEach>
 </ul>

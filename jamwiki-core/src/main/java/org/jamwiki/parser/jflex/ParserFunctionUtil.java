@@ -18,8 +18,10 @@ package org.jamwiki.parser.jflex;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.LinkUtil;
@@ -42,7 +44,7 @@ public class ParserFunctionUtil {
 	private static final String PARSER_FUNCTION_UPPER_CASE = "uc:";
 	private static final String PARSER_FUNCTION_UPPER_CASE_FIRST = "ucfirst:";
 	private static final String PARSER_FUNCTION_URL_ENCODE = "urlencode:";
-	private static Vector PARSER_FUNCTIONS = new Vector();
+	private static List<String> PARSER_FUNCTIONS = new ArrayList<String>();
 
 	static {
 		// parser functions
@@ -64,7 +66,7 @@ public class ParserFunctionUtil {
 	 * function then return the parser function name and argument.
 	 */
 	protected static String[] parseParserFunctionInfo(String name) {
-		int pos = name.indexOf(":");
+		int pos = name.indexOf(':');
 		if (pos == -1 || (pos + 2) > name.length()) {
 			return null;
 		}
@@ -81,7 +83,7 @@ public class ParserFunctionUtil {
 	 * function result.  See http://meta.wikimedia.org/wiki/Help:Magic_words for a
 	 * list of Mediawiki parser functions.
 	 */
-	protected static String processParserFunction(ParserInput parserInput, String parserFunction, String parserFunctionArguments) throws Exception {
+	protected static String processParserFunction(ParserInput parserInput, String parserFunction, String parserFunctionArguments) throws DataAccessException {
 		String[] parserFunctionArgumentArray = ParserFunctionUtil.parseParserFunctionArgumentArray(parserFunctionArguments);
 		if (parserFunction.equals(PARSER_FUNCTION_ANCHOR_ENCODE)) {
 			return Utilities.encodeAndEscapeTopicName(parserFunctionArgumentArray[0]);
@@ -116,7 +118,7 @@ public class ParserFunctionUtil {
 	/**
 	 * Parse the {{filepath}} parser function.
 	 */
-	private static String parseFilePath(ParserInput parserInput, String[] parserFunctionArgumentArray) throws Exception {
+	private static String parseFilePath(ParserInput parserInput, String[] parserFunctionArgumentArray) throws DataAccessException {
 		// pre-pend the image namespace to the file name
 		String filename = NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR + parserFunctionArgumentArray[0];
 		String result = LinkUtil.buildImageFileUrl(parserInput.getContext(), parserInput.getVirtualWiki(), filename);
@@ -134,7 +136,7 @@ public class ParserFunctionUtil {
 	/**
 	 * Parse the {{fileurl:}} parser function.
 	 */
-	private static String parseFileUrl(ParserInput parserInput, String[] parserFunctionArgumentArray) throws Exception {
+	private static String parseFileUrl(ParserInput parserInput, String[] parserFunctionArgumentArray) throws DataAccessException {
 		String result = LinkUtil.buildTopicUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserFunctionArgumentArray[0], false);
 		result = LinkUtil.normalize(Environment.getValue(Environment.PROP_SERVER_URL) + result);
 		if (parserFunctionArgumentArray.length > 1 && !StringUtils.isBlank(parserFunctionArgumentArray[1])) {
@@ -146,7 +148,7 @@ public class ParserFunctionUtil {
 	/**
 	 * Parse the {{localurl:}} parser function.
 	 */
-	private static String parseLocalUrl(ParserInput parserInput, String[] parserFunctionArgumentArray) throws Exception {
+	private static String parseLocalUrl(ParserInput parserInput, String[] parserFunctionArgumentArray) throws DataAccessException {
 		String result = LinkUtil.buildTopicUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserFunctionArgumentArray[0], false);
 		if (parserFunctionArgumentArray.length > 1 && !StringUtils.isBlank(parserFunctionArgumentArray[1])) {
 			result += "?" + parserFunctionArgumentArray[1];
@@ -157,28 +159,28 @@ public class ParserFunctionUtil {
 	/**
 	 * Parse the {{lc:}} parser function.
 	 */
-	private static String parseLowerCase(ParserInput parserInput, String[] parserFunctionArgumentArray) throws Exception {
+	private static String parseLowerCase(ParserInput parserInput, String[] parserFunctionArgumentArray) {
 		return StringUtils.lowerCase(parserFunctionArgumentArray[0]);
 	}
 
 	/**
 	 * Parse the {{lcfirst:}} parser function.
 	 */
-	private static String parseLowerCaseFirst(ParserInput parserInput, String[] parserFunctionArgumentArray) throws Exception {
+	private static String parseLowerCaseFirst(ParserInput parserInput, String[] parserFunctionArgumentArray) {
 		return StringUtils.uncapitalize(parserFunctionArgumentArray[0]);
 	}
 
 	/**
 	 * Parse the {{uc:}} parser function.
 	 */
-	private static String parseUpperCase(ParserInput parserInput, String[] parserFunctionArgumentArray) throws Exception {
+	private static String parseUpperCase(ParserInput parserInput, String[] parserFunctionArgumentArray) {
 		return StringUtils.upperCase(parserFunctionArgumentArray[0]);
 	}
 
 	/**
 	 * Parse the {{ucfirst:}} parser function.
 	 */
-	private static String parseUpperCaseFirst(ParserInput parserInput, String[] parserFunctionArgumentArray) throws Exception {
+	private static String parseUpperCaseFirst(ParserInput parserInput, String[] parserFunctionArgumentArray) {
 		return StringUtils.capitalize(parserFunctionArgumentArray[0]);
 	}
 

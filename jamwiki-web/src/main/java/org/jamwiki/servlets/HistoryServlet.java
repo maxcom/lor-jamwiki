@@ -17,13 +17,14 @@
 package org.jamwiki.servlets;
 
 import java.text.DateFormat;
-import java.util.Collection;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.utils.Pagination;
@@ -65,9 +66,9 @@ public class HistoryServlet extends JAMWikiServlet {
 		pageInfo.setTopicName(topicName);
 		pageInfo.setPageTitle(new WikiMessage("history.title", topicName));
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		Collection changes = WikiBase.getDataHandler().getRecentChanges(virtualWiki, topicName, pagination, true);
+		List<RecentChange> changes = WikiBase.getDataHandler().getTopicHistory(virtualWiki, topicName, pagination, true);
 		next.addObject("changes", changes);
-		next.addObject("numChanges", new Integer(changes.size()));
+		next.addObject("numChanges", changes.size());
 	}
 
 	/**
@@ -90,6 +91,6 @@ public class HistoryServlet extends JAMWikiServlet {
 		topic.setTopicContent(topicVersion.getVersionContent());
 		String versionDate = DateFormat.getDateTimeInstance().format(topicVersion.getEditDate());
 		WikiMessage pageTitle = new WikiMessage("topic.title", topicName + " @" + versionDate);
-		ServletUtil.viewTopic(request, next, pageInfo, pageTitle, topic, false);
+		ServletUtil.viewTopic(request, next, pageInfo, pageTitle, topic, false, false);
 	}
 }

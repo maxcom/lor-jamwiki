@@ -98,8 +98,8 @@ public class TranslationServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private TreeSet retrieveTranslationCodes() throws Exception {
-		TreeSet codes = new TreeSet();
+	private TreeSet<String> retrieveTranslationCodes() throws Exception {
+		TreeSet<String> codes = new TreeSet<String>();
 		File propertyRoot = Utilities.getClassLoaderRoot();
 		File[] files = propertyRoot.listFiles();
 		File file;
@@ -169,7 +169,7 @@ public class TranslationServlet extends JAMWikiServlet {
 				Map tmp = Utilities.intersect(translations, Environment.loadProperties("ApplicationResources.properties"));
 				translations = new SortedProperties();
 				translations.putAll(tmp);
-				next.addObject("hideTranslated", new Boolean(true));
+				next.addObject("hideTranslated", true);
 			}
 		}
 		pageInfo.setContentJsp(JSP_ADMIN_TRANSLATION);
@@ -202,6 +202,6 @@ public class TranslationServlet extends JAMWikiServlet {
 		topic.setTopicType(Topic.TYPE_SYSTEM_FILE);
 		WikiUser user = ServletUtil.currentWikiUser();
 		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), null, contents, charactersChanged);
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
 	}
 }

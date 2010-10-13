@@ -17,11 +17,14 @@
 package org.jamwiki.authentication;
 
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.security.ConfigAttribute;
 import org.springframework.security.ConfigAttributeDefinition;
-import org.springframework.security.intercept.web.FilterInvocationDefinitionSourceEditor;
 import org.springframework.security.intercept.web.DefaultFilterInvocationDefinitionSource;
+import org.springframework.security.intercept.web.RequestKey;
+import org.springframework.security.util.UrlMatcher;
+import org.springframework.security.util.AntUrlPathMatcher;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -32,7 +35,8 @@ import org.jamwiki.utils.WikiLogger;
 public class JAMWikiErrorMessageProvider {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiErrorMessageProvider.class.getName());
-	private String urlPatterns;
+	private DefaultFilterInvocationDefinitionSource defaultFilterInvocationDefinitionSource = null;
+	private LinkedHashMap<String, String> urlPatterns;
 
 	/**
 	 *
@@ -44,7 +48,7 @@ public class JAMWikiErrorMessageProvider {
 	/**
 	 *
 	 */
-	public String getUrlPatterns() {
+	public LinkedHashMap<String, String> getUrlPatterns() {
 		return this.urlPatterns;
 	}
 
@@ -56,10 +60,16 @@ public class JAMWikiErrorMessageProvider {
 		if (uri == null) {
 			return null;
 		}
-		FilterInvocationDefinitionSourceEditor editor = new FilterInvocationDefinitionSourceEditor();
-		editor.setAsText(this.getUrlPatterns());
-		DefaultFilterInvocationDefinitionSource map = (DefaultFilterInvocationDefinitionSource)editor.getValue();
-		return map.lookupAttributes(uri, null);
+		if (this.defaultFilterInvocationDefinitionSource == null) {
+			UrlMatcher matcher = new AntUrlPathMatcher();
+			LinkedHashMap<RequestKey, ConfigAttributeDefinition> requestMap = new LinkedHashMap<RequestKey, ConfigAttributeDefinition>();
+			for (String key : this.getUrlPatterns().keySet()) {
+				String value = this.getUrlPatterns().get(key);
+				requestMap.put(new RequestKey(key), new ConfigAttributeDefinition(value));
+			}
+			this.defaultFilterInvocationDefinitionSource = new DefaultFilterInvocationDefinitionSource(matcher, requestMap);
+		}
+		return this.defaultFilterInvocationDefinitionSource.lookupAttributes(uri, null);
 	}
 
 	/**
@@ -80,7 +90,7 @@ public class JAMWikiErrorMessageProvider {
 	/**
 	 *
 	 */
-	public void setUrlPatterns(String urlPatterns) {
+	public void setUrlPatterns(LinkedHashMap<String, String> urlPatterns) {
 		this.urlPatterns = urlPatterns;
 	}
 }

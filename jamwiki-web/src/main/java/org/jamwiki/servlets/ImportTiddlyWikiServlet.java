@@ -31,6 +31,7 @@ import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.TiddlyWikiParser;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -110,9 +111,8 @@ public class ImportTiddlyWikiServlet extends JAMWikiServlet {
 	 */
 	private File saveFileItem(FileItem item) throws Exception {
 		// upload user file to the server
-		String subdirectory = "tmp";
-		File directory = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), subdirectory);
-		if (!directory.exists() && !directory.mkdirs()) {
+		File directory = WikiUtil.getTempDirectory();
+		if (!directory.exists()) {
 			throw new WikiException(new WikiMessage("upload.error.directorycreate",  directory.getAbsolutePath()));
 		}
 		// use current timestamp as unique file name

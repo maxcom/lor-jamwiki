@@ -66,10 +66,10 @@ public class InterWikiHandler {
 		if (pattern == null) {
 			return namespace + NamespaceHandler.NAMESPACE_SEPARATOR + value;
 		}
+		Object[] objects = {Utilities.encodeAndEscapeTopicName(value)};
 		try {
-			Object[] objects = {Utilities.encodeAndEscapeTopicName(value)};
 			return MessageFormat.format(pattern, objects);
-		} catch (Exception e) {
+		} catch (IllegalArgumentException e) {
 			logger.warning("Unable to format " + pattern + " with value " + value, e);
 			return namespace + NamespaceHandler.NAMESPACE_SEPARATOR + value;
 		}

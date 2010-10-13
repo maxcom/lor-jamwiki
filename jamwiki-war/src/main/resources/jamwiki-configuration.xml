@@ -59,10 +59,6 @@
 		<class>org.jamwiki.db.HSqlDataHandler</class>
 	</data-handler>
 	<data-handler>
-		<name>mssql</name>
-		<class>org.jamwiki.db.MSSqlDataHandler</class>
-	</data-handler>
-	<data-handler>
 		<name>mysql</name>
 		<class>org.jamwiki.db.MySqlDataHandler</class>
 	</data-handler>
@@ -77,6 +73,7 @@
 	<data-handler>
 		<name>asa</name>
 		<class>org.jamwiki.db.SybaseASADataHandler</class>
+		<state>experimental</state>
 	</data-handler>
 	<data-handler>
 		<name>db2</name>
@@ -86,6 +83,11 @@
 	<data-handler>
 		<name>db2/400</name>
 		<class>org.jamwiki.db.DB2400DataHandler</class>
+		<state>experimental</state>
+	</data-handler>
+	<data-handler>
+		<name>mssql</name>
+		<class>org.jamwiki.db.MSSqlDataHandler</class>
 		<state>experimental</state>
 	</data-handler>
 </data-handlers>
@@ -262,6 +264,12 @@
 	</pseudotopic>
 	<pseudotopic>
 		<name>Special:Logout</name>
+	</pseudotopic>
+	<pseudotopic>
+		<name>Special:Log</name>
+	</pseudotopic>
+	<pseudotopic>
+		<name>Special:Logs</name>
 	</pseudotopic>
 	<pseudotopic>
 		<name>Special:Maintenance</name>

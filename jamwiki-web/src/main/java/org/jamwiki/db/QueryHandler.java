@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Category;
+import org.jamwiki.model.LogItem;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
@@ -50,6 +51,15 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	boolean authenticateUser(String login, String encryptedPassword, Connection conn) throws SQLException;
+
+	/**
+	 * Some databases support automatically incrementing primary key values without the
+	 * need to explicitly specify a value, thus improving performance.  This method provides
+	 * a way for the a query handler to specify whether or not auto-incrementing is supported.
+	 *
+	 * @return <code>true</code> if the query handler supports auto-incrementing primary keys.
+	 */
+	boolean autoIncrementPrimaryKeys();
 
 	/**
 	 * Returns the simplest possible query that can be used to validate
@@ -142,6 +152,26 @@ public interface QueryHandler {
 	void dropTables(Connection conn);
 
 	/**
+	 * This method should be called only during upgrades and provides the capability
+	 * to execute a SQL query from a QueryHandler-specific property file.
+	 *
+	 * @param prop The name of the SQL property file value to execute.
+	 * @param conn The SQL connection to use when executing the SQL.
+	 * @throws SQLException Thrown if any error occurs during execution.
+	 */
+	void executeUpgradeQuery(String prop, Connection conn) throws SQLException;
+
+	/**
+	 * This method should be called only during upgrades and provides the capability
+	 * to execute update SQL from a QueryHandler-specific property file.
+	 *
+	 * @param prop The name of the SQL property file value to execute.
+	 * @param conn The SQL connection to use when executing the SQL.
+	 * @throws SQLException Thrown if any error occurs during execution.
+	 */
+	void executeUpgradeUpdate(String prop, Connection conn) throws SQLException;
+
+	/**
 	 * Return a simple query, that if successfully run indicates that JAMWiki
 	 * tables have been initialized in the database.
 	 *
@@ -193,6 +223,22 @@ public interface QueryHandler {
 	WikiResultSet getCategories(int virtualWikiId, Pagination pagination) throws SQLException;
 
 	/**
+	 * Retrieve a WikiResultSet containing all recent log items for a specific virtual wiki.
+	 *
+	 * @param virtualWikiId The id of the virtual wiki for which log items
+	 *  are being retrieved.
+	 * @param logType Set to <code>-1</code> if all log items should be returned,
+	 *  otherwise set the log type for items to retrieve.
+	 * @param pagination A Pagination object that specifies the number of results
+	 *  and starting result offset for the result set to be retrieved.
+	 * @param descending If <code>true</code> then results are sorted newest to
+	 *  oldest.
+	 * @return A WikiResultSet containing log items for a particular virtual wiki.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	public WikiResultSet getLogItems(int virtualWikiId, int logType, Pagination pagination, boolean descending) throws SQLException;
+
+	/**
 	 * Retrieve a WikiResultSet containing all recent changes made to the wiki for a
 	 * specific virtual wiki.
 	 *
@@ -207,22 +253,6 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	WikiResultSet getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws SQLException;
-
-	/**
-	 * Retrieve a WikiResultSet containing all recent changes made to the wiki for a
-	 * specific topic.
-	 *
-	 * @param topicId The id of the topic for which recent changes are being
-	 *  retrieved.
-	 * @param pagination A Pagination object that specifies the number of results
-	 *  and starting result offset for the result set to be retrieved.
-	 * @param descending If <code>true</code> then results are sorted newest to
-	 *  oldest.
-	 * @return A WikiResultSet containing all recent changes for a particular virtual
-	 *  wiki.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws SQLException;
 
 	/**
 	 * Retrieve a WikiResultSet of user ids, group ids and role names for all
@@ -292,6 +322,20 @@ public interface QueryHandler {
 	WikiResultSet getRoles() throws SQLException;
 
 	/**
+	 * Retrieve a WikiResultSet containing all history for a specific topic.
+	 *
+	 * @param topicId The id of the topic for which recent changes are being
+	 *  retrieved.
+	 * @param pagination A Pagination object that specifies the number of results
+	 *  and starting result offset for the result set to be retrieved.
+	 * @param descending If <code>true</code> then results are sorted newest to
+	 *  oldest.
+	 * @return A WikiResultSet containing all history for a particular topic.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	WikiResultSet getTopicHistory(int topicId, Pagination pagination, boolean descending) throws SQLException;
+
+	/**
 	 * Retrieve a WikiResultSet containing the topic names of all admin-only
 	 * topics for the virtual wiki.
 	 *
@@ -311,8 +355,7 @@ public interface QueryHandler {
 	 *
 	 * @param virtualWiki The name of the virtual wiki for which user contributions
 	 *  are being retrieved.
-	 * @param userString The login of the user for whom changes are being retrieved; or
-	 *  for anonymous users, the IP address of the user.
+	 * @param login The login of the user for whom changes are being retrieved.
 	 * @param pagination A Pagination object that specifies the number of results
 	 *  and starting result offset for the result set to be retrieved.
 	 * @param descending If <code>true</code> then results are sorted newest to
@@ -320,7 +363,25 @@ public interface QueryHandler {
 	 * @return A WikiResultSet containing all recent changes made by a particular user.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	WikiResultSet getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws SQLException;
+	WikiResultSet getUserContributionsByLogin(String virtualWiki, String login, Pagination pagination, boolean descending) throws SQLException;
+
+	/**
+	 * Retrieve a WikiResultSet containing all recent changes made to the wiki by
+	 * searching for matches against the user display field.  This method is
+	 * typically used to retrieve contributions made by anonymous users.
+	 *
+	 * @param virtualWiki The name of the virtual wiki for which user contributions
+	 *  are being retrieved.
+	 * @param userDisplay The display name of the user, typically the IP address,
+	 *  for whom changes are being retrieved.
+	 * @param pagination A Pagination object that specifies the number of results
+	 *  and starting result offset for the result set to be retrieved.
+	 * @param descending If <code>true</code> then results are sorted newest to
+	 *  oldest.
+	 * @return A WikiResultSet containing all recent changes made by a particular user.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	WikiResultSet getUserContributionsByUserDisplay(String virtualWiki, String userDisplay, Pagination pagination, boolean descending) throws SQLException;
 
 	/**
 	 * Retrieve a WikiResultSet containing all virtual wiki information for all
@@ -390,14 +451,24 @@ public interface QueryHandler {
 	/**
 	 * Add a user to a group.
 	 *
-	 * @param groupMemberId A unique ID for the group membership record.
 	 * @param username The username for the user being added to the group.
 	 * @param groupId The group ID for the group.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	void insertGroupMember(int groupMemberId, String username, int groupId, Connection conn) throws SQLException;
+	void insertGroupMember(String username, int groupId, Connection conn) throws SQLException;
+
+	/**
+	 * Add a new log item record to the database.
+	 *
+	 * @param logItem The LogItem record that is to be added to the database.
+	 * @param virtualWikiId The virtual wiki id for the record that is being added.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	void insertLogItem(LogItem logItem, int virtualWikiId, Connection conn) throws SQLException;
 
 	/**
 	 * Add a new recent change record to the database.
@@ -692,86 +763,16 @@ public interface QueryHandler {
 	WikiResultSet lookupWikiUsers(Pagination pagination) throws SQLException;
 
 	/**
-	 * Retrieve the next available group member id from the group members table.
+	 * Refresh the log entries by rebuilding the data based on topic versions,
+	 * file uploads, and user information.
 	 *
+	 * @param virtualWikiId The virtual wiki id for which log items are being
+	 *  reloaded.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
-	 * @return The next available group member id from the group members table.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	int nextGroupMemberId(Connection conn) throws SQLException;
-
-	/**
-	 * Retrieve the next available topic id from the topic table.
-	 *
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @return The next available topic id from the topic table.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	int nextTopicId(Connection conn) throws SQLException;
-
-	/**
-	 * Retrieve the next available topic version id from the topic version table.
-	 *
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @return The next available topic version id from the topic version table.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	int nextTopicVersionId(Connection conn) throws SQLException;
-
-	/**
-	 * Retrieve the next available virtual wiki id from the virtual wiki table.
-	 *
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @return The next available virtual wiki id from the virtual wiki table.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	int nextVirtualWikiId(Connection conn) throws SQLException;
-
-	/**
-	 * Retrieve the next available wiki file id from the wiki file table.
-	 *
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @return The next available wiki file id from the wiki file table.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	int nextWikiFileId(Connection conn) throws SQLException;
-
-	/**
-	 * Retrieve the next available wiki file version id from the wiki file
-	 * version table.
-	 *
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @return The next available wiki file version id from the wiki file
-	 *  version table.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	int nextWikiFileVersionId(Connection conn) throws SQLException;
-
-	/**
-	 * Retrieve the next available wiki group id from the wiki group table.
-	 *
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @return The next available wiki group id from the wiki group table.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	int nextWikiGroupId(Connection conn) throws SQLException;
-
-	/**
-	 * Retrieve the next available wiki user id from the wiki user table.
-	 *
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @return The next available wiki user id from the wiki user table.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	int nextWikiUserId(Connection conn) throws SQLException;
+	void reloadLogItems(int virtualWikiId, Connection conn) throws SQLException;
 
 	/**
 	 * Refresh the recent changes content by reloading the recent changes table.

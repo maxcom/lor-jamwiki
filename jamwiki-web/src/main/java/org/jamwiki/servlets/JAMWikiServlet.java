@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
@@ -82,10 +83,10 @@ public abstract class JAMWikiServlet extends AbstractController {
 		String bottomArea = ServletUtil.cachedContent(request.getContextPath(), request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_BOTTOM_AREA, true);
 		next.addObject("bottomArea", bottomArea);
 		next.addObject(WikiUtil.PARAMETER_VIRTUAL_WIKI, virtualWiki.getName());
-		Integer cssRevision = new Integer(0);
+		int cssRevision = 0;
 		try {
 			cssRevision = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, false, null).getCurrentVersionId();
-		} catch (Exception e) {}
+		} catch (DataAccessException e) {}
 		next.addObject("cssRevision", cssRevision);
 	}
 
@@ -94,28 +95,28 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * tab menu links for the WikiPageInfo object.
 	 */
 	private LinkedHashMap buildTabMenu(HttpServletRequest request, WikiPageInfo pageInfo) {
-		LinkedHashMap links = new LinkedHashMap();
+		LinkedHashMap<String, WikiMessage> links = new LinkedHashMap<String, WikiMessage>();
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
 		String pageName = pageInfo.getTopicName();
 		String virtualWiki = pageInfo.getVirtualWikiName();
-		try {
-			if (pageInfo.getAdmin()) {
-				if (userDetails.hasRole(Role.ROLE_SYSADMIN)) {
-					links.put("Special:Admin", new WikiMessage("tab.admin.configuration"));
-					links.put("Special:Maintenance", new WikiMessage("tab.admin.maintenance"));
-					links.put("Special:Roles", new WikiMessage("tab.admin.roles"));
-				}
-				if (userDetails.hasRole(Role.ROLE_TRANSLATE)) {
-					links.put("Special:Translation", new WikiMessage("tab.admin.translations"));
-				}
-			} else if (pageInfo.getSpecial()) {
-				// append query params for pages such as Special:Contributions that need it
-				String specialUrl = pageName;
-				if (!StringUtils.isBlank(request.getQueryString())) {
-					specialUrl = pageName + "?" + request.getQueryString();
-				}
-				links.put(specialUrl, new WikiMessage("tab.common.special"));
-			} else {
+		if (pageInfo.getAdmin()) {
+			if (userDetails.hasRole(Role.ROLE_SYSADMIN)) {
+				links.put("Special:Admin", new WikiMessage("tab.admin.configuration"));
+				links.put("Special:Maintenance", new WikiMessage("tab.admin.maintenance"));
+				links.put("Special:Roles", new WikiMessage("tab.admin.roles"));
+			}
+			if (userDetails.hasRole(Role.ROLE_TRANSLATE)) {
+				links.put("Special:Translation", new WikiMessage("tab.admin.translations"));
+			}
+		} else if (pageInfo.getSpecial()) {
+			// append query params for pages such as Special:Contributions that need it
+			String specialUrl = pageName;
+			if (!StringUtils.isBlank(request.getQueryString())) {
+				specialUrl = pageName + "?" + request.getQueryString();
+			}
+			links.put(specialUrl, new WikiMessage("tab.common.special"));
+		} else {
+			try {
 				String article = WikiUtil.extractTopicLink(pageName);
 				String comments = WikiUtil.extractCommentsLink(pageName);
 				links.put(article, new WikiMessage("tab.common.article"));
@@ -135,7 +136,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 				}
 				if (!userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 					Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
-					boolean watched = (watchlist.containsTopic(pageName));
+					boolean watched = watchlist.containsTopic(pageName);
 					String watchlistLabel = (watched) ? "tab.common.unwatch" : "tab.common.watch";
 					String watchlistLink = "Special:Watchlist?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 					links.put(watchlistLink, new WikiMessage(watchlistLabel));
@@ -153,9 +154,9 @@ public abstract class JAMWikiServlet extends AbstractController {
 				}
 				String printLink = "Special:Print?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 				links.put(printLink, new WikiMessage("tab.common.print"));
+			} catch (WikiException e) {
+				logger.severe("Unable to build tabbed menu links", e);
 			}
-		} catch (Exception e) {
-			logger.severe("Unable to build tabbed menu links", e);
 		}
 		return links;
 	}
@@ -165,7 +166,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * user menu links for the WikiPageInfo object.
 	 */
 	private LinkedHashMap buildUserMenu(WikiPageInfo pageInfo) {
-		LinkedHashMap links = new LinkedHashMap();
+		LinkedHashMap<String, WikiMessage> links = new LinkedHashMap<String, WikiMessage>();
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
 		if (userDetails.hasRole(Role.ROLE_ANONYMOUS) && !userDetails.hasRole(Role.ROLE_EMBEDDED)) {
 			// include the current page in the login link 
@@ -252,8 +253,32 @@ public abstract class JAMWikiServlet extends AbstractController {
 		if (execution > JAMWikiServlet.SLOW_PAGE_LIMIT) {
 			logger.warning("Slow page loading time: " + request.getRequestURI() + " (" + (execution / 1000.000) + " s.)");
 		}
-		logger.info("Loaded page " + request.getRequestURI() + " (" + (execution / 1000.000) + " s.)");
+		if (logger.isInfoEnabled()) {
+			String url = request.getRequestURI() + (!StringUtils.isEmpty(request.getQueryString()) ? "?" + request.getQueryString() : "");
+			logger.info("Loaded page " + url + " (" + (execution / 1000.000) + " s.)");
+		}
 		return next;
+	}
+
+	/**
+	 * Determine if a topic contains a spam pattern, and if so set the appropriate page parameters
+	 * including a "hasSpam" flag in the ModelAndView object.
+	 *
+	 * @param request The servlet request object.
+	 * @param next The current ModelAndView object.
+	 * @param topicName The name of the topic being examined for spam.
+	 * @param contents The contents of the topic being examined for spam.
+	 * @return <code>true</code> if the topic in question matches any spam pattern.
+	 */
+	protected boolean handleSpam(HttpServletRequest request, ModelAndView next, String topicName, String contents) throws DataAccessException {
+		String result = ServletUtil.checkForSpam(request, topicName, contents);
+		if (result == null) {
+			return false;
+		}
+		WikiMessage spam = new WikiMessage("edit.exception.spam", result);
+		next.addObject("spam", spam);
+		next.addObject("hasSpam", "true");
+		return true;
 	}
 
 	/**

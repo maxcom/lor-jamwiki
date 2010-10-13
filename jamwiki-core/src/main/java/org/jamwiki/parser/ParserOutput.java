@@ -17,8 +17,9 @@
 package org.jamwiki.parser;
 
 import java.io.Serializable;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * This class represents the output from the JAMWiki parser.  It holds parsed
@@ -27,11 +28,11 @@ import java.util.LinkedHashMap;
 public class ParserOutput implements Serializable {
 
 	private boolean cacheable = true;
-	private final LinkedHashMap categories = new LinkedHashMap();
-	private final Vector links = new Vector();
+	private final LinkedHashMap<String, String> categories = new LinkedHashMap<String, String>();
+	private final List<String> links = new ArrayList<String>();
 	private String redirect = null;
 	private String sectionName = null;
-	private final Vector templates = new Vector();
+	private final List<String> templates = new ArrayList<String>();
 
 	/**
 	 *
@@ -131,18 +132,18 @@ public class ParserOutput implements Serializable {
 	 * @return A mapping of categories and their associated sort keys (if any)
 	 *  for all categories that are associated with the document being parsed.
 	 */
-	public LinkedHashMap getCategories() {
+	public LinkedHashMap<String, String> getCategories() {
 		return this.categories;
 	}
 
 	/**
-	 * For the document being parsed, return the current collection of topic
+	 * For the document being parsed, return the current list of topic
 	 * names for all topics that are linked to from the current document.
 	 *
-	 * @return A collection of all topic names that are linked to from the
+	 * @return A list of all topic names that are linked to from the
 	 *  current document.
 	 */
-	public Vector getLinks() {
+	public List<String> getLinks() {
 		return this.links;
 	}
 
@@ -173,14 +174,14 @@ public class ParserOutput implements Serializable {
 	}
 
 	/**
-	 * For the document being parsed, return the current collection of
+	 * For the document being parsed, return the current list of
 	 * templates names for all templates that are included in the current
 	 * document.
 	 *
-	 * @return A collection of all template names that are included in the
+	 * @return A list of all template names that are included in the
 	 *  current document.
 	 */
-	public Vector getTemplates() {
+	public List<String> getTemplates() {
 		return this.templates;
 	}
 

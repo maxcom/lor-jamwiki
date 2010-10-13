@@ -16,6 +16,7 @@
  */
 package org.jamwiki.utils;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -83,12 +84,12 @@ public class Encryption {
 			} catch (NoSuchAlgorithmException e) {
 				throw new UnsupportedOperationException("JDK does not support the SHA-1 or SHA-512 encryption algorithms");
 			}
+			// save the algorithm so that if the user upgrades the JDK they can
+			// still use passwords encrypted with the weaker algorithm
+			Environment.setValue(Environment.PROP_ENCRYPTION_ALGORITHM, "SHA-1");
 			try {
-				// save the algorithm so that if the user upgrades the JDK they can
-				// still use passwords encrypted with the weaker algorithm
-				Environment.setValue(Environment.PROP_ENCRYPTION_ALGORITHM, "SHA-1");
 				Environment.saveProperties();
-			} catch (Exception e) {
+			} catch (IOException e) {
 				logger.info("Failure while saving encryption algorithm property", e);
 			}
 		}
@@ -150,7 +151,9 @@ public class Encryption {
 	}
 
 	/**
-	 * If a property value is encrypted, return the unencrypted value.
+	 * If a property value is encrypted, return the unencrypted value.  Note that if this
+	 * method finds an un-encrypted value it will automatically encrypt it and re-save it to
+	 * the property file.
 	 *
 	 * @param name The name of the encrypted property being retrieved.
 	 * @return The unencrypted value of the property.
@@ -162,8 +165,21 @@ public class Encryption {
 			}
 			return Encryption.decrypt64(Environment.getValue(name));
 		} catch (GeneralSecurityException e) {
-			logger.severe("Encryption failure", e);
-			throw new IllegalStateException("Failure while encrypting value");
+			String value = Environment.getValue(name);
+			if (props != null || StringUtils.isBlank(value)) {
+				logger.severe("Encryption failure or no value available for property: " + name, e);
+				throw new IllegalStateException("Failure while retrieving encrypted property: " + name);
+			}
+			// the property might have been unencrypted in the property file, so encrypt, save, and return the value
+			logger.warning("Found unencrypted property file value: " + name + ".  Assuming that this value manually un-encrypted in the property file so re-encrypting and re-saving.");
+			Encryption.setEncryptedProperty(name, value, null);
+			try {
+				Environment.saveProperties();
+			} catch (IOException ex) {
+				logger.severe("Failure while saving properties", ex);
+				throw new IllegalStateException("Failure while saving properties");
+			}
+			return value;
 		} catch (UnsupportedEncodingException e) {
 			throw new IllegalStateException("Unsupporting encoding UTF-8");
 		}
@@ -173,7 +189,7 @@ public class Encryption {
 	 * Encrypt and set a property value.
 	 *
 	 * @param name The name of the encrypted property being retrieved.
-	 * @param value The enencrypted value of the property.
+	 * @param value The unenencrypted value of the property.
 	 * @param props The property object in which the property is being set.
 	 */
 	public static void setEncryptedProperty(String name, String value, Properties props) {

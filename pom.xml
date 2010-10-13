@@ -7,7 +7,7 @@
 	<groupId>org.jamwiki</groupId>
 	<artifactId>jamwiki</artifactId>
 	<packaging>pom</packaging>
-	<version>0.7.2</version>
+	<version>0.8.0</version>
 	<name>Jamwiki Super POM</name>
 	<description>
 		JAMWiki is a Java-based Wiki engine which offers many of the
@@ -45,22 +45,22 @@
 		</license>
 	</licenses>
 	<properties>
-		<jamwiki.version>0.7.2</jamwiki.version>
+		<jamwiki.version>0.8.0</jamwiki.version>
 		<dependency.spring.version>2.5.6</dependency.spring.version>
-		<dependency.spring.security.version>2.0.4</dependency.spring.security.version>
+		<dependency.spring.security.version>2.0.5.RELEASE</dependency.spring.security.version>
 	</properties>
-	<repositories>
-		<repository>
-			<id>java.net</id>
-			<url>http://download.java.net/maven/1</url>
-			<layout>legacy</layout>
-		</repository>
-	</repositories>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>org.jamwiki</groupId>
 				<artifactId>jamwiki-core</artifactId>
+				<version>${jamwiki.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jamwiki</groupId>
+				<artifactId>jamwiki-core</artifactId>
+				<scope>test</scope>
+				<classifier>tests</classifier>
 				<version>${jamwiki.version}</version>
 			</dependency>
 			<dependency>
@@ -71,7 +71,7 @@
 			<dependency>
 				<groupId>org.incava</groupId>
 				<artifactId>javadiff</artifactId>
-				<version>1.0.5</version>
+				<version>1.1.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.ldap</groupId>
@@ -153,13 +153,13 @@
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>3.8.2</version>
+				<version>4.5</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.ehcache</groupId>
 				<artifactId>ehcache</artifactId>
-				<version>1.3.0</version>
+				<version>1.6.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.lucene</groupId>
@@ -170,6 +170,11 @@
 				<groupId>org.apache.lucene</groupId>
 				<artifactId>lucene-highlighter</artifactId>
 				<version>2.4.1</version>
+			</dependency>
+			<dependency>
+				<groupId>info.bliki.wiki</groupId>
+				<artifactId>bliki-core</artifactId>
+				<version>3.0.12-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
@@ -235,7 +240,7 @@
 			<dependency>
 				<groupId>taglibs</groupId>
 				<artifactId>standard</artifactId>
-				<version>1.0.6</version>
+				<version>1.1.2</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -303,19 +308,27 @@
 		</developer>
 		<developer>
 			<id>decamps</id>
-			<name>Régis Décamps</name>
+			<name>RÃ©gis DÃ©camps</name>
 			<email>decamps@users.sf.net</email>
 			<roles>
 				<role>developer</role>
 			</roles>
 			<timezone>+1</timezone>
 		</developer>
+		<developer>
+			<id>dfisla</id>
+			<name>Daniel Fisla</name>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
 	</developers>
 	<contributors>
 		<contributor><name>Fernando Fernandes</name><email>leandes</email><roles><role>translator (Portugese - Brazilian)</role></roles></contributor>
-		<contributor><name>Martin Östmark</name><email>martin</email><roles><role>translator (Swedish)</role></roles></contributor>
+		<contributor><name>Martin Ã–stmark</name><email>martin</email><roles><role>translator (Swedish)</role></roles></contributor>
 		<contributor><name>Jiading</name><email>ewen0930</email><roles><role>translator (Chinese)</role></roles></contributor>
 		<contributor><name>Feilong Huang</name><email>hfl</email><roles><role>translator (Chinese)</role></roles></contributor>
+		<contributor><name>Pei-Tang Huang</name><email>tang</email><roles><role>translator (traditional Chinese)</role></roles></contributor>
 		<contributor><name>Marija Susovic</name><roles><role>translator (Croatian)</role></roles></contributor>
 		<contributor><name>Anders Monrad</name><email>g9adm</email><roles><role>translator (Danish)</role></roles></contributor>
 		<contributor><name>Tarik Menbhi</name><roles><role>translator (Dutch)</role></roles></contributor>
@@ -330,11 +343,11 @@
 		<contributor><name>Natto Lover (nattolover)</name><roles><role>translator (Japanese)</role></roles></contributor>
 		<contributor><name>Robert Matyja</name><email>dlpa@users.sf.net</email><roles><role>translator (Polish)</role></roles></contributor>
 		<contributor><name>Matus Majchrak (aryan)</name><roles><role>translator (Slovak)</role></roles></contributor>
-		<contributor><name>Angel Luis Pinazo Perpiñán</name><roles><role>translator (Spanish)</role></roles></contributor>
+		<contributor><name>Angel Luis Pinazo PerpiÃ±Ã¡n</name><roles><role>translator (Spanish)</role></roles></contributor>
 		<contributor><name>Volodymyr Vlad</name><email>gutsul</email><roles><role>translator (Ukranian)</role></roles></contributor>
 		<!-- TODO indicate roles -->
 		<contributor><name>AleXey "lexis" Rumyantsev</name><email>lexis@mail.ru</email><roles><role>graphics designer</role></roles></contributor>
-		<contributor><name>Luzius Thöny</name><email>luzi</email></contributor>
+		<contributor><name>Luzius ThÃ¶ny</name><email>luzi</email></contributor>
 		<contributor><name>Oliver</name><email>okohll</email><roles><role>graphics designer</role></roles></contributor>
 		<contributor><name>Carsten Seiffert</name><email>carsten</email><roles><role>bugfixer</role></roles></contributor>
 		<contributor><name>Hanspeter Klapf</name><email>hanspeterklapf</email></contributor>
@@ -355,4 +368,128 @@
 		<contributor><name>Sasha Kotlo</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
 		<contributor><name>Michael (mindweb)</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
 	</contributors>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<aggregate>true</aggregate>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<configuration>
+					<aggregate>true</aggregate>
+					<excludes>
+						<exclude>**/org/incava/**/*.java</exclude>
+						<exclude>**/org/jamwiki/parser/jflex/JAMWikiPostProcessor.java</exclude>
+						<exclude>**/org/jamwiki/parser/jflex/JAMWikiPreProcessor.java</exclude>
+						<exclude>**/org/jamwiki/parser/jflex/JAMWikiProcessor.java</exclude>
+						<exclude>**/org/jamwiki/parser/jflex/JAMWikiSliceProcessor.java</exclude>
+						<exclude>**/org/jamwiki/parser/jflex/JAMWikiSpliceProcessor.java</exclude>
+					</excludes>
+					<format>xml</format>
+					<includeTests>true</includeTests>
+					<linkXref>true</linkXref>
+					<minimumTokens>100</minimumTokens>
+					<rulesets>
+						<ruleset>${basedir}/pmd.xml</ruleset>
+					</rulesets>
+					<targetJdk>1.5</targetJdk>
+					<sourceEncoding>UTF-8</sourceEncoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<reportSets>
+					<reportSet>
+						<reports>
+						<report>index</report>
+						<report>dependencies</report>
+						<report>project-team</report>
+						<report>issue-tracking</report>
+						<report>license</report>
+						<report>scm</report>
+						<report>summary</report>
+						<report>jdepend</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>taglist-maven-plugin</artifactId>
+				<configuration>
+					<aggregate>true</aggregate>
+					<encoding>UTF-8</encoding>
+					<tags>
+						<tag>TODO</tag>
+						<tag>FIXME</tag>
+						<tag>@todo</tag>
+						<tag>@deprecated</tag>
+					</tags>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<configuration>
+					<aggregate>true</aggregate>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<configuration>
+					<aggregate>true</aggregate>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>javancss-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>1.1.1</version>
+				<configuration>
+					<xmlOutput>true</xmlOutput>
+					<threshold>Normal</threshold>
+					<effort>Default</effort>
+					<outputDirectory>target/findbugs</outputDirectory>
+					<visitors>FindDeadLocalStores,UnreadFields</visitors>
+					<onlyAnalyze>org.jamwiki.*</onlyAnalyze>
+					<debug>true</debug>
+					<relaxed>true</relaxed>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jdepend-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-changelog-plugin</artifactId>
+				<reportSets>
+					<reportSet>
+						<id>dual-report</id>
+						<configuration>
+							<type>range</type>
+							<range>90</range>
+						</configuration>
+						<reports>
+							<report>changelog</report>
+							<!--
+							<report>dev-activity</report>
+							<report>file-activity</report>
+							-->
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>

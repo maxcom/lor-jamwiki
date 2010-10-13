@@ -18,16 +18,18 @@
  */
 package org.jamwiki.utils;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  */
-public class InterWikiHandlerTest extends TestCase {
+public class InterWikiHandlerTest {
 
 	/**
 	 *
 	 */
+	@Test
 	public void testFormatInterWiki() throws Throwable {
 		String result = InterWikiHandler.formatInterWiki("testInterWikiHandlerNamespace", "testInterWikiHandlerValue");
 		assertEquals("result", "testInterWikiHandlerNamespace:testInterWikiHandlerValue", result);
@@ -36,6 +38,7 @@ public class InterWikiHandlerTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testIsInterWiki() throws Throwable {
 		boolean result = InterWikiHandler.isInterWiki("testInterWikiHandlerNamespace");
 		assertFalse("result", result);
@@ -44,25 +47,17 @@ public class InterWikiHandlerTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testFormatInterWikiThrowsNullPointerException() throws Throwable {
-		try {
-			InterWikiHandler.formatInterWiki(null, "testInterWikiHandlerValue");
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		InterWikiHandler.formatInterWiki(null, "testInterWikiHandlerValue");
 	}
 
 	/**
 	 *
 	 */
+	@Test(expected=NullPointerException.class)
 	public void testIsInterWikiThrowsNullPointerException() throws Throwable {
-		try {
-			InterWikiHandler.isInterWiki(null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
+		InterWikiHandler.isInterWiki(null);
 	}
 }
 

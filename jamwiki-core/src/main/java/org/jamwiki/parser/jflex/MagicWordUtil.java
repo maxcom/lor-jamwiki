@@ -18,9 +18,11 @@ package org.jamwiki.parser.jflex;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
-import java.util.Vector;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiVersion;
@@ -114,7 +116,7 @@ public class MagicWordUtil {
 	private static final String MAGIC_SERVER = "SERVER";
 	private static final String MAGIC_SCRIPT_PATH = "SCRIPTPATH";
 	private static final String MAGIC_SERVER_NAME = "SERVERNAME";
-	private static Vector MAGIC_WORDS = new Vector();
+	private static List<String> MAGIC_WORDS = new ArrayList<String>();
 
 	static {
 		// current date values
@@ -207,7 +209,7 @@ public class MagicWordUtil {
 	 * word value.  See http://meta.wikimedia.org/wiki/Help:Magic_words for a
 	 * list of Mediawiki magic words.
 	 */
-	protected static String processMagicWord(ParserInput parserInput, String name) throws Exception {
+	protected static String processMagicWord(ParserInput parserInput, String name) throws DataAccessException {
 		SimpleDateFormat formatter = new SimpleDateFormat();
 		TimeZone utc = TimeZone.getTimeZone("GMT+00");
 		Date current = new Date(System.currentTimeMillis());
@@ -442,7 +444,7 @@ public class MagicWordUtil {
 		Date revision = null;
 		// null check needed for the test data handler, which does not implement topic versions
 		if (topic != null && topic.getCurrentVersionId() != null) {
-			topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId().intValue());
+			topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId());
 			revision = topicVersion.getEditDate();
 		}
 		formatter.setTimeZone(utc);

@@ -19,8 +19,6 @@ package org.jamwiki.servlets;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -138,7 +136,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		try {
 			String feedType = ServletRequestUtils.getStringParameter(request, FEED_TYPE, defaultFeedType);
-			logger.fine("Serving xml feed of type " + feedType);
+			logger.finer("Serving xml feed of type " + feedType);
 			SyndFeed feed = getFeed(request);
 			feed.setFeedType(feedType);
 			response.setContentType(MIME_TYPE);
@@ -159,7 +157,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 	 * @throws Exception
 	 */
 	private SyndFeed getFeed(HttpServletRequest request) throws Exception {
-		Collection changes = getChanges(request);
+		List<RecentChange> changes = getChanges(request);
 		SyndFeed feed = new SyndFeedImpl();
 		feed.setEncoding(FEED_ENCODING);
 		feed.setTitle(Environment.getValue(Environment.PROP_RSS_TITLE));
@@ -177,11 +175,11 @@ public class RecentChangesFeedServlet extends AbstractController {
 	/**
 	 *
 	 */
-	private List getFeedEntries(Collection changes, boolean includeMinorEdits, boolean linkToVersion, String feedURL) {
-		List entries = new ArrayList();
-		for (Iterator iter = changes.iterator(); iter.hasNext();) {
-			RecentChange change = (RecentChange)iter.next();
-			if (includeMinorEdits || (!change.getMinor())) {
+	private List<SyndEntry> getFeedEntries(List<RecentChange> changes, boolean includeMinorEdits, boolean linkToVersion, String feedURL) {
+		List<SyndEntry> entries = new ArrayList<SyndEntry>();
+		for (RecentChange change : changes) {
+			// FIXME - add support for log item changes
+			if (!StringUtils.isBlank(change.getTopicName()) && (includeMinorEdits || !change.getMinor())) {
 				entries.add(getFeedEntry(change, linkToVersion, feedURL));
 			}
 		}
@@ -196,14 +194,14 @@ public class RecentChangesFeedServlet extends AbstractController {
 		SyndEntry entry = new SyndEntryImpl();
 		entry.setTitle(change.getTopicName());
 		entry.setAuthor(change.getAuthorName());
-		entry.setPublishedDate(change.getEditDate());
+		entry.setPublishedDate(change.getChangeDate());
 		description = new SyndContentImpl();
 		description.setType("text/plain");
 		StringBuffer descr = new StringBuffer();
-		if (!StringUtils.isBlank(change.getEditComment())) {
-			descr.append(change.getEditComment());
+		if (!StringUtils.isBlank(change.getChangeComment())) {
+			descr.append(change.getChangeComment());
 		}
-		if (change.getDelete()) {
+		if (change.isDelete()) {
 			descr.append(" (deleted)");
 		} else {
 			if (linkToVersion) {
@@ -219,7 +217,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 				entry.setLink(feedURL + Utilities.encodeAndEscapeTopicName(change.getTopicName()));
 			}
 		}
-		if (change.getUndelete()) {
+		if (change.isUndelete()) {
 			descr.append(" (undeleted)");
 		}
 		if (change.getMinor()) {
@@ -236,7 +234,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 	/**
 	 *
 	 */
-	private Collection getChanges(HttpServletRequest request) throws Exception {
+	private List<RecentChange> getChanges(HttpServletRequest request) throws Exception {
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		Pagination pagination = WikiUtil.buildPagination(request);
 		return WikiBase.getDataHandler().getRecentChanges(virtualWiki, pagination, true);

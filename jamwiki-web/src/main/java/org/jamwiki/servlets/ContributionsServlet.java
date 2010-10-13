@@ -16,11 +16,12 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.Collection;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.RecentChange;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -50,9 +51,9 @@ public class ContributionsServlet extends JAMWikiServlet {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		String userString = WikiUtil.getParameterFromRequest(request, "contributor", false);
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		Collection contributions = WikiBase.getDataHandler().getUserContributions(virtualWiki, userString, pagination, true);
+		List<RecentChange> contributions = WikiBase.getDataHandler().getUserContributions(virtualWiki, userString, pagination, true);
 		next.addObject("contributions", contributions);
-		next.addObject("numContributions", new Integer(contributions.size()));
+		next.addObject("numContributions", contributions.size());
 		next.addObject("contributor", userString);
 		pageInfo.setPageTitle(new WikiMessage("contributions.title", userString));
 		pageInfo.setContentJsp(JSP_CONTRIBUTIONS);

@@ -34,7 +34,7 @@ called it means that a catastrophic error has occurred.
 
 <html>
 <head>
-<title><fmt:message key="common.sitename" /> - <fmt:message key="error.title" /></title>
+<title><fmt:message key="error.title" /></title>
 <script type="text/javascript">
 function cancel() {
 	history.go(-1);

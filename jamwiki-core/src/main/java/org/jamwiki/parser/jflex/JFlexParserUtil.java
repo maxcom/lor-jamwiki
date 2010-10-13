@@ -16,10 +16,14 @@
  */
 package org.jamwiki.parser.jflex;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
+import org.jamwiki.model.WikiReference;
+import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.LinkUtil;
@@ -32,41 +36,24 @@ import org.jamwiki.utils.WikiLogger;
 public class JFlexParserUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexParserUtil.class.getName());
-	private static Pattern EMPTY_BODY_TAG_PATTERN = null;
-	private static Pattern JAVASCRIPT_PATTERN1 = null;
-	private static Pattern JAVASCRIPT_PATTERN2 = null;
-	private static Pattern NON_NESTING_TAG_PATTERN = null;
-	private static Pattern NON_TEXT_BODY_TAG_PATTERN = null;
-	private static Pattern NON_INLINE_TAG_PATTERN = null;
-	private static Pattern NON_INLINE_TAG_START_PATTERN = null;
-	private static Pattern NON_INLINE_TAG_END_PATTERN = null;
-	private static Pattern TAG_PATTERN = null;
-	private static Pattern WIKI_LINK_PATTERN = null;
 	private static final String emptyBodyTagPattern = "(br|div|hr|td|th)";
 	private static final String nonNestingTagPattern = "(dd|dl|dt|hr|li|ol|table|tbody|td|tfoot|th|thead|tr|ul)";
 	private static final String nonTextBodyTagPattern = "(dl|ol|table|tr|ul)";
 	private static final String nonInlineTagPattern = "(caption|dd|div|dl|dt|hr|li|ol|p|table|td|th|tr|ul)";
 	private static final String nonInlineTagStartPattern = "<" + nonInlineTagPattern + ">.*";
 	private static final String nonInlineTagEndPattern = ".*</" + nonInlineTagPattern + ">";
-
-	static {
-		try {
-			EMPTY_BODY_TAG_PATTERN = Pattern.compile(emptyBodyTagPattern, Pattern.CASE_INSENSITIVE);
-			// catch script insertions of the form "onsubmit="
-			JAVASCRIPT_PATTERN1 = Pattern.compile("( on[^=]{3,}=)+", Pattern.CASE_INSENSITIVE);
-			// catch script insertions that use a javascript url
-			JAVASCRIPT_PATTERN2 = Pattern.compile("(javascript[ ]*\\:)+", Pattern.CASE_INSENSITIVE);
-			NON_NESTING_TAG_PATTERN = Pattern.compile(nonNestingTagPattern, Pattern.CASE_INSENSITIVE);
-			NON_TEXT_BODY_TAG_PATTERN = Pattern.compile(nonTextBodyTagPattern, Pattern.CASE_INSENSITIVE);
-			NON_INLINE_TAG_PATTERN = Pattern.compile(nonInlineTagPattern, Pattern.CASE_INSENSITIVE);
-			NON_INLINE_TAG_START_PATTERN = Pattern.compile(nonInlineTagStartPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-			NON_INLINE_TAG_END_PATTERN = Pattern.compile(nonInlineTagEndPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-			TAG_PATTERN = Pattern.compile("(<[ ]*[/]?[ ]*)([^\\ />]+)([ ]*(.*?))([/]?[ ]*>)");
-			WIKI_LINK_PATTERN = Pattern.compile("\\[\\[[ ]*(\\:[ ]*)?[ ]*([^\\n\\r\\|]+)([ ]*\\|[ ]*([^\\n\\r]+))?[ ]*\\]\\]([a-z]*)");
-		} catch (Exception e) {
-			logger.severe("Unable to compile pattern", e);
-		}
-	}
+	private static final Pattern EMPTY_BODY_TAG_PATTERN = Pattern.compile(emptyBodyTagPattern, Pattern.CASE_INSENSITIVE);
+	/** Pattern to catch script insertions of the form "onsubmit=". */
+	private static final Pattern JAVASCRIPT_PATTERN1 = Pattern.compile("( on[^=]{3,}=)+", Pattern.CASE_INSENSITIVE);
+	/** Pattern to catch script insertions that use a javascript url. */
+	private static final Pattern JAVASCRIPT_PATTERN2 = Pattern.compile("(javascript[ ]*\\:)+", Pattern.CASE_INSENSITIVE);
+	private static final Pattern NON_NESTING_TAG_PATTERN = Pattern.compile(nonNestingTagPattern, Pattern.CASE_INSENSITIVE);
+	private static final Pattern NON_TEXT_BODY_TAG_PATTERN = Pattern.compile(nonTextBodyTagPattern, Pattern.CASE_INSENSITIVE);
+	private static final Pattern NON_INLINE_TAG_PATTERN = Pattern.compile(nonInlineTagPattern, Pattern.CASE_INSENSITIVE);
+	private static final Pattern NON_INLINE_TAG_START_PATTERN = Pattern.compile(nonInlineTagStartPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+	private static final Pattern NON_INLINE_TAG_END_PATTERN = Pattern.compile(nonInlineTagEndPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+	private static final Pattern TAG_PATTERN = Pattern.compile("(<[ ]*[/]?[ ]*)([^\\ />]+)([ ]*(.*?))([/]?[ ]*>)");
+	private static final Pattern WIKI_LINK_PATTERN = Pattern.compile("\\[\\[[ ]*(\\:[ ]*)?[ ]*([^\\n\\r\\|]+)([ ]*\\|[ ]*([^\\n\\r]+))?[ ]*\\]\\]([a-z]*)");
 
 	/**
 	 *
@@ -148,7 +135,7 @@ public class JFlexParserUtil {
 	 * as an image caption.  This method should be used sparingly since it is
 	 * not very efficient.
 	 */
-	protected static String parseFragment(ParserInput parserInput, String raw, int mode) throws Exception {
+	protected static String parseFragment(ParserInput parserInput, String raw, int mode) throws ParserException {
 		if (StringUtils.isBlank(raw)) {
 			return raw;
 		}
@@ -253,6 +240,23 @@ public class JFlexParserUtil {
 	}
 
 	/**
+	 * During parsing the reference objects will be stored as a temporary array.  This method
+	 * parses that array and returns the reference objects.
+	 *
+	 * @param parserInput The current ParserInput object for the topic that is being parsed.
+	 * @return A list of reference objects (never <code>null</code>) for the current topic that
+	 *  is being parsed.
+	 */
+	protected static List<WikiReference> retrieveReferences(ParserInput parserInput) {
+		List<WikiReference> references = (List<WikiReference>)parserInput.getTempParams().get(WikiReferenceTag.REFERENCES_PARAM);
+		if (references == null) {
+			references = new ArrayList<WikiReference>();
+			parserInput.getTempParams().put(WikiReferenceTag.REFERENCES_PARAM, references);
+		}
+		return references;
+	}
+
+	/**
 	 * Allowing Javascript action tags to be used as attributes (onmouseover, etc) is
 	 * a bad thing, so clean up HTML tags to remove any such attributes.
 	 */
@@ -262,19 +266,19 @@ public class JFlexParserUtil {
 		String tagKeyword = tagInfo[0];
 		String attributes = tagInfo[1];
 		String tagClose = tagInfo[3];
-		String result = "<";
+		StringBuffer result = new StringBuffer('<');
 		if (tagOpen.indexOf('/') != -1) {
-			result += "/";
+			result.append('/');
 		}
-		result += tagKeyword;
+		result.append(tagKeyword);
 		if (!StringUtils.isBlank(attributes)) {
-			result += " " + attributes;
+			result.append(' ').append(attributes);
 		}
 		if (tagClose.indexOf('/') != -1) {
 			tagClose = " />";
 		}
-		result += tagClose.trim();
-		return result;
+		result.append(tagClose.trim());
+		return result.toString();
 	}
 
 	/**

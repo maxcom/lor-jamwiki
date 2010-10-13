@@ -117,40 +117,40 @@ class JFlexTagItem {
 		}
 		StringBuffer result = new StringBuffer();
 		if (!JFlexParserUtil.isRootTag(this.tagType)) {
-			result.append("<").append(this.tagType);
+			result.append('<').append(this.tagType);
 			if (!StringUtils.isBlank(this.tagAttributes)) {
-				result.append(" ").append(this.tagAttributes);
+				result.append(' ').append(this.tagAttributes);
 			}
-			result.append(">");
+			result.append('>');
 		}
 		if (JFlexParserUtil.isRootTag(this.tagType)) {
 			result.append(content);
 		} else if (this.tagType.equals("pre")) {
 			// pre-formatted, no trimming but make sure the open and close tags appear on their own lines
 			if (!content.startsWith("\n")) {
-				result.append("\n");
+				result.append('\n');
 			}
 			result.append(content);
 			if (!content.endsWith("\n")) {
-				result.append("\n");
+				result.append('\n');
 			}
 		} else if (JFlexParserUtil.isTextBodyTag(this.tagType)) {
 			// ugly hack to handle cases such as "<li><ul>" where the "<ul>" should be on its own line
 			if (JFlexParserUtil.isNonInlineTagStart(content.trim())) {
-				result.append("\n");
+				result.append('\n');
 			}
 			result.append(content.trim());
 			// ugly hack to handle cases such as "</ul></li>" where the "</li>" should be on its own line
 			if (JFlexParserUtil.isNonInlineTagEnd(content.trim())) {
-				result.append("\n");
+				result.append('\n');
 			}
 		} else {
-			result.append("\n");
+			result.append('\n');
 			result.append(content.trim());
-			result.append("\n");
+			result.append('\n');
 		}
 		if (!JFlexParserUtil.isRootTag(this.tagType)) {
-			result.append("</").append(this.tagType).append(">");
+			result.append("</").append(this.tagType).append('>');
 		}
 		if (JFlexParserUtil.isTextBodyTag(this.tagType) && !JFlexParserUtil.isRootTag(this.tagType) && JFlexParserUtil.isInlineTag(this.tagType) && !this.tagType.equals("pre")) {
 			// work around issues such as "text''' text'''", where the output should

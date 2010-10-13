@@ -18,34 +18,18 @@
  */
 package org.jamwiki.utils;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  */
-public class NamespaceHandlerTest extends TestCase {
+public class NamespaceHandlerTest {
 
 	/**
 	 *
 	 */
-	public void testGetCommentsNamespace() throws Throwable {
-		// FIXME
-//		String result = NamespaceHandler.getCommentsNamespace("testNamespaceHandlerNamespace");
-//		assertEquals("result", "null:testNamespaceHandlerNamespace", result);
-	}
-
-	/**
-	 *
-	 */
-	public void testGetCommentsNamespace1() throws Throwable {
-		// FIXME
-//		String result = NamespaceHandler.getCommentsNamespace("");
-//		assertNull("result", result);
-	}
-
-	/**
-	 *
-	 */
+	@Test
 	public void testGetMainNamespace() throws Throwable {
 		String result = NamespaceHandler.getMainNamespace("testNamespaceHandlerNamespace");
 		assertSame("result", "testNamespaceHandlerNamespace", result);
@@ -54,6 +38,7 @@ public class NamespaceHandlerTest extends TestCase {
 	/**
 	 *
 	 */
+	@Test
 	public void testGetMainNamespace1() throws Throwable {
 		String result = NamespaceHandler.getMainNamespace("");
 		assertSame("result", "", result);
