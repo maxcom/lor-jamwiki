@@ -72,6 +72,13 @@ otherwise noted.  For example, if upgrading from version 0.5.0 to version
 0.5.3, you should apply the upgrade steps for 0.5.1, followed by 0.5.2,
 followed by 0.5.3.
 
+  JAMWiki 0.7.1
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.7.1".
+
+
   JAMWiki 0.7.0
   =============
 

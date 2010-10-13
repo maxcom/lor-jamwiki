@@ -1,4 +1,26 @@
-﻿0.7.0
+﻿0.7.1
+=====
+
+New Features:
+
+  * Upgrade to Lucene Search 2.4.1.
+
+Bugfixes:
+
+  * Search by login on the Special:Roles page returned no results for users
+    without at least one role.  Reported by tapaya and rebecca.
+  * Fix incorrect LDAP sample configuration.  Reported with a fix by Tobias
+    Kalbitz.
+  * Display signatures even if there is no email addresss specified (axelclk).
+
+Translation Updates:
+
+  * Added Russian translations (shar).
+  * Updated German translations (axelclk).
+  * Updated Portugese (Brazilian) translations (leandes).
+
+
+0.7.0
 =====
 
 New Features:
