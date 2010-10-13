@@ -83,9 +83,9 @@ public class WikiReference {
 	 */
 	public String getNotationName() {
 		if (StringUtils.isBlank(this.name)) {
-			return "_note-" + this.citation;
+			return "cite_note-" + this.citation;
 		}
-		return "_note-" + Utilities.encodeAndEscapeTopicName(this.name);
+		return "cite_note-" + Utilities.encodeAndEscapeTopicName(this.name);
 	}
 
 	/**
@@ -93,8 +93,8 @@ public class WikiReference {
 	 */
 	public String getReferenceName() {
 		if (StringUtils.isBlank(this.name)) {
-			return "_ref-" + this.citation;
+			return "cite_ref-" + this.citation;
 		}
-		return "_ref-" + Utilities.encodeAndEscapeTopicName(this.name) + "_" + this.count;
+		return "cite_ref-" + Utilities.encodeAndEscapeTopicName(this.name) + "_" + this.count;
 	}
 }

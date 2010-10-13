@@ -276,6 +276,11 @@ public abstract class JFlexLexer {
 	 *
 	 */
 	protected void processListStack(String wikiSyntax) {
+		// before adding to a list, first make sure that any open inline tags or paragraph tags
+		// have been closed (example: "<i><ul>" is invalid.  close the <i> first).
+		while (!JFlexParserUtil.isRootTag(this.peekTag().getTagType()) && (this.peekTag().getTagType().equals("p") || JFlexParserUtil.isInlineTag(this.peekTag().getTagType()))) {
+			this.popTag(this.peekTag().getTagType());
+		}
 		int previousDepth = this.currentListDepth();
 		int currentDepth = wikiSyntax.length();
 		String tagType;

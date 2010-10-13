@@ -1,4 +1,23 @@
 ﻿
+0.8.4
+=====
+
+Bugfixes:
+
+  * Wiki tables placed after lists were being incorrectly indented.  Reported
+    by Rudi Wiesmayr.
+  * Fix incorrect parsing when inline tags (such as wiki bold) are left
+    unclosed before or after list tags.  Reported by Rudi Wiesmayr.
+  * Parsing of the <references /> tag produced an unclosed ordered list.
+    Reported by Rudi Wiesmayr and an anonymous user.
+  * Fix potential XSS attack with URLs of the form Special:Login?message=XSS.
+    Reported by frafu.
+  * Fix the manual upgrade steps for MS SQL in the UPGRADE.txt document.
+    Reported by Angel.
+  * Very large values for max upload file size could result in
+    NumberFormatException being thrown on the Special:Admin page.
+
+
 0.8.3
 =====
 

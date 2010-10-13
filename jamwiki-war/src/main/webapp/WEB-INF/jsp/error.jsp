@@ -24,6 +24,7 @@ called it means that a catastrophic error has occurred.
 --%>
 
 <%@ page import="
+        org.apache.commons.lang.StringEscapeUtils,
         org.jamwiki.utils.WikiLogger
     "
     isErrorPage="true"
@@ -47,7 +48,8 @@ WikiLogger logger = WikiLogger.getLogger("org.jamwiki.jsp");
 String errorMessage = "";
 if (exception != null) {
 	logger.severe("Error in JSP page", exception);
-	errorMessage = exception.toString();
+	// escape XML to avoid potential XSS attacks such as /wiki/en/Special:Login?message=<script>alert("xss")</script>
+	errorMessage = StringEscapeUtils.escapeXml(exception.toString());
 }
 %>
 

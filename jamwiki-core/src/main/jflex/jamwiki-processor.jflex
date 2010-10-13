@@ -220,7 +220,7 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 /* ----- tables ----- */
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>^{tablestart} {
+<YYINITIAL, TABLE, PARAGRAPH>^{tablestart} {
     logger.finer("tablestart: " + yytext() + " (" + yystate() + ")");
     if (this.peekTag().getTagType().equals("p")) {
         popTag("p");
@@ -448,6 +448,10 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{references} {
     logger.finer("references: " + yytext() + " (" + yystate() + ")");
+    if (this.peekTag().getTagType().equals("p")) {
+        // if a paragraph is already opened, close it before opening a new paragraph
+        this.popTag("p");
+    }
     WikiReferencesTag parserTag = new WikiReferencesTag();
     return parserTag.parse(this.parserInput, this.mode, yytext());
 }
