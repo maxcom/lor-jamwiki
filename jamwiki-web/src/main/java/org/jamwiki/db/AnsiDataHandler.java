@@ -238,22 +238,20 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public boolean authenticate(String username, String password) throws DataAccessException {
-		boolean result = false;
-		TransactionStatus status = null;
-		try {
-			status = DatabaseConnection.startTransaction();
-			Connection conn = DatabaseConnection.getConnection();
-			// password is stored encrypted, so encrypt password
-			if (!StringUtils.isBlank(password)) {
-				String encryptedPassword = Encryption.encrypt(password);
-				return this.queryHandler().authenticateUser(username, encryptedPassword, conn);
-			}
-		} catch (SQLException e) {
-			DatabaseConnection.rollbackOnException(status, e);
-			throw new DataAccessException(e);
+		if (StringUtils.isBlank(password)) {
+			return false;
 		}
-		DatabaseConnection.commit(status);
-		return result;
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			// password is stored encrypted, so encrypt password
+			String encryptedPassword = Encryption.encrypt(password);
+			return this.queryHandler().authenticateUser(username, encryptedPassword, conn);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
 	}
 
 	/**
@@ -1103,11 +1101,11 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List<String> lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws DataAccessException {
+	public List<String> lookupTopicByType(String virtualWiki, int topicType1, int topicType2, Pagination pagination) throws DataAccessException {
 		List<String> results = new ArrayList<String>();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		try {
-			WikiResultSet rs = this.queryHandler().lookupTopicByType(virtualWikiId, topicType, pagination);
+			WikiResultSet rs = this.queryHandler().lookupTopicByType(virtualWikiId, topicType1, topicType2, pagination);
 			while (rs.next()) {
 				results.add(rs.getString("topic_name"));
 			}

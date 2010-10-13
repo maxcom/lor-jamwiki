@@ -76,7 +76,7 @@ public class ItemsServlet extends JAMWikiServlet {
 	private void viewFiles(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		List<String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_FILE, pagination);
+		List<String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_FILE, Topic.TYPE_FILE, pagination);
 		next.addObject("itemCount", items.size());
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:Filelist");
@@ -170,7 +170,7 @@ public class ItemsServlet extends JAMWikiServlet {
 	private void viewImages(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		List<String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_IMAGE, pagination);
+		List<String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_IMAGE, Topic.TYPE_IMAGE, pagination);
 		next.addObject("itemCount", items.size());
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:Imagelist");
@@ -185,7 +185,7 @@ public class ItemsServlet extends JAMWikiServlet {
 	private void viewTopics(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		List<String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_ARTICLE, pagination);
+		List<String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_ARTICLE, Topic.TYPE_TEMPLATE, pagination);
 		next.addObject("itemCount", items.size());
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:Allpages");

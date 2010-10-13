@@ -163,11 +163,12 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws SQLException {
+	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType1, int topicType2, Pagination pagination) throws SQLException {
 		String sql = formatStatement(STATEMENT_SELECT_TOPIC_BY_TYPE, pagination);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, topicType);
+		stmt.setInt(2, topicType1);
+		stmt.setInt(3, topicType2);
 		return stmt.executeQuery();
 	}
 

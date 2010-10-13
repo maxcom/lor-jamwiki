@@ -649,8 +649,11 @@ public interface QueryHandler {
 	 *
 	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the topics
 	 *  being retrieved.
-	 * @param topicType The topic type (image, normal, etc) for the topics to be
+	 * @param topicType1 The topic type (image, normal, etc) for the topics to be
 	 *  retrieved.
+	 * @param topicType2 The topic type (image, normal, etc) for the topics to be
+	 *  retrieved.  Set to the same value as topicType1 if only one topic type is
+	 *  needed.
 	 * @param pagination A Pagination object that specifies the number of results
 	 *  and starting result offset for the result set to be retrieved.
 	 * @return A WikiResult set of all non-deleted topics for the given virtual wiki
@@ -658,7 +661,7 @@ public interface QueryHandler {
 	 *  object.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws SQLException;
+	WikiResultSet lookupTopicByType(int virtualWikiId, int topicType1, int topicType2, Pagination pagination) throws SQLException;
 
 	/**
 	 * Return a count of all topics, including redirects, comments pages and templates,
