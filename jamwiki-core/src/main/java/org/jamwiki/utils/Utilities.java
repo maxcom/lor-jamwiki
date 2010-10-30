@@ -30,7 +30,6 @@ import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -456,14 +455,12 @@ public class Utilities {
 	/**
 	 * Utility method for determining common elements in two Map objects.
 	 */
-	public static Map intersect(Map map1, Map map2) {
+	public static <K, V> Map<K, V> intersect(Map<K, V> map1, Map<K, V> map2) {
 		if (map1 == null || map2 == null) {
 			throw new IllegalArgumentException("Utilities.intersection() requires non-null arguments");
 		}
-		Map result = new HashMap();
-		Iterator keys = map1.keySet().iterator();
-		while (keys.hasNext()) {
-			Object key = keys.next();
+		Map<K, V> result = new HashMap<K, V>();
+		for (K key : map1.keySet()) {
 			if (ObjectUtils.equals(map1.get(key), map2.get(key))) {
 				result.put(key, map1.get(key));
 			}
