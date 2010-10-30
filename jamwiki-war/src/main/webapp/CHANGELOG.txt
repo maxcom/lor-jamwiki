@@ -47,6 +47,7 @@ New Features:
   * Upgrade to Spring Security 3.0.3.RELEASE.
   * Upgrade to Ehcache 2.1.0.
   * Upgrade to commons-fileupload-1.2.2.
+  * Upgrade to commons-io-2.0.
 
 Bugfixes:
 
