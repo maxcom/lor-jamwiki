@@ -238,6 +238,45 @@ public abstract class JAMWikiServlet extends AbstractController {
 	protected abstract ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception;
 
 	/**
+	 * Handle redirection cases, such as case-sensitive issues or legacy support.
+	 */
+	private boolean handleRedirect(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws WikiException {
+		// TODO - this functionality should support translations and ideally be configured
+		// via jamwiki-servlet.xml or a similar configuration
+		String target = null;
+		if (ServletUtil.isTopic(request, "Special:Allpages")) {
+			target = "Special:AllPages";
+		} else if (ServletUtil.isTopic(request, "Special:Filelist")) {
+			target = "Special:FileList";
+		} else if (ServletUtil.isTopic(request, "Special:Imagelist")) {
+			target = "Special:ImageList";
+		} else if (ServletUtil.isTopic(request, "Special:Linkto")) {
+			target = "Special:LinkTo";
+		} else if (ServletUtil.isTopic(request, "Special:Listusers")) {
+			target = "Special:ListUsers";
+		} else if (ServletUtil.isTopic(request, "Special:Orphanedpages")) {
+			target = "Special:OrphanedPages";
+		} else if (ServletUtil.isTopic(request, "Special:Recentchanges")) {
+			target = "Special:RecentChanges";
+		} else if (ServletUtil.isTopic(request, "Special:Specialpages")) {
+			target = "Special:SpecialPages";
+		} else if (ServletUtil.isTopic(request, "Special:Topicsadmin")) {
+			target = "Special:TopicsAdmin";
+		} else if (ServletUtil.isTopic(request, "Special:Virtualwiki")) {
+			target = "Special:VirtualWiki";
+		} else if (ServletUtil.isTopic(request, "Special:WatchList")) {
+			target = "Special:Watchlist";
+		}
+		if (target != null) {
+			if (request.getQueryString() != null) {
+				target += "?" + request.getQueryString();
+			}
+			ServletUtil.redirect(next, pageInfo.getVirtualWikiName(), target);
+		}
+		return (target != null);
+	}
+
+	/**
 	 * Implement the handleRequestInternal method specified by the
 	 * Spring AbstractController class.
 	 *
@@ -254,12 +293,14 @@ public abstract class JAMWikiServlet extends AbstractController {
 		ModelAndView next = new ModelAndView(this.displayJSP);
 		WikiPageInfo pageInfo = new WikiPageInfo(request);
 		try {
-			next = this.handleJAMWikiRequest(request, response, next, pageInfo);
-			if (next != null && this.layout) {
-				this.loadLayout(request, next, pageInfo);
-			}
-			if (next != null) {
-				next.addObject(ServletUtil.PARAMETER_PAGE_INFO, pageInfo);
+			if (!this.handleRedirect(request, next, pageInfo)) {
+				next = this.handleJAMWikiRequest(request, response, next, pageInfo);
+				if (next != null && this.layout) {
+					this.loadLayout(request, next, pageInfo);
+				}
+				if (next != null) {
+					next.addObject(ServletUtil.PARAMETER_PAGE_INFO, pageInfo);
+				}
 			}
 		} catch (Throwable t) {
 			return this.viewError(request, response, t);

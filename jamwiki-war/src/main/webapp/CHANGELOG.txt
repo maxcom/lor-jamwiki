@@ -72,6 +72,8 @@ Bugfixes:
   * Templates and signatures should be expanded when using wiki preformatted
     sytnax (" ~~~~") but not when using HTML preformatted syntax
     ("<pre>~~~~</pre>).
+  * Convert all Special: pages to use proper camel case, and create redirects
+    for the non-camel case versions.  Reported by Michael Osipov.
 
 Translation Updates:
 

@@ -2,8 +2,8 @@
 * [[Special:RecentChanges|Friss válzotások]]
 * [[Special:Search|Keresés]]
 ----
-* [[Special:Allpages|Minden oldal]]
-* [[Special:Specialpages|Speciális lapok]]
+* [[Special:AllPages|Minden oldal]]
+* [[Special:SpecialPages|Speciális lapok]]
 * [[Special:Upload|Fájl feltöltése]]
 ----
 * [http://jamwiki.org/ JAMWiki]

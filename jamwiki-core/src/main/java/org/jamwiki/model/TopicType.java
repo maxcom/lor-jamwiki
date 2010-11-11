@@ -33,7 +33,7 @@ public enum TopicType {
 	CATEGORY(5),
 	/* Topic is a non-image file. */
 	FILE(6),
-	/* Internal files, do not display on Special:Allpages */
+	/* Internal files, do not display on Special:AllPages */
 	SYSTEM_FILE(7),
 	/* Wiki templates. */
 	TEMPLATE(8);

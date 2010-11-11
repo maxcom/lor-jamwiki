@@ -18,5 +18,5 @@
 * [[Special:Upload | アップロード]] - Wikiにファイルや画像をアップロードするために使います。
 * [[Special:Search | 検索]] - Wikiを検索します。
 * [[Special:Account | アカウント]] - 編集に名前が正しく残るように、アカウントを作ります。
-* [[Special:Allpages | 記事一覧]] - Wikiの全記事の一覧です。
-* [[Special:Specialpages | 特別ページ]] - Wikiの「特別」ページの一覧です。
+* [[Special:AllPages | 記事一覧]] - Wikiの全記事の一覧です。
+* [[Special:SpecialPages | 特別ページ]] - Wikiの「特別」ページの一覧です。

@@ -159,7 +159,7 @@
 		<name>Special:Admin</name>
 	</pseudotopic>
 	<pseudotopic>
-		<name>Special:Allpages</name>
+		<name>Special:AllPages</name>
 	</pseudotopic>
 	<pseudotopic>
 		<name>Special:Categories</name>
@@ -177,13 +177,13 @@
 		<name>Special:Export</name>
 	</pseudotopic>
 	<pseudotopic>
-		<name>Special:Filelist</name>
+		<name>Special:FileList</name>
 	</pseudotopic>
 	<pseudotopic>
 		<name>Special:History</name>
 	</pseudotopic>
 	<pseudotopic>
-		<name>Special:Imagelist</name>
+		<name>Special:ImageList</name>
 	</pseudotopic>
 	<pseudotopic>
 		<name>Special:Import</name>
@@ -195,7 +195,7 @@
 		<name>Special:LinkTo</name>
 	</pseudotopic>
 	<pseudotopic>
-		<name>Special:Listusers</name>
+		<name>Special:ListUsers</name>
 	</pseudotopic>
 	<pseudotopic>
 		<name>Special:Login</name>
@@ -240,7 +240,7 @@
 		<name>Special:Setup</name>
 	</pseudotopic>
 	<pseudotopic>
-		<name>Special:Specialpages</name>
+		<name>Special:SpecialPages</name>
 	</pseudotopic>
 	<pseudotopic>
 		<name>Special:TopicsAdmin</name>

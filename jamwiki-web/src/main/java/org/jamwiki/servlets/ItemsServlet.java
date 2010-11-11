@@ -57,13 +57,13 @@ public class ItemsServlet extends JAMWikiServlet {
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		if (ServletUtil.isTopic(request, "Special:Imagelist")) {
+		if (ServletUtil.isTopic(request, "Special:ImageList")) {
 			viewImages(request, next, pageInfo);
-		} else if (ServletUtil.isTopic(request, "Special:Filelist")) {
+		} else if (ServletUtil.isTopic(request, "Special:FileList")) {
 			viewFiles(request, next, pageInfo);
 		} else if (ServletUtil.isTopic(request, "Special:LinkTo")) {
 			viewLinkTo(request, next, pageInfo);
-		} else if (ServletUtil.isTopic(request, "Special:Listusers")) {
+		} else if (ServletUtil.isTopic(request, "Special:ListUsers")) {
 			viewUsers(request, next, pageInfo);
 		} else if (ServletUtil.isTopic(request, "Special:OrphanedPages")) {
 			viewOrphanedPages(request, next, pageInfo);
@@ -84,7 +84,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		Map<Integer, String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, TopicType.FILE, TopicType.FILE, null, pagination);
 		next.addObject("itemCount", items.size());
 		next.addObject("items", items.values());
-		next.addObject("rootUrl", "Special:Filelist");
+		next.addObject("rootUrl", "Special:FileList");
 		pageInfo.setPageTitle(new WikiMessage("allfiles.title"));
 		pageInfo.setContentJsp(JSP_ITEMS);
 		pageInfo.setSpecial(true);
@@ -187,7 +187,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		}
 		next.addObject("itemCount", items.size());
 		next.addObject("items", links);
-		next.addObject("rootUrl", "Special:Listusers");
+		next.addObject("rootUrl", "Special:ListUsers");
 		pageInfo.setPageTitle(new WikiMessage("allusers.title"));
 		pageInfo.setContentJsp(JSP_ITEMS);
 		pageInfo.setSpecial(true);
@@ -202,7 +202,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		Map<Integer, String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, TopicType.IMAGE, TopicType.IMAGE, null, pagination);
 		next.addObject("itemCount", items.size());
 		next.addObject("items", items.values());
-		next.addObject("rootUrl", "Special:Imagelist");
+		next.addObject("rootUrl", "Special:ImageList");
 		pageInfo.setPageTitle(new WikiMessage("allimages.title"));
 		pageInfo.setContentJsp(JSP_ITEMS);
 		pageInfo.setSpecial(true);
@@ -222,7 +222,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		Map<Integer, String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, TopicType.ARTICLE, topicType, namespaceId, pagination);
 		next.addObject("itemCount", items.size());
 		next.addObject("items", items.values());
-		String rootUrl = "Special:Allpages";
+		String rootUrl = "Special:AllPages";
 		if (request.getParameter("namespace") != null) {
 			rootUrl += "?namespace=" + namespaceId;
 		}

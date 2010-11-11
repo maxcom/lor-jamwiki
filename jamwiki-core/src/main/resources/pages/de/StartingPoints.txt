@@ -16,5 +16,5 @@ Einige weitere nützliche Funktionen:
 * [[Special:Upload]] - Spezialseite zum Hochladen von Dateien und Bildern in das Wiki benutzt.
 * [[Special:Search]] - Spezialseite zum Durchsuchen des Wikis.
 * [[Special:Account]] - Legen Sie ein Benutzerkonto an, so dass Änderungen an den Wiki Artikeln Ihrem Benutzer entsprechend zugeordnet werden können.
-* [[Special:Allpages]] - Eine Liste aller Wiki Artikel.
-* [[Special:Specialpages]] - Ein Index der vorhandenen Spezialseiten.
+* [[Special:AllPages]] - Eine Liste aller Wiki Artikel.
+* [[Special:SpecialPages]] - Ein Index der vorhandenen Spezialseiten.
