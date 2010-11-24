@@ -509,8 +509,10 @@ public class MagicWordUtil {
 		}
 		*/
 		if (name.equals(MAGIC_SERVER_NAME)) {
-			// add nowiki tags so that the next round of parsing does not convert to an HTML link
-			return "<nowiki>" + Environment.getValue(Environment.PROP_SERVER_URL) + "</nowiki>";
+			// strip the opening "http://" if there is one
+			String result = Environment.getValue(Environment.PROP_SERVER_URL);
+			int pos = result.indexOf("://");
+			return (pos == -1) ? result : result.substring(pos + "://".length());
 		}
 		return name;
 	}
