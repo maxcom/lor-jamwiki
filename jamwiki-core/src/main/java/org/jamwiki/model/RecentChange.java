@@ -372,7 +372,7 @@ public class RecentChange {
 	/**
 	 *
 	 */
-	public boolean isImport() {
+	public boolean isImportChange() {
 		if (this.editType != null && this.editType == TopicVersion.EDIT_IMPORT) {
 			return true;
 		} else if (this.logType != null && this.logType == LogItem.LOG_TYPE_IMPORT) {

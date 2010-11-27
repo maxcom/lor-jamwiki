@@ -41,7 +41,7 @@
 <ul>
 <c:set var="nextTopicVersionId" value="" />
 <c:forEach items="${changes}" var="change" varStatus="status">
-<li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.import}"> class="importchange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
+<li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.importChange}"> class="importchange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
 	<c:if test="${!empty nextTopicVersionId}">(<jamwiki:link value="Special:Diff"><jamwiki:linkParam key="topic" value="${change.topicName}" /><jamwiki:linkParam key="version2" value="${change.topicVersionId}" /><jamwiki:linkParam key="version1" value="${nextTopicVersionId}" /><fmt:message key="history.caption.diffnext" /></jamwiki:link>)</c:if>
 	<c:if test="${empty nextTopicVersionId}">(<fmt:message key="history.caption.diffnext" />)</c:if>
 	<c:if test="${!empty change.previousTopicVersionId}">(<jamwiki:link value="Special:Diff"><jamwiki:linkParam key="topic" value="${change.topicName}" /><jamwiki:linkParam key="version2" value="${change.previousTopicVersionId}" /><jamwiki:linkParam key="version1" value="${change.topicVersionId}" /><fmt:message key="history.caption.diffprevious" /></jamwiki:link>)</c:if>
