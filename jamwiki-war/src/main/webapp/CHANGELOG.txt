@@ -3,9 +3,9 @@
 
 Bugfixes:
 
-  * The SERVERNAME was previously implemented incorrectly and has been fixed
-    to return only the server URL ("www.example.com") without an "http://"
-    prefix.  Reported by an anonymous user.
+  * The SERVERNAME magic word was previously implemented incorrectly and has
+    been fixed to return only the server URL ("www.example.com") without an
+    "http://" prefix.  Reported by an anonymous user.
   * Several pages including the Special:History page could generated errors on
     Apache 7.0.x due to an invalid JSTL naming convention used with import
     revisions.  Reported by anonymous users.
