@@ -15,7 +15,6 @@
 	</description>
 	<url>http://www.jamwiki.org</url>
 	<modules>
-		<module>javadiff</module>
 		<module>jamwiki-core</module>
 		<module>jamwiki-web</module>
 		<module>addons</module>
@@ -68,11 +67,6 @@
 				<groupId>org.jamwiki</groupId>
 				<artifactId>jamwiki-web</artifactId>
 				<version>${jamwiki.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.incava</groupId>
-				<artifactId>javadiff</artifactId>
-				<version>1.1.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.security</groupId>
