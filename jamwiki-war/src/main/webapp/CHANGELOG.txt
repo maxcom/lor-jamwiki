@@ -7,7 +7,6 @@ New Features:
     page.  If set, then any virtual wiki will be able to access images from the
     specified virtual wiki.
   * Refactor Special:OrphanedPages to vastly improve speed & scalability.
-  * Allow use of HTML heading tags (<h1>, <h2>, etc).
   * Update the admin page UI to improve usability - content is now organized
     using tabs, and some options have been re-worked.
   * Store interwiki patterns in the database and add a management interface for
@@ -15,8 +14,6 @@ New Features:
     records have been carried over from the old interwiki.properties file.
   * Display interwiki and virtual wiki links in boxes in the left nav.  This
     capability can be configured from the parser tab of the Special:Admin page.
-  * Use the database rather than the search engine to generate results for the
-    Special:LinkTo page and add pagination and sorting to Special:LinkTo.
   * Update the Special:Diff UI to display additional information, including
     revision dates, edit comments, and links to previous/next diff.
   * Display author, revision information, and links to previous/next revision
@@ -28,6 +25,9 @@ New Features:
   * Special:VirtualWiki optimizations.  Site name, meta description and logo
     can now allow be customized per-virtual wiki.
   * Use a new algorithm for image resizing to greatly improve image quality.
+  * Allow use of HTML heading tags (<h1>, <h2>, etc).
+  * Use the database rather than the search engine to generate results for the
+    Special:LinkTo page and add pagination and sorting to Special:LinkTo.
   * SEO optimizations: return HTTP 404 when requesting a page for a topic that
     does not exist, return HTTP 500 for error pages, and specify the
     "canonical" meta tag for redirected topics.
