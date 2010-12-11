@@ -81,6 +81,8 @@ public class WikiHeadingTag implements JFlexParserTag {
 		}
 		int level = (Integer)args[0];
 		String tagText = raw.substring(level, raw.length() - level).trim();
+		// since the TOC isn't part of the editable content use a copy of the parser input/
+		// and an empty output.
 		ParserInput tmpParserInput = new ParserInput(lexer.getParserInput());
 		// special case - if text is of the form "=======text=======" then after stripping equals
 		// signs "=text=" will be left.  in this one case strip any opening equals signs before parsing.
@@ -90,9 +92,8 @@ public class WikiHeadingTag implements JFlexParserTag {
 			extraEqualSigns = tagText.substring(0, pos);
 			tagText = (pos < tagText.length()) ? tagText.substring(pos) : "";
 		}
-		String tocText = JFlexParserUtil.parseFragment(tmpParserInput, tagText, lexer.getMode());
+		String tocText = JFlexParserUtil.parseFragment(tmpParserInput, tagText, JFlexParser.MODE_PROCESS);
 		tocText = extraEqualSigns + tocText;
-		String parsedTocText = tocText;
 		tocText = Utilities.stripMarkup(tocText);
 		String tagName = lexer.getParserInput().getTableOfContents().checkForUniqueName(tocText);
 		// re-convert any &uuml; or other (converted by the parser) entities back
@@ -106,6 +107,7 @@ public class WikiHeadingTag implements JFlexParserTag {
 		output.append("<a name=\"").append(Utilities.encodeAndEscapeTopicName(tagName)).append("\"></a>");
 		output.append("<h").append(level).append('>');
 		output.append(this.buildSectionEditLink(lexer.getParserInput(), nextSection));
+		String parsedTocText = extraEqualSigns + JFlexParserUtil.parseFragment(lexer.getParserInput(), tagText, lexer.getMode());
 		output.append("<span>").append(parsedTocText).append("</span>");
 		output.append("</h").append(level).append('>');
 		return output.toString();
