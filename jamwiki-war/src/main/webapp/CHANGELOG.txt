@@ -82,6 +82,15 @@ Translation Updates:
   * Updated Russian translations (shar).
 
 
+0.9.5
+=====
+
+Bugfixes:
+
+  * Headings of seven or more levels caused generation of invalid HTML.
+    Reported by an anonymous user.
+
+
 0.9.4
 =====
 

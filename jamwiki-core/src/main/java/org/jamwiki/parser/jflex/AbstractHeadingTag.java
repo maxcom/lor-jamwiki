@@ -16,6 +16,8 @@
  */
 package org.jamwiki.parser.jflex;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
@@ -24,7 +26,6 @@ import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
-import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * Abstract parent class used for parsing wiki & HTML heading tags.
@@ -79,7 +80,7 @@ public abstract class AbstractHeadingTag implements JFlexParserTag {
 		// and an empty output.
 		ParserInput tmpParserInput = new ParserInput(lexer.getParserInput());
 		ParserOutput parserOutput = new ParserOutput();
-		String tocText = JFlexParserUtil.parseFragment(tmpParserInput, parserOutput, tagText, JFlexParser.MODE_PROCESS);
+		String tocText = this.processTocText(tmpParserInput, parserOutput, tagText, JFlexParser.MODE_PROCESS);
 		return Utilities.stripMarkup(tocText);
 	}
 
@@ -92,7 +93,8 @@ public abstract class AbstractHeadingTag implements JFlexParserTag {
 		output.append("<a name=\"").append(Utilities.encodeAndEscapeTopicName(tagName)).append("\"></a>");
 		output.append(generateTagOpen(raw, args));
 		output.append(this.buildSectionEditLink(lexer.getParserInput(), nextSection));
-		output.append("<span>").append(JFlexParserUtil.parseFragment(lexer.getParserInput(), lexer.getParserOutput(), tagText, lexer.getMode())).append("</span>");
+		String parsedTocText = this.processTocText(lexer.getParserInput(), lexer.getParserOutput(), tagText, lexer.getMode());
+		output.append("<span>").append(parsedTocText).append("</span>");
 		output.append("</h").append(level).append('>');
 		return output.toString();
 	}
@@ -135,6 +137,21 @@ public abstract class AbstractHeadingTag implements JFlexParserTag {
 			return raw;
 		}
 		return this.generateOutput(lexer, tagName, tocText, tagText, level, raw, args);
+	}
+
+	/**
+	 * Process all text inside of the equals signs.
+	 */
+	private String processTocText(ParserInput parserInput, ParserOutput parserOutput, String tagText, int mode) throws ParserException {
+		// special case - if text is of the form "=======text=======" then after stripping equals
+		// signs "=text=" will be left.  in this one case strip any opening equals signs before parsing.
+		String extraEqualSigns = "";
+		int pos = StringUtils.indexOfAnyBut(tagText, "= \t");
+		if (pos != -1) {
+			extraEqualSigns = tagText.substring(0, pos);
+			tagText = (pos < tagText.length()) ? tagText.substring(pos) : "";
+		}
+		return extraEqualSigns + JFlexParserUtil.parseFragment(parserInput, parserOutput, tagText, mode);
 	}
 
 	/**

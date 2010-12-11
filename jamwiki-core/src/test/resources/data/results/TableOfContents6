@@ -1,0 +1,24 @@
+<table id="toc">
+<tr>
+<td>
+<ul>
+<li><a href="#Level_1"><span class="tocnumber">1</span> <span class="toctext">Level 1</span></a><ul>
+<li><a href="#Level_2"><span class="tocnumber">1.1</span> <span class="toctext">Level 2</span></a><ul>
+<li><a href="#Level_3"><span class="tocnumber">1.1.1</span> <span class="toctext">Level 3</span></a><ul>
+<li><a href="#Level_4"><span class="tocnumber">1.1.1.1</span> <span class="toctext">Level 4</span></a><ul>
+<li><a href="#Level_5"><span class="tocnumber">1.1.1.1.1</span> <span class="toctext">Level 5</span></a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</td>
+</tr>
+</table>
+<a name="Level_1"></a><h1><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents6&amp;section=1">Edit</a>]</span><span>Level 1</span></h1>
+<a name="Level_2"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents6&amp;section=2">Edit</a>]</span><span>Level 2</span></h2>
+<a name="Level_3"></a><h3><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents6&amp;section=3">Edit</a>]</span><span>Level 3</span></h3>
+<a name="Level_4"></a><h4><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents6&amp;section=4">Edit</a>]</span><span>Level 4</span></h4>
+<a name="Level_5"></a><h5><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents6&amp;section=5">Edit</a>]</span><span>Level 5</span></h5>
+<a name="Level_6"></a><h6><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents6&amp;section=6">Edit</a>]</span><span>Level 6</span></h6>
+<a name="%3DLevel_7%3D"></a><h6><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents6&amp;section=7">Edit</a>]</span><span>=Level 7=</span></h6>
