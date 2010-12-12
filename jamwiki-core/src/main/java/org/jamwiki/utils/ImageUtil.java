@@ -56,6 +56,8 @@ public class ImageUtil {
 	private static final WikiLogger logger = WikiLogger.getLogger(ImageUtil.class.getName());
 	/** Cache name for the cache of image dimensions. */
 	private static final String CACHE_IMAGE_DIMENSIONS = "org.jamwiki.utils.ImageUtil.CACHE_IMAGE_DIMENSIONS";
+	/** Sub-folder of the "files" directory into which to place resized images. */
+	private static final String RESIZED_IMAGE_SUBFOLDER = "resized";
 
 	/**
 	 *
@@ -201,14 +203,14 @@ public class ImageUtil {
 	}
 
 	/**
-	 * Given a file URL and a maximum dimension, return a path for the file.
+	 * Given a file URL and a maximum dimension, return a relative path for the file.
 	 */
 	private static String buildImagePath(String currentUrl, int originalWidth, int scaledWidth) {
 		if (originalWidth <= scaledWidth) {
 			// no resizing necessary, return the original URL
 			return currentUrl;
 		}
-		String path = currentUrl;
+		String path = FilenameUtils.normalize(RESIZED_IMAGE_SUBFOLDER + "/" + currentUrl);
 		String dimensionInfo = "-" + scaledWidth + "px";
 		int pos = path.lastIndexOf('.');
 		if (pos != -1) {

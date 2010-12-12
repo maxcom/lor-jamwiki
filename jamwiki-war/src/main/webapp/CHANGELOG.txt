@@ -37,6 +37,8 @@ New Features:
   * Display pagination options when viewing topic categories.
   * Reduce the amount of parsing the must be done when importing topics in
     order to improve performance.
+  * Use a separate "resized" folder for resized images in order to more clearly
+    separate original uploads from resized images.
   * Remove ability to automatically upgrade from versions prior to 0.8.0.
   * Remove unused/obsolete Javascript and namespace the remaining code.
   * Organize uploaded images by virtual wiki on the file system.

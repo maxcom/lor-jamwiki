@@ -30,6 +30,7 @@ import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import org.apache.commons.io.FileUtils;
 
 /**
  * Utility methods that wrap native Java image processing functionality to allow
@@ -188,7 +189,9 @@ public class ImageProcessor {
 		// errors on some operating systems
 		FileOutputStream fos = null;
 		try {
-			fos = new FileOutputStream(imageFile);
+			// use the FileUtils utility method to ensure parent directories are created
+			// if necessary
+			fos = FileUtils.openOutputStream(imageFile);
 			boolean result = ImageIO.write(image, imageType, fos);
 			if (!result) {
 				throw new IOException("No appropriate writer found when writing image: " + filename);
