@@ -103,20 +103,8 @@ public class ItemsServlet extends JAMWikiServlet {
 		Set<String> allItems = new TreeSet<String>();
 		// retrieve topic names for topics that link to this one
 		allItems.addAll(WikiBase.getDataHandler().lookupTopicLinks(virtualWiki, topicName));
-		Set<String> items = new TreeSet<String>();
+		List<String> items = Pagination.retrievePaginatedSubset(pagination, allItems);
 		if (!allItems.isEmpty()) {
-			// FIXME - this is a nasty hack until data can be retrieved properly for pagination
-			int count = 0;
-			for (String linkTopic : allItems) {
-				count++;
-				if (count < (pagination.getOffset() + 1)) {
-					continue;
-				}
-				if (count > (pagination.getOffset() + pagination.getNumResults())) {
-					break;
-				}
-				items.add(linkTopic);
-			}
 			next.addObject("message", new WikiMessage("linkto.overview", topicName));
 		} else {
 			next.addObject("message", new WikiMessage("linkto.none", topicName));
@@ -141,19 +129,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		int namespaceId = (request.getParameter("namespace") == null) ? Namespace.MAIN_ID : new Integer(request.getParameter("namespace")).intValue();
 		Set<String> allItems = new TreeSet<String>();
 		allItems.addAll(WikiBase.getDataHandler().lookupTopicLinkOrphans(virtualWiki, namespaceId));
-		// FIXME - this is a nasty hack until data can be retrieved properly for pagination
-		Set<String> items = new TreeSet<String>();
-		int count = 0;
-		for (String topicName : allItems) {
-			count++;
-			if (count < (pagination.getOffset() + 1)) {
-				continue;
-			}
-			if (count > (pagination.getOffset() + pagination.getNumResults())) {
-				break;
-			}
-			items.add(topicName);
-		}
+		List<String> items = Pagination.retrievePaginatedSubset(pagination, allItems);
 		next.addObject("itemCount", items.size());
 		next.addObject("items", items);
 		String rootUrl = "Special:OrphanedPages";
