@@ -572,6 +572,13 @@ img.gallery {
 #toolbar a img:hover {
 	border-color: #D8D8E7;
 }
+table.categories {
+	width: 100%;
+}
+table.categories td {
+	vertical-align: top;
+	width: 33%;
+}
 
 /* search results */
 

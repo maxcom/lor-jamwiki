@@ -22,7 +22,7 @@
 <h3><fmt:message key="topic.category.subcategories"><fmt:param value="${categoryName}" /></fmt:message></h3>
 <div class="message"><fmt:message key="topic.category.numsubcategories"><fmt:param value="${numSubCategories}" /><fmt:param value="${categoryName}" /></fmt:message></div>
 
-<table width="100%"><tr><td>
+<table class="categories"><tr><td>
 <ul>
 		<c:set var="columnCount" value="1" />
 		<c:forEach items="${subCategories}" var="subCategory" varStatus="status">
@@ -61,7 +61,7 @@
 <div class="message"><fmt:message key="topic.category.numtopics"><fmt:param value="${numCategoryTopics}" /><fmt:param value="${categoryName}" /></fmt:message></div>
 	<c:if test="${numCategoryTopics > 0}">
 <div class="message"><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${displayCategoryCount}" rootUrl="${pageInfo.topicName}" /></div>
-<table width="100%"><tr><td>
+<table class="categories"><tr><td>
 <ul>
 		<c:set var="columnCount" value="1" />
 		<c:forEach items="${categoryTopics}" var="subtopic" varStatus="status">
