@@ -57,15 +57,17 @@
 	</c:if>
 
 <h3><fmt:message key="topic.category.topics"><fmt:param value="${categoryName}" /></fmt:message></h3>
+
 <div class="message"><fmt:message key="topic.category.numtopics"><fmt:param value="${numCategoryTopics}" /><fmt:param value="${categoryName}" /></fmt:message></div>
 	<c:if test="${numCategoryTopics > 0}">
+<div class="message"><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${displayCategoryCount}" rootUrl="${pageInfo.topicName}" /></div>
 <table width="100%"><tr><td>
 <ul>
 		<c:set var="columnCount" value="1" />
 		<c:forEach items="${categoryTopics}" var="subtopic" varStatus="status">
 <li><jamwiki:link value="${subtopic.childTopicName}" text="${subtopic.childTopicName}" /></li>
 			<%-- FIXME - do not hard code min num topics and num columns --%>
-			<c:if test="${(numCategoryTopics > 9) && (columnCount < 3) && ((status.count * 3) >= (numCategoryTopics * columnCount))}">
+			<c:if test="${(displayCategoryCount > 9) && (columnCount < 3) && ((status.count * 3) >= (displayCategoryCount * columnCount))}">
 				<c:set var="columnCount" value="${columnCount + 1}" />
 </ul></td><td><ul>
 			</c:if>

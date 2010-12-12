@@ -414,13 +414,14 @@ public class ServletUtil {
 	 * names and sort keys to the session that can then be retrieved for
 	 * display during rendering.
 	 *
+	 * @param request The current servlet request object.
 	 * @param next The current ModelAndView object used to return rendering
 	 *  information.
 	 * @param virtualWiki The virtual wiki name for the topic being rendered.
 	 * @param topicName The name of the topic that is being rendered.
 	 * @throws WikiException Thrown if any error occurs during processing.
 	 */
-	protected static void loadCategoryContent(ModelAndView next, String virtualWiki, String topicName) throws WikiException {
+	protected static void loadCategoryContent(HttpServletRequest request, ModelAndView next, String virtualWiki, String topicName) throws WikiException {
 		String categoryName = topicName.substring(Namespace.namespace(Namespace.CATEGORY_ID).getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
 		next.addObject("categoryName", categoryName);
 		List<Category> categoryTopics = null;
@@ -429,6 +430,7 @@ public class ServletUtil {
 		} catch (DataAccessException e) {
 			throw new WikiException(new WikiMessage("error.unknown", e.getMessage()), e);
 		}
+		Pagination pagination = ServletUtil.loadPagination(request, next);
 		List<Category> categoryImages = new ArrayList<Category>();
 		LinkedHashMap<String, String> subCategories = new LinkedHashMap<String, String>();
 		int i = 0;
@@ -448,12 +450,15 @@ public class ServletUtil {
 			}
 			i++;
 		}
-		next.addObject("categoryTopics", categoryTopics);
+		// manually process pagination
+		List<Category> paginatedCategories = Pagination.retrievePaginatedSubset(pagination, categoryTopics);
+		next.addObject("categoryTopics", paginatedCategories);
 		next.addObject("numCategoryTopics", categoryTopics.size());
 		next.addObject("categoryImages", categoryImages);
 		next.addObject("numCategoryImages", categoryImages.size());
 		next.addObject("subCategories", subCategories);
 		next.addObject("numSubCategories", subCategories.size());
+		next.addObject("displayCategoryCount", paginatedCategories.size());
 	}
 
 	/**
@@ -783,7 +788,7 @@ public class ServletUtil {
 		}
 		topic.setTopicContent(content);
 		if (topic.getTopicType() == TopicType.CATEGORY) {
-			loadCategoryContent(next, virtualWiki, topic.getName());
+			loadCategoryContent(request, next, virtualWiki, topic.getName());
 		}
 		next.addObject("interwikiLinks", parserOutput.getInterwikiLinks());
 		next.addObject("virtualWikiLinks", parserOutput.getVirtualWikiLinks());
