@@ -47,6 +47,7 @@
 		<jamwiki.version>1.0.0-SNAPSHOT</jamwiki.version>
 		<dependency.spring.version>3.0.5.RELEASE</dependency.spring.version>
 		<dependency.spring.security.version>3.0.5.RELEASE</dependency.spring.security.version>
+		<slf4j.version>1.5.11</slf4j.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencyManagement>
@@ -161,24 +162,29 @@
 				<artifactId>ehcache-core</artifactId>
 				<version>2.1.0</version>
 			</dependency>
-			<!-- slf4j unifies logging.  ehcache depends on it, and this replaces spring's dependency on commons-logging -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<!-- short-circuit commons-logging with 'provided' scope to avoid -->
+			<!--tedious dependency excludes and redirect all logging calls to SLF4J -->
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>jcl-over-slf4j</artifactId>
-				<version>1.5.8</version>
+				<version>${slf4j.version}</version>
 				<scope>runtime</scope>
 			</dependency>
-			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-classic</artifactId>
-				<version>0.9.20</version>
-			</dependency>
-			<!-- explicitly exclude commons-logging, which would otherwise be included by Spring -->
 			<dependency>
 				<groupId>commons-logging</groupId>
 				<artifactId>commons-logging</artifactId>
 				<version>1.0.4</version>
 				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>0.9.20</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.lucene</groupId>
