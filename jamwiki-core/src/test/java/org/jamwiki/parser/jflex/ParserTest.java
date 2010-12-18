@@ -22,9 +22,13 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 import org.jamwiki.JAMWikiUnitTest;
 import org.jamwiki.TestFileUtil;
+import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
@@ -43,7 +47,9 @@ public class ParserTest extends JAMWikiUnitTest {
 	private static boolean INITIALIZED = false;
 
 	/**
-	 *
+	 * Initialize test topics using sample data from the
+	 * /jamwiki-core/src/test/resources/data/topics folder.  This initialization
+	 * will be performed only once.
 	 */
 	@Before
 	public void setup() throws Exception {
@@ -51,6 +57,22 @@ public class ParserTest extends JAMWikiUnitTest {
 		if (!INITIALIZED) {
 			this.setupTopics();
 			INITIALIZED = true;
+		}
+	}
+
+	/**
+	 * Read and load default topics from the /jamwiki-core/src/test/resources/data/topics
+	 * folder.
+	 */
+	private void setupTopics() throws DataAccessException, IOException, WikiException {
+		File topicDir = TestFileUtil.getClassLoaderFile(TestFileUtil.TEST_TOPICS_DIR);
+		File[] topicFiles = topicDir.listFiles();
+		List<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
+		for (VirtualWiki virtualWiki : virtualWikis) {
+			for (File topicFile : topicFiles) {
+				String fileName = topicFile.getName();
+				this.setupTopic(virtualWiki, fileName);
+			}
 		}
 	}
 

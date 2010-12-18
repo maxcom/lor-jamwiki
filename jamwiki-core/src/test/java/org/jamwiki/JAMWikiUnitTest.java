@@ -39,12 +39,16 @@ import org.junit.Before;
 
 /**
  * JAMWiki parent class for unit tests.  This class will verify that a test
- * DataHandler is available and perform other required initialization.
+ * JAMWiki instance is available and that is has been loaded with sample topics,
+ * virtual wikis, and a default user account.
  */
 public abstract class JAMWikiUnitTest {
 
 	/**
-	 *
+	 * If a test JAMWiki instance does not yet exist, create one to allow running
+	 * of unit tests that require a working JAMWiki instance.  Note that this
+	 * method is run only once per target, since if the test instance already
+	 * exists a new one will not be set up.
 	 */
 	@Before
 	public void setup() throws Exception {
@@ -66,7 +70,8 @@ public abstract class JAMWikiUnitTest {
 	}
 
 	/**
-	 *
+	 * Initialize a test HSQL database for JAMWiki including two virtual wikis
+	 * and a default user account.
 	 */
 	private void setupDatabase() throws Exception {
 		WikiDatabase.setupDefaultDatabase(Environment.getInstance());
@@ -80,21 +85,6 @@ public abstract class JAMWikiUnitTest {
 		virtualWiki.setRootTopicName("StartingPoints");
 		WikiBase.getDataHandler().writeVirtualWiki(virtualWiki);
 		WikiBase.getDataHandler().setupSpecialPages(locale, wikiUser, virtualWiki);
-	}
-
-	/**
-	 * Read and load default topics from the file system.
-	 */
-	protected void setupTopics() throws DataAccessException, IOException, WikiException {
-		File topicDir = TestFileUtil.getClassLoaderFile(TestFileUtil.TEST_TOPICS_DIR);
-		File[] topicFiles = topicDir.listFiles();
-		List<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
-		for (VirtualWiki virtualWiki : virtualWikis) {
-			for (File topicFile : topicFiles) {
-				String fileName = topicFile.getName();
-				this.setupTopic(virtualWiki, fileName);
-			}
-		}
 	}
 
 	/**
