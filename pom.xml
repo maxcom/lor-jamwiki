@@ -199,7 +199,7 @@
 			<dependency>
 				<groupId>info.bliki.wiki</groupId>
 				<artifactId>bliki-core</artifactId>
-				<version>3.0.12-SNAPSHOT</version>
+				<version>3.0.16</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>

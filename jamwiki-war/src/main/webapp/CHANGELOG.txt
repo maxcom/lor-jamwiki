@@ -52,6 +52,7 @@ New Features:
   * Upgrade to Lucene Search 3.0.3.
   * Upgrade to commons-fileupload-1.2.2.
   * Upgrade to commons-io-2.0.
+  * Upgrade to bliki-core 3.0.16.
 
 Bugfixes:
 

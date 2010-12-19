@@ -7,6 +7,7 @@ import info.bliki.wiki.filter.WikipediaParser;
 import info.bliki.wiki.model.AbstractWikiModel;
 import info.bliki.wiki.model.Configuration;
 import info.bliki.wiki.model.ImageFormat;
+import info.bliki.wiki.namespaces.INamespace;
 import info.bliki.wiki.tags.WPATag;
 import info.bliki.wiki.tags.util.TagStack;
 
@@ -271,6 +272,10 @@ public class JAMWikiModel extends AbstractWikiModel {
 	@Override
 	public boolean replaceColon() {
 		return false;
+	}
+
+	public INamespace getNamespace() {
+		return new info.bliki.wiki.namespaces.Namespace(fParserInput.getLocale());
 	}
 
 	@Override
