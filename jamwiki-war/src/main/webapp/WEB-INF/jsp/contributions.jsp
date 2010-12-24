@@ -37,7 +37,6 @@
 	&#160;
 	(<jamwiki:link value="Special:History"><jamwiki:linkParam key="topic" value="${change.topicName}" /><fmt:message key="common.caption.history" /></jamwiki:link>)
 	&#160;
-	<%-- FIXME: do not hardcode date pattern --%>
 	<fmt:formatDate value="${change.changeDate}" type="both" pattern="${pageInfo.datePatternDateAndTime}" />
 	&#160;.&#160;.&#160;
 	<%-- the "+" symbol could be added using a pattern attribute, but there does not seem to be a way to avoid having "+0" show up when that approach is used. --%>

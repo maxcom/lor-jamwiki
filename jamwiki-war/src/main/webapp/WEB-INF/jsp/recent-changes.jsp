@@ -27,7 +27,6 @@
 <div class="message">
 <fmt:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:RecentChanges" />
 <br /><br />
-<%-- FIXME: do not hardcode date patterns --%>
 <fmt:message key="recentchanges.caption.time"><fmt:param><jsp:useBean id="now" class="java.util.Date" /><fmt:formatDate value="${now}" type="both" pattern="${pageInfo.datePatternDateAndTime}" /></fmt:param></fmt:message> <jamwiki:enabled property="PROP_RSS_ALLOWED">(<jamwiki:link value="Special:RecentChangesFeed"><fmt:message key="recentchanges.caption.rss" /></jamwiki:link>)</jamwiki:enabled>
 </div>
 

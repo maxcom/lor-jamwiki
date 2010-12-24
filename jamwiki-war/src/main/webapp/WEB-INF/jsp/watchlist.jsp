@@ -34,7 +34,6 @@
 
 <form name="num-changes" method="get" action="<jamwiki:link value="Special:Watchlist" />">
 
-<%-- FIXME: do not hardcode date pattern --%>
 <c:set var="previousDate"><fmt:formatDate value="${changes[0].changeDate}" type="both" pattern="${pageInfo.datePatternDateOnly}" /></c:set>
 <h4><c:out value="${previousDate}" /></h4>
 <ul>

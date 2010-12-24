@@ -54,7 +54,6 @@
 	<input type="radio" name="version1" id="ver1_<c:out value="${change.topicVersionId}" />" onclick="JAMWiki.UI.historyRadio(this, 'version2', false)" value="<c:out value="${change.topicVersionId}" />" <c:if test="${status.first}">checked="checked"</c:if> <c:if test="${status.last}">style="visibility:hidden"</c:if> />
 	</c:if>
 	&#160;
-	<%-- FIXME: do not hardcode date pattern --%>
 	<jamwiki:link value="Special:History"><jamwiki:linkParam key="topicVersionId" value="${change.topicVersionId}" /><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><fmt:formatDate value="${change.changeDate}" type="both" pattern="${pageInfo.datePatternDateAndTime}" /></jamwiki:link>
 	&#160;.&#160;.&#160;
 	<%-- the "+" symbol could be added using a pattern attribute, but there does not seem to be a way to avoid having "+0" show up when that approach is used. --%>
