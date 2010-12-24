@@ -155,6 +155,39 @@ public class WikiPageInfo {
 	}
 
 	/**
+	 * Return the property representing the date pattern to use for dates
+	 * that include date and time.
+	 *
+	 * @return The property representing the date pattern to use for dates
+	 * that include date and time.
+	 */
+	public String getDatePatternDateAndTime() {
+		return Environment.getValue(Environment.PROP_DATE_PATTERN_DATE_AND_TIME);
+	}
+
+	/**
+	 * Return the property representing the date pattern to use for date-only
+	 * dates.
+	 *
+	 * @return The property representing the date pattern to use for date-only
+	 * dates.
+	 */
+	public String getDatePatternDateOnly() {
+		return Environment.getValue(Environment.PROP_DATE_PATTERN_DATE_ONLY);
+	}
+
+	/**
+	 * Return the property representing the date pattern to use for time-only
+	 * dates.
+	 *
+	 * @return The property representing the date pattern to use for time-only
+	 * dates.
+	 */
+	public String getDatePatternTimeOnly() {
+		return Environment.getValue(Environment.PROP_DATE_PATTERN_TIME_ONLY);
+	}
+
+	/**
 	 * If a fatal error occurs it will be stored for display on the front
 	 * end.
 	 *

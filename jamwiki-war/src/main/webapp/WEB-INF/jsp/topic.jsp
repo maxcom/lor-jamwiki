@@ -27,7 +27,7 @@
 	<div id="contentSub">
 		<div id="revision">
 			<fmt:message key="history.revision">
-				<fmt:param><fmt:formatDate value="${version.changeDate}" type="both" pattern="dd MMMM yyyy HH:mm" /></fmt:param>
+				<fmt:param><fmt:formatDate value="${version.changeDate}" type="both" pattern="${pageInfo.datePatternDateAndTime}" /></fmt:param>
 				<fmt:param><jamwiki_t:userLinks pageInfo="${pageInfo}" userDisplay="${version.authorName}" /></fmt:param>
 			</fmt:message>
 			<c:if test="${!empty version.changeComment}">|&#160;(<span class="edit-comment"><jamwiki:editComment comment="${version.changeComment}" topic="${version.topicName}" /></span>)</c:if>

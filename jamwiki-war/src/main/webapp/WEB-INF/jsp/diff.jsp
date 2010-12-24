@@ -27,7 +27,7 @@
 	<td>
 		<c:if test="${!empty version2}">
 			<div id="left_revision">
-				<jamwiki:link value="Special:History"><jamwiki:linkParam key="topicVersionId" value="${version2.topicVersionId}" /><jamwiki:linkParam key="topic" value="${version2.topicName}" /><fmt:message key="diff.revision"><fmt:param><fmt:formatDate value="${version2.changeDate}" type="both" pattern="dd MMMM yyyy HH:mm" /></fmt:param></fmt:message></jamwiki:link>
+				<jamwiki:link value="Special:History"><jamwiki:linkParam key="topicVersionId" value="${version2.topicVersionId}" /><jamwiki:linkParam key="topic" value="${version2.topicName}" /><fmt:message key="diff.revision"><fmt:param><fmt:formatDate value="${version2.changeDate}" type="both" pattern="${pageInfo.datePatternDateAndTime}" /></fmt:param></fmt:message></jamwiki:link>
 				<c:if test="${!empty version2.changeTypeNotification}"><b>${version2.changeTypeNotification}</b></c:if>
 			</div>
 			<div id="left_revision_user">
@@ -42,7 +42,7 @@
 	<td>
 		<c:if test="${!empty version1}">
 			<div id="right_revision">
-				<jamwiki:link value="Special:History"><jamwiki:linkParam key="topicVersionId" value="${version1.topicVersionId}" /><jamwiki:linkParam key="topic" value="${version1.topicName}" /><fmt:message key="diff.revision"><fmt:param><fmt:formatDate value="${version1.changeDate}" type="both" pattern="dd MMMM yyyy HH:mm" /></fmt:param></fmt:message></jamwiki:link>
+				<jamwiki:link value="Special:History"><jamwiki:linkParam key="topicVersionId" value="${version1.topicVersionId}" /><jamwiki:linkParam key="topic" value="${version1.topicName}" /><fmt:message key="diff.revision"><fmt:param><fmt:formatDate value="${version1.changeDate}" type="both" pattern="${pageInfo.datePatternDateAndTime}" /></fmt:param></fmt:message></jamwiki:link>
 				<c:if test="${!empty version1.changeTypeNotification}"><b>${version1.changeTypeNotification}</b></c:if>
 			</div>
 			<div id="right_revision_user">

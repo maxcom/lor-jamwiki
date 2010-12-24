@@ -53,6 +53,9 @@ public class Environment {
 	public static final String PROP_CACHE_MAX_AGE = "cache-max-age";
 	public static final String PROP_CACHE_MAX_IDLE_AGE = "cache-max-idle-age";
 	public static final String PROP_CACHE_TOTAL_SIZE = "cache-total-size";
+	public static final String PROP_DATE_PATTERN_DATE_AND_TIME = "date-pattern-date-and-time";
+	public static final String PROP_DATE_PATTERN_DATE_ONLY = "date-pattern-date-only";
+	public static final String PROP_DATE_PATTERN_TIME_ONLY = "date-pattern-time-only";
 	public static final String PROP_DB_DRIVER = "driver";
 	public static final String PROP_DB_PASSWORD = "db-password";
 	public static final String PROP_DB_TYPE = "database-type";
@@ -193,6 +196,9 @@ public class Environment {
 		this.defaults.setProperty(PROP_CACHE_MAX_AGE, "300");
 		this.defaults.setProperty(PROP_CACHE_MAX_IDLE_AGE, "150");
 		this.defaults.setProperty(PROP_CACHE_TOTAL_SIZE, "3000");
+		this.defaults.setProperty(PROP_DATE_PATTERN_DATE_AND_TIME, "dd MMMM yyyy HH:mm");
+		this.defaults.setProperty(PROP_DATE_PATTERN_DATE_ONLY, "dd MMMM yyyy");
+		this.defaults.setProperty(PROP_DATE_PATTERN_TIME_ONLY, "HH:mm");
 		this.defaults.setProperty(PROP_DB_DRIVER, "");
 		this.defaults.setProperty(PROP_DB_PASSWORD, "");
 		this.defaults.setProperty(PROP_DB_TYPE, "");
@@ -279,7 +285,7 @@ public class Environment {
 		if (ENVIRONMENT_INSTANCE == null) {
 			// initialize the singleton instance
 			ENVIRONMENT_INSTANCE = new Environment();
-	}
+		}
 		return ENVIRONMENT_INSTANCE.props;
 	}
 
