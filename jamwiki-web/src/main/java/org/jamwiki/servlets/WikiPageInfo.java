@@ -319,7 +319,7 @@ public class WikiPageInfo {
 	 * @return The base title used with RSS feeds.
 	 */
 	public String getRSSTitle() {
-		return Environment.getValue("rss-title");
+		return Environment.getValue(Environment.PROP_RSS_TITLE);
 	}
 
 	/**
