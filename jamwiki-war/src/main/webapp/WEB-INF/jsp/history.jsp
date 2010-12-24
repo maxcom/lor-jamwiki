@@ -55,7 +55,7 @@
 	</c:if>
 	&#160;
 	<%-- FIXME: do not hardcode date pattern --%>
-	<jamwiki:link value="Special:History"><jamwiki:linkParam key="topicVersionId" value="${change.topicVersionId}" /><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><fmt:formatDate value="${change.changeDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></jamwiki:link>
+	<jamwiki:link value="Special:History"><jamwiki:linkParam key="topicVersionId" value="${change.topicVersionId}" /><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><fmt:formatDate value="${change.changeDate}" type="both" pattern="dd MMMM yyyy HH:mm" /></jamwiki:link>
 	&#160;.&#160;.&#160;
 	<%-- the "+" symbol could be added using a pattern attribute, but there does not seem to be a way to avoid having "+0" show up when that approach is used. --%>
 	(<c:if test="${change.charactersChanged > 0}">+</c:if><fmt:formatNumber value="${change.charactersChanged}" />)

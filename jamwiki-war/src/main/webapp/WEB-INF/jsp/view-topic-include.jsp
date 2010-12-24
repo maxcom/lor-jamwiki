@@ -34,7 +34,7 @@
 				<ul>
 					<c:forEach items="${fileVersions}" var="fileVersion">
 					<li>
-					<a href="<c:out value="${fileVersion.url}" />"><fmt:formatDate value="${fileVersion.uploadDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></a>
+					<a href="<c:out value="${fileVersion.url}" />"><fmt:formatDate value="${fileVersion.uploadDate}" type="both" pattern="dd MMMM yyyy HH:mm" /></a>
 					&#160;(<fmt:message key="topic.filesize.bytes"><fmt:param value="${fileVersion.fileSize}" /></fmt:message>)
 					&#160;.&#160;.&#160;
 					<jamwiki:link value="${pageInfo.namespaces[topicObject.virtualWiki]['User']}:${fileVersion.authorDisplay}" virtualWiki="${topicObject.virtualWiki}" text="${fileVersion.authorDisplay}" style="${sharedImage ? 'interwikilink' : ''}"/>
