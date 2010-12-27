@@ -16,6 +16,7 @@
  */
 package org.jamwiki.servlets;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -287,6 +288,9 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_TOPIC_EDITOR);
 			setNumericProperty(props, request, Environment.PROP_IMAGE_RESIZE_INCREMENT, errors);
 			setNumericProperty(props, request, Environment.PROP_MAX_TOPIC_VERSION_EXPORT, errors);
+			setDatePatternProperty(props, request, Environment.PROP_DATE_PATTERN_DATE_AND_TIME, errors);
+			setDatePatternProperty(props, request, Environment.PROP_DATE_PATTERN_DATE_ONLY, errors);
+			setDatePatternProperty(props, request, Environment.PROP_DATE_PATTERN_TIME_ONLY, errors);
 			setNumericProperty(props, request, Environment.PROP_RECENT_CHANGES_NUM, errors);
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_SPAM_FILTER);
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_USE_PREVIEW);
@@ -304,7 +308,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_JAVASCRIPT);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_TEMPLATES);
 			setProperty(props, request, Environment.PROP_PARSER_SIGNATURE_USER_PATTERN);
-			setProperty(props, request, Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN);
+			setDatePatternProperty(props, request, Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN, errors);
 			setProperty(props, request, Environment.PROP_BASE_FILE_DIR);
 			setProperty(props, request, Environment.PROP_BASE_PERSISTENCE_TYPE);
 			if (props.getProperty(Environment.PROP_BASE_PERSISTENCE_TYPE).equals(WikiBase.PERSISTENCE_EXTERNAL)) {
@@ -427,6 +431,22 @@ public class AdminServlet extends JAMWikiServlet {
 	private static void setBooleanProperty(Properties props, HttpServletRequest request, String parameter) {
 		boolean value = (request.getParameter(parameter) != null);
 		props.setProperty(parameter, Boolean.toString(value));
+	}
+
+	/**
+	 * Utility method for setting a property that represents a SimpleDateFormat pattern.
+	 * If the pattern is invalid or <code>null</code> then an error is generated.
+	 */
+	private static void setDatePatternProperty(Properties props, HttpServletRequest request, String parameter, List<WikiMessage> errors) {
+		String value = request.getParameter(parameter);
+		if (!StringUtils.equalsIgnoreCase(value, "SHORT") && !StringUtils.equalsIgnoreCase(value, "MEDIUM") && !StringUtils.equalsIgnoreCase(value, "LONG") && !StringUtils.equalsIgnoreCase(value, "FULL")) {
+			try {
+				SimpleDateFormat sdf = new SimpleDateFormat(value);
+			} catch (Exception e) {
+				errors.add(new WikiMessage("admin.message.date.error", parameter, value));
+			}
+		}
+		props.setProperty(parameter, value);
 	}
 
 	/**

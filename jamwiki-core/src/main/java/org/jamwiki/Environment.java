@@ -21,9 +21,11 @@ import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 // FIXME - remove this import
 import org.apache.commons.pool.impl.GenericObjectPool;
@@ -273,6 +275,44 @@ public class Environment {
 	 */
 	public static boolean getBooleanValue(String name) {
 		return Boolean.valueOf(getValue(name));
+	}
+
+	/**
+	 * Utility method for processing a SimpleDateFormatPattern property value.
+	 *
+	 * @param name The name of the property whose value is to be retrieved.
+	 * @param date Boolean value indicating whether or not to include the date
+	 *  pattern for SHORT, MEDIUM, LONG or FULL pattern values.  This parameter
+	 *  is ignored if the property value is an actual pattern rather than the
+	 *  constant name.
+	 * @param time Boolean value indicating whether or not to include the time
+	 *  pattern for SHORT, MEDIUM, LONG or FULL pattern values.  This parameter
+	 *  is ignored if the property value is an actual pattern rather than the
+	 *  constant name.
+	 * @return The value of the property.
+	 */
+	public static String getDatePatternValue(String name, boolean date, boolean time) {
+		String result = getValue(name);
+		int style = -1;
+		if (StringUtils.equalsIgnoreCase(result, "SHORT")) {
+			style = SimpleDateFormat.SHORT;
+		} else if (StringUtils.equalsIgnoreCase(result, "MEDIUM")) {
+			style = SimpleDateFormat.MEDIUM;
+		} else if (StringUtils.equalsIgnoreCase(result, "LONG")) {
+			style = SimpleDateFormat.LONG;
+		} else if (StringUtils.equalsIgnoreCase(result, "FULL")) {
+			style = SimpleDateFormat.FULL;
+		}
+		if (style != -1) {
+			if (date && time) {
+				result = ((SimpleDateFormat)SimpleDateFormat.getDateTimeInstance(style, style)).toPattern();
+			} else if (date) {
+				result = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(style)).toPattern();
+			} else if (time) {
+				result = ((SimpleDateFormat)SimpleDateFormat.getTimeInstance(style)).toPattern();
+			}
+		}
+		return result;
 	}
 
 	/**

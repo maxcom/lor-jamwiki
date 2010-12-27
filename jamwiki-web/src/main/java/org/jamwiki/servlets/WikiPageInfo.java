@@ -162,7 +162,7 @@ public class WikiPageInfo {
 	 * that include date and time.
 	 */
 	public String getDatePatternDateAndTime() {
-		return Environment.getValue(Environment.PROP_DATE_PATTERN_DATE_AND_TIME);
+		return Environment.getDatePatternValue(Environment.PROP_DATE_PATTERN_DATE_AND_TIME, true, true);
 	}
 
 	/**
@@ -173,7 +173,7 @@ public class WikiPageInfo {
 	 * dates.
 	 */
 	public String getDatePatternDateOnly() {
-		return Environment.getValue(Environment.PROP_DATE_PATTERN_DATE_ONLY);
+		return Environment.getDatePatternValue(Environment.PROP_DATE_PATTERN_DATE_ONLY, true, false);
 	}
 
 	/**
@@ -184,7 +184,7 @@ public class WikiPageInfo {
 	 * dates.
 	 */
 	public String getDatePatternTimeOnly() {
-		return Environment.getValue(Environment.PROP_DATE_PATTERN_TIME_ONLY);
+		return Environment.getDatePatternValue(Environment.PROP_DATE_PATTERN_TIME_ONLY, false, true);
 	}
 
 	/**

@@ -187,6 +187,24 @@ function onRSS() {
 	<span><jamwiki:text name="${PROP_MAX_TOPIC_VERSION_EXPORT}" size="5" maxlength="4" value="${props[PROP_MAX_TOPIC_VERSION_EXPORT]}" id="${PROP_MAX_TOPIC_VERSION_EXPORT}" /></span>
 	<div class="formhelp"><fmt:message key="admin.help.maxversionexport" /></div>
 </div>
+<div class="row">
+	<label for="<%= Environment.PROP_DATE_PATTERN_DATE_AND_TIME %>"><fmt:message key="admin.caption.date.dateandtime" /></label>
+	<c:set var="PROP_DATE_PATTERN_DATE_AND_TIME"><%= Environment.PROP_DATE_PATTERN_DATE_AND_TIME %></c:set>
+	<span><jamwiki:text name="${PROP_DATE_PATTERN_DATE_AND_TIME}" size="30" value="${props[PROP_DATE_PATTERN_DATE_AND_TIME]}" id="${PROP_DATE_PATTERN_DATE_AND_TIME}" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.date.dateandtime" /> <fmt:message key="admin.help.date.common" /></div>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_DATE_PATTERN_DATE_ONLY %>"><fmt:message key="admin.caption.date.dateonly" /></label>
+	<c:set var="PROP_DATE_PATTERN_DATE_ONLY"><%= Environment.PROP_DATE_PATTERN_DATE_ONLY %></c:set>
+	<span><jamwiki:text name="${PROP_DATE_PATTERN_DATE_ONLY}" size="30" value="${props[PROP_DATE_PATTERN_DATE_ONLY]}" id="${PROP_DATE_PATTERN_DATE_ONLY}" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.date.dateonly" /> <fmt:message key="admin.help.date.common" /></div>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_DATE_PATTERN_TIME_ONLY %>"><fmt:message key="admin.caption.date.timeonly" /></label>
+	<c:set var="PROP_DATE_PATTERN_TIME_ONLY"><%= Environment.PROP_DATE_PATTERN_TIME_ONLY %></c:set>
+	<span><jamwiki:text name="${PROP_DATE_PATTERN_TIME_ONLY}" size="30" value="${props[PROP_DATE_PATTERN_TIME_ONLY]}" id="${PROP_DATE_PATTERN_TIME_ONLY}" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.date.timeonly" /> <fmt:message key="admin.help.date.common" /></div>
+</div>
 </fieldset>
 </div>
 <!-- END GENERAL SETTINGS -->
@@ -277,7 +295,7 @@ function onRSS() {
 	<label for="<%= Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN %>"><fmt:message key="admin.parser.caption.signaturedate" /></label>
 	<c:set var="PROP_PARSER_SIGNATURE_DATE_PATTERN"><%= Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN %></c:set>
 	<span><jamwiki:text name="${PROP_PARSER_SIGNATURE_DATE_PATTERN}" value="${props[PROP_PARSER_SIGNATURE_DATE_PATTERN]}" size="50" id="${PROP_PARSER_SIGNATURE_DATE_PATTERN}" /></span>
-	<div class="formhelp"><fmt:message key="admin.parser.help.signaturedate" /></div>
+	<div class="formhelp"><fmt:message key="admin.parser.help.signaturedate" /> <fmt:message key="admin.help.date.common" /></div>
 </div>
 </fieldset>
 </div>

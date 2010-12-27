@@ -59,7 +59,7 @@ public class WikiSignatureTag implements JFlexParserTag {
 		}
 		if (includeDate) {
 			SimpleDateFormat format = new SimpleDateFormat();
-			format.applyPattern(Environment.getValue(Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN));
+			format.applyPattern(Environment.getDatePatternValue(Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN, true, true));
 			signature += format.format(new java.util.Date());
 		}
 		return signature;
