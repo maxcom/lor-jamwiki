@@ -186,4 +186,22 @@ public class WikiMessage {
 		}
 		this.params[index] = this.escapeHtml(parameter);
 	}
+
+	/**
+	 * Override the toString method to return the key and params used by this message
+	 * object.  This capability is useful mainly for logging purposes when formatting
+	 * by locale is not required.
+	 *
+	 * @return A string representation of this WikiMessage including the message key
+	 *  and any params.
+	 */
+	public String toString() {
+		String result = this.key;
+		if (this.params != null) {
+			for (String param : this.params) {
+				result += " | " + param;
+			}
+		}
+		return result;
+	}
 }
