@@ -45,6 +45,7 @@ public class TemplateTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(TemplateTag.class.getName());
 	protected static final String TEMPLATE_INCLUSION = "template-inclusion";
+	protected static final String TEMPLATE_ONLYINCLUDE = "template-onlyinclude";
 	private static final Pattern PARAM_NAME_VALUE_PATTERN = Pattern.compile("[\\s]*([A-Za-z0-9_\\ \\-]+)[\\s]*\\=([\\s\\S]*)");
 
 	/**
@@ -283,7 +284,17 @@ public class TemplateTag implements JFlexParserTag {
 			output.append(this.applyParameter(parserInput, parserOutput, param, parameterValues));
 			pos = endPos - 1;
 		}
-		return JFlexParserUtil.parseFragment(parserInput, parserOutput, output.toString().trim(), JFlexParser.MODE_TEMPLATE);
+		String result = JFlexParserUtil.parseFragment(parserInput, parserOutput, output.toString().trim(), JFlexParser.MODE_TEMPLATE);
+		if (parserInput.getTempParams().get(TEMPLATE_ONLYINCLUDE) != null) {
+			// HACK! If an onlyinclude tag is encountered in the previous fragment parse
+			// then that tag's parsed output is stored in the TEMPLATE_ONLYINCLUDE param.
+			// This hack is necessary because onlyinclude indicates that ONLY the
+			// onlyinclude content is relevant, and anything parsed before or after that
+			// tag must be ignored.
+			result = (String)parserInput.getTempParams().get(TEMPLATE_ONLYINCLUDE);
+			parserInput.getTempParams().remove(TEMPLATE_ONLYINCLUDE);
+		}
+		return result;
 	}
 
 	/**

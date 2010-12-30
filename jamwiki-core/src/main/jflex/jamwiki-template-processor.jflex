@@ -58,6 +58,7 @@ templateendchar    = "}"
 templateparam      = "{{{" [^\{\}\n]+ "}}}"
 includeonly        = (<[ ]*includeonly[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*includeonly[ ]*>)
 noinclude          = (<[ ]*noinclude[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*noinclude[ ]*>)
+onlyinclude        = (<[ ]*onlyinclude[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*onlyinclude[ ]*>)
 
 /* signatures */
 wikisignature      = ([~]{3,5})
@@ -103,9 +104,9 @@ wikisignature      = ([~]{3,5})
     this.templateString += raw;
     if (Utilities.findMatchingEndTag(this.templateString, 0, "{", "}") != -1) {
         endState();
-        String value = this.templateString;
+        String result = this.parse(TAG_TYPE_TEMPLATE, this.templateString);
         this.templateString = "";
-        return this.parse(TAG_TYPE_TEMPLATE, value);
+        return result;
     }
     return "";
 }
@@ -127,20 +128,23 @@ wikisignature      = ([~]{3,5})
     return "";
 }
 
-<TEMPLATE>{includeonly} {
+<YYINITIAL, TEMPLATE>{includeonly} {
     if (logger.isTraceEnabled()) logger.trace("includeonly: " + yytext() + " (" + yystate() + ")");
-    this.templateString += this.parse(TAG_TYPE_INCLUDE_ONLY, yytext());
-    return "";
-}
-
-<YYINITIAL>{includeonly} {
-    if (logger.isTraceEnabled()) logger.trace("includeonly: " + yytext() + " (" + yystate() + ")");
-    return this.parse(TAG_TYPE_INCLUDE_ONLY, yytext());
+    String parsed = this.parse(TAG_TYPE_INCLUDE_ONLY, yytext());
+    if (yystate() == TEMPLATE) {
+        this.templateString += parsed;
+    }
+    return (yystate() == YYINITIAL) ? parsed : "";
 }
 
 <YYINITIAL, TEMPLATE>{noinclude} {
     if (logger.isTraceEnabled()) logger.trace("noinclude: " + yytext() + " (" + yystate() + ")");
     return this.parse(TAG_TYPE_NO_INCLUDE, yytext());
+}
+
+<YYINITIAL, TEMPLATE>{onlyinclude} {
+    if (logger.isTraceEnabled()) logger.trace("onlyinclude: " + yytext() + " (" + yystate() + ")");
+    return this.parse(TAG_TYPE_ONLY_INCLUDE, yytext());
 }
 
 /* ----- signatures ----- */

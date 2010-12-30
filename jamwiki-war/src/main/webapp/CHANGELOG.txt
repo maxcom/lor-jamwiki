@@ -22,6 +22,7 @@ New Features:
     "{{#switch: value | case1 = result | case2 = result | default}}".
   * Support the #ifexist parser function.  Usage:
     "{{#ifexist: topic | exists | does not exist}}".
+  * Support the Mediawiki <onlyinclude> tag for template content.
   * Special:VirtualWiki optimizations.  Site name, meta description and logo
     can now allow be customized per-virtual wiki.
   * Use a new algorithm for image resizing to greatly improve image quality.
