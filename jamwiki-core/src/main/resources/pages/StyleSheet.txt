@@ -53,6 +53,12 @@ h1, h2, h3, h4, h5 {
 	padding: 0.5em 0em 0.2em 0em;
 	text-align: left;
 }
+h1, h2 {
+	margin-bottom: 0.5em;
+}
+h3, h4, h5 {
+	margin-bottom: 0.2em;
+}
 h1 {
 	border-bottom: 1px solid #D8D8E7;
 	font-size: 200%;

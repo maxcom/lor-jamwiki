@@ -30,7 +30,9 @@
 			</div>
 			<div class="clear"></div>
 			<c:if test="${!empty fileVersions}">
+				<%-- display image file history --%>
 				<h2><fmt:message key="topic.filehistory" /></h2>
+				<p><fmt:message key="topic.filehistory.click" /></p>
 				<ul>
 					<c:forEach items="${fileVersions}" var="fileVersion">
 					<li>
