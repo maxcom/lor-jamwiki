@@ -20,13 +20,8 @@ package org.jamwiki;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Locale;
 import org.apache.commons.io.FileUtils;
-import org.jamwiki.DataAccessException;
-import org.jamwiki.Environment;
-import org.jamwiki.WikiBase;
-import org.jamwiki.WikiException;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicType;

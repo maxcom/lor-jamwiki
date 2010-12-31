@@ -446,9 +446,9 @@ public class Environment {
 			File webAppRoot = Utilities.getClassLoaderRoot();
 			// the class loader root should be /WEB-INF/classes, but if deployed as anything
 			// other than a WAR then it might just be the temp directory.
-			if (webAppRoot.getParentFile() != null && webAppRoot.getName().toLowerCase().equals("classes")) {
+			if (webAppRoot.getParentFile() != null && webAppRoot.getName().equalsIgnoreCase("classes")) {
 				webAppRoot = webAppRoot.getParentFile();
-				if (webAppRoot.getParentFile() != null && webAppRoot.getName().toLowerCase().equals("web-inf")) {
+				if (webAppRoot.getParentFile() != null && webAppRoot.getName().equalsIgnoreCase("web-inf")) {
 					webAppRoot = webAppRoot.getParentFile();
 				}
 			}

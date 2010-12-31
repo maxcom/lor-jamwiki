@@ -127,7 +127,7 @@ public class TemplateTag implements JFlexParserTag {
 		// update the raw value to handle cases such as a signature in the template content
 		raw = "{{" + templateContent + "}}";
 		// check for substitution ("{{subst:Template}}")
-		String subst = this.parseSubstitution(parserInput, parserOutput, mode, raw, templateContent);
+		String subst = this.parseSubstitution(parserInput, parserOutput, raw, templateContent);
 		if (subst != null) {
 			parserInput.decrementTemplateDepth();
 			return subst;
@@ -154,7 +154,7 @@ public class TemplateTag implements JFlexParserTag {
 			inclusion = (templateTopic != null || wikiLink.getColon());
 		}
 		// get the parsed template body
-		this.processTemplateMetadata(parserInput, parserOutput, templateTopic, raw, name);
+		this.processTemplateMetadata(parserOutput, templateTopic, name);
 		if (mode <= JFlexParser.MODE_MINIMAL) {
 			result = raw;
 		} else {
@@ -168,11 +168,11 @@ public class TemplateTag implements JFlexParserTag {
 				templateTopic = null;
 			}
 			if (inclusion) {
-				result = this.processTemplateInclusion(parserInput, parserOutput, mode, templateTopic, templateContent, raw, name);
+				result = this.processTemplateInclusion(parserInput, parserOutput, templateTopic, templateContent, name);
 			} else if (templateTopic == null) {
 				result = ((allowTemplateEdit) ? "[[" + name + "]]" : null);
 			} else {
-				result = this.processTemplateContent(parserInput, parserOutput, templateTopic, templateContent, name);
+				result = this.processTemplateContent(parserInput, parserOutput, templateTopic, templateContent);
 			}
 		}
 		parserInput.decrementTemplateDepth();
@@ -213,7 +213,7 @@ public class TemplateTag implements JFlexParserTag {
 	 * Determine if template content is of the form "subst:XXX".  If it is,
 	 * process it, otherwise return <code>null</code>.
 	 */
-	private String parseSubstitution(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw, String templateContent) throws DataAccessException, ParserException {
+	private String parseSubstitution(ParserInput parserInput, ParserOutput parserOutput, String raw, String templateContent) throws DataAccessException, ParserException {
 		// is it a substitution?
 		templateContent = templateContent.trim();
 		if (!templateContent.startsWith("subst:") || templateContent.length() <= "subst:".length()) {
@@ -330,7 +330,7 @@ public class TemplateTag implements JFlexParserTag {
 	 * Given a template call of the form "{{name|param=value|param=value}}"
 	 * parse the parameter names and values.
 	 */
-	private Map<String, String> parseTemplateParameterValues(ParserInput parserInput, String templateContent) throws ParserException {
+	private Map<String, String> parseTemplateParameterValues(String templateContent) throws ParserException {
 		Map<String, String> parameterValues = new HashMap<String, String>();
 		List<String> tokens = JFlexParserUtil.tokenizeParamString(templateContent);
 		if (tokens.isEmpty()) {
@@ -363,9 +363,9 @@ public class TemplateTag implements JFlexParserTag {
 	 * Given a template call of the form "{{name|param|param}}" return the
 	 * parsed output.
 	 */
-	private String processTemplateContent(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String templateContent, String name) throws ParserException {
+	private String processTemplateContent(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String templateContent) throws ParserException {
 		// set template parameter values
-		Map<String, String> parameterValues = this.parseTemplateParameterValues(parserInput, templateContent);
+		Map<String, String> parameterValues = this.parseTemplateParameterValues(templateContent);
 		return this.parseTemplateBody(parserInput, parserOutput, templateTopic.getTopicContent(), parameterValues);
 	}
 
@@ -373,7 +373,7 @@ public class TemplateTag implements JFlexParserTag {
 	 * Given a template call of the form "{{:name}}" parse the template
 	 * inclusion.
 	 */
-	private String processTemplateInclusion(ParserInput parserInput, ParserOutput parserOutput, int mode, Topic templateTopic, String templateContent, String raw, String name) throws ParserException {
+	private String processTemplateInclusion(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String templateContent, String name) throws ParserException {
 		if (templateTopic == null) {
 			return "[[" + name + "]]";
 		}
@@ -383,13 +383,13 @@ public class TemplateTag implements JFlexParserTag {
 			throw new ExcessiveNestingException("Potentially infinite inclusions - over " + inclusion + " template inclusions while parsing topic " + parserInput.getTopicName());
 		}
 		parserInput.getTempParams().put(TEMPLATE_INCLUSION, inclusion);
-		return this.processTemplateContent(parserInput, parserOutput, templateTopic, templateContent, name);
+		return this.processTemplateContent(parserInput, parserOutput, templateTopic, templateContent);
 	}
 
 	/**
 	 * Process template values, setting link and other metadata output values.
 	 */
-	private void processTemplateMetadata(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String raw, String name) {
+	private void processTemplateMetadata(ParserOutput parserOutput, Topic templateTopic, String name) {
 		name = (templateTopic != null) ? templateTopic.getName() : name;
 		parserOutput.addLink(name);
 		parserOutput.addTemplate(name);

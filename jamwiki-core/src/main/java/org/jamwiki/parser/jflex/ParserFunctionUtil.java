@@ -381,7 +381,7 @@ public class ParserFunctionUtil {
 		int pos = 0;
 		String caseCondition, caseResult;
 		for (int i = 1; i < parserFunctionArgumentArray.length; i++) {
-			pos = parserFunctionArgumentArray[i].indexOf("=");
+			pos = parserFunctionArgumentArray[i].indexOf('=');
 			if (pos == -1 && i == (parserFunctionArgumentArray.length - 1)) {
 				// last argument is the default when no case is specified
 				defaultCondition = parserFunctionArgumentArray[i].trim();

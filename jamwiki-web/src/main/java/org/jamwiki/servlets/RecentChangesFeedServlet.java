@@ -206,12 +206,10 @@ public class RecentChangesFeedServlet extends AbstractController {
 		} else {
 			if (linkToVersion) {
 				try {
-				String url = feedURL + URLEncoder.encode("Special:History?topicVersionId=" + change.getTopicVersionId() + "&topic="
-						+ Utilities.encodeAndEscapeTopicName(change.getTopicName()), "UTF-8");
+					String url = feedURL + URLEncoder.encode("Special:History?topicVersionId=" + change.getTopicVersionId() + "&topic=" + Utilities.encodeAndEscapeTopicName(change.getTopicName()), "UTF-8");
 					entry.setLink(url);
 				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					// this won't ever happen since UTF-8 is always valid
 				}
 			} else {
 				entry.setLink(feedURL + Utilities.encodeAndEscapeTopicName(change.getTopicName()));

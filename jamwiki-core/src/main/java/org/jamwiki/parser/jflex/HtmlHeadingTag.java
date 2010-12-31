@@ -39,7 +39,7 @@ public class HtmlHeadingTag extends AbstractHeadingTag {
 	 *
 	 */
 	protected String generateTagOpen(String raw, Object... args) throws ParserException {
-		int pos = raw.indexOf(">");
+		int pos = raw.indexOf('>');
 		String openTagRaw = raw.substring(0, pos + 1);
 		return JFlexParserUtil.sanitizeHtmlTag(openTagRaw).getHtml();
 	}
@@ -49,10 +49,10 @@ public class HtmlHeadingTag extends AbstractHeadingTag {
 	 */
 	protected String generateTagText(String raw, Object... args) throws ParserException {
 		// get end of opening tag
-		int pos = raw.indexOf(">");
+		int pos = raw.indexOf('>');
 		String tagText = raw.substring(pos + 1);
 		// get start of closing tag
-		pos = tagText.lastIndexOf("<");
+		pos = tagText.lastIndexOf('<');
 		return tagText.substring(0, pos).trim();
 	}
 }

@@ -28,7 +28,6 @@ import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
-import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.ImageUtil;
@@ -146,7 +145,7 @@ public class UploadServlet extends JAMWikiServlet {
 		Topic topic = ImageUtil.writeImageTopic(virtualWiki, topicName, contents, user, isImage, ipAddress);
 		WikiFileVersion wikiFileVersion = new WikiFileVersion();
 		wikiFileVersion.setUploadComment(topic.getTopicContent());
-		WikiFile wikiFile = ImageUtil.writeWikiFile(topic, wikiFileVersion, user, ipAddress, filename, url, contentType, fileSize);
+		ImageUtil.writeWikiFile(topic, wikiFileVersion, user, ipAddress, filename, url, contentType, fileSize);
 		ServletUtil.redirect(next, virtualWiki, topicName);
 	}
 

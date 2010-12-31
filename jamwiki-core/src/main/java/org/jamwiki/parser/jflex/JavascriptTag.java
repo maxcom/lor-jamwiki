@@ -35,7 +35,9 @@ public class JavascriptTag implements JFlexParserTag {
 	 * Parse a Mediawiki HTML link of the form "<script>...</script>".
 	 */
 	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
-		if (logger.isTraceEnabled()) logger.trace("javascript: " + raw + " (" + lexer.yystate() + ")");
+		if (logger.isTraceEnabled()) {
+			logger.trace("javascript: " + raw + " (" + lexer.yystate() + ")");
+		}
 		if (StringUtils.isBlank(raw)) {
 			// no link to display
 			return raw;
@@ -48,11 +50,11 @@ public class JavascriptTag implements JFlexParserTag {
 	 */
 	private String parseScriptTag(ParserInput parserInput, ParserOutput parserOutput, String raw, int mode) throws ParserException {
 		// get open <script> tag
-		int pos = raw.indexOf(">");
+		int pos = raw.indexOf('>');
 		String openTag = raw.substring(0, pos + 1);
 		// get closing </script> tag
 		raw = raw.substring(pos + 1);
-		pos = raw.lastIndexOf("<");
+		pos = raw.lastIndexOf('<');
 		String closeTag = raw.substring(pos);
 		raw = raw.substring(0, pos);
 		if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT)) {
