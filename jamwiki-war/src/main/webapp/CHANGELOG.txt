@@ -19,6 +19,9 @@ New Features:
     "{{#ifexist: topic | exists | does not exist}}".
   * Support the Mediawiki <onlyinclude> tag for template content.
   * Allow use of HTML heading tags (<h1>, <h2>, etc).
+  * Use SLF4J for logging instead of java.util.logging to allow consolidated
+    logging from core code and dependencies such as Spring and ehcache.  Site
+    admins will need to configure the /WEB-INF/classes/logback.xml file.
   * Update the admin page UI to improve usability - content is now organized
     using tabs, and some options have been re-worked.
   * Store interwiki patterns in the database and add a management interface for
