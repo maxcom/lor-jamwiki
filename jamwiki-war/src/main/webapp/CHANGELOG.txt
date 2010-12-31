@@ -48,6 +48,9 @@ New Features:
   * Use a separate "resized" folder to cache resized images in order to more
     clearly separate original uploads from thumbnail and resized images.
   * Organize new file uploads by virtual wiki on the file system.
+  * A new "Regenerate Topic Metadata Records" tool has been added to the
+    Special:Maintenance page to allow regeneration of all topic metadata
+    including categories and "link to" records.
   * Remove ability to automatically upgrade from versions prior to 0.8.0.
   * Remove unused/obsolete Javascript and namespace the remaining code.
   * Add several indexes to the database to improve query performance.
@@ -72,7 +75,8 @@ Bugfixes:
   * Images with multiple captions ([[Image:Example.gif|caption1|caption2]])
     should only render the last caption value specified.
   * Fix a design flaw in processing of nested metadata, such as categories
-    included via templates or "link to" in records in image captions.
+    included via templates or "link to" in records in image captions, that
+    could cause nested information to not be processed for the parsed topic.
   * A corrupt image should not halt page parsing; instead just display the
     image name as text.
   * Refactor image processing code to use less memory and avoid OOM errors.
