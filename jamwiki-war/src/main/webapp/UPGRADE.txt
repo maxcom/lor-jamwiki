@@ -146,9 +146,9 @@ followed by 0.6.3.
               CREATE INDEX jam_i_topicv_uid on jam_topic_version (wiki_user_id);
        f) Create the jam_configuration table.
               CREATE TABLE jam_configuration ( 
-                key VARCHAR(50) NOT NULL, 
-                value VARCHAR(500) NOT NULL, 
-                CONSTRAINT jam_p_config PRIMARY KEY (key) 
+                config_key VARCHAR(50) NOT NULL, 
+                config_value VARCHAR(500) NOT NULL, 
+                CONSTRAINT jam_p_config PRIMARY KEY (config_key) 
               );
   4. Once the database upgrades are complete the "Regenerate Topic Metadata
      Records" tool should be invoked from the Special:Maintenance page.

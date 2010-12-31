@@ -2018,7 +2018,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt = conn.prepareStatement(STATEMENT_SELECT_CONFIGURATION);
 			rs = stmt.executeQuery();
 			while (rs.next()) {
-				configuration.put(rs.getString("key"), rs.getString("value"));
+				configuration.put(rs.getString("config_key"), rs.getString("config_value"));
 			}
 		} finally {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
