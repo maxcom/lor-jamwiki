@@ -8,7 +8,7 @@
 	<artifactId>jamwiki</artifactId>
 	<packaging>pom</packaging>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>Jamwiki Super POM</name>
+	<name>JAMWiki Super POM</name>
 	<description>
 		JAMWiki is a Java-based Wiki engine which offers many of the
 		features of MediaWiki.
@@ -40,35 +40,22 @@
 		<license>
 			<name>LGPL</name>
 			<url>http://www.gnu.org/licenses/lgpl.html</url>
-			<distribution>repo</distribution>
+			<distribution>manual</distribution>
 		</license>
 	</licenses>
 	<properties>
-		<jamwiki.version>1.0.0-SNAPSHOT</jamwiki.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.version>2.2.0</maven.version>
 		<dependency.spring.version>3.0.5.RELEASE</dependency.spring.version>
 		<dependency.spring.security.version>3.0.5.RELEASE</dependency.spring.security.version>
 		<slf4j.version>1.5.11</slf4j.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	<prerequisites>
+		<maven>${maven.version}</maven>
+	</prerequisites>
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>org.jamwiki</groupId>
-				<artifactId>jamwiki-core</artifactId>
-				<version>${jamwiki.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jamwiki</groupId>
-				<artifactId>jamwiki-core</artifactId>
-				<scope>test</scope>
-				<classifier>tests</classifier>
-				<version>${jamwiki.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jamwiki</groupId>
-				<artifactId>jamwiki-web</artifactId>
-				<version>${jamwiki.version}</version>
-			</dependency>
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-config</artifactId>
@@ -167,19 +154,24 @@
 				<artifactId>slf4j-api</artifactId>
 				<version>${slf4j.version}</version>
 			</dependency>
-			<!-- short-circuit commons-logging with 'provided' scope to avoid -->
-			<!--tedious dependency excludes and redirect all logging calls to SLF4J -->
 			<dependency>
 				<groupId>org.slf4j</groupId>
-				<artifactId>jcl-over-slf4j</artifactId>
+				<artifactId>slf4j-simple</artifactId>
 				<version>${slf4j.version}</version>
-				<scope>runtime</scope>
 			</dependency>
+			<!-- short-circuit commons-logging with 'provided' scope to avoid -->
+			<!--tedious dependency exclusions and redirect all logging calls to SLF4J -->
 			<dependency>
 				<groupId>commons-logging</groupId>
 				<artifactId>commons-logging</artifactId>
 				<version>1.0.4</version>
 				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>${slf4j.version}</version>
+				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
@@ -256,7 +248,7 @@
 	</dependencyManagement>
 	<developers>
 		<!--
-		See http://www.ohloh.net/projects/6482/analyses/latest/contributors
+		See http://www.ohloh.net/p/jamwiki/contributors
 		 -->
 		<developer>
 			<id>wrh2</id>
@@ -339,6 +331,16 @@
 				<role>developer</role>
 			</roles>
 		</developer>
+		<developer>
+			<id>michael-o</id>
+			<name>Michael Osipov</name>
+			<email>michael-o at users.sf.net</email>
+			<roles>
+				<role>developer</role>
+				<role>Maven responsible</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
 	</developers>
 	<contributors>
 		<contributor><name>Fernando Fernandes</name><email>leandes</email><roles><role>translator (Portugese - Brazilian)</role></roles></contributor>
@@ -387,39 +389,94 @@
 		<contributor><name>Michael (mindweb)</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
 	</contributors>
 	<build>
+		<defaultGoal>package</defaultGoal>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>2.3.2</version>
+					<configuration>
+						<showDeprecation>true</showDeprecation>
+						<compilerArgument>-Xlint:unchecked</compilerArgument>
+					</configuration>
+				</plugin>
+				<plugin>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>2.4.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>2.3.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.4.3</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>2.2</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.7.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.3.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-war-plugin</artifactId>
+					<version>2.1.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>2.7</version>
+					<configuration>
+						<quiet>true</quiet>
+					</configuration>
+				</plugin>
+				<plugin>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<!-- version 2.2 is too different, not upgrading right now -->
+					<version>2.2-beta-5</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>2.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-help-plugin</artifactId>
+					<version>2.1.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>2.1.2</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.0.2</version>
+				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<descriptors>
+						<descriptor>src/main/assembly/src.xml</descriptor>
+					</descriptors>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+	<!-- FIXME merge versions and configs with pluginManagement if possible -->
 	<reporting>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.0.2</version>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-					<encoding>ISO-8859-1</encoding>
-					<showDeprecation>true</showDeprecation>
-					<compilerArgument>-Xlint:unchecked</compilerArgument>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.7</version>
 				<configuration>
 					<aggregate>true</aggregate>
-					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -443,7 +500,6 @@
 						<ruleset>${basedir}/pmd.xml</ruleset>
 					</rulesets>
 					<targetJdk>1.5</targetJdk>
-					<sourceEncoding>UTF-8</sourceEncoding>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -471,7 +527,6 @@
 				<version>2.4</version>
 				<configuration>
 					<aggregate>true</aggregate>
-					<encoding>UTF-8</encoding>
 					<tags>
 						<tag>TODO</tag>
 						<tag>FIXME</tag>

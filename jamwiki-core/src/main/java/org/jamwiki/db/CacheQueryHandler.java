@@ -55,15 +55,15 @@ import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- * Caché-specific implementation of the QueryHandler interface.  This class implements
- * Caché-specific methods for instances where Caché does not support the default
+ * CachÃ©-specific implementation of the QueryHandler interface.  This class implements
+ * CachÃ©-specific methods for instances where CachÃ© does not support the default
  * ASCII SQL syntax.
  * Most of these changes have to do with creating a pagination scheme that will work
- * Caché does not support the limit and offset functionality
+ * CachÃ© does not support the limit and offset functionality
  * Also it needs the content to be stored and passed as a clob to avoid default string size limitations
  * 
  * in sql.cache.properties there are 3 changes to upgrade sql statements due to the way
- * Caché handles alter statements.   alter statements are required to do no more than one 
+ * CachÃ© handles alter statements.   alter statements are required to do no more than one 
  * operation at a time, and specifying the data type (ie,  VARCHAR(200) NOT NULL) is 
  * considered to be an operation.   Since the datatype and size for the fields in question
  * had not changed,  i removed the datatype declaration to leave the actual "not null" change
@@ -442,7 +442,7 @@ public class CacheQueryHandler extends AnsiQueryHandler {
 			}
 			stmt.setInt(index++, topicVersion.getTopicId());
 			stmt.setString(index++, topicVersion.getEditComment());
-			//pass the content into a stream to be passed to Caché
+			//pass the content into a stream to be passed to CachÃ©
 			sr = new StringReader(topicVersion.getVersionContent());
 			stmt.setCharacterStream(index++, sr, topicVersion.getVersionContent().length());
 			if (topicVersion.getAuthorId() == null) {

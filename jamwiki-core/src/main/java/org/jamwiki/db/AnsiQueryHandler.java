@@ -1234,7 +1234,7 @@ public class AnsiQueryHandler implements QueryHandler {
 
 	/**
 	 *
-	 * had to override the insertTopicVersion method for the Caché implementation
+	 * had to override the insertTopicVersion method for the CachÃ© implementation
 	 * need this to be public so that CacheQueryHandler can use it
 	 */
 	public LogItem initLogItem(ResultSet rs, String virtualWikiName) throws SQLException {
@@ -1262,7 +1262,7 @@ public class AnsiQueryHandler implements QueryHandler {
 
 	/**
 	 *
-	 * had to override the insertTopicVersion method for the Caché implementation
+	 * had to override the insertTopicVersion method for the CachÃ© implementation
 	 * need this to be public so that CacheQueryHandler can use it
 	 */
 	public RecentChange initRecentChange(ResultSet rs) throws SQLException {
@@ -2551,7 +2551,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 * @return The next available topic version id from the topic version table.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 * 
-	 * had to override the insertTopicVersion method for the Caché implementation
+	 * had to override the insertTopicVersion method for the CachÃ© implementation
 	 * need this to be public so that CacheQueryHandler can use it
 	 */
 	public int nextTopicVersionId(Connection conn) throws SQLException {

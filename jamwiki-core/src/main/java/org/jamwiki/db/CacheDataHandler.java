@@ -20,7 +20,7 @@ import org.jamwiki.utils.WikiLogger;
 
 /**
  * Implementation of the {@link org.jamwiki.DataHandler} interface that is
- * appropriate for use with the Caché database.
+ * appropriate for use with the CachÃ© database.
  */
 public class CacheDataHandler extends AnsiDataHandler {
 
