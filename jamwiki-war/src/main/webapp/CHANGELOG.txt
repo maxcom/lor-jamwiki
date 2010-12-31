@@ -5,30 +5,32 @@ New Features:
 
   * Add an option to specify a "shared file repository" from the Special:Admin
     page.  If set, then any virtual wiki will be able to access images from the
-    specified virtual wiki.
-  * Refactor Special:OrphanedPages to vastly improve speed & scalability.
-  * Update the admin page UI to improve usability - content is now organized
-    using tabs, and some options have been re-worked.
-  * Store interwiki patterns in the database and add a management interface for
-    interwiki links to the Special:VirtualWiki page.  Note that not all
-    records have been carried over from the old interwiki.properties file.
-  * Display interwiki and virtual wiki links in boxes in the left nav.  This
-    capability can be configured from the parser tab of the Special:Admin page.
+    "shared" virtual wiki.
+  * Use a new algorithm for image resizing to greatly improve image quality.
   * Update the Special:Diff UI to display additional information, including
     revision dates, edit comments, and links to previous/next diff.
   * Display author, revision information, and links to previous/next revision
     when viewing an old version of a topic.
+  * Special:VirtualWiki optimizations.  Site name, meta description and logo
+    can now allow be customized per-virtual wiki.
   * Support the #switch parser functions.  Usage:
     "{{#switch: value | case1 = result | case2 = result | default}}".
   * Support the #ifexist parser function.  Usage:
     "{{#ifexist: topic | exists | does not exist}}".
   * Support the Mediawiki <onlyinclude> tag for template content.
-  * Special:VirtualWiki optimizations.  Site name, meta description and logo
-    can now allow be customized per-virtual wiki.
-  * Use a new algorithm for image resizing to greatly improve image quality.
   * Allow use of HTML heading tags (<h1>, <h2>, etc).
+  * Update the admin page UI to improve usability - content is now organized
+    using tabs, and some options have been re-worked.
+  * Store interwiki patterns in the database and add a management interface for
+    interwiki links to the Special:VirtualWiki page.  Not all of the patterns
+    from the old interwiki.properties file have been migrated, so sites using
+    patterns that were not migrated will need to manually add them.
+  * Display interwiki and virtual wiki links in boxes in the left nav by
+    default.  Sites needing the old behavior (inline links) can re-enable it
+    from the parser tab of the Special:Admin page.
   * Use the database rather than the search engine to generate results for the
     Special:LinkTo page and add pagination and sorting to Special:LinkTo.
+  * Refactor Special:OrphanedPages to vastly improve speed & scalability.
   * SEO optimizations: return HTTP 404 when requesting a page for a topic that
     does not exist, return HTTP 500 for error pages, and specify the
     "canonical" meta tag for redirected topics.
@@ -38,11 +40,11 @@ New Features:
   * Display pagination options when viewing topic categories.
   * Reduce the amount of parsing the must be done when importing topics in
     order to improve performance.
-  * Use a separate "resized" folder for resized images in order to more clearly
-    separate original uploads from resized images.
+  * Use a separate "resized" folder to cache resized images in order to more
+    clearly separate original uploads from thumbnail and resized images.
+  * Organize new file uploads by virtual wiki on the file system.
   * Remove ability to automatically upgrade from versions prior to 0.8.0.
   * Remove unused/obsolete Javascript and namespace the remaining code.
-  * Organize uploaded images by virtual wiki on the file system.
   * Add several indexes to the database to improve query performance.
   * Persist configuration information to a new jam_configuration table in
     addition to the jamwiki.properties file.  This table will be used in future
@@ -101,9 +103,9 @@ Bugfixes:
 
 Bugfixes:
 
-  * The SERVERNAME was previously implemented incorrectly and has been fixed
-    to return only the server URL ("www.example.com") without an "http://"
-    prefix.  Reported by an anonymous user.
+  * The SERVERNAME magic word was previously implemented incorrectly and has
+    been fixed to return only the server URL ("www.example.com") without an
+    "http://" prefix.  Reported by an anonymous user.
   * Several pages including the Special:History page could generated errors on
     Apache 7.0.x due to an invalid JSTL naming convention used with import
     revisions.  Reported by anonymous users.
