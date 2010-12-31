@@ -34,6 +34,8 @@ New Features:
   * SEO optimizations: return HTTP 404 when requesting a page for a topic that
     does not exist, return HTTP 500 for error pages, and specify the
     "canonical" meta tag for redirected topics.
+  * Wiki date patterns can now be configured from the Special:Admin page.
+    Suggested by Michael Osipov (mosipov).
   * Add support for the Caché database (dprekker).
   * Add an option to treat capitalized and lowercase topic names as a single
     record.  For example, "Topic" and "topic" would refer to the same topic.
