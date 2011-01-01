@@ -9,6 +9,7 @@ Bugfixes:
     some databases including MS SQL Server.
   * Fix an issue that could cause topic history to display incorrectly with
     MS SQL Server.
+  * Update the default footer page's copyright notice to 2011.
 
 
 0.9.4
