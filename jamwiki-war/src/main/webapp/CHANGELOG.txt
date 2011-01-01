@@ -5,6 +5,8 @@ Bugfixes:
 
   * Headings of seven or more levels caused generation of invalid HTML.
     Reported by an anonymous user.
+  * Fix a transaction-related issue that could cause XML imports to hang on
+    some databases including MS SQL Server.
 
 
 0.9.4
