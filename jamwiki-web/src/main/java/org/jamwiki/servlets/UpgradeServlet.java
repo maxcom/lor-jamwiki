@@ -180,6 +180,13 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private boolean upgradeDatabase(boolean performUpgrade, List<WikiMessage> messages) throws WikiException {
 		boolean upgradeRequired = false;
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
+		if (oldVersion.before(1, 0, 0)) {
+			// special case - virtual wiki table changes must be done before anything else
+			upgradeRequired = true;
+			if (performUpgrade) {
+				messages = DatabaseUpgrades.preUpgrade100(messages);
+			}
+		}
 		if (oldVersion.before(0, 9, 0)) {
 			upgradeRequired = true;
 			if (performUpgrade) {
@@ -223,13 +230,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 */
 	private boolean upgradeStyleSheetRequired() {
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
-		if (oldVersion.before(0, 9, 0)) {
-			return true;
-		}
-		if (oldVersion.before(1, 0, 0)) {
-			return true;
-		}
-		return false;
+		return (oldVersion.before(1, 0, 0));
 	}
 
 	/**

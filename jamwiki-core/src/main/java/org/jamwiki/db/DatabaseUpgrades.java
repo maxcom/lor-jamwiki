@@ -30,9 +30,13 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 /**
  * This class simply contains utility methods for upgrading database schemas
- * (if needed) between JAMWiki versions.  In general upgrade methods will only
- * be maintained for a few versions and then deleted - for example, JAMWiki version 10.0.0
- * does not need to keep the upgrade methods from JAMWiki 0.0.1 around.
+ * (if needed) between JAMWiki versions.  These methods are typically called automatically
+ * by the UpgradeServlet when an upgrade is detected and will automatically upgrade the
+ * database schema without the need for manual intervention from the user.
+ *
+ * In general upgrade methods will only be maintained for two major releases and then
+ * deleted - for example, JAMWiki version 0.9.0 will not support upgrading from versions
+ * prior to 0.7.0.
  */
 public class DatabaseUpgrades {
 
@@ -91,15 +95,6 @@ public class DatabaseUpgrades {
 			// add an index for topic_id on the jam_topic_version table
 			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_VERSION_TOPIC_INDEX", conn);
 			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic_version"));
-			// move this up to 90 since it was added to getvirtualwikis and is thus used by the upgrade process
-			// not sure if you want to keep this, since there are manual upgrade procedures
-			// but it made my upgrade seemless
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_ADD_VIRTUAL_WIKI_LOGO_URL", conn);
-			messages.add(new WikiMessage("upgrade.message.db.column.added", "logo_image_url", "jam_virtual_wiki"));
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_ADD_VIRTUAL_WIKI_SITE_NAME", conn);
-			messages.add(new WikiMessage("upgrade.message.db.column.added", "site_name", "jam_virtual_wiki"));
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_ADD_VIRTUAL_WIKI_META_DESCRIPTION", conn);
-			messages.add(new WikiMessage("upgrade.message.db.column.added", "meta_description", "jam_virtual_wiki"));
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			logger.error("Database failure during upgrade", e);
@@ -150,6 +145,31 @@ public class DatabaseUpgrades {
 		if (status != null) {
 			DatabaseConnection.commit(status);
 		}
+		return messages;
+	}
+
+	/**
+	 * The following updates the jam_virtual_wiki table, but these changes are required for
+	 * a successful 0.9.0 upgrade so move them into a separate method so that they can be
+	 * executed before anything else.
+	 */
+	public static List<WikiMessage> preUpgrade100(List<WikiMessage> messages) throws WikiException {
+		TransactionStatus status = null;
+		try {
+			status = DatabaseConnection.startTransaction(getTransactionDefinition());
+			Connection conn = DatabaseConnection.getConnection();
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_ADD_VIRTUAL_WIKI_LOGO_URL", conn);
+			messages.add(new WikiMessage("upgrade.message.db.column.added", "logo_image_url", "jam_virtual_wiki"));
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_ADD_VIRTUAL_WIKI_SITE_NAME", conn);
+			messages.add(new WikiMessage("upgrade.message.db.column.added", "site_name", "jam_virtual_wiki"));
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_ADD_VIRTUAL_WIKI_META_DESCRIPTION", conn);
+			messages.add(new WikiMessage("upgrade.message.db.column.added", "meta_description", "jam_virtual_wiki"));
+		} catch (SQLException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			logger.error("Database failure during upgrade", e);
+			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
+		}
+		DatabaseConnection.commit(status);
 		return messages;
 	}
 
