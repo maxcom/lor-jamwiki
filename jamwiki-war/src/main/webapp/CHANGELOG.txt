@@ -110,6 +110,8 @@ Bugfixes:
     Reported by an anonymous user.
   * Fix a transaction-related issue that could cause XML imports to hang on
     some databases including MS SQL Server.
+  * Fix an issue that could cause topic history to display incorrectly with
+    MS SQL Server.
 
 
 0.9.4
