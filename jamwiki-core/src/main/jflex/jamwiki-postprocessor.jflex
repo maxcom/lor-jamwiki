@@ -84,7 +84,9 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <YYINITIAL>{javascript} {
     if (logger.isTraceEnabled()) logger.trace("javascript: " + yytext() + " (" + yystate() + ")");
-    return yytext();
+    // javascript tags are parsed in the processor step, but parse again here as a security
+    // check against potential XSS attacks.
+    return this.parse(TAG_TYPE_JAVASCRIPT, yytext());
 }
 
 /* ----- other ----- */

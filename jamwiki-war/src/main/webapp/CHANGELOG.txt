@@ -106,6 +106,8 @@ Translation Updates:
 
 Bugfixes:
 
+  * Fix a potential XSS attack, and make the XSS detection code more
+    aggressive.  Reported by bawolff.
   * Headings of seven or more levels caused generation of invalid HTML.
     Reported by an anonymous user.
   * Fix a transaction-related issue that could cause XML imports to hang on

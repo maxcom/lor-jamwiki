@@ -58,6 +58,12 @@ public class JavascriptTag implements JFlexParserTag {
 		String closeTag = raw.substring(pos);
 		raw = raw.substring(0, pos);
 		if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT)) {
+			if (mode >= JFlexParser.MODE_POSTPROCESS) {
+				// if Javascript is disabled but a script tag is present during the
+				// postprocessor parsing then it's highly likely someone is attempting
+				// an XSS attack.
+				logger.warn("Potential XSS attack detected from user " + parserInput.getUserDisplay() + ": " + raw);
+			}
 			return StringEscapeUtils.escapeHtml(openTag) + JFlexParserUtil.parseFragment(parserInput, parserOutput, raw, mode) + StringEscapeUtils.escapeHtml(closeTag);
 		}
 		JFlexTagItem tag = new JFlexTagItem("script", openTag);
