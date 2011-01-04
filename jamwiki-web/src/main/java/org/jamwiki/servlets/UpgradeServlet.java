@@ -100,7 +100,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 			}
 			WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 			if (oldVersion.before(0, 8, 0)) {
-				throw new WikiException(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.7.0"));
+				throw new WikiException(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.8.0"));
 			}
 			// first perform database upgrades
 			this.upgradeDatabase(true, messages);
@@ -240,7 +240,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 		if (oldVersion.before(0, 8, 0)) {
 			List<WikiMessage> errors = new ArrayList<WikiMessage>();
-			errors.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.7.0"));
+			errors.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.8.0"));
 			next.addObject("errors", errors);
 		}
 		List<WikiMessage> upgradeDetails = new ArrayList<WikiMessage>();
