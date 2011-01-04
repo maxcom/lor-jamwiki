@@ -251,6 +251,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 		} catch (Exception e) {
 			// never thrown when the first parameter is false
 		}
+		if (oldVersion.before(1, 0, 0)) {
+			upgradeDetails.add(new WikiMessage("upgrade.message.100.reparse"));
+		}
 		if (this.upgradeStyleSheetRequired()) {
 			upgradeDetails.add(new WikiMessage("upgrade.caption.stylesheet"));
 		}
