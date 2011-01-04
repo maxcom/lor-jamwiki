@@ -29,9 +29,8 @@ public class WikiLogger {
 
 	private final Logger logger;
 
-	/** Log configuration property file. */
-	public final static String LOG_PROPERTIES_FILENAME = "logging.properties";
-	public final static String DEFAULT_LOG_FILENAME = "jamwiki.log";
+	/** Log configuration property file name. */
+	public final static String LOG_PROPERTIES_FILENAME = "logback.xml";
 
 	/**
 	 *
@@ -41,15 +40,9 @@ public class WikiLogger {
 	}
 
 	/**
-	 * Return the path to the default system log file.
-	 */
-	public static String getDefaultLogFile() {
-		// by default the log configuration uses a relative path which initializes in the "user.dir" directory
-		return System.getProperty("user.dir") + System.getProperty("file.separator") + DEFAULT_LOG_FILENAME;
-	}
-
-	/**
-	 * Return the path to the default logback.xml configuration file.
+	 * Return the path to the logging configuration file.  This functionality
+	 * is used during setup to alert the user as to how they can customize
+	 * logging.
 	 */
 	public static String getLogConfigFile() {
 		return System.getProperty("file.separator") + "WEB-INF" + System.getProperty("file.separator") + "classes" + System.getProperty("file.separator") + LOG_PROPERTIES_FILENAME;

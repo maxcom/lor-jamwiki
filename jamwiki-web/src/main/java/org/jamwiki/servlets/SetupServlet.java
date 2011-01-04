@@ -232,7 +232,7 @@ public class SetupServlet extends JAMWikiServlet {
 		pageInfo.setPageTitle(new WikiMessage("setup.title", WikiVersion.CURRENT_WIKI_VERSION));
 		List<WikiConfigurationObject> dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
 		next.addObject("dataHandlers", dataHandlers);
-		WikiMessage logMessage = new WikiMessage("setup.help.logfile", WikiLogger.getDefaultLogFile(), WikiLogger.getLogConfigFile());
+		WikiMessage logMessage = new WikiMessage("setup.help.logfile", WikiLogger.getLogConfigFile());
 		next.addObject("logMessage", logMessage);
 	}
 }

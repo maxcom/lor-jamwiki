@@ -21,7 +21,7 @@ To upgrade using this automated process follow these steps:
   2.  The following files will need to be backed up from the webapp
       installation directory:
         1.  /WEB-INF/classes/jamwiki.properties
-        2.  /WEB-INF/classes/logging.properties
+        2.  /WEB-INF/classes/logback.xml (new in JAMWiki 1.0.0)
         3.  (Optional) The content found in the /upload/ directory. This step
             is necessary only if the default file upload directory is being
             used.
