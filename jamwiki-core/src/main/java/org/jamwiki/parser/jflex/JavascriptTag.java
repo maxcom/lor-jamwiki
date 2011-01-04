@@ -46,9 +46,28 @@ public class JavascriptTag implements JFlexParserTag {
 	}
 
 	/**
+	 * Parse a Javascript tag in the post-processor phase.  This is done for security
+	 * purposes to defend against XSS attacks.
+	 */
+	private String parsePostProcess(ParserInput parserInput, String raw) {
+		if (Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT)) {
+			// if javascript is allowed then it was already handled in the processor
+			// phase, so nothing more to do here.
+			return raw;
+		}
+		// otherwise, if Javascript is disabled but a script tag is present during the
+		// postprocessor parsing then it's highly likely someone is attempting an XSS attack.
+		logger.warn("Potential XSS attack detected from user " + parserInput.getUserDisplay() + ": " + raw);
+		return StringEscapeUtils.escapeHtml(raw);
+	}
+
+	/**
 	 *
 	 */
 	private String parseScriptTag(ParserInput parserInput, ParserOutput parserOutput, String raw, int mode) throws ParserException {
+		if (mode >= JFlexParser.MODE_POSTPROCESS) {
+			return this.parsePostProcess(parserInput, raw);
+		}
 		// get open <script> tag
 		int pos = raw.indexOf('>');
 		String openTag = raw.substring(0, pos + 1);
@@ -58,12 +77,6 @@ public class JavascriptTag implements JFlexParserTag {
 		String closeTag = raw.substring(pos);
 		raw = raw.substring(0, pos);
 		if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT)) {
-			if (mode >= JFlexParser.MODE_POSTPROCESS) {
-				// if Javascript is disabled but a script tag is present during the
-				// postprocessor parsing then it's highly likely someone is attempting
-				// an XSS attack.
-				logger.warn("Potential XSS attack detected from user " + parserInput.getUserDisplay() + ": " + raw);
-			}
 			return StringEscapeUtils.escapeHtml(openTag) + JFlexParserUtil.parseFragment(parserInput, parserOutput, raw, mode) + StringEscapeUtils.escapeHtml(closeTag);
 		}
 		JFlexTagItem tag = new JFlexTagItem("script", openTag);
