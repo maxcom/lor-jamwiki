@@ -323,11 +323,13 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	private void cacheTopicRefresh(Topic topic) {
 		String key = this.cacheTopicKey(topic.getVirtualWiki(), topic.getNamespace(), topic.getPageName());
-		WikiCache.removeFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key);
+		// because some topics may be cached in a case-insensitive manner remove all possible
+		// cache keys for the topic, regardless of case
+		WikiCache.removeFromCacheCaseInsensitive(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key);
+		WikiCache.removeFromCacheCaseInsensitive(CACHE_TOPIC_NAMES_BY_NAME, key);
+		WikiCache.removeFromCacheCaseInsensitive(CACHE_TOPICS_BY_NAME, key);
 		if (topic.getDeleteDate() == null) {
 			WikiCache.addToCache(CACHE_TOPIC_NAMES_BY_NAME, key, topic.getName());
-		} else {
-			WikiCache.removeFromCache(CACHE_TOPIC_NAMES_BY_NAME, key);
 		}
 		WikiCache.addToCache(CACHE_TOPICS_BY_NAME, key, topic);
 		WikiCache.addToCache(CACHE_TOPICS_BY_ID, topic.getTopicId(), topic);

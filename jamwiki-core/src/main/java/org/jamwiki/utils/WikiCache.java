@@ -18,6 +18,7 @@ package org.jamwiki.utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
@@ -199,6 +200,21 @@ public class WikiCache {
 	public static void removeFromCache(String cacheName, Object key) {
 		Cache cache = WikiCache.getCache(cacheName);
 		cache.remove(key);
+	}
+
+	/**
+	 * Remove a key from the cache in a case-insensitive manner.  This method
+	 * is significantly slower than removeFromCache and should only be used when
+	 * the key values may not be exactly known.
+	 */
+	public static void removeFromCacheCaseInsensitive(String cacheName, String key) {
+		Cache cache = WikiCache.getCache(cacheName);
+		List cacheKeys = cache.getKeys();
+		for (Object cacheKey : cacheKeys) {
+			if (cacheKey.toString().equalsIgnoreCase(key)) {
+				cache.remove(cacheKey);
+			}
+		}
 	}
 
 	/**
