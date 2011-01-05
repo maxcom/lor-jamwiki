@@ -68,8 +68,14 @@ public class DiffServlet extends JAMWikiServlet {
 		if (!StringUtils.isBlank(request.getParameter("version2"))) {
 			topicVersionId2 = Integer.valueOf(request.getParameter("version2"));
 		}
-		TopicVersion version1 = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId1);
-		TopicVersion version2 = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId2);
+		if (topicVersionId1 == 0 && topicVersionId2 == 0) {
+			// default to the current version in case no version is present in the request,
+			// which can happen when clicking the "diff" button from a history page for a topic
+			// with only one version.
+			topicVersionId1 = topic.getCurrentVersionId();
+		}
+		TopicVersion version1 = (topicVersionId1 != 0) ? WikiBase.getDataHandler().lookupTopicVersion(topicVersionId1) : null;
+		TopicVersion version2 = (topicVersionId2 != 0) ? WikiBase.getDataHandler().lookupTopicVersion(topicVersionId2) : null;
 		if (version1 == null && version2 == null) {
 			String msg = "Versions " + topicVersionId1 + " and " + topicVersionId2 + " not found for " + topicName;
 			logger.error(msg);

@@ -94,6 +94,8 @@ Bugfixes:
     ("<pre>~~~~</pre>).
   * Convert all Special: pages to use proper camel case, and create redirects
     for the non-camel case versions. Reported by Michael Osipov.
+  * Clicking the "diff" button on the Special:History page for topics with only
+    one revision should not generate a system error.  Reported by shar.
 
 Translation Updates:
 
