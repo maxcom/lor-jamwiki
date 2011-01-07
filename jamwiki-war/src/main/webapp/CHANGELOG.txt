@@ -96,6 +96,7 @@ Bugfixes:
     for the non-camel case versions. Reported by Michael Osipov.
   * Clicking the "diff" button on the Special:History page for topics with only
     one revision should not generate a system error.  Reported by shar.
+  * Make the parser's infinite loop detection more robust.
 
 Translation Updates:
 

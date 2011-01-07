@@ -96,6 +96,8 @@ public class Environment {
 	public static final String PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE = "parser-virtualwiki-links-inline";
 	/** Maximum number of template inclusions allowed on a page. */
 	public static final String PROP_PARSER_MAX_INCLUSIONS = "parser-max-inclusions";
+	/** This constant controls how many infinite loops a topic can hold before parsing aborts. */
+	public static final String PROP_PARSER_MAXIMUM_INFINITE_LOOP_LIMIT = "parser-infinite-loop-limit";
 	/** Maximum number of parser iterations allowed for a single parsing run. */
 	public static final String PROP_PARSER_MAX_PARSER_ITERATIONS = "parser-max-iterations";
 	/** Maximum depth to which templates can be included for a single parsing run. */
@@ -237,6 +239,7 @@ public class Environment {
 		this.defaults.setProperty(PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE, Boolean.FALSE.toString());
 		this.defaults.setProperty(PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE, Boolean.FALSE.toString());
 		this.defaults.setProperty(PROP_PARSER_MAX_INCLUSIONS, "250");
+		this.defaults.setProperty(PROP_PARSER_MAXIMUM_INFINITE_LOOP_LIMIT, "5");
 		this.defaults.setProperty(PROP_PARSER_MAX_PARSER_ITERATIONS, "100");
 		this.defaults.setProperty(PROP_PARSER_MAX_TEMPLATE_DEPTH, "100");
 		this.defaults.setProperty(PROP_PARSER_SIGNATURE_DATE_PATTERN, "dd-MMM-yyyy HH:mm zzz");

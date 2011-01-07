@@ -105,11 +105,6 @@ public class JFlexParser extends AbstractParser {
 		lexer.init(this.parserInput, parserOutput, mode);
 		validate(lexer);
 		this.parserInput.incrementDepth();
-		// avoid infinite loops
-		if (this.parserInput.getDepth() > Environment.getIntValue(Environment.PROP_PARSER_MAX_PARSER_ITERATIONS)) {
-			this.parserInput.decrementDepth();
-			throw new ExcessiveNestingException("Potential infinite parsing loop - over " + this.parserInput.getDepth() + " parser iterations while parsing topic " + this.parserInput.getTopicName());
-		}
 		long previous, current = 0;
 		String line;
 		try {

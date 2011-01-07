@@ -18,6 +18,7 @@ package org.jamwiki.parser;
 
 import java.util.Hashtable;
 import java.util.Locale;
+import org.jamwiki.Environment;
 import org.jamwiki.model.WikiUser;
 
 /**
@@ -30,6 +31,11 @@ public class ParserInput {
 	private String context = null;
 	/** Depth is used to prevent infinite nesting of templates and other objects. */
 	private int depth = 0;
+	/**
+	 * If an infinite loop is detected increment this counter so that the parser can
+	 * halt parsing for infinite loop attacks.
+	 */
+	private int infiniteLoopCount = 0;
 	private Locale locale = null;
 	private TableOfContents tableOfContents = new TableOfContents();
 	/** Template inclusion tracks whether or not template code is being parsed.  A counter is used to deal with nested templates. */
@@ -57,7 +63,10 @@ public class ParserInput {
 	public ParserInput(ParserInput parserInput) {
 		this.allowSectionEdit = parserInput.allowSectionEdit;
 		this.context = parserInput.context;
+		this.depth = depth;
+		this.infiniteLoopCount = infiniteLoopCount;
 		this.locale = parserInput.locale;
+		this.templateDepth = templateDepth;
 		this.topicName = parserInput.topicName;
 		this.userDisplay = parserInput.userDisplay;
 		this.virtualWiki = parserInput.virtualWiki;
@@ -134,9 +143,29 @@ public class ParserInput {
 	 * This method increases the current parser instance depth and should
 	 * only be called when a instantiating a new parser instance.  Depth is
 	 * useful as a way of avoiding infinite loops in the parser.
+	 *
+	 * @throws ExcessiveNestingException Thrown if incrementing the depth
+	 *  would cause the depth to exceed the maximum configured depth.  Useful
+	 *  for infinite loop detection.
 	 */
-	public void incrementDepth() {
+	public void incrementDepth() throws ExcessiveNestingException {
+		// avoid infinite loops
+		if ((this.getDepth() + 1) >= Environment.getIntValue(Environment.PROP_PARSER_MAX_PARSER_ITERATIONS)) {
+			this.infiniteLoopCount++;
+			throw new ExcessiveNestingException("Potential infinite parsing loop - over " + this.getDepth() + " parser iterations while parsing topic " + this.getTopicName());
+		}
 		this.depth++;
+	}
+
+	/**
+	 * The infinite loop count records how many times the parser has found what
+	 * it believes to be an infinite loop while parsing a topic.  Each time such
+	 * a loop is encountered the parser will abort and move on to the next tag,
+	 * so this counter provides a way of essentially saying "enough is enough"
+	 * if too many such loops are encountered.
+	 */
+	public int getInfiniteLoopCount() {
+		return this.infiniteLoopCount;
 	}
 
 	/**

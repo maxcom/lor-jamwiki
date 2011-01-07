@@ -203,6 +203,10 @@ public abstract class JFlexLexer {
 	 *
 	 */
 	protected String parse(int type, String raw, Object... args) {
+		if (this.getParserInput().getInfiniteLoopCount() >= Environment.getIntValue(Environment.PROP_PARSER_MAXIMUM_INFINITE_LOOP_LIMIT)) {
+			// do not attempt any further parsing
+			return raw;
+		}
 		JFlexParserTag jflexParserTag = null;
 		switch (type) {
 			case TAG_TYPE_HTML_HEADING:
