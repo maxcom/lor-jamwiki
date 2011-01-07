@@ -41,8 +41,7 @@ public class OnlyIncludeTag implements JFlexParserTag {
 		}
 		String content = JFlexParserUtil.tagContent(raw);
 		// run the pre-processor against the onlyinclude content
-		JFlexParser parser = new JFlexParser(lexer.getParserInput());
-		String parsed = parser.parseFragment(lexer.getParserOutput(), content, JFlexParser.MODE_TEMPLATE);
+		String parsed = JFlexParserUtil.parseFragment(lexer.getParserInput(), lexer.getParserOutput(), content, JFlexParser.MODE_TEMPLATE);
 		// HACK - put the onlyinclude content in a temp param to be used by the
 		// TemplateTag.parseTemplateBody method.  this is necessary because onlyinclude
 		// supersedes anything that might have been parsed before or after the onlyinclude
