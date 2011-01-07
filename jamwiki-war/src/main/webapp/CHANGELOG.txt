@@ -5,14 +5,14 @@ New Features:
 
   * Add an option to specify a "shared file repository" from the Special:Admin
     page. If set, then any virtual wiki will be able to access images from the
-    "shared" virtual wiki.
+    "shared" virtual wiki as if they were on the same virtual wiki.
   * Use a new algorithm for image resizing to greatly improve image quality.
   * Update the Special:Diff UI to display additional information, including
     revision dates, edit comments, and links to previous/next diff.
   * Display author, revision information, and links to previous/next revision
     when viewing an old version of a topic.
-  * Special:VirtualWiki optimizations. Site name, meta description and logo
-    can now allow be customized per-virtual wiki.
+  * Virtual wiki enhancements including the ability to configure a different
+    site name, meta description and logo for each virtual wiki.
   * Support the #switch parser functions. Usage:
     "{{#switch: value | case1 = result | case2 = result | default}}".
   * Support the #ifexist parser function. Usage:
