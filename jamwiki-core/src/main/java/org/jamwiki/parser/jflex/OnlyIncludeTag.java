@@ -34,6 +34,11 @@ public class OnlyIncludeTag implements JFlexParserTag {
 		if (lexer.getMode() <= JFlexParser.MODE_MINIMAL) {
 			return raw;
 		}
+		if (lexer.getParserInput().getTemplateDepth() == 0) {
+			// onlyinclude only generates results during transclusion, otherwise the
+			// content is ignored.
+			return "";
+		}
 		String content = JFlexParserUtil.tagContent(raw);
 		// run the pre-processor against the onlyinclude content
 		JFlexParser parser = new JFlexParser(lexer.getParserInput());
