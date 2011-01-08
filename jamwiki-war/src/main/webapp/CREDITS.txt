@@ -15,6 +15,7 @@ JAMWiki Contributors
                             Hanspeter Klapf (hanspeterklapf)
                             Axel Kramer (axelclk)
                             Robert Matyja (dlpa)
+                            Michael Osipov (mosipov)
                             Dan Prekker (dprekker)
                             Rainer Schmitz (swift)
                             Volodymyr Vlad (gutsul)
