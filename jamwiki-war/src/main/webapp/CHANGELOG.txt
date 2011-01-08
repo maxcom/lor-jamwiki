@@ -97,6 +97,8 @@ Bugfixes:
   * Clicking the "diff" button on the Special:History page for topics with only
     one revision should not generate a system error.  Reported by shar.
   * Make the parser's infinite loop detection more robust.
+  * Fix an issue that caused non-link signatures ("my sig") to display tildes
+    instead of the signature text.
 
 Translation Updates:
 

@@ -41,11 +41,9 @@ public class WikiSignatureTag implements JFlexParserTag {
 		String signature = "";
 		if (includeUser) {
 			signature = this.retrieveUserSignature(lexer.getParserInput());
-			// parse signature as link in order to store link metadata
-			WikiLinkTag wikiLinkTag = new WikiLinkTag();
-			wikiLinkTag.parse(lexer, signature);
 			if (lexer.getMode() != JFlexParser.MODE_MINIMAL) {
 				try {
+					// parsing will also process metadata such as link to records
 					signature = JFlexParserUtil.parseFragment(lexer.getParserInput(), lexer.getParserOutput(), signature, lexer.getMode());
 				} catch (ParserException e) {
 					logger.error("Failure while building wiki signature", e);
