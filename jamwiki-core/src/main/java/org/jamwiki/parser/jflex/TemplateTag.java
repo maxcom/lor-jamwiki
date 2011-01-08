@@ -74,6 +74,9 @@ public class TemplateTag implements JFlexParserTag {
 	 * and return the resulting template output.
 	 */
 	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
+		if (lexer.getMode() < JFlexParser.MODE_TEMPLATE) {
+			return raw;
+		}
 		// validate and extract the template content
 		if (StringUtils.isBlank(raw)) {
 			throw new ParserException("Empty template text");
@@ -286,15 +289,6 @@ public class TemplateTag implements JFlexParserTag {
 			pos = endPos - 1;
 		}
 		String result = JFlexParserUtil.parseFragment(parserInput, parserOutput, output.toString().trim(), JFlexParser.MODE_TEMPLATE);
-		if (parserInput.getTempParams().get(TEMPLATE_ONLYINCLUDE) != null) {
-			// HACK! If an onlyinclude tag is encountered in the previous fragment parse
-			// then that tag's parsed output is stored in the TEMPLATE_ONLYINCLUDE param.
-			// This hack is necessary because onlyinclude indicates that ONLY the
-			// onlyinclude content is relevant, and anything parsed before or after that
-			// tag must be ignored.
-			result = (String)parserInput.getTempParams().get(TEMPLATE_ONLYINCLUDE);
-			parserInput.getTempParams().remove(TEMPLATE_ONLYINCLUDE);
-		}
 		return result;
 	}
 
@@ -367,7 +361,18 @@ public class TemplateTag implements JFlexParserTag {
 	private String processTemplateContent(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String templateContent) throws ParserException {
 		// set template parameter values
 		Map<String, String> parameterValues = this.parseTemplateParameterValues(templateContent);
-		return this.parseTemplateBody(parserInput, parserOutput, templateTopic.getTopicContent(), parameterValues);
+		// parse the template content for noinclude, onlyinclude and includeonly tags
+		String templateBody = JFlexParserUtil.parseFragment(parserInput, parserOutput, templateTopic.getTopicContent().trim(), JFlexParser.MODE_TEMPLATE_BODY);
+		if (parserInput.getTempParams().get(TEMPLATE_ONLYINCLUDE) != null) {
+			// HACK! If an onlyinclude tag is encountered in the previous fragment parse
+			// then that tag's parsed output is stored in the TEMPLATE_ONLYINCLUDE param.
+			// This hack is necessary because onlyinclude indicates that ONLY the
+			// onlyinclude content is relevant, and anything parsed before or after that
+			// tag must be ignored.
+			templateBody = (String)parserInput.getTempParams().get(TEMPLATE_ONLYINCLUDE);
+			parserInput.getTempParams().remove(TEMPLATE_ONLYINCLUDE);
+		}
+		return this.parseTemplateBody(parserInput, parserOutput, templateBody, parameterValues);
 	}
 
 	/**

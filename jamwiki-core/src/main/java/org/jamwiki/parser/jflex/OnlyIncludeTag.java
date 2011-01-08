@@ -30,7 +30,7 @@ public class OnlyIncludeTag implements JFlexParserTag {
 	 * Parse a call to a Mediawiki onlyinclude tag of the form
 	 * "<onlyinclude>text</onlyinclude>" and return the resulting output.
 	 */
-	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
+	public String parse(JFlexLexer lexer, String raw, Object... args) {
 		if (lexer.getMode() <= JFlexParser.MODE_MINIMAL) {
 			return raw;
 		}
@@ -39,14 +39,13 @@ public class OnlyIncludeTag implements JFlexParserTag {
 			// content is ignored.
 			return "";
 		}
+		// there is no need to parse the tag content since that will be done by TemplateTag
 		String content = JFlexParserUtil.tagContent(raw);
-		// run the pre-processor against the onlyinclude content
-		String parsed = JFlexParserUtil.parseFragment(lexer.getParserInput(), lexer.getParserOutput(), content, JFlexParser.MODE_TEMPLATE);
 		// HACK - put the onlyinclude content in a temp param to be used by the
 		// TemplateTag.parseTemplateBody method.  this is necessary because onlyinclude
 		// supersedes anything that might have been parsed before or after the onlyinclude
 		// tag.
-		lexer.getParserInput().getTempParams().put(TemplateTag.TEMPLATE_ONLYINCLUDE, parsed);
-		return parsed;
+		lexer.getParserInput().getTempParams().put(TemplateTag.TEMPLATE_ONLYINCLUDE, content);
+		return content;
 	}
 }

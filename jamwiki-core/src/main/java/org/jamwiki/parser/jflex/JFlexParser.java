@@ -48,16 +48,18 @@ public class JFlexParser extends AbstractParser {
 	public static final int MODE_SLICE = 2;
 	/** Minimal mode is used to do a bare minimum of parsing, usually just converting signature tags, prior to saving to the database. */
 	public static final int MODE_MINIMAL = 3;
+	/** Template mode indicates that the template body is being process for includeonly and similar tags. */
+	public static final int MODE_TEMPLATE_BODY = 4;
 	/** Template mode indicates that template processing is occurring. */
-	public static final int MODE_TEMPLATE = 4;
+	public static final int MODE_TEMPLATE = 5;
 	/** Pre-process mode indicates that that the JFlex pre-processor parser should be run in full. */
-	public static final int MODE_PREPROCESS = 5;
+	public static final int MODE_PREPROCESS = 6;
 	/** Processing mode indicates that the pre-processor and processor should be run, parsing all Wiki syntax into formatted output but NOT parsing paragraph tags. */
-	public static final int MODE_PROCESS = 6;
+	public static final int MODE_PROCESS = 7;
 	/** Layout mode indicates that the pre-processor and processor should be run in full, parsing all Wiki syntax into formatted output and adding layout tags such as paragraphs. */
-	public static final int MODE_LAYOUT = 7;
+	public static final int MODE_LAYOUT = 8;
 	/** Post-process mode indicates that the pre-processor, processor and post-processor should be run in full, parsing all Wiki syntax into formatted output and adding layout tags such as paragraphs and TOC. */
-	public static final int MODE_POSTPROCESS = 8;
+	public static final int MODE_POSTPROCESS = 9;
 
 	/** Pattern to determine if the topic is a redirect. */
 	private static final Pattern REDIRECT_PATTERN = Pattern.compile("#REDIRECT[ ]*\\[\\[([^\\n\\r\\]]+)\\]\\]", Pattern.CASE_INSENSITIVE);
