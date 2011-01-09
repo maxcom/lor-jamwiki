@@ -101,6 +101,8 @@ Bugfixes:
     instead of the signature text.
   * When importing Mediawiki XML the Special:Import tool should trim author
     names longer than 100 characters to conform to JAMWiki database limits.
+  * Do not throw a "topic already exists" error if importing a topic when the
+    existing topic name differs from the new topic in a case-sensitive way.
 
 Translation Updates:
 

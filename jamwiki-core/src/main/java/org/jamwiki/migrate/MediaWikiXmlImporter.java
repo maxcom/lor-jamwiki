@@ -36,6 +36,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.jamwiki.DataAccessException;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -183,6 +184,8 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 	 * Initialize the current topic, validating that it does not yet exist.
 	 */
 	private void initCurrentTopic(String topicName) throws SAXException {
+		topicName = convertArticleNameFromWikipediaToJAMWiki(topicName);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(this.virtualWiki, topicName);
 		Topic existingTopic = null;
 		try {
 			existingTopic = WikiBase.getDataHandler().lookupTopic(this.virtualWiki, topicName, false, null);
@@ -190,12 +193,17 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 			throw new SAXException("Failure while validating topic name: " + topicName, e);
 		}
 		if (existingTopic != null && existingTopic.getVirtualWiki().equals(this.virtualWiki)) {
-			// FIXME - update so that this merges any new versions instead of throwing an error
-			WikiException e = new WikiException(new WikiMessage("import.error.topicexists", topicName));
-			throw new SAXException("Topic " + topicName + " already exists and cannot be imported", e);
+			// do a second comparison of capitalized topic names in a case-sensitive way
+			// since the initial topic lookup will return a case-insensitive match for some
+			// namespaces.
+			String existingTopicName = (Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_CAPITALIZATION)) ? StringUtils.capitalize(existingTopic.getPageName()) : existingTopic.getPageName();
+			String importTopicName = (Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_CAPITALIZATION)) ? StringUtils.capitalize(wikiLink.getArticle()) : wikiLink.getArticle();
+			if (StringUtils.equals(existingTopicName, importTopicName)) {
+				// FIXME - update so that this merges any new versions instead of throwing an error
+				WikiException e = new WikiException(new WikiMessage("import.error.topicexists", topicName));
+				throw new SAXException("Topic " + topicName + " already exists and cannot be imported", e);
+			}
 		}
-		topicName = convertArticleNameFromWikipediaToJAMWiki(topicName);
-		WikiLink wikiLink = LinkUtil.parseWikiLink(this.virtualWiki, topicName);
 		this.currentTopic = new Topic(this.virtualWiki, topicName);
 		this.currentTopic.setTopicType(WikiUtil.findTopicTypeForNamespace(wikiLink.getNamespace()));
 	}
