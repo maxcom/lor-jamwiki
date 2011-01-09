@@ -99,6 +99,8 @@ Bugfixes:
   * Make the parser's infinite loop detection more robust.
   * Fix an issue that caused non-link signatures ("my sig") to display tildes
     instead of the signature text.
+  * When importing Mediawiki XML the Special:Import tool should trim author
+    names longer than 100 characters to conform to JAMWiki database limits.
 
 Translation Updates:
 

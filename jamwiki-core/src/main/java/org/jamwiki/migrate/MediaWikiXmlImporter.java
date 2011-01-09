@@ -318,7 +318,14 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 		} else if (MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC_VERSION_EDIT_DATE.equals(qName)) {
 			this.currentTopicVersion.setEditDate(this.parseMediaWikiTimestamp(currentElementBuffer.toString().trim()));
 		} else if (MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC_VERSION_IP.equals(qName) || MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC_VERSION_USERNAME.equals(qName)) {
-			this.currentTopicVersion.setAuthorDisplay(currentElementBuffer.toString().trim());
+			// Login name in Mediawiki can be longer than 100 characters, so trim to conform to
+			// JAMWiki limits.  In general very long login names seem to be used only by vandals,
+			// so this should be an acceptable workaround.
+			String authorDisplay = currentElementBuffer.toString().trim();
+			if (authorDisplay.length() > 100) {
+				authorDisplay = authorDisplay.substring(0, 100);
+			}
+			this.currentTopicVersion.setAuthorDisplay(authorDisplay);
 		} else if (MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC_VERSION.equals(qName)) {
 			this.commitTopicVersion();
 		} else if (MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC.equals(qName)) {
