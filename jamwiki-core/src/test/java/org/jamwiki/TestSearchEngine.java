@@ -35,6 +35,12 @@ public class TestSearchEngine implements SearchEngine {
 	/**
 	 *
 	 */
+	public void commit(String virtualWiki) {
+	}
+
+	/**
+	 *
+	 */
 	public void deleteFromIndex(Topic topic) {
 	}
 
@@ -49,6 +55,12 @@ public class TestSearchEngine implements SearchEngine {
 	 *
 	 */
 	public void refreshIndex() throws Exception {
+	}
+
+	/**
+	 *
+	 */
+	public void setAutoCommit(boolean autoCommit) {
 	}
 
 	/**

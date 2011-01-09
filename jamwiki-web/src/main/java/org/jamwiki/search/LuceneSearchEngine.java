@@ -78,6 +78,8 @@ public class LuceneSearchEngine implements SearchEngine {
 	/** Maximum number of results to return per search. */
 	// FIXME - make this configurable
 	private static final int MAXIMUM_RESULTS_PER_SEARCH = 200;
+	/** Flag indicating whether or not to commit search index changes immediately. */
+	private boolean autoCommit = true;
 	/** Store Searchers (once opened) for re-use for performance reasons. */
 	private Map<String, Searcher> searchers = new HashMap<String, Searcher>();
 	/** Store Writers (once opened) for re-use for performance reasons. */
@@ -93,7 +95,7 @@ public class LuceneSearchEngine implements SearchEngine {
 			long start = System.currentTimeMillis();
 			IndexWriter writer = this.retrieveIndexWriter(topic.getVirtualWiki(), false);
 			this.addToIndex(writer, topic);
-			writer.commit();
+			this.commit(writer, this.autoCommit);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Add to search index for topic " + topic.getName() + " in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 			}
@@ -111,6 +113,30 @@ public class LuceneSearchEngine implements SearchEngine {
 		Document standardDocument = createStandardDocument(topic);
 		writer.addDocument(standardDocument);
 		this.resetIndexSearcher(topic.getVirtualWiki());
+	}
+
+	/**
+	 * Force a flush of any pending commits to the search index.
+	 *
+	 * @param virtualWiki The virtual wiki for which pending updates are being
+	 *  committed.
+	 */
+	public void commit(String virtualWiki) {
+		try {
+			this.commit(this.retrieveIndexWriter(virtualWiki, false), true);
+		} catch (IOException e) {
+			logger.error("Exception while committing pending changes for virtual wiki " + virtualWiki, e);
+		}
+	}
+
+	/**
+	 * Commit pending changes to the writer only if the commitNow value is true.
+	 * This is primarily a utility method for working with the autoCommit flag.
+	 */
+	private void commit(IndexWriter writer, boolean commitNow) throws IOException {
+		if (commitNow) {
+			writer.commit();
+		}
 	}
 
 	/**
@@ -143,7 +169,7 @@ public class LuceneSearchEngine implements SearchEngine {
 			// delete the current document
 			IndexWriter writer = this.retrieveIndexWriter(topic.getVirtualWiki(), false);
 			this.deleteFromIndex(writer, topic);
-			writer.commit();
+			this.commit(writer, this.autoCommit);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Delete from search index for topic " + topic.getName() + " in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 			}
@@ -346,13 +372,20 @@ public class LuceneSearchEngine implements SearchEngine {
 	/**
 	 *
 	 */
+	public void setAutoCommit(boolean autoCommit) {
+		this.autoCommit = autoCommit;
+	}
+
+	/**
+	 *
+	 */
 	public void updateInIndex(Topic topic) {
 		try {
 			long start = System.currentTimeMillis();
 			IndexWriter writer = this.retrieveIndexWriter(topic.getVirtualWiki(), false);
 			this.deleteFromIndex(writer, topic);
 			this.addToIndex(writer, topic);
-			writer.commit();
+			this.commit(writer, this.autoCommit);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Update search index for topic " + topic.getName() + " in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 			}

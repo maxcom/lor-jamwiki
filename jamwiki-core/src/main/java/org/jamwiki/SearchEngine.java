@@ -39,6 +39,14 @@ public interface SearchEngine {
 	void addToIndex(Topic topic);
 
 	/**
+	 * Force a flush of any pending commits to the search index.
+	 *
+	 * @param virtualWiki The virtual wiki for which pending updates are being
+	 *  committed.
+	 */
+	void commit(String virtualWiki);
+
+	/**
 	 * Remove a topic from the search index.
 	 *
 	 * @param topic The topic object that is to be removed from the index.
@@ -61,6 +69,17 @@ public interface SearchEngine {
 	 * @throws Exception Thrown if any error occurs while re-indexing the Wiki.
 	 */
 	void refreshIndex() throws Exception;
+
+	/**
+	 * Set a flag indicating whether or not every update of the search index
+	 * should be immediately committed to the index.  This is useful mainly
+	 * during batch updates when for performance reasons it is advantageous
+	 * to commit only after the update is done.
+	 *
+	 * @param autoCommit A boolean indicating whether or not every update of
+	 *  the search index should be immediately committed to the index.
+	 */
+	void setAutoCommit(boolean autoCommit);
 
 	/**
 	 * Update a topic in the search index.
