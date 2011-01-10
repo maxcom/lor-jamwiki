@@ -422,8 +422,8 @@ followed by 0.6.3.
                 CONSTRAINT jam_f_log_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id),
                 CONSTRAINT jam_f_log_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id)
               )
-       c) Add the wiki_user_display column to the jam_topic_version,
-          jam_recent_change and jam_file_version tables.
+       c) Add the wiki_user_display column to the jam_topic_version and
+          jam_file_version tables.
             Oracle:
               alter table jam_topic_version add (wiki_user_display VARCHAR(100));
               alter table jam_file_version add (wiki_user_display VARCHAR(100));
@@ -433,12 +433,12 @@ followed by 0.6.3.
             Other Databases:
               alter table jam_topic_version add column wiki_user_display VARCHAR(100);
               alter table jam_file_version add column wiki_user_display VARCHAR(100);
-       d) Populate the new wiki_user_display columns in the jam_topic_version,
-          jam_recent_change and jam_file_version tables.
+       d) Populate the new wiki_user_display columns in the jam_topic_version
+          and jam_file_version tables.
               update jam_topic_version set wiki_user_display = wiki_user_ip_address;
               update jam_file_version set wiki_user_display = wiki_user_ip_address;
-       e) Drop the unused wiki_user_ip_address column from the jam_topic_version,
-          jam_recent_change and jam_file_version tables.
+       e) Drop the unused wiki_user_ip_address column from the jam_topic_version
+          and jam_file_version tables.
               alter table jam_topic_version drop column wiki_user_ip_address;
               alter table jam_file_version drop column wiki_user_ip_address;
        f) Add the version_params column to the jam_topic_version table.
