@@ -82,8 +82,11 @@ public class ParserTest extends JAMWikiUnitTest {
 	@Test
 	public void testCategory() throws Throwable {
 		ParserOutput parserOutput = this.executeCategoryTest("WikiCategory");
-		assertEquals("Expected one category", 1, parserOutput.getCategories().size());
-		assertNotNull("Category:Test expected", parserOutput.getCategories().get("Category:Test"));
+		assertEquals("Expected two categories", 2, parserOutput.getCategories().size());
+		assertTrue("Category:Test expected in categories", parserOutput.getCategories().containsKey("Category:Test"));
+		assertNull("Category:Test should not have a sort key", parserOutput.getCategories().get("Category:Test"));
+		assertTrue("Category:Sort Key expected", parserOutput.getCategories().containsKey("Category:Sort Key"));
+		assertEquals("sort key expected", parserOutput.getCategories().get("Category:Sort Key"), "sort key");
 	}
 
 	/**
@@ -93,7 +96,7 @@ public class ParserTest extends JAMWikiUnitTest {
 	public void testCategoryNested() throws Throwable {
 		ParserOutput parserOutput = this.executeCategoryTest("TemplateIncludeCategory");
 		assertEquals("Expected one category", 1, parserOutput.getCategories().size());
-		assertNotNull("Category:Test expected", parserOutput.getCategories().get("Category:Test"));
+		assertNotNull("Category:Test expected", parserOutput.getCategories().containsKey("Category:Test"));
 	}
 
 	/**
@@ -103,7 +106,7 @@ public class ParserTest extends JAMWikiUnitTest {
 	public void testCategoryTemplate1() throws Throwable {
 		ParserOutput parserOutput = this.executeCategoryTest("TemplateCategory1");
 		assertEquals("Expected one category", 1, parserOutput.getCategories().size());
-		assertNotNull("Category:Test Example1 expected", parserOutput.getCategories().get("Category:Test Example1"));
+		assertNotNull("Category:Test Example1 expected", parserOutput.getCategories().containsKey("Category:Test Example1"));
 	}
 
 	/**
@@ -113,8 +116,8 @@ public class ParserTest extends JAMWikiUnitTest {
 	public void testCategoryTemplate2() throws Throwable {
 		ParserOutput parserOutput = this.executeCategoryTest("TemplateCategory2");
 		assertEquals("Expected two categories", 2, parserOutput.getCategories().size());
-		assertNotNull("Category:Test Example1 expected", parserOutput.getCategories().get("Category:Test Example1"));
-		assertNotNull("Category:Test Example2 expected", parserOutput.getCategories().get("Category:Test Example2"));
+		assertNotNull("Category:Test Example1 expected", parserOutput.getCategories().containsKey("Category:Test Example1"));
+		assertNotNull("Category:Test Example2 expected", parserOutput.getCategories().containsKey("Category:Test Example2"));
 	}
 
 	/**

@@ -89,6 +89,10 @@ public class JFlexParserUtil {
 		}
 		String virtualWiki = parserInput.getVirtualWiki();
 		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, raw);
+		if (!colon && wikiLink.getNamespace().getId().equals(Namespace.CATEGORY_ID)) {
+			// do not set default text for categories
+			wikiLink.setText(null);
+		}
 		if (wikiLink.getVirtualWiki() != null && !StringUtils.equals(wikiLink.getVirtualWiki().getName(), virtualWiki) && StringUtils.isBlank(wikiLink.getDestination())) {
 			// use the root topic name as the destination
 			wikiLink.setDestination(wikiLink.getVirtualWiki().getRootTopicName());
