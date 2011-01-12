@@ -2018,7 +2018,10 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt = conn.prepareStatement(STATEMENT_SELECT_CONFIGURATION);
 			rs = stmt.executeQuery();
 			while (rs.next()) {
-				configuration.put(rs.getString("config_key"), rs.getString("config_value"));
+				// note that the value must be trimmed since Oracle cannot store empty
+				// strings (it converts them to NULL) so empty config values are stored
+				// as " ".
+				configuration.put(rs.getString("config_key"), rs.getString("config_value").trim());
 			}
 		} finally {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
@@ -2754,7 +2757,13 @@ public class AnsiQueryHandler implements QueryHandler {
 			pstmt = conn.prepareStatement(STATEMENT_INSERT_CONFIGURATION);
 			for (String key : configuration.keySet()) {
 				pstmt.setString(1, key);
-				pstmt.setString(2, configuration.get(key));
+				// FIXME - Oracle cannot store an empty string - it converts them
+				// to null - so add a hack to work around the problem.
+				String value = configuration.get(key);
+				if (StringUtils.isBlank(value)) {
+					value = " ";
+				}
+				pstmt.setString(2, value);
 				pstmt.addBatch();
 			}
 			pstmt.executeBatch();
