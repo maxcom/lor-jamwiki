@@ -20,32 +20,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class provides a wrapper around the http://www.slf4j.org/ logging
- * classes.  This framework consolidates logging from multiple sources from
- * the various libraries used in JAMWiki, each of which may be pre-configured
- * to use a different logging mechanism.
+ * This class provides a wrapper around the <a href="http://www.slf4j.org">SFL4J</a>
+ * logging facade framework. A logging framework can be chosen at runtime.
  */
 public class WikiLogger {
 
 	private final Logger logger;
 
-	/** Log configuration property file name. */
-	public final static String LOG_PROPERTIES_FILENAME = "logback.xml";
+	/** Logging framework configuration file path. */
+	public final static String LOGGING_CONFIGURATION_FILE_PATH = "/WEB-INF/classes/logback.xml";
 
 	/**
 	 *
 	 */
 	private WikiLogger(Logger logger) {
 		this.logger = logger;
-	}
-
-	/**
-	 * Return the path to the logging configuration file.  This functionality
-	 * is used during setup to alert the user as to how they can customize
-	 * logging.
-	 */
-	public static String getLogConfigFile() {
-		return System.getProperty("file.separator") + "WEB-INF" + System.getProperty("file.separator") + "classes" + System.getProperty("file.separator") + LOG_PROPERTIES_FILENAME;
 	}
 
 	/**
