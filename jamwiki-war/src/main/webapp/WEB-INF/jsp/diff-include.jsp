@@ -20,47 +20,50 @@
 <c:choose>
 	<c:when test="${empty diffs}"><div class="message"><fmt:message key="diff.nochange" /></div></c:when>
 	<c:otherwise>
-		<div id="diff">
+		<table id="diff">
+			<col class="diff-marker">
+			<col class="diff-content">
+			<col class="diff-marker">
+			<col class="diff-content">
 			<c:set var="previousPosition" value="-10" />
 			<c:forEach items="${diffs}" var="diff">
 				<c:if test="${diff.position > (previousPosition + 1)}">
-					<div class="diff-line"><fmt:message key="diff.line" /> <c:out value="${diff.position + 1}" />:</div>
+					<tr><td class="diff-line" colspan="4"><fmt:message key="diff.line" /> <c:out value="${diff.position + 1}" />:</td></tr>
 				</c:if>
-				<div class="diff-entry">
+				<tr class="diff-entry">
 					<c:choose>
 						<c:when test="${!empty diff.oldText && diff.change}">
-							<div class="diff-indicator">-</div>
-							<div class="diff-delete">
+							<td class="diff-indicator">-</td>
+							<td class="diff-delete">
 								<c:set var="subDiffChange" value="false" />
 								<c:forEach items="${diff.subDiffs}" var="subDiff"><c:if test="${!subDiffChange && subDiff.change}"><c:set var="subDiffChange" value="true" /><span class="diff-change"></c:if><c:if test="${subDiffChange && !subDiff.change}"><c:set var="subDiffChange" value="false" /></span></c:if><c:out value="${subDiff.oldText}" /></c:forEach>
 								<c:if test="${subDiffChange}"></span></c:if>
 								&#160;
-							</div>
+							</td>
 						</c:when>
 						<c:otherwise>
-							<div class="diff-indicator">&#160;</div>
-							<div class="diff-unchanged"><c:out value="${diff.oldText}" />&#160;</div>
+							<td class="diff-indicator">&#160;</td>
+							<td class="diff-unchanged"><c:out value="${diff.oldText}" />&#160;</td>
 						</c:otherwise>
 					</c:choose>
 					<c:choose>
 						<c:when test="${!empty diff.newText && diff.change}">
-							<div class="diff-indicator">+</div>
-							<div class="diff-add">
+							<td class="diff-indicator">+</td>
+							<td class="diff-add">
 								<c:set var="subDiffChange" value="false" />
 								<c:forEach items="${diff.subDiffs}" var="subDiff"><c:if test="${!subDiffChange && subDiff.change}"><c:set var="subDiffChange" value="true" /><span class="diff-change"></c:if><c:if test="${subDiffChange && !subDiff.change}"><c:set var="subDiffChange" value="false" /></span></c:if><c:out value="${subDiff.newText}" /></c:forEach>
 								<c:if test="${subDiffChange}"></span></c:if>
 								&#160;
-							</div>
+							</td>
 						</c:when>
 						<c:otherwise>
-							<div class="diff-indicator">&#160;</div>
-							<div class="diff-unchanged"><c:out value="${diff.newText}" />&#160;</div>
+							<td class="diff-indicator">&#160;</td>
+							<td class="diff-unchanged"><c:out value="${diff.newText}" />&#160;</td>
 						</c:otherwise>
 					</c:choose>
-					<div class="clear"></div>
-				</div>
+				</tr>
 				<c:set var="previousPosition" value="${diff.position}" />
 			</c:forEach>
-		</div>
+		</table>
 	</c:otherwise>
 </c:choose>

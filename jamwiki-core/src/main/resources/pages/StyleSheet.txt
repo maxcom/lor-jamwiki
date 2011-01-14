@@ -271,47 +271,43 @@ div.submenu {
 #left_revision, #right_revision {
 	font-weight: bold;
 }
+table#diff {
+	width: 98%;
+}
+table#diff col.diff-marker {
+	width: 2%;
+}
+table#diff col.diff-content {
+	width: 48%;
+}
 .diff-delete {
-	float: left;
-	position: relative;
 	background: #eeee88;
 	font-weight: bold;
 	padding: 0.1em;
-	width: 48%;
 	overflow: hidden;
 }
 .diff-add {
-	float: left;
-	position: relative;
 	background: #88ee88;
 	font-weight: bold;
 	padding: 0.1em;
-	width: 48%;
 	overflow: hidden;
 }
 .diff-unchanged {
-	float: left;
-	position: relative;
 	background: #dddddd;
 	padding: 0.1em;
-	width: 48%;
 	overflow: hidden;
 }
 .diff-indicator {
-	float: left;
-	position: relative;
 	font-weight: bold;
 	padding: 0.1em;
 	text-align: right;
 	width: 7px;
 }
 .diff-line {
-	clear: both;
 	padding: 0.5em 0.1em 0.1em 0.1em;
 	font-weight: bold;
 }
 .diff-entry {
-	clear: both;
 	margin: 1px;
 	padding: 1px;
 }
