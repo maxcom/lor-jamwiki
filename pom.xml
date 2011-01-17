@@ -20,7 +20,6 @@
 	<scm>
 		<connection>scm:svn:http://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/branches/1.0.x</connection>
 		<developerConnection>scm:svn:https://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/branches/1.0.x</developerConnection>
-		<tag>HEAD</tag>
 		<url>http://jamwiki.svn.sourceforge.net/viewvc/jamwiki/wiki/branches/1.0.x</url>
 	</scm>
 	<issueManagement>
