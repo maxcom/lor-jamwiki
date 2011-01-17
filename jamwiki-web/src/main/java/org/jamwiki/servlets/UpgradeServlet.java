@@ -99,8 +99,8 @@ public class UpgradeServlet extends JAMWikiServlet {
 				throw new WikiException(new WikiMessage("error.login"));
 			}
 			WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
-			if (oldVersion.before(0, 8, 0)) {
-				throw new WikiException(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.8.0"));
+			if (oldVersion.before(0, 9, 0)) {
+				throw new WikiException(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.9.0"));
 			}
 			// first perform database upgrades
 			this.upgradeDatabase(true, messages);
@@ -181,19 +181,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 		boolean upgradeRequired = false;
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 		if (oldVersion.before(1, 0, 0)) {
-			// special case - virtual wiki table changes must be done before anything else
-			upgradeRequired = true;
-			if (performUpgrade) {
-				messages = DatabaseUpgrades.preUpgrade100(messages);
-			}
-		}
-		if (oldVersion.before(0, 9, 0)) {
-			upgradeRequired = true;
-			if (performUpgrade) {
-				messages = DatabaseUpgrades.upgrade090(messages);
-			}
-		}
-		if (oldVersion.before(1, 0, 0)) {
 			upgradeRequired = true;
 			if (performUpgrade) {
 				messages = DatabaseUpgrades.upgrade100(messages);
@@ -238,9 +225,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
-		if (oldVersion.before(0, 8, 0)) {
+		if (oldVersion.before(0, 9, 0)) {
 			List<WikiMessage> errors = new ArrayList<WikiMessage>();
-			errors.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.8.0"));
+			errors.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.9.0"));
 			next.addObject("errors", errors);
 		}
 		List<WikiMessage> upgradeDetails = new ArrayList<WikiMessage>();

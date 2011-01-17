@@ -3,6 +3,8 @@
 
 New Features:
 
+  * Remove ability to automatically upgrade from versions prior to 0.9.0.
+
 Bugfixes:
 
 Translation Updates:
