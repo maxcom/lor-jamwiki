@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jamwiki</groupId>
 	<artifactId>jamwiki</artifactId>
@@ -21,10 +18,10 @@
 		<module>jamwiki-war</module>
 	</modules>
 	<scm>
-		<connection>scm:svn:http://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/trunk</connection>
-		<developerConnection>scm:svn:https://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/trunk</developerConnection>
+		<connection>scm:svn:http://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/branches/1.0.x</connection>
+		<developerConnection>scm:svn:https://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/branches/1.0.x</developerConnection>
 		<tag>HEAD</tag>
-		<url>http://jamwiki.svn.sourceforge.net/viewvc/jamwiki/</url>
+		<url>http://jamwiki.svn.sourceforge.net/viewvc/jamwiki/branches/1.0.x</url>
 	</scm>
 	<issueManagement>
 		<system>Wiki</system>
