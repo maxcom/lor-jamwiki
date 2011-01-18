@@ -556,11 +556,18 @@ table.gallery td {
 	border: solid 2px white;
 	text-align: center;
 	vertical-align: middle;
-	width:  150px;
 }
 img.gallery {
 	border: 1px solid #bbbbbb;
 	padding: 0.3em;
+}
+div.gallerytext {
+	font-size: 94%;
+	overflow: hidden;
+	padding: 2px 4px
+}
+div.gallerybox {
+	margin: 2px;
 }
 #toolbar a {
 	border: none;

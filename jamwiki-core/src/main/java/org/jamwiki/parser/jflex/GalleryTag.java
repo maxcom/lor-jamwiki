@@ -51,17 +51,18 @@ public class GalleryTag implements JFlexParserTag {
 			return "";
 		}
 		int width = DEFAULT_THUMBNAIL_MAX_DIMENSION;
+		int perRow = DEFAULT_IMAGES_PER_ROW;
 		String virtualWiki;
 		ImageMetadata imageMetadata = this.initializeImageMetadata();
 		int count = 0;
 		StringBuilder result = new StringBuilder("<table class=\"gallery\" cellspacing=\"0\" cellpadding=\"0\">\n<tr>\n");
 		for (WikiLink wikiLink : imageLinks) {
 			count++;
-			if (count != 1 && count % DEFAULT_IMAGES_PER_ROW == 1) {
+			if (count != 1 && count % perRow == 1) {
 				// new row
 				result.append("</tr>\n<tr>\n");
 			}
-			result.append("<td>\n");
+			result.append("<td>\n<div style=\"width:" + (width + 35) + "px;\" class=\"gallerybox\">\n");
 			virtualWiki = (wikiLink.getVirtualWiki() == null) ? parserInput.getVirtualWiki() : wikiLink.getVirtualWiki().getName();
 			imageMetadata.setAlt((StringUtils.isBlank(wikiLink.getText())) ? wikiLink.getArticle() : "");
 			try {
@@ -75,7 +76,13 @@ public class GalleryTag implements JFlexParserTag {
 			if (!StringUtils.isBlank(wikiLink.getText())) {
 				result.append("<div class=\"gallerytext\">\n<p>").append(wikiLink.getText()).append("</p>\n</div>\n");
 			}
-			result.append("</td>\n");
+			result.append("</div>\n</td>\n");
+		}
+		// add any blank columns that are necessary to fill out the last row
+		if ((count % perRow) != 0) {
+			for (int i = (perRow - (count % perRow)); i > 0; i--) {
+				result.append("<td>&#160;</td>\n");
+			}
 		}
 		result.append("</tr>\n</table>");
 		return result.toString();
