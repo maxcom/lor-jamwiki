@@ -48,7 +48,7 @@
 			<c:if test="${status.count != 1 && (status.count % 4) == 1}">
 </tr><tr>
 			</c:if>
-<td><a href="<jamwiki:link value="${categoryImage.childTopicName}" />" class="wikiimg"><jamwiki:image value="${categoryImage.childTopicName}" maxWidth="120" maxHeight="120" style="gallery" /></a></td>
+<td><div class="gallerybox" style="width:155px;"><a href="<jamwiki:link value="${categoryImage.childTopicName}" />" class="wikiimg"><jamwiki:image value="${categoryImage.childTopicName}" maxWidth="120" maxHeight="120" style="gallery" /></a></div></td>
 		</c:forEach>
 		<c:if test="${(numCategoryImages % 4) != 0}">
 			<c:forEach begin="1" end="${4 - (numCategoryImages % 4)}">
