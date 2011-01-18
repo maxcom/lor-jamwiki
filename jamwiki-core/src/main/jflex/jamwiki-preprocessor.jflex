@@ -48,6 +48,9 @@ wikilinkcontent    = [^\n\]] | "]" [^\n\]] | {htmllink}
 wikilink           = "[[" ({wikilinkcontent})+ "]]" [a-z]*
 nestedwikilink     = "[[" ({wikilinkcontent})+ "|" ({wikilinkcontent} | {wikilink})+ "]]"
 
+/* image gallery */
+gallery            = (<[ ]*gallery[^>]*>) ~(<[ ]*\/[ ]*gallery[ ]*>)
+
 %state WIKIPRE
 
 %%
@@ -102,6 +105,13 @@ nestedwikilink     = "[[" ({wikilinkcontent})+ "|" ({wikilinkcontent} | {wikilin
 <YYINITIAL>{nestedwikilink} {
     if (logger.isTraceEnabled()) logger.trace("nestedwikilink: " + yytext() + " (" + yystate() + ")");
     return this.parse(TAG_TYPE_WIKI_LINK, yytext(), "nested");
+}
+
+/* ----- image gallery ----- */
+
+<YYINITIAL>{gallery} {
+    if (logger.isTraceEnabled()) logger.trace("gallery: " + yytext() + " (" + yystate() + ")");
+    return this.parse(TAG_TYPE_GALLERY, yytext());
 }
 
 /* ----- other ----- */

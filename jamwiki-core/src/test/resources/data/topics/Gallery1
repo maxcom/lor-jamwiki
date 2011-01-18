@@ -1,0 +1,9 @@
+<!-- image gallery test -->
+<gallery>
+Image:Test Image.jpg|Item 1
+Image:Test Image.jpg|a link to [[Example1]]
+Image:Test Image.jpg
+Image:Test Image.jpg
+Image:Test Image.jpg| ''italic caption''
+Image:Test Image.jpg|on page "{{PAGENAME}}"
+</gallery>
