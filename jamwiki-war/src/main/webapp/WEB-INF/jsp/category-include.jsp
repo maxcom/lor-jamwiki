@@ -45,14 +45,16 @@
 <table class="gallery" cellpadding="0" cellspacing="0"><tr>
 		<%-- FIXME - number of columns and max image size are hard-coded --%>
 		<c:forEach items="${categoryImages}" var="categoryImage" varStatus="status">
-<td><a href="<jamwiki:link value="${categoryImage.childTopicName}" />" class="wikiimg"><jamwiki:image value="${categoryImage.childTopicName}" maxWidth="120" maxHeight="120" style="gallery" /></a></td>
-			<c:if test="${(status.count % 4) == 0}">
+			<c:if test="${status.count != 1 && (status.count % 4) == 1}">
 </tr><tr>
 			</c:if>
+<td><a href="<jamwiki:link value="${categoryImage.childTopicName}" />" class="wikiimg"><jamwiki:image value="${categoryImage.childTopicName}" maxWidth="120" maxHeight="120" style="gallery" /></a></td>
 		</c:forEach>
-		<c:forEach begin="1" end="${4 - (numCategoryImages % 4)}">
+		<c:if test="${(numCategoryImages % 4) != 0}">
+			<c:forEach begin="1" end="${4 - (numCategoryImages % 4)}">
 <td>&#160;</td>
-		</c:forEach>
+			</c:forEach>
+		</c:if>
 </tr></table>
 	</c:if>
 
