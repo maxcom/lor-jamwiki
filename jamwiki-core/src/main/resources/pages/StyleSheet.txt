@@ -546,14 +546,15 @@ table.gallery {
 	padding: 2px;
 	background-color: white;
 }
-table.gallery tr {
-	vertical-align: middle;
-}
 table.gallery td {
 	background-color: #f9f9f9;
 	border: solid 2px white;
 	text-align: center;
+	vertical-align: top;
+}
+table.gallery-cat td {
 	vertical-align: middle;
+	padding: 2px;
 }
 img.gallery {
 	border: 1px solid #bbbbbb;
@@ -570,6 +571,9 @@ div.gallerytext p {
 }
 div.gallerybox {
 	margin: 2px;
+}
+table.gallery-cat div.gallerybox {
+	width: 155px;
 }
 #toolbar a {
 	border: none;

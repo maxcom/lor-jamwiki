@@ -42,13 +42,13 @@
 <h3><fmt:message key="topic.category.images"><fmt:param value="${categoryName}" /></fmt:message></h3>
 <div class="message"><fmt:message key="topic.category.numimages"><fmt:param value="${numCategoryImages}" /><fmt:param value="${categoryName}" /></fmt:message></div>
 
-<table class="gallery" cellpadding="0" cellspacing="0"><tr>
+<table class="gallery-cat gallery" cellpadding="0" cellspacing="0"><tr>
 		<%-- FIXME - number of columns and max image size are hard-coded --%>
 		<c:forEach items="${categoryImages}" var="categoryImage" varStatus="status">
 			<c:if test="${status.count != 1 && (status.count % 4) == 1}">
 </tr><tr>
 			</c:if>
-<td><div class="gallerybox" style="width:155px;"><a href="<jamwiki:link value="${categoryImage.childTopicName}" />" class="wikiimg"><jamwiki:image value="${categoryImage.childTopicName}" maxWidth="120" maxHeight="120" style="gallery" /></a></div></td>
+<td><div class="gallerybox"><a href="<jamwiki:link value="${categoryImage.childTopicName}" />" class="wikiimg"><jamwiki:image value="${categoryImage.childTopicName}" maxWidth="120" maxHeight="120" style="gallery" /></a></div></td>
 		</c:forEach>
 		<c:if test="${(numCategoryImages % 4) != 0}">
 			<c:forEach begin="1" end="${4 - (numCategoryImages % 4)}">
