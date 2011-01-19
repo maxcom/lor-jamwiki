@@ -28,6 +28,7 @@ public class ImageMetadata {
 	private boolean bordered = false;
 	private ImageBorderEnum border = ImageBorderEnum.NOT_SPECIFIED;
 	private String caption = null;
+	private int galleryHeight = 0;
 	private ImageHorizontalAlignmentEnum horizontalAlignment = ImageHorizontalAlignmentEnum.NOT_SPECIFIED;
 	/**
 	 * Destination to link to when the image is clicked.  May be either a topic or a URL.  If
@@ -120,6 +121,22 @@ public class ImageMetadata {
 	 */
 	public void setCaption(String caption) {
 		this.caption = caption;
+	}
+
+	/**
+	 * Gallery height is used for adding padding around image gallery images.
+	 * Specify the total vertical space available for display, in pixels.
+	 */
+	public int getGalleryHeight() {
+		return this.galleryHeight;
+	}
+
+	/**
+	 * Gallery height is used for adding padding around image gallery images.
+	 * Specify the total vertical space available for display, in pixels.
+	 */
+	public void setGalleryHeight(int galleryHeight) {
+		this.galleryHeight = galleryHeight;
 	}
 
 	/**

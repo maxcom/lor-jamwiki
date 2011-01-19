@@ -2,10 +2,8 @@
 <tr>
 <td>
 <div style="width:155px;" class="gallerybox">
-<div class="center">
-<div class="thumb tnone">
-<div class="thumbinner" style="width:122px"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/resized/test_image-200px.jpg" width="120" height="80" alt="" /></a></div>
-</div>
+<div class="thumb" style="padding:25px 0;">
+<div class="thumbinner" style="width:122px; margin:0 auto;"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/resized/test_image-200px.jpg" width="120" height="80" alt="" /></a></div>
 </div>
 <div class="gallerytext">
 <p>Item 1</p>
@@ -14,10 +12,8 @@
 </td>
 <td>
 <div style="width:155px;" class="gallerybox">
-<div class="center">
-<div class="thumb tnone">
-<div class="thumbinner" style="width:122px"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/resized/test_image-200px.jpg" width="120" height="80" alt="" /></a></div>
-</div>
+<div class="thumb" style="padding:25px 0;">
+<div class="thumbinner" style="width:122px; margin:0 auto;"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/resized/test_image-200px.jpg" width="120" height="80" alt="" /></a></div>
 </div>
 <div class="gallerytext">
 <p>a link to <a href="/wiki/en/Example1" title="Example1">Example1</a></p>
@@ -26,19 +22,15 @@
 </td>
 <td>
 <div style="width:155px;" class="gallerybox">
-<div class="center">
-<div class="thumb tnone">
-<div class="thumbinner" style="width:122px"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/resized/test_image-200px.jpg" width="120" height="80" alt="Test Image.jpg" /></a></div>
-</div>
+<div class="thumb" style="padding:25px 0;">
+<div class="thumbinner" style="width:122px; margin:0 auto;"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/resized/test_image-200px.jpg" width="120" height="80" alt="Test Image.jpg" /></a></div>
 </div>
 </div>
 </td>
 <td>
 <div style="width:155px;" class="gallerybox">
-<div class="center">
-<div class="thumb tnone">
-<div class="thumbinner" style="width:122px"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/resized/test_image-200px.jpg" width="120" height="80" alt="Test Image.jpg" /></a></div>
-</div>
+<div class="thumb" style="padding:25px 0;">
+<div class="thumbinner" style="width:122px; margin:0 auto;"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/resized/test_image-200px.jpg" width="120" height="80" alt="Test Image.jpg" /></a></div>
 </div>
 </div>
 </td>
@@ -46,10 +38,8 @@
 <tr>
 <td>
 <div style="width:155px;" class="gallerybox">
-<div class="center">
-<div class="thumb tnone">
-<div class="thumbinner" style="width:122px"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/resized/test_image-200px.jpg" width="120" height="80" alt="" /></a></div>
-</div>
+<div class="thumb" style="padding:25px 0;">
+<div class="thumbinner" style="width:122px; margin:0 auto;"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/resized/test_image-200px.jpg" width="120" height="80" alt="" /></a></div>
 </div>
 <div class="gallerytext">
 <p><i>italic caption</i></p>
@@ -58,10 +48,8 @@
 </td>
 <td>
 <div style="width:155px;" class="gallerybox">
-<div class="center">
-<div class="thumb tnone">
-<div class="thumbinner" style="width:122px"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/resized/test_image-200px.jpg" width="120" height="80" alt="" /></a></div>
-</div>
+<div class="thumb" style="padding:25px 0;">
+<div class="thumbinner" style="width:122px; margin:0 auto;"><a class="wikiimg" href="/wiki/en/Image:Test_Image.jpg"><img class="wikiimg" src="/files/resized/test_image-200px.jpg" width="120" height="80" alt="" /></a></div>
 </div>
 <div class="gallerytext">
 <p>on page &quot;Gallery1&quot;</p>

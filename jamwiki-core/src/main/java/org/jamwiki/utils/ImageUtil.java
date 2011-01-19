@@ -147,7 +147,7 @@ public class ImageUtil {
 		if (wikiImage == null) {
 			return ImageUtil.buildLinkToFile(url, topic, caption, escapeHtml);
 		}
-		String imageWrapperDiv = ImageUtil.buildImageWrapperDivs(imageMetadata, wikiImage.getWidth());
+		String imageWrapperDiv = ImageUtil.buildImageWrapperDivs(imageMetadata, wikiImage.getWidth(), wikiImage.getHeight());
 		if (!StringUtils.isWhitespace(imageMetadata.getLink())) {
 			if (imageMetadata.getLink() == null) {
 				// no link set, link to the image topic page.  At this point we have validated
@@ -224,9 +224,13 @@ public class ImageUtil {
 	/**
 	 * Determine the CSS styles to apply to the image wrapper div.
 	 */
-	private static String buildImageWrapperDivs(ImageMetadata imageMetadata, int width) {
+	private static String buildImageWrapperDivs(ImageMetadata imageMetadata, int width, int height) {
 		// CSS and wrappers are processed differently for thumb/frame vs. non-thumb/non-frame
-		if (imageMetadata.getBorder() != ImageBorderEnum.THUMB && imageMetadata.getBorder() != ImageBorderEnum.FRAME) {
+		if (imageMetadata.getBorder() == ImageBorderEnum.GALLERY) {
+			// vertical padding centers the image in the box.  the extra 4 pixels are padding.
+			int verticalPadding = ((imageMetadata.getGalleryHeight() - height) > 0) ? (int)Math.floor((imageMetadata.getGalleryHeight() - height) / 2) : 0;
+			return "<div class=\"thumb\" style=\"padding:" + verticalPadding + "px 0;\">\n<div class=\"thumbinner\" style=\"width:" + (width + 2) + "px; margin:0 auto;\">{0}</div>\n</div>";
+		} else if (imageMetadata.getBorder() != ImageBorderEnum.THUMB && imageMetadata.getBorder() != ImageBorderEnum.FRAME) {
 			if (imageMetadata.getHorizontalAlignment() == ImageHorizontalAlignmentEnum.LEFT) {
 				return "<div class=\"floatleft\">{0}</div>";
 			} else if (imageMetadata.getHorizontalAlignment() == ImageHorizontalAlignmentEnum.RIGHT) {

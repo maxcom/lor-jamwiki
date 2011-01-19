@@ -1,5 +1,3 @@
-/* defaults */
-
 body {
 	background: #f9f9f9 url(../images/denalibg.jpg) 0 0 no-repeat;
 	color: black;
@@ -565,6 +563,10 @@ div.gallerytext {
 	font-size: 94%;
 	overflow: hidden;
 	padding: 2px 4px
+}
+div.gallerytext p {
+	line-height: auto;
+	margin: auto;
 }
 div.gallerybox {
 	margin: 2px;

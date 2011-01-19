@@ -133,8 +133,10 @@ public class GalleryTag implements JFlexParserTag {
 		ImageMetadata imageMetadata = new ImageMetadata();
 		imageMetadata.setMaxHeight(DEFAULT_THUMBNAIL_MAX_DIMENSION);
 		imageMetadata.setMaxWidth(DEFAULT_THUMBNAIL_MAX_DIMENSION);
-		imageMetadata.setBorder(ImageBorderEnum.THUMB);
+		imageMetadata.setBorder(ImageBorderEnum.GALLERY);
 		imageMetadata.setHorizontalAlignment(ImageHorizontalAlignmentEnum.CENTER);
+		// 10 pixels is for padding
+		imageMetadata.setGalleryHeight(DEFAULT_THUMBNAIL_MAX_DIMENSION + 10);
 		return imageMetadata;
 	}
 
