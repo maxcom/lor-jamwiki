@@ -412,6 +412,30 @@ public class Utilities {
 	}
 
 	/**
+	 * Utility method for retrieving a key from a map, case-insensitive.  This method
+	 * first tries to return an exact match, and if that fails it returns the first
+	 * case-insensitive match.
+	 *
+	 * @param map The map being examined.
+	 * @param key The key for the value being retrieved.
+	 * @return A matching value for the key, or <code>null</code> if no match is found.
+	 */
+	public static <V> V getMapValueCaseInsensitive(Map<String, V> map, String key) {
+		if (map == null) {
+			return null;
+		}
+		if (map.containsKey(key)) {
+			return map.get(key);
+		}
+		for (String mapKey : map.keySet()) {
+			if (StringUtils.equalsIgnoreCase(mapKey, key)) {
+				return map.get(mapKey);
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Given a request, determine the server URL.
 	 *
 	 * @return A Server URL of the form http://www.example.com/
