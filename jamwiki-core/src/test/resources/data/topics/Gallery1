@@ -7,3 +7,12 @@ Image:Test Image.jpg
 Image:Test Image.jpg| ''italic caption''
 Image:Test Image.jpg|on page "{{PAGENAME}}"
 </gallery>
+<!-- test with gallery attributes -->
+<gallery WIDTHS=90 perRow  = "3" heights=80px bogus=bogus caption=" This is the gallery caption	">
+Image:Test Image.jpg|caption 1
+Image:Test Image.jpg|caption 2
+Image:Test Image.jpg|caption 3
+Image:Test Image.jpg|caption 4
+Image:Test Image.jpg|caption 5
+Image:Test Image.jpg|caption 6
+</gallery>

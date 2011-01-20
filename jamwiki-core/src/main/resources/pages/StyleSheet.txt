@@ -538,13 +538,17 @@ div.thumbinner  {
 	overflow:hidden;
 	padding: 3px !important;
 	text-align:center;
-	min-width:100px;
+	min-width:10px;
 }
 table.gallery {
 	border: 1px solid #ccc;
 	margin: 2px;
 	padding: 2px;
 	background-color: white;
+}
+table.gallery caption {
+	font-weight: bold;
+	padding-bottom: 5px;
 }
 table.gallery td {
 	background-color: #f9f9f9;

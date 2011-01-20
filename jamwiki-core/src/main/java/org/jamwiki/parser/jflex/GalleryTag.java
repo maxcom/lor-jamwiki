@@ -19,7 +19,10 @@ package org.jamwiki.parser.jflex;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.parser.ParserException;
@@ -29,6 +32,7 @@ import org.jamwiki.utils.ImageBorderEnum;
 import org.jamwiki.utils.ImageHorizontalAlignmentEnum;
 import org.jamwiki.utils.ImageMetadata;
 import org.jamwiki.utils.ImageUtil;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 
@@ -38,6 +42,7 @@ import org.jamwiki.utils.WikiLogger;
 public class GalleryTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(GalleryTag.class.getName());
+	private static Pattern IMAGE_DIMENSION_PATTERN = Pattern.compile("([0-9]+)[ ]*(px)?", Pattern.CASE_INSENSITIVE);
 	private static final int DEFAULT_IMAGES_PER_ROW = 4;
 	private static final int DEFAULT_THUMBNAIL_MAX_DIMENSION = 120;
 
@@ -45,17 +50,26 @@ public class GalleryTag implements JFlexParserTag {
 	 * Given a list of image links to display in the gallery, generate the
 	 * gallery HTML.
 	 */
-	private String generateGalleryHtml(ParserInput parserInput, List<WikiLink> imageLinks) {
+	private String generateGalleryHtml(ParserInput parserInput, String raw, List<WikiLink> imageLinks) throws ParserException {
 		if (imageLinks.isEmpty()) {
 			// empty gallery tag
 			return "";
 		}
-		int width = DEFAULT_THUMBNAIL_MAX_DIMENSION;
-		int perRow = DEFAULT_IMAGES_PER_ROW;
+		// process the open tag to generate a list of attributes
+		String openTag = raw.substring(0, raw.indexOf(">") + 1);
+		HtmlTagItem htmlTagItem = JFlexParserUtil.sanitizeHtmlTag(openTag);
+		int width = this.retrieveDimension(htmlTagItem, "widths", DEFAULT_THUMBNAIL_MAX_DIMENSION);
+		int height = this.retrieveDimension(htmlTagItem, "heights", DEFAULT_THUMBNAIL_MAX_DIMENSION);
+		int perRow = NumberUtils.toInt(Utilities.getMapValueCaseInsensitive(htmlTagItem.getAttributes(), "perrow"), DEFAULT_IMAGES_PER_ROW);
 		String virtualWiki;
-		ImageMetadata imageMetadata = this.initializeImageMetadata();
+		ImageMetadata imageMetadata = this.initializeImageMetadata(width, height);
 		int count = 0;
-		StringBuilder result = new StringBuilder("<table class=\"gallery\" cellspacing=\"0\" cellpadding=\"0\">\n<tr>\n");
+		StringBuilder result = new StringBuilder("<table class=\"gallery\" cellspacing=\"0\" cellpadding=\"0\">\n");
+		String caption = Utilities.getMapValueCaseInsensitive(htmlTagItem.getAttributes(), "caption");
+		if (!StringUtils.isBlank(caption)) {
+			result.append("<caption>").append(caption.trim()).append("</caption>\n");
+		}
+		result.append("<tr>\n");
 		for (WikiLink wikiLink : imageLinks) {
 			count++;
 			if (count != 1 && count % perRow == 1) {
@@ -129,14 +143,14 @@ public class GalleryTag implements JFlexParserTag {
 	/**
 	 *
 	 */
-	private ImageMetadata initializeImageMetadata() {
+	private ImageMetadata initializeImageMetadata(int width, int height) {
 		ImageMetadata imageMetadata = new ImageMetadata();
-		imageMetadata.setMaxHeight(DEFAULT_THUMBNAIL_MAX_DIMENSION);
-		imageMetadata.setMaxWidth(DEFAULT_THUMBNAIL_MAX_DIMENSION);
+		imageMetadata.setMaxHeight(height);
+		imageMetadata.setMaxWidth(width);
 		imageMetadata.setBorder(ImageBorderEnum.GALLERY);
 		imageMetadata.setHorizontalAlignment(ImageHorizontalAlignmentEnum.CENTER);
 		// 10 pixels is for padding
-		imageMetadata.setGalleryHeight(DEFAULT_THUMBNAIL_MAX_DIMENSION + 10);
+		imageMetadata.setGalleryHeight(height + 10);
 		return imageMetadata;
 	}
 
@@ -153,6 +167,21 @@ public class GalleryTag implements JFlexParserTag {
 			return raw;
 		}
 		// generate the gallery HTML
-		return this.generateGalleryHtml(lexer.getParserInput(), imageLinks);
+		return this.generateGalleryHtml(lexer.getParserInput(), raw, imageLinks);
+	}
+
+	/**
+	 * Utility method for converting a dimension of the form "50px" to an integer.
+	 */
+	private int retrieveDimension(HtmlTagItem htmlTagItem, String key, int defaultValue) {
+		String value = Utilities.getMapValueCaseInsensitive(htmlTagItem.getAttributes(), key);
+		if (StringUtils.isBlank(value)) {
+			return defaultValue;
+		}
+		Matcher matcher = IMAGE_DIMENSION_PATTERN.matcher(value.trim());
+		if (matcher.find()) {
+			value = matcher.group(1);
+		}
+		return NumberUtils.toInt(value, defaultValue);
 	}
 }
