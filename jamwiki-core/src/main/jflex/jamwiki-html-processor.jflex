@@ -193,14 +193,16 @@ mapAttr            = {i18n}|{events}|id|class|style|title|name
 areaAttr           = {attrs}|{focus}|shape|coords|href|nohref|alt|target
 */
 
-
 heading            = h1|h2|h3|h4|h5|h6
 inlineTag          = abbr|b|big|br|cite|code|del|em|font|i|ins|pre|s|small|span|strike|strong|sub|sup|tt|u|var
 blockLevelTag      = blockquote|caption|center|col|colgroup|dd|div|dl|dt|{heading}|hr|li|ol|p|table|tbody|td|tfoot|th|thead|tr|ul
 htmlTag            = {inlineTag}|{blockLevelTag}
 
-tagContent         = "<" ({whitespace})* ({htmlTag}) [^\n]* ">"
-tagClose           = "<" ({whitespace})* "/" ({whitespace})* ({htmlTag}) ({whitespace})* ">"
+genericTag         = [a-zA-Z0-9_:\-]+
+genericTagAttr     = [a-zA-Z0-9_:\-]+
+
+tagContent         = "<" ({whitespace})* ({genericTag}) ({whitespace})* [^\n]* ">"
+tagClose           = "<" ({whitespace})* "/" ({whitespace})* ({genericTag}) ({whitespace})* ">"
 tagCloseContent    = ({whitespace})* ">"
 tagCloseNoContent  = "/" ({whitespace})* ">"
 tagAttributeValueInQuotes = ("\"" ~"\"")|("'" ~"'")
@@ -209,7 +211,7 @@ tagAttributeValueNoQuotes = [^ \t\f\"'>/]+
 tagScript          = "<" ({whitespace})* "script" [^\n]* ">"
 tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespace})* ">"
 
-%state ATTRS_ATTRIBUTE_KEY, ATTRS_TEXTALIGN_ATTRIBUTE_KEY, BLOCKQUOTE_ATTRIBUTE_KEY, BR_ATTRIBUTE_KEY, DL_ATTRIBUTE_KEY, FONT_ATTRIBUTE_KEY, HR_ATTRIBUTE_KEY, HTML_ATTRIBUTE_VALUE, HTML_CLOSE, HTML_OPEN, INS_DEL_ATTRIBUTE_KEY, LI_ATTRIBUTE_KEY, OL_ATTRIBUTE_KEY, PRE_ATTRIBUTE_KEY, SCRIPT_ATTRIBUTE_KEY, TABLE_ATTRIBUTE_KEY, TABLE_CAPTION_ATTRIBUTE_KEY, TABLE_CELL_ATTRIBUTE_KEY, TABLE_COL_ATTRIBUTE_KEY, TABLE_ROW_ATTRIBUTE_KEY, TABLE_SECTION_ATTRIBUTE_KEY, UL_ATTRIBUTE_KEY
+%state ATTRS_ATTRIBUTE_KEY, ATTRS_TEXTALIGN_ATTRIBUTE_KEY, BLOCKQUOTE_ATTRIBUTE_KEY, BR_ATTRIBUTE_KEY, DL_ATTRIBUTE_KEY, FONT_ATTRIBUTE_KEY, HR_ATTRIBUTE_KEY, HTML_ATTRIBUTE_VALUE, HTML_CLOSE, HTML_OPEN, INS_DEL_ATTRIBUTE_KEY, LI_ATTRIBUTE_KEY, NON_HTML_ATTRIBUTE_KEY, OL_ATTRIBUTE_KEY, PRE_ATTRIBUTE_KEY, SCRIPT_ATTRIBUTE_KEY, TABLE_ATTRIBUTE_KEY, TABLE_CAPTION_ATTRIBUTE_KEY, TABLE_CELL_ATTRIBUTE_KEY, TABLE_COL_ATTRIBUTE_KEY, TABLE_ROW_ATTRIBUTE_KEY, TABLE_SECTION_ATTRIBUTE_KEY, UL_ATTRIBUTE_KEY
 
 %%
 
@@ -371,11 +373,18 @@ tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespa
         }
         return "";
     }
+    {genericTag} {
+        // non-HTML tag, such as <gallery>
+        endState();
+        this.tagType = yytext().toLowerCase();
+        beginState(NON_HTML_ATTRIBUTE_KEY);
+        return "";
+    }
     . {
         throw new IllegalArgumentException("HTML_OPEN: Invalid HTML tag: " + this.html);
     }
 }
-<ATTRS_ATTRIBUTE_KEY, ATTRS_TEXTALIGN_ATTRIBUTE_KEY, BLOCKQUOTE_ATTRIBUTE_KEY, BR_ATTRIBUTE_KEY, DL_ATTRIBUTE_KEY, FONT_ATTRIBUTE_KEY, HR_ATTRIBUTE_KEY, HTML_ATTRIBUTE_VALUE, INS_DEL_ATTRIBUTE_KEY, LI_ATTRIBUTE_KEY, OL_ATTRIBUTE_KEY, PRE_ATTRIBUTE_KEY, SCRIPT_ATTRIBUTE_KEY, TABLE_ATTRIBUTE_KEY, TABLE_CAPTION_ATTRIBUTE_KEY, TABLE_CELL_ATTRIBUTE_KEY, TABLE_COL_ATTRIBUTE_KEY, TABLE_ROW_ATTRIBUTE_KEY, TABLE_SECTION_ATTRIBUTE_KEY, UL_ATTRIBUTE_KEY> {
+<ATTRS_ATTRIBUTE_KEY, ATTRS_TEXTALIGN_ATTRIBUTE_KEY, BLOCKQUOTE_ATTRIBUTE_KEY, BR_ATTRIBUTE_KEY, DL_ATTRIBUTE_KEY, FONT_ATTRIBUTE_KEY, HR_ATTRIBUTE_KEY, HTML_ATTRIBUTE_VALUE, INS_DEL_ATTRIBUTE_KEY, LI_ATTRIBUTE_KEY, NON_HTML_ATTRIBUTE_KEY, OL_ATTRIBUTE_KEY, PRE_ATTRIBUTE_KEY, SCRIPT_ATTRIBUTE_KEY, TABLE_ATTRIBUTE_KEY, TABLE_CAPTION_ATTRIBUTE_KEY, TABLE_CELL_ATTRIBUTE_KEY, TABLE_COL_ATTRIBUTE_KEY, TABLE_ROW_ATTRIBUTE_KEY, TABLE_SECTION_ATTRIBUTE_KEY, UL_ATTRIBUTE_KEY> {
     {tagCloseNoContent} {
         if (!this.isFinished()) {
             return "";
@@ -443,6 +452,12 @@ tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespa
 }
 <LI_ATTRIBUTE_KEY> {
     {coreattrs}|{i18n}|type|value {
+        this.initializeCurrentAttribute(yytext());
+        return "";
+    }
+}
+<NON_HTML_ATTRIBUTE_KEY> {
+    {genericTagAttr} {
         this.initializeCurrentAttribute(yytext());
         return "";
     }
@@ -516,7 +531,7 @@ tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespa
         return "";
     }
 }
-<ATTRS_ATTRIBUTE_KEY, ATTRS_TEXTALIGN_ATTRIBUTE_KEY, BLOCKQUOTE_ATTRIBUTE_KEY, BR_ATTRIBUTE_KEY, DL_ATTRIBUTE_KEY, FONT_ATTRIBUTE_KEY, HR_ATTRIBUTE_KEY, INS_DEL_ATTRIBUTE_KEY, LI_ATTRIBUTE_KEY, OL_ATTRIBUTE_KEY, PRE_ATTRIBUTE_KEY, SCRIPT_ATTRIBUTE_KEY, TABLE_ATTRIBUTE_KEY, TABLE_CAPTION_ATTRIBUTE_KEY, TABLE_CELL_ATTRIBUTE_KEY, TABLE_COL_ATTRIBUTE_KEY, TABLE_ROW_ATTRIBUTE_KEY, TABLE_SECTION_ATTRIBUTE_KEY, UL_ATTRIBUTE_KEY> {
+<ATTRS_ATTRIBUTE_KEY, ATTRS_TEXTALIGN_ATTRIBUTE_KEY, BLOCKQUOTE_ATTRIBUTE_KEY, BR_ATTRIBUTE_KEY, DL_ATTRIBUTE_KEY, FONT_ATTRIBUTE_KEY, HR_ATTRIBUTE_KEY, INS_DEL_ATTRIBUTE_KEY, LI_ATTRIBUTE_KEY, NON_HTML_ATTRIBUTE_KEY, OL_ATTRIBUTE_KEY, PRE_ATTRIBUTE_KEY, SCRIPT_ATTRIBUTE_KEY, TABLE_ATTRIBUTE_KEY, TABLE_CAPTION_ATTRIBUTE_KEY, TABLE_CELL_ATTRIBUTE_KEY, TABLE_COL_ATTRIBUTE_KEY, TABLE_ROW_ATTRIBUTE_KEY, TABLE_SECTION_ATTRIBUTE_KEY, UL_ATTRIBUTE_KEY> {
     "=" ({whitespace})* {
         if (this.currentAttributeKey != null) {
             beginState(HTML_ATTRIBUTE_VALUE);
