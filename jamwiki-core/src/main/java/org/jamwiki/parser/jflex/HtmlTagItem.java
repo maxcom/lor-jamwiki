@@ -16,34 +16,79 @@
  */
 package org.jamwiki.parser.jflex;
 
+import java.util.LinkedHashMap;
+
 /**
- * Wrapper for an HTML tag of the form <tag attribute1="value1" attribute2="value2">.  Used solely
- * for utility purposes with the JFlex parser.
+ * Wrapper for an HTML or HTML-like tag of the form
+ * <tag attribute1="value1" attribute2="value2">.  Used for utility purposes with
+ * the JFlex parser.
  */
 public class HtmlTagItem {
 
+	/** HTML open tag of the form <tag> or <tag attribute="value">. */
+	public static final int TAG_PATTERN_OPEN = 1;
+	/** HTML close tag of the form </tag>. */
+	public static final int TAG_PATTERN_CLOSE = 2;
+	/** HTML tag without content of the form <tag /> or <tag attribute="value" />. */
+	public static final int TAG_PATTERN_EMPTY_BODY = 3;
+	/** The tag type, for example <tag attribute="value"> has a tag type of "tag". */
 	private String tagType;
-	private String html;
+	/** The pattern type for the tag - open, close, or empty body. */
+	private int tagPattern;
+	/** The tag's attributes, mapped as an ordered list of key-value pairs. */
+	private LinkedHashMap<String, String> attributes;
 
 	/**
 	 *
 	 */
-	protected HtmlTagItem(String tagType, String html) {
+	protected HtmlTagItem(String tagType, int tagPattern, LinkedHashMap<String, String> attributes) {
 		this.tagType = tagType;
-		this.html = html;
+		this.tagPattern = tagPattern;
+		this.attributes = new LinkedHashMap<String, String>(attributes);
 	}
 
 	/**
-	 *
+	 * Return a mapping of key-value pairs for all attributes of this tag.
 	 */
-	protected String getHtml() {
-		return this.html;
+	protected LinkedHashMap<String, String> getAttributes() {
+		return this.attributes;
 	}
 
 	/**
-	 *
+	 * Return the tag pattern (open tag, close tag, empty body tag).
+	 */
+	protected int getTagPattern() {
+		return this.tagPattern;
+	}
+
+	/**
+	 * Return the tag type (example: "ul").
 	 */
 	protected String getTagType() {
 		return this.tagType;
+	}
+
+	/**
+	 * Convert the tag to an HTML or HTML-like representation.
+	 */
+	public String toHtml() {
+		String value;
+		StringBuilder result = new StringBuilder("<");
+		if (this.tagPattern == TAG_PATTERN_CLOSE) {
+			result.append("/");
+		}
+		result.append(this.tagType);
+		for (String key : this.attributes.keySet()) {
+			result.append(' ').append(key);
+			value = this.attributes.get(key);
+			if (value != null) {
+				result.append('=').append("\"").append(value.trim()).append("\"");
+			}
+		}
+		if (this.tagPattern == TAG_PATTERN_EMPTY_BODY) {
+			result.append(" /");
+		}
+		result.append(">");
+		return result.toString();
 	}
 }

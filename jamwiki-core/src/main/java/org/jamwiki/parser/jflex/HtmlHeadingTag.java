@@ -41,7 +41,7 @@ public class HtmlHeadingTag extends AbstractHeadingTag {
 	protected String generateTagOpen(String raw, Object... args) throws ParserException {
 		int pos = raw.indexOf('>');
 		String openTagRaw = raw.substring(0, pos + 1);
-		return JFlexParserUtil.sanitizeHtmlTag(openTagRaw).getHtml();
+		return JFlexParserUtil.sanitizeHtmlTag(openTagRaw).toHtml();
 	}
 
 	/**

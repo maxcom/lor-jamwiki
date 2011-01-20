@@ -228,7 +228,7 @@ class JFlexTagItem {
 		StringBuilder result = new StringBuilder();
 		if (!this.isRootTag()) {
 			if (this.htmlTagItem != null) {
-				result.append(this.htmlTagItem.getHtml());
+				result.append(this.htmlTagItem.toHtml());
 			} else {
 				result.append('<').append(this.tagType).append('>');
 			}

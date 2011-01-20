@@ -1,10 +1,12 @@
 /*
- * This class provides capability for parsing HTML tags of the form <tag attribute="value">.
+ * This class provides capability for parsing HTML or HTML-like tags of the form
+ * <tag attribute="value">.  While it generates the HTML markup for the tag, it is
+ * most useful as a tool to build an HtmlTagItem object that can then be further
+ * processed.
  */
 package org.jamwiki.parser.jflex;
 
 import java.util.LinkedHashMap;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.jamwiki.utils.WikiLogger;
 
 %%
@@ -22,41 +24,37 @@ import org.jamwiki.utils.WikiLogger;
     private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiHtmlProcessor.class.getName());
     private String currentAttributeKey;
     private String html;
+    private HtmlTagItem htmlTagItem;
+    private int tagPattern;
     private String tagType;
     private LinkedHashMap<String, String> attributes = new LinkedHashMap<String, String>();
 
     /**
      *
      */
-    private String closeTag(String closeString) {
-        String value;
-        StringBuilder result = new StringBuilder();
-        result.append(this.tagType);
-        for (String key : this.attributes.keySet()) {
-            result.append(' ').append(key);
-            value = this.attributes.get(key);
-            if (value != null) {
-                result.append('=').append("\"").append(value.trim()).append("\"");
-            }
-        }
-        result.append(closeString);
-        return result.toString();
+    private String closeTag(int tagPattern) {
+        this.htmlTagItem = new HtmlTagItem(this.tagType, this.tagPattern, this.attributes);
+        return this.htmlTagItem.toHtml();
+    }
+
+    /**
+     * Return the HTML tag item that this processor generates.  Note that the tag
+     * item is only created when the tag parser processes the last character of the
+     * close tag, so this method can only be called after a parser pass completes.
+     */
+    protected HtmlTagItem getHtmlTagItem() {
+        return this.htmlTagItem;
     }
 
     /**
      *
      */
-    protected String getTagType() {
-        return this.tagType;
-    }
-
-    /**
-     *
-     */
-    private void initialize() {
+    private void initialize(int tagPattern) {
         this.attributes.clear();
         this.currentAttributeKey = null;
+        this.tagPattern = tagPattern;
         this.html = yytext();
+        this.htmlTagItem = null;
         this.tagType = null;
     }
 
@@ -217,42 +215,30 @@ tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespa
 
 <YYINITIAL> {
     {tagScript} {
-        if (!allowJavascript()) {
-            return StringEscapeUtils.escapeHtml(yytext());
-        }
-        this.initialize();
+        this.initialize(HtmlTagItem.TAG_PATTERN_OPEN);
         int pos = this.yytext().toLowerCase().indexOf("script") + "script".length();
         yypushback(this.html.length() - pos);
         beginState(SCRIPT_ATTRIBUTE_KEY);
         this.tagType = "script";
-        return "<";
+        return "";
     }
     {tagScriptClose} {
-        if (!allowJavascript()) {
-            return StringEscapeUtils.escapeHtml(yytext());
-        }
-        this.initialize();
+        this.initialize(HtmlTagItem.TAG_PATTERN_CLOSE);
         this.tagType = "script";
-        return "<" + this.closeTag(">");
+        return this.closeTag(this.tagPattern);
     }
     {tagClose} {
-        if (!allowHTML()) {
-            return StringEscapeUtils.escapeHtml(yytext());
-        }
-        this.initialize();
+        this.initialize(HtmlTagItem.TAG_PATTERN_CLOSE);
         int pos = this.html.indexOf("/");
         yypushback(this.html.length() - (pos + 1));
         beginState(HTML_CLOSE);
-        return "</";
+        return "";
     }
     {tagContent} {
-        if (!allowHTML()) {
-            return StringEscapeUtils.escapeHtml(yytext());
-        }
-        this.initialize();
+        this.initialize(HtmlTagItem.TAG_PATTERN_OPEN);
         yypushback(this.html.length() - 1);
         beginState(HTML_OPEN);
-        return "<";
+        return "";
     }
     /* error fallthrough */
     . {
@@ -266,11 +252,15 @@ tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespa
     }
     {htmlTag} {
         this.tagType = yytext().toLowerCase();
+        if (this.tagType.equals("br") || this.tagType.equals("hr")) {
+            // handle invalid tags of the form </br> or </hr>
+            this.tagPattern = HtmlTagItem.TAG_PATTERN_EMPTY_BODY;
+        }
         return "";
     }
     ">" {
         endState();
-        return this.closeTag(">");
+        return this.closeTag(this.tagPattern);
     }
     . {
         throw new IllegalArgumentException("HTML_CLOSE: Invalid HTML tag: " + this.html);
@@ -375,6 +365,10 @@ tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespa
         } else {
             logger.info("Unknown tag type: " + this.html);
         }
+        if (this.tagType.equals("br") || this.tagType.equals("col") || this.tagType.equals("hr")) {
+            // these tags may not have content, so explicitly set to empty body
+            this.tagPattern = HtmlTagItem.TAG_PATTERN_EMPTY_BODY;
+        }
         return "";
     }
     . {
@@ -388,7 +382,7 @@ tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespa
         }
         // tag close, done
         endState();
-        return this.closeTag(" />");
+        return this.closeTag(HtmlTagItem.TAG_PATTERN_EMPTY_BODY);
     }
     {tagCloseContent} {
         if (!this.isFinished()) {
@@ -396,7 +390,7 @@ tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespa
         }
         // tag close, done
         endState();
-        return this.closeTag(">");
+        return this.closeTag(this.tagPattern);
     }
 }
 <ATTRS_ATTRIBUTE_KEY> {

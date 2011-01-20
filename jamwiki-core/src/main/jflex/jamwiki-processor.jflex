@@ -477,20 +477,8 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     }
     // <br> may have attributes, so check for them
     HtmlTagItem htmlTagItem = JFlexParserUtil.sanitizeHtmlTag(yytext());
-    // FIXME - clean this up
-    if (htmlTagItem == null) {
-        return "";
-    }
-    int start = htmlTagItem.getHtml().indexOf(" ");
-    if (start == -1) {
-        return "<br />\n";
-    }
-    int end = htmlTagItem.getHtml().lastIndexOf("/>");
-    if (end == -1) {
-        end = htmlTagItem.getHtml().lastIndexOf(">");
-    }
-    String attributes = htmlTagItem.getHtml().substring(start, end).trim();
-    return (attributes.length() > 0) ? "<br " + attributes + " />\n" : "<br />\n";
+    // Mediawiki standard is to include a newline after br tags
+    return (htmlTagItem == null) ? "" : htmlTagItem.toHtml() + '\n';
 }
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{htmlparagraphopen} {
@@ -526,8 +514,11 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 <YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{htmltagnocontent} {
     if (logger.isTraceEnabled()) logger.trace("htmltagnocontent: " + yytext() + " (" + yystate() + ")");
+    if (!allowHTML()) {
+        return StringEscapeUtils.escapeHtml(yytext());
+    }
     HtmlTagItem tagItem = JFlexParserUtil.sanitizeHtmlTag(yytext());
-    return ((tagItem == null) ? "" : tagItem.getHtml());
+    return (tagItem == null) ? "" : tagItem.toHtml();
 }
 
 <YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{htmltagopen} {
