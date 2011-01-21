@@ -272,6 +272,7 @@ div.submenu {
 	font-weight: bold;
 }
 table#diff {
+	table-layout: fixed;
 	width: 98%;
 }
 table#diff col.diff-marker {
