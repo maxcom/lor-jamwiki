@@ -419,13 +419,13 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 }
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{htmllinkraw} {
-    return this.parse(TAG_TYPE_HTML_LINK, yytext());
+    return this.parse(TAG_TYPE_HTML_LINK, yytext(), false);
 }
 
 <YYINITIAL, LIST, TABLE, PARAGRAPH>{htmllinkwiki} {
     String raw = yytext();
     // strip the opening and closing brackets
-    return this.parse(TAG_TYPE_HTML_LINK, raw.substring(1, raw.length() - 1));
+    return this.parse(TAG_TYPE_HTML_LINK, raw.substring(1, raw.length() - 1), true);
 }
 
 /* ----- image gallery ----- */

@@ -17,6 +17,7 @@
 package org.jamwiki.parser.jflex;
 
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
@@ -32,8 +33,10 @@ import org.jamwiki.utils.WikiLogger;
 public class HtmlLinkTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(HtmlLinkTag.class.getName());
-	// temporary parameter passed to indicate that the fragment being parsed is a link caption
+	/** Temporary parameter passed to indicate that the fragment being parsed is a link caption. */
 	private static final String HTML_LINK_CAPTION = "html-link-caption";
+	/** Counter used to keep track of auto-increment link captions of the form "[2]". */
+	private static final String HTML_LINK_CAPTION_COUNTER = "html-link-caption-counter";
 
 	/**
 	 * Given a String that represents a raw HTML link (a URL link that is
@@ -42,7 +45,7 @@ public class HtmlLinkTag implements JFlexParserTag {
 	 * @param raw The raw HTML link that is to be converted into an HTML link.
 	 * @return A formatted HTML link.
 	 */
-	private String buildHtmlLinkRaw(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws ParserException {
+	private String buildHtmlLinkRaw(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw, boolean numberedCaption) throws ParserException {
 		String link = raw.trim();
 		// search for link text (space followed by text)
 		String punctuation = this.extractTrailingPunctuation(link);
@@ -58,7 +61,7 @@ public class HtmlLinkTag implements JFlexParserTag {
 		} else {
 			link = link.substring(0, link.length() - punctuation.length()).trim();
 		}
-		String html = this.linkHtml(parserInput, parserOutput, mode, link, text, punctuation);
+		String html = this.linkHtml(parserInput, parserOutput, mode, link, text, punctuation, numberedCaption);
 		return (html == null) ? raw : html;
 	}
 
@@ -108,7 +111,7 @@ public class HtmlLinkTag implements JFlexParserTag {
 	/**
 	 *
 	 */
-	private String linkHtml(ParserInput parserInput, ParserOutput parserOutput, int mode, String link, String text, String punctuation) throws ParserException {
+	private String linkHtml(ParserInput parserInput, ParserOutput parserOutput, int mode, String link, String text, String punctuation, boolean numberedCaption) throws ParserException {
 		if (link.toLowerCase().startsWith("mailto://")) {
 			// fix bad mailto syntax
 			link = "mailto:" + link.substring("mailto://".length());
@@ -119,6 +122,14 @@ public class HtmlLinkTag implements JFlexParserTag {
 			parserInput.getTempParams().put(HTML_LINK_CAPTION, true);
 			caption = JFlexParserUtil.parseFragment(parserInput, parserOutput, text, mode);
 			parserInput.getTempParams().remove(HTML_LINK_CAPTION);
+		} else if (numberedCaption) {
+			// set the caption of the form "[1]"
+			int counter = 1;
+			if (parserInput.getTempParams().get(HTML_LINK_CAPTION_COUNTER) != null) {
+				counter = (Integer)parserInput.getTempParams().get(HTML_LINK_CAPTION_COUNTER);
+			}
+			parserInput.getTempParams().put(HTML_LINK_CAPTION_COUNTER, counter + 1);
+			caption = "[" + counter + "]";
 		}
 		String openTag = LinkUtil.buildHtmlLinkOpenTag(link, "externallink");
 		return openTag + caption + "</a>" + punctuation;
@@ -136,6 +147,7 @@ public class HtmlLinkTag implements JFlexParserTag {
 			// no link to display
 			return raw;
 		}
+		boolean numberedCaption = (Environment.getBooleanValue(Environment.PROP_PARSER_USE_NUMBERED_HTML_LINKS) && args != null && args.length >= 1 && ((Boolean)args[0]).booleanValue());
 		Boolean linkCaption = (Boolean)lexer.getParserInput().getTempParams().get(WikiLinkTag.LINK_CAPTION);
 		Boolean htmlLinkCaption = (Boolean)lexer.getParserInput().getTempParams().get(HTML_LINK_CAPTION);
 		if ((linkCaption != null && linkCaption.booleanValue()) || (htmlLinkCaption != null && htmlLinkCaption.booleanValue())) {
@@ -143,6 +155,6 @@ public class HtmlLinkTag implements JFlexParserTag {
 			// "<a href="">this is the <a href="">link caption</a></a>"
 			return raw;
 		}
-		return this.buildHtmlLinkRaw(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), raw);
+		return this.buildHtmlLinkRaw(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), raw, numberedCaption);
 	}
 }

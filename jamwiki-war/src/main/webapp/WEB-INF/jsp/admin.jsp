@@ -251,6 +251,12 @@ function onRSS() {
 	<span><jamwiki:checkbox name="${PROP_EXTERNAL_LINK_NEW_WINDOW}" value="true" checked="${props[PROP_EXTERNAL_LINK_NEW_WINDOW]}" id="${PROP_EXTERNAL_LINK_NEW_WINDOW}" /></span>
 </div>
 <div class="row">
+	<label for="<%= Environment.PROP_PARSER_USE_NUMBERED_HTML_LINKS %>"><fmt:message key="admin.parser.caption.numberedhtmllinks" /></label>
+	<c:set var="PROP_PARSER_USE_NUMBERED_HTML_LINKS"><%= Environment.PROP_PARSER_USE_NUMBERED_HTML_LINKS %></c:set>
+	<span><jamwiki:checkbox name="${PROP_PARSER_USE_NUMBERED_HTML_LINKS}" value="true" checked="${props[PROP_PARSER_USE_NUMBERED_HTML_LINKS]}" id="${PROP_PARSER_USE_NUMBERED_HTML_LINKS}" /></span>
+	<div class="formhelp"><fmt:message key="admin.parser.help.numberedhtmllinks" /></div>
+</div>
+<div class="row">
 	<label for="<%= Environment.PROP_PARSER_TOC %>"><fmt:message key="admin.parser.caption.tableofcontents" /></label>
 	<c:set var="PROP_PARSER_TOC"><%= Environment.PROP_PARSER_TOC %></c:set>
 	<span><jamwiki:checkbox name="${PROP_PARSER_TOC}" value="true" checked="${props[PROP_PARSER_TOC]}" id="${PROP_PARSER_TOC}" /></span>

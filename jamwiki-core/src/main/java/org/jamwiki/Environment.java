@@ -106,6 +106,7 @@ public class Environment {
 	public static final String PROP_PARSER_SIGNATURE_USER_PATTERN = "signature-user";
 	public static final String PROP_PARSER_TOC = "allow-toc";
 	public static final String PROP_PARSER_TOC_DEPTH = "toc-depth";
+	public static final String PROP_PARSER_USE_NUMBERED_HTML_LINKS = "use-numbered-html-links";
 	public static final String PROP_PATTERN_INVALID_NAMESPACE_NAME = "pattern-namespace-name-invalid";
 	public static final String PROP_PATTERN_INVALID_ROLE_NAME = "pattern-role-name-invalid";
 	public static final String PROP_PATTERN_INVALID_TOPIC_NAME = "pattern-topic-name-invalid";
@@ -246,6 +247,7 @@ public class Environment {
 		this.defaults.setProperty(PROP_PARSER_SIGNATURE_USER_PATTERN, "[[{0}|{4}]]");
 		this.defaults.setProperty(PROP_PARSER_TOC, Boolean.TRUE.toString());
 		this.defaults.setProperty(PROP_PARSER_TOC_DEPTH, "5");
+		this.defaults.setProperty(PROP_PARSER_USE_NUMBERED_HTML_LINKS, Boolean.TRUE.toString());
 		this.defaults.setProperty(PROP_PATTERN_INVALID_NAMESPACE_NAME, "([\\n\\r\\\\<>\\[\\]\\:_%/?&#]+)");
 		this.defaults.setProperty(PROP_PATTERN_INVALID_ROLE_NAME, "([A-Za-z0-9_]+)");
 		this.defaults.setProperty(PROP_PATTERN_INVALID_TOPIC_NAME, "([\\n\\r\\\\<>\\[\\]?#]+)");
