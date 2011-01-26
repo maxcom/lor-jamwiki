@@ -90,6 +90,10 @@ followed by 0.6.3.
   * HTML links of the form "[http://example.com]" will now display using
     numbered links to match Mediawiki behvior.  The legacy behavior can be
     restored from the "Parser" tab of the Special:Admin page.
+  * Database defaults have changed to optimize performance.  Upgrading users
+    may want to update these values by going to the "Database" tab of the
+    Special:Admin page and changing the "Max number of idle connections"
+    value to 15, and unchecking the "Test connections on return" option.
 
   UPGRADE STEPS:
 

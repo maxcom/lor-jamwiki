@@ -212,13 +212,13 @@ public class Environment {
 		this.defaults.setProperty(PROP_DB_URL, "");
 		this.defaults.setProperty(PROP_DB_USERNAME, "");
 		this.defaults.setProperty(PROP_DBCP_MAX_ACTIVE, "15");
-		this.defaults.setProperty(PROP_DBCP_MAX_IDLE, "5");
+		this.defaults.setProperty(PROP_DBCP_MAX_IDLE, "15");
 		this.defaults.setProperty(PROP_DBCP_MAX_OPEN_PREPARED_STATEMENTS, "20");
 		this.defaults.setProperty(PROP_DBCP_MIN_EVICTABLE_IDLE_TIME, "600");
 		this.defaults.setProperty(PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN, "5");
 		this.defaults.setProperty(PROP_DBCP_POOL_PREPARED_STATEMENTS, Boolean.TRUE.toString());
 		this.defaults.setProperty(PROP_DBCP_TEST_ON_BORROW, Boolean.TRUE.toString());
-		this.defaults.setProperty(PROP_DBCP_TEST_ON_RETURN, Boolean.TRUE.toString());
+		this.defaults.setProperty(PROP_DBCP_TEST_ON_RETURN, Boolean.FALSE.toString());
 		this.defaults.setProperty(PROP_DBCP_TEST_WHILE_IDLE, Boolean.FALSE.toString());
 		this.defaults.setProperty(PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS, "120");
 		this.defaults.setProperty(PROP_DBCP_WHEN_EXHAUSTED_ACTION, String.valueOf(GenericObjectPool.WHEN_EXHAUSTED_GROW));
