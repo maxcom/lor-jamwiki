@@ -23,15 +23,9 @@
 		<url>http://jamwiki.svn.sourceforge.net/viewvc/jamwiki/wiki/trunk</url>
 	</scm>
 	<issueManagement>
-		<system>Wiki</system>
-		<url>http://jamwiki.org/wiki/en/Bug_Reports</url>
+		<system>JIRA</system>
+		<url>http://jira.jamwiki.org/browse/JAMWIKI</url>
 	</issueManagement>
-	<distributionManagement>
-		<site>
-			<id>test-site</id>
-			<url>file:/var/www/jamwiki</url>
-		</site>
-	</distributionManagement>
 	<licenses>
 		<license>
 			<name>LGPL</name>
