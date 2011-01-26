@@ -65,8 +65,10 @@ public class Environment {
 	public static final String PROP_DB_USERNAME = "db-user";
 	public static final String PROP_DBCP_MAX_ACTIVE = "dbcp-max-active";
 	public static final String PROP_DBCP_MAX_IDLE = "dbcp-max-idle";
+	public static final String PROP_DBCP_MAX_OPEN_PREPARED_STATEMENTS = "dbcp-max-open-prepared-statements";
 	public static final String PROP_DBCP_MIN_EVICTABLE_IDLE_TIME = "dbcp-min-evictable-idle-time";
 	public static final String PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN = "dbcp-num-tests-per-eviction-run";
+	public static final String PROP_DBCP_POOL_PREPARED_STATEMENTS = "dbcp-pool-prepared-statements";
 	public static final String PROP_DBCP_TEST_ON_BORROW = "dbcp-test-on-borrow";
 	public static final String PROP_DBCP_TEST_ON_RETURN = "dbcp-test-on-return";
 	public static final String PROP_DBCP_TEST_WHILE_IDLE = "dbcp-test-while-idle";
@@ -211,8 +213,10 @@ public class Environment {
 		this.defaults.setProperty(PROP_DB_USERNAME, "");
 		this.defaults.setProperty(PROP_DBCP_MAX_ACTIVE, "15");
 		this.defaults.setProperty(PROP_DBCP_MAX_IDLE, "5");
+		this.defaults.setProperty(PROP_DBCP_MAX_OPEN_PREPARED_STATEMENTS, "20");
 		this.defaults.setProperty(PROP_DBCP_MIN_EVICTABLE_IDLE_TIME, "600");
 		this.defaults.setProperty(PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN, "5");
+		this.defaults.setProperty(PROP_DBCP_POOL_PREPARED_STATEMENTS, Boolean.TRUE.toString());
 		this.defaults.setProperty(PROP_DBCP_TEST_ON_BORROW, Boolean.TRUE.toString());
 		this.defaults.setProperty(PROP_DBCP_TEST_ON_RETURN, Boolean.TRUE.toString());
 		this.defaults.setProperty(PROP_DBCP_TEST_WHILE_IDLE, Boolean.FALSE.toString());

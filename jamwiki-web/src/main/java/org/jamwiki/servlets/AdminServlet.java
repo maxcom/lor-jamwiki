@@ -323,6 +323,8 @@ public class AdminServlet extends JAMWikiServlet {
 			}
 			setNumericProperty(props, request, Environment.PROP_DBCP_MAX_ACTIVE, errors);
 			setNumericProperty(props, request, Environment.PROP_DBCP_MAX_IDLE, errors);
+			setNumericProperty(props, request, Environment.PROP_DBCP_MAX_OPEN_PREPARED_STATEMENTS, errors);
+			setBooleanProperty(props, request, Environment.PROP_DBCP_POOL_PREPARED_STATEMENTS);
 			setBooleanProperty(props, request, Environment.PROP_DBCP_TEST_ON_BORROW);
 			setBooleanProperty(props, request, Environment.PROP_DBCP_TEST_ON_RETURN);
 			setBooleanProperty(props, request, Environment.PROP_DBCP_TEST_WHILE_IDLE);

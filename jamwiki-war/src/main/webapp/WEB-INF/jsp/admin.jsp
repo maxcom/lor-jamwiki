@@ -440,6 +440,17 @@ FIXME - Email not supported right now, comment this out
 		</select>
 	</span>
 </div>
+<div class="row">
+	<label for="<%= Environment.PROP_DBCP_POOL_PREPARED_STATEMENTS %>"><fmt:message key="admin.persistence.caption.poolpreparedstatements" /></label>
+	<c:set var="PROP_DBCP_POOL_PREPARED_STATEMENTS"><%= Environment.PROP_DBCP_POOL_PREPARED_STATEMENTS %></c:set>
+	<span><jamwiki:checkbox name="${PROP_DBCP_POOL_PREPARED_STATEMENTSPROP_DBCP_POOL_PREPARED_STATEMENTS}" value="true" checked="${props[PROP_DBCP_POOL_PREPARED_STATEMENTS]}" id="${PROP_DBCP_POOL_PREPARED_STATEMENTS}" /></span>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_DBCP_MAX_OPEN_PREPARED_STATEMENTS %>"><fmt:message key="admin.persistence.caption.maxopenpreparedstatements" /></label>
+	<c:set var="PROP_DBCP_MAX_OPEN_PREPARED_STATEMENTS"><%= Environment.PROP_DBCP_MAX_OPEN_PREPARED_STATEMENTS %></c:set>
+	<span><jamwiki:text name="${PROP_DBCP_MAX_OPEN_PREPARED_STATEMENTS}" id="${PROP_DBCP_MAX_OPEN_PREPARED_STATEMENTS}" value="${props[PROP_DBCP_MAX_OPEN_PREPARED_STATEMENTS]}" size="5" maxlength="4" /></span>
+	<div class="formhelp"><fmt:message key="admin.persistence.help.maxopenpreparedstatements" /></div>
+</div>
 </fieldset>
 </div>
 <!-- END DATABASE PERSISTENCE -->

@@ -7,6 +7,7 @@ New Features:
   * Display HTML links of the form "[http://example.com]" using numbered links
     to match Mediawiki behavior.  The legacy behavior can be restored with a
     configuration options.
+  * Enable DBCP prepared statement pooling to improve performance.
   * Remove ability to automatically upgrade from versions prior to 0.9.0.
 
 Bugfixes:
