@@ -35,10 +35,7 @@ import org.w3c.dom.NodeList;
  * The <code>WikiConfiguration</code> class provides the infrastructure for
  * retrieving configuration values.  Note that with JAMWiki configuration
  * values differ from site properties by being generally less site-specific
- * and falling into specific categories, such as pseudo-topics and parser
- * values.
- *
- * @see org.jamwiki.utils.PseudoTopicHandler
+ * and falling into specific categories, such as parser values.
  */
 public class WikiConfiguration {
 
@@ -50,7 +47,6 @@ public class WikiConfiguration {
 	private List<WikiConfigurationObject> dataHandlers = null;
 	private Map<String, String> editors = null;
 	private List<WikiConfigurationObject> parsers = null;
-	private List<String> pseudotopics = null;
 	private List<WikiConfigurationObject> searchEngines = null;
 	private Map<String, String> translations = null;
 
@@ -67,8 +63,6 @@ public class WikiConfiguration {
 	private static final String XML_PARAM_STATE = "state";
 	private static final String XML_PARSER = "parser";
 	private static final String XML_PARSER_ROOT = "parsers";
-	private static final String XML_PSEUDOTOPIC = "pseudotopic";
-	private static final String XML_PSEUDOTOPIC_ROOT = "pseudotopics";
 	private static final String XML_SEARCH_ENGINE = "search-engine";
 	private static final String XML_SEARCH_ENGINE_ROOT = "search-engines";
 	private static final String XML_TRANSLATION = "translation";
@@ -115,13 +109,6 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
-	public List<String> getPseudotopics() {
-		return this.pseudotopics;
-	}
-
-	/**
-	 *
-	 */
 	public List<WikiConfigurationObject> getSearchEngines() {
 		return this.searchEngines;
 	}
@@ -140,7 +127,6 @@ public class WikiConfiguration {
 		this.dataHandlers = new ArrayList<WikiConfigurationObject>();
 		this.editors = new LinkedHashMap<String, String>();
 		this.parsers = new ArrayList<WikiConfigurationObject>();
-		this.pseudotopics = new ArrayList<String>();
 		this.searchEngines = new ArrayList<WikiConfigurationObject>();
 		this.translations = new LinkedHashMap<String, String>();
 		File file = null;
@@ -168,8 +154,6 @@ public class WikiConfiguration {
 				this.parseMapNodes(child, this.editors, XML_EDITOR);
 			} else if (child.getNodeName().equals(XML_SEARCH_ENGINE_ROOT)) {
 				this.searchEngines = this.parseConfigurationObjects(child, XML_SEARCH_ENGINE);
-			} else if (child.getNodeName().equals(XML_PSEUDOTOPIC_ROOT)) {
-				this.parsePseudotopics(child);
 			} else if (child.getNodeName().equals(XML_TRANSLATION_ROOT)) {
 				this.parseMapNodes(child, this.translations, XML_TRANSLATION);
 			} else {
@@ -248,36 +232,6 @@ public class WikiConfiguration {
 			Node child = children.item(j);
 			if (child.getNodeName().equals(childNodeName)) {
 				this.parseMapNode(child, resultsMap);
-			} else {
-				logUnknownChild(node, child);
-			}
-		}
-	}
-
-	/**
-	 *
-	 */
-	private void parsePseudotopic(Node node) {
-		NodeList children = node.getChildNodes();
-		for (int j = 0; j < children.getLength(); j++) {
-			Node child = children.item(j);
-			if (child.getNodeName().equals(XML_PARAM_NAME)) {
-				this.pseudotopics.add(XMLUtil.getTextContent(child));
-			} else {
-				logUnknownChild(node, child);
-			}
-		}
-	}
-
-	/**
-	 *
-	 */
-	private void parsePseudotopics(Node node) {
-		NodeList children = node.getChildNodes();
-		for (int j = 0; j < children.getLength(); j++) {
-			Node child = children.item(j);
-			if (child.getNodeName().equals(XML_PSEUDOTOPIC)) {
-				this.parsePseudotopic(child);
 			} else {
 				logUnknownChild(node, child);
 			}
