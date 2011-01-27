@@ -177,7 +177,7 @@ public class WikiMessage {
 	 *
 	 * @param index The message parameter to replace, starting with zero.
 	 * @param parameter The value to replace the current parameter with.
-	 * @throw IllegalArgumentException Thrown if the existing message parameter
+	 * @throws IllegalArgumentException Thrown if the existing message parameter
 	 *  array is shorter than the specified index.
 	 */
 	public void replaceParameter(int index, String parameter) {
