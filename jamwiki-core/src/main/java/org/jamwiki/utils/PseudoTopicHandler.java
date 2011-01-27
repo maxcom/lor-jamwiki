@@ -82,6 +82,7 @@ public class PseudoTopicHandler {
 		PSEUDO_TOPICS.add("Special:Roles");
 		PSEUDO_TOPICS.add("Special:Search");
 		PSEUDO_TOPICS.add("Special:Setup");
+		PSEUDO_TOPICS.add("Special:Source");
 		PSEUDO_TOPICS.add("Special:SpecialPages");
 		PSEUDO_TOPICS.add("Special:Specialpages");
 		PSEUDO_TOPICS.add("Special:TopicsAdmin");

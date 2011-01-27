@@ -40,6 +40,7 @@
 				<prop key="/**/Special:Roles">Roles</prop>
 				<prop key="/**/Special:Search">Search</prop>
 				<prop key="/**/Special:Setup">Setup</prop>
+				<prop key="/**/Special:Source">ViewSource</prop>
 				<prop key="/**/Special:SpecialPages">SpecialPages</prop>
 				<prop key="/**/Special:TopicsAdmin">Items</prop>
 				<prop key="/**/Special:Translation">Translation</prop>
@@ -84,6 +85,7 @@
 	<bean id="Translation" class="org.jamwiki.servlets.TranslationServlet" />
 	<bean id="Upgrade" class="org.jamwiki.servlets.UpgradeServlet" />
 	<bean id="Upload" class="org.jamwiki.servlets.UploadServlet" />
+	<bean id="ViewSource" class="org.jamwiki.servlets.ViewSourceServlet" />
 	<bean id="VirtualWiki" class="org.jamwiki.servlets.AdminVirtualWikiServlet" />
 	<bean id="Watchlist" class="org.jamwiki.servlets.WatchlistServlet" />
 

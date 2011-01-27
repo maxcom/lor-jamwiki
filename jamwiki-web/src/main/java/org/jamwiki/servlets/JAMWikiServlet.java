@@ -127,6 +127,9 @@ public abstract class JAMWikiServlet extends AbstractController {
 						editLink += "&topicVersionId=" + request.getParameter("topicVersionId");
 					}
 					links.put(editLink, new WikiMessage("tab.common.edit"));
+				} else {
+					String viewSourceLink = "Special:Source?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
+					links.put(viewSourceLink, new WikiMessage("tab.common.viewsource"));
 				}
 				String historyLink = "Special:History?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 				links.put(historyLink, new WikiMessage("tab.common.history"));
