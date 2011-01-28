@@ -16,7 +16,6 @@
  */
 package org.jamwiki.parser.jflex;
 
-import org.jamwiki.parser.ParserException;
 import org.jamwiki.utils.WikiLogger;
 
 /**
