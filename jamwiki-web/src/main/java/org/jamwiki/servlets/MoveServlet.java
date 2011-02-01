@@ -95,7 +95,7 @@ public class MoveServlet extends JAMWikiServlet {
 	 */
 	private boolean movePage(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String moveFrom, String moveDestination) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
-		Topic fromTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, moveFrom, false, null);
+		Topic fromTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, moveFrom, false);
 		if (fromTopic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
@@ -154,12 +154,12 @@ public class MoveServlet extends JAMWikiServlet {
 		if (StringUtils.isBlank(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false);
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		String commentsPage = WikiUtil.extractCommentsLink(virtualWiki, topicName);
-		Topic commentsTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, commentsPage, false, null);
+		Topic commentsTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, commentsPage, false);
 		if (commentsTopic != null) {
 			// add option to also move comments page
 			next.addObject("moveCommentsPage", commentsPage);

@@ -506,7 +506,7 @@ public class WikiDatabase {
 				continue;
 			}
 			for (String topicName : topicNames) {
-				topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
+				topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false);
 				if (topic == null) {
 					logger.warn("Invalid topic record found, possible database integrity issue: " + virtualWiki.getName() + " / " + topicName);
 					continue;

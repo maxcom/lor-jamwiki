@@ -322,7 +322,7 @@ public class ParserFunctionUtil {
 		}
 		String topicName = Utilities.decodeAndEscapeTopicName(parserFunctionArgumentArray[0], true);
 		// parse to handle any embedded templates
-		if (WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), topicName, false, null) != null) {
+		if (WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), topicName, false) != null) {
 			return (parserFunctionArgumentArray.length >= 2) ? JFlexParserUtil.parseFragment(parserInput, parserOutput, parserFunctionArgumentArray[1], JFlexParser.MODE_TEMPLATE) : "";
 		} else {
 			return (parserFunctionArgumentArray.length >= 3) ? JFlexParserUtil.parseFragment(parserInput, parserOutput, parserFunctionArgumentArray[2], JFlexParser.MODE_TEMPLATE) : "";

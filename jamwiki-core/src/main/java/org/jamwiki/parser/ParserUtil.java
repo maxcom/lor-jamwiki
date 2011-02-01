@@ -197,7 +197,7 @@ public class ParserUtil {
 	private static String[] executeSliceOrSplice(ParserOutput parserOutput, String context, Locale locale, String virtualWiki, String topicName, int targetSection, String replacementText, boolean isSlice) throws ParserException {
 		Topic topic = null;
 		try {
-			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false);
 		} catch (DataAccessException e) {
 			throw new ParserException(e);
 		}

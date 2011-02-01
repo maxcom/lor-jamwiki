@@ -275,7 +275,7 @@ public class LuceneSearchEngine implements SearchEngine {
 				// FIXME - parsing all documents will be intolerably slow with even a
 				// moderately large Wiki
 				for (String topicName : topicNames) {
-					topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
+					topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false);
 					if (topic == null) {
 						logger.info("Unable to rebuild search index for topic: " + topicName);
 						continue;

@@ -147,13 +147,13 @@ public class TemplateTag implements JFlexParserTag {
 			if (!wikiLink.getNamespace().equals(Namespace.namespace(Namespace.TEMPLATE_ID))) {
 				templateName = Namespace.namespace(Namespace.TEMPLATE_ID).getLabel(parserInput.getVirtualWiki()) + Namespace.SEPARATOR + StringUtils.capitalize(name);
 			}
-			templateTopic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), templateName, false, null);
+			templateTopic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), templateName, false);
 		}
 		if (templateTopic != null) {
 			name = templateName;
 		} else {
 			// otherwise see if it's an inclusion
-			templateTopic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), name, false, null);
+			templateTopic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), name, false);
 			name = ((templateTopic == null && !wikiLink.getColon()) ? templateName : name);
 			inclusion = (templateTopic != null || wikiLink.getColon());
 		}

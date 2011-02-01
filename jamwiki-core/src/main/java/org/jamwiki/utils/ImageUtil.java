@@ -128,7 +128,7 @@ public class ImageUtil {
 		if (url == null) {
 			return ImageUtil.buildUploadLink(context, linkVirtualWiki, topicName);
 		}
-		Topic topic = WikiBase.getDataHandler().lookupTopic(linkVirtualWiki, topicName, false, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(linkVirtualWiki, topicName, false);
 		StringBuilder html = new StringBuilder();
 		String caption = imageMetadata.getCaption();
 		if (topic.getTopicType() == TopicType.FILE) {
@@ -526,7 +526,7 @@ public class ImageUtil {
 	 *
 	 */
 	public static Topic writeImageTopic(String virtualWiki, String topicName, String contents, WikiUser user, boolean isImage, String ipAddress) throws DataAccessException, ParserException, WikiException {
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false);
 		int charactersChanged = 0;
 		if (topic == null) {
 			topic = new Topic(virtualWiki, topicName);

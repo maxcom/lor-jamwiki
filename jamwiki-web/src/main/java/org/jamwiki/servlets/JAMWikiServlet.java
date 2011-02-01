@@ -84,7 +84,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		next.addObject(WikiUtil.PARAMETER_VIRTUAL_WIKI, virtualWiki.getName());
 		int cssRevision = 0;
 		try {
-			cssRevision = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, false, null).getCurrentVersionId();
+			cssRevision = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, false).getCurrentVersionId();
 		} catch (DataAccessException e) {}
 		next.addObject("cssRevision", cssRevision);
 	}

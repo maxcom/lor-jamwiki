@@ -188,7 +188,7 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 		WikiLink wikiLink = LinkUtil.parseWikiLink(this.virtualWiki, topicName);
 		Topic existingTopic = null;
 		try {
-			existingTopic = WikiBase.getDataHandler().lookupTopic(this.virtualWiki, topicName, false, null);
+			existingTopic = WikiBase.getDataHandler().lookupTopic(this.virtualWiki, topicName, false);
 		} catch (DataAccessException e) {
 			throw new SAXException("Failure while validating topic name: " + topicName, e);
 		}

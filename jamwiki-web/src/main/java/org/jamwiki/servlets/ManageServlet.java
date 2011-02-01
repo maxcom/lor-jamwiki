@@ -79,7 +79,7 @@ public class ManageServlet extends JAMWikiServlet {
 	 */
 	private void deletePage(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true);
 		if (topic.getDeleted()) {
 			logger.warn("Attempt to delete a topic that is already deleted: " + virtualWiki + " / " + topicName);
 			return;
@@ -102,7 +102,7 @@ public class ManageServlet extends JAMWikiServlet {
 		if (topicName == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false);
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
@@ -141,7 +141,7 @@ public class ManageServlet extends JAMWikiServlet {
 	 */
 	private void undeletePage(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true);
 		if (!topic.getDeleted()) {
 			logger.warn("Attempt to undelete a topic that is not deleted: " + virtualWiki + " / " + topicName);
 			return;
@@ -166,13 +166,13 @@ public class ManageServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
 		String virtualWiki = pageInfo.getVirtualWikiName();
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true);
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		String commentsPage = WikiUtil.extractCommentsLink(virtualWiki, topicName);
 		if (!topicName.equals(commentsPage)) {
-			Topic commentsTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, commentsPage, true, null);
+			Topic commentsTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, commentsPage, true);
 			if (commentsTopic != null && commentsTopic.getDeleted() == topic.getDeleted()) {
 				// add option to also move comments page
 				next.addObject("manageCommentsPage", commentsPage);

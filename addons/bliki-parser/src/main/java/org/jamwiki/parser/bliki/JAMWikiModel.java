@@ -227,7 +227,7 @@ public class JAMWikiModel extends AbstractWikiModel {
 		}
 		try {
 			topicName = topicName.replaceAll("_", " ");
-			Topic topic = WikiBase.getDataHandler().lookupTopic(fParserInput.getVirtualWiki(), namespace + ':' + topicName, false, null);
+			Topic topic = WikiBase.getDataHandler().lookupTopic(fParserInput.getVirtualWiki(), namespace + ':' + topicName, false);
 			if (topic == null) {
 				return null;
 			}

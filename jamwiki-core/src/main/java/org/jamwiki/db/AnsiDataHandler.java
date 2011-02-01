@@ -339,7 +339,7 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public boolean canMoveTopic(Topic fromTopic, String destination) throws DataAccessException {
-		Topic toTopic = this.lookupTopic(fromTopic.getVirtualWiki(), destination, false, null);
+		Topic toTopic = this.lookupTopic(fromTopic.getVirtualWiki(), destination, false);
 		if (toTopic == null || toTopic.getDeleteDate() != null) {
 			// destination doesn't exist or is deleted, so move is OK
 			return true;
@@ -625,7 +625,7 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public List<RecentChange> getTopicHistory(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws DataAccessException {
-		Topic topic = this.lookupTopic(virtualWiki, topicName, true, null);
+		Topic topic = this.lookupTopic(virtualWiki, topicName, true);
 		if (topic == null) {
 			return new ArrayList<RecentChange>();
 		}
@@ -839,7 +839,14 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Connection conn) throws DataAccessException {
+	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK) throws DataAccessException {
+		return this.lookupTopic(virtualWiki, topicName, deleteOK, null);
+	}
+
+	/**
+	 *
+	 */
+	private Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Connection conn) throws DataAccessException {
 		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(topicName)) {
 			return null;
 		}
@@ -1087,7 +1094,7 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public WikiFile lookupWikiFile(String virtualWiki, String topicName) throws DataAccessException {
-		Topic topic = this.lookupTopic(virtualWiki, topicName, false, null);
+		Topic topic = this.lookupTopic(virtualWiki, topicName, false);
 		if (topic == null) {
 			return null;
 		}

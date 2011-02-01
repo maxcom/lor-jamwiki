@@ -83,7 +83,7 @@ public class HistoryServlet extends JAMWikiServlet {
 		if (topicVersion == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false);
 		if (topic == null) {
 			// the topic may have been deleted
 			throw new WikiException(new WikiMessage("history.message.notopic", topicName));

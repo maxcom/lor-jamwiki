@@ -114,7 +114,7 @@ public class MigrationUtilTest extends JAMWikiUnitTest {
 		List<String> results = this.importTestFile(FILE_TEST_TWO_TOPICS_WITH_HISTORY);
 		// validate that the first topic parsed
 		assertTrue("Parsed topic '" + TOPIC_NAME1 + "'", results.contains(TOPIC_NAME1));
-		Topic topic1 = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME1, false, null);
+		Topic topic1 = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME1, false);
 		// validate that the parsed topic correctly set topic values
 		assertEquals("Topic name '" + TOPIC_NAME1 + "' set correctly", TOPIC_NAME1, topic1.getName());
 		assertTrue("Topic content set correctly", topic1.getTopicContent().indexOf("Link to user page: [[User:Test User]]") != -1);
@@ -122,7 +122,7 @@ public class MigrationUtilTest extends JAMWikiUnitTest {
 		assertTrue("Topic content namespaces updated correctly", topic1.getTopicContent().indexOf("Link to user talk page: [[User comments: Test User]]") != -1);
 		// validate that the second topic parsed
 		assertTrue("Parsed topic '" + TOPIC_NAME2 + "'", results.contains(TOPIC_NAME2));
-		Topic topic2 = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME2, false, null);
+		Topic topic2 = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME2, false);
 		// validate that the parsed topic correctly set topic values
 		assertEquals("Topic name '" + TOPIC_NAME2 + "' set correctly", TOPIC_NAME2, topic2.getName());
 	}
@@ -134,7 +134,7 @@ public class MigrationUtilTest extends JAMWikiUnitTest {
 	public void testImportFromFileWithUnsortedHistory() throws Throwable {
 		String virtualWiki = VIRTUAL_WIKI_EN;
 		List<String> results = this.importTestFile(FILE_ONE_TOPIC_WITH_UNSORTED_HISTORY);
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME3, false, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME3, false);
 		// validate that the current topic content is correct
 		assertEquals("Incorrect topic ordering: " + topic.getTopicId() + " / " + topic.getCurrentVersionId(), "Newest Revision", topic.getTopicContent());
 	}
@@ -146,7 +146,7 @@ public class MigrationUtilTest extends JAMWikiUnitTest {
 	public void testImportFromFileTopicNameWithQuestionMark() throws Throwable {
 		String virtualWiki = VIRTUAL_WIKI_EN;
 		List<String> results = this.importTestFile(FILE_TOPIC_NAME_WITH_QUESTION_MARK);
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME4, false, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME4, false);
 		assertNotNull("Topic with question mark in name imported correctly", topic);
 	}
 
@@ -157,7 +157,7 @@ public class MigrationUtilTest extends JAMWikiUnitTest {
 	public void testImportFromFileNamespaceTest() throws Throwable {
 		String virtualWiki = VIRTUAL_WIKI_EN;
 		List<String> results = this.importTestFile(FILE_NAMESPACE_TEST);
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME5, false, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME5, false);
 		assertNotNull("Namespace test topic imported correctly", topic);
 		// verify that Mediawiki namespaces were correctly converted to JAMWiki namespaces
 		assertTrue("Talk:Test", (topic.getTopicContent().indexOf("Talk:Test - [[Comments:Test]]") != -1));

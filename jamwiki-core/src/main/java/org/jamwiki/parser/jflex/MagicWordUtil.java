@@ -445,7 +445,7 @@ public class MagicWordUtil {
 		if (name.equals(MAGIC_SUBJECT_PAGE_NAME_E) || name.equals(MAGIC_ARTICLE_PAGE_NAME_E)) {
 			return Utilities.encodeAndEscapeTopicName(WikiUtil.extractTopicLink(parserInput.getVirtualWiki(), parserInput.getTopicName()));
 		}
-		Topic topic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), parserInput.getTopicName(), false, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), parserInput.getTopicName(), false);
 		TopicVersion topicVersion = null;
 		Date revision = null;
 		// null check needed for the test data handler, which does not implement topic versions

@@ -196,11 +196,11 @@ public class EditServlet extends JAMWikiServlet {
 			WikiMessage messageObject = new WikiMessage("login.message.edit");
 			return ServletUtil.viewLogin(request, pageInfo, WikiUtil.getTopicFromURI(request), messageObject);
 		}
-		if (!user.hasRole(Role.ROLE_EDIT_NEW) && WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null) == null) {
+		if (!user.hasRole(Role.ROLE_EDIT_NEW) && WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false) == null) {
 			WikiMessage messageObject = new WikiMessage("login.message.editnew");
 			return ServletUtil.viewLogin(request, pageInfo, WikiUtil.getTopicFromURI(request), messageObject);
 		}
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false);
 		if (topic == null) {
 			// this should never trigger, but better safe than sorry...
 			return null;
@@ -247,7 +247,7 @@ public class EditServlet extends JAMWikiServlet {
 	private void resolve(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
 		String virtualWiki = pageInfo.getVirtualWikiName();
-		Topic lastTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+		Topic lastTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false);
 		String contents1 = lastTopic.getTopicContent();
 		String contents2 = request.getParameter("contents");
 		next.addObject("lastTopicVersionId", lastTopic.getCurrentVersionId());
@@ -271,7 +271,7 @@ public class EditServlet extends JAMWikiServlet {
 		String topicName = WikiUtil.getTopicFromRequest(request);
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Topic topic = loadTopic(virtualWiki, topicName);
-		Topic lastTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+		Topic lastTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false);
 		if (lastTopic != null && !lastTopic.getCurrentVersionId().equals(retrieveLastTopicVersionId(request, topic))) {
 			// someone else has edited the topic more recently
 			resolve(request, next, pageInfo);

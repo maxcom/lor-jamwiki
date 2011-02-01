@@ -191,7 +191,7 @@ public class TranslationServlet extends JAMWikiServlet {
 		String language = request.getParameter("language");
 		String topicName = Namespace.namespace(Namespace.JAMWIKI_ID).getLabel(virtualWiki) + Namespace.SEPARATOR + Utilities.decodeTopicName(filename(language), true);
 		String contents = "<pre><nowiki>\n" + Utilities.readFile(filename(language)) + "\n</nowiki></pre>";
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false);
 		if (topic == null) {
 			topic = new Topic(virtualWiki, topicName);
 		}

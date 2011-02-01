@@ -118,7 +118,7 @@ public class ServletUtil {
 			return (content == null) ? null : content;
 		}
 		try {
-			Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+			Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false);
 			content = topic.getTopicContent();
 			if (cook) {
 				ParserInput parserInput = new ParserInput(virtualWiki, topicName);
@@ -301,7 +301,7 @@ public class ServletUtil {
 		WikiUtil.validateTopicName(virtualWiki, topicName);
 		Topic topic = null;
 		try {
-			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false);
 		} catch (DataAccessException e) {
 			throw new WikiException(new WikiMessage("error.unknown", e.getMessage()), e);
 		}
@@ -332,11 +332,11 @@ public class ServletUtil {
 		}
 		Topic topic = null;
 		try {
-			if (!user.hasRole(Role.ROLE_EDIT_NEW) && WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null) == null) {
+			if (!user.hasRole(Role.ROLE_EDIT_NEW) && WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false) == null) {
 				// user does not have appropriate permissions
 				return false;
 			}
-			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false);
 		} catch (DataAccessException e) {
 			throw new WikiException(new WikiMessage("error.unknown", e.getMessage()), e);
 		}
@@ -371,7 +371,7 @@ public class ServletUtil {
 		}
 		Topic topic = null;
 		try {
-			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false);
 		} catch (DataAccessException e) {
 			throw new WikiException(new WikiMessage("error.unknown", e.getMessage()), e);
 		}

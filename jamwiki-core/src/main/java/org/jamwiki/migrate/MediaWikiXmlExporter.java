@@ -126,7 +126,7 @@ public class MediaWikiXmlExporter implements TopicExporter {
 		textAttributes.put("xml:space", "preserve");
 		for (String topicName : topicNames) {
 			topicVersionIds = new ArrayList<Integer>();
-			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false);
 			if (topic == null) {
 				throw new MigrationException("Failure while exporting: topic " + topicName + " does not exist");
 			}
