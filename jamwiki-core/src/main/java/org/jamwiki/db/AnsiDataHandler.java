@@ -672,16 +672,12 @@ public class AnsiDataHandler implements DataHandler {
 			return (List<VirtualWiki>)cacheElement.getObjectValue();
 		}
 		List<VirtualWiki> virtualWikis = new ArrayList<VirtualWiki>();
-		TransactionStatus status = null;
 		try {
-			status = DatabaseConnection.startTransaction();
 			Connection conn = DatabaseConnection.getConnection();
 			virtualWikis = this.queryHandler().getVirtualWikis(conn);
 		} catch (SQLException e) {
-			DatabaseConnection.rollbackOnException(status, e);
 			throw new DataAccessException(e);
 		}
-		DatabaseConnection.commit(status);
 		WikiCache.addToCache(CACHE_VIRTUAL_WIKI_LIST, CACHE_VIRTUAL_WIKI_LIST, virtualWikis);
 		return virtualWikis;
 	}
@@ -1159,22 +1155,15 @@ public class AnsiDataHandler implements DataHandler {
 			return (WikiUser)cacheElement.getObjectValue();
 		}
 		WikiUser result = null;
-		TransactionStatus status = null;
 		try {
-			status = DatabaseConnection.startTransaction();
 			Connection conn = DatabaseConnection.getConnection();
 			int userId = this.queryHandler().lookupWikiUser(username, conn);
 			if (userId != -1) {
 				result = lookupWikiUser(userId);
 			}
-		} catch (DataAccessException e) {
-			DatabaseConnection.rollbackOnException(status, e);
-			throw e;
 		} catch (SQLException e) {
-			DatabaseConnection.rollbackOnException(status, e);
 			throw new DataAccessException(e);
 		}
-		DatabaseConnection.commit(status);
 		WikiCache.addToCache(CACHE_USER_BY_USER_NAME, username, result);
 		return result;
 	}
