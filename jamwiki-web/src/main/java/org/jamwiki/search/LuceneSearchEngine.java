@@ -338,17 +338,19 @@ public class LuceneSearchEngine implements SearchEngine {
 	 */
 	private IndexWriter retrieveIndexWriter(String virtualWiki, boolean create) throws IOException {
 		IndexWriter indexWriter = indexWriters.get(virtualWiki);
-		if (create) {
+		if (create && indexWriter != null) {
 			// if the writer is going to blow away the existing index and create a new one then it
 			// should not be cached.  instead, close any open writer, create a new one, and return.
-			if (indexWriter != null) {
-				indexWriter.close();
-				indexWriters.remove(virtualWiki);
+			indexWriter.close();
+			indexWriters.remove(virtualWiki);
+			indexWriter = null;
+		}
+		if (indexWriter == null) {
+			FSDirectory fsDirectory = FSDirectory.open(getSearchIndexPath(virtualWiki));
+			indexWriter = new IndexWriter(fsDirectory, new StandardAnalyzer(USE_LUCENE_VERSION), create, IndexWriter.MaxFieldLength.LIMITED);
+			if (!create) {
+				indexWriters.put(virtualWiki, indexWriter);
 			}
-			indexWriter = new IndexWriter(FSDirectory.open(getSearchIndexPath(virtualWiki)), new StandardAnalyzer(USE_LUCENE_VERSION), create, IndexWriter.MaxFieldLength.LIMITED);
-		} else if (indexWriter == null) {
-			indexWriter = new IndexWriter(FSDirectory.open(getSearchIndexPath(virtualWiki)), new StandardAnalyzer(USE_LUCENE_VERSION), create, IndexWriter.MaxFieldLength.LIMITED);
-			indexWriters.put(virtualWiki, indexWriter);
 		}
 		return indexWriter;
 	}
@@ -374,6 +376,18 @@ public class LuceneSearchEngine implements SearchEngine {
 	 */
 	public void setAutoCommit(boolean autoCommit) {
 		this.autoCommit = autoCommit;
+	}
+
+	/**
+	 * 
+	 */
+	public void shutdown() throws IOException {
+		for (Searcher searcher : this.searchers.values()) {
+			searcher.close();
+		}
+		for (IndexWriter indexWriter : this.indexWriters.values()) {
+			indexWriter.close();
+		}
 	}
 
 	/**

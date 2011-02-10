@@ -16,6 +16,7 @@
  */
 package org.jamwiki;
 
+import java.io.IOException;
 import java.util.List;
 import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.model.Topic;
@@ -80,6 +81,14 @@ public interface SearchEngine {
 	 *  the search index should be immediately committed to the index.
 	 */
 	void setAutoCommit(boolean autoCommit);
+
+	/**
+	 * Trigger a shutdown of a search engine instance, allowing resources to
+	 * be freed and any pending changes committed.
+	 *
+	 * @throws IOException Thrown if a failure occurs during shutdown.
+	 */
+	void shutdown() throws IOException;
 
 	/**
 	 * Update a topic in the search index.
