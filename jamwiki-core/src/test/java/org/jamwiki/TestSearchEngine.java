@@ -66,6 +66,12 @@ public class TestSearchEngine implements SearchEngine {
 	/**
 	 *
 	 */
+	public void shutdown() {
+	}
+
+	/**
+	 *
+	 */
 	public void updateInIndex(Topic topic) {
 	}
 }

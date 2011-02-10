@@ -128,6 +128,9 @@ public class WikiBase {
 	 */
 	public static void reload() throws IOException {
 		WikiBase.dataHandler = WikiUtil.dataHandlerInstance();
+		if (WikiBase.searchEngine != null) {
+			WikiBase.searchEngine.shutdown();
+		}
 		WikiBase.searchEngine = WikiUtil.searchEngineInstance();
 	}
 

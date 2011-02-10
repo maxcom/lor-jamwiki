@@ -17,6 +17,15 @@ Bugfixes:
 Translation Updates:
 
 
+1.0.1
+=====
+
+Bugfixes:
+
+  * Fix a locking issue with Lucene that could prevent the search index from
+    being updated when topics are changed immediately after upgrading.
+
+
 1.0.0
 =====
 
