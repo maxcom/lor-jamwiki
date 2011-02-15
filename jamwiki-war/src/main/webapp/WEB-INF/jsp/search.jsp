@@ -30,6 +30,12 @@
 
 </form>
 
-<div id="searchpower"><fmt:message key="search.poweredby" /> <a href="http://lucene.apache.org/java/"><img src="../images/lucene_green_100.gif" alt="Lucene" border="0" /></a></div>
+<div id="searchpower"><fmt:message key="search.poweredby" /> 
+<% if (org.jamwiki.Environment.getValue(org.jamwiki.Environment.PROP_BASE_SEARCH_ENGINE).contains("RankingAlgorithm")) { %>
+<font size="3"><b><a href=http://rankingalgorithm.tgels.com>RankingAlgorithm</a></b></font>
+<% }else { %>
+<a href="http://lucene.apache.org/java/"><img src="../images/lucene_green_100.gif" alt="Lucene" border="0" /></a>
+<% } %>
+</div>
 
 <script type="text/javascript">document.searchForm.text.focus();</script>

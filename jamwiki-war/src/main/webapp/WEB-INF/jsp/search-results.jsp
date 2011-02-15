@@ -35,4 +35,8 @@
 </c:if>
 <br /><br /><br />
 <font size="-1"><i><fmt:message key="search.poweredby" /></i></font>
+<% if (org.jamwiki.Environment.getValue(org.jamwiki.Environment.PROP_BASE_SEARCH_ENGINE).contains("RankingAlgorithm")) { %>
+<font size="3"><b><a href=http://rankingalgorithm.tgels.com>RankingAlgorithm</a></b></font>
+<% }else { %>
 <a href="http://lucene.apache.org/java/"><img src="../images/lucene_green_100.gif" alt="Lucene" border="0" /></a>
+<% } %>
