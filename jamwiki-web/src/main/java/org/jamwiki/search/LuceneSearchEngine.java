@@ -62,28 +62,28 @@ import org.jamwiki.utils.WikiLogger;
 public class LuceneSearchEngine implements SearchEngine {
 
 	/** Where to log to */
-	private static final WikiLogger logger = WikiLogger.getLogger(LuceneSearchEngine.class.getName());
+	protected static final WikiLogger logger = WikiLogger.getLogger(LuceneSearchEngine.class.getName());
 	/** Directory for search index files */
-	private static final String SEARCH_DIR = "search";
+	protected static final String SEARCH_DIR = "search";
 	/** Id stored with documents to indicate the searchable topic name */
-	private static final String ITYPE_TOPIC = "topic";
+	protected static final String ITYPE_TOPIC = "topic";
 	/** Id stored with documents to indicate the searchable content. */
-	private static final String ITYPE_CONTENT = "content";
+	protected static final String ITYPE_CONTENT = "content";
 	/** Id stored with documents to indicate the raw Wiki markup */
-	private static final String ITYPE_CONTENT_PLAIN = "content_plain";
+	protected static final String ITYPE_CONTENT_PLAIN = "content_plain";
 	/** Id stored with documents to indicate the topic name. */
-	private static final String ITYPE_TOPIC_PLAIN = "topic_plain";
+	protected static final String ITYPE_TOPIC_PLAIN = "topic_plain";
 	/** Lucene compatibility version. */
-	private static final Version USE_LUCENE_VERSION = Version.LUCENE_30;
+	protected static final Version USE_LUCENE_VERSION = Version.LUCENE_30;
 	/** Maximum number of results to return per search. */
 	// FIXME - make this configurable
-	private static final int MAXIMUM_RESULTS_PER_SEARCH = 200;
+	protected static final int MAXIMUM_RESULTS_PER_SEARCH = 200;
 	/** Flag indicating whether or not to commit search index changes immediately. */
-	private boolean autoCommit = true;
+	protected boolean autoCommit = true;
 	/** Store Searchers (once opened) for re-use for performance reasons. */
-	private Map<String, Searcher> searchers = new HashMap<String, Searcher>();
+	protected Map<String, Searcher> searchers = new HashMap<String, Searcher>();
 	/** Store Writers (once opened) for re-use for performance reasons. */
-	private Map<String, IndexWriter> indexWriters = new HashMap<String, IndexWriter>();
+	protected Map<String, IndexWriter> indexWriters = new HashMap<String, IndexWriter>();
 
 	/**
 	 * Add a topic to the search index.
@@ -109,7 +109,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 *
 	 * @param topic The Topic object that is to be added to the index.
 	 */
-	private void addToIndex(IndexWriter writer, Topic topic) throws IOException {
+	protected void addToIndex(IndexWriter writer, Topic topic) throws IOException {
 		Document standardDocument = createStandardDocument(topic);
 		writer.addDocument(standardDocument);
 		this.resetIndexSearcher(topic.getVirtualWiki());
@@ -133,7 +133,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * Commit pending changes to the writer only if the commitNow value is true.
 	 * This is primarily a utility method for working with the autoCommit flag.
 	 */
-	private void commit(IndexWriter writer, boolean commitNow) throws IOException {
+	protected void commit(IndexWriter writer, boolean commitNow) throws IOException {
 		if (commitNow) {
 			writer.commit();
 		}
@@ -143,7 +143,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * Create a basic Lucene document to add to the index.  This document
 	 * is suitable to be parsed with the StandardAnalyzer.
 	 */
-	private Document createStandardDocument(Topic topic) {
+	protected Document createStandardDocument(Topic topic) {
 		String topicContent = topic.getTopicContent();
 		if (topicContent == null) {
 			topicContent = "";
@@ -183,7 +183,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 *
 	 * @param topic The topic object that is to be removed from the index.
 	 */
-	private void deleteFromIndex(IndexWriter writer, Topic topic) throws IOException {
+	protected void deleteFromIndex(IndexWriter writer, Topic topic) throws IOException {
 		writer.deleteDocuments(new Term(ITYPE_TOPIC_PLAIN, topic.getName()));
 		this.resetIndexSearcher(topic.getVirtualWiki());
 	}
@@ -235,7 +235,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	/**
 	 * Get the path, which holds all index files
 	 */
-	private File getSearchIndexPath(String virtualWiki) throws IOException {
+	protected File getSearchIndexPath(String virtualWiki) throws IOException {
 		File parent = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), SEARCH_DIR);
 		try {
 			if (System.getProperty("org.apache.lucene.lockdir") == null) {
@@ -311,7 +311,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	/**
 	 * Call this method after a search index is updated to reset the searcher.
 	 */
-	private void resetIndexSearcher(String virtualWiki) throws IOException {
+	protected void resetIndexSearcher(String virtualWiki) throws IOException {
 		Searcher searcher = searchers.get(virtualWiki);
 		if (searcher != null) {
 			searchers.remove(virtualWiki);
@@ -322,7 +322,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	/**
 	 * For performance reasons cache the IndexSearcher for re-use.
 	 */
-	private Searcher retrieveIndexSearcher(String virtualWiki) throws IOException {
+	protected Searcher retrieveIndexSearcher(String virtualWiki) throws IOException {
 		Searcher searcher = searchers.get(virtualWiki);
 		if (searcher == null) {
 			searcher = new IndexSearcher(this.retrieveIndexWriter(virtualWiki, false).getReader());
@@ -336,7 +336,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * re-initialized then commit() must be called to explicitly flush data to the index,
 	 * otherwise it will be flushed on a programmatic basis by Lucene.
 	 */
-	private IndexWriter retrieveIndexWriter(String virtualWiki, boolean create) throws IOException {
+	protected IndexWriter retrieveIndexWriter(String virtualWiki, boolean create) throws IOException {
 		IndexWriter indexWriter = indexWriters.get(virtualWiki);
 		if (create && indexWriter != null) {
 			// if the writer is going to blow away the existing index and create a new one then it
@@ -358,7 +358,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	/**
 	 *
 	 */
-	private String retrieveResultSummary(Document document, Highlighter highlighter, StandardAnalyzer analyzer) throws InvalidTokenOffsetsException, IOException {
+	protected String retrieveResultSummary(Document document, Highlighter highlighter, StandardAnalyzer analyzer) throws InvalidTokenOffsetsException, IOException {
 		String content = document.get(ITYPE_CONTENT_PLAIN);
 		TokenStream tokenStream = analyzer.tokenStream(ITYPE_CONTENT_PLAIN, new StringReader(content));
 		String summary = highlighter.getBestFragments(tokenStream, content, 3, "...");
