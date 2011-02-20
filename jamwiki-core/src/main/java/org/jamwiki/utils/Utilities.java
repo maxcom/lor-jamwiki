@@ -404,7 +404,7 @@ public class Utilities {
 	 */
 	public static File getClassLoaderRoot() throws FileNotFoundException {
 		// The file hard-coded here MUST exist in the class loader directory.
-		File file = Utilities.getClassLoaderFile("sql.ansi.properties");
+		File file = Utilities.getClassLoaderFile("sql/sql.ansi.properties");
 		if (!file.exists()) {
 			throw new FileNotFoundException("Unable to find class loader root");
 		}

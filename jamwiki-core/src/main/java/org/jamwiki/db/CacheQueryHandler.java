@@ -55,7 +55,7 @@ import org.jamwiki.utils.WikiLogger;
 public class CacheQueryHandler extends AnsiQueryHandler {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(AnsiQueryHandler.class.getName());
-	protected static final String SQL_PROPERTY_FILE_NAME = "sql.cache.properties";
+	protected static final String SQL_PROPERTY_FILE_NAME = "sql/sql.cache.properties";
 
 	/**
 	 *
