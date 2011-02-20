@@ -5,6 +5,8 @@ Bugfixes:
 
   * Fix a locking issue with Lucene that could prevent the search index from
     being updated when topics are changed immediately after upgrading.
+  * Update ASA database support for JAMWiki version 1.0.x, tested with SQL
+    Anywhere 11.0.1 (dallas).
 
 
 1.0.0
