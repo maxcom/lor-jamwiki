@@ -59,6 +59,7 @@ public class WikiConfiguration {
 	private static final String XML_EDITOR_ROOT = "editors";
 	private static final String XML_PARAM_CLASS = "class";
 	private static final String XML_PARAM_KEY = "key";
+	private static final String XML_PARAM_KEY2 = "key2";
 	private static final String XML_PARAM_NAME = "name";
 	private static final String XML_PARAM_STATE = "state";
 	private static final String XML_PARSER = "parser";
@@ -175,6 +176,8 @@ public class WikiConfiguration {
 				configurationObject.setClazz(XMLUtil.getTextContent(child));
 			} else if (child.getNodeName().equals(XML_PARAM_KEY)) {
 				configurationObject.setKey(XMLUtil.getTextContent(child));
+			} else if (child.getNodeName().equals(XML_PARAM_KEY2)) {
+				configurationObject.setKey2(XMLUtil.getTextContent(child));
 			} else if (child.getNodeName().equals(XML_PARAM_NAME)) {
 				configurationObject.setName(XMLUtil.getTextContent(child));
 			} else if (child.getNodeName().equals(XML_PARAM_STATE)) {
