@@ -28,7 +28,7 @@ import org.jamwiki.utils.WikiLogger;
 public class SybaseASAQueryHandler extends AnsiQueryHandler {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(SybaseASAQueryHandler.class.getName());
-	private static final String SQL_PROPERTY_FILE_NAME = "sql.asa.properties";
+	private static final String SQL_PROPERTY_FILE_NAME = "sql/sql.asa.properties";
 
 	/**
 	 *
