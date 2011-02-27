@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
+import org.jamwiki.Environment;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.utils.WikiLogger;
@@ -249,4 +251,18 @@ public class WikiConfiguration {
 	private void logUnknownChild(Node node, Node child) {
 		logger.trace("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
 	}
+
+	/**
+	 * Retrieve the search configuration that matches the current SearchEngine object.
+	 */
+	public static WikiConfigurationObject getCurrentSearchConfiguration() {
+		List<WikiConfigurationObject> searchEngines = WikiConfiguration.getInstance().getSearchEngines();
+		for (WikiConfigurationObject wikiConfigurationObject : WikiConfiguration.getInstance().getSearchEngines()) {
+			if (StringUtils.equals(wikiConfigurationObject.getClazz(), Environment.getValue(Environment.PROP_BASE_SEARCH_ENGINE))) {
+				return wikiConfigurationObject;
+			}
+		}
+		throw new IllegalStateException("No search configuraiton available");
+	}
+
 }

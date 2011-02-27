@@ -20,7 +20,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.utils.LinkUtil;
@@ -84,6 +86,7 @@ public class SearchServlet extends JAMWikiServlet {
 			pageInfo.setSpecial(true);
 			return;
 		}
+		next.addObject("searchConfig", WikiConfiguration.getCurrentSearchConfiguration());
 		// grab search engine instance and find
 		List<SearchResultEntry> results = WikiBase.getSearchEngine().findResults(virtualWiki, searchField);
 		next.addObject("searchField", searchField);

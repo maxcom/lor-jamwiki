@@ -139,12 +139,14 @@
 		<name>Lucene</name>
 		<class>org.jamwiki.search.LuceneSearchEngine</class>
 		<key>admin.searchengine.lucene</key>
+		<key2>search.logo.lucene</key2>
 	</search-engine>
 	<search-engine>
-                <name>RankingAlgorithm</name>
-                <class>org.jamwiki.search.RankingAlgorithmSearchEngine</class>
-                <key>admin.searchengine.rankingalgorithm</key>
-        </search-engine>
+		<name>RankingAlgorithm</name>
+		<class>org.jamwiki.search.RankingAlgorithmSearchEngine</class>
+		<key>admin.searchengine.rankingalgorithm</key>
+		<key2>search.logo.rankingalgorithm</key2>
+	</search-engine>
 </search-engines>
 
 <!--
