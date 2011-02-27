@@ -146,6 +146,7 @@
 		<class>org.jamwiki.search.RankingAlgorithmSearchEngine</class>
 		<key>admin.searchengine.rankingalgorithm</key>
 		<key2>search.logo.rankingalgorithm</key2>
+		<state>experimental</state>
 	</search-engine>
 </search-engines>
 

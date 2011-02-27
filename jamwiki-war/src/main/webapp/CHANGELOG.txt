@@ -11,6 +11,7 @@ New Features:
     a topic to view its wiki markup.
   * Enable DBCP prepared statement pooling to improve performance.
   * Remove ability to automatically upgrade from versions prior to 0.9.0.
+  * Add RankingAlgorithm search engine support (nnagarajayya).
 
 Bugfixes:
 
