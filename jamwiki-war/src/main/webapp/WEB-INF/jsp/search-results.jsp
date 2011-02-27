@@ -35,4 +35,4 @@
 </c:if>
 <br /><br /><br />
 <font size="-1"><i><fmt:message key="search.poweredby" /></i></font>
-<a href="http://lucene.apache.org/java/"><img src="../images/lucene_green_100.gif" alt="Lucene" border="0" /></a>
+<fmt:message key="${searchConfig.key2}" />

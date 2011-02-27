@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
+import org.jamwiki.Environment;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.utils.WikiLogger;
@@ -59,6 +61,7 @@ public class WikiConfiguration {
 	private static final String XML_EDITOR_ROOT = "editors";
 	private static final String XML_PARAM_CLASS = "class";
 	private static final String XML_PARAM_KEY = "key";
+	private static final String XML_PARAM_KEY2 = "key2";
 	private static final String XML_PARAM_NAME = "name";
 	private static final String XML_PARAM_STATE = "state";
 	private static final String XML_PARSER = "parser";
@@ -175,6 +178,8 @@ public class WikiConfiguration {
 				configurationObject.setClazz(XMLUtil.getTextContent(child));
 			} else if (child.getNodeName().equals(XML_PARAM_KEY)) {
 				configurationObject.setKey(XMLUtil.getTextContent(child));
+			} else if (child.getNodeName().equals(XML_PARAM_KEY2)) {
+				configurationObject.setKey2(XMLUtil.getTextContent(child));
 			} else if (child.getNodeName().equals(XML_PARAM_NAME)) {
 				configurationObject.setName(XMLUtil.getTextContent(child));
 			} else if (child.getNodeName().equals(XML_PARAM_STATE)) {
@@ -246,4 +251,18 @@ public class WikiConfiguration {
 	private void logUnknownChild(Node node, Node child) {
 		logger.trace("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
 	}
+
+	/**
+	 * Retrieve the search configuration that matches the current SearchEngine object.
+	 */
+	public static WikiConfigurationObject getCurrentSearchConfiguration() {
+		List<WikiConfigurationObject> searchEngines = WikiConfiguration.getInstance().getSearchEngines();
+		for (WikiConfigurationObject wikiConfigurationObject : WikiConfiguration.getInstance().getSearchEngines()) {
+			if (StringUtils.equals(wikiConfigurationObject.getClazz(), Environment.getValue(Environment.PROP_BASE_SEARCH_ENGINE))) {
+				return wikiConfigurationObject;
+			}
+		}
+		throw new IllegalStateException("No search configuraiton available");
+	}
+
 }

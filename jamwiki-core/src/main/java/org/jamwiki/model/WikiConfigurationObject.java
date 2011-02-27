@@ -29,6 +29,7 @@ public class WikiConfigurationObject {
 
 	private String clazz;
 	private String key;
+	private String key2;
 	private String name;
 	private String state;
 
@@ -65,6 +66,20 @@ public class WikiConfigurationObject {
 	 */
 	public void setKey(String key) {
 		this.key = key;
+	}
+
+	/**
+	 *
+	 */
+	public String getKey2() {
+		return this.key2;
+	}
+
+	/**
+	 *
+	 */
+	public void setKey2(String key2) {
+		this.key2 = key2;
 	}
 
 	/**

@@ -11,7 +11,7 @@
 <!ELEMENT editor (name, key)>
 
 <!ELEMENT search-engines (search-engine*)>
-<!ELEMENT search-engine (name, class, key?, state?)>
+<!ELEMENT search-engine (name, class, key?, key2?, state?)>
 
 <!ELEMENT main (#PCDATA)>
 <!ELEMENT comments (#PCDATA)>

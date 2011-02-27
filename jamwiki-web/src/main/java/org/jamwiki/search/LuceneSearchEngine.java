@@ -31,6 +31,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
@@ -72,12 +73,12 @@ public class LuceneSearchEngine implements SearchEngine {
 	/** Id stored with documents to indicate the raw Wiki markup */
 	private static final String ITYPE_CONTENT_PLAIN = "content_plain";
 	/** Id stored with documents to indicate the topic name. */
-	private static final String ITYPE_TOPIC_PLAIN = "topic_plain";
+	protected static final String ITYPE_TOPIC_PLAIN = "topic_plain";
 	/** Lucene compatibility version. */
-	private static final Version USE_LUCENE_VERSION = Version.LUCENE_30;
+	protected static final Version USE_LUCENE_VERSION = Version.LUCENE_30;
 	/** Maximum number of results to return per search. */
 	// FIXME - make this configurable
-	private static final int MAXIMUM_RESULTS_PER_SEARCH = 200;
+	protected static final int MAXIMUM_RESULTS_PER_SEARCH = 200;
 	/** Flag indicating whether or not to commit search index changes immediately. */
 	private boolean autoCommit = true;
 	/** Store Searchers (once opened) for re-use for performance reasons. */
@@ -137,6 +138,22 @@ public class LuceneSearchEngine implements SearchEngine {
 		if (commitNow) {
 			writer.commit();
 		}
+	}
+
+	/**
+	 * Given the search text, searcher object, and query analyzer generate an
+	 * appropriate Lucene search query.
+	 */
+	protected Query createSearchQuery(Searcher searcher, StandardAnalyzer analyzer, String text) throws IOException, ParseException {
+		BooleanQuery query = new BooleanQuery();
+		QueryParser qp;
+		qp = new QueryParser(USE_LUCENE_VERSION, ITYPE_TOPIC, analyzer);
+		query.add(qp.parse(text), Occur.SHOULD);
+		qp = new QueryParser(USE_LUCENE_VERSION, ITYPE_CONTENT, analyzer);
+		query.add(qp.parse(text), Occur.SHOULD);
+		// rewrite the query to expand it - required for wildcards to work with highlighter
+		Query rewrittenQuery = searcher.rewrite(query);
+		return rewrittenQuery;
 	}
 
 	/**
@@ -202,19 +219,12 @@ public class LuceneSearchEngine implements SearchEngine {
 		List<SearchResultEntry> results = new ArrayList<SearchResultEntry>();
 		logger.trace("search text: " + text);
 		try {
-			BooleanQuery query = new BooleanQuery();
-			QueryParser qp;
-			qp = new QueryParser(USE_LUCENE_VERSION, ITYPE_TOPIC, analyzer);
-			query.add(qp.parse(text), Occur.SHOULD);
-			qp = new QueryParser(USE_LUCENE_VERSION, ITYPE_CONTENT, analyzer);
-			query.add(qp.parse(text), Occur.SHOULD);
 			Searcher searcher = this.retrieveIndexSearcher(virtualWiki);
-			// rewrite the query to expand it - required for wildcards to work with highlighter
-			Query rewrittenQuery = searcher.rewrite(query);
+			Query query = this.createSearchQuery(searcher, analyzer, text);
 			// actually perform the search
 			TopScoreDocCollector collector = TopScoreDocCollector.create(MAXIMUM_RESULTS_PER_SEARCH, true);
-			searcher.search(rewrittenQuery, collector);
-			Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>"), new SimpleHTMLEncoder(), new QueryScorer(rewrittenQuery));
+			searcher.search(query, collector);
+			Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>"), new SimpleHTMLEncoder(), new QueryScorer(query));
 			ScoreDoc[] hits = collector.topDocs().scoreDocs;
 			for (int i = 0; i < hits.length; i++) {
 				int docId = hits[i].doc;
@@ -322,7 +332,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	/**
 	 * For performance reasons cache the IndexSearcher for re-use.
 	 */
-	private Searcher retrieveIndexSearcher(String virtualWiki) throws IOException {
+	protected Searcher retrieveIndexSearcher(String virtualWiki) throws IOException {
 		Searcher searcher = searchers.get(virtualWiki);
 		if (searcher == null) {
 			searcher = new IndexSearcher(this.retrieveIndexWriter(virtualWiki, false).getReader());
@@ -358,7 +368,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	/**
 	 *
 	 */
-	private String retrieveResultSummary(Document document, Highlighter highlighter, StandardAnalyzer analyzer) throws InvalidTokenOffsetsException, IOException {
+	protected String retrieveResultSummary(Document document, Highlighter highlighter, StandardAnalyzer analyzer) throws InvalidTokenOffsetsException, IOException {
 		String content = document.get(ITYPE_CONTENT_PLAIN);
 		TokenStream tokenStream = analyzer.tokenStream(ITYPE_CONTENT_PLAIN, new StringReader(content));
 		String summary = highlighter.getBestFragments(tokenStream, content, 3, "...");
