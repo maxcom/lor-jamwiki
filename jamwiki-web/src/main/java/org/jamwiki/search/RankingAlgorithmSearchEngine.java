@@ -16,43 +16,22 @@
  */
 package org.jamwiki.search;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.lang.reflect.Method;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.TopScoreDocCollector;
-import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.highlight.Highlighter;
-import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
-import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.Version;
-import org.jamwiki.Environment;
-import org.jamwiki.SearchEngine;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.SearchResultEntry;
-import org.jamwiki.model.Topic;
-import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -60,10 +39,10 @@ import org.jamwiki.utils.WikiLogger;
  * <a href="http://rankingalgorithm.tgels.com">RankingAlgorithm</a> to perform searches of
  * Wiki content.
  */
-public class RankingAlgorithmSearchEngine extends  LuceneSearchEngine {
+public class RankingAlgorithmSearchEngine extends LuceneSearchEngine {
 
 	/** Where to log to */
-	protected static final WikiLogger logger = WikiLogger.getLogger(RankingAlgorithmSearchEngine.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(RankingAlgorithmSearchEngine.class.getName());
 
 	/**
 	 * Find all documents that contain a specific search term, ordered by relevance.
@@ -79,20 +58,11 @@ public class RankingAlgorithmSearchEngine extends  LuceneSearchEngine {
 		List<SearchResultEntry> results = new ArrayList<SearchResultEntry>();
 		logger.trace("search text: " + text);
 		try {
-			BooleanQuery query = new BooleanQuery();
-			QueryParser qp;
-			qp = new QueryParser(USE_LUCENE_VERSION, ITYPE_TOPIC, analyzer);
-			query.add(qp.parse(text), Occur.SHOULD);
-			qp = new QueryParser(USE_LUCENE_VERSION, ITYPE_CONTENT, analyzer);
-			query.add(qp.parse(text), Occur.SHOULD);
 			Searcher searcher = this.retrieveIndexSearcher(virtualWiki);
-			// rewrite the query to expand it - required for wildcards to work with highlighter
-			Query rewrittenQuery = searcher.rewrite(query);
+			Query query = this.createSearchQuery(searcher, analyzer, text);
 			// actually perform the search
 			TopScoreDocCollector collector = TopScoreDocCollector.create(MAXIMUM_RESULTS_PER_SEARCH, true);
-		
-			Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>"), new SimpleHTMLEncoder(), new QueryScorer(rewrittenQuery));
-		
+			Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>"), new SimpleHTMLEncoder(), new QueryScorer(query));
 			try {
 				IndexSearcher is = (IndexSearcher)searcher;
 				Class classRQ = Class.forName("com.transaxtions.search.rankingalgorithm.RankingQuery");
@@ -102,9 +72,9 @@ public class RankingAlgorithmSearchEngine extends  LuceneSearchEngine {
 				classArray[0] = classQuery;
 				classArray[1] = is.getClass();
 				Object args[] = new Object[2];
-				args[0] = rewrittenQuery;
+				args[0] = query;
 				args[1] = is;
-				Method methodRQ_search = classRQ.getMethod("search", classArray);				
+				Method methodRQ_search = classRQ.getMethod("search", classArray);
 				Object hitsobject = methodRQ_search.invoke(rq, args); 
 				Class classRH = hitsobject.getClass();
 				classArray = new Class[1];
@@ -129,8 +99,9 @@ public class RankingAlgorithmSearchEngine extends  LuceneSearchEngine {
 					result.setSummary(summary);
 					results.add(result);
 				}
-			} catch(Throwable t) {t.printStackTrace();}
-			
+			} catch (Throwable t) {
+				logger.error("Failure while executing RankingAlgorithm search", t);
+			}
 		} catch (Exception e) {
 			logger.error("Exception while searching for " + text, e);
 		}
