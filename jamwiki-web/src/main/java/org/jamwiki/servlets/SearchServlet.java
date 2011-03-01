@@ -80,13 +80,13 @@ public class SearchServlet extends JAMWikiServlet {
 		} else {
 			pageInfo.setPageTitle(new WikiMessage("searchresult.title", searchField));
 		}
+		next.addObject("searchConfig", WikiConfiguration.getCurrentSearchConfiguration());
 		// forward back to the search page if the request is blank or null
 		if (StringUtils.isBlank(searchField)) {
 			pageInfo.setContentJsp(JSP_SEARCH);
 			pageInfo.setSpecial(true);
 			return;
 		}
-		next.addObject("searchConfig", WikiConfiguration.getCurrentSearchConfiguration());
 		// grab search engine instance and find
 		List<SearchResultEntry> results = WikiBase.getSearchEngine().findResults(virtualWiki, searchField);
 		next.addObject("searchField", searchField);
