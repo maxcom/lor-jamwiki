@@ -7,6 +7,8 @@ Bugfixes:
     being updated when topics are changed immediately after upgrading.
   * Update ASA database support for JAMWiki version 1.0.x, tested with SQL
     Anywhere 11.0.1 (dallas).
+  * Fix the subst: tag to properly substitute content when a topic is saved.
+    Reported by Gregory Brown.
 
 
 1.0.0
