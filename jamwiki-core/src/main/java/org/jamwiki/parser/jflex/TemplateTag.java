@@ -70,13 +70,19 @@ public class TemplateTag implements JFlexParserTag {
 	}
 
 	/**
+	 * Determine if the template text is of the form "subst:XXX".
+	 */
+	private boolean isSubstitution(String templateContent) {
+		// is it a substitution?
+		templateContent = templateContent.trim();
+		return (templateContent.startsWith("subst:") && templateContent.length() > "subst:".length());
+	}
+
+	/**
 	 * Parse a call to a Mediawiki template of the form "{{template|param1|param2}}"
 	 * and return the resulting template output.
 	 */
 	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
-		if (lexer.getMode() < JFlexParser.MODE_TEMPLATE) {
-			return raw;
-		}
 		// validate and extract the template content
 		if (StringUtils.isBlank(raw)) {
 			throw new ParserException("Empty template text");
@@ -84,12 +90,15 @@ public class TemplateTag implements JFlexParserTag {
 		if (!raw.startsWith("{{") || !raw.endsWith("}}")) {
 			throw new ParserException ("Invalid template text: " + raw);
 		}
+		String templateContent = raw.substring("{{".length(), raw.length() - "}}".length());
+		if ((!this.isSubstitution(templateContent) && lexer.getMode() < JFlexParser.MODE_TEMPLATE) || lexer.getMode() < JFlexParser.MODE_MINIMAL) {
+			return raw;
+		}
 		try {
 			return this.parseTemplateOutput(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), raw, true);
 		} catch (ExcessiveNestingException e) {
 			logger.warn("Excessive template nesting in topic " + lexer.getParserInput().getTopicName());
 			// convert to a link so that the user can fix the template
-			String templateContent = raw.substring("{{".length(), raw.length() - "}}".length());
 			WikiLink wikiLink = this.parseTemplateName(lexer.getParserInput().getVirtualWiki(), templateContent);
 			String templateName = wikiLink.getDestination();
 			if (!wikiLink.getColon() && !wikiLink.getNamespace().equals(Namespace.namespace(Namespace.TEMPLATE_ID))) {
@@ -220,7 +229,7 @@ public class TemplateTag implements JFlexParserTag {
 	private String parseSubstitution(ParserInput parserInput, ParserOutput parserOutput, String raw, String templateContent) throws DataAccessException, ParserException {
 		// is it a substitution?
 		templateContent = templateContent.trim();
-		if (!templateContent.startsWith("subst:") || templateContent.length() <= "subst:".length()) {
+		if (!this.isSubstitution(templateContent)) {
 			return null;
 		}
 		// get the substitution content

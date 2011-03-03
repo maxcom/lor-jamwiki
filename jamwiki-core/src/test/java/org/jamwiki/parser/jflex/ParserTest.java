@@ -28,6 +28,7 @@ import org.jamwiki.JAMWikiUnitTest;
 import org.jamwiki.TestFileUtil;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
+import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
@@ -139,6 +140,21 @@ public class ParserTest extends JAMWikiUnitTest {
 		String parserResult = this.parserResult(parserOutput, "InterWiki1");
 		assertEquals("InterWiki1", 2, parserOutput.getInterwikiLinks().size());
 		assertEquals("InterWiki1", "<a class=\"interwiki\" title=\"Wikipedia\" href=\"http://en.wikipedia.org/wiki/Main_Page\">Wikipedia</a>", parserOutput.getInterwikiLinks().get(0));
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testSubst() throws Throwable {
+		// verify that "subst:" content was properly replaced when topic was saved
+		String TOPIC1_NAME = "Subst2";
+		String TOPIC2_NAME = "Template:Test Template";
+		String VIRTUAL_WIKI_NAME = "en";
+		Topic topic1 = WikiBase.getDataHandler().lookupTopic(VIRTUAL_WIKI_NAME, TOPIC1_NAME, false);
+		String contents1 = ParserUtil.parseMinimal(this.parserInput(TOPIC1_NAME), topic1.getTopicContent());
+		Topic topic2 = WikiBase.getDataHandler().lookupTopic(VIRTUAL_WIKI_NAME, TOPIC2_NAME, false);
+		assertTrue("Topic Subst2 should contain as content Template:Test Template", contents1.indexOf(topic2.getTopicContent()) != -1);
 	}
 
 	/**
