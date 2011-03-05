@@ -29,6 +29,9 @@ Bugfixes:
     Anywhere 11.0.1 (dallas).
   * Fix the subst: tag to properly substitute content when a topic is saved.
     Reported by Gregory Brown.
+  * Namespaces should be handled case-insensitive, but instead variations in
+    case-sensitivity could throw IllegalArgumentException.  Reported by Quynh
+    Nguyen and Tan-Vinh Nguyen.
 
 Translation Updates:
 

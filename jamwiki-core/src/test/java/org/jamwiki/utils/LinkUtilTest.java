@@ -154,5 +154,15 @@ public class LinkUtilTest extends JAMWikiUnitTest {
 		String result = LinkUtil.retrieveTopicPageName(Namespace.namespace(Namespace.COMMENTS_ID), "en", topicName);
 		assertEquals("LinkUtil.retrieveTopicPageName", "Main Page", result);
 	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testRetrieveTopicPageName3() throws Throwable {
+		String topicName = "COMMENTS:Main Page";
+		String result = LinkUtil.retrieveTopicPageName(Namespace.namespace(Namespace.COMMENTS_ID), "en", topicName);
+		assertEquals("LinkUtil.retrieveTopicPageName", "Main Page", result);
+	}
 }
 
