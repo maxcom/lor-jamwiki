@@ -578,10 +578,10 @@ public class LinkUtil {
 		if (namespace.getId() == Namespace.MAIN_ID) {
 			return topicName;
 		}
-		if (topicName.startsWith(namespace.getLabel(virtualWiki))) {
+		if (StringUtils.startsWithIgnoreCase(topicName, namespace.getLabel(virtualWiki))) {
 			// translated namespace
 			return topicName.substring(namespace.getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
-		} else if (topicName.startsWith(namespace.getDefaultLabel())) {
+		} else if (StringUtils.startsWithIgnoreCase(topicName, namespace.getDefaultLabel())) {
 			// translated namespace available, but using the default namespace label
 			return topicName.substring(namespace.getDefaultLabel().length() + Namespace.SEPARATOR.length());
 		}
