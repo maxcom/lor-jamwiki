@@ -38,9 +38,6 @@ a.redirect {
 a.redirect:before {
 	content:url("../images/redirect-arrow.png");
 }
-a.interwiki:after {
-	content:url("../images/external.png");
-}
 p {
 	margin: .4em 0 .5em 0;
 	line-height: 1.5em;

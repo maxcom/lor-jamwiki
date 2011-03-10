@@ -470,7 +470,6 @@ public class LinkUtil {
 			if (wikiLink.getInterwiki() != null) {
 				// strip the interwiki
 				processed = topic;
-				wikiLink.setText(processed);
 			}
 		}
 		if (wikiLink.getNamespace().getId().equals(Namespace.FILE_ID)) {

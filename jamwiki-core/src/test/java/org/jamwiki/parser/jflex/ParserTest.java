@@ -138,8 +138,8 @@ public class ParserTest extends JAMWikiUnitTest {
 		// this topic has two interwiki links, but they both go to the same wikipedia page
 		ParserOutput parserOutput = new ParserOutput();
 		String parserResult = this.parserResult(parserOutput, "InterWiki1");
-		assertEquals("InterWiki1", 2, parserOutput.getInterwikiLinks().size());
-		assertEquals("InterWiki1", "<a class=\"interwiki\" title=\"Wikipedia\" href=\"http://en.wikipedia.org/wiki/Main_Page\">Wikipedia</a>", parserOutput.getInterwikiLinks().get(0));
+		assertEquals("Number of interwiki links found does not match expected", 2, parserOutput.getInterwikiLinks().size());
+		assertEquals("Interwiki link text does not match expected", "<a class=\"interwiki\" title=\"Wikipedia\" href=\"http://en.wikipedia.org/wiki/Main_Page\">Wikipedia</a>", parserOutput.getInterwikiLinks().get(0));
 	}
 
 	/**

@@ -15,6 +15,10 @@ New Features:
 
 Bugfixes:
 
+  * Interwiki link CSS should match internal link CSS, not external link CSS,
+    and if no link text is specified the default text should display the
+    interwiki prefix.  Reported by floatingworld.
+
 Translation Updates:
 
 
