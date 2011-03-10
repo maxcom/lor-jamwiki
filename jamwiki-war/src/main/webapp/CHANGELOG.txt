@@ -1,4 +1,12 @@
-﻿1.0.1
+﻿1.0.2
+=====
+
+Bugfixes:
+
+  * Updated spam filter patterns.
+
+
+1.0.1
 =====
 
 Bugfixes:
