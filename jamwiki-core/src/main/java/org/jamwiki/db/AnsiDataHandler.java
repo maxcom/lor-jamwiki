@@ -1874,8 +1874,7 @@ public class AnsiDataHandler implements DataHandler {
 	 * @param categories A mapping of categories and their associated sort keys (if any)
 	 *  for all categories that are associated with the current topic.
 	 * @param links A List of all topic names that are linked to from the
-	 *  current topic.  These will be passed to the search engine to create
-	 *  searchable metadata.
+	 *  current topic.
 	 */
 	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links) throws DataAccessException, WikiException {
 		long start = System.currentTimeMillis();
@@ -1932,9 +1931,9 @@ public class AnsiDataHandler implements DataHandler {
 				if (topic.getDeleteDate() == null && !links.isEmpty()) {
 					this.addTopicLinks(links, topic.getTopicId(), conn);
 				}
-				// only update the search engine if metadata is available
-				WikiBase.getSearchEngine().updateInIndex(topic);
 			}
+			// only update the search engine if metadata is available
+			WikiBase.getSearchEngine().updateInIndex(topic);
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
