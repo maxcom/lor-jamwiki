@@ -105,6 +105,20 @@ followed by 0.6.3.
      should only be edited AFTER all other upgrade steps have been completed.
 
 
+  JAMWiki 1.0.2
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "1.0.2".
+
+
+  JAMWiki 1.0.1
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "1.0.1".
+
+
   JAMWiki 1.0.0
   =============
 

@@ -24,6 +24,19 @@ Translation Updates:
   * Updated Russian translations (shar).
 
 
+1.0.2
+=====
+
+New Features:
+
+  * Updated spam filter patterns.
+
+Bugfixes:
+
+  * Fix MS SQL errors on the Special:ImageList and similar pages.  Fix provided
+    by Scott Barlow.
+
+
 1.0.1
 =====
 
