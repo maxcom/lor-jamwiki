@@ -1204,7 +1204,10 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination) throws DataAccessException, WikiException {
+	public void moveTopic(Topic fromTopic, String destination, WikiUser user, String ipAddress, String moveComment) throws DataAccessException, WikiException {
+		// set up the version record to record the topic move
+		TopicVersion fromVersion = new TopicVersion(user, ipAddress, moveComment, fromTopic.getTopicContent(), 0);
+		fromVersion.setEditType(TopicVersion.EDIT_MOVE);
 		TransactionStatus status = null;
 		try {
 			status = DatabaseConnection.startTransaction();
@@ -1225,6 +1228,7 @@ public class AnsiDataHandler implements DataHandler {
 			// only one version needs to create a recent change entry, so do not create a log entry
 			// for the "from" version
 			fromVersion.setRecentChangeAllowed(false);
+			// handle categories
 			ParserOutput fromParserOutput = ParserUtil.parserOutput(fromTopic.getTopicContent(), fromTopic.getVirtualWiki(), fromTopic.getName());
 			writeTopic(fromTopic, fromVersion, fromParserOutput.getCategories(), fromParserOutput.getLinks());
 			// now either create a new topic that is a redirect with the

@@ -672,13 +672,16 @@ public interface DataHandler {
 	 * moved for any reason.
 	 *
 	 * @param fromTopic The Topic object that is being moved.
-	 * @param fromVersion A TopicVersion object that indicates the move
-	 *  date, author, and other parameters for the topic.
 	 * @param destination The new name for the topic.
+	 * @param user The WikiUser who will be credited in the topic version
+	 *  associated with this topic move as having performed the move.
+	 * @param ipAddress The IP address of the user making the topic move.
+	 * @param moveComment The edit comment to associate with the topic
+	 *  move.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 * @throws WikiException Thrown if the topic information is invalid.
 	 */
-	void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination) throws DataAccessException, WikiException;
+	void moveTopic(Topic fromTopic, String destination, WikiUser user, String ipAddress, String moveComment) throws DataAccessException, WikiException;
 
 	/**
 	 * Utility method used when importing to updating the previous topic version ID field
