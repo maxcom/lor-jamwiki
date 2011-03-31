@@ -8,7 +8,7 @@ New Features:
 Bugfixes:
 
   * Fix MS SQL errors on the Special:ImageList and similar pages.  Fix provided
-    by Scott Barlow.
+    by Scott Barlow and Filip Rysavy.
 
 
 1.0.1
