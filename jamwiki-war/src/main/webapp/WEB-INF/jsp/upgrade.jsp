@@ -103,7 +103,13 @@ body, input, select {
 		<tr>
 			<td colspan="2">
 				<ul>
-					<c:forEach items="${upgradeDetails}" var="upgradeDetail"><li><fmt:message key="${upgradeDetail.key}" /></li></c:forEach>
+					<c:forEach items="${upgradeDetails}" var="upgradeDetail">
+						<li><fmt:message key="${upgradeDetail.key}">
+							<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
+							<fmt:param><c:if test="${upgradeDetail.paramsLength >= 1}">${upgradeDetail.params[0]}</c:if></fmt:param>
+							<fmt:param><c:if test="${upgradeDetail.paramsLength >= 2}">${upgradeDetail.params[1]}</c:if></fmt:param>
+						</fmt:message></li>
+					</c:forEach>
 				</ul>
 			</td>
 		</tr>

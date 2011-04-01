@@ -85,6 +85,9 @@ followed by 0.6.3.
 
   SPECIAL NOTES:
 
+  * The Lucene search engine has been updated in this release.  As a result
+    most users will want to rebuild their search index using the tools on
+    the Special:Maintenance page.
   * This release updates the default StyleSheet topic.  See below for
     instructions on manaully updating this topic with the new styles.
   * HTML links of the form "[http://example.com]" will now display using

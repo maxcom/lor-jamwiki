@@ -48,6 +48,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private static final WikiLogger logger = WikiLogger.getLogger(UpgradeServlet.class.getName());
 	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_UPGRADE = "upgrade.jsp";
+	private static final int MAX_TOPICS_FOR_AUTOMATIC_SEARCH_REBUILD = 200;
 
 	/**
 	 * This method handles the request after its parent class receives control.
@@ -104,10 +105,12 @@ public class UpgradeServlet extends JAMWikiServlet {
 			}
 			// first perform database upgrades
 			this.upgradeDatabase(true, messages);
+			// upgrade the search index if required & possible
+			this.upgradeSearchIndex(true, messages);
 			// perform any additional upgrades required
-			if (oldVersion.before(1, 0, 0)) {
-				try {
-					int topicCount = WikiBase.getDataHandler().lookupTopicCount(VirtualWiki.defaultVirtualWiki().getName(), null);
+			try {
+				int topicCount = WikiBase.getDataHandler().lookupTopicCount(VirtualWiki.defaultVirtualWiki().getName(), null);
+				if (oldVersion.before(1, 0, 0)) {
 					if (topicCount < 1000) {
 						// populate the jam_topic_links table
 						WikiDatabase.rebuildTopicMetadata();
@@ -116,10 +119,10 @@ public class UpgradeServlet extends JAMWikiServlet {
 						// print a message telling the user to do this step manually
 						messages.add(new WikiMessage("upgrade.message.100.topic.links"));
 					}
-				} catch (DataAccessException e) {
-					logger.warn("Failure during upgrade while generating topic link records.  Please use the tools on the Special:Maintenance page to complete this step.", e);
-					messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 				}
+			} catch (DataAccessException e) {
+				logger.warn("Failure during upgrade while generating topic link records.  Please use the tools on the Special:Maintenance page to complete this step.", e);
+				messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 			}
 			// upgrade stylesheet
 			if (this.upgradeStyleSheetRequired()) {
@@ -192,6 +195,36 @@ public class UpgradeServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private boolean upgradeSearchIndex(boolean performUpgrade, List<WikiMessage> messages) {
+		boolean upgradeRequired = false;
+		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
+		if (oldVersion.before(1, 1, 0)) {
+			upgradeRequired = true;
+			if (performUpgrade) {
+				try {
+					int topicCount = WikiBase.getDataHandler().lookupTopicCount(VirtualWiki.defaultVirtualWiki().getName(), null);
+					if (oldVersion.before(1, 1, 0)) {
+						if (topicCount < MAX_TOPICS_FOR_AUTOMATIC_SEARCH_REBUILD) {
+							// refresh search engine
+							WikiBase.getSearchEngine().refreshIndex();
+							messages.add(new WikiMessage("upgrade.message.search.refresh"));
+						} else {
+							// print a message telling the user to do this step manually
+							messages.add(new WikiMessage("upgrade.error.search.refresh"));
+						}
+					}
+				} catch (Exception e) {
+					logger.warn("Failure during upgrade while rebuilding search index.  Please use the tools on the Special:Maintenance page to complete this step.", e);
+					messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
+				}
+			}
+		}
+		return upgradeRequired;
+	}
+
+	/**
+	 *
+	 */
 	private boolean upgradeStyleSheet(HttpServletRequest request, List<WikiMessage> messages) {
 		try {
 			List<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
@@ -237,6 +270,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 			}
 		} catch (Exception e) {
 			// never thrown when the first parameter is false
+		}
+		if (this.upgradeSearchIndex(false, null)) {
+			upgradeDetails.add(new WikiMessage("upgrade.caption.search", Integer.toString(MAX_TOPICS_FOR_AUTOMATIC_SEARCH_REBUILD)));
 		}
 		if (oldVersion.before(1, 0, 0)) {
 			upgradeDetails.add(new WikiMessage("upgrade.message.100.reparse"));

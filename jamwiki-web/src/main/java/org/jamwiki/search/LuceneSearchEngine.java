@@ -30,6 +30,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
@@ -37,7 +38,6 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.highlight.Highlighter;
@@ -75,14 +75,14 @@ public class LuceneSearchEngine implements SearchEngine {
 	/** Id stored with documents to indicate the topic name. */
 	protected static final String ITYPE_TOPIC_PLAIN = "topic_plain";
 	/** Lucene compatibility version. */
-	protected static final Version USE_LUCENE_VERSION = Version.LUCENE_30;
+	protected static final Version USE_LUCENE_VERSION = Version.LUCENE_31;
 	/** Maximum number of results to return per search. */
 	// FIXME - make this configurable
 	protected static final int MAXIMUM_RESULTS_PER_SEARCH = 200;
 	/** Flag indicating whether or not to commit search index changes immediately. */
 	private boolean autoCommit = true;
 	/** Store Searchers (once opened) for re-use for performance reasons. */
-	private Map<String, Searcher> searchers = new HashMap<String, Searcher>();
+	private Map<String, IndexSearcher> searchers = new HashMap<String, IndexSearcher>();
 	/** Store Writers (once opened) for re-use for performance reasons. */
 	private Map<String, IndexWriter> indexWriters = new HashMap<String, IndexWriter>();
 
@@ -144,7 +144,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * Given the search text, searcher object, and query analyzer generate an
 	 * appropriate Lucene search query.
 	 */
-	protected Query createSearchQuery(Searcher searcher, StandardAnalyzer analyzer, String text) throws IOException, ParseException {
+	protected Query createSearchQuery(IndexSearcher searcher, StandardAnalyzer analyzer, String text) throws IOException, ParseException {
 		BooleanQuery query = new BooleanQuery();
 		QueryParser qp;
 		qp = new QueryParser(USE_LUCENE_VERSION, ITYPE_TOPIC, analyzer);
@@ -219,7 +219,7 @@ public class LuceneSearchEngine implements SearchEngine {
 		List<SearchResultEntry> results = new ArrayList<SearchResultEntry>();
 		logger.trace("search text: " + text);
 		try {
-			Searcher searcher = this.retrieveIndexSearcher(virtualWiki);
+			IndexSearcher searcher = this.retrieveIndexSearcher(virtualWiki);
 			Query query = this.createSearchQuery(searcher, analyzer, text);
 			// actually perform the search
 			TopScoreDocCollector collector = TopScoreDocCollector.create(MAXIMUM_RESULTS_PER_SEARCH, true);
@@ -261,7 +261,7 @@ public class LuceneSearchEngine implements SearchEngine {
 		if (!child.exists()) {
 			// create the search instance
 			child.mkdirs();
-			IndexWriter writer = new IndexWriter(FSDirectory.open(child), new StandardAnalyzer(USE_LUCENE_VERSION), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(FSDirectory.open(child), this.retrieveIndexWriterConfig());
 			writer.close();
 		}
 		return child;
@@ -322,7 +322,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * Call this method after a search index is updated to reset the searcher.
 	 */
 	private void resetIndexSearcher(String virtualWiki) throws IOException {
-		Searcher searcher = searchers.get(virtualWiki);
+		IndexSearcher searcher = searchers.get(virtualWiki);
 		if (searcher != null) {
 			searchers.remove(virtualWiki);
 			searcher.close();
@@ -332,8 +332,8 @@ public class LuceneSearchEngine implements SearchEngine {
 	/**
 	 * For performance reasons cache the IndexSearcher for re-use.
 	 */
-	protected Searcher retrieveIndexSearcher(String virtualWiki) throws IOException {
-		Searcher searcher = searchers.get(virtualWiki);
+	protected IndexSearcher retrieveIndexSearcher(String virtualWiki) throws IOException {
+		IndexSearcher searcher = searchers.get(virtualWiki);
 		if (searcher == null) {
 			searcher = new IndexSearcher(this.retrieveIndexWriter(virtualWiki, false).getReader());
 			searchers.put(virtualWiki, searcher);
@@ -357,12 +357,25 @@ public class LuceneSearchEngine implements SearchEngine {
 		}
 		if (indexWriter == null) {
 			FSDirectory fsDirectory = FSDirectory.open(getSearchIndexPath(virtualWiki));
-			indexWriter = new IndexWriter(fsDirectory, new StandardAnalyzer(USE_LUCENE_VERSION), create, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriterConfig indexWriterConfig = this.retrieveIndexWriterConfig();
+			if (create) {
+				indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
+			}
+			indexWriter = new IndexWriter(fsDirectory, indexWriterConfig);
 			if (!create) {
 				indexWriters.put(virtualWiki, indexWriter);
 			}
 		}
 		return indexWriter;
+	}
+
+	/**
+	 * Retrieve an IndexWriter configuration object.
+	 */
+	private IndexWriterConfig retrieveIndexWriterConfig() {
+		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(USE_LUCENE_VERSION, new StandardAnalyzer(USE_LUCENE_VERSION));
+		indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+		return indexWriterConfig;
 	}
 
 	/**
@@ -392,7 +405,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * 
 	 */
 	public void shutdown() throws IOException {
-		for (Searcher searcher : this.searchers.values()) {
+		for (IndexSearcher searcher : this.searchers.values()) {
 			searcher.close();
 		}
 		for (IndexWriter indexWriter : this.indexWriters.values()) {

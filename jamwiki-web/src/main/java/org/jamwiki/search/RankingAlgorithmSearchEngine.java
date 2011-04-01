@@ -24,7 +24,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
@@ -58,22 +57,21 @@ public class RankingAlgorithmSearchEngine extends LuceneSearchEngine {
 		List<SearchResultEntry> results = new ArrayList<SearchResultEntry>();
 		logger.trace("search text: " + text);
 		try {
-			Searcher searcher = this.retrieveIndexSearcher(virtualWiki);
+			IndexSearcher searcher = this.retrieveIndexSearcher(virtualWiki);
 			Query query = this.createSearchQuery(searcher, analyzer, text);
 			// actually perform the search
 			TopScoreDocCollector collector = TopScoreDocCollector.create(MAXIMUM_RESULTS_PER_SEARCH, true);
 			Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>"), new SimpleHTMLEncoder(), new QueryScorer(query));
 			try {
-				IndexSearcher is = (IndexSearcher)searcher;
 				Class classRQ = Class.forName("com.transaxtions.search.rankingalgorithm.RankingQuery");
 				Class classQuery = Class.forName("org.apache.lucene.search.Query");
 				Object rq = classRQ.newInstance();
 				Class classArray[] = new Class[2];
 				classArray[0] = classQuery;
-				classArray[1] = is.getClass();
+				classArray[1] = searcher.getClass();
 				Object args[] = new Object[2];
 				args[0] = query;
-				args[1] = is;
+				args[1] = searcher;
 				Method methodRQ_search = classRQ.getMethod("search", classArray);
 				Object hitsobject = methodRQ_search.invoke(rq, args); 
 				Class classRH = hitsobject.getClass();
