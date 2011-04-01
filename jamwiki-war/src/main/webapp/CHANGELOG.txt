@@ -10,6 +10,10 @@ Bugfixes:
   * Fix MS SQL errors on the Special:ImageList and similar pages.  Fix provided
     by Scott Barlow and Filip Rysavy.
 
+Translation Updates:
+
+  * Updated German translations (axelclk).
+
 
 1.0.1
 =====
