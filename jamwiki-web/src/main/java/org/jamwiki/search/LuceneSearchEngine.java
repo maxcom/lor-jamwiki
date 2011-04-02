@@ -261,7 +261,7 @@ public class LuceneSearchEngine implements SearchEngine {
 		if (!child.exists()) {
 			// create the search instance
 			child.mkdirs();
-			IndexWriter writer = new IndexWriter(FSDirectory.open(child), this.retrieveIndexWriterConfig());
+			IndexWriter writer = new IndexWriter(FSDirectory.open(child), this.retrieveIndexWriterConfig(true));
 			writer.close();
 		}
 		return child;
@@ -357,11 +357,7 @@ public class LuceneSearchEngine implements SearchEngine {
 		}
 		if (indexWriter == null) {
 			FSDirectory fsDirectory = FSDirectory.open(getSearchIndexPath(virtualWiki));
-			IndexWriterConfig indexWriterConfig = this.retrieveIndexWriterConfig();
-			if (create) {
-				indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
-			}
-			indexWriter = new IndexWriter(fsDirectory, indexWriterConfig);
+			indexWriter = new IndexWriter(fsDirectory, this.retrieveIndexWriterConfig(create));
 			if (!create) {
 				indexWriters.put(virtualWiki, indexWriter);
 			}
@@ -372,9 +368,9 @@ public class LuceneSearchEngine implements SearchEngine {
 	/**
 	 * Retrieve an IndexWriter configuration object.
 	 */
-	private IndexWriterConfig retrieveIndexWriterConfig() {
+	private IndexWriterConfig retrieveIndexWriterConfig(boolean create) {
 		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(USE_LUCENE_VERSION, new StandardAnalyzer(USE_LUCENE_VERSION));
-		indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+		indexWriterConfig.setOpenMode(((create) ? IndexWriterConfig.OpenMode.CREATE : IndexWriterConfig.OpenMode.CREATE_OR_APPEND));
 		return indexWriterConfig;
 	}
 
