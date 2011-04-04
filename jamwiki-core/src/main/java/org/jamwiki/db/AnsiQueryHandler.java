@@ -222,6 +222,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_UPDATE_NAMESPACE = null;
 	protected static String STATEMENT_UPDATE_TOPIC = null;
 	protected static String STATEMENT_UPDATE_TOPIC_NAMESPACE = null;
+	protected static String STATEMENT_UPDATE_TOPIC_VERSION = null;
 	protected static String STATEMENT_UPDATE_TOPIC_VERSION_PREVIOUS_VERSION_ID = null;
 	protected static String STATEMENT_UPDATE_USER = null;
 	protected static String STATEMENT_UPDATE_VIRTUAL_WIKI = null;
@@ -1212,6 +1213,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_UPDATE_TOPIC_NAMESPACE         = props.getProperty("STATEMENT_UPDATE_TOPIC_NAMESPACE");
 		STATEMENT_UPDATE_ROLE                    = props.getProperty("STATEMENT_UPDATE_ROLE");
 		STATEMENT_UPDATE_TOPIC                   = props.getProperty("STATEMENT_UPDATE_TOPIC");
+		STATEMENT_UPDATE_TOPIC_VERSION           = props.getProperty("STATEMENT_UPDATE_TOPIC_VERSION");
 		STATEMENT_UPDATE_TOPIC_VERSION_PREVIOUS_VERSION_ID = props.getProperty("STATEMENT_UPDATE_TOPIC_VERSION_PREVIOUS_VERSION_ID");
 		STATEMENT_UPDATE_USER                    = props.getProperty("STATEMENT_UPDATE_USER");
 		STATEMENT_UPDATE_VIRTUAL_WIKI            = props.getProperty("STATEMENT_UPDATE_VIRTUAL_WIKI");
@@ -2899,6 +2901,38 @@ public class AnsiQueryHandler implements QueryHandler {
 				stmt.addBatch();
 			}
 			stmt.executeBatch();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void updateTopicVersion(TopicVersion topicVersion, Connection conn) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_UPDATE_TOPIC_VERSION);
+			stmt.setInt(1, topicVersion.getTopicId());
+			stmt.setString(2, topicVersion.getEditComment());
+			stmt.setString(3, topicVersion.getVersionContent());
+			if (topicVersion.getAuthorId() == null) {
+				stmt.setNull(4, Types.INTEGER);
+			} else {
+				stmt.setInt(4, topicVersion.getAuthorId());
+			}
+			stmt.setInt(5, topicVersion.getEditType());
+			stmt.setString(6, topicVersion.getAuthorDisplay());
+			stmt.setTimestamp(7, topicVersion.getEditDate());
+			if (topicVersion.getPreviousTopicVersionId() == null) {
+				stmt.setNull(8, Types.INTEGER);
+			} else {
+				stmt.setInt(8, topicVersion.getPreviousTopicVersionId());
+			}
+			stmt.setInt(9, topicVersion.getCharactersChanged());
+			stmt.setString(10, topicVersion.getVersionParamString());
+			stmt.setInt(11, topicVersion.getTopicVersionId());
+			stmt.executeUpdate();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
 		}

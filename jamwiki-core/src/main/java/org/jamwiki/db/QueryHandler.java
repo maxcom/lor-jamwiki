@@ -1040,6 +1040,16 @@ public interface QueryHandler {
 	public void updateTopicNamespaces(List<Topic> topics, Connection conn) throws SQLException;
 
 	/**
+	 * Update a topic version record in the database.
+	 *
+	 * @param topic The TopicVersion record that is to be updated in the database.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	public void updateTopicVersion(TopicVersion topicVersion, Connection conn) throws SQLException;
+
+	/**
 	 * Update user authentication credentials.
 	 *
 	 * @param userDetails The user authentication credentials to update.
