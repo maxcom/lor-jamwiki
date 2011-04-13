@@ -88,6 +88,7 @@ public class Environment {
 	public static final String PROP_FILE_SERVER_URL = "file-server-url";
 	public static final String PROP_FILE_WHITELIST = "file-whitelist";
 	public static final String PROP_IMAGE_RESIZE_INCREMENT = "image-resize-increment";
+	public static final String PROP_MAX_RECENT_CHANGES = "max-recent-changes";
 	public static final String PROP_MAX_TOPIC_VERSION_EXPORT = "max-topic-version-export";
 	public static final String PROP_PARSER_ALLOW_CAPITALIZATION = "allow-capitalization";
 	public static final String PROP_PARSER_ALLOW_HTML = "allowHTML";
@@ -235,6 +236,7 @@ public class Environment {
 		this.defaults.setProperty(PROP_FILE_SERVER_URL, "");
 		this.defaults.setProperty(PROP_FILE_WHITELIST, "bmp,gif,jpeg,jpg,pdf,png,properties,svg,txt,zip");
 		this.defaults.setProperty(PROP_IMAGE_RESIZE_INCREMENT, "100");
+		this.defaults.setProperty(PROP_MAX_RECENT_CHANGES, "10000");
 		this.defaults.setProperty(PROP_MAX_TOPIC_VERSION_EXPORT, "200");
 		this.defaults.setProperty(PROP_PARSER_ALLOW_CAPITALIZATION, Boolean.TRUE.toString());
 		this.defaults.setProperty(PROP_PARSER_ALLOW_HTML, Boolean.TRUE.toString());

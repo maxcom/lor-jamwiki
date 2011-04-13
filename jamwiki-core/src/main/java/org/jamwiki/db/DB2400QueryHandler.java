@@ -67,6 +67,27 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	}
 
 	/**
+	 * DB2/400 will not allow query parameters such as "fetch ? rows only", so
+	 * this method provides a way of formatting the query limits without using
+	 * query parameters.
+	 *
+	 * @param sql The SQL statement, with the last result parameter specified as
+	 *  {0} and the total number of rows parameter specified as {1}.
+	 * @param pagination A Pagination object that specifies the number of results
+	 *  and starting result offset for the result set to be retrieved.
+	 * @return A formatted SQL string.
+	 */
+	private static String formatStatement(String sql, int limit) {
+		try {
+			Object[] objects = {limit};
+			return MessageFormat.format(sql, objects);
+		} catch (Exception e) {
+			logger.warn("Unable to format " + sql + " with value " + limit, e);
+			return null;
+		}
+	}
+
+	/**
 	 *
 	 */
 	protected PreparedStatement getCategoriesStatement(Connection conn, int virtualWikiId, String virtualWikiName, Pagination pagination) throws SQLException {
@@ -179,5 +200,22 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 		String sql = formatStatement(STATEMENT_SELECT_WIKI_USERS, pagination);
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		return stmt;
+	}
+
+	/**
+	 *
+	 */
+	public void reloadRecentChanges(Connection conn, int limit) throws SQLException {
+		PreparedStatement stmt = null;
+		String sql = formatStatement(STATEMENT_INSERT_RECENT_CHANGES_VERSIONS, limit);
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DELETE_RECENT_CHANGES, conn);
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, limit);
+			stmt.executeUpdate();
+			DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES_LOGS, conn);
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
 	}
 }

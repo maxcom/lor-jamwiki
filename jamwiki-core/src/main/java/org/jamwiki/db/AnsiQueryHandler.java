@@ -2741,10 +2741,17 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void reloadRecentChanges(Connection conn) throws SQLException {
-		DatabaseConnection.executeUpdate(STATEMENT_DELETE_RECENT_CHANGES, conn);
-		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES_VERSIONS, conn);
-		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES_LOGS, conn);
+	public void reloadRecentChanges(Connection conn, int limit) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DELETE_RECENT_CHANGES, conn);
+			stmt = conn.prepareStatement(STATEMENT_INSERT_RECENT_CHANGES_VERSIONS);
+			stmt.setInt(1, limit);
+			stmt.executeUpdate();
+			DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES_LOGS, conn);
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
 	}
 
 	/**

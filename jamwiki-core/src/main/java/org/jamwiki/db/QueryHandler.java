@@ -960,9 +960,11 @@ public interface QueryHandler {
 	 *
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
+	 * @param limit The maximum number of topic history versions to examine
+	 *  when reloading recent changes.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	void reloadRecentChanges(Connection conn) throws SQLException;
+	void reloadRecentChanges(Connection conn, int limit) throws SQLException;
 
 	/**
 	 * Replace the existing configuration records with a new set of values.  This

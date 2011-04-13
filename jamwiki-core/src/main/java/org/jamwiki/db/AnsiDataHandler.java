@@ -1314,11 +1314,12 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public void reloadRecentChanges() throws DataAccessException {
+		int limit = Environment.getIntValue(Environment.PROP_MAX_RECENT_CHANGES);
 		TransactionStatus status = null;
 		try {
 			status = DatabaseConnection.startTransaction();
 			Connection conn = DatabaseConnection.getConnection();
-			this.queryHandler().reloadRecentChanges(conn);
+			this.queryHandler().reloadRecentChanges(conn, limit);
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw new DataAccessException(e);
