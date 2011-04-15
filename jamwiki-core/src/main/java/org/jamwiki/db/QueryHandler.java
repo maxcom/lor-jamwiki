@@ -143,6 +143,22 @@ public interface QueryHandler {
 	void deleteTopicLinks(int topicId, Connection conn) throws SQLException;
 
 	/**
+	 * Delete a topic version record.  This method will fail if there is a
+	 * topic with the version as its current version ID, or if there is
+	 * a topic version with the version as its previous topic version, but
+	 * should update references in all other tables.
+	 *
+	 * @param topicVersionId The version record that is being deleted.
+	 * @param previousTopicVersionId If this record was referenced as a
+	 *  "previous topic version ID" then this value will be used as the
+	 *  replacement for those records.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	public void deleteTopicVersion(int topicVersionId, Integer previousTopicVersionId, Connection conn) throws SQLException;
+
+	/**
 	 * Delete all authorities for a specific user.
 	 *
 	 * @param username The username for which authorities are being deleted.

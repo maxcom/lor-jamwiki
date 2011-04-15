@@ -16,15 +16,22 @@
  */
 package org.jamwiki.servlets;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.authentication.WikiUserDetailsImpl;
+import org.jamwiki.model.RecentChange;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
@@ -48,6 +55,13 @@ public class ManageServlet extends JAMWikiServlet {
 			undelete(request, next, pageInfo);
 		} else if (!StringUtils.isBlank(request.getParameter("permissions"))) {
 			permissions(request, next, pageInfo);
+		} else if (!StringUtils.isBlank(request.getParameter("purge"))) {
+			WikiUserDetailsImpl user = ServletUtil.currentUserDetails();
+			if (!user.hasRole(Role.ROLE_SYSADMIN)) {
+				WikiMessage messageObject = new WikiMessage("login.message.purge");
+				return ServletUtil.viewLogin(request, pageInfo, "Special:Manage", messageObject);
+			}
+			purge(request, next, pageInfo);
 		} else {
 			view(request, next, pageInfo);
 		}
@@ -119,6 +133,32 @@ public class ManageServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private void purge(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		String topicName = WikiUtil.getTopicFromRequest(request);
+		if (topicName == null) {
+			throw new WikiException(new WikiMessage("common.exception.notopic"));
+		}
+		String virtualWiki = pageInfo.getVirtualWikiName();
+		int purgeCount = 0;
+		String[] topicVersionIds = request.getParameterValues("topicVersionId");
+		if (topicVersionIds == null) {
+			throw new WikiException(new WikiMessage("manage.purge.noversion"));
+		}
+		for (String topicVersionIdString : topicVersionIds) {
+			int topicVersionId = NumberUtils.toInt(topicVersionIdString, -1);
+			if (topicVersionId == -1) {
+				throw new WikiException(new WikiMessage("purge.error.noversion"));
+			}
+			WikiBase.getDataHandler().purgeTopicVersion(virtualWiki, topicVersionId, ServletUtil.currentWikiUser(), ServletUtil.getIpAddress(request));
+			purgeCount++;
+		}
+		next.addObject("message", new WikiMessage("manage.message.purge", Integer.toString(purgeCount), topicName));
+		view(request, next, pageInfo);
+	}
+
+	/**
+	 *
+	 */
 	private void undelete(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
 		if (topicName == null) {
@@ -181,6 +221,10 @@ public class ManageServlet extends JAMWikiServlet {
 		next.addObject("readOnly", topic.getReadOnly());
 		next.addObject("adminOnly", topic.getAdminOnly());
 		next.addObject("deleted", (topic.getDeleteDate() != null));
+		Pagination pagination = ServletUtil.loadPagination(request, next);
+		List<RecentChange> versions = WikiBase.getDataHandler().getTopicHistory(virtualWiki, topicName, pagination, true);
+		next.addObject("numChanges", versions.size());
+		next.addObject("versions", versions);
 		pageInfo.setTopicName(topicName);
 		pageInfo.setContentJsp(JSP_ADMIN_MANAGE);
 		pageInfo.setPageTitle(new WikiMessage("manage.title", topicName));

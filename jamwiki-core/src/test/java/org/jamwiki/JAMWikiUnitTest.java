@@ -85,20 +85,34 @@ public abstract class JAMWikiUnitTest {
 	/**
 	 * Read and load a test topic from the file system.
 	 */
-	protected void setupTopic(VirtualWiki virtualWiki, String fileName) throws DataAccessException, IOException, WikiException {
+	protected Topic setupTopic(VirtualWiki virtualWiki, String fileName) throws DataAccessException, IOException, WikiException {
+		String contents = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_TOPICS_DIR, fileName);
+		String topicName = TestFileUtil.decodeTopicName(fileName);
+		return this.setupTopic(virtualWiki, topicName, contents);
+	}
+
+	/**
+	 * Crate a test topic.
+	 */
+	protected Topic setupTopic(VirtualWiki virtualWiki, String topicName, String contents) throws DataAccessException, IOException, WikiException {
 		if (virtualWiki == null) {
 			virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki("en");
 		}
-		String contents = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_TOPICS_DIR, fileName);
-		String topicName = TestFileUtil.decodeTopicName(fileName);
 		Topic topic = new Topic(virtualWiki.getName(), topicName);
 		topic.setTopicContent(contents);
-		int charactersChanged = (contents == null) ? 0 : contents.length();
-		TopicVersion topicVersion = new TopicVersion(null, "127.0.0.1", null, contents, charactersChanged);
 		if (topicName.toLowerCase().startsWith("image:")) {
-			this.setupImage(virtualWiki, topic, topicVersion);
-			return;
+			this.setupImage(virtualWiki, topic);
+			return topic;
 		}
+		this.setupTopic(topic);
+		return topic;
+	}
+
+	/**
+	 * Crate a test topic.  Cannot be used for images.
+	 */
+	protected void setupTopic(Topic topic) throws DataAccessException, WikiException {
+		TopicVersion topicVersion = new TopicVersion(null, "127.0.0.1", null, topic.getTopicContent(), topic.getTopicContent().length());
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
 	}
 
@@ -106,10 +120,11 @@ public abstract class JAMWikiUnitTest {
 	 * Set up images separately - one image is created in both virtual wikis, the
 	 * second image is set up in only the shared virtual wiki.
 	 */
-	private void setupImage(VirtualWiki virtualWiki, Topic topic, TopicVersion topicVersion) throws DataAccessException, IOException, WikiException {
+	private void setupImage(VirtualWiki virtualWiki, Topic topic) throws DataAccessException, IOException, WikiException {
 		if (!topic.getName().toLowerCase().startsWith("image:")) {
 			throw new IllegalArgumentException("Cannot call JAMWikiUtilTest.setupImage for non-image topics");
 		}
+		TopicVersion topicVersion = new TopicVersion(null, "127.0.0.1", null, topic.getTopicContent(), topic.getTopicContent().length());
 		topic.setTopicType(TopicType.IMAGE);
 		topicVersion.setEditType(TopicVersion.EDIT_UPLOAD);
 		// hard code image details - Image:Test Image.jpg will be created for both the "en"

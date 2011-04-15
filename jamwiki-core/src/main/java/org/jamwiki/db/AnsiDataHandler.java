@@ -1287,6 +1287,58 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public void purgeTopicVersion(String virtualWiki, int topicVersionId, WikiUser user, String ipAddress) throws DataAccessException, WikiException {
+		// 1. get the topic version record.  if no such record exists
+		// throw an exception.
+		TopicVersion topicVersion = this.lookupTopicVersion(topicVersionId);
+		if (topicVersion == null) {
+			throw new WikiException(new WikiMessage("purge.error.noversion", Integer.toString(topicVersionId)));
+		}
+		// 2. get the current version's previous_topic_version_id
+		// record.  if there is no such record get the topic version
+		// with the current version as its previous_topic_version_id.
+		// if there is still no such record throw an exception.
+		Topic topic = this.lookupTopicById(virtualWiki, topicVersion.getTopicId());
+		Integer previousTopicVersionId = topicVersion.getPreviousTopicVersionId();
+		Integer nextTopicVersionId = this.lookupTopicVersionNextId(topicVersionId);
+		if (previousTopicVersionId == null && nextTopicVersionId == null) {
+			throw new WikiException(new WikiMessage("purge.error.onlyversion", Integer.toString(topicVersionId), topic.getName()));
+		}
+		Integer replacementTopicVersionId = (previousTopicVersionId != null) ? previousTopicVersionId : nextTopicVersionId;
+		TransactionStatus status = null;
+		try {
+			status = DatabaseConnection.startTransaction();
+			Connection conn = DatabaseConnection.getConnection();
+			// 3. get a reference to any topic which has this topic as its
+			// current_version_id, and update with the value from #2.
+			if (topicVersionId == topic.getCurrentVersionId().intValue()) {
+				topic.setCurrentVersionId(replacementTopicVersionId);
+				this.updateTopic(topic, conn);
+			}
+			// 4. if there is a topic version with this version as its
+			// previous_topic_version_id update it with the value from #2
+			if (nextTopicVersionId != null) {
+				TopicVersion nextTopicVersion = this.lookupTopicVersion(nextTopicVersionId);
+				nextTopicVersion.setPreviousTopicVersionId(topicVersion.getPreviousTopicVersionId());
+				this.queryHandler().updateTopicVersion(nextTopicVersion, conn);
+			}
+			// 5. delete the topic version record from all tables
+			this.queryHandler().deleteTopicVersion(topicVersionId, topicVersion.getPreviousTopicVersionId(), conn);
+			// 6. create a log record
+			LogItem logItem = LogItem.initLogItemPurge(topic, topicVersion, user, ipAddress);
+			this.addLogItem(logItem, conn);
+			RecentChange change = RecentChange.initRecentChange(logItem);
+			this.addRecentChange(change, conn);
+		} catch (SQLException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			throw new DataAccessException(e);
+		}
+		DatabaseConnection.commit(status);
+	}
+
+	/**
+	 *
+	 */
 	protected QueryHandler queryHandler() {
 		return this.queryHandler;
 	}

@@ -17,11 +17,14 @@
 package org.jamwiki.db;
 
 import java.io.IOException;
+import java.util.List;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.JAMWikiUnitTest;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
+import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
+import org.jamwiki.utils.Pagination;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -49,6 +52,43 @@ public class AnsiDataHandlerTest extends JAMWikiUnitTest {
 	public void testTopicLookup1() throws DataAccessException {
 		Topic topic = WikiBase.getDataHandler().lookupTopic("en", WikiBase.SPECIAL_PAGE_STYLESHEET, false);
 		assertEquals("Incorrect topic name", topic.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET);
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testPurgeTopicVersion() throws DataAccessException, IOException, WikiException {
+		// load a test topic with three versions
+		String topicName = "Purge Topic Test";
+		String virtualWiki = "en";
+		Topic topic = null;
+		for (int i = 0; i < 3; i++) {
+			String contents = "Test topic content " + i;
+			if (topic == null) {
+				// create a new record
+				topic = this.setupTopic(null, topicName, contents);
+			} else {
+				// update the existing record
+				this.setupTopic(topic);
+			}
+		}
+		// delete the first two versions
+		Pagination pagination = new Pagination(1000, 0);
+		List<RecentChange> versions = WikiBase.getDataHandler().getTopicHistory(virtualWiki, topicName, pagination, true);
+		assertEquals("Incorrect number of test versions present", 3, versions.size());
+		WikiBase.getDataHandler().purgeTopicVersion(virtualWiki, versions.get(0).getTopicVersionId(), null, "127.0.0.1");
+		WikiBase.getDataHandler().purgeTopicVersion(virtualWiki, versions.get(1).getTopicVersionId(), null, "127.0.0.1");
+		// attempts to delete the third version should thrown an error
+		boolean exceptionThrown = false;
+		try {
+			WikiBase.getDataHandler().purgeTopicVersion(virtualWiki, versions.get(2).getTopicVersionId(), null, "127.0.0.1");
+		} catch (WikiException e) {
+			exceptionThrown = true;
+		}
+		assertTrue("Deleting a topic version should fail when only one topic version exists", exceptionThrown);
+		versions = WikiBase.getDataHandler().getTopicHistory(virtualWiki, topicName, pagination, true);
+		assertEquals("Incorrect number of test versions present", 1, versions.size());
 	}
 
 	/**

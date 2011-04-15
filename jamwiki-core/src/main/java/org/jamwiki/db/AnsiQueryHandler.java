@@ -101,11 +101,14 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DELETE_GROUP_AUTHORITIES = null;
 	protected static String STATEMENT_DELETE_INTERWIKI = null;
 	protected static String STATEMENT_DELETE_LOG_ITEMS = null;
+	protected static String STATEMENT_DELETE_LOG_ITEMS_BY_TOPIC_VERSION = null;
 	protected static String STATEMENT_DELETE_NAMESPACE_TRANSLATIONS = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES_TOPIC = null;
+	protected static String STATEMENT_DELETE_RECENT_CHANGES_TOPIC_VERSION = null;
 	protected static String STATEMENT_DELETE_TOPIC_CATEGORIES = null;
 	protected static String STATEMENT_DELETE_TOPIC_LINKS = null;
+	protected static String STATEMENT_DELETE_TOPIC_VERSION = null;
 	protected static String STATEMENT_DELETE_WATCHLIST_ENTRY = null;
 	protected static String STATEMENT_DROP_AUTHORITIES_TABLE = null;
 	protected static String STATEMENT_DROP_CATEGORY_TABLE = null;
@@ -220,6 +223,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_UPDATE_GROUP = null;
 	protected static String STATEMENT_UPDATE_ROLE = null;
 	protected static String STATEMENT_UPDATE_NAMESPACE = null;
+	protected static String STATEMENT_UPDATE_RECENT_CHANGES_PREVIOUS_VERSION_ID = null;
 	protected static String STATEMENT_UPDATE_TOPIC = null;
 	protected static String STATEMENT_UPDATE_TOPIC_NAMESPACE = null;
 	protected static String STATEMENT_UPDATE_TOPIC_VERSION = null;
@@ -371,6 +375,38 @@ public class AnsiQueryHandler implements QueryHandler {
 		try {
 			stmt = conn.prepareStatement(STATEMENT_DELETE_TOPIC_LINKS);
 			stmt.setInt(1, topicId);
+			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void deleteTopicVersion(int topicVersionId, Integer previousTopicVersionId, Connection conn) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			// delete references to the topic version from the log table
+			stmt = conn.prepareStatement(STATEMENT_DELETE_LOG_ITEMS_BY_TOPIC_VERSION);
+			stmt.setInt(1, topicVersionId);
+			stmt.executeUpdate();
+			// delete references to the topic version from the recent changes table
+			stmt = conn.prepareStatement(STATEMENT_DELETE_RECENT_CHANGES_TOPIC_VERSION);
+			stmt.setInt(1, topicVersionId);
+			stmt.executeUpdate();
+			// update any recent changes that refer to this record as the previous record
+			stmt = conn.prepareStatement(STATEMENT_UPDATE_RECENT_CHANGES_PREVIOUS_VERSION_ID);
+			if (previousTopicVersionId != null) {
+				stmt.setInt(1, previousTopicVersionId);
+			} else {
+				stmt.setNull(1, Types.INTEGER);
+			}
+			stmt.setInt(2, topicVersionId);
+			stmt.executeUpdate();
+			// delete the topic version record
+			stmt = conn.prepareStatement(STATEMENT_DELETE_TOPIC_VERSION);
+			stmt.setInt(1, topicVersionId);
 			stmt.executeUpdate();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
@@ -1092,11 +1128,14 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_DELETE_GROUP_AUTHORITIES       = props.getProperty("STATEMENT_DELETE_GROUP_AUTHORITIES");
 		STATEMENT_DELETE_INTERWIKI               = props.getProperty("STATEMENT_DELETE_INTERWIKI");
 		STATEMENT_DELETE_LOG_ITEMS               = props.getProperty("STATEMENT_DELETE_LOG_ITEMS");
+		STATEMENT_DELETE_LOG_ITEMS_BY_TOPIC_VERSION = props.getProperty("STATEMENT_DELETE_LOG_ITEMS_BY_TOPIC_VERSION");
 		STATEMENT_DELETE_NAMESPACE_TRANSLATIONS  = props.getProperty("STATEMENT_DELETE_NAMESPACE_TRANSLATIONS");
 		STATEMENT_DELETE_RECENT_CHANGES          = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES");
 		STATEMENT_DELETE_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES_TOPIC");
+		STATEMENT_DELETE_RECENT_CHANGES_TOPIC_VERSION = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES_TOPIC_VERSION");
 		STATEMENT_DELETE_TOPIC_CATEGORIES        = props.getProperty("STATEMENT_DELETE_TOPIC_CATEGORIES");
 		STATEMENT_DELETE_TOPIC_LINKS             = props.getProperty("STATEMENT_DELETE_TOPIC_LINKS");
+		STATEMENT_DELETE_TOPIC_VERSION           = props.getProperty("STATEMENT_DELETE_TOPIC_VERSION");
 		STATEMENT_DELETE_WATCHLIST_ENTRY         = props.getProperty("STATEMENT_DELETE_WATCHLIST_ENTRY");
 		STATEMENT_DROP_AUTHORITIES_TABLE         = props.getProperty("STATEMENT_DROP_AUTHORITIES_TABLE");
 		STATEMENT_DROP_CATEGORY_TABLE            = props.getProperty("STATEMENT_DROP_CATEGORY_TABLE");
@@ -1210,6 +1249,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_WIKI_USERS              = props.getProperty("STATEMENT_SELECT_WIKI_USERS");
 		STATEMENT_UPDATE_GROUP                   = props.getProperty("STATEMENT_UPDATE_GROUP");
 		STATEMENT_UPDATE_NAMESPACE               = props.getProperty("STATEMENT_UPDATE_NAMESPACE");
+		STATEMENT_UPDATE_RECENT_CHANGES_PREVIOUS_VERSION_ID = props.getProperty("STATEMENT_UPDATE_RECENT_CHANGES_PREVIOUS_VERSION_ID");
 		STATEMENT_UPDATE_TOPIC_NAMESPACE         = props.getProperty("STATEMENT_UPDATE_TOPIC_NAMESPACE");
 		STATEMENT_UPDATE_ROLE                    = props.getProperty("STATEMENT_UPDATE_ROLE");
 		STATEMENT_UPDATE_TOPIC                   = props.getProperty("STATEMENT_UPDATE_TOPIC");
@@ -1298,7 +1338,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		int logType = rs.getInt("log_type");
 		if (logType > 0) {
 			change.setLogType(logType);
-			change.initChangeWikiMessageForLog(logType, rs.getString("log_params"));
+			change.initChangeWikiMessageForLog(logType, rs.getString("log_params"), change.getTopicVersionId());
 		}
 		change.setVirtualWiki(rs.getString("virtual_wiki_name"));
 		return change;
