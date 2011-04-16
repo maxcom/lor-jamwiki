@@ -408,7 +408,7 @@ public class Utilities {
 		if (!file.exists()) {
 			throw new FileNotFoundException("Unable to find class loader root");
 		}
-		return file.getParentFile();
+		return file.getParentFile().getParentFile();
 	}
 
 	/**
