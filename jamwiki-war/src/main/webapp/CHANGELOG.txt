@@ -18,6 +18,7 @@ New Features:
     task on the Special:Maintenance page to improve performance.
   * Upgrade to Lucene Search 3.1.
   * Upgrade to commons-codec 1.5.
+  * Upgrade to commons-pool 1.5.6.
 
 Bugfixes:
 
