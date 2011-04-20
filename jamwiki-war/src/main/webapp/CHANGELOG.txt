@@ -1,4 +1,21 @@
-﻿1.0.2
+﻿1.0.3
+=====
+
+New Features:
+
+  * None.
+
+Bugfixes:
+
+  * None.
+
+Translation Updates:
+
+  * Updated Chinese translations (hfl).
+  * Updated Dutch translations (Angel).
+
+
+1.0.2
 =====
 
 New Features:
