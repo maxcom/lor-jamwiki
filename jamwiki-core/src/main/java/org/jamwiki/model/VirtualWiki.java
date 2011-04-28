@@ -17,6 +17,7 @@
 package org.jamwiki.model;
 
 import java.io.Serializable;
+import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -47,6 +48,13 @@ public class VirtualWiki implements Serializable {
 	 */
 	public void setDefaultTopicName(String defaultTopicName) {
 		this.defaultTopicName = defaultTopicName;
+	}
+
+	/**
+	 * Determine if this virtual wiki matches the system default.
+	 */
+	public boolean isDefaultVirtualWiki() {
+		return (this.name != null && this.name.equals(Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT)));
 	}
 
 	/**

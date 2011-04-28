@@ -125,7 +125,7 @@ public class Difference
      */
     public String toString()
     {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("del: [" + delStart + ", " + delEnd + "]");
         buf.append(" ");
         buf.append("add: [" + addStart + ", " + addEnd + "]");

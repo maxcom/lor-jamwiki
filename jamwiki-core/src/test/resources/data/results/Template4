@@ -5,3 +5,17 @@
 Test topic.</p>
 <p>test</p>
 <p><a href="/wiki/en/Special:Edit?topic=non_existent_topic" class="edit" title="non existent topic">non existent topic</a></p>
+<p><b>THIS IS A TEST</b></p>
+<p><b>THIS IS A TEST</b></p>
+<p><b>THIS IS A TEST</b></p>
+<p>{{subst: Non-Existent Template}}</p>
+<p>6</p>
+<p><br />
+Test topic.</p>
+<p>content = Template4</p>
+<table>
+<tr>
+<td>no arg1</td>
+<td>test</td>
+</tr>
+</table>

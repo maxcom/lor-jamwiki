@@ -42,6 +42,7 @@
 <h1 id="contents-header"><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /></fmt:message></h1>
 
 <%@ include file="view-topic-include.jsp" %>
+<%@ include file="view-category-include.jsp" %>
 
 </body>
 </html>

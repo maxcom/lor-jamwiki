@@ -58,7 +58,7 @@ public class XMLUtil {
 		if (tagValue == null) {
 			return "";
 		}
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append('<').append(tagName).append('>');
 		if (escape) {
 			tagValue = StringEscapeUtils.escapeXml(tagValue);
@@ -82,7 +82,7 @@ public class XMLUtil {
 		if (tagValue == null) {
 			return "";
 		}
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append('<').append(tagName);
 		String value = null;
 		for (String key : attributes.keySet()) {

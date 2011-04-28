@@ -19,6 +19,7 @@
 package org.jamwiki.utils;
 
 import java.util.List;
+import org.jamwiki.JAMWikiUnitTest;
 import org.jamwiki.model.WikiDiff;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -26,7 +27,7 @@ import static org.junit.Assert.*;
 /**
  *
  */
-public class DiffUtilTest {
+public class DiffUtilTest extends JAMWikiUnitTest {
 
 	/**
 	 *

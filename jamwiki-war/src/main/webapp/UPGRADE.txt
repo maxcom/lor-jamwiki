@@ -28,8 +28,9 @@ To upgrade using this automated process follow these steps:
         4.  (Optional) Any other files in the /WEB-INF/ directory that have
             custom modifications.
   3.  Back up all database data prior to upgrading. If you skip this step you
-      do so at your own risk - the upgrade process may modify the database
-      schema, and a failure can leave your wiki in an unusable state. User who
+      do so at your own risk - major upgrades (such as from 0.7.x 0.8.x) will
+      generally include database schema modifications, and failures while
+      updating the schema can leave your wiki in an unusable state. Users who
       are not using an external database should back up all files in the wiki
       system folder, which is specified by the Special:Admin#database
       "File-system directory" property.
@@ -56,6 +57,8 @@ To upgrade using this automated process follow these steps:
       "History" tab for the StyleSheet topic (for example: 
       http://jamwiki.org/wiki/en/Special:History?topic=StyleSheet), selecting
       the pre-upgrade version, and then editing and saving that version.
+  11. If you have created any virtual wikis, be sure to restore the
+      configuration for each virtual wiki to the /WEB-INF/web-xml file.
 
 If the upgrade fails see below for instructions to manually upgrade. If the
 problem persists please report it on http://jamwiki.org/wiki/en/Bug_Reports and
@@ -77,11 +80,131 @@ otherwise noted.  For example, if upgrading from version 0.6.0 to version
 followed by 0.6.3.
 
 
+  JAMWiki 0.9.4
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.9.4".
+
+
+  JAMWiki 0.9.3
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.9.3".
+
+
+  JAMWiki 0.9.2
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.9.2".
+
+
+  JAMWiki 0.9.1
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.9.1".
+
+
+  JAMWiki 0.9.0
+  =============
+
+  NOTE: The Lucene search engine has been updated in this release.  As a
+  result most users will want to rebuild their search index using the
+  tools on the Special:Maintenance page.
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.9.0".
+  2. CSS styles have changed during this release.  An up-to-date version of
+     the default StyleSheet topic can be found in the
+     /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
+     can only be edited AFTER all other upgrade steps have been completed.
+  3. The Spring Framework and Spring Security have been updated, so
+     the applicationContext-security.xml, jamwiki-servlet.xml and web.xml
+     may require modification.
+  4. Namespaces are now managed through the Special:VirtualWiki page.  Any
+     namespaces that were previously customized via the
+     jamwiki-configuration.xml will need to be re-configured using the new
+     interface.
+  5. Update the database schema by executing the following SQL statements:
+       a) Create the jam_namespace table
+              CREATE TABLE jam_namespace ( 
+                namespace_id INTEGER NOT NULL, 
+                namespace VARCHAR(200) NOT NULL, 
+                main_namespace_id INTEGER, 
+                CONSTRAINT jam_p_namesp PRIMARY KEY (namespace_id), 
+                CONSTRAINT jam_u_namesp_namesp UNIQUE (namespace), 
+                CONSTRAINT jam_f_namesp_namesp FOREIGN KEY (main_namespace_id) REFERENCES jam_namespace(namespace_id) 
+              );
+       b) Create the jam_namespace_translation table.
+              CREATE TABLE jam_namespace_translation ( 
+                namespace_id INTEGER NOT NULL, 
+                virtual_wiki_id INTEGER NOT NULL, 
+                namespace VARCHAR(200) NOT NULL, 
+                CONSTRAINT jam_p_namesptr PRIMARY KEY (namespace_id, virtual_wiki_id), 
+                CONSTRAINT jam_f_namesptr_namesp FOREIGN KEY (namespace_id) REFERENCES jam_namespace(namespace_id), 
+                CONSTRAINT jam_f_namesptr_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id), 
+                CONSTRAINT jam_u_namesptr_namesp UNIQUE (virtual_wiki_id, namespace) 
+              );
+       c) Create the base namespaces.
+              INSERT INTO jam_namespace (namespace_id, namespace) values (-2, 'Media');
+              INSERT INTO jam_namespace (namespace_id, namespace) values (-1, 'Special');
+              INSERT INTO jam_namespace (namespace_id, namespace) values (0, '');
+              INSERT INTO jam_namespace (namespace_id, namespace, main_namespace_id) values (1, 'Comments', 0);
+              INSERT INTO jam_namespace (namespace_id, namespace) values (2, 'User');
+              INSERT INTO jam_namespace (namespace_id, namespace, main_namespace_id) values (3, 'User comments', 2);
+              INSERT INTO jam_namespace (namespace_id, namespace) values (4, 'Project');
+              INSERT INTO jam_namespace (namespace_id, namespace, main_namespace_id) values (5, 'Project comments', 4);
+              INSERT INTO jam_namespace (namespace_id, namespace) values (6, 'Image');
+              INSERT INTO jam_namespace (namespace_id, namespace, main_namespace_id) values (7, 'Image comments', 6);
+              INSERT INTO jam_namespace (namespace_id, namespace) values (8, 'JAMWiki');
+              INSERT INTO jam_namespace (namespace_id, namespace, main_namespace_id) values (9, 'JAMWiki comments', 8);
+              INSERT INTO jam_namespace (namespace_id, namespace) values (10, 'Template');
+              INSERT INTO jam_namespace (namespace_id, namespace, main_namespace_id) values (11, 'Template comments', 10);
+              INSERT INTO jam_namespace (namespace_id, namespace) values (12, 'Help');
+              INSERT INTO jam_namespace (namespace_id, namespace, main_namespace_id) values (13, 'Help comments', 12);
+              INSERT INTO jam_namespace (namespace_id, namespace) values (14, 'Category');
+              INSERT INTO jam_namespace (namespace_id, namespace, main_namespace_id) values (15, 'Category comments', 14);
+       d) Update the jam_topic table with namespace-related values
+            Oracle:
+              alter table jam_topic add namespace_id INTEGER DEFAULT 0 NOT NULL;
+              alter table jam_topic add constraint jam_f_topic_namesp FOREIGN KEY (namespace_id) REFERENCES jam_namespace(namespace_id);
+              alter table jam_topic add page_name VARCHAR(200);
+              alter table jam_topic add page_name_lower VARCHAR(200);
+            MS SQL:
+              alter table jam_topic add namespace_id INTEGER DEFAULT 0 NOT NULL;
+              alter table jam_topic add constraint jam_f_topic_namesp FOREIGN KEY (namespace_id) REFERENCES jam_namespace(namespace_id);
+              alter table jam_topic add page_name VARCHAR(200);
+              alter table jam_topic add page_name_lower VARCHAR(200);
+            Other Databases:
+              alter table jam_topic add column namespace_id INTEGER DEFAULT 0 NOT NULL;
+              alter table jam_topic add constraint jam_f_topic_namesp FOREIGN KEY (namespace_id) REFERENCES jam_namespace(namespace_id);
+              alter table jam_topic add column page_name VARCHAR(200);
+              alter table jam_topic add column page_name_lower VARCHAR(200);
+       e) Add indexes to tables.
+              CREATE INDEX jam_i_topic_pgnm on jam_topic (page_name);
+              CREATE INDEX jam_i_topic_pgnml on jam_topic (page_name_lower);
+              CREATE INDEX jam_i_topicv_topic on jam_topic_version (topic_id);
+  6. Once the database upgrades are complete the "Fix Incorrect Topic Namespaces"
+     tool should be invoked from the Special:Maintenance page.  Provided that tool
+     runs successfully then "NOT NULL" constraints should be added to the page_name
+     and page_name_lower columns in the jam_topic table.
+
+
   JAMWiki 0.8.4
   =============
 
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.8.4".
+
+
+  JAMWiki 0.8.3
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.8.3".
 
 
   JAMWiki 0.8.3

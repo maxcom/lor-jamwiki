@@ -18,6 +18,9 @@ package org.jamwiki.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import org.apache.commons.lang.StringUtils;
+import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -25,37 +28,39 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class Topic implements Serializable {
 
-	/* Standard topic type. */
-	public static final int TYPE_ARTICLE = 1;
-	/* Topic redirects to another topic. */
-	public static final int TYPE_REDIRECT = 2;
-	/* Topic is an image. */
-	public static final int TYPE_IMAGE = 4;
-	/* Topic is a category. */
-	public static final int TYPE_CATEGORY = 5;
-	/* Topic is a non-image file. */
-	public static final int TYPE_FILE = 6;
-	/* Internal files, do not display on Special:Allpages */
-	public static final int TYPE_SYSTEM_FILE = 7;
-	/* Wiki templates. */
-	public static final int TYPE_TEMPLATE = 8;
 	// FIXME - consider making this an ACL (more flexible)
 	private boolean adminOnly = false;
 	private Integer currentVersionId = null;
 	private Timestamp deleteDate = null;
-	private String name = null;
+	private Namespace namespace = Namespace.namespace(Namespace.MAIN_ID);
+	/** Page name is the topic name without the namespace.  For example, if the topic name is "Help:Help Page" the page name is "Help Page". */
+	private String pageName = null;
 	private boolean readOnly = false;
 	private String redirectTo = null;
 	private String topicContent = null;
 	private int topicId = -1;
-	private int topicType = TYPE_ARTICLE;
+	private TopicType topicType = TopicType.ARTICLE;
 	private String virtualWiki = null;
 	private static final WikiLogger logger = WikiLogger.getLogger(Topic.class.getName());
 
 	/**
-	 *
+	 * Initialize a topic, passing in the virtual wiki and the full topic name,
+	 * including namespace.  Example: "Help:Help Page".
 	 */
-	public Topic() {
+	public Topic(String virtualWiki, String name) {
+		this.virtualWiki = virtualWiki;
+		this.setName(name);
+	}
+
+	/**
+	 * Initialize a topic, passing in the virtual wiki, namespace and page name.  Note
+	 * that page name does NOT include namespace, so for a topic of "Help:Help Page"
+	 * the page name is "Help Page".
+	 */
+	public Topic(String virtualWiki, Namespace namespace, String pageName) {
+		this.virtualWiki = virtualWiki;
+		this.namespace = namespace;
+		this.pageName = pageName;
 	}
 
 	/**
@@ -65,7 +70,8 @@ public class Topic implements Serializable {
 		this.adminOnly = topic.adminOnly;
 		this.currentVersionId = topic.currentVersionId;
 		this.deleteDate = topic.deleteDate;
-		this.name = topic.name;
+		this.namespace = topic.namespace;
+		this.pageName = topic.pageName;
 		this.readOnly = topic.readOnly;
 		this.redirectTo = topic.redirectTo;
 		this.topicContent = topic.topicContent;
@@ -124,17 +130,37 @@ public class Topic implements Serializable {
 	}
 
 	/**
-	 *
+	 * Return the full topic name, including namespace.  Example: "Help:Help Page".
 	 */
 	public String getName() {
-		return this.name;
+		String name = this.pageName;
+		if (!StringUtils.isBlank(this.namespace.getLabel(this.virtualWiki))) {
+			name = this.namespace.getLabel(this.virtualWiki) + Namespace.SEPARATOR + this.pageName;
+		}
+		return name;
+	}
+
+	/**
+	 * Set the full topic name, including namespace.  Example: "Help:Help Page".
+	 */
+	public void setName(String name) {
+		WikiLink wikiLink = LinkUtil.parseWikiLink(this.virtualWiki, name);
+		this.namespace = wikiLink.getNamespace();
+		this.pageName = wikiLink.getArticle();
 	}
 
 	/**
 	 *
 	 */
-	public void setName(String name) {
-		this.name = name;
+	public Namespace getNamespace() {
+		return this.namespace;
+	}
+
+	/**
+	 *
+	 */
+	public String getPageName() {
+		return this.pageName;
 	}
 
 	/**
@@ -196,14 +222,14 @@ public class Topic implements Serializable {
 	/**
 	 *
 	 */
-	public int getTopicType() {
+	public TopicType getTopicType() {
 		return this.topicType;
 	}
 
 	/**
 	 *
 	 */
-	public void setTopicType(int topicType) {
+	public void setTopicType(TopicType topicType) {
 		this.topicType = topicType;
 	}
 
@@ -212,12 +238,5 @@ public class Topic implements Serializable {
 	 */
 	public String getVirtualWiki() {
 		return this.virtualWiki;
-	}
-
-	/**
-	 *
-	 */
-	public void setVirtualWiki(String virtualWiki) {
-		this.virtualWiki = virtualWiki;
 	}
 }

@@ -17,15 +17,21 @@
 package org.jamwiki.parser.jflex;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
+import org.jamwiki.model.Namespace;
+import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.utils.ImageUtil;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
@@ -38,12 +44,18 @@ public class ParserFunctionUtil {
 	private static final String PARSER_FUNCTION_ANCHOR_ENCODE = "anchorencode:";
 	private static final String PARSER_FUNCTION_FILE_PATH = "filepath:";
 	private static final String PARSER_FUNCTION_FULL_URL = "fullurl:";
+	private static final String PARSER_FUNCTION_EXPR = "#expr:";
+	private static final String PARSER_FUNCTION_IF = "#if:";
+	private static final String PARSER_FUNCTION_IF_EQUAL = "#ifeq:";
 	private static final String PARSER_FUNCTION_LOCAL_URL = "localurl:";
 	private static final String PARSER_FUNCTION_LOWER_CASE = "lc:";
 	private static final String PARSER_FUNCTION_LOWER_CASE_FIRST = "lcfirst:";
+	private static final String PARSER_FUNCTION_NAMESPACE = "ns:";
+	private static final String PARSER_FUNCTION_NAMESPACE_ESCAPED = "nse:";
 	private static final String PARSER_FUNCTION_UPPER_CASE = "uc:";
 	private static final String PARSER_FUNCTION_UPPER_CASE_FIRST = "ucfirst:";
 	private static final String PARSER_FUNCTION_URL_ENCODE = "urlencode:";
+	private static final String MAGIC_DISPLAY_TITLE = "DISPLAYTITLE:";
 	private static List<String> PARSER_FUNCTIONS = new ArrayList<String>();
 
 	static {
@@ -51,12 +63,18 @@ public class ParserFunctionUtil {
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_ANCHOR_ENCODE);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_FILE_PATH);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_FULL_URL);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_EXPR);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_IF);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_IF_EQUAL);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOCAL_URL);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOWER_CASE);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOWER_CASE_FIRST);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_NAMESPACE);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_NAMESPACE_ESCAPED);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_UPPER_CASE);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_UPPER_CASE_FIRST);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_URL_ENCODE);
+		PARSER_FUNCTIONS.add(MAGIC_DISPLAY_TITLE);
 	}
 
 	/**
@@ -72,7 +90,7 @@ public class ParserFunctionUtil {
 		}
 		String parserFunction = name.substring(0, pos + 1).trim();
 		String parserFunctionArguments = name.substring(pos + 1).trim();
-		if (!PARSER_FUNCTIONS.contains(parserFunction) || StringUtils.isBlank(parserFunctionArguments)) {
+		if (!PARSER_FUNCTIONS.contains(parserFunction)) {
 			return null;
 		}
 		return new String[]{parserFunction, parserFunctionArguments};
@@ -83,7 +101,7 @@ public class ParserFunctionUtil {
 	 * function result.  See http://meta.wikimedia.org/wiki/Help:Magic_words for a
 	 * list of Mediawiki parser functions.
 	 */
-	protected static String processParserFunction(ParserInput parserInput, String parserFunction, String parserFunctionArguments) throws DataAccessException {
+	protected static String processParserFunction(ParserInput parserInput, ParserOutput parserOutput, String parserFunction, String parserFunctionArguments) throws DataAccessException, ParserException {
 		String[] parserFunctionArgumentArray = ParserFunctionUtil.parseParserFunctionArgumentArray(parserFunctionArguments);
 		if (parserFunction.equals(PARSER_FUNCTION_ANCHOR_ENCODE)) {
 			return Utilities.encodeAndEscapeTopicName(parserFunctionArgumentArray[0]);
@@ -94,6 +112,15 @@ public class ParserFunctionUtil {
 		if (parserFunction.equals(PARSER_FUNCTION_FULL_URL)) {
 			return ParserFunctionUtil.parseFileUrl(parserInput, parserFunctionArgumentArray);
 		}
+		if (parserFunction.equals(PARSER_FUNCTION_EXPR)) {
+			return ParserFunctionUtil.parseExpr(parserInput, parserFunctionArgumentArray);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_IF)) {
+			return ParserFunctionUtil.parseIf(parserInput, parserFunctionArgumentArray);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_IF_EQUAL)) {
+			return ParserFunctionUtil.parseIfEqual(parserInput, parserFunctionArgumentArray);
+		}
 		if (parserFunction.equals(PARSER_FUNCTION_LOCAL_URL)) {
 			return ParserFunctionUtil.parseLocalUrl(parserInput, parserFunctionArgumentArray);
 		}
@@ -102,6 +129,12 @@ public class ParserFunctionUtil {
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_LOWER_CASE_FIRST)) {
 			return ParserFunctionUtil.parseLowerCaseFirst(parserInput, parserFunctionArgumentArray);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_NAMESPACE)) {
+			return ParserFunctionUtil.parseNamespace(parserInput, parserFunctionArgumentArray, false);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_NAMESPACE_ESCAPED)) {
+			return ParserFunctionUtil.parseNamespace(parserInput, parserFunctionArgumentArray, true);
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_UPPER_CASE)) {
 			return ParserFunctionUtil.parseUpperCase(parserInput, parserFunctionArgumentArray);
@@ -112,6 +145,9 @@ public class ParserFunctionUtil {
 		if (parserFunction.equals(PARSER_FUNCTION_URL_ENCODE)) {
 			return ParserFunctionUtil.parseUrlEncode(parserInput, parserFunctionArgumentArray);
 		}
+		if (parserFunction.equals(MAGIC_DISPLAY_TITLE)) {
+			return ParserFunctionUtil.parseDisplayTitle(parserInput, parserOutput, parserFunctionArgumentArray);
+		}
 		return null;
 	}
 
@@ -120,8 +156,8 @@ public class ParserFunctionUtil {
 	 */
 	private static String parseFilePath(ParserInput parserInput, String[] parserFunctionArgumentArray) throws DataAccessException {
 		// pre-pend the image namespace to the file name
-		String filename = NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR + parserFunctionArgumentArray[0];
-		String result = LinkUtil.buildImageFileUrl(parserInput.getContext(), parserInput.getVirtualWiki(), filename);
+		String filename = Namespace.namespace(Namespace.FILE_ID).getLabel(parserInput.getVirtualWiki()) + Namespace.SEPARATOR + parserFunctionArgumentArray[0];
+		String result = ImageUtil.buildImageFileUrl(parserInput.getContext(), parserInput.getVirtualWiki(), filename);
 		if (result == null) {
 			return "";
 		}
@@ -143,6 +179,128 @@ public class ParserFunctionUtil {
 			result += "?" + parserFunctionArgumentArray[1];
 		}
 		return result;
+	}
+
+	/**
+	 * Parse the {{#expr:}} parser function.  Usage: {{#expr: expression }}.
+	 */
+	private static String parseExpr(ParserInput parserInput, String[] parserFunctionArgumentArray) throws DataAccessException,  ParserException {
+		String expr = parserFunctionArgumentArray[0];
+		return ParserFunctionUtil.evaluateExpression(expr);
+	}
+
+	/**
+	 *
+	 */
+	private static String evaluateExpression(String expr) {
+		if (StringUtils.isBlank(expr)) {
+			return "";
+		}
+		StringBuilder expression = new StringBuilder(expr);
+		List<BigDecimal> stack = new ArrayList<BigDecimal>();
+		String next = "";
+		char part;
+		int i = 0;
+		while (i < expression.length()) {
+			part = expression.charAt(i);
+			if (Character.isDigit(part) || part == '.') {
+				next += part;
+			} else if (part == ')') {
+				// unmatched closing parentheses
+				return ((i > 0) ? expression.substring(0, i) : "") + "<strong class=\"error\">" + part + "</strong>" + ((i < expression.length() - 1) ? expression.substring(i + 1) : "");
+			} else if (part == '(') {
+				int end = Utilities.findMatchingEndTag(expression, i, "(", ")");
+				if (end == -1) {
+					// unmatched opening parentheses
+					return ((i > 0) ? expression.substring(0, i) : "") + "<strong class=\"error\">" + part + "</strong>" + ((i < expression.length() - 1) ? expression.substring(i + 1) : "");
+				}
+				String result = ParserFunctionUtil.evaluateExpression(expression.substring(i + 1, end - 1));
+				expression = expression.replace(i, end, "");
+				try {
+					stack.add(new BigDecimal(result));
+				} catch (NumberFormatException e) {
+					return result;
+				}
+			} else if (!StringUtils.isBlank(next)) {
+				stack.add(new BigDecimal(next));
+				next = "";
+			}
+			i++;
+		}
+		if (!StringUtils.isBlank(next)) {
+			stack.add(new BigDecimal(next));
+		}
+		BigDecimal a, b;
+		for (i = 0; i < expression.length(); i++) {
+			part = expression.charAt(i);
+			try {
+				switch (part) {
+					case '+':
+						a = stack.remove(0);
+						b = stack.remove(0);
+						stack.add(0, a.add(b));
+						break;
+					case '-':
+						a = stack.remove(0);
+						b = stack.remove(0);
+						stack.add(0, a.subtract(b));
+						break;
+					case '*':
+						a = stack.remove(0);
+						b = stack.remove(0);
+						stack.add(0, a.multiply(b));
+						break;
+					case '/':
+						a = stack.remove(0);
+						b = stack.remove(0);
+						stack.add(0, a.divide(b));
+						break;
+				}
+			} catch (ArithmeticException e) {
+				return "<strong class=\"error\">" + expr + "</strong>";
+			} catch (IndexOutOfBoundsException e) {
+				return "<strong class=\"error\">" + expr + "</strong>";
+			}
+		}
+		double result = stack.get(0).doubleValue();
+		// strip any trailing zeroes
+		return ((Math.round(result) == result) ? Long.toString(Math.round(result)) : Double.toString(result));
+	}
+
+	/**
+	 * Parse the {{#if:}} parser function.  Usage: {{#if: test | true | false}}.
+	 */
+	private static String parseIf(ParserInput parserInput, String[] parserFunctionArgumentArray) throws DataAccessException,  ParserException {
+		boolean condition = ((parserFunctionArgumentArray.length >= 1) ? !StringUtils.isBlank(parserFunctionArgumentArray[0]) : false);
+		// parse to handle any embedded templates
+		if (condition) {
+			return (parserFunctionArgumentArray.length >= 2) ? JFlexParserUtil.parseFragment(parserInput, parserFunctionArgumentArray[1], JFlexParser.MODE_PREPROCESS) : "";
+		} else {
+			return (parserFunctionArgumentArray.length >= 3) ? JFlexParserUtil.parseFragment(parserInput, parserFunctionArgumentArray[2], JFlexParser.MODE_PREPROCESS) : "";
+		}
+	}
+
+	/**
+	 * Parse the {{#ifeq:}} parser function.  Usage: {{#ifeq: value1 | value2 | true | false}}.
+	 */
+	private static String parseIfEqual(ParserInput parserInput, String[] parserFunctionArgumentArray) throws DataAccessException,  ParserException {
+		String arg1 = ((parserFunctionArgumentArray.length >= 1) ? parserFunctionArgumentArray[0] : "");
+		String arg2 = ((parserFunctionArgumentArray.length >= 2) ? parserFunctionArgumentArray[1] : "");
+		String result1 = ((parserFunctionArgumentArray.length >= 3) ? parserFunctionArgumentArray[2] : "");
+		String result2 = ((parserFunctionArgumentArray.length >= 4) ? parserFunctionArgumentArray[3] : "");
+		boolean equals = StringUtils.equals(arg1, arg2);
+		if (!equals && NumberUtils.isNumber(arg1) && NumberUtils.isNumber(arg2)) {
+			// compare numerically
+			BigDecimal bigDecimal1 = new BigDecimal(arg1);
+			BigDecimal bigDecimal2 = new BigDecimal(arg2);
+			equals = (bigDecimal1.compareTo(bigDecimal2) == 0);
+		}
+		// parse to handle any embedded templates
+		if (equals) {
+			return JFlexParserUtil.parseFragment(parserInput, result1, JFlexParser.MODE_PREPROCESS);
+		} else {
+			return JFlexParserUtil.parseFragment(parserInput, result2, JFlexParser.MODE_PREPROCESS);
+		}
 	}
 
 	/**
@@ -168,6 +326,24 @@ public class ParserFunctionUtil {
 	 */
 	private static String parseLowerCaseFirst(ParserInput parserInput, String[] parserFunctionArgumentArray) {
 		return StringUtils.uncapitalize(parserFunctionArgumentArray[0]);
+	}
+
+	/**
+	 * Parse the {{ns:}} and {{nse:}} parser functions.
+	 */
+	private static String parseNamespace(ParserInput parserInput, String[] parserFunctionArgumentArray, boolean escape) throws DataAccessException {
+		int namespaceId = NumberUtils.toInt(parserFunctionArgumentArray[0], -10);
+		Namespace namespace = null;
+		if (namespaceId != -10) {
+			namespace = WikiBase.getDataHandler().lookupNamespaceById(namespaceId);
+		} else {
+			namespace = WikiBase.getDataHandler().lookupNamespace(parserInput.getVirtualWiki(), Utilities.decodeAndEscapeTopicName(parserFunctionArgumentArray[0], true));
+		}
+		String result = ((namespace == null) ? "" : namespace.getLabel(parserInput.getVirtualWiki()));
+		if (StringUtils.isBlank(result)) {
+			return "";
+		}
+		return (escape) ? Utilities.encodeAndEscapeTopicName(result) : result;
 	}
 
 	/**
@@ -197,6 +373,19 @@ public class ParserFunctionUtil {
 	}
 
 	/**
+	 *
+	 */
+	private static String parseDisplayTitle(ParserInput parserInput, ParserOutput parserOutput, String[] parserFunctionArgumentArray) {
+		String pageTitle = parserFunctionArgumentArray[0];
+		if (pageTitle != null) {
+			if (StringUtils.equals(Utilities.decodeAndEscapeTopicName(pageTitle, true), parserInput.getTopicName())) {
+				parserOutput.setPageTitle(parserFunctionArgumentArray[0]);
+			}
+		}
+		return "";
+	}
+
+	/**
 	 * Parse parser function arguments of the form "arg1|arg2", trimming excess whitespace
 	 * and returning an array of results.
 	 */
@@ -204,10 +393,12 @@ public class ParserFunctionUtil {
 		if (StringUtils.isBlank(parserFunctionArguments)) {
 			return new String[0];
 		}
-		String[] parserFunctionArgumentArray = parserFunctionArguments.split("\\|");
-		// trim results
-		for (int i = 0; i < parserFunctionArgumentArray.length; i++) {
-			parserFunctionArgumentArray[i] = parserFunctionArgumentArray[i].trim();
+		List<String> parserFunctionArgumentList = JFlexParserUtil.tokenizeParamString(parserFunctionArguments);
+		String[] parserFunctionArgumentArray = new String[parserFunctionArgumentList.size()];
+		// trim results and store in array
+		int i = 0;
+		for (String argument : parserFunctionArgumentList) {
+			parserFunctionArgumentArray[i++] = argument.trim();
 		}
 		return parserFunctionArgumentArray;
 	}

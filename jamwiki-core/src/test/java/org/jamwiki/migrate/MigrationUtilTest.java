@@ -20,18 +20,21 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import org.jamwiki.JAMWikiUnitTest;
 import org.jamwiki.TestFileUtil;
 import org.jamwiki.WikiBase;
-import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.rules.TemporaryFolder;
 
 /**
  *
  */
-public class MigrationUtilTest {
+public class MigrationUtilTest extends JAMWikiUnitTest {
 
 	private static final String FILE_TEST_TWO_TOPICS_WITH_HISTORY = "mediawiki-export-two-topics-with-history.xml";
 	private static final String FILE_ONE_TOPIC_WITH_UNSORTED_HISTORY = "mediawiki-export-one-topic-with-unsorted-history.xml";
@@ -44,6 +47,63 @@ public class MigrationUtilTest {
 	private static final String TOPIC_NAME4 = "Who am i";
 	private static final String TOPIC_NAME5 = "Namespace Test";
 	private static final String VIRTUAL_WIKI_EN = "en";
+	@Rule
+	public TemporaryFolder TEMP_FOLDER = new TemporaryFolder();
+
+	private static boolean INITIALIZED = false;
+
+	/**
+	 *
+	 */
+	@Before
+	public void setup() throws Exception {
+		super.setup();
+		if (!INITIALIZED) {
+			this.setupTopic(null, "Example1");
+			this.setupTopic(null, "Example2");
+			INITIALIZED = true;
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testExportNonExistentTopic() throws Throwable {
+		String virtualWiki = VIRTUAL_WIKI_EN;
+		List<String> topicNames = new ArrayList<String>();
+		topicNames.add("Bogus Topic Name");
+		boolean excludeHistory = false;
+		File file = TEMP_FOLDER.newFile("export.xml");
+		try {
+			MigrationUtil.exportToFile(file, virtualWiki, topicNames, excludeHistory);
+		} catch (MigrationException e) {
+			if (file.exists()) {
+				// should have been deleted
+				fail("Partial export file not deleted");
+			}
+			return;
+		}
+		fail("Expected MigrationException to be thrown");
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testTwoTopics() throws Throwable {
+		String virtualWiki = VIRTUAL_WIKI_EN;
+		List<String> topicNames = new ArrayList<String>();
+		topicNames.add("Example1");
+		topicNames.add("Example2");
+		boolean excludeHistory = false;
+		File file = TEMP_FOLDER.newFile("export.xml");
+		try {
+			MigrationUtil.exportToFile(file, virtualWiki, topicNames, excludeHistory);
+		} catch (MigrationException e) {
+			fail("Failure during export" + e);
+		}
+	}
 
 	/**
 	 *
@@ -51,8 +111,7 @@ public class MigrationUtilTest {
 	@Test
 	public void testImportFromFileWithTwoTopics() throws Throwable {
 		String virtualWiki = VIRTUAL_WIKI_EN;
-		List<WikiMessage> errors = new ArrayList<WikiMessage>();
-		List<String> results = this.importTestFile(FILE_TEST_TWO_TOPICS_WITH_HISTORY, errors);
+		List<String> results = this.importTestFile(FILE_TEST_TWO_TOPICS_WITH_HISTORY);
 		// validate that the first topic parsed
 		assertTrue("Parsed topic '" + TOPIC_NAME1 + "'", results.contains(TOPIC_NAME1));
 		Topic topic1 = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME1, false, null);
@@ -74,11 +133,10 @@ public class MigrationUtilTest {
 	@Test
 	public void testImportFromFileWithUnsortedHistory() throws Throwable {
 		String virtualWiki = VIRTUAL_WIKI_EN;
-		List<WikiMessage> errors = new ArrayList<WikiMessage>();
-		List<String> results = this.importTestFile(FILE_ONE_TOPIC_WITH_UNSORTED_HISTORY, errors);
+		List<String> results = this.importTestFile(FILE_ONE_TOPIC_WITH_UNSORTED_HISTORY);
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME3, false, null);
 		// validate that the current topic content is correct
-		assertEquals("Topic content set correctly", "Newest Revision", topic.getTopicContent());
+		assertEquals("Incorrect topic ordering: " + topic.getTopicId() + " / " + topic.getCurrentVersionId(), "Newest Revision", topic.getTopicContent());
 	}
 
 	/**
@@ -87,8 +145,7 @@ public class MigrationUtilTest {
 	@Test
 	public void testImportFromFileTopicNameWithQuestionMark() throws Throwable {
 		String virtualWiki = VIRTUAL_WIKI_EN;
-		List<WikiMessage> errors = new ArrayList<WikiMessage>();
-		List<String> results = this.importTestFile(FILE_TOPIC_NAME_WITH_QUESTION_MARK, errors);
+		List<String> results = this.importTestFile(FILE_TOPIC_NAME_WITH_QUESTION_MARK);
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME4, false, null);
 		assertNotNull("Topic with question mark in name imported correctly", topic);
 	}
@@ -99,33 +156,34 @@ public class MigrationUtilTest {
 	@Test
 	public void testImportFromFileNamespaceTest() throws Throwable {
 		String virtualWiki = VIRTUAL_WIKI_EN;
-		List<WikiMessage> errors = new ArrayList<WikiMessage>();
-		List<String> results = this.importTestFile(FILE_NAMESPACE_TEST, errors);
+		List<String> results = this.importTestFile(FILE_NAMESPACE_TEST);
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, TOPIC_NAME5, false, null);
 		assertNotNull("Namespace test topic imported correctly", topic);
 		// verify that Mediawiki namespaces were correctly converted to JAMWiki namespaces
 		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Talk:Test - [[Comments:Test]]") != -1));
 		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("User:Test - [[User:Test]]") != -1));
 		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("User talk:Test - [[User comments:Test]]") != -1));
-		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Wikipedia:Test - [[Wikipedia:Test]]") != -1));
-		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Wikipedia talk:Test - [[Wikipedia talk:Test]]") != -1));
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Wikipedia:Test - [[Project:Test]]") != -1));
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Wikipedia talk:Test - [[Project comments:Test]]") != -1));
 		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("File:Test - [[Image:Test]]") != -1));
 		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("File talk:Test - [[Image comments:Test]]") != -1));
 		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Template:Test - [[Template:Test]]") != -1));
 		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Template talk:Test - [[Template comments:Test]]") != -1));
 		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Category:Test - [[Category:Test]]") != -1));
 		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Category talk:Test - [[Category comments:Test]]") != -1));
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Custom:Test - [[Custom:Test]]") != -1));
+		assertTrue("Namespace converted", (topic.getTopicContent().indexOf("Custom talk:Test - [[Custom talk:Test]]") != -1));
 	}
 
 	/**
 	 * Utility method for importing test files.
 	 */
-	private List<String> importTestFile(String filename, List<WikiMessage> errors) throws Throwable {
+	private List<String> importTestFile(String filename) throws Throwable {
 		File file = TestFileUtil.retrieveFile(TEST_FILES_DIR, filename);
 		Locale locale = new Locale("en", "US");
 		String virtualWiki = VIRTUAL_WIKI_EN;
 		String authorDisplay = "127.0.0.1";
 		WikiUser user = null;
-		return MigrationUtil.importFromFile(file, virtualWiki, user, authorDisplay, locale, errors);
+		return MigrationUtil.importFromFile(file, virtualWiki, user, authorDisplay, locale);
 	}
 }

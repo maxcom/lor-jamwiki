@@ -16,10 +16,12 @@
  */
 package org.jamwiki.parser;
 
+import java.io.IOException;
+
 /**
  * Custom exception class for JAMWiki parsing errors.
  */
-public class ParserException extends Exception {
+public class ParserException extends IOException {
 
 	/**
 	 * Constructor for an exception containing a message.
@@ -38,7 +40,8 @@ public class ParserException extends Exception {
 	 * @param t The exception that is the cause of this exception.
 	 */
 	public ParserException(String message, Throwable t) {
-		super(message, t);
+		super(message);
+		this.initCause(t);
 	}
 
 	/**
@@ -47,6 +50,7 @@ public class ParserException extends Exception {
 	 * @param t The exception that is the cause of this exception.
 	 */
 	public ParserException(Throwable t) {
-		super(t);
+		super();
+		this.initCause(t);
 	}
 }

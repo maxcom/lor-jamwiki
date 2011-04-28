@@ -16,17 +16,13 @@
  */
 package org.jamwiki.model;
 
-import org.springframework.security.GrantedAuthorityImpl;
-import org.jamwiki.utils.WikiLogger;
-
 /**
- * Provides an object representing a Wiki role and implementing the Spring Security
- * <code>GrantedAuthority</code> interface.
+ * Provides an object representing a Wiki role that can be extended by the specific security
+ * implementation.
+ *
+ * @see org.springframework.security.core.authority.GrantedAuthorityImpl#getAuthority
  */
-public class Role extends GrantedAuthorityImpl {
-
-	private static final WikiLogger logger = WikiLogger.getLogger(Role.class.getName());
-	private String description = null;
+public class Role {
 
 	/**
 	 * ROLE_ADMIN gives permission to perform wiki maintenance tasks not
@@ -67,34 +63,36 @@ public class Role extends GrantedAuthorityImpl {
 	public static final Role ROLE_UPLOAD = new Role("ROLE_UPLOAD");
 	public static final Role ROLE_VIEW = new Role("ROLE_VIEW");
 
+	private String authority;
+	private String description;
+
 	/**
+	 * Constructor for role.
 	 *
+	 * @param authority The role name.
 	 */
-	public Role(String role) {
-		super((role == null) ? null : role.toUpperCase());
+	public Role(String authority) {
+		this.authority = authority;
 	}
 
 	/**
-	 *
+	 * 
+	 */
+	public String getAuthority() {
+		return this.authority;
+	}
+
+	/**
+	 * Provide a description of this role.
 	 */
 	public String getDescription() {
 		return this.description;
 	}
 
 	/**
-	 *
+	 * Set a description for this role.
 	 */
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	/**
-	 * Two roles are equal if the role names are the same.
-	 */
-	public boolean equals(Role role) {
-		if (this.getAuthority() == null && role != null && role.getAuthority() == null) {
-			return true;
-		}
-		return (this.getAuthority() != null && role != null && this.getAuthority().equals(role.getAuthority()));
 	}
 }

@@ -16,12 +16,11 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
-<div id="tab-menu">
+<ul id="tab-menu">
 <c:forEach items="${pageInfo.tabMenu}" var="menuItem" varStatus="status">
 	<c:set var="menuText" value="${menuItem.value}" />
 	<%-- FIXME - the print target check is an ugly hack.  need to find a better way. --%>
-	<c:if test="${menuText.key == 'tab.common.print'}"><div class="tab-item"><jamwiki:link value="${menuItem.key}" target="${pageInfo.printTarget}"><fmt:message key="${menuText.key}"><fmt:param value="${menuText.params[0]}" /></fmt:message></jamwiki:link></div></c:if>
-	<c:if test="${menuText.key != 'tab.common.print'}"><div class="tab-item"><jamwiki:link value="${menuItem.key}"><fmt:message key="${menuText.key}"><fmt:param value="${menuText.params[0]}" /></fmt:message></jamwiki:link></div></c:if>
+	<c:if test="${menuText.key == 'tab.common.print'}"><li><jamwiki:link value="${menuItem.key}" target="${pageInfo.printTarget}"><fmt:message key="${menuText.key}"><fmt:param value="${menuText.params[0]}" /></fmt:message></jamwiki:link></li></c:if>
+	<c:if test="${menuText.key != 'tab.common.print'}"><li<c:if test="${pageInfo.selectedTab == menuItem.key}"> class="active"</c:if>><jamwiki:link value="${menuItem.key}"><fmt:message key="${menuText.key}"><fmt:param value="${menuText.params[0]}" /></fmt:message></jamwiki:link></li></c:if>
 </c:forEach>
-</div>
-<div class="clear"></div>
+</ul>

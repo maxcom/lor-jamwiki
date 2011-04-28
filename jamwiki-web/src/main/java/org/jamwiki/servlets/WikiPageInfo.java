@@ -17,14 +17,18 @@
 package org.jamwiki.servlets;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -41,12 +45,14 @@ public class WikiPageInfo {
 	private boolean admin = false;
 	private String contentJsp = JSP_TOPIC;
 	private WikiMessage pageTitle = null;
+	private WikiMessage exception = null;
 	private String redirectName = null;
 	private String redirectUrl = null;
+	private String selectedTab = null;
 	private boolean special = false;
-	private LinkedHashMap tabMenu = new LinkedHashMap();
+	private LinkedHashMap<String, WikiMessage> tabMenu = new LinkedHashMap<String, WikiMessage>();
 	private String topicName = "";
-	private LinkedHashMap userMenu = new LinkedHashMap();
+	private LinkedHashMap<String, WikiMessage> userMenu = new LinkedHashMap<String, WikiMessage>();
 	private String virtualWikiName = null;
 
 	/**
@@ -56,7 +62,7 @@ public class WikiPageInfo {
 		this.virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
 		if (this.virtualWikiName == null) {
 			logger.severe("No virtual wiki available for page request " + request.getRequestURI());
-			this.virtualWikiName = WikiBase.DEFAULT_VWIKI;
+			this.virtualWikiName = Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT);
 		}
 	}
 
@@ -67,12 +73,14 @@ public class WikiPageInfo {
 	protected void reset() {
 		this.admin = false;
 		this.contentJsp = JSP_TOPIC;
+		this.exception = null;
 		this.pageTitle = null;
 		this.redirectName = null;
+		this.selectedTab = null;
 		this.special = false;
-		this.tabMenu = new LinkedHashMap();
+		this.tabMenu = new LinkedHashMap<String, WikiMessage>();
 		this.topicName = "";
-		this.userMenu = new LinkedHashMap();
+		this.userMenu = new LinkedHashMap<String, WikiMessage>();
 	}
 
 	/**
@@ -121,6 +129,26 @@ public class WikiPageInfo {
 	}
 
 	/**
+	 * If a fatal error occurs it will be stored for display on the front
+	 * end.
+	 *
+	 * @return The WikiMessage object representing the error.
+	 */
+	public WikiMessage getException() {
+		return this.exception;
+	}
+
+	/**
+	 * If a fatal error occurs it will be stored for display on the front
+	 * end.
+	 *
+	 * @param exception The WikiMessage object representing the error.
+	 */
+	public void setException(WikiMessage exception) {
+		this.exception = exception;
+	}
+
+	/**
 	 * Return a description for the current page that can be used in an HTML
 	 * meta tag.
 	 *
@@ -136,6 +164,19 @@ public class WikiPageInfo {
 		Object params[] = new Object[1];
 		params[0] = (this.topicName == null) ? "" : this.topicName;
 		return formatter.format(params);
+	}
+
+	/**
+	 * Return a map of default namespace name and the virtual wiki translation for the
+	 * namespace.
+	 */
+	public Map<String, String> getNamespaces() throws DataAccessException {
+		List<Namespace> namespaces = WikiBase.getDataHandler().lookupNamespaces();
+		Map<String, String> results = new HashMap<String, String>();
+		for (Namespace namespace : namespaces) {
+			results.put(namespace.getDefaultLabel(), namespace.getLabel(this.virtualWikiName));
+		}
+		return results;
 	}
 
 	/**
@@ -218,6 +259,28 @@ public class WikiPageInfo {
 	}
 
 	/**
+	 * Return the page topic (example: "Special:Admin") for the page that is
+	 * currently active.
+	 *
+	 * @return The page topic (example: "Special:Admin") for the page that is
+	 * currently active.
+	 */
+	public String getSelectedTab() {
+		return this.selectedTab;
+	}
+
+	/**
+	 * Set the page topic (example: "Special:Admin") for the page that is
+	 * currently active.
+	 *
+	 * @param selectedTab The page topic (example: "Special:Admin") for the
+	 *  page that is currently active.
+	 */
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
+
+	/**
 	 * Return the property value set for the site name.  This value is appended to
 	 * page titles and used in XML exports.
 	 *
@@ -251,41 +314,13 @@ public class WikiPageInfo {
 	}
 
 	/**
-	 * Return the namespace of the topic displayed by the current page.  The
-	 * namespace is the part of topic name, up to the colon.  For regular
-	 * articles the namespace is an empty string.
-	 *
-	 * The namespace cannot be set directly, only the topic name can be set.
-	 *
-	 * @return The wiki namespace of this page, or an empty string for pages
-	 *  in the main namespace.
-	 * @see #getPagename
-	 * @see #getTopicName
-	 */
-	public String getNamespace() {
-		WikiLink wikiLink = LinkUtil.parseWikiLink(this.getTopicName());
-		return wikiLink.getNamespace();
-	}
-
-	/**
-	 * Return the name of the current page, which is the name of the topic
-	 * being viewed (without the namespace).
-	 *
-	 * @return Name of the page.
-	 */
-	public String getPagename() {
-		WikiLink wikiLink = LinkUtil.parseWikiLink(this.getTopicName());
-		return wikiLink.getArticle();
-	}
-
-	/**
 	 * Return a LinkedHashMap containing the topic and text for all links
 	 * that should appear for the tab menu.
 	 *
 	 * @return A LinkedHashMap containing the topic and text for all links
 	 *  that should appear for the tab menu.
 	 */
-	public LinkedHashMap getTabMenu() {
+	public LinkedHashMap<String, WikiMessage> getTabMenu() {
 		return this.tabMenu;
 	}
 
@@ -296,7 +331,7 @@ public class WikiPageInfo {
 	 * @param tabMenu A LinkedHashMap containing the topic and text for all
 	 *  links that should appear for the tab menu.
 	 */
-	public void setTabMenu(LinkedHashMap tabMenu) {
+	public void setTabMenu(LinkedHashMap<String, WikiMessage> tabMenu) {
 		this.tabMenu = tabMenu;
 	}
 
@@ -326,7 +361,7 @@ public class WikiPageInfo {
 	 * @return A LinkedHashMap containing the topic and text for all links
 	 *  that should appear for the user menu.
 	 */
-	public LinkedHashMap getUserMenu() {
+	public LinkedHashMap<String, WikiMessage> getUserMenu() {
 		return this.userMenu;
 	}
 
@@ -337,7 +372,7 @@ public class WikiPageInfo {
 	 * @param userMenu A LinkedHashMap containing the topic and text for all
 	 *  links that should appear for the user menu.
 	 */
-	public void setUserMenu(LinkedHashMap userMenu) {
+	public void setUserMenu(LinkedHashMap<String, WikiMessage> userMenu) {
 		this.userMenu = userMenu;
 	}
 
@@ -374,13 +409,7 @@ public class WikiPageInfo {
 	 *  user page, otherwise <code>false</code>.
 	 */
 	public boolean isUserPage() {
-		WikiLink wikiLink = LinkUtil.parseWikiLink(this.getTopicName());
-		if (wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_USER)) {
-			return true;
-		}
-		if (wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_USER_COMMENTS)) {
-			return true;
-		}
-		return false;
+		WikiLink wikiLink = LinkUtil.parseWikiLink(this.virtualWikiName, this.getTopicName());
+		return (wikiLink.getNamespace().getId().equals(Namespace.USER_ID) || wikiLink.getNamespace().getId().equals(Namespace.USER_COMMENTS_ID));
 	}
 }

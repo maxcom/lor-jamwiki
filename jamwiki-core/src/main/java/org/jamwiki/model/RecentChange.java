@@ -169,7 +169,7 @@ public class RecentChange {
 	 *
 	 */
 	public String getChangeTypeNotification() {
-		StringBuffer changeTypeNotification = new StringBuffer();
+		StringBuilder changeTypeNotification = new StringBuilder();
 		if (this.previousTopicVersionId == null) {
 			changeTypeNotification.append('n');
 		}
@@ -372,7 +372,7 @@ public class RecentChange {
 	/**
 	 *
 	 */
-	public boolean isImport() {
+	public boolean isImportChange() {
 		if (this.editType != null && this.editType == TopicVersion.EDIT_IMPORT) {
 			return true;
 		} else if (this.logType != null && this.logType == LogItem.LOG_TYPE_IMPORT) {

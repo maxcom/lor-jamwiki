@@ -17,12 +17,15 @@
 package org.jamwiki.utils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.Configuration;
 import net.sf.ehcache.config.DiskStoreConfiguration;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 
 /**
@@ -33,11 +36,23 @@ public class WikiCache {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiCache.class.getName());
 	private static CacheManager cacheManager = null;
+	// track whether this instance was instantiated from an ehcache.xml file or using configured properties.
+	private static final boolean USES_XML_CONFIG;
+	private static final String EHCACHE_XML_CONFIG_FILENAME = "ehcache.xml";
 
 	/** Directory for cache files. */
 	private static final String CACHE_DIR = "cache";
 
 	static {
+		boolean xmlConfig = false;
+		try {
+			Utilities.getClassLoaderFile(EHCACHE_XML_CONFIG_FILENAME);
+			logger.info("Initializing cache configuration from " + EHCACHE_XML_CONFIG_FILENAME + " file");
+			xmlConfig = true;
+		} catch (FileNotFoundException e) {
+			logger.info("No " + EHCACHE_XML_CONFIG_FILENAME + " file found, using default cache configuration");
+		}
+		USES_XML_CONFIG = xmlConfig;
 		WikiCache.initialize();
 	}
 
@@ -62,28 +77,21 @@ public class WikiCache {
 	}
 
 	/**
-	 * Add an object to the cache.
-	 *
-	 * @param cacheName The name of the cache that the object is being added
-	 *  to.
-	 * @param key An int value to use as the key for storing and retrieving
-	 *  this object from the cache.
-	 * @param value The object that is being stored in the cache.
-	 */
-	public static void addToCache(String cacheName, int key, Object value) {
-		WikiCache.addToCache(cacheName, Integer.valueOf(key), value);
-	}
-
-	/**
 	 * Internal method used to retrieve a cache given the cache name.  If no
 	 * cache exists with the given name then a new cache will be created.
 	 *
 	 * @param cacheName The name of the cache to retrieve.
 	 * @return The existing cache with the given name, or a new cache if no
 	 *  existing cache exists.
+	 * @throws IllegalStateException if an attempt is made to retrieve a cache
+	 *  using XML configuration and the cache is not configured.
 	 */
-	private static Cache getCache(String cacheName) {
+	private static Cache getCache(String cacheName) throws CacheException {
 		if (!WikiCache.cacheManager.cacheExists(cacheName)) {
+			if (USES_XML_CONFIG) {
+				// all caches should be configured from ehcache.xml
+				throw new IllegalStateException("No cache named " + cacheName + " is configured in the ehcache.xml file");
+			}
 			int maxSize = Environment.getIntValue(Environment.PROP_CACHE_INDIVIDUAL_SIZE);
 			int maxAge = Environment.getIntValue(Environment.PROP_CACHE_MAX_AGE);
 			int maxIdleAge = Environment.getIntValue(Environment.PROP_CACHE_MAX_IDLE_AGE);
@@ -100,29 +108,36 @@ public class WikiCache {
 	public static void initialize() {
 		try {
 			if (WikiCache.cacheManager != null) {
-				WikiCache.cacheManager.removalAll();
+				if (USES_XML_CONFIG) {
+					WikiCache.cacheManager.removalAll();
+				}
 				WikiCache.cacheManager.shutdown();
 			}
 			File directory = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), CACHE_DIR);
 			if (!directory.exists()) {
 				directory.mkdir();
 			}
-			Configuration configuration = new Configuration();
-			CacheConfiguration defaultCacheConfiguration = new CacheConfiguration();
-			defaultCacheConfiguration.setDiskPersistent(false);
-			defaultCacheConfiguration.setEternal(false);
-			defaultCacheConfiguration.setOverflowToDisk(true);
-			defaultCacheConfiguration.setMaxElementsInMemory(Environment.getIntValue(Environment.PROP_CACHE_TOTAL_SIZE));
-			defaultCacheConfiguration.setName("defaultCache");
-			configuration.addDefaultCache(defaultCacheConfiguration);
-			DiskStoreConfiguration diskStoreConfiguration = new DiskStoreConfiguration();
-//			diskStoreConfiguration.addExpiryThreadPool(new ThreadPoolConfiguration("", 5, 5));
-//			diskStoreConfiguration.addSpoolThreadPool(new ThreadPoolConfiguration("", 5, 5));
-			diskStoreConfiguration.setPath(directory.getPath());
-			configuration.addDiskStore(diskStoreConfiguration);
-			WikiCache.cacheManager = new CacheManager(configuration);
-		} catch (Exception e) {
-			logger.severe("Initialization error in WikiCache", e);
+			if (USES_XML_CONFIG) {
+				WikiCache.cacheManager = CacheManager.create();
+			} else {
+				Configuration configuration = new Configuration();
+				CacheConfiguration defaultCacheConfiguration = new CacheConfiguration();
+				defaultCacheConfiguration.setDiskPersistent(false);
+				defaultCacheConfiguration.setEternal(false);
+				defaultCacheConfiguration.setOverflowToDisk(true);
+				defaultCacheConfiguration.setMaxElementsInMemory(Environment.getIntValue(Environment.PROP_CACHE_TOTAL_SIZE));
+				defaultCacheConfiguration.setName("defaultCache");
+				configuration.addDefaultCache(defaultCacheConfiguration);
+				DiskStoreConfiguration diskStoreConfiguration = new DiskStoreConfiguration();
+//				diskStoreConfiguration.addExpiryThreadPool(new ThreadPoolConfiguration("", 5, 5));
+//				diskStoreConfiguration.addSpoolThreadPool(new ThreadPoolConfiguration("", 5, 5));
+				diskStoreConfiguration.setPath(directory.getPath());
+				configuration.addDiskStore(diskStoreConfiguration);
+				WikiCache.cacheManager = new CacheManager(configuration);
+			}
+		} catch (RuntimeException e) {
+			logger.severe("Failure while initializing cache", e);
+			throw e;
 		}
 	}
 
@@ -142,7 +157,27 @@ public class WikiCache {
 	 * @return The generated key value.
 	 */
 	public static String key(String value1, String value2) {
+		if (value1 == null && value2 == null) {
+			throw new IllegalArgumentException("WikiCache.key cannot be called with two null values");
+		}
+		if (value1 == null) {
+			value1 = "";
+		}
+		if (value2 == null) {
+			value2 = "";
+		}
 		return value1 + "/" + value2;
+	}
+
+	/**
+	 * Remove all values from the cache with the given name.
+	 *
+	 * @param cacheName The name of the cache from which objects are being
+	 *  removed.
+	 */
+	public static void removeAllFromCache(String cacheName) {
+		Cache cache = WikiCache.getCache(cacheName);
+		cache.removeAll();
 	}
 
 	/**
@@ -168,17 +203,6 @@ public class WikiCache {
 	}
 
 	/**
-	 * Remove a value from the cache with the given key and name.
-	 *
-	 * @param cacheName The name of the cache from which the object is being
-	 *  removed.
-	 * @param key The key for the record that is being removed from the cache.
-	 */
-	public static void removeFromCache(String cacheName, int key) {
-		WikiCache.removeFromCache(cacheName, Integer.valueOf(key));
-	}
-
-	/**
 	 * Retrieve a cached element from the cache.  This method will return
 	 * <code>null</code> if no matching element is cached, an element with
 	 * no value if a <code>null</code> value is cached, or an element with a
@@ -191,25 +215,13 @@ public class WikiCache {
 	 * @return A new <code>Element</code> object containing the key and cached
 	 *  object value.
 	 */
-	public static Element retrieveFromCache(String cacheName, Object key) {
-		Cache cache = WikiCache.getCache(cacheName);
+	public static Element retrieveFromCache(String cacheName, Object key) throws DataAccessException {
+		Cache cache = null;
+		try {
+			cache = WikiCache.getCache(cacheName);
+		} catch (CacheException e) {
+			throw new DataAccessException("Failure while retrieving data from cache " + cacheName, e);
+		}
 		return cache.get(key);
-	}
-
-	/**
-	 * Retrieve a cached element from the cache.  This method will return
-	 * <code>null</code> if no matching element is cached, an element with
-	 * no value if a <code>null</code> value is cached, or an element with a
-	 * valid object value if such an element is cached.
-	 *
-	 * @param cacheName The name of the cache from which the object is being
-	 *  retrieved.
-	 * @param key The key for the record that is being retrieved from the
-	 *  cache.
-	 * @return A new <code>Element</code> object containing the key and cached
-	 *  object value.
-	 */
-	public static Element retrieveFromCache(String cacheName, int key) {
-		return WikiCache.retrieveFromCache(cacheName, Integer.valueOf(key));
 	}
 }

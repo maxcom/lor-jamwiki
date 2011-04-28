@@ -25,6 +25,8 @@
 
 <%@ include file="page-init.jsp" %>
 
+<div id="move">
+
 <c:if test="${!empty messageObject}"><div class="message red"><fmt:message key="${messageObject.key}"><fmt:param value="${messageObject.params[0]}" /></fmt:message></div></c:if>
 
 <div class="message"><fmt:message key="move.overview" /></div>
@@ -32,22 +34,23 @@
 <%-- FIXME: change from table to divs --%>
 <form name="delete" method="post" action="<jamwiki:link value="Special:Move" />">
 <input type="hidden" name="<%= WikiUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
-<div class="formentry">
-	<span class="formcaption-medium" nowrap><label for="moveDestination"><fmt:message key="move.destination" /></label>: </span>
-	<span class="formelement" width="90%"><input type="text" name="moveDestination" value="<c:out value="${moveDestination}" />" id="moveDestination" size="60" /></span>
+<div class="row">
+	<label for="moveDestination"><fmt:message key="move.destination" /></label>
+	<span><input type="text" name="moveDestination" value="<c:out value="${moveDestination}" />" id="moveDestination" size="60" /></span>
 </div>
-<div class="formentry">
-	<span class="formcaption-medium" nowrap><label for="moveComment"><fmt:message key="move.comment" /></label>: </span>
-	<span class="formelement" width="90%"><input type="text" name="moveComment" value="<c:out value="${moveComment}" />" id="moveComment" size="60" /></span>
+<div class="row">
+	<label for="moveComment"><fmt:message key="move.comment" /></label>
+	<span><input type="text" name="moveComment" value="<c:out value="${moveComment}" />" id="moveComment" size="60" /></span>
 </div>
 <c:if test="${!empty moveCommentsPage}">
-<div class="formentry">
-	<span class="formcaption-medium"><label for="moveCommentsPage"><fmt:message key="move.commentspage" /></label>:</span>
-	<span class="formelement"><input type="checkbox" name="moveCommentsPage" value="<c:out value="${moveCommentsPage}" />" id="moveCommentsPage" /></span>
+<div class="row">
+	<label for="moveCommentsPage"><fmt:message key="move.commentspage" /></label>
+	<span><input type="checkbox" name="moveCommentsPage" value="<c:out value="${moveCommentsPage}" />" id="moveCommentsPage" /></span>
 </div>
 </c:if>
-<div class="formentry">
-	<span class="formcaption-medium">&#160;</span>
-	<span class="formelement"><input type="submit" name="move" value="<fmt:message key="common.move" />" /></span>
+<div class="row">
+	<span class="form-button"><input type="submit" name="move" value="<fmt:message key="common.move" />" /></span>
 </div>
 </form>
+
+</div>

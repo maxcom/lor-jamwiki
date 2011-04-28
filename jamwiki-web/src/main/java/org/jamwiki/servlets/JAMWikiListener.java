@@ -20,6 +20,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.utils.WikiCache;
+import org.jamwiki.utils.WikiUtil;
 
 /**
  * A ServletContextListener that will do necessary initialization
@@ -33,8 +34,10 @@ public class JAMWikiListener implements ServletContextListener {
 	 * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
 	 */
 	public void contextInitialized(ServletContextEvent arg0) {
-		WikiDatabase.initialize();
-		WikiCache.initialize();
+		if (!WikiUtil.isFirstUse()) {
+			WikiDatabase.initialize();
+			WikiCache.initialize();
+		}
 	}
 
 	/**

@@ -16,11 +16,16 @@
  */
 package org.jamwiki;
 
+import java.sql.SQLException;
+
 /**
  * Custom exception class for JAMWiki data errors.  This class will typically
  * wrap <code>SQLException</code> or other exception types.
  */
 public class DataAccessException extends Exception {
+
+	/** SQLException can bury useful info in getNextException(), so add special handling. */
+	private SQLException nextException;
 
 	/**
 	 * Constructor for an exception containing a message.
@@ -29,6 +34,7 @@ public class DataAccessException extends Exception {
 	 */
 	public DataAccessException(String message) {
 		super(message);
+		this.init(message, null);
 	}
 
 	/**
@@ -40,6 +46,7 @@ public class DataAccessException extends Exception {
 	 */
 	public DataAccessException(String message, Throwable t) {
 		super(message, t);
+		this.init(message, t);
 	}
 
 	/**
@@ -49,5 +56,27 @@ public class DataAccessException extends Exception {
 	 */
 	public DataAccessException(Throwable t) {
 		super(t);
+		this.init(null, t);
+	}
+
+	/**
+	 *
+	 */
+	private void init(String message, Throwable t) {
+		if (t instanceof SQLException) {
+			this.nextException = ((SQLException)t).getNextException();
+		}
+	}
+
+	/**
+	 * Override the parent method to add special handling for SQLException.getNextException().
+	 */
+	public String getMessage() {
+		String message = super.getMessage();
+		if (this.nextException != null) {
+			message = (message == null) ? "" : message;
+			message += " [ " + this.nextException.toString() + " ]";
+		}
+		return message;
 	}
 }

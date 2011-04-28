@@ -23,7 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.WikiUserDetails;
+import org.jamwiki.authentication.WikiUserDetailsImpl;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Watchlist;
@@ -60,7 +60,7 @@ public class WatchlistServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void update(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 			throw new WikiException(new WikiMessage("watchlist.error.loginrequired"));
 		}
@@ -69,7 +69,7 @@ public class WatchlistServlet extends JAMWikiServlet {
 		Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
 		WikiUser user = ServletUtil.currentWikiUser();
 		WikiBase.getDataHandler().writeWatchlistEntry(watchlist, virtualWiki, topicName, user.getUserId());
-		String article = WikiUtil.extractTopicLink(topicName);
+		String article = WikiUtil.extractTopicLink(virtualWiki, topicName);
 		if (watchlist.containsTopic(topicName)) {
 			// added to watchlist
 			next.addObject("message", new WikiMessage("watchlist.caption.added", article));
@@ -86,7 +86,7 @@ public class WatchlistServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 			throw new WikiException(new WikiMessage("watchlist.error.loginrequired"));
 		}

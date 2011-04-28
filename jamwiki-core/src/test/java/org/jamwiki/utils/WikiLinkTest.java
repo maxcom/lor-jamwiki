@@ -18,13 +18,15 @@
  */
 package org.jamwiki.utils;
 
+import org.jamwiki.JAMWikiUnitTest;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.jamwiki.model.Namespace;
 
 /**
  *
  */
-public class WikiLinkTest {
+public class WikiLinkTest extends JAMWikiUnitTest {
 
 	/**
 	 *
@@ -36,7 +38,7 @@ public class WikiLinkTest {
 		assertNull("wikiLink.getSection()", wikiLink.getSection());
 		assertNull("wikiLink.getText()", wikiLink.getText());
 		assertNull("wikiLink.getArticle()", wikiLink.getArticle());
-		assertNull("wikiLink.getNamespace()", wikiLink.getNamespace());
+		assertEquals("wikiLink.getNamespace()", Namespace.namespace(Namespace.MAIN_ID), wikiLink.getNamespace());
 		assertNull("wikiLink.getDestination()", wikiLink.getDestination());
 		assertFalse("wikiLink.getColon()", wikiLink.getColon());
 	}
@@ -77,8 +79,18 @@ public class WikiLinkTest {
 	@Test
 	public void testSetNamespace() throws Throwable {
 		WikiLink wikiLink = new WikiLink();
-		wikiLink.setNamespace("testWikiLinkNamespace");
-		assertEquals("wikiLink.getNamespace()", "testWikiLinkNamespace", wikiLink.getNamespace());
+		wikiLink.setNamespace(Namespace.namespace(Namespace.FILE_ID));
+		assertEquals("wikiLink.getNamespace()", Namespace.namespace(Namespace.FILE_ID), wikiLink.getNamespace());
+	}
+
+	/**
+	 *
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testSetNamespace2() throws Throwable {
+		WikiLink wikiLink = new WikiLink();
+		wikiLink.setNamespace(null);
+		assertEquals("wikiLink.getNamespace()", Namespace.namespace(Namespace.FILE_ID), wikiLink.getNamespace());
 	}
 
 	/**

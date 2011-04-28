@@ -18,10 +18,11 @@
  */
 package org.jamwiki.utils;
 
+import org.jamwiki.JAMWikiUnitTest;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class TiddlyWiki2MediaWikiTranslatorTest {
+public class TiddlyWiki2MediaWikiTranslatorTest extends JAMWikiUnitTest {
 
 	/**
 	 *

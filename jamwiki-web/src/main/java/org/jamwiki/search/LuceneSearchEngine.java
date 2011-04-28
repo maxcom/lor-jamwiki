@@ -20,11 +20,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -36,13 +37,16 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocCollector;
+import org.apache.lucene.search.Searcher;
+import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Version;
 import org.jamwiki.Environment;
 import org.jamwiki.SearchEngine;
 import org.jamwiki.WikiBase;
@@ -74,9 +78,15 @@ public class LuceneSearchEngine implements SearchEngine {
 	private static final String ITYPE_TOPIC_PLAIN = "topic_plain";
 	/** Id stored with the document to indicate the search names of topics linked from the page.  */
 	private static final String ITYPE_TOPIC_LINK = "topic_link";
+	/** Lucene compatibility version. */
+	private static final Version USE_LUCENE_VERSION = Version.LUCENE_30;
 	/** Maximum number of results to return per search. */
 	// FIXME - make this configurable
 	private static final int MAXIMUM_RESULTS_PER_SEARCH = 200;
+	/** Store Searchers (once opened) for re-use for performance reasons. */
+	private Map<String, Searcher> searchers = new HashMap<String, Searcher>();
+	/** Store Writers (once opened) for re-use for performance reasons. */
+	private Map<String, IndexWriter> indexWriters = new HashMap<String, IndexWriter>();
 
 	/**
 	 * Add a topic to the search index.
@@ -85,66 +95,38 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * @param links A list containing the topic names for all topics that link
 	 *  to the current topic.
 	 */
-	public synchronized void addToIndex(Topic topic, List<String> links) {
-		String virtualWiki = topic.getVirtualWiki();
-		String topicName = topic.getName();
-		IndexWriter writer = null;
+	public void addToIndex(Topic topic, List<String> links) {
 		try {
-			FSDirectory directory = FSDirectory.getDirectory(getSearchIndexPath(virtualWiki));
-			// FIXME - move synchronization to the writer instance for this directory
-			try {
-				writer = new IndexWriter(directory, new StandardAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
-				KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
-				writer.optimize();
-				Document standardDocument = createStandardDocument(topic);
-				writer.addDocument(standardDocument);
-				Document keywordDocument = createKeywordDocument(topic, links);
-				writer.addDocument(keywordDocument, keywordAnalyzer);
-			} finally {
-				try {
-					if (writer != null) {
-						writer.optimize();
-					}
-				} catch (Exception e) {}
-				try {
-					if (writer != null) {
-						writer.close();
-					}
-				} catch (Exception e) {}
+			long start = System.currentTimeMillis();
+			IndexWriter writer = this.retrieveIndexWriter(topic.getVirtualWiki(), false);
+			this.addToIndex(writer, topic, links);
+			writer.commit();
+			if (logger.isFineEnabled()) {
+				logger.fine("Add to search index for topic " + topic.getName() + " in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 			}
-			directory.close();
 		} catch (Exception e) {
-			logger.severe("Exception while adding topic " + topicName, e);
+			logger.severe("Exception while adding topic " + topic.getName(), e);
 		}
 	}
 
 	/**
-	 * Create a basic Lucene document to add to the index that does treats
-	 * the topic content as a single keyword and does not tokenize it.
+	 * Add a topic to the search index.
+	 *
+	 * @param topic The Topic object that is to be added to the index.
+	 * @param links A list containing the topic names for all topics that link
+	 *  to the current topic.
 	 */
-	private Document createKeywordDocument(Topic topic, List<String> links) {
-		String topicContent = topic.getTopicContent();
-		if (topicContent == null) {
-			topicContent = "";
-		}
-		Document doc = new Document();
-		// store topic name for later retrieval
-		doc.add(new Field(ITYPE_TOPIC_PLAIN, topic.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-		if (links == null) {
-			links = new ArrayList<String>();
-		}
-		// index topic links for search purposes
-		for (String linkTopic : links) {
-			doc.add(new Field(ITYPE_TOPIC_LINK, linkTopic, Field.Store.NO, Field.Index.NOT_ANALYZED));
-		}
-		return doc;
+	private void addToIndex(IndexWriter writer, Topic topic, List<String> links) throws IOException {
+		Document standardDocument = createStandardDocument(topic, links);
+		writer.addDocument(standardDocument);
+		this.resetIndexSearcher(topic.getVirtualWiki());
 	}
 
 	/**
 	 * Create a basic Lucene document to add to the index.  This document
 	 * is suitable to be parsed with the StandardAnalyzer.
 	 */
-	private Document createStandardDocument(Topic topic) {
+	private Document createStandardDocument(Topic topic, List<String> links) {
 		String topicContent = topic.getTopicContent();
 		if (topicContent == null) {
 			topicContent = "";
@@ -156,6 +138,13 @@ public class LuceneSearchEngine implements SearchEngine {
 		// index topic name and content for search purposes
 		doc.add(new Field(ITYPE_TOPIC, new StringReader(topic.getName())));
 		doc.add(new Field(ITYPE_CONTENT, new StringReader(topicContent)));
+		// index topic links for search purposes
+		if (links == null) {
+			links = new ArrayList<String>();
+		}
+		for (String linkTopic : links) {
+			doc.add(new Field(ITYPE_TOPIC_LINK, linkTopic, Field.Store.NO, Field.Index.NOT_ANALYZED));
+		}
 		return doc;
 	}
 
@@ -164,28 +153,29 @@ public class LuceneSearchEngine implements SearchEngine {
 	 *
 	 * @param topic The topic object that is to be removed from the index.
 	 */
-	public synchronized void deleteFromIndex(Topic topic) {
-		String virtualWiki = topic.getVirtualWiki();
-		String topicName = topic.getName();
-		IndexWriter writer = null;
+	public void deleteFromIndex(Topic topic) {
 		try {
-			FSDirectory directory = FSDirectory.getDirectory(getSearchIndexPath(virtualWiki));
+			long start = System.currentTimeMillis();
 			// delete the current document
-			// FIXME - move synchronization to the writer instance for this directory
-			try {
-				writer = new IndexWriter(directory, new StandardAnalyzer(), false, IndexWriter.MaxFieldLength.LIMITED);
-				writer.deleteDocuments(new Term(ITYPE_TOPIC_PLAIN, topicName));
-			} finally {
-				if (writer != null) {
-					try {
-						writer.close();
-					} catch (Exception e) {}
-				}
+			IndexWriter writer = this.retrieveIndexWriter(topic.getVirtualWiki(), false);
+			this.deleteFromIndex(writer, topic);
+			writer.commit();
+			if (logger.isFineEnabled()) {
+				logger.fine("Delete from search index for topic " + topic.getName() + " in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 			}
-			directory.close();
 		} catch (Exception e) {
-			logger.severe("Exception while adding topic " + topicName, e);
+			logger.severe("Exception while adding topic " + topic.getName(), e);
 		}
+	}
+
+	/**
+	 * Remove a topic from the search index.
+	 *
+	 * @param topic The topic object that is to be removed from the index.
+	 */
+	private void deleteFromIndex(IndexWriter writer, Topic topic) throws IOException {
+		writer.deleteDocuments(new Term(ITYPE_TOPIC_PLAIN, topic.getName()));
+		this.resetIndexSearcher(topic.getVirtualWiki());
 	}
 
 	/**
@@ -198,14 +188,13 @@ public class LuceneSearchEngine implements SearchEngine {
 	 */
 	public List<SearchResultEntry> findLinkedTo(String virtualWiki, String topicName) {
 		List<SearchResultEntry> results = new ArrayList<SearchResultEntry>();
-		IndexSearcher searcher = null;
 		try {
 			PhraseQuery query = new PhraseQuery();
 			Term term = new Term(ITYPE_TOPIC_LINK, topicName);
 			query.add(term);
-			searcher = new IndexSearcher(FSDirectory.getDirectory(getSearchIndexPath(virtualWiki)));
+			Searcher searcher = this.retrieveIndexSearcher(virtualWiki);
 			// actually perform the search
-			TopDocCollector collector = new TopDocCollector(MAXIMUM_RESULTS_PER_SEARCH);
+			TopScoreDocCollector collector = TopScoreDocCollector.create(MAXIMUM_RESULTS_PER_SEARCH, true);
 			searcher.search(query, collector);
 			ScoreDoc[] hits = collector.topDocs().scoreDocs;
 			for (int i = 0; i < hits.length; i++) {
@@ -218,12 +207,6 @@ public class LuceneSearchEngine implements SearchEngine {
 			}
 		} catch (Exception e) {
 			logger.severe("Exception while searching for " + topicName, e);
-		} finally {
-			if (searcher != null) {
-				try {
-					searcher.close();
-				} catch (Exception e) {}
-			}
 		}
 		return results;
 	}
@@ -238,22 +221,21 @@ public class LuceneSearchEngine implements SearchEngine {
 	 *  contain the search term.
 	 */
 	public List<SearchResultEntry> findResults(String virtualWiki, String text) {
-		StandardAnalyzer analyzer = new StandardAnalyzer();
+		StandardAnalyzer analyzer = new StandardAnalyzer(USE_LUCENE_VERSION);
 		List<SearchResultEntry> results = new ArrayList<SearchResultEntry>();
 		logger.finer("search text: " + text);
-		IndexSearcher searcher = null;
 		try {
 			BooleanQuery query = new BooleanQuery();
 			QueryParser qp;
-			qp = new QueryParser(ITYPE_TOPIC, analyzer);
+			qp = new QueryParser(USE_LUCENE_VERSION, ITYPE_TOPIC, analyzer);
 			query.add(qp.parse(text), Occur.SHOULD);
-			qp = new QueryParser(ITYPE_CONTENT, analyzer);
+			qp = new QueryParser(USE_LUCENE_VERSION, ITYPE_CONTENT, analyzer);
 			query.add(qp.parse(text), Occur.SHOULD);
-			searcher = new IndexSearcher(FSDirectory.getDirectory(getSearchIndexPath(virtualWiki)));
+			Searcher searcher = this.retrieveIndexSearcher(virtualWiki);
 			// rewrite the query to expand it - required for wildcards to work with highlighter
 			Query rewrittenQuery = searcher.rewrite(query);
 			// actually perform the search
-			TopDocCollector collector = new TopDocCollector(MAXIMUM_RESULTS_PER_SEARCH);
+			TopScoreDocCollector collector = TopScoreDocCollector.create(MAXIMUM_RESULTS_PER_SEARCH, true);
 			searcher.search(rewrittenQuery, collector);
 			Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>"), new SimpleHTMLEncoder(), new QueryScorer(rewrittenQuery));
 			ScoreDoc[] hits = collector.topDocs().scoreDocs;
@@ -269,12 +251,6 @@ public class LuceneSearchEngine implements SearchEngine {
 			}
 		} catch (Exception e) {
 			logger.severe("Exception while searching for " + text, e);
-		} finally {
-			if (searcher != null) {
-				try {
-					searcher.close();
-				} catch (Exception e) {}
-			}
 		}
 		return results;
 	}
@@ -282,7 +258,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	/**
 	 * Get the path, which holds all index files
 	 */
-	private String getSearchIndexPath(String virtualWiki) {
+	private File getSearchIndexPath(String virtualWiki) throws IOException {
 		File parent = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), SEARCH_DIR);
 		try {
 			if (System.getProperty("org.apache.lucene.lockdir") == null) {
@@ -296,26 +272,12 @@ public class LuceneSearchEngine implements SearchEngine {
 		}
 		File child = new File(parent.getPath(), "index" + virtualWiki + File.separator);
 		if (!child.exists()) {
+			// create the search instance
 			child.mkdirs();
-			IndexWriter writer = null;
-			try {
-				// create the search instance
-				FSDirectory directory = FSDirectory.getDirectory(getSearchIndexPath(virtualWiki));
-				writer = new IndexWriter(directory, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-				directory.close();
-			} catch (Exception e) {
-				logger.severe("Unable to create search instance " + child.getPath(), e);
-			} finally {
-				try {
-					if (writer != null) {
-						writer.close();
-					}
-				} catch (Exception e) {
-					logger.severe("Exception during close", e);
-				}
-			}
+			IndexWriter writer = new IndexWriter(FSDirectory.open(child), new StandardAnalyzer(USE_LUCENE_VERSION), true, IndexWriter.MaxFieldLength.LIMITED);
+			writer.close();
 		}
-		return child.getPath();
+		return child;
 	}
 
 	/**
@@ -323,28 +285,27 @@ public class LuceneSearchEngine implements SearchEngine {
 	 *
 	 * @throws Exception Thrown if any error occurs while re-indexing the Wiki.
 	 */
-	public synchronized void refreshIndex() throws Exception {
+	public void refreshIndex() throws Exception {
 		List<VirtualWiki> allWikis = WikiBase.getDataHandler().getVirtualWikiList();
 		Topic topic;
 		for (VirtualWiki virtualWiki : allWikis) {
 			long start = System.currentTimeMillis();
 			int count = 0;
-			FSDirectory directory = FSDirectory.getDirectory(this.getSearchIndexPath(virtualWiki.getName()));
-			KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
 			IndexWriter writer = null;
-			// FIXME - move synchronization to the writer instance for this directory
 			try {
-				writer = new IndexWriter(directory, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-				List<String> topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName());
+				writer = this.retrieveIndexWriter(virtualWiki.getName(), true);
+				List<String> topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName(), false);
+				// FIXME - parsing all documents will be intolerably slow with even a
+				// moderately large Wiki
 				for (String topicName : topicNames) {
 					topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
-					Document standardDocument = createStandardDocument(topic);
-					writer.addDocument(standardDocument);
-					// FIXME - parsing all documents will be intolerably slow with even a
-					// moderately large Wiki
+					if (topic == null) {
+						logger.info("Unable to rebuild search index for topic: " + topicName);
+						continue;
+					}
 					ParserOutput parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki.getName(), topicName);
-					Document keywordDocument = createKeywordDocument(topic, parserOutput.getLinks());
-					writer.addDocument(keywordDocument, keywordAnalyzer);
+					// note: no delete is necessary since a new index is being created
+					this.addToIndex(writer, topic, parserOutput.getLinks());
 					count++;
 				}
 			} catch (Exception ex) {
@@ -365,15 +326,61 @@ public class LuceneSearchEngine implements SearchEngine {
 					logger.severe("Exception during close", e);
 				}
 			}
-			directory.close();
-			logger.info("Rebuilt search index for " + virtualWiki.getName() + " (" + count + " documents) in " + ((System.currentTimeMillis() - start) / 1000.000) + " seconds");
+			if (logger.isInfoEnabled()) {
+				logger.info("Rebuilt search index for " + virtualWiki.getName() + " (" + count + " documents) in " + ((System.currentTimeMillis() - start) / 1000.000) + " seconds");
+			}
 		}
+	}
+
+	/**
+	 * Call this method after a search index is updated to reset the searcher.
+	 */
+	private void resetIndexSearcher(String virtualWiki) throws IOException {
+		Searcher searcher = searchers.get(virtualWiki);
+		if (searcher != null) {
+			searchers.remove(virtualWiki);
+			searcher.close();
+		}
+	}
+
+	/**
+	 * For performance reasons cache the IndexSearcher for re-use.
+	 */
+	private Searcher retrieveIndexSearcher(String virtualWiki) throws IOException {
+		Searcher searcher = searchers.get(virtualWiki);
+		if (searcher == null) {
+			searcher = new IndexSearcher(this.retrieveIndexWriter(virtualWiki, false).getReader());
+			searchers.put(virtualWiki, searcher);
+		}
+		return searcher;
+	}
+
+	/**
+	 * For performance reasons create a cache of writers.  Since writers are not being
+	 * re-initialized then commit() must be called to explicitly flush data to the index,
+	 * otherwise it will be flushed on a programmatic basis by Lucene.
+	 */
+	private IndexWriter retrieveIndexWriter(String virtualWiki, boolean create) throws IOException {
+		IndexWriter indexWriter = indexWriters.get(virtualWiki);
+		if (create) {
+			// if the writer is going to blow away the existing index and create a new one then it
+			// should not be cached.  instead, close any open writer, create a new one, and return.
+			if (indexWriter != null) {
+				indexWriter.close();
+				indexWriters.remove(virtualWiki);
+			}
+			indexWriter = new IndexWriter(FSDirectory.open(getSearchIndexPath(virtualWiki)), new StandardAnalyzer(USE_LUCENE_VERSION), create, IndexWriter.MaxFieldLength.LIMITED);
+		} else if (indexWriter == null) {
+			indexWriter = new IndexWriter(FSDirectory.open(getSearchIndexPath(virtualWiki)), new StandardAnalyzer(USE_LUCENE_VERSION), create, IndexWriter.MaxFieldLength.LIMITED);
+			indexWriters.put(virtualWiki, indexWriter);
+		}
+		return indexWriter;
 	}
 
 	/**
 	 *
 	 */
-	private String retrieveResultSummary(Document document, Highlighter highlighter, StandardAnalyzer analyzer) throws IOException {
+	private String retrieveResultSummary(Document document, Highlighter highlighter, StandardAnalyzer analyzer) throws InvalidTokenOffsetsException, IOException {
 		String content = document.get(ITYPE_CONTENT_PLAIN);
 		TokenStream tokenStream = analyzer.tokenStream(ITYPE_CONTENT_PLAIN, new StringReader(content));
 		String summary = highlighter.getBestFragments(tokenStream, content, 3, "...");
@@ -384,5 +391,23 @@ public class LuceneSearchEngine implements SearchEngine {
 			}
 		}
 		return summary;
+	}
+
+	/**
+	 *
+	 */
+	public void updateInIndex(Topic topic, List<String> links) {
+		try {
+			long start = System.currentTimeMillis();
+			IndexWriter writer = this.retrieveIndexWriter(topic.getVirtualWiki(), false);
+			this.deleteFromIndex(writer, topic);
+			this.addToIndex(writer, topic, links);
+			writer.commit();
+			if (logger.isFineEnabled()) {
+				logger.fine("Update search index for topic " + topic.getName() + " in " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
+			}
+		} catch (Exception e) {
+			logger.severe("Exception while updating topic " + topic.getName(), e);
+		}
 	}
 }

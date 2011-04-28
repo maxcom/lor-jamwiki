@@ -21,12 +21,15 @@ import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.LogItem;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.RoleMap;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
@@ -151,16 +154,18 @@ public interface DataHandler {
 	List<Role> getAllRoles() throws DataAccessException;
 
 	/**
-	 * Return a List of all topic names for all non-deleted topics that
-	 * exist for the virtual wiki.
+	 * Return a List of all topic names for all topics that exist for
+	 * the virtual wiki.
 	 *
 	 * @param virtualWiki The virtual wiki for which topics are being
 	 *  retrieved.
+	 * @param includeDeleted Set to <code>true</code> if deleted topics
+	 *  should be included in the results.
 	 * @return A List of all topic names for all non-deleted topics that
 	 *  exist for the virtual wiki.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<String> getAllTopicNames(String virtualWiki) throws DataAccessException;
+	List<String> getAllTopicNames(String virtualWiki, boolean includeDeleted) throws DataAccessException;
 
 	/**
 	 * Retrieve a List of all TopicVersions for a given topic, sorted
@@ -250,7 +255,7 @@ public interface DataHandler {
 	 *  never return <code>null</code>.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	Role[] getRoleMapGroup(String groupName) throws DataAccessException;
+	List<Role> getRoleMapGroup(String groupName) throws DataAccessException;
 
 	/**
 	 * Retrieve a list of RoleMap objects for all groups.
@@ -266,12 +271,12 @@ public interface DataHandler {
 	 * Retrieve all roles assigned to a given user.
 	 *
 	 * @param login The login of the user for whom roles are being retrieved.
-	 * @return An array of Role objects for the given user, or an empty
+	 * @return A list of Role objects for the given user, or an empty
 	 *  array if no roles are assigned to the user.  This method will
 	 *  never return <code>null</code>.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	Role[] getRoleMapUser(String login) throws DataAccessException;
+	List<Role> getRoleMapUser(String login) throws DataAccessException;
 
 	/**
 	 * Retrieve a List of RecentChange objects representing a topic's history,
@@ -375,6 +380,35 @@ public interface DataHandler {
 	List<Category> lookupCategoryTopics(String virtualWiki, String categoryName) throws DataAccessException;
 
 	/**
+	 * Given a namespace string, return the namespace that corresponds to that string,
+	 * or <code>null</code> if no match exists.
+	 *
+	 * @param virtualWiki The virtual wiki for the namespace being queried.
+	 * @param namespaceString The value to query to see if a matching namespace exists.
+	 * @return The matching Namespace object, or <code>null</code> if no match is found.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	Namespace lookupNamespace(String virtualWiki, String namespaceString) throws DataAccessException;
+
+	/**
+	 * Given a namespace ID return the corresponding namespace, or <code>null</code>
+	 * if no match exists.
+	 *
+	 * @param namespaceId The ID for the namespace being retrieved.
+	 * @return The matching Namespace object, or <code>null</code> if no match is found.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	Namespace lookupNamespaceById(int namespaceId) throws DataAccessException;
+
+	/**
+	 * Return all namespaces currently available for the wiki.
+	 *
+	 * @return A list of all Namespace objects currently available for the wiki.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	List<Namespace> lookupNamespaces() throws DataAccessException;
+
+	/**
 	 * Retrieve a Topic object that matches the given virtual wiki and topic
 	 * name.
 	 *
@@ -382,15 +416,27 @@ public interface DataHandler {
 	 * @param topicName The name of the topic being queried.
 	 * @param deleteOK Set to <code>true</code> if deleted topics can be
 	 *  retrieved, <code>false</code> otherwise.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
+	 * @param conn If this method is being called as part of a transaction
+	 *  then this parameter should contain the database connection.  If
+	 *  this method is not part of a transaction then this value should be
+	 *  <code>null</code>.
 	 * @return A Topic object that matches the given virtual wiki and topic
 	 *  name, or <code>null</code> if no matching topic exists.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object transactionObject) throws DataAccessException;
+	Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Connection conn) throws DataAccessException;
+
+	/**
+	 * Retrieve a Topic object that matches the given topic id and virtual wiki.  Note
+	 * that this method can return deleted topics.
+	 *
+	 * @param virtualWiki The virtual wiki for the topic being queried.
+	 * @param topicId The identifier of the topic being queried.
+	 * @return A Topic object that matches the given virtual wiki and topic
+	 * id, or <code>null</code> if no matching topic exists.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	Topic lookupTopicById(String virtualWiki, int topicId) throws DataAccessException;
 
 	/**
 	 * Return a count of all topics, including redirects, comments pages and
@@ -399,12 +445,15 @@ public interface DataHandler {
 	 *
 	 * @param virtualWiki The virtual wiki for which the total topic count is
 	 *  being returned.
+	 * @param namespaceId An optional parameter to specify that results should only
+	 *  be from the specified namespace.  If this value is <code>null</code> then
+	 *  results will be returned from all namespaces.
 	 * @return A count of all topics, including redirects, comments pages and
-	 *  templates, for the given virtual wiki.  Deleted topics are not included
-	 *  in the count.
+	 *  templates, for the given virtual wiki and (optionally) namespace.  Deleted
+	 *  topics are not included in the count.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	int lookupTopicCount(String virtualWiki) throws DataAccessException;
+	int lookupTopicCount(String virtualWiki, Integer namespaceId) throws DataAccessException;
 
 	/**
 	 * Return a List of topic names for all non-deleted topics in the
@@ -414,13 +463,30 @@ public interface DataHandler {
 	 * @param topicType1 The type of topics to return.
 	 * @param topicType2 The type of topics to return.  Set to the same value
 	 *  as topicType1 if only one type is needed.
+	 * @param namespaceId An optional parameter to specify that results should only
+	 *  be from the specified namespace.  If this value is <code>null</code> then
+	 *  results will be returned from all namespaces.
 	 * @param pagination A Pagination object indicating the total number of
 	 *  results and offset for the results to be retrieved.
-	 * @return A List of topic names for all non-deleted topics in the
+	 * @return A map of topic id and topic name for all non-deleted topics in the
 	 *  virtual wiki that match a specific topic type.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<String> lookupTopicByType(String virtualWiki, int topicType1, int topicType2, Pagination pagination) throws DataAccessException;
+	Map<Integer, String> lookupTopicByType(String virtualWiki, TopicType topicType1, TopicType topicType2, Integer namespaceId, Pagination pagination) throws DataAccessException;
+
+	/**
+	 * Given a topic name and virtual wiki, return the corresponding topic ID, or
+	 * <code>null</code> if no matching topic exists.  This method will return only
+	 * non-deleted topics and performs better for cases where a caller only needs to
+	 * know if a topic exists, but does not need a full Topic object.
+	 *
+	 * @param virtualWiki The virtual wiki for the topic being queried.
+	 * @param topicName The name of the topic being queried.
+	 * @return The ID of the Topic object that matches the given virtual wiki and topic
+	 * name, or <code>null</code> if no matching topic exists.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	Integer lookupTopicId(String virtualWiki, String topicName) throws DataAccessException;
 
 	/**
 	 * Retrieve a TopicVersion object for a given topic version ID.
@@ -540,6 +606,17 @@ public interface DataHandler {
 	void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination) throws DataAccessException, WikiException;
 
 	/**
+	 * Utility method used when importing to updating the previous topic version ID field
+	 * of topic versions, as well as the current version ID field for the topic record.
+	 *
+	 * @param topic The topic record to update.
+	 * @param topicVersionIdList A list of all topic version IDs for the topic, sorted
+	 *  chronologically from oldest to newest.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	void orderTopicVersions(Topic topic, List<Integer> topicVersionIdList) throws DataAccessException;
+
+	/**
 	 * Delete all existing log entries and reload the log item table based
 	 * on the most recent topic versions, uploads, and user signups.
 	 *
@@ -639,6 +716,32 @@ public interface DataHandler {
 	void writeFile(WikiFile wikiFile, WikiFileVersion wikiFileVersion) throws DataAccessException, WikiException;
 
 	/**
+	 * Add or update a namespace.  This method will add a new record if the
+	 * namespace does not already exist, otherwise it will update the existing
+	 * record.
+	 *
+	 * @param mainNamespace The namespace object to add to the database.
+	 * @param commentsNamespace The comments namespace object to add to the database
+	 *  for the corresponding main namespace.  This argument can be <code>null</code>
+	 *  if there is no comments namespace.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the namespace information is invalid.
+	 */
+	void writeNamespace(Namespace mainNamespace, Namespace commentsNamespace) throws DataAccessException, WikiException;
+
+	/**
+	 * Add or update virtual-wiki specific labels for a namespace.  This method will
+	 * remove existing records for the virtual wiki and add the new ones.
+	 *
+	 * @param namespaces The namespace translation records to add/update.
+	 * @param virtualWiki The virtual wiki for which namespace translations are
+	 *  being added or updated.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the namespace information is invalid.
+	 */
+	void writeNamespaceTranslations(List<Namespace> namespaces, String virtualWiki) throws DataAccessException, WikiException;
+
+	/**
 	 * Add or update a Role object.  This method will add a new record if
 	 * the role does not yet exist, otherwise the role will be updated.
 	 *
@@ -700,6 +803,22 @@ public interface DataHandler {
 	 * @throws WikiException Thrown if the topic information is invalid.
 	 */
 	void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links) throws DataAccessException, WikiException;
+
+	/**
+	 * This method exists for performance reasons for scenarios such as topic imports where many versions
+	 * may be added without the need to update the topic record.  In general {@link #writeTopic}
+	 * should be used instead.
+	 *
+	 * @param topic The Topic to add or update.  If the Topic does not have
+	 *  a topic ID then a new record is created, otherwise an update is
+	 *  performed.
+	 * @param topicVersion A TopicVersion containing the author, date, and
+	 *  other information about the version being added.  If this value is <code>null</code>
+	 *  then no version is saved and no recent change record is created.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the topic version information is invalid.
+	 */
+	public void writeTopicVersion(Topic topic, TopicVersion topicVersion) throws DataAccessException, WikiException;
 
 	/**
 	 * Add or update a VirtualWiki object.  This method will add a new record

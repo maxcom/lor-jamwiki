@@ -22,13 +22,13 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.WikiUserDetails;
+import org.jamwiki.authentication.WikiUserDetailsImpl;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -48,7 +48,7 @@ public class MoveServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		if (!userDetails.hasRole(Role.ROLE_MOVE)) {
 			WikiMessage messageObject = new WikiMessage("login.message.move");
 			return ServletUtil.viewLogin(request, pageInfo, WikiUtil.getTopicFromURI(request), messageObject);
@@ -78,8 +78,9 @@ public class MoveServlet extends JAMWikiServlet {
 		}
 		String moveCommentsPage = Utilities.decodeAndEscapeTopicName(request.getParameter("moveCommentsPage"), true);
 		if (!StringUtils.isBlank(moveCommentsPage)) {
-			String commentsDestination = WikiUtil.extractCommentsLink(moveDestination);
-			if (WikiUtil.isCommentsPage(moveCommentsPage) && !moveCommentsPage.equals(topicName) && !commentsDestination.equals(moveDestination)) {
+			String virtualWiki = pageInfo.getVirtualWikiName();
+			String commentsDestination = WikiUtil.extractCommentsLink(virtualWiki, moveDestination);
+			if (WikiUtil.isCommentsPage(virtualWiki, moveCommentsPage) && !moveCommentsPage.equals(topicName) && !commentsDestination.equals(moveDestination)) {
 				if (!movePage(request, next, pageInfo, moveCommentsPage, commentsDestination)) {
 					return;
 				}
@@ -103,29 +104,29 @@ public class MoveServlet extends JAMWikiServlet {
 			this.view(request, next, pageInfo);
 			return false;
 		}
-		WikiLink fromWikiLink = LinkUtil.parseWikiLink(moveFrom);
-		WikiLink destinationWikiLink = LinkUtil.parseWikiLink(moveDestination);
-		if (!StringUtils.equals(fromWikiLink.getNamespace(), destinationWikiLink.getNamespace())) {
+		WikiLink fromWikiLink = LinkUtil.parseWikiLink(virtualWiki, moveFrom);
+		WikiLink destinationWikiLink = LinkUtil.parseWikiLink(virtualWiki, moveDestination);
+		if (fromWikiLink.getNamespace() != destinationWikiLink.getNamespace()) {
 			// do not allow moving into or out of image & category namespace
-			if (StringUtils.equals(fromWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_CATEGORY)
-					|| StringUtils.equals(fromWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_CATEGORY_COMMENTS)
-					|| StringUtils.equals(destinationWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_CATEGORY)
-					|| StringUtils.equals(destinationWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_CATEGORY_COMMENTS)
+			if (fromWikiLink.getNamespace().getId().equals(Namespace.CATEGORY_ID)
+					|| fromWikiLink.getNamespace().getId().equals(Namespace.CATEGORY_COMMENTS_ID)
+					|| destinationWikiLink.getNamespace().getId().equals(Namespace.CATEGORY_ID)
+					|| destinationWikiLink.getNamespace().getId().equals(Namespace.CATEGORY_COMMENTS_ID)
 				) {
 				next.addObject("messageObject", new WikiMessage("move.exception.namespacecategory"));
 				this.view(request, next, pageInfo);
 				return false;
-			} else if (StringUtils.equals(fromWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_IMAGE)
-					|| StringUtils.equals(fromWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_IMAGE_COMMENTS)
-					|| StringUtils.equals(destinationWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_IMAGE)
-					|| StringUtils.equals(destinationWikiLink.getNamespace(), NamespaceHandler.NAMESPACE_IMAGE_COMMENTS)
+			} else if (fromWikiLink.getNamespace().getId().equals(Namespace.FILE_ID)
+					|| fromWikiLink.getNamespace().getId().equals(Namespace.FILE_COMMENTS_ID)
+					|| destinationWikiLink.getNamespace().getId().equals(Namespace.FILE_ID)
+					|| destinationWikiLink.getNamespace().getId().equals(Namespace.FILE_COMMENTS_ID)
 				) {
 				next.addObject("messageObject", new WikiMessage("move.exception.namespaceimage"));
 				this.view(request, next, pageInfo);
 				return false;
 			}
 		}
-		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		if (!ServletUtil.isMoveable(virtualWiki, moveFrom, userDetails)) {
 			this.view(request, next, pageInfo);
 			next.addObject("messageObject", new WikiMessage("move.exception.permission", moveFrom));
@@ -157,7 +158,7 @@ public class MoveServlet extends JAMWikiServlet {
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		String commentsPage = WikiUtil.extractCommentsLink(topicName);
+		String commentsPage = WikiUtil.extractCommentsLink(virtualWiki, topicName);
 		Topic commentsTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, commentsPage, false, null);
 		if (commentsTopic != null) {
 			// add option to also move comments page

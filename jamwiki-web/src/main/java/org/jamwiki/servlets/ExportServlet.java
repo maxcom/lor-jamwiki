@@ -82,7 +82,7 @@ public class ExportServlet extends JAMWikiServlet {
 			File file = new File(directory, filename);
 			List<String> topicNameList = Arrays.asList(StringUtils.split(topicNames, "\n\r"));
 			String virtualWiki = pageInfo.getVirtualWikiName();
-			MigrationUtil.exportToFile(file, virtualWiki, topicNameList, excludeHistory, errors);
+			MigrationUtil.exportToFile(file, virtualWiki, topicNameList, excludeHistory);
 			this.renderXml(response, file, download);
 			success = true;
 			file.delete();

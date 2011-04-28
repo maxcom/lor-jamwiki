@@ -25,13 +25,13 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.WikiUserDetails;
+import org.jamwiki.authentication.WikiUserDetailsImpl;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -67,11 +67,11 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * @param next A ModelAndView object corresponding to the page being
 	 *  constructed.
 	 */
-	private void buildLayout(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
+	private void buildLayout(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws DataAccessException {
 		String virtualWikiName = pageInfo.getVirtualWikiName();
 		if (virtualWikiName == null) {
 			logger.severe("No virtual wiki available for page request " + request.getRequestURI());
-			virtualWikiName = WikiBase.DEFAULT_VWIKI;
+			virtualWikiName = Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT);
 		}
 		VirtualWiki virtualWiki = ServletUtil.retrieveVirtualWiki(virtualWikiName);
 		// build the layout contents
@@ -94,15 +94,16 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * Build a map of links and the corresponding link text to be used as the
 	 * tab menu links for the WikiPageInfo object.
 	 */
-	private LinkedHashMap buildTabMenu(HttpServletRequest request, WikiPageInfo pageInfo) {
+	private void buildTabMenu(HttpServletRequest request, WikiPageInfo pageInfo) {
 		LinkedHashMap<String, WikiMessage> links = new LinkedHashMap<String, WikiMessage>();
-		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		String pageName = pageInfo.getTopicName();
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		if (pageInfo.getAdmin()) {
 			if (userDetails.hasRole(Role.ROLE_SYSADMIN)) {
 				links.put("Special:Admin", new WikiMessage("tab.admin.configuration"));
 				links.put("Special:Maintenance", new WikiMessage("tab.admin.maintenance"));
+				links.put("Special:VirtualWiki", new WikiMessage("tab.admin.vwiki"));
 				links.put("Special:Roles", new WikiMessage("tab.admin.roles"));
 			}
 			if (userDetails.hasRole(Role.ROLE_TRANSLATE)) {
@@ -117,8 +118,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 			links.put(specialUrl, new WikiMessage("tab.common.special"));
 		} else {
 			try {
-				String article = WikiUtil.extractTopicLink(pageName);
-				String comments = WikiUtil.extractCommentsLink(pageName);
+				String article = WikiUtil.extractTopicLink(virtualWiki, pageName);
+				String comments = WikiUtil.extractCommentsLink(virtualWiki, pageName);
 				links.put(article, new WikiMessage("tab.common.article"));
 				links.put(comments, new WikiMessage("tab.common.comments"));
 				if (ServletUtil.isEditable(virtualWiki, pageName, userDetails)) {
@@ -142,7 +143,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 					links.put(watchlistLink, new WikiMessage(watchlistLabel));
 				}
 				if (pageInfo.isUserPage()) {
-					WikiLink wikiLink = LinkUtil.parseWikiLink(pageName);
+					WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, pageName);
 					String contributionsLink = "Special:Contributions?contributor=" + Utilities.encodeAndEscapeTopicName(wikiLink.getArticle());
 					links.put(contributionsLink, new WikiMessage("tab.common.contributions"));
 				}
@@ -158,16 +159,31 @@ public abstract class JAMWikiServlet extends AbstractController {
 				logger.severe("Unable to build tabbed menu links", e);
 			}
 		}
-		return links;
+		pageInfo.setTabMenu(links);
+		// determine the currently active tab
+		String activePage = WikiUtil.getTopicFromURI(request);
+		int pos;
+		for (String link : links.keySet()) {
+			if (StringUtils.isBlank(pageInfo.getSelectedTab())) {
+				// if no tab is selected default to the first one
+				pageInfo.setSelectedTab(link);
+			}
+			pos = link.indexOf("?");
+			if ((pos != -1 && StringUtils.equals(activePage, link.substring(0, pos))) || (pos == -1 && StringUtils.equals(activePage, link))) {
+				pageInfo.setSelectedTab(link);
+				break;
+			}
+		}
 	}
 
 	/**
 	 * Build a map of links and the corresponding link text to be used as the
 	 * user menu links for the WikiPageInfo object.
 	 */
-	private LinkedHashMap buildUserMenu(WikiPageInfo pageInfo) {
+	private LinkedHashMap<String, WikiMessage> buildUserMenu(WikiPageInfo pageInfo) {
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		LinkedHashMap<String, WikiMessage> links = new LinkedHashMap<String, WikiMessage>();
-		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		if (userDetails.hasRole(Role.ROLE_ANONYMOUS) && !userDetails.hasRole(Role.ROLE_EMBEDDED)) {
 			// include the current page in the login link 
 			String loginLink = "Special:Login";
@@ -179,8 +195,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 		}
 		if (!userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 			WikiUser user = ServletUtil.currentWikiUser();
-			String userPage = NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername();
-			String userCommentsPage = NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername();
+			String userPage = Namespace.namespace(Namespace.USER_ID).getLabel(virtualWiki) + Namespace.SEPARATOR + user.getUsername();
+			String userCommentsPage = Namespace.namespace(Namespace.USER_COMMENTS_ID).getLabel(virtualWiki) + Namespace.SEPARATOR + user.getUsername();
 			String username = user.getUsername();
 			if (!StringUtils.isBlank(user.getDisplayName())) {
 				username = user.getDisplayName();
@@ -251,7 +267,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		}
 		long execution = System.currentTimeMillis() - start;
 		if (execution > JAMWikiServlet.SLOW_PAGE_LIMIT) {
-			logger.warning("Slow page loading time: " + request.getRequestURI() + " (" + (execution / 1000.000) + " s.)");
+			logger.info("Slow page loading time: " + request.getRequestURI() + " (" + (execution / 1000.000) + " s.)");
 		}
 		if (logger.isInfoEnabled()) {
 			String url = request.getRequestURI() + (!StringUtils.isEmpty(request.getQueryString()) ? "?" + request.getQueryString() : "");
@@ -268,10 +284,12 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * @param next The current ModelAndView object.
 	 * @param topicName The name of the topic being examined for spam.
 	 * @param contents The contents of the topic being examined for spam.
+	 * @param editComment (Optional) The topic edit comment, which has also been a
+	 *  target for spambots.
 	 * @return <code>true</code> if the topic in question matches any spam pattern.
 	 */
-	protected boolean handleSpam(HttpServletRequest request, ModelAndView next, String topicName, String contents) throws DataAccessException {
-		String result = ServletUtil.checkForSpam(request, topicName, contents);
+	protected boolean handleSpam(HttpServletRequest request, ModelAndView next, String topicName, String contents, String editComment) throws DataAccessException {
+		String result = ServletUtil.checkForSpam(request, topicName, contents, editComment);
 		if (result == null) {
 			return false;
 		}
@@ -313,7 +331,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			pageInfo.setTopicName(WikiUtil.getTopicFromURI(request));
 		}
 		pageInfo.setUserMenu(this.buildUserMenu(pageInfo));
-		pageInfo.setTabMenu(this.buildTabMenu(request, pageInfo));
+		this.buildTabMenu(request, pageInfo);
 	}
 
 	/**
@@ -334,9 +352,17 @@ public abstract class JAMWikiServlet extends AbstractController {
 		pageInfo.setSpecial(true);
 		if (t instanceof WikiException) {
 			WikiException we = (WikiException)t;
+			pageInfo.setException(we.getWikiMessage());
 			next.addObject("messageObject", we.getWikiMessage());
 		} else {
-			next.addObject("messageObject", new WikiMessage("error.unknown", t.toString()));
+			String errorMessage = t.toString();
+			if (t.getCause() != null) {
+				errorMessage += " / " + t.getCause().toString();
+			}
+			WikiMessage wm = new WikiMessage("error.unknown", errorMessage);
+			pageInfo.setException(wm);
+			next.addObject("messageObject", wm);
+			logger.severe("Failure while loading JSP: " + request.getServletPath(), t);
 		}
 		try {
 			this.loadLayout(request, next, pageInfo);

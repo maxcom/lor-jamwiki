@@ -25,7 +25,6 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
@@ -66,7 +65,8 @@ public class ManageServlet extends JAMWikiServlet {
 		deletePage(request, next, pageInfo, topicName);
 		String manageCommentsPage = WikiUtil.getParameterFromRequest(request, "manageCommentsPage", true);
 		if (!StringUtils.isBlank(manageCommentsPage)) {
-			if (WikiUtil.isCommentsPage(manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
+			String virtualWiki = pageInfo.getVirtualWikiName();
+			if (WikiUtil.isCommentsPage(virtualWiki, manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
 				deletePage(request, next, pageInfo, manageCommentsPage);
 			}
 		}
@@ -127,7 +127,8 @@ public class ManageServlet extends JAMWikiServlet {
 		undeletePage(request, next, pageInfo, topicName);
 		String manageCommentsPage = WikiUtil.getParameterFromRequest(request, "manageCommentsPage", true);
 		if (!StringUtils.isBlank(manageCommentsPage)) {
-			if (WikiUtil.isCommentsPage(manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
+			String virtualWiki = pageInfo.getVirtualWikiName();
+			if (WikiUtil.isCommentsPage(virtualWiki, manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
 				undeletePage(request, next, pageInfo, manageCommentsPage);
 			}
 		}
@@ -169,7 +170,7 @@ public class ManageServlet extends JAMWikiServlet {
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		String commentsPage = WikiUtil.extractCommentsLink(topicName);
+		String commentsPage = WikiUtil.extractCommentsLink(virtualWiki, topicName);
 		if (!topicName.equals(commentsPage)) {
 			Topic commentsTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, commentsPage, true, null);
 			if (commentsTopic != null && commentsTopic.getDeleted() == topic.getDeleted()) {

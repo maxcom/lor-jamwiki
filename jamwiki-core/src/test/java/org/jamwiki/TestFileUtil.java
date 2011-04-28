@@ -29,6 +29,7 @@ import org.jamwiki.utils.Utilities;
 public class TestFileUtil {
 
 	public static final String TEST_RESULTS_DIR = "data/results/";
+	public static final String TEST_JS_RESULTS_DIR = "data/javascript/";
 	public static final String TEST_TOPICS_DIR = "data/topics/";
 
 	/**
@@ -37,7 +38,10 @@ public class TestFileUtil {
 	public static String decodeTopicName(String fileName) {
 		// files containing colons aren't allowed, so they are replaced with "_-_"
 		String result = StringUtils.replace(fileName, "_-_", ":");
-		return StringUtils.replace(result, "_", " ");
+		result = StringUtils.replace(result, "_", " ");
+		// files containing slashes aren't allowed, so they are replaced with "~"
+		result = StringUtils.replace(result, "~", "/");
+		return result;
 	}
 
 	/**
@@ -94,7 +98,7 @@ public class TestFileUtil {
 				return null;
 			}
 			reader = new FileReader(file);
-			StringBuffer output = new StringBuffer();
+			StringBuilder output = new StringBuilder();
 			char[] buf = new char[4096];
 			int c;
 			while ((c = reader.read(buf, 0, buf.length)) != -1) {

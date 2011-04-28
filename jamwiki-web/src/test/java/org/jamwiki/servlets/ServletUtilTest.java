@@ -19,11 +19,12 @@
 package org.jamwiki.servlets;
 
 import java.util.Properties;
+import org.jamwiki.JAMWikiUnitTest;
 import org.jamwiki.utils.SortedProperties;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class ServletUtilTest {
+public class ServletUtilTest extends JAMWikiUnitTest {
 
 	/**
 	 *

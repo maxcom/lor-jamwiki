@@ -22,6 +22,8 @@
 
 <%@ include file="page-init.jsp" %>
 
+<div id="translation" class="admin">
+
 <div class="message"><fmt:message key="translation.caption.instructions" /></div>
 
 <fieldset>
@@ -30,7 +32,7 @@
 <table>
 <tr>
 <td>
-<form name="adminTranslation" method="get" action="<jamwiki:link value="Special:Translation" />">
+<form name="adminTranslationSelect" method="get" action="<jamwiki:link value="Special:Translation" />">
 <input type="hidden" name="hideTranslated" value="<c:out value="${hideTranslated}" />" />
 <select name="language" onchange="this.form.submit()">
 <option value=""></option>
@@ -42,30 +44,32 @@
 </td>
 <td>&#160;&#160;&#160;&#160;&#160;</td>
 <td>
-<form name="adminTranslation" method="get" action="<jamwiki:link value="Special:Translation" />">
+<form name="adminTranslationEnter" method="get" action="<jamwiki:link value="Special:Translation" />">
 <input type="hidden" name="hideTranslated" value="<c:out value="${hideTranslated}" />" />
 <input type="text" name="language" size="5" value="<c:out value="${language}" />" />&#160;&#160;<input type="submit" name="submit" value="<fmt:message key="common.change" />" />
 </form>
 </td>
 </tr>
 <tr>
-<form name="adminTranslation" method="post" action="<jamwiki:link value="Special:Translation" />">
+<td colspan="3">
+<form name="adminTranslationFilter" method="post" action="<jamwiki:link value="Special:Translation" />">
 <input type="hidden" name="language" value="<c:out value="${language}" />" />
-<td colspan="3"><input type="checkbox" name="hideTranslated" value="true" onchange="this.form.submit()" <c:if test="${hideTranslated}">checked="checked"</c:if> />&#160;<fmt:message key="translation.caption.hidetranslated" /></td>
+<input type="checkbox" name="hideTranslated" value="true" onchange="this.form.submit()" <c:if test="${hideTranslated}">checked="checked"</c:if> />&#160;<fmt:message key="translation.caption.hidetranslated" />
 </form>
+</td>
 </tr>
 </table>
 
 <form name="adminTranslation" method="post" action="<jamwiki:link value="Special:Translation" />">
 <input type="hidden" name="language" value="<c:out value="${language}" />" />
 <input type="hidden" name="hideTranslated" value="<c:out value="${hideTranslated}" />" />
-<div class="formentry darkbg">
+<div class="darkbg">
 	<span class="translationElement"><fmt:message key="translation.caption.key" /></span>
 	<span class="translationElement"><fmt:message key="translation.caption.translation"><fmt:param value="${language}" /></fmt:message></span>
 	<div class="clear"></div>
 </div>
 <c:forEach items="${translations}" var="translation">
-<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="translation" />">
+<div class="row">
 	<span class="translationElement">
 		<label for="<c:out value="${translation.key}" />">
 		<code><c:out value="${translation.key}" /></code>
@@ -77,10 +81,10 @@
 	<div class="clear"></div>
 </div>
 </c:forEach>
-<div class="formentry">
-	<span class="formcaption">&#160;</span>
-	<span class="formelement"><input type="submit" name="function" value="<fmt:message key="common.save" />" /></span>
+<div class="row">
+	<span class="form-button"><input type="submit" name="function" value="<fmt:message key="common.save" />" /></span>
 </div>
 </form>
 
 </fieldset>
+</div>

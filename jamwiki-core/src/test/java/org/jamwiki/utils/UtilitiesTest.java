@@ -19,10 +19,11 @@
 package org.jamwiki.utils;
 
 import java.io.FileNotFoundException;
+import org.jamwiki.JAMWikiUnitTest;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class UtilitiesTest {
+public class UtilitiesTest extends JAMWikiUnitTest {
 
 	/**
 	 *

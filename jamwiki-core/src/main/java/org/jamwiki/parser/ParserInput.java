@@ -279,8 +279,8 @@ public class ParserInput {
 	 * instance.  This value is typically the user IP address and is used
 	 * primarily when parsing signatures.
 	 *
-	 * @param The user display, typically the user IP address, associated
-	 *  with the current parser input instance.
+	 * @param userDisplay The user display, typically the user IP address,
+	 *  associated with the current parser input instance.
 	 */
 	public void setUserDisplay(String userDisplay) {
 		this.userDisplay = userDisplay;

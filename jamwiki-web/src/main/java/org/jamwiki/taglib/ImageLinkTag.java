@@ -21,8 +21,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.jamwiki.DataAccessException;
+import org.jamwiki.utils.ImageMetadata;
+import org.jamwiki.utils.ImageUtil;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiUtil;
 
 /**
@@ -32,7 +33,9 @@ import org.jamwiki.utils.WikiUtil;
 public class ImageLinkTag extends TagSupport {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(ImageLinkTag.class.getName());
-	private String maxDimension = null;
+	private String allowEnlarge = null;
+	private String maxHeight = null;
+	private String maxWidth = null;
 	private String style = null;
 	private String value = null;
 
@@ -40,16 +43,22 @@ public class ImageLinkTag extends TagSupport {
 	 *
 	 */
 	public int doEndTag() throws JspException {
-		int linkDimension = -1;
-		if (this.maxDimension != null) {
-			linkDimension = Integer.valueOf(this.maxDimension);
-		}
+		int linkHeight = (this.maxHeight != null) ? Integer.valueOf(this.maxHeight) : -1;
+		int linkWidth = (this.maxWidth != null) ? Integer.valueOf(this.maxWidth) : -1;
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		String virtualWiki = retrieveVirtualWiki(request);
 		String html = null;
+		ImageMetadata imageMetadata = new ImageMetadata();
+		imageMetadata.setMaxHeight(linkHeight);
+		imageMetadata.setMaxWidth(linkWidth);
+		// set the link field empty to prevent the image from being clickable
+		imageMetadata.setLink("");
+		if (this.allowEnlarge != null) {
+			imageMetadata.setAllowEnlarge(Boolean.valueOf(this.allowEnlarge));
+		}
 		try {
 			try {
-				html = LinkUtil.buildImageLinkHtml(request.getContextPath(), virtualWiki, this.value, false, false, null, null, linkDimension, true, this.style, true);
+				html = ImageUtil.buildImageLinkHtml(request.getContextPath(), virtualWiki, this.value, imageMetadata, this.style, true);
 			} catch (DataAccessException e) {
 				logger.severe("Failure while building url " + html + " with value " + this.value, e);
 				throw new JspException(e);
@@ -79,15 +88,43 @@ public class ImageLinkTag extends TagSupport {
 	/**
 	 *
 	 */
-	public String getMaxDimension() {
-		return this.maxDimension;
+	public String getAllowEnlarge() {
+		return this.allowEnlarge;
 	}
 
 	/**
 	 *
 	 */
-	public void setMaxDimension(String maxDimension) {
-		this.maxDimension = maxDimension;
+	public void setAllowEnlarge(String allowEnlarge) {
+		this.allowEnlarge = allowEnlarge;
+	}
+
+	/**
+	 *
+	 */
+	public String getMaxHeight() {
+		return this.maxHeight;
+	}
+
+	/**
+	 *
+	 */
+	public void setMaxHeight(String maxHeight) {
+		this.maxHeight = maxHeight;
+	}
+
+	/**
+	 *
+	 */
+	public String getMaxWidth() {
+		return this.maxWidth;
+	}
+
+	/**
+	 *
+	 */
+	public void setMaxWidth(String maxWidth) {
+		this.maxWidth = maxWidth;
 	}
 
 	/**

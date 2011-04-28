@@ -17,6 +17,7 @@
 
 --%>
 <%@ page import="
+        org.jamwiki.DataHandler,
         org.jamwiki.Environment,
         org.jamwiki.WikiBase
     "
@@ -57,23 +58,9 @@ td.formhelp {
 	text-align: center;
 }
 </style>
-<script type="text/javascript">
-function onPersistenceType() {
-	if (document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").options[document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").selectedIndex].value == "<%= WikiBase.PERSISTENCE_INTERNAL %>") {
-		document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DB_TYPE %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DB_URL %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DB_USERNAME %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DB_PASSWORD %>").disabled=true
-	} else {
-		document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DB_TYPE %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DB_URL %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DB_USERNAME %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DB_PASSWORD %>").disabled=false
-	}
-}
-</script>
+
+<%@ include file="shared-db-javascript.jsp" %>
+
 </head>
 <body>
 <div id="setup-container">
@@ -123,7 +110,8 @@ function onPersistenceType() {
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DB_TYPE %>"><fmt:message key="admin.persistence.caption.type" /></label>:</td>
 	<td class="formelement">
-		<select name="<%= Environment.PROP_DB_TYPE %>" id="<%= Environment.PROP_DB_TYPE %>">
+		<select name="<%= Environment.PROP_DB_TYPE %>" id="<%= Environment.PROP_DB_TYPE %>" onchange="onDatabaseType()">
+		<option value=""></option>
 		<c:set var="selectedDataHandler"><%= Environment.getValue(Environment.PROP_DB_TYPE) %></c:set>
 		<c:forEach items="${dataHandlers}" var="dataHandler">
 		<option value="<c:out value="${dataHandler.clazz}" />"<c:if test="${selectedDataHandler == dataHandler.clazz}"> selected</c:if>><c:if test="${!empty dataHandler.key}"><fmt:message key="${dataHandler.key}" /></c:if><c:if test="${empty dataHandler.key}"><c:out value="${dataHandler.name}" /></c:if><c:if test="${dataHandler.experimental}"> (<fmt:message key="common.caption.experimental" />)</c:if></option>

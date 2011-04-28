@@ -9,9 +9,14 @@ import info.bliki.wiki.model.ImageFormat;
 import java.io.IOException;
 import java.util.Map;
 
+import org.jamwiki.model.Namespace;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
+import org.jamwiki.utils.ImageBorderEnum;
+import org.jamwiki.utils.ImageHorizontalAlignmentEnum;
+import org.jamwiki.utils.ImageMetadata;
+import org.jamwiki.utils.ImageUtil;
+
+import org.apache.commons.lang.StringUtils;
 
 public class JAMHTMLConverter extends HTMLConverter {
 	private static final int DEFAULT_THUMBNAIL_SIZE = 180;
@@ -48,12 +53,24 @@ public class JAMHTMLConverter extends HTMLConverter {
 		if (thumb && pxWidth <= 0) {
 			pxWidth = DEFAULT_THUMBNAIL_SIZE;
 		}
-
+		ImageMetadata imageMetadata = new ImageMetadata();
+		imageMetadata.setMaxWidth(pxWidth);
+		imageMetadata.setCaption(imageFormat.getCaption());
+		if (frame) {
+			imageMetadata.setBorder(ImageBorderEnum.FRAME);
+		} else if (thumb) {
+			imageMetadata.setBorder(ImageBorderEnum.THUMB);
+		}
+		if (StringUtils.equals(imageFormat.getLocation(), "left")) {
+			imageMetadata.setHorizontalAlignment(ImageHorizontalAlignmentEnum.LEFT);
+		} else if  (StringUtils.equals(imageFormat.getLocation(), "right")) {
+			imageMetadata.setHorizontalAlignment(ImageHorizontalAlignmentEnum.RIGHT);
+		} else if  (StringUtils.equals(imageFormat.getLocation(), "center")) {
+			imageMetadata.setHorizontalAlignment(ImageHorizontalAlignmentEnum.CENTER);
+		}
 		try {
-			resultBuffer.append(LinkUtil.buildImageLinkHtml(fParserInput.getContext(), fParserInput.getVirtualWiki(), model
-					.getImageNamespace()
-					+ NamespaceHandler.NAMESPACE_SEPARATOR + imageName, frame, thumb, imageFormat.getLocation(), imageFormat.getCaption(),
-					pxWidth, false, null, false));
+			resultBuffer.append(ImageUtil.buildImageLinkHtml(fParserInput.getContext(), fParserInput.getVirtualWiki(), model
+					.getImageNamespace() + Namespace.SEPARATOR + imageName, imageMetadata, null, false));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

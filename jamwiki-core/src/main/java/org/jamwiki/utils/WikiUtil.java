@@ -22,7 +22,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -37,8 +36,10 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.VirtualWiki;
 
 /**
@@ -51,18 +52,22 @@ public class WikiUtil {
 
 	/** webapp context path, initialized from JAMWikiFilter. */
 	public static String WEBAPP_CONTEXT_PATH = null;
+	private static Pattern INVALID_NAMESPACE_NAME_PATTERN = null;
 	private static Pattern INVALID_ROLE_NAME_PATTERN = null;
 	private static Pattern INVALID_TOPIC_NAME_PATTERN = null;
 	private static Pattern VALID_USER_LOGIN_PATTERN = null;
+	private static Pattern VALID_VIRTUAL_WIKI_PATTERN = null;
 	public static final String PARAMETER_TOPIC = "topic";
 	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
 	public static final String PARAMETER_WATCHLIST = "watchlist";
 
 	static {
 		try {
+			INVALID_NAMESPACE_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_NAMESPACE_NAME));
 			INVALID_ROLE_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_ROLE_NAME));
 			INVALID_TOPIC_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_TOPIC_NAME));
 			VALID_USER_LOGIN_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_VALID_USER_LOGIN));
+			VALID_VIRTUAL_WIKI_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_VALID_VIRTUAL_WIKI));
 		} catch (PatternSyntaxException e) {
 			logger.severe("Unable to compile pattern", e);
 		}
@@ -104,7 +109,7 @@ public class WikiUtil {
 	 *  instantiated.
 	 */
 	public static DataHandler dataHandlerInstance() throws IOException {
-		if (Environment.getValue(Environment.PROP_DB_TYPE) == null) {
+		if (StringUtils.isBlank(Environment.getValue(Environment.PROP_DB_TYPE))) {
 			// this is a problem, but it should never occur
 			logger.warning("WikiUtil.dataHandlerInstance called without a valid PROP_DB_TYPE value");
 		}
@@ -145,21 +150,26 @@ public class WikiUtil {
 	 * For example, if the article name is "Topic" then the return value is
 	 * "Comments:Topic".
 	 *
+	 * @param virtualWiki The current virtual wiki.
 	 * @param name The article name from which a comments article name is to
 	 *  be constructed.
 	 * @return The comments article name for the article name.
 	 */
-	public static String extractCommentsLink(String name) {
+	public static String extractCommentsLink(String virtualWiki, String name) {
 		if (StringUtils.isBlank(name)) {
 			throw new IllegalArgumentException("Topic name must not be empty in extractCommentsLink");
 		}
-		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
-		if (StringUtils.isBlank(wikiLink.getNamespace())) {
-			return NamespaceHandler.NAMESPACE_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + name;
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, name);
+		Namespace commentsNamespace = null;
+		try {
+			commentsNamespace = Namespace.findCommentsNamespace(wikiLink.getNamespace());
+		} catch (DataAccessException e) {
+			throw new IllegalStateException("Database error while retrieving comments namespace", e);
 		}
-		String namespace = wikiLink.getNamespace();
-		String commentsNamespace = NamespaceHandler.getCommentsNamespace(namespace);
-		return (!StringUtils.isBlank(commentsNamespace)) ? commentsNamespace + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle() : NamespaceHandler.NAMESPACE_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle();
+		if (commentsNamespace == null) {
+			throw new IllegalArgumentException("Topic " + name + " does not have a comments namespace");
+		}
+		return (!StringUtils.isBlank(commentsNamespace.getLabel(virtualWiki))) ? commentsNamespace.getLabel(virtualWiki) + Namespace.SEPARATOR + wikiLink.getArticle() : wikiLink.getArticle();
 	}
 
 	/**
@@ -167,21 +177,21 @@ public class WikiUtil {
 	 * example, if the article name is "Comments:Topic" then the return value
 	 * is "Topic".
 	 *
+	 * @param virtualWiki The current virtual wiki.
 	 * @param name The article name from which a topic article name is to be
 	 *  constructed.
 	 * @return The topic article name for the article name.
 	 */
-	public static String extractTopicLink(String name) {
+	public static String extractTopicLink(String virtualWiki, String name) {
 		if (StringUtils.isBlank(name)) {
 			throw new IllegalArgumentException("Topic name must not be empty in extractTopicLink");
 		}
-		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
-		if (StringUtils.isBlank(wikiLink.getNamespace())) {
-			return name;
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, name);
+		Namespace mainNamespace = Namespace.findMainNamespace(wikiLink.getNamespace());
+		if (mainNamespace == null) {
+			throw new IllegalArgumentException("Topic " + name + " does not have a main namespace");
 		}
-		String namespace = wikiLink.getNamespace();
-		String mainNamespace = NamespaceHandler.getMainNamespace(namespace);
-		return (!StringUtils.isBlank(mainNamespace)) ? mainNamespace + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle() : wikiLink.getArticle();
+		return (!StringUtils.isBlank(mainNamespace.getLabel(virtualWiki))) ? mainNamespace.getLabel(virtualWiki) + Namespace.SEPARATOR + wikiLink.getArticle() : wikiLink.getArticle();
 	}
 
 	/**
@@ -189,7 +199,7 @@ public class WikiUtil {
 	 */
 	public static String findDefaultVirtualWikiUrl(String virtualWikiName) {
 		if (StringUtils.isBlank(virtualWikiName)) {
-			virtualWikiName = WikiBase.DEFAULT_VWIKI;
+			virtualWikiName = Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT);
 		}
 		String target = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
 		try {
@@ -199,28 +209,6 @@ public class WikiUtil {
 			logger.warning("Unable to retrieve default topic for virtual wiki", e);
 		}
 		return "/" + virtualWikiName + "/" + target;
-	}
-
-	/**
-	 * Given a topic type, determine the namespace name.
-	 *
-	 * @param topicType The topic type.
-	 * @return The namespace that matches the topic type.
-	 */
-	public static String findNamespaceForTopicType(int topicType) {
-		switch (topicType) {
-			case Topic.TYPE_IMAGE:
-			case Topic.TYPE_FILE:
-				return NamespaceHandler.NAMESPACE_IMAGE;
-			case Topic.TYPE_CATEGORY:
-				return NamespaceHandler.NAMESPACE_CATEGORY;
-			case Topic.TYPE_SYSTEM_FILE:
-				return NamespaceHandler.NAMESPACE_JAMWIKI;
-			case Topic.TYPE_TEMPLATE:
-				return NamespaceHandler.NAMESPACE_TEMPLATE;
-			default:
-				return "";
-		}
 	}
 
 	/**
@@ -237,7 +225,7 @@ public class WikiUtil {
 	public static Topic findRedirectedTopic(Topic parent, int attempts) throws DataAccessException {
 		int count = attempts;
 		String target = parent.getRedirectTo();
-		if (parent.getTopicType() != Topic.TYPE_REDIRECT || StringUtils.isBlank(target)) {
+		if (parent.getTopicType() != TopicType.REDIRECT || StringUtils.isBlank(target)) {
 			logger.severe("getRedirectTarget() called for non-redirect topic " + parent.getName());
 			return parent;
 		}
@@ -248,10 +236,9 @@ public class WikiUtil {
 			return parent;
 		}
 		String virtualWiki = parent.getVirtualWiki();
-		WikiLink wikiLink = LinkUtil.parseWikiLink(target);
-		if (!StringUtils.isBlank(wikiLink.getNamespace()) && WikiBase.getDataHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
-			virtualWiki = wikiLink.getNamespace();
-			wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, target);
+		if (wikiLink.getVirtualWiki() != null) {
+			virtualWiki = wikiLink.getVirtualWiki().getName();
 		}
 		// get the topic that is being redirected to
 		Topic child = WikiBase.getDataHandler().lookupTopic(virtualWiki, wikiLink.getDestination(), false, null);
@@ -270,26 +257,26 @@ public class WikiUtil {
 	/**
 	 * Given a namespace name, determine the topic type.
 	 *
-	 * @param namespace The namespace name.
+	 * @param namespace The namespace.
 	 * @return The topic type that matches the namespace.
 	 */
-	public static int findTopicTypeForNamespace(String namespace) {
+	public static TopicType findTopicTypeForNamespace(Namespace namespace) {
 		if (namespace != null) {
-			if (namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
-				return Topic.TYPE_CATEGORY;
+			if (namespace.getId().equals(Namespace.CATEGORY_ID)) {
+				return TopicType.CATEGORY;
 			}
-			if (namespace.equals(NamespaceHandler.NAMESPACE_TEMPLATE)) {
-				return Topic.TYPE_TEMPLATE;
+			if (namespace.getId().equals(Namespace.TEMPLATE_ID)) {
+				return TopicType.TEMPLATE;
 			}
-			if (namespace.equals(NamespaceHandler.NAMESPACE_JAMWIKI)) {
-				return Topic.TYPE_SYSTEM_FILE;
+			if (namespace.getId().equals(Namespace.JAMWIKI_ID)) {
+				return TopicType.SYSTEM_FILE;
 			}
-			if (namespace.equals(NamespaceHandler.NAMESPACE_IMAGE)) {
+			if (namespace.getId().equals(Namespace.FILE_ID)) {
 				// FIXME - handle TYPE_FILE
-				return Topic.TYPE_IMAGE;
+				return TopicType.IMAGE;
 			}
 		}
-		return Topic.TYPE_ARTICLE;
+		return TopicType.ARTICLE;
 	}
 
 	/**
@@ -299,7 +286,7 @@ public class WikiUtil {
 	 */
 	public static String getBaseUrl() throws DataAccessException {
 		String url = Environment.getValue(Environment.PROP_SERVER_URL);
-		url += LinkUtil.buildTopicUrl(WEBAPP_CONTEXT_PATH, WikiBase.DEFAULT_VWIKI, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC), true);
+		url += LinkUtil.buildTopicUrl(WEBAPP_CONTEXT_PATH, Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT), Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC), true);
 		return url;
 	}
 
@@ -382,7 +369,8 @@ public class WikiUtil {
 		// skip one directory, which is the virutal wiki
 		String topic = retrieveDirectoriesFromURI(request, 1);
 		if (topic == null) {
-			logger.warning("No topic in URL: " + request.getRequestURI());
+			// may be the root URL, ie: http://example.com/wiki/en/
+			logger.info("No topic in URL: " + request.getRequestURI());
 			return null;
 		}
 		int pos = topic.indexOf('#');
@@ -465,22 +453,22 @@ public class WikiUtil {
 	 * Given a topic name, determine if that name corresponds to a comments
 	 * page.
 	 *
+	 * @param virtualWiki The current virtual wiki.
 	 * @param topicName The topic name (non-null) to examine to determine if it
 	 *  is a comments page or not.
 	 * @return <code>true</code> if the page is a comments page, <code>false</code>
 	 *  otherwise.
 	 */
-	public static boolean isCommentsPage(String topicName) {
-		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-		if (StringUtils.isBlank(wikiLink.getNamespace())) {
+	public static boolean isCommentsPage(String virtualWiki, String topicName) {
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, topicName);
+		if (wikiLink.getNamespace().getId().equals(Namespace.SPECIAL_ID)) {
 			return false;
 		}
-		String namespace = wikiLink.getNamespace();
-		if (namespace.equals(NamespaceHandler.NAMESPACE_SPECIAL)) {
-			return false;
+		try {
+			return (Namespace.findCommentsNamespace(wikiLink.getNamespace()) != null);
+		} catch (DataAccessException e) {
+			throw new IllegalStateException("Database error while retrieving comments namespace", e);
 		}
-		String commentNamespace = NamespaceHandler.getCommentsNamespace(namespace);
-		return namespace.equals(commentNamespace);
 	}
 
 	/**
@@ -509,54 +497,6 @@ public class WikiUtil {
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 		WikiVersion currentVersion = new WikiVersion(WikiVersion.CURRENT_WIKI_VERSION);
 		return oldVersion.before(currentVersion);
-	}
-
-	/**
-	 * Utility method for reading special topic values from files and returning
-	 * the file contents.
-	 *
-	 * @param locale The locale for the user viewing the special page.
-	 * @param pageName The name of the special page being retrieved.
-	 */
-	public static String readSpecialPage(Locale locale, String pageName) throws IOException {
-		String contents = null;
-		String filename = null;
-		String language = null;
-		String country = null;
-		if (locale != null) {
-			language = locale.getLanguage();
-			country = locale.getCountry();
-		}
-		String subdirectory = "";
-		if (!StringUtils.isBlank(language) && !StringUtils.isBlank(country)) {
-			try {
-				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language + "_" + country).getPath();
-				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
-				contents = Utilities.readFile(filename);
-			} catch (IOException e) {
-				logger.info("File " + filename + " does not exist");
-			}
-		}
-		if (contents == null && !StringUtils.isBlank(language)) {
-			try {
-				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language).getPath();
-				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
-				contents = Utilities.readFile(filename);
-			} catch (IOException e) {
-				logger.info("File " + filename + " does not exist");
-			}
-		}
-		if (contents == null) {
-			try {
-				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR).getPath();
-				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
-				contents = Utilities.readFile(filename);
-			} catch (IOException e) {
-				logger.warning("File " + filename + " could not be read", e);
-				throw e;
-			}
-		}
-		return contents;
 	}
 
 	/**
@@ -682,6 +622,42 @@ public class WikiUtil {
 	}
 
 	/**
+	 * Utility method for determining if a namespace name is valid for use on the Wiki,
+	 * meaning that it is not empty and does not contain any invalid characters.
+	 *
+	 * @param name The namespace name to validate.
+	 * @throws WikiException Thrown if the user name is invalid.
+	 */
+	public static void validateNamespaceName(String name) throws WikiException {
+		if (name == null || (name.length() != 0 && StringUtils.isBlank(name)) || name.length() != name.trim().length()) {
+			// name cannot be null, contain only whitespace, or have trailing whitespace
+			throw new WikiException(new WikiMessage("admin.vwiki.error.namespace.whitespace", name));
+		}
+		Matcher m = WikiUtil.INVALID_NAMESPACE_NAME_PATTERN.matcher(name);
+		if (m.find()) {
+			throw new WikiException(new WikiMessage("admin.vwiki.error.namespace.characters", name));
+		}
+		List<Namespace> namespaces = null;
+		try {
+			namespaces = WikiBase.getDataHandler().lookupNamespaces();
+		} catch (DataAccessException e) {
+			throw new WikiException(new WikiMessage("error.unknown", e.getMessage()));
+		}
+		for (Namespace namespace : namespaces) {
+			// verify that the namespace name is unique
+			if (name.equals(namespace.getDefaultLabel())) {
+				throw new WikiException(new WikiMessage("admin.vwiki.error.namespace.unique", name));
+			}
+			// verify that there are no translated namespaces with the same name
+			for (String namespaceTranslation : namespace.getNamespaceTranslations().values()) {
+				if (name.equals(namespaceTranslation)) {
+					throw new WikiException(new WikiMessage("admin.vwiki.error.namespace.unique", name));
+				}
+			}
+		}
+	}
+
+	/**
 	 * Utility method for determining if the parameters of a Role are valid
 	 * or not.
 	 *
@@ -703,23 +679,26 @@ public class WikiUtil {
 	 * Utility method for determining if a topic name is valid for use on the Wiki,
 	 * meaning that it is not empty and does not contain any invalid characters.
 	 *
+	 * @param virtualWiki The current virtual wiki.
 	 * @param name The topic name to validate.
 	 * @throws WikiException Thrown if the user name is invalid.
 	 */
-	public static void validateTopicName(String name) throws WikiException {
+	public static void validateTopicName(String virtualWiki, String name) throws WikiException {
+		if (StringUtils.isBlank(virtualWiki)) {
+			throw new WikiException(new WikiMessage("common.exception.novirtualwiki"));
+		}
 		if (StringUtils.isBlank(name)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		if (PseudoTopicHandler.isPseudoTopic(name)) {
 			throw new WikiException(new WikiMessage("common.exception.pseudotopic", name));
 		}
-		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
-		String namespace = StringUtils.trimToNull(wikiLink.getNamespace());
+		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, name);
 		String article = StringUtils.trimToNull(wikiLink.getArticle());
-		if (StringUtils.startsWith(namespace, "/") || StringUtils.startsWith(article, "/")) {
+		if (StringUtils.startsWith(article, "/")) {
 			throw new WikiException(new WikiMessage("common.exception.name", name));
 		}
-		if (namespace != null && namespace.toLowerCase().equals(NamespaceHandler.NAMESPACE_SPECIAL.toLowerCase())) {
+		if (wikiLink.getNamespace().getId().equals(Namespace.SPECIAL_ID)) {
 			throw new WikiException(new WikiMessage("common.exception.name", name));
 		}
 		Matcher m = WikiUtil.INVALID_TOPIC_NAME_PATTERN.matcher(name);
@@ -761,6 +740,23 @@ public class WikiUtil {
 		Matcher m = WikiUtil.VALID_USER_LOGIN_PATTERN.matcher(name);
 		if (!m.matches()) {
 			throw new WikiException(new WikiMessage("common.exception.name", name));
+		}
+	}
+
+	/**
+	 * Utility method for determining if a virtual wiki name is valid for use on the Wiki,
+	 * meaning that it is not empty and does not contain any invalid characters.
+	 *
+	 * @param virtualWikiName The virtual wiki name to validate.
+	 * @throws WikiException Thrown if the user name is invalid.
+	 */
+	public static void validateVirtualWikiName(String virtualWikiName) throws WikiException {
+		if (StringUtils.isBlank(virtualWikiName)) {
+			throw new WikiException(new WikiMessage("common.exception.novirtualwiki"));
+		}
+		Matcher m = WikiUtil.VALID_VIRTUAL_WIKI_PATTERN.matcher(virtualWikiName);
+		if (!m.matches()) {
+			throw new WikiException(new WikiMessage("common.exception.name", virtualWikiName));
 		}
 	}
 }

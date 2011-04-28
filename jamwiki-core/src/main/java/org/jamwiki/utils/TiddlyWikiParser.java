@@ -32,6 +32,7 @@ import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 
@@ -50,7 +51,7 @@ public class TiddlyWikiParser {
 	private static final String MODIFIED = "modified";
 	//private static final String TAGS = "tags";
 	private static final SimpleDateFormat formater = new SimpleDateFormat("yyyyMMddHHmm");
-	private StringBuffer messages = new StringBuffer();
+	private StringBuilder messages = new StringBuilder();
 	private String virtualWiki;
 	private WikiUser user;
 	private String authorDisplay;
@@ -123,7 +124,7 @@ public class TiddlyWikiParser {
 		boolean inTiddler = false;
 		int start = 0;
 		int end = 0;
-		StringBuffer content = new StringBuffer();
+		StringBuilder content = new StringBuilder();
 		while (line != null) {
 			if (inTiddler) {
 				end = line.indexOf(DIV_END);
@@ -200,15 +201,13 @@ public class TiddlyWikiParser {
 	 *
 	 */
 	private void saveTopic(String name, Date lastMod, String content) throws DataAccessException, WikiException {
-		Topic topic = new Topic();
-		topic.setName(name);
-		topic.setVirtualWiki(virtualWiki);
+		Topic topic = new Topic(virtualWiki, name);
 		topic.setTopicContent(content);
 		int charactersChanged = StringUtils.length(content);
 		TopicVersion topicVersion = new TopicVersion(user, authorDisplay, "imported", content, charactersChanged);
 		topicVersion.setEditDate(new Timestamp(lastMod.getTime()));
 		// manage mapping bitween MediaWiki and JAMWiki namespaces
-		topic.setTopicType(Topic.TYPE_ARTICLE);
+		topic.setTopicType(TopicType.ARTICLE);
 		// Store topic in database
 		wikiBase.writeTopic(topic, topicVersion, null, null, null);
 	}

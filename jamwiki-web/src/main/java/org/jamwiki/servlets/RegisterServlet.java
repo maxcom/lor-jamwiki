@@ -23,9 +23,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import org.springframework.security.ui.WebAuthenticationDetails;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
@@ -33,7 +33,7 @@ import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
-import org.jamwiki.authentication.WikiUserDetails;
+import org.jamwiki.authentication.WikiUserDetailsImpl;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
@@ -96,7 +96,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void login(HttpServletRequest request, String username, String password) {
-		WikiUserDetails userDetails = new WikiUserDetails(username, password, true, true, true, true, JAMWikiAuthenticationConfiguration.getDefaultGroupRoles());
+		WikiUserDetailsImpl userDetails = new WikiUserDetailsImpl(username, password, true, true, true, true, JAMWikiAuthenticationConfiguration.getDefaultGroupRoles());
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 		authentication.setDetails(new WebAuthenticationDetails(request));
 		SecurityContextHolder.getContext().setAuthentication(authentication);

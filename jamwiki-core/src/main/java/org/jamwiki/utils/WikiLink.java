@@ -16,6 +16,9 @@
  */
 package org.jamwiki.utils;
 
+import org.jamwiki.model.Namespace;
+import org.jamwiki.model.VirtualWiki;
+
 /**
  * Utility method used in processing Wiki links.
  */
@@ -28,20 +31,18 @@ public class WikiLink {
 	private String article = null;
 	/** Link destination, including namespace. */
 	private String destination = null;
+	/** Interwiki link prefix. */
+	private String interWiki = null;
 	/** Namespace prefix for the link. */
-	private String namespace = null;
+	private Namespace namespace = Namespace.namespace(Namespace.MAIN_ID);
 	/** Link query paramters. */
 	private String query = null;
 	/** Link section (ie #section). */
 	private String section = null;
 	/** Link text. */
 	private String text = null;
-
-	/**
-	 *
-	 */
-	public WikiLink() {
-	}
+	/** Virtual wiki link prefix. */
+	private VirtualWiki virtualWiki = null;
 
 	/**
 	 *
@@ -88,14 +89,31 @@ public class WikiLink {
 	/**
 	 *
 	 */
-	public String getNamespace() {
+	public String getInterWiki() {
+		return this.interWiki;
+	}
+
+	/**
+	 *
+	 */
+	public void setInterWiki(String interWiki) {
+		this.interWiki = interWiki;
+	}
+
+	/**
+	 *
+	 */
+	public Namespace getNamespace() {
 		return this.namespace;
 	}
 
 	/**
 	 *
 	 */
-	public void setNamespace(String namespace) {
+	public void setNamespace(Namespace namespace) {
+		if (namespace == null) {
+			throw new IllegalArgumentException("Namespace cannot be null");
+		}
 		this.namespace = namespace;
 	}
 
@@ -139,5 +157,19 @@ public class WikiLink {
 	 */
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	/**
+	 *
+	 */
+	public VirtualWiki getVirtualWiki() {
+		return this.virtualWiki;
+	}
+
+	/**
+	 *
+	 */
+	public void setVirtualWiki(VirtualWiki virtualWiki) {
+		this.virtualWiki = virtualWiki;
 	}
 }

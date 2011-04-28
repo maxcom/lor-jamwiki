@@ -22,13 +22,14 @@ import java.util.logging.LogRecord;
 import java.util.logging.Level;
 import java.util.PropertyResourceBundle;
 import java.io.ByteArrayInputStream;
+import org.jamwiki.JAMWikiUnitTest;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
  *
  */
-public class WikiLogFormatterTest {
+public class WikiLogFormatterTest extends JAMWikiUnitTest {
 
 	/**
 	 *

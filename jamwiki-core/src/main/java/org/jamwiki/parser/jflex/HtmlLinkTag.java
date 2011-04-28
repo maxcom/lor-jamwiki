@@ -17,9 +17,9 @@
 package org.jamwiki.parser.jflex;
 
 import org.apache.commons.lang.StringUtils;
-import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
@@ -28,26 +28,11 @@ import org.jamwiki.utils.WikiLogger;
  * <code>[http://example.com optional text]</code> as well as raw links
  * of the form <code>http://example.com</code>.
  */
-public class HtmlLinkTag {
+public class HtmlLinkTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(HtmlLinkTag.class.getName());
-
-	/**
-	 * Given a String that represents a Wiki HTML link (a URL with an optional
-	 * link text that is enclosed in brackets), return a formatted HTML anchor tag.
-	 *
-	 * @param raw The raw Wiki syntax that is to be converted into an HTML link.
-	 * @return A formatted HTML link for the Wiki syntax.
-	 */
-	private String buildHtmlLink(ParserInput parserInput, int mode, String raw) throws ParserException {
-		if (raw.length() <= 2) {
-			// no link, display the raw text
-			return raw;
-		}
-		// strip the first and last brackets
-		String link = raw.substring(1, raw.length() - 1).trim();
-		return this.buildHtmlLinkRaw(parserInput, mode, link);
-	}
+	// temporary parameter passed to indicate that the fragment being parsed is a link caption
+	private static final String HTML_LINK_CAPTION = "html-link-caption";
 
 	/**
 	 * Given a String that represents a raw HTML link (a URL link that is
@@ -92,7 +77,7 @@ public class HtmlLinkTag {
 		if (StringUtils.isBlank(text)) {
 			return "";
 		}
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (int i = text.length() - 1; i >= 0; i--) {
 			char c = text.charAt(i);
 			if (c == '.' || c == ';' || c == ',' || c == ':' || c == '(' || c == '[' || c == '{') {
@@ -123,65 +108,40 @@ public class HtmlLinkTag {
 	 *
 	 */
 	private String linkHtml(ParserInput parserInput, int mode, String link, String text, String punctuation) throws ParserException {
-		String html = null;
-		String linkLower = link.toLowerCase();
-		if (linkLower.startsWith("mailto://")) {
+		if (link.toLowerCase().startsWith("mailto://")) {
 			// fix bad mailto syntax
 			link = "mailto:" + link.substring("mailto://".length());
 		}
-		String protocol = "";
-		if (linkLower.startsWith("http://")) {
-			protocol = "http://";
-		} else if  (linkLower.startsWith("https://")) {
-			protocol = "https://";
-		} else if (linkLower.startsWith("ftp://")) {
-			protocol = "ftp://";
-		} else if (linkLower.startsWith("mailto:")) {
-			protocol = "mailto:";
-		} else if (linkLower.startsWith("news://")) {
-			protocol = "news://";
-		} else if (linkLower.startsWith("telnet://")) {
-			protocol = "telnet://";
-		} else if (linkLower.startsWith("file://")) {
-			protocol = "file://";
-		} else {
-			throw new ParserException("Invalid protocol in link " + link);
-		}
 		String caption = link;
 		if (!StringUtils.isBlank(text)) {
+			// pass a parameter via the parserInput to prevent nested links from being generated
+			parserInput.getTempParams().put(HTML_LINK_CAPTION, true);
 			caption = JFlexParserUtil.parseFragment(parserInput, text, mode);
+			parserInput.getTempParams().remove(HTML_LINK_CAPTION);
 		}
-		String title = Utilities.stripMarkup(caption);
-		link = link.substring(protocol.length());
-		// make sure link values are properly escaped.
-		link = StringUtils.replace(link, "<", "%3C");
-		link = StringUtils.replace(link, ">", "%3E");
-		link = StringUtils.replace(link, "\"", "%22");
-		link = StringUtils.replace(link, "\'", "%27");
-		String target = (Environment.getBooleanValue(Environment.PROP_EXTERNAL_LINK_NEW_WINDOW)) ? " target=\"_blank\"" : "";
-		html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-			 + title + "\" href=\"" + protocol + link + "\"" + target + ">"
-			 + caption + "</a>" + punctuation;
-		return html;
+		String openTag = LinkUtil.buildHtmlLinkOpenTag(link, "externallink");
+		return openTag + caption + "</a>" + punctuation;
 	}
 
 	/**
 	 * Parse a Mediawiki HTML link of the form "[http://www.site.com/ text]" or
 	 * "http://www.site.com/" and return the resulting HTML output.
 	 */
-	public String parse(ParserInput parserInput, int mode, String raw) {
+	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
+		if (logger.isFinerEnabled()) {
+			logger.finer("htmllink: " + raw + " (" + lexer.yystate() + ")");
+		}
 		if (raw == null || StringUtils.isBlank(raw)) {
 			// no link to display
 			return raw;
 		}
-		try {
-			if (raw.charAt(0) == '[' && raw.endsWith("]")) {
-				return this.buildHtmlLink(parserInput, mode, raw);
-			}
-			return this.buildHtmlLinkRaw(parserInput, mode, raw);
-		} catch (Throwable t) {
-			logger.info("Unable to parse " + raw, t);
+		Boolean linkCaption = (Boolean)lexer.getParserInput().getTempParams().get(WikiLinkTag.LINK_CAPTION);
+		Boolean htmlLinkCaption = (Boolean)lexer.getParserInput().getTempParams().get(HTML_LINK_CAPTION);
+		if ((linkCaption != null && linkCaption.booleanValue()) || (htmlLinkCaption != null && htmlLinkCaption.booleanValue())) {
+			// do not parse HTML tags in link captions as that would result in HTML of the form
+			// "<a href="">this is the <a href="">link caption</a></a>"
 			return raw;
 		}
+		return this.buildHtmlLinkRaw(lexer.getParserInput(), lexer.getMode(), raw);
 	}
 }

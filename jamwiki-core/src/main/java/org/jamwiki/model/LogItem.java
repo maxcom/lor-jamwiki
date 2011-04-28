@@ -337,7 +337,7 @@ public class LogItem {
 	/**
 	 *
 	 */
-	public boolean isImport() {
+	public boolean isImportLog() {
 		return this.logType == LOG_TYPE_IMPORT;
 	}
 

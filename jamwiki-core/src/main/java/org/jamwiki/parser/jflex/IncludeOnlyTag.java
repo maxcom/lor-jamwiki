@@ -16,14 +16,13 @@
  */
 package org.jamwiki.parser.jflex;
 
-import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserException;
 import org.jamwiki.utils.WikiLogger;
 
 /**
  * This class parses nowiki tags of the form <code>&lt;includeonly&gt;content&lt;/includeonly&gt;</code>.
  */
-public class IncludeOnlyTag {
+public class IncludeOnlyTag implements JFlexParserTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(IncludeOnlyTag.class.getName());
 
@@ -31,22 +30,17 @@ public class IncludeOnlyTag {
 	 * Parse a call to a Mediawiki includeonly tag of the form
 	 * "<includeonly>text</includeonly>" and return the resulting output.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
-		if (mode <= JFlexParser.MODE_MINIMAL) {
+	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
+		if (lexer.getMode() <= JFlexParser.MODE_MINIMAL) {
 			return raw;
 		}
-		try {
-			if (parserInput.getTemplateDepth() > 0) {
-				String content = JFlexParserUtil.tagContent(raw);
-				// run the pre-processor against the includeonly content
-				JFlexParser parser = new JFlexParser(parserInput);
-				return parser.parseFragment(parserOutput, content, JFlexParser.MODE_PREPROCESS);
-			}
-			// anything else then the tag content is not included
-			return "";
-		} catch (Throwable t) {
-			logger.info("Unable to parse " + raw, t);
-			return raw;
+		if (lexer.getParserInput().getTemplateDepth() > 0) {
+			String content = JFlexParserUtil.tagContent(raw);
+			// run the pre-processor against the includeonly content
+			JFlexParser parser = new JFlexParser(lexer.getParserInput());
+			return parser.parseFragment(lexer.getParserOutput(), content, JFlexParser.MODE_PREPROCESS);
 		}
+		// anything else then the tag content is not included
+		return "";
 	}
 }

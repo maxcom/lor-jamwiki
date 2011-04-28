@@ -19,6 +19,7 @@ package org.jamwiki.utils;
 import java.text.MessageFormat;
 import java.util.Properties;
 import org.jamwiki.Environment;
+import org.jamwiki.model.Namespace;
 
 /**
  * Class for controlling inter-wiki links. An interwiki link is a link that is
@@ -34,7 +35,7 @@ public class InterWikiHandler {
 	/** Properties bundle to store mappings */
 	private static Properties mapping;
 	/** Name of resource to access the persisted bundle */
-	private static final String RESOURCE_NAME = "/interwiki.properties";
+	private static final String RESOURCE_NAME = "interwiki.properties";
 
 	static {
 		InterWikiHandler.mapping = Environment.loadProperties(RESOURCE_NAME);
@@ -64,14 +65,14 @@ public class InterWikiHandler {
 	public static String formatInterWiki(String namespace, String value) {
 		String pattern = InterWikiHandler.mapping.getProperty(namespace.toLowerCase());
 		if (pattern == null) {
-			return namespace + NamespaceHandler.NAMESPACE_SEPARATOR + value;
+			return namespace + Namespace.SEPARATOR + value;
 		}
 		Object[] objects = {Utilities.encodeAndEscapeTopicName(value)};
 		try {
 			return MessageFormat.format(pattern, objects);
 		} catch (IllegalArgumentException e) {
 			logger.warning("Unable to format " + pattern + " with value " + value, e);
-			return namespace + NamespaceHandler.NAMESPACE_SEPARATOR + value;
+			return namespace + Namespace.SEPARATOR + value;
 		}
 	}
 

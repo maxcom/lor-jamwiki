@@ -19,7 +19,7 @@ package org.jamwiki.servlets;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.jamwiki.Environment;
@@ -28,7 +28,6 @@ import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
-import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.WikiConfigurationObject;
@@ -72,7 +71,7 @@ public class SetupServlet extends JAMWikiServlet {
 				throw new WikiException(new WikiMessage("setup.error.jdk", Integer.valueOf(MINIMUM_JDK_VERSION).toString(), System.getProperty("java.version")));
 			}
 			if (!StringUtils.isBlank(function) && initialize(request, next, pageInfo)) {
-				ServletUtil.redirect(next, WikiBase.DEFAULT_VWIKI, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
+				ServletUtil.redirect(next, Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT), Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
 			} else {
 				view(request, next, pageInfo);
 			}
@@ -141,8 +140,6 @@ public class SetupServlet extends JAMWikiServlet {
 		String newPassword = request.getParameter("newPassword");
 		String encryptedPassword = Encryption.encrypt(newPassword);
 		WikiBase.reset(request.getLocale(), user, username, encryptedPassword);
-		JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
-		JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
 		Environment.saveProperties();
 		// the setup process does not add new topics to the index (currently)
 		// TODO - remove this once setup uses safe connection handling

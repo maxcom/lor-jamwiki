@@ -23,3 +23,4 @@
 <%@ include file="page-init.jsp" %>
 
 <%@ include file="view-topic-include.jsp" %>
+<%@ include file="view-category-include.jsp" %>

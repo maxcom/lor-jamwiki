@@ -41,7 +41,7 @@
 <ul>
 <c:set var="nextTopicVersionId" value="" />
 <c:forEach items="${changes}" var="change" varStatus="status">
-<li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.import}"> class="importchange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
+<li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.importChange}"> class="importchange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
 	<c:if test="${!empty nextTopicVersionId}">(<jamwiki:link value="Special:Diff"><jamwiki:linkParam key="topic" value="${change.topicName}" /><jamwiki:linkParam key="version2" value="${change.topicVersionId}" /><jamwiki:linkParam key="version1" value="${nextTopicVersionId}" /><fmt:message key="history.caption.diffnext" /></jamwiki:link>)</c:if>
 	<c:if test="${empty nextTopicVersionId}">(<fmt:message key="history.caption.diffnext" />)</c:if>
 	<c:if test="${!empty change.previousTopicVersionId}">(<jamwiki:link value="Special:Diff"><jamwiki:linkParam key="topic" value="${change.topicName}" /><jamwiki:linkParam key="version2" value="${change.previousTopicVersionId}" /><jamwiki:linkParam key="version1" value="${change.topicVersionId}" /><fmt:message key="history.caption.diffprevious" /></jamwiki:link>)</c:if>
@@ -60,8 +60,8 @@
 	<%-- the "+" symbol could be added using a pattern attribute, but there does not seem to be a way to avoid having "+0" show up when that approach is used. --%>
 	(<c:if test="${change.charactersChanged > 0}">+</c:if><fmt:formatNumber value="${change.charactersChanged}" />)
 	&#160;.&#160;.&#160;
-	<jamwiki:link value="User:${change.authorName}" text="${change.authorName}" />
-	(<jamwiki:link value="User comments:${change.authorName}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${change.authorName}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
+	<jamwiki:link value="${pageInfo.namespaces['User']}:${change.authorName}" text="${change.authorName}" />
+	(<jamwiki:link value="${pageInfo.namespaces['User comments']}:${change.authorName}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${change.authorName}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
 	<c:if test="${!empty change.changeTypeNotification}">&#160;<b><c:out value="${change.changeTypeNotification}" /></b></c:if>
 	<c:if test="${!empty change.changeWikiMessage}">
 		&#160;

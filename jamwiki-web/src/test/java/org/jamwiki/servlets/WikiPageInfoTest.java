@@ -18,13 +18,14 @@
  */
 package org.jamwiki.servlets;
 
-import org.jamwiki.WikiBase;
+import org.jamwiki.Environment;
+import org.jamwiki.JAMWikiUnitTest;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockServletContext;
 import static org.junit.Assert.*;
 
-public class WikiPageInfoTest {
+public class WikiPageInfoTest extends JAMWikiUnitTest {
 
 	/**
 	 *
@@ -38,43 +39,9 @@ public class WikiPageInfoTest {
 		assertEquals(p.getVirtualWikiName(), "en", p.getVirtualWikiName());
 		mockRequest = this.getMockHttpServletRequest("/");
 		p = new WikiPageInfo(mockRequest);
-		assertEquals(p.getVirtualWikiName(), WikiBase.DEFAULT_VWIKI, p.getVirtualWikiName());
+		assertEquals(p.getVirtualWikiName(), Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT), p.getVirtualWikiName());
 	}
 
-	/**
-	 *
-	 */
-	@Test
-	public void testGetNamespace() {
-		MockHttpServletRequest mockRequest = this.getMockHttpServletRequest("/virtual/Topic");
-		WikiPageInfo p = new WikiPageInfo(mockRequest);
-		assertEquals(p.getTopicName(),"",p.getTopicName());
-		p.setTopicName("Main");
-		assertEquals("Expected empty namespace", "", p.getNamespace());
-		p.setTopicName("User:FooBar");
-		assertEquals("Expected 'User' namespace", "User", p.getNamespace());
-		p.setTopicName("Special:Contributions");
-		p.setSpecial(true);
-		assertEquals("Expected 'Special' namespace", "Special", p.getNamespace());
-	}
-
-	/**
-	 *
-	 */
-	@Test
-	public void testGetPagename() {
-		MockHttpServletRequest mockRequest = this.getMockHttpServletRequest("/virtual/Topic");
-		WikiPageInfo p = new WikiPageInfo(mockRequest);
-		assertEquals(p.getTopicName(),null,p.getPagename());
-		p.setTopicName("Main");
-		assertEquals("Expected page name of 'Main'", "Main", p.getPagename());
-		p.setTopicName("User:FooBar");
-		assertEquals("Expected page name of 'FooBar'", "FooBar", p.getPagename());
-		p.setTopicName("Special:Contributions");
-		p.setSpecial(true);
-		assertEquals("Expected page name of 'Contributions'", "Contributions", p.getPagename());
-	}
-	
 	/**
 	 *
 	 */

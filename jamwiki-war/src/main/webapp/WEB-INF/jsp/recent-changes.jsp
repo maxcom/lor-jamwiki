@@ -43,7 +43,7 @@
 <h4><c:out value="${currentDate}" /></h4>
 <ul>
 </c:if>
-<li<c:if test="${change.delete && empty change.logType}"> class="deletechange"</c:if><c:if test="${change.import && empty change.logType}"> class="importchange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move && empty change.logType}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
+<li<c:if test="${change.delete && empty change.logType}"> class="deletechange"</c:if><c:if test="${change.importChange && empty change.logType}"> class="importchange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move && empty change.logType}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
 	<c:if test="${!empty change.topicName}">
 		(<jamwiki:link value="Special:Diff"><jamwiki:linkParam key="topic" value="${change.topicName}" /><jamwiki:linkParam key="version2"><c:out value="${change.previousTopicVersionId}" /></jamwiki:linkParam><jamwiki:linkParam key="version1" value="${change.topicVersionId}" /><fmt:message key="common.caption.diff" /></jamwiki:link>)
 		&#160;
@@ -65,8 +65,8 @@
 		(<c:if test="${change.charactersChanged > 0}">+</c:if><fmt:formatNumber value="${change.charactersChanged}" />)
 	</c:if>
 	&#160;.&#160;.&#160;
-	<jamwiki:link value="User:${change.authorName}" text="${change.authorName}" />
-	(<jamwiki:link value="User comments:${change.authorName}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${change.authorName}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
+	<jamwiki:link value="${pageInfo.namespaces['User']}:${change.authorName}" text="${change.authorName}" />
+	(<jamwiki:link value="${pageInfo.namespaces['User comments']}:${change.authorName}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${change.authorName}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
 	<c:if test="${!empty change.changeTypeNotification}">&#160;<b><c:out value="${change.changeTypeNotification}" /></b></c:if>
 	<c:if test="${!empty change.changeWikiMessage}">
 		&#160;

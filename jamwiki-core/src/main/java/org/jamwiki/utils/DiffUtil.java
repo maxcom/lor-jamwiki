@@ -22,6 +22,7 @@ import net.sf.ehcache.Element;
 import org.apache.commons.lang.StringUtils;
 import org.incava.util.diff.Diff;
 import org.incava.util.diff.Difference;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.model.WikiDiff;
 
 /**
@@ -111,7 +112,7 @@ public class DiffUtil {
 	 *  version of a topic.
 	 * @return Returns a list of WikiDiff objects that correspond to the changed text.
 	 */
-	public static List<WikiDiff> diff(String newVersion, String oldVersion) {
+	public static List<WikiDiff> diff(String newVersion, String oldVersion) throws DataAccessException {
 		List<WikiDiff> result = DiffUtil.retrieveFromCache(newVersion, oldVersion);
 		if (result != null) {
 			return result;
@@ -139,7 +140,7 @@ public class DiffUtil {
 	 * be unique enough.
 	 */
 	private static String generateCacheKey(String newVersion, String oldVersion) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		if (newVersion == null) {
 			result.append(-1);
 		} else if (newVersion.length() <= 10) {
@@ -392,7 +393,7 @@ public class DiffUtil {
 	 * Determine if diff information is available in the cache.  If so return it,
 	 * otherwise return <code>null</code>.
 	 */
-	private static List<WikiDiff> retrieveFromCache(String newVersion, String oldVersion) {
+	private static List<WikiDiff> retrieveFromCache(String newVersion, String oldVersion) throws DataAccessException {
 		String key = generateCacheKey(newVersion, oldVersion);
 		Element cachedDiffInformation = WikiCache.retrieveFromCache(CACHE_DIFF_INFORMATION, key);
 		return (cachedDiffInformation != null) ? (List<WikiDiff>)cachedDiffInformation.getObjectValue() : null;

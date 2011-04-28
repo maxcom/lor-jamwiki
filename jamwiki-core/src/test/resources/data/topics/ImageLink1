@@ -1,6 +1,168 @@
 <!-- test basic image links -->
-[[Image:Test Image.gif]]
+plain image
 
-[[:Image:Test Image.gif]]
+[[Image:Test Image.jpg]]
 
-[[:Image:Test Image.gif|Caption for link]]
+image link
+
+[[:Image:Test Image.jpg]]
+
+image link with caption
+
+[[:Image:Test Image.jpg|Caption for link]]
+
+non-existent image with caption
+
+[[Image:Non Existent Image.jpg|Caption for link]]
+
+left-aligned image
+
+[[Image:Test Image.jpg|left]]
+
+right-aligned image
+
+[[Image:Test Image.jpg|right]]
+
+centered image
+
+[[Image:Test Image.jpg|center]]
+
+unformatted image
+
+[[Image:Test Image.jpg|none]]
+
+thumbnail image
+
+[[Image:Test Image.jpg|thumb]]
+
+bordered image
+
+[[Image:Test Image.jpg|border]]
+
+framed image
+
+[[Image:Test Image.jpg|frame]]
+
+frameless image
+
+[[Image:Test Image.jpg|frameless]]
+
+frameless bordered image
+
+[[Image:Test Image.jpg|frameless|border]]
+
+centered thumbnail
+
+[[Image:Test Image.jpg|thumb|center]]
+
+right-aligned thumbnail
+
+[[Image:Test Image.jpg|thumb|right]]
+
+left-aligned thumbnail
+
+[[Image:Test Image.jpg|thumb|left]]
+
+plain image with caption
+
+[[Image:Test Image.jpg|this is a caption blah blah blah blah blah blah blah blah blah blah blah]]
+
+left-aligned image with caption
+
+[[Image:Test Image.jpg|left|this is a caption blah blah blah blah blah blah blah blah blah blah blah]]
+
+unformatted image with caption
+
+[[Image:Test Image.jpg|none|this is a caption blah blah blah blah blah blah blah blah blah blah blah]]
+
+thumbnail with caption
+
+[[Image:Test Image.jpg|thumb|this is a caption blah blah blah blah blah blah blah blah blah blah blah]]
+
+bordered image with caption
+
+[[Image:Test Image.jpg|border|this is a caption blah blah blah blah blah blah blah blah blah blah blah]]
+
+framed image with caption
+
+[[Image:Test Image.jpg|frame|this is a caption blah blah blah blah blah blah blah blah blah blah blah]]
+
+frameless image with caption
+
+[[Image:Test Image.jpg|frameless|this is a caption blah blah blah blah blah blah blah blah blah blah blah]]
+
+left-aligned thumbnail with caption
+
+[[Image:Test Image.jpg|thumb|left|this is a caption blah blah blah blah blah blah blah blah blah blah blah]]
+
+image within a paragraph [[Image:Test Image.jpg|220px]] test to make sure text flows
+
+thumbnail within a paragraph [[Image:Test Image.jpg|thumb]] test to make sure text breaks
+
+vertical align standard [[Image:Test Image.jpg|220px|baseline]]
+
+vertical align thumbnail [[Image:Test Image.jpg|220px|baseline|thumb]]
+
+vertical align frame [[Image:Test Image.jpg|220px|baseline|frame]]
+
+vertical align left [[Image:Test Image.jpg|220px|baseline|left]]
+
+alt tag standard [[Image:Test Image.jpg|alt=alternate text|caption]]
+
+[[Image:Test Image.jpg|thumb|alt=alternate text|caption]]
+
+blank alt #1 [[Image:Test Image.jpg|alt=]]
+
+blank alt #2 [[Image:Test Image.jpg|alt= ]]
+
+internal link #1 [[Image:Test Image.jpg|link=StartingPoints]]
+
+internal link #2 [[Image:Test Image.jpg|  link  =  StartingPoints  ]]
+
+internal link #3 [[Image:Test Image.jpg|link=http://www.example.com/]]
+
+internal link #4 [[Image:Test Image.jpg|link= ]]
+
+internal link #5 [[Image:Test Image.jpg|link=test:StartingPoints]]
+
+internal link #6 [[Image:Test Image.jpg|thumb|link=StartingPoints]]
+
+[[Media:Test Image.jpg]]
+
+[[Media:Test Image.jpg|test image caption]]
+
+[[Media:Non-existent image.jpg]]
+
+[[Media:Non-existent image.jpg|non-existent image caption]]
+
+resize #1 [[Image:Test Image.jpg|220x400px|link=]]
+
+resize #2 [[Image:Test Image.jpg|400x147px|link=]]
+
+resize #3 [[Image:Test Image.jpg|x147px|link=]]
+
+resize #4 [[Image:Test Image.jpg|0px|link=]]
+
+resize #5 [[Image:Test Image.jpg| x 147 px|link=]]
+
+resize #6 [[Image:Test Image.jpg|800px|link=]]
+
+resize #7 [[Image:Test Image.jpg|800x147px|link=]]
+
+caption test #1 [[Image:Test Image.jpg|thumb|Caption with a [[StartingPoints]] link]]
+
+caption test #2 [[Image:Test Image.jpg|thumb|Caption with a [[StartingPoints|alt text]] link]]
+
+caption test #3 [[Image:Test Image.jpg|thumb|Caption with a [http://example.com/] link]]
+
+caption test #4 [[Image:Test Image.jpg|thumb|Caption with a [http://example.com/ example] link]]
+
+caption test #5 [[Image:Test Image.jpg|thumb|Caption with a http://example.com/ link]]
+
+caption test #6 [[Image:Test Image.jpg|thumb|Caption with a [http://example.com/]]]
+
+caption test #7 [[Image:Test Image.jpg|thumb|Caption with a [http://example.com/ link]]]
+
+caption test #8 [[Image:Test Image.jpg|thumb|Test [[ Caption]]
+
+caption test #9 [[Image:Test Image.jpg|thumb|Test ]] Caption]]

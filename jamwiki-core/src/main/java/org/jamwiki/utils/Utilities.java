@@ -17,7 +17,9 @@
 package org.jamwiki.utils;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
@@ -38,8 +40,10 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -216,8 +220,8 @@ public class Utilities {
 	 * @return -1 if no matching end tag is found, or the index within the string of the first
 	 *  character immediately following the end tag.
 	 */
-	public static int findMatchingEndTag(String content, int start, String startToken, String endToken) {
-		return Utilities.findMatchingTag(content, start, startToken, endToken, false);
+	public static int findMatchingEndTag(CharSequence content, int start, String startToken, String endToken) {
+		return Utilities.findMatchingTag(content.toString(), start, startToken, endToken, false);
 	}
 
 	/**
@@ -236,8 +240,8 @@ public class Utilities {
 	 * @return -1 if no matching start tag is found, or the index within the string of the first
 	 *  character immediately preceding the start tag.
 	 */
-	public static int findMatchingStartTag(String content, int start, String startToken, String endToken) {
-		return Utilities.findMatchingTag(content, start, startToken, endToken, true);
+	public static int findMatchingStartTag(CharSequence content, int start, String startToken, String endToken) {
+		return Utilities.findMatchingTag(content.toString(), start, startToken, endToken, true);
 	}
 
 	/**
@@ -356,7 +360,10 @@ public class Utilities {
 	 *
 	 * @param filename The name of the file (relative to the classpath) that is
 	 *  to be retrieved.
-	 * @return A file object representing the requested filename
+	 * @return A file object representing the requested filename.  Note that the
+	 *  file name is not guaranteed to match the filename passed to this method
+	 *  since (for example) the file might be found in a JAR file and thus will
+	 *  need to be copied to a temporary location for reading.
 	 * @throws FileNotFoundException Thrown if the classloader can not be found or if
 	 *  the file can not be found in the classpath.
 	 */
@@ -365,6 +372,8 @@ public class Utilities {
 		// not attempt to log anything.
 		File file = null;
 		ClassLoader loader = Utilities.getClassLoader();
+		// Windows machines will have "\" in the path, convert to "/"
+		filename = filename.replace('\\', '/');
 		URL url = loader.getResource(filename);
 		if (url == null) {
 			url = ClassLoader.getSystemResource(filename);
@@ -374,14 +383,22 @@ public class Utilities {
 		}
 		file = FileUtils.toFile(url);
 		if (file == null || !file.exists()) {
+			InputStream is = null;
+			FileOutputStream os = null;
 			try {
 				// url exists but file cannot be read, so perhaps it's not a "file:" url (an example
 				// would be a "jar:" url).  as a workaround, copy the file to a temp file and return
 				// the temp file.
-				file = File.createTempFile(filename, null);
-				FileUtils.copyURLToFile(url, file);
+				String tempFilename = RandomStringUtils.randomAlphanumeric(20);
+				file = File.createTempFile(tempFilename, null);
+				is = loader.getResourceAsStream(filename);
+				os = new FileOutputStream(file);
+				IOUtils.copy(is, os);
 			} catch (IOException e) {
 				throw new FileNotFoundException("Unable to load file with URL " + url);
+			} finally {
+				IOUtils.closeQuietly(is);
+				IOUtils.closeQuietly(os);
 			}
 		}
 		return file;
@@ -393,11 +410,12 @@ public class Utilities {
 	 * and then returning its parent directory.
 	 *
 	 * @return Returns a file indicating the directory of the class loader.
-	 * @throws FileNotFoundException Thrown if the class loader can not be found.
+	 * @throws FileNotFoundException Thrown if the class loader can not be found,
+	 *  which may occur if this class is deployed without the jamwiki-war package.
 	 */
 	public static File getClassLoaderRoot() throws FileNotFoundException {
-		// The file hard-coded here MUST be in the class loader directory.
-		File file = Utilities.getClassLoaderFile("ApplicationResources.properties");
+		// The file hard-coded here MUST exist in the class loader directory.
+		File file = Utilities.getClassLoaderFile("sql.ansi.properties");
 		if (!file.exists()) {
 			throw new FileNotFoundException("Unable to find class loader root");
 		}
@@ -411,18 +429,6 @@ public class Utilities {
 	 */
 	public static String getServerUrl(HttpServletRequest request) {
 		return request.getScheme() + "://" + request.getServerName() + ((request.getServerPort() != 80) ? ":" + request.getServerPort() : "");
-	}
-
-	/**
-	 * Retrieve the webapp root.
-	 *
-	 * @return The default webapp root directory.
-	 */
-	// FIXME - there HAS to be a utility method available in Spring or some other
-	// common library that offers this functionality.
-	public static File getWebappRoot() throws FileNotFoundException {
-		// webapp root is two levels above /WEB-INF/classes/
-		return Utilities.getClassLoaderRoot().getParentFile().getParentFile();
 	}
 
 	/**
@@ -486,9 +492,8 @@ public class Utilities {
 		if (text == null) {
 			return false;
 		}
-		String unescaped = StringEscapeUtils.unescapeHtml(text);
 		// see if it was successfully converted, in which case it is an entity
-		return (!text.equals(unescaped));
+		return (!text.equals(StringEscapeUtils.unescapeHtml(text)));
 	}
 
 	/**
@@ -554,12 +559,7 @@ public class Utilities {
 			return FileUtils.readFileToString(file, "UTF-8");
 		}
 		// look for file in resource directories
-		ClassLoader loader = Utilities.getClassLoader();
-		URL url = loader.getResource(filename);
-		file = FileUtils.toFile(url);
-		if (file == null || !file.exists()) {
-			throw new FileNotFoundException("File " + filename + " is not available for reading");
-		}
+		file = getClassLoaderFile(filename);
 		return FileUtils.readFileToString(file, "UTF-8");
 	}
 

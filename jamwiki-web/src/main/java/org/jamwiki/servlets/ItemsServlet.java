@@ -18,20 +18,25 @@ package org.jamwiki.servlets;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -76,9 +81,9 @@ public class ItemsServlet extends JAMWikiServlet {
 	private void viewFiles(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		List<String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_FILE, Topic.TYPE_FILE, pagination);
+		Map<Integer, String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, TopicType.FILE, TopicType.FILE, null, pagination);
 		next.addObject("itemCount", items.size());
-		next.addObject("items", items);
+		next.addObject("items", items.values());
 		next.addObject("rootUrl", "Special:Filelist");
 		pageInfo.setPageTitle(new WikiMessage("allfiles.title"));
 		pageInfo.setContentJsp(JSP_ITEMS);
@@ -92,18 +97,18 @@ public class ItemsServlet extends JAMWikiServlet {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		Set<String> allItems = new TreeSet<String>();
-		List<String> unlinkedTopics = WikiBase.getDataHandler().getAllTopicNames(virtualWiki);
+		List<String> unlinkedTopics = WikiBase.getDataHandler().getAllTopicNames(virtualWiki, false);
 		Topic topic;
 		List<SearchResultEntry> topicLinks;
 		ParserInput parserInput;
 		ParserOutput parserOutput;
 		for (String topicName : unlinkedTopics) {
-			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, new Object());
+			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, null);
 			if (topic == null) {
 				logger.warning("No topic found: " + virtualWiki + " / " + topicName);
 				continue;
 			}
-			if (topic.getTopicType() != Topic.TYPE_ARTICLE) {
+			if (topic.getTopicType() != TopicType.ARTICLE) {
 				continue;
 			}
 			// only mark them orphaned if there is neither category defined in it, nor a link to it!
@@ -150,11 +155,12 @@ public class ItemsServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void viewUsers(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		List<String> items = WikiBase.getDataHandler().lookupWikiUsers(pagination);
 		List<String> links = new ArrayList<String>();
 		for (String link : items) {
-			links.add(NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + link);
+			links.add(Namespace.namespace(Namespace.USER_ID).getLabel(virtualWiki) + Namespace.SEPARATOR + link);
 		}
 		next.addObject("itemCount", items.size());
 		next.addObject("items", links);
@@ -170,9 +176,9 @@ public class ItemsServlet extends JAMWikiServlet {
 	private void viewImages(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		List<String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_IMAGE, Topic.TYPE_IMAGE, pagination);
+		Map<Integer, String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, TopicType.IMAGE, TopicType.IMAGE, null, pagination);
 		next.addObject("itemCount", items.size());
-		next.addObject("items", items);
+		next.addObject("items", items.values());
 		next.addObject("rootUrl", "Special:Imagelist");
 		pageInfo.setPageTitle(new WikiMessage("allimages.title"));
 		pageInfo.setContentJsp(JSP_ITEMS);
@@ -182,13 +188,30 @@ public class ItemsServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void viewTopics(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	private void viewTopics(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws DataAccessException {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		List<String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_ARTICLE, Topic.TYPE_TEMPLATE, pagination);
+		List<Namespace> namespaces = WikiBase.getDataHandler().lookupNamespaces();
+		// find the current namespace and topic type
+		Integer namespaceId = (request.getParameter("namespace") == null) ? Namespace.MAIN_ID : new Integer(request.getParameter("namespace"));
+		TopicType topicType = WikiUtil.findTopicTypeForNamespace(WikiBase.getDataHandler().lookupNamespaceById(namespaceId.intValue()));
+		// retrieve a list of topics for the namespace
+		Map<Integer, String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, TopicType.ARTICLE, topicType, namespaceId, pagination);
 		next.addObject("itemCount", items.size());
-		next.addObject("items", items);
-		next.addObject("rootUrl", "Special:Allpages");
+		next.addObject("items", items.values());
+		String rootUrl = "Special:Allpages";
+		if (request.getParameter("namespace") != null) {
+			rootUrl += "?namespace=" + namespaceId;
+		}
+		next.addObject("rootUrl", rootUrl);
+		// add a map of namespace id & label for display on the front end.
+		Map<Integer, String> namespaceMap = new TreeMap<Integer, String>();
+		for (Namespace namespace : namespaces) {
+			if (namespace.getId() >= 0) {
+				namespaceMap.put(namespace.getId(), namespace.getLabel(virtualWiki));
+			}
+		}
+		next.addObject("namespaces", namespaceMap);
 		pageInfo.setPageTitle(new WikiMessage("alltopics.title"));
 		pageInfo.setContentJsp(JSP_ITEMS);
 		pageInfo.setSpecial(true);

@@ -4,3 +4,6 @@ test
 <pre>
 &lt;u&gt;test&lt;/u&gt;
 </pre>
+<pre id="pre" style="border:1px solid red" xml:space="preserve">
+test
+</pre>

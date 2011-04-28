@@ -73,4 +73,13 @@ public interface SearchEngine {
 	 * @throws Exception Thrown if any error occurs while re-indexing the Wiki.
 	 */
 	void refreshIndex() throws Exception;
+
+	/**
+	 * Update a topic in the search index.
+	 *
+	 * @param topic The Topic object that is to be updated in the index.
+	 * @param links A list containing the topic names for all topics that link
+	 *  to the current topic.
+	 */
+	void updateInIndex(Topic topic, List<String> links);
 }

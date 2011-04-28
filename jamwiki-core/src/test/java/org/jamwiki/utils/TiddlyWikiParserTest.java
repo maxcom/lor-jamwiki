@@ -30,13 +30,14 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jamwiki.DataAccessException;
+import org.jamwiki.JAMWikiUnitTest;
 import org.jamwiki.WikiException;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class TiddlyWikiParserTest {
+public class TiddlyWikiParserTest extends JAMWikiUnitTest {
 
 	private static final String NAME = "MyTopic";
 	private static final String DATUM  = "200701020304";

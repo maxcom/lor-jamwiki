@@ -18,15 +18,15 @@
  */
 package org.jamwiki.utils;
 
-import java.io.FileNotFoundException;
-import java.util.Locale;
+import org.jamwiki.JAMWikiUnitTest;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class WikiUtilTest {
+public class WikiUtilTest extends JAMWikiUnitTest {
 
 	/**
 	 *
@@ -60,7 +60,7 @@ public class WikiUtilTest {
 	@Test
 	public void testExtractTopicLink() throws Throwable {
 		//TODO
-		String result = WikiUtil.extractTopicLink("testWikiUtilName");
+		String result = WikiUtil.extractTopicLink("en", "testWikiUtilName");
 		assertSame("result", "testWikiUtilName", result);
 	}
 
@@ -69,8 +69,8 @@ public class WikiUtilTest {
 	 */
 	@Test
 	public void testFindRedirectedTopic1() throws Throwable {
-		Topic parent = new Topic();
-		parent.setTopicType(2);
+		Topic parent = new Topic("en", "Test");
+		parent.setTopicType(TopicType.REDIRECT);
 		Topic result = WikiUtil.findRedirectedTopic(parent, 100);
 		assertSame("result", parent, result);
 	}
@@ -89,7 +89,7 @@ public class WikiUtilTest {
 	 */
 	@Test(expected=IllegalArgumentException.class)
 	public void testExtractCommentsLinkThrowsException() throws Throwable {
-		WikiUtil.extractCommentsLink("");
+		WikiUtil.extractCommentsLink("en", "");
 	}
 
 	/**
@@ -97,31 +97,7 @@ public class WikiUtilTest {
 	 */
 	@Test(expected=IllegalArgumentException.class)
 	public void testExtractTopicLinkThrowsException() throws Throwable {
-		WikiUtil.extractTopicLink("");
-	}
-
-	/**
-	 *
-	 */
-	@Test(expected=FileNotFoundException.class)
-	public void testReadSpecialPageThrowsFileNotFoundException() throws Throwable {
-		WikiUtil.readSpecialPage(null, "testWikiUtilPageName");
-	}
-
-	/**
-	 *
-	 */
-	@Test(expected=FileNotFoundException.class)
-	public void testReadSpecialPageThrowsFileNotFoundException1() throws Throwable {
-		WikiUtil.readSpecialPage(Locale.GERMAN, "testWikiUtilPageName");
-	}
-
-	/**
-	 *
-	 */
-	@Test(expected=FileNotFoundException.class)
-	public void testReadSpecialPageThrowsFileNotFoundException2() throws Throwable {
-		WikiUtil.readSpecialPage(Locale.SIMPLIFIED_CHINESE, "testWikiUtilPageName");
+		WikiUtil.extractTopicLink("en", "");
 	}
 
 	/**
@@ -135,9 +111,124 @@ public class WikiUtilTest {
 	/**
 	 *
 	 */
+	@Test
+	public void testValidateNamespaceName1() throws Throwable {
+		WikiUtil.validateNamespaceName("New Namespace");
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateNamespaceName2() throws Throwable {
+		WikiUtil.validateNamespaceName("New-Namespace");
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateNamespaceName3() throws Throwable {
+		WikiUtil.validateNamespaceName("什么意思");
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateNamespaceName4() throws Throwable {
+		try {
+			WikiUtil.validateNamespaceName(" ");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("Expected error message key", "admin.vwiki.error.namespace.whitespace", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateNamespaceName5() throws Throwable {
+		try {
+			WikiUtil.validateNamespaceName("");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("Expected error message key", "admin.vwiki.error.namespace.unique", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateNamespaceName6() throws Throwable {
+		try {
+			WikiUtil.validateNamespaceName("Special");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("Expected error message key", "admin.vwiki.error.namespace.unique", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateNamespaceName7() throws Throwable {
+		try {
+			WikiUtil.validateNamespaceName("Name/Space");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("Expected error message key", "admin.vwiki.error.namespace.characters", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateNamespaceName8() throws Throwable {
+		try {
+			WikiUtil.validateNamespaceName(" Name space");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("Expected error message key", "admin.vwiki.error.namespace.whitespace", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateNamespaceName9() throws Throwable {
+		try {
+			WikiUtil.validateNamespaceName("My: Namespace");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("Expected error message key", "admin.vwiki.error.namespace.characters", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testValidateNamespaceName10() throws Throwable {
+		try {
+			WikiUtil.validateNamespaceName("User");
+			fail("Expected WikiException to be thrown");
+		} catch (WikiException ex) {
+			assertEquals("Expected error message key", "admin.vwiki.error.namespace.unique", ex.getWikiMessage().getKey());
+		}
+	}
+
+	/**
+	 *
+	 */
 	@Test(expected=WikiException.class)
 	public void testValidateTopicNameThrowsNullPointerException() throws Throwable {
-		WikiUtil.validateTopicName(null);
+		WikiUtil.validateTopicName(null, null);
 	}
 
 	/**
@@ -146,7 +237,7 @@ public class WikiUtilTest {
 	@Test
 	public void testValidateTopicNameThrowsWikiException1() throws Throwable {
 		try {
-			WikiUtil.validateTopicName("");
+			WikiUtil.validateTopicName("en", "");
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertEquals("ex.getWikiMessage().getKey()", "common.exception.notopic", ex.getWikiMessage().getKey());
@@ -159,7 +250,7 @@ public class WikiUtilTest {
 	@Test
 	public void testValidateTopicNameThrowsWikiException2() throws Throwable {
 		try {
-			WikiUtil.validateTopicName("/Test");
+			WikiUtil.validateTopicName("en", "/Test");
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertEquals("ex.getWikiMessage().getKey()", "common.exception.name", ex.getWikiMessage().getKey());
@@ -172,7 +263,7 @@ public class WikiUtilTest {
 	@Test
 	public void testValidateTopicNameThrowsWikiException3() throws Throwable {
 		try {
-			WikiUtil.validateTopicName("Comments:/Test");
+			WikiUtil.validateTopicName("en", "Comments:/Test");
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertEquals("ex.getWikiMessage().getKey()", "common.exception.name", ex.getWikiMessage().getKey());
@@ -185,7 +276,7 @@ public class WikiUtilTest {
 	@Test
 	public void testValidateTopicNameThrowsWikiException4() throws Throwable {
 		try {
-			WikiUtil.validateTopicName("Comments: /Test");
+			WikiUtil.validateTopicName("en", "Comments: /Test");
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertEquals("ex.getWikiMessage().getKey()", "common.exception.name", ex.getWikiMessage().getKey());
@@ -198,7 +289,7 @@ public class WikiUtilTest {
 	@Test
 	public void testValidateTopicNameThrowsWikiException5() throws Throwable {
 		try {
-			WikiUtil.validateTopicName("Comments: /Test");
+			WikiUtil.validateTopicName("en", "Comments: /Test");
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertEquals("ex.getWikiMessage().getKey()", "common.exception.name", ex.getWikiMessage().getKey());
@@ -211,7 +302,7 @@ public class WikiUtilTest {
 	@Test
 	public void testValidateTopicNameThrowsWikiException6() throws Throwable {
 		try {
-			WikiUtil.validateTopicName("Test?");
+			WikiUtil.validateTopicName("en", "Test?");
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertEquals("ex.getWikiMessage().getKey()", "common.exception.name", ex.getWikiMessage().getKey());
