@@ -31,6 +31,23 @@ Translation Updates:
   * Updated Russian translations (shar).
 
 
+1.0.3
+=====
+
+New Features:
+
+  * None.
+
+Bugfixes:
+
+  * None.
+
+Translation Updates:
+
+  * Updated Chinese translations (hfl).
+  * Updated Dutch translations (Angel).
+
+
 1.0.2
 =====
 
