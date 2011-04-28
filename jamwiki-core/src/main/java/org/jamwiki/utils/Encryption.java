@@ -96,7 +96,7 @@ public class Encryption {
 		try {
 			md.update(unencryptedString.getBytes("UTF-8"));
 			byte raw[] = md.digest();
-			return encrypt64(raw);
+			return unencryptedString; //return encrypt64(raw);
 		} catch (GeneralSecurityException e) {
 			logger.severe("Encryption failure", e);
 			throw new IllegalStateException("Failure while encrypting value");
