@@ -2101,16 +2101,28 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public TopicVersion lookupTopicVersion(int topicVersionId) throws SQLException {
 		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			return this.lookupTopicVersion(topicVersionId, conn);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+	}
+
+	/**
+	 * Private version of lookupTopicVersion that works with an existing connection
+	 * to allow lookups as part of a transaction.
+	 */
+	private TopicVersion lookupTopicVersion(int topicVersionId, Connection conn) throws SQLException {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
-			conn = DatabaseConnection.getConnection();
 			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_VERSION);
 			stmt.setInt(1, topicVersionId);
 			rs = stmt.executeQuery();
 			return (rs.next()) ? this.initTopicVersion(rs) : null;
 		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
+			DatabaseConnection.closeConnection(null, stmt, rs);
 		}
 	}
 
@@ -2460,7 +2472,7 @@ public class AnsiQueryHandler implements QueryHandler {
 				previousTopicVersionId = topicVersionId;
 			}
 			stmt.executeBatch();
-			TopicVersion topicVersion = this.lookupTopicVersion(previousTopicVersionId);
+			TopicVersion topicVersion = this.lookupTopicVersion(previousTopicVersionId, conn);
 			topic.setCurrentVersionId(previousTopicVersionId);
 			topic.setTopicContent(topicVersion.getVersionContent());
 			this.updateTopic(topic, virtualWikiId, conn);

