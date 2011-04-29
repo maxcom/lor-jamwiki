@@ -1,20 +1,4 @@
-﻿0.9.5
-=====
-
-Bugfixes:
-
-  * Fix a potential XSS attack, and make the XSS detection code more
-    aggressive.  Reported by bawolff.
-  * Headings of seven or more levels caused generation of invalid HTML.
-    Reported by an anonymous user.
-  * Fix a transaction-related issue that could cause XML imports to hang on
-    some databases including MS SQL Server.
-  * Fix an issue that could cause topic history to display incorrectly with
-    MS SQL Server.
-  * Update the default footer page's copyright notice to 2011.
-
-
-0.9.4
+﻿0.9.4
 =====
 
 Bugfixes:
@@ -22,7 +6,7 @@ Bugfixes:
   * The SERVERNAME magic word was previously implemented incorrectly and has
     been fixed to return only the server URL ("www.example.com") without an
     "http://" prefix.  Reported by an anonymous user.
-  * Several pages including the Special:History page could generate errors on
+  * Several pages including the Special:History page could generated errors on
     Apache 7.0.x due to an invalid JSTL naming convention used with import
     revisions.  Reported by anonymous users.
 
