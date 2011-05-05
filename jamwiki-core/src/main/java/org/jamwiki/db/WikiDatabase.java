@@ -37,6 +37,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Interwiki;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
@@ -44,6 +45,9 @@ import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.parser.ParserException;
+import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
@@ -82,7 +86,10 @@ public class WikiDatabase {
 		{"jam_group_authorities", null},
 		{"jam_recent_change", "topic_version_id"},
 		{"jam_log", null},
-		{"jam_watchlist", null}
+		{"jam_watchlist", null},
+		{"jam_topic_links", null},
+		{"jam_interwiki", null},
+		{"jam_configuration", null}
 	};
 
 	/**
@@ -101,7 +108,7 @@ public class WikiDatabase {
 			// use existing DataHandler
 			return WikiBase.getDataHandler();
 		}
-		logger.fine("Using NEW data handler: " + handlerClassName);
+		logger.debug("Using NEW data handler: " + handlerClassName);
 		return (DataHandler)Utilities.instantiateClass(handlerClassName);
 	}
 
@@ -163,7 +170,7 @@ public class WikiDatabase {
 		if (newDataHandler instanceof AnsiDataHandler) {
 			AnsiDataHandler dataHandler = (AnsiDataHandler)newDataHandler;
 			newQueryHandler = dataHandler.queryHandler();
-			logger.fine("Using NEW query handler: " + newQueryHandler.getClass().getName());
+			logger.debug("Using NEW query handler: " + newQueryHandler.getClass().getName());
 		} else {
 			newQueryHandler = queryHandler();
 		}
@@ -290,12 +297,12 @@ public class WikiDatabase {
 				update.executeUpdate();
 			}
 		} catch (Exception e) {
-			logger.severe("Error attempting to migrate the database", e);
+			logger.error("Error attempting to migrate the database", e);
 			errors.add(new WikiMessage("error.unknown", e.getMessage()));
 			try {
 				newQueryHandler.dropTables(conn);
 			} catch (Exception ex) {
-				logger.warning("Unable to drop tables in NEW database following failed migration", ex);
+				logger.warn("Unable to drop tables in NEW database following failed migration", ex);
 			}
 		} finally {
 			if (conn != null) {
@@ -335,7 +342,7 @@ public class WikiDatabase {
 			// this clears out any existing connection pool, so that a new one will be created on first access
 			DatabaseConnection.closeConnectionPool();
 		} catch (Exception e) {
-			logger.severe("Unable to initialize database", e);
+			logger.error("Unable to initialize database", e);
 		}
 	}
 
@@ -375,19 +382,19 @@ public class WikiDatabase {
 			return null;
 		} catch (Exception ex) {
 			// we expect this exception as the JAMWiki tables don't exist
-			logger.fine("NEW Database does not contain any JAMWiki instance");
+			logger.debug("NEW Database does not contain any JAMWiki instance");
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
 		}
 		try {
 			newQueryHandler.createTables(conn);
 		} catch (Exception e) {
-			logger.severe("Error attempting to migrate the database", e);
+			logger.error("Error attempting to migrate the database", e);
 			errors.add(new WikiMessage("error.unknown", e.getMessage()));
 			try {
 				newQueryHandler.dropTables(conn);
 			} catch (Exception ex) {
-				logger.warning("Unable to drop tables in NEW database following failed migration", ex);
+				logger.warn("Unable to drop tables in NEW database following failed migration", ex);
 			}
 			if (conn != null) {
 				try {
@@ -402,7 +409,7 @@ public class WikiDatabase {
 		try {
 			DatabaseConnection.closeConnectionPool();
 		} catch (Exception e) {
-			logger.severe("Unable to close the connection pool on shutdown", e);
+			logger.error("Unable to close the connection pool on shutdown", e);
 		}
 	}
 
@@ -476,11 +483,45 @@ public class WikiDatabase {
 				filename = subdirectory + File.separator + WikiUtil.encodeForFilename(pageName) + ".txt";
 				contents = Utilities.readFile(filename);
 			} catch (IOException e) {
-				logger.warning("Default topic initialization file " + filename + " could not be read", e);
+				logger.warn("Default topic initialization file " + filename + " could not be read", e);
 				throw e;
 			}
 		}
 		return contents;
+	}
+
+	/**
+	 * Utility method for regenerating categories, "link to" records and other metadata
+	 * for all wiki topics.
+	 */
+	public static int rebuildTopicMetadata() throws DataAccessException, WikiException {
+		int numUpdated = 0;
+		List<String> topicNames;
+		Topic topic;
+		ParserOutput parserOutput;
+		List<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
+		for (VirtualWiki virtualWiki : virtualWikis) {
+			topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName(), false);
+			if (topicNames.isEmpty()) {
+				continue;
+			}
+			for (String topicName : topicNames) {
+				topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
+				if (topic == null) {
+					logger.warn("Invalid topic record found, possible database integrity issue: " + virtualWiki.getName() + " / " + topicName);
+					continue;
+				}
+				try {
+					parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki.getName(), topicName);
+				} catch (ParserException e) {
+					logger.error("Failure while regenerating topic metadata", e);
+					continue;
+				}
+				WikiBase.getDataHandler().writeTopic(topic, null, parserOutput.getCategories(), parserOutput.getLinks());
+			}
+			numUpdated += topicNames.size();
+		}
+		return numUpdated;
 	}
 
 	/**
@@ -542,13 +583,14 @@ public class WikiDatabase {
 			WikiDatabase.queryHandler().createTables(conn);
 			WikiDatabase.setupDefaultVirtualWiki();
 			WikiDatabase.setupDefaultNamespaces();
+			WikiDatabase.setupDefaultInterwikis();
 			WikiDatabase.setupRoles();
 			WikiDatabase.setupGroups();
 			WikiDatabase.setupAdminUser(user, username, encryptedPassword);
 			WikiDatabase.setupSpecialPages(locale, user);
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
-			logger.severe("Unable to set up database tables", e);
+			logger.error("Unable to set up database tables", e);
 			// clean up anything that might have been created
 			try {
 				Connection conn = DatabaseConnection.getConnection();
@@ -557,7 +599,7 @@ public class WikiDatabase {
 			throw new DataAccessException(e);
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
-			logger.severe("Unable to set up database tables", e);
+			logger.error("Unable to set up database tables", e);
 			// clean up anything that might have been created
 			try {
 				Connection conn = DatabaseConnection.getConnection();
@@ -566,7 +608,7 @@ public class WikiDatabase {
 			throw e;
 		} catch (WikiException e) {
 			DatabaseConnection.rollbackOnException(status, e);
-			logger.severe("Unable to set up database tables", e);
+			logger.error("Unable to set up database tables", e);
 			// clean up anything that might have been created
 			try {
 				Connection conn = DatabaseConnection.getConnection();
@@ -586,7 +628,7 @@ public class WikiDatabase {
 			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 		}
 		if (WikiBase.getDataHandler().lookupWikiUser(user.getUserId()) != null) {
-			logger.warning("Admin user already exists");
+			logger.warn("Admin user already exists");
 		}
 		WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword);
 		List<String> roles = new ArrayList<String>();
@@ -611,6 +653,30 @@ public class WikiDatabase {
 		}
 		String url = "jdbc:hsqldb:file:" + new File(file.getPath(), "jamwiki").getPath() + ";shutdown=true";
 		props.setProperty(Environment.PROP_DB_URL, url);
+	}
+
+	/**
+	 *
+	 */
+	// FIXME - make this private once the ability to upgrade to 1.0.0 is removed
+	protected static void setupDefaultInterwikis() throws DataAccessException, WikiException {
+		logger.info("Creating default interwiki records");
+		Interwiki jamwiki = new Interwiki("jamwiki", "http://jamwiki.org/wiki/en/{0}", "JAMWiki");
+		WikiBase.getDataHandler().writeInterwiki(jamwiki);
+		Interwiki mediawiki = new Interwiki("mediawiki", "http://www.mediawiki.org/wiki/{0}", "MediaWiki");
+		WikiBase.getDataHandler().writeInterwiki(mediawiki);
+		Interwiki metawikipedia = new Interwiki("metawikipedia", "http://meta.wikimedia.org/wiki/{0}", "Wikimedia Meta-Wiki");
+		WikiBase.getDataHandler().writeInterwiki(metawikipedia);
+		Interwiki wiki = new Interwiki("wiki", "http://c2.com/cgi/wiki?{0}", "WikiWiki");
+		WikiBase.getDataHandler().writeInterwiki(wiki);
+		Interwiki wikia = new Interwiki("wikia", "http://www.wikia.com/wiki/index.php/{0}", "Wikia");
+		WikiBase.getDataHandler().writeInterwiki(wikia);
+		Interwiki wikipedia = new Interwiki("wikipedia", "http://en.wikipedia.org/wiki/{0}", "Wikipedia");
+		WikiBase.getDataHandler().writeInterwiki(wikipedia);
+		Interwiki wikiquote = new Interwiki("wikiquote", "http://en.wikiquote.org/wiki/{0}", "Wikiquote");
+		WikiBase.getDataHandler().writeInterwiki(wikiquote);
+		Interwiki wikinews = new Interwiki("wikinews", "http://en.wikinews.org/wiki/{0}", "Wikinews");
+		WikiBase.getDataHandler().writeInterwiki(wikinews);
 	}
 
 	/**
@@ -643,9 +709,7 @@ public class WikiDatabase {
 	 */
 	private static void setupDefaultVirtualWiki() throws DataAccessException, WikiException {
 		logger.info("Creating default virtual wiki");
-		VirtualWiki virtualWiki = new VirtualWiki();
-		virtualWiki.setName(Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT));
-		virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
+		VirtualWiki virtualWiki = VirtualWiki.defaultVirtualWiki();
 		WikiBase.getDataHandler().writeVirtualWiki(virtualWiki);
 	}
 

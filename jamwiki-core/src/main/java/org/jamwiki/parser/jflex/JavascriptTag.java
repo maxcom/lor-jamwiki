@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -34,12 +35,14 @@ public class JavascriptTag implements JFlexParserTag {
 	 * Parse a Mediawiki HTML link of the form "<script>...</script>".
 	 */
 	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
-		if (logger.isFinerEnabled()) logger.finer("javascript: " + raw + " (" + lexer.yystate() + ")");
+		if (logger.isTraceEnabled()) {
+			logger.trace("javascript: " + raw + " (" + lexer.yystate() + ")");
+		}
 		if (StringUtils.isBlank(raw)) {
 			// no link to display
 			return raw;
 		}
-		return this.parseScriptTag(lexer.getParserInput(), raw, lexer.getMode());
+		return this.parseScriptTag(lexer.getParserInput(), lexer.getParserOutput(), raw, lexer.getMode());
 	}
 
 	/**
@@ -54,27 +57,27 @@ public class JavascriptTag implements JFlexParserTag {
 		}
 		// otherwise, if Javascript is disabled but a script tag is present during the
 		// postprocessor parsing then it's highly likely someone is attempting an XSS attack.
-		logger.warning("Potential XSS attack detected from user " + parserInput.getUserDisplay() + ": " + raw);
+		logger.warn("Potential XSS attack detected from user " + parserInput.getUserDisplay() + ": " + raw);
 		return StringEscapeUtils.escapeHtml(raw);
 	}
 
 	/**
 	 *
 	 */
-	private String parseScriptTag(ParserInput parserInput, String raw, int mode) throws ParserException {
+	private String parseScriptTag(ParserInput parserInput, ParserOutput parserOutput, String raw, int mode) throws ParserException {
 		if (mode >= JFlexParser.MODE_POSTPROCESS) {
 			return this.parsePostProcess(parserInput, raw);
 		}
 		// get open <script> tag
-		int pos = raw.indexOf(">");
+		int pos = raw.indexOf('>');
 		String openTag = raw.substring(0, pos + 1);
 		// get closing </script> tag
 		raw = raw.substring(pos + 1);
-		pos = raw.lastIndexOf("<");
+		pos = raw.lastIndexOf('<');
 		String closeTag = raw.substring(pos);
 		raw = raw.substring(0, pos);
 		if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT)) {
-			return StringEscapeUtils.escapeHtml(openTag) + JFlexParserUtil.parseFragment(parserInput, raw, mode) + StringEscapeUtils.escapeHtml(closeTag);
+			return StringEscapeUtils.escapeHtml(openTag) + JFlexParserUtil.parseFragment(parserInput, parserOutput, raw, mode) + StringEscapeUtils.escapeHtml(closeTag);
 		}
 		JFlexTagItem tag = new JFlexTagItem("script", openTag);
 		tag.getTagContent().append(raw);

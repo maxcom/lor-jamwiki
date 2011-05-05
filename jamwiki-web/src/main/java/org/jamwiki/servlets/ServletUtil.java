@@ -121,16 +121,14 @@ public class ServletUtil {
 			Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 			content = topic.getTopicContent();
 			if (cook) {
-				ParserInput parserInput = new ParserInput();
+				ParserInput parserInput = new ParserInput(virtualWiki, topicName);
 				parserInput.setContext(context);
 				parserInput.setLocale(locale);
-				parserInput.setVirtualWiki(virtualWiki);
-				parserInput.setTopicName(topicName);
 				content = ParserUtil.parse(parserInput, null, content);
 			}
 			WikiCache.addToCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key, content);
 		} catch (Exception e) {
-			logger.warning("error getting cached page " + virtualWiki + " / " + topicName, e);
+			logger.warn("error getting cached page " + virtualWiki + " / " + topicName, e);
 			return null;
 		}
 		return content;
@@ -207,13 +205,13 @@ public class ServletUtil {
 				// FIXME - do not lookup the user every time this method is called, that will kill performance
 				user = WikiBase.getDataHandler().lookupWikiUser(username);
 			} catch (DataAccessException e) {
-				logger.severe("Failure while retrieving user from database with login: " + username, e);
+				logger.error("Failure while retrieving user from database with login: " + username, e);
 				return user;
 			}
 			if (user == null) {
 				// invalid user.  someone has either spoofed a cookie or the user account is no longer in
 				// the database.
-				logger.warning("No user exists for principal found in security context authentication: " + username);
+				logger.warn("No user exists for principal found in security context authentication: " + username);
 				SecurityContextHolder.clearContext();
 				throw new AuthenticationCredentialsNotFoundException("Invalid user credentials found - username " + username + " does not exist in this wiki installation");
 			}
@@ -416,13 +414,14 @@ public class ServletUtil {
 	 * names and sort keys to the session that can then be retrieved for
 	 * display during rendering.
 	 *
+	 * @param request The current servlet request object.
 	 * @param next The current ModelAndView object used to return rendering
 	 *  information.
 	 * @param virtualWiki The virtual wiki name for the topic being rendered.
 	 * @param topicName The name of the topic that is being rendered.
 	 * @throws WikiException Thrown if any error occurs during processing.
 	 */
-	protected static void loadCategoryContent(ModelAndView next, String virtualWiki, String topicName) throws WikiException {
+	protected static void loadCategoryContent(HttpServletRequest request, ModelAndView next, String virtualWiki, String topicName) throws WikiException {
 		String categoryName = topicName.substring(Namespace.namespace(Namespace.CATEGORY_ID).getLabel(virtualWiki).length() + Namespace.SEPARATOR.length());
 		next.addObject("categoryName", categoryName);
 		List<Category> categoryTopics = null;
@@ -431,6 +430,7 @@ public class ServletUtil {
 		} catch (DataAccessException e) {
 			throw new WikiException(new WikiMessage("error.unknown", e.getMessage()), e);
 		}
+		Pagination pagination = ServletUtil.loadPagination(request, next);
 		List<Category> categoryImages = new ArrayList<Category>();
 		LinkedHashMap<String, String> subCategories = new LinkedHashMap<String, String>();
 		int i = 0;
@@ -450,12 +450,15 @@ public class ServletUtil {
 			}
 			i++;
 		}
-		next.addObject("categoryTopics", categoryTopics);
+		// manually process pagination
+		List<Category> paginatedCategories = Pagination.retrievePaginatedSubset(pagination, categoryTopics);
+		next.addObject("categoryTopics", paginatedCategories);
 		next.addObject("numCategoryTopics", categoryTopics.size());
 		next.addObject("categoryImages", categoryImages);
 		next.addObject("numCategoryImages", categoryImages.size());
 		next.addObject("subCategories", subCategories);
 		next.addObject("numSubCategories", subCategories.size());
+		next.addObject("displayCategoryCount", paginatedCategories.size());
 	}
 
 	/**
@@ -562,7 +565,7 @@ public class ServletUtil {
 	public static VirtualWiki retrieveVirtualWiki(String virtualWikiName) {
 		VirtualWiki virtualWiki = null;
 		if (virtualWikiName == null) {
-			virtualWikiName = Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT);
+			virtualWikiName = VirtualWiki.defaultVirtualWiki().getName();
 		}
 		// FIXME - the check here for initialized properties is due to this
 		// change being made late in a release cycle.  Revisit in a future
@@ -573,10 +576,8 @@ public class ServletUtil {
 			} catch (DataAccessException e) {}
 		}
 		if (virtualWiki == null) {
-			logger.severe("No virtual wiki found for " + virtualWikiName);
-			virtualWiki = new VirtualWiki();
-			virtualWiki.setName(Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT));
-			virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
+			logger.error("No virtual wiki found for " + virtualWikiName);
+			virtualWiki = VirtualWiki.defaultVirtualWiki();
 		}
 		return virtualWiki;
 	}
@@ -618,10 +619,10 @@ public class ServletUtil {
 		try {
 			DatabaseConnection.testDatabase(driver, url, userName, password, false);
 		} catch (ClassNotFoundException e) {
-			logger.severe("Invalid database settings", e);
+			logger.error("Invalid database settings", e);
 			errors.add(new WikiMessage("error.databaseconnection", e.getMessage()));
 		} catch (SQLException e) {
-			logger.severe("Invalid database settings", e);
+			logger.error("Invalid database settings", e);
 			errors.add(new WikiMessage("error.databaseconnection", e.getMessage()));
 		}
 		// verify valid parser class
@@ -672,7 +673,7 @@ public class ServletUtil {
 				} catch (DataAccessException e) {
 					throw new WikiException(new WikiMessage("error.unknown", e.getMessage()), e);
 				}
-				topic = virtualWiki.getDefaultTopicName();
+				topic = virtualWiki.getRootTopicName();
 			}
 			target = "/" + virtualWikiName + "/" + topic;
 			if (!StringUtils.isBlank(request.getQueryString())) {
@@ -748,6 +749,11 @@ public class ServletUtil {
 				pageInfo.setRedirectInfo(redirectUrl, redirectName);
 				pageTitle.replaceParameter(0, child.getName());
 				topic = child;
+				try {
+					pageInfo.setCanonicalUrl(LinkUtil.buildTopicUrl(request.getContextPath(), topic.getVirtualWiki(), topic.getName(), false));
+				} catch (DataAccessException e) {
+					throw new WikiException(new WikiMessage("error.unknown", e.getMessage()), e);
+				}
 				// update the page info's virtual wiki in case this redirect is to another virtual wiki
 				pageInfo.setVirtualWikiName(topic.getVirtualWiki());
 			}
@@ -759,13 +765,11 @@ public class ServletUtil {
 			sectionEdit = false;
 		}
 		WikiUser user = ServletUtil.currentWikiUser();
-		ParserInput parserInput = new ParserInput();
+		ParserInput parserInput = new ParserInput(virtualWiki, topicName);
 		parserInput.setContext(request.getContextPath());
 		parserInput.setLocale(request.getLocale());
 		parserInput.setWikiUser(user);
-		parserInput.setTopicName(topicName);
 		parserInput.setUserDisplay(ServletUtil.getIpAddress(request));
-		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setAllowSectionEdit(sectionEdit);
 		ParserOutput parserOutput = new ParserOutput();
 		String content = null;
@@ -784,12 +788,14 @@ public class ServletUtil {
 		}
 		topic.setTopicContent(content);
 		if (topic.getTopicType() == TopicType.CATEGORY) {
-			loadCategoryContent(next, virtualWiki, topic.getName());
+			loadCategoryContent(request, next, virtualWiki, topic.getName());
 		}
+		next.addObject("interwikiLinks", parserOutput.getInterwikiLinks());
+		next.addObject("virtualWikiLinks", parserOutput.getVirtualWikiLinks());
 		if (topic.getTopicType() == TopicType.IMAGE || topic.getTopicType() == TopicType.FILE) {
 			List<WikiFileVersion> fileVersions = null;
 			try {
-				fileVersions = WikiBase.getDataHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
+				fileVersions = WikiBase.getDataHandler().getAllWikiFileVersions(topic.getVirtualWiki(), topicName, true);
 			} catch (DataAccessException e) {
 				throw new WikiException(new WikiMessage("error.unknown", e.getMessage()), e);
 			}
@@ -817,6 +823,15 @@ public class ServletUtil {
 				next.addObject("topicImage", true);
 			} else {
 				next.addObject("topicFile", true);
+			}
+			boolean sharedImage = !pageInfo.getVirtualWikiName().equals(virtualWiki);
+			next.addObject("sharedImage", sharedImage);
+			if (sharedImage) {
+				try {
+					pageInfo.setCanonicalUrl(LinkUtil.buildTopicUrl(request.getContextPath(), virtualWiki, topic.getName(), false));
+				} catch (DataAccessException e) {
+					throw new WikiException(new WikiMessage("error.unknown", e.getMessage()), e);
+				}
 			}
 		}
 		pageInfo.setSpecial(false);

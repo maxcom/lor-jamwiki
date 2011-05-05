@@ -21,21 +21,28 @@
 	<c:when test="${empty notopic}">
 		<c:if test="${!empty topicObject}">
 			<div id="content-article">
-			<c:if test="${topicImage}"><a href="<c:out value="${fileVersions[0].url}" />" class="wikiimg"><jamwiki:image value="${topicObject.name}" maxWidth="800" maxHeight="600" allowEnlarge="false" /></a></c:if>
+			<c:if test="${sharedImage}">
+				<div id="shared-image-message"><fmt:message key="topic.sharedImage"><fmt:param><jamwiki:link value="${topicObject.name}" virtualWiki="${topicObject.virtualWiki}" text="${topicObject.name}" style="interwikilink" /></fmt:param></fmt:message></div>
+			</c:if>
+			<c:if test="${topicImage}"><a href="<c:out value="${fileVersions[0].url}" />" class="wikiimg"><jamwiki:image value="${topicObject.name}" virtualWiki="${topicObject.virtualWiki}" maxWidth="800" maxHeight="600" allowEnlarge="false" /></a></c:if>
 			<c:if test="${topicFile}"><div id="topic-file-download"><fmt:message key="topic.file.download" />:&#160;<a href="<c:out value="${fileVersions[0].url}" />"><c:out value="${topicObject.name}" /></a></div></c:if>
 			<c:out value="${topicObject.topicContent}" escapeXml="false" />
 			</div>
 			<div class="clear"></div>
 			<c:if test="${!empty fileVersions}">
+				<%-- display image file history --%>
 				<h2><fmt:message key="topic.filehistory" /></h2>
+				<p><fmt:message key="topic.filehistory.click" /></p>
 				<ul>
 					<c:forEach items="${fileVersions}" var="fileVersion">
 					<li>
-					<a href="<c:out value="${fileVersion.url}" />"><fmt:formatDate value="${fileVersion.uploadDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></a>
+					<a href="<c:out value="${fileVersion.url}" />"><fmt:formatDate value="${fileVersion.uploadDate}" type="both" pattern="${pageInfo.datePatternDateAndTime}" /></a>
 					&#160;(<fmt:message key="topic.filesize.bytes"><fmt:param value="${fileVersion.fileSize}" /></fmt:message>)
 					&#160;.&#160;.&#160;
-					<jamwiki:link value="${pageInfo.namespaces['User']}:${fileVersion.authorDisplay}" text="${fileVersion.authorDisplay}" />
-					(<jamwiki:link value="${pageInfo.namespaces['User comments']}:${fileVersion.authorDisplay}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${fileVersion.authorDisplay}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
+					<jamwiki:link value="${pageInfo.namespaces[topicObject.virtualWiki]['User']}:${fileVersion.authorDisplay}" virtualWiki="${topicObject.virtualWiki}" text="${fileVersion.authorDisplay}" style="${sharedImage ? 'interwikilink' : ''}"/>
+					<c:if test="${!sharedImage}">
+						(<jamwiki:link value="${pageInfo.namespaces[topicObject.virtualWiki]['User comments']}:${fileVersion.authorDisplay}" virtualWiki="${topicObject.virtualWiki}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions" virtualWiki="${topicObject.virtualWiki}"><jamwiki:linkParam key="contributor" value="${fileVersion.authorDisplay}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
+					</c:if>
 					<c:if test="${!empty fileVersion.uploadComment}">&#160;(<i><c:out value="${fileVersion.uploadComment}" /></i>)</c:if>
 					</li>
 					</c:forEach>

@@ -26,12 +26,12 @@
 </table>
 </td>
 <td style="width:50px;">
-<table border="2" style="background:#ABCDEF;float:left;">
+<table border="2" style="background:#ABCDEF; float:left;">
 <tr>
 <td>C</td>
 </tr>
 </table>
-<table border="2" style="background:#ABCDEF;float:right;">
+<table border="2" style="background:#ABCDEF; float:right;">
 <tr>
 <td>D</td>
 </tr>

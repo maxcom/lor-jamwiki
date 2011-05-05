@@ -18,5 +18,5 @@
 * [[Special:Upload]] - 用來上傳檔案及圖片到 Wiki 上。
 * [[Special:Search]] - 搜尋 Wiki 內容。
 * [[Special:Account]] - 建立帳戶，正確記錄主題的編輯參與名單。
-* [[Special:Allpages]] - Wiki 上所有主題的清單。
-* [[Special:Specialpages]] - Wiki 「特殊」頁面索引。
+* [[Special:AllPages]] - Wiki 上所有主題的清單。
+* [[Special:SpecialPages]] - Wiki 「特殊」頁面索引。

@@ -239,4 +239,16 @@ public class Topic implements Serializable {
 	public String getVirtualWiki() {
 		return this.virtualWiki;
 	}
+
+	/**
+	 * Utility method for generating a topic name from a namespace and a page name.
+	 */
+	public static String buildTopicName(String virtualWiki, Namespace namespace, String pageName) {
+		String topicName = namespace.getLabel(virtualWiki);
+		if (topicName.length() != 0) {
+			topicName += Namespace.SEPARATOR;
+		}
+		topicName += pageName;
+		return topicName;
+	}
 }

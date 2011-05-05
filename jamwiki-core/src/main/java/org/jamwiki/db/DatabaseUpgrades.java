@@ -19,10 +19,7 @@ package org.jamwiki.db;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
-import org.jamwiki.DataHandler;
-import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -33,9 +30,13 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 /**
  * This class simply contains utility methods for upgrading database schemas
- * (if needed) between JAMWiki versions.  In general upgrade methods will only
- * be maintained for a few versions and then deleted - for example, JAMWiki version 10.0.0
- * does not need to keep the upgrade methods from JAMWiki 0.0.1 around.
+ * (if needed) between JAMWiki versions.  These methods are typically called automatically
+ * by the UpgradeServlet when an upgrade is detected and will automatically upgrade the
+ * database schema without the need for manual intervention from the user.
+ *
+ * In general upgrade methods will only be maintained for two major releases and then
+ * deleted - for example, JAMWiki version 0.9.0 will not support upgrading from versions
+ * prior to 0.7.0.
  */
 public class DatabaseUpgrades {
 
@@ -59,158 +60,17 @@ public class DatabaseUpgrades {
 	 */
 	public static boolean login(String username, String password) throws WikiException {
 		try {
-			return (WikiBase.getDataHandler().authenticate(username, password));
+			return WikiBase.getDataHandler().authenticate(username, password);
 		} catch (DataAccessException e) {
-			logger.severe("Unable to authenticate user during upgrade", e);
+			logger.error("Unable to authenticate user during upgrade", e);
 			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
 		}
-	}
-
-	/**
-	 *
-	 */
-	public static List<WikiMessage> upgrade080(List<WikiMessage> messages) throws WikiException {
-		String dbType = Environment.getValue(Environment.PROP_DB_TYPE);
-		TransactionStatus status = null;
-		try {
-			status = DatabaseConnection.startTransaction(getTransactionDefinition());
-			Connection conn = DatabaseConnection.getConnection();
-			if (StringUtils.equals(dbType, DataHandler.DATA_HANDLER_POSTGRES)) {
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_SEQUENCE_GROUP_ID", conn);
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_GROUP_ID", conn);
-				WikiBase.getDataHandler().executeUpgradeQuery("UPGRADE_080_SET_SEQUENCE_GROUP_ID", conn);
-				messages.add(new WikiMessage("upgrade.message.db.column.modified", "group_id", "jam_group"));
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_SEQUENCE_GROUP_MEMBERS_ID", conn);
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_GROUP_MEMBERS_ID", conn);
-				WikiBase.getDataHandler().executeUpgradeQuery("UPGRADE_080_SET_SEQUENCE_GROUP_MEMBERS_ID", conn);
-				messages.add(new WikiMessage("upgrade.message.db.column.modified", "id", "jam_group_members"));
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_SEQUENCE_TOPIC_ID", conn);
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_TOPIC_ID", conn);
-				WikiBase.getDataHandler().executeUpgradeQuery("UPGRADE_080_SET_SEQUENCE_TOPIC_ID", conn);
-				messages.add(new WikiMessage("upgrade.message.db.column.modified", "topic_id", "jam_topic"));
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_SEQUENCE_TOPIC_VERSION_ID", conn);
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_TOPIC_VERSION_ID", conn);
-				WikiBase.getDataHandler().executeUpgradeQuery("UPGRADE_080_SET_SEQUENCE_TOPIC_VERSION_ID", conn);
-				messages.add(new WikiMessage("upgrade.message.db.column.modified", "topic_version_id", "jam_topic_version"));
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_SEQUENCE_VIRTUAL_WIKI_ID", conn);
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_VIRTUAL_WIKI_ID", conn);
-				WikiBase.getDataHandler().executeUpgradeQuery("UPGRADE_080_SET_SEQUENCE_VIRTUAL_WIKI_ID", conn);
-				messages.add(new WikiMessage("upgrade.message.db.column.modified", "virtual_wiki_id", "jam_virtual_wiki"));
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_SEQUENCE_WIKI_FILE_ID", conn);
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_WIKI_FILE_ID", conn);
-				WikiBase.getDataHandler().executeUpgradeQuery("UPGRADE_080_SET_SEQUENCE_WIKI_FILE_ID", conn);
-				messages.add(new WikiMessage("upgrade.message.db.column.modified", "file_id", "jam_file"));
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_SEQUENCE_WIKI_FILE_VERSION_ID", conn);
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_WIKI_FILE_VERSION_ID", conn);
-				WikiBase.getDataHandler().executeUpgradeQuery("UPGRADE_080_SET_SEQUENCE_WIKI_FILE_VERSION_ID", conn);
-				messages.add(new WikiMessage("upgrade.message.db.column.modified", "file_version_id", "jam_file_version"));
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_SEQUENCE_WIKI_USER_ID", conn);
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_WIKI_USER_ID", conn);
-				WikiBase.getDataHandler().executeUpgradeQuery("UPGRADE_080_SET_SEQUENCE_WIKI_USER_ID", conn);
-				messages.add(new WikiMessage("upgrade.message.db.column.modified", "wiki_user_id", "jam_wiki_user"));
-			} else if (StringUtils.equals(dbType, DataHandler.DATA_HANDLER_MYSQL)) {
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_GROUP_ID", conn);
-				messages.add(new WikiMessage("upgrade.message.db.column.modified", "group_id", "jam_group"));
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_GROUP_MEMBERS_ID", conn);
-				messages.add(new WikiMessage("upgrade.message.db.column.modified", "id", "jam_group_members"));
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_TOPIC_ID", conn);
-				messages.add(new WikiMessage("upgrade.message.db.column.modified", "topic_id", "jam_topic"));
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_TOPIC_VERSION_ID", conn);
-				messages.add(new WikiMessage("upgrade.message.db.column.modified", "topic_version_id", "jam_topic_version"));
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_VIRTUAL_WIKI_ID", conn);
-				messages.add(new WikiMessage("upgrade.message.db.column.modified", "virtual_wiki_id", "jam_virtual_wiki"));
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_WIKI_FILE_ID", conn);
-				messages.add(new WikiMessage("upgrade.message.db.column.modified", "file_id", "jam_file"));
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_WIKI_FILE_VERSION_ID", conn);
-				messages.add(new WikiMessage("upgrade.message.db.column.modified", "file_version_id", "jam_file_version"));
-				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ALTER_WIKI_USER_ID", conn);
-				messages.add(new WikiMessage("upgrade.message.db.column.modified", "wiki_user_id", "jam_wiki_user"));
-			}
-			// add jam_log table
-			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_LOG_TABLE", conn);
-			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_log"));
-			// add wiki_user_display column to jam_topic_version
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_TOPIC_VERSION_USER_DISPLAY", conn);
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_UPDATE_TOPIC_VERSION_USER_DISPLAY", conn);
-			messages.add(new WikiMessage("upgrade.message.db.column.added", "wiki_user_display", "jam_topic_version"));
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_DROP_TOPIC_VERSION_IP_ADDRESS", conn);
-			messages.add(new WikiMessage("upgrade.message.db.column.dropped", "wiki_user_ip_address", "jam_topic_version"));
-			// add wiki_user_display column to jam_file_version
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_FILE_VERSION_USER_DISPLAY", conn);
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_UPDATE_FILE_VERSION_USER_DISPLAY", conn);
-			messages.add(new WikiMessage("upgrade.message.db.column.added", "wiki_user_display", "jam_file_version"));
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_DROP_FILE_VERSION_IP_ADDRESS", conn);
-			messages.add(new WikiMessage("upgrade.message.db.column.dropped", "wiki_user_ip_address", "jam_file_version"));
-			// add version_param column to jam_topic_version
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_ADD_TOPIC_VERSION_VERSION_PARAMS", conn);
-			messages.add(new WikiMessage("upgrade.message.db.column.added", "version_params", "jam_topic_version"));
-			// drop and restore the jam_recent_change table
-			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_DROP_RECENT_CHANGE_TABLE", conn);
-			messages.add(new WikiMessage("upgrade.message.db.table.dropped", "jam_recent_change"));
-			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_RECENT_CHANGE_TABLE", conn);
-			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_recent_change"));
-		} catch (SQLException e) {
-			DatabaseConnection.rollbackOnException(status, e);
-			logger.severe("Database failure during upgrade", e);
-			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
-		}
-		DatabaseConnection.commit(status);
-		try {
-			// perform a separate transaction to update existing data.  this code is in its own
-			// transaction since if it fails the upgrade can still be considered successful.
-			status = DatabaseConnection.startTransaction(getTransactionDefinition());
-			Connection conn = DatabaseConnection.getConnection();
-			// update the edit type field for topic versions
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_UPDATE_TOPIC_VERSION_UPLOAD_EDIT_TYPE", conn);
-			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic_version"));
-		} catch (SQLException e) {
-			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
-			// do not throw this error and halt the upgrade process - populating the field
-			// is not required for existing systems.
-			logger.warning("Failure while updating edit_type value in jam_topic_version.  See UPGRADE.txt for instructions on how to manually complete this optional step.", e);
-			try {
-				DatabaseConnection.rollbackOnException(status, e);
-			} catch (Exception ex) {
-				// ignore
-			}
-			status = null; // so we do not try to commit
-		}
-		if (status != null) {
-			DatabaseConnection.commit(status);
-		}
-		try {
-			// perform a separate transaction to update existing data.  this code is in its own
-			// transaction since if it fails the upgrade can still be considered successful.
-			status = DatabaseConnection.startTransaction(getTransactionDefinition());
-			Connection conn = DatabaseConnection.getConnection();
-			// assign ROLE_IMPORT
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_INSERT_ROLE_ROLE_IMPORT", conn);
-			messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_role"));
-			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_080_INSERT_AUTHORITIES_ROLE_IMPORT", conn);
-			messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_authorities"));
-		} catch (SQLException e) {
-			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
-			// do not throw this error and halt the upgrade process - populating the field
-			// is not required for existing systems.
-			logger.warning("Failure while updating ROLE_IMPORT in the jam_authorities table.  See UPGRADE.txt for instructions on how to manually complete this optional step.", e);
-			try {
-				DatabaseConnection.rollbackOnException(status, e);
-			} catch (Exception ex) {
-				// ignore
-			}
-			status = null; // so we do not try to commit
-		}
-		if (status != null) {
-			DatabaseConnection.commit(status);
-		}
-		return messages;
 	}
 
 	/**
 	 *
 	 */
 	public static List<WikiMessage> upgrade090(List<WikiMessage> messages) throws WikiException {
-		String dbType = Environment.getValue(Environment.PROP_DB_TYPE);
 		TransactionStatus status = null;
 		try {
 			status = DatabaseConnection.startTransaction(getTransactionDefinition());
@@ -237,11 +97,11 @@ public class DatabaseUpgrades {
 			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic_version"));
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
-			logger.severe("Database failure during upgrade", e);
+			logger.error("Database failure during upgrade", e);
 			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
-			logger.severe("Database failure during upgrade", e);
+			logger.error("Database failure during upgrade", e);
 			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
 		}
 		DatabaseConnection.commit(status);
@@ -250,7 +110,7 @@ public class DatabaseUpgrades {
 			Connection conn = DatabaseConnection.getConnection();
 			// populate jam_topic.namespace_id, jam_topic.page_name and jam_topic.page_name_lower
 			int numUpdated = WikiDatabase.fixIncorrectTopicNamespaces();
-			messages.add(new WikiMessage("admin.maintenance.message.namespaces", Integer.toString(numUpdated)));
+			messages.add(new WikiMessage("admin.maintenance.message.topicsUpdated", Integer.toString(numUpdated)));
 			// add not null constraints for jam_topic.page_name and jam_topic.page_name_lower
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_090_ADD_TOPIC_PAGE_NAME_NOT_NULL_CONSTRAINT", conn);
 			messages.add(new WikiMessage("upgrade.message.db.column.modified", "page_name", "jam_topic"));
@@ -263,7 +123,7 @@ public class DatabaseUpgrades {
 			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 			// do not throw this error and halt the upgrade process - populating the field
 			// is not required for existing systems.
-			logger.warning("Failure while populating correct namespace_id values in the jam_topic table.  Try running the 'Fix Incorrect Topic Namespaces' from Special:Maintenance to complete this step.", e);
+			logger.warn("Failure while populating correct namespace_id values in the jam_topic table.  Try running the 'Fix Incorrect Topic Namespaces' from Special:Maintenance to complete this step.", e);
 			try {
 				DatabaseConnection.rollbackOnException(status, e);
 			} catch (Exception ex) {
@@ -274,7 +134,103 @@ public class DatabaseUpgrades {
 			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 			// do not throw this error and halt the upgrade process - populating the field
 			// is not required for existing systems.
-			logger.warning("Failure while populating correct namespace_id values in the jam_topic table.  Try running the 'Fix Incorrect Topic Namespaces' from Special:Maintenance to complete this step.", e);
+			logger.warn("Failure while populating correct namespace_id values in the jam_topic table.  Try running the 'Fix Incorrect Topic Namespaces' from Special:Maintenance to complete this step.", e);
+			try {
+				DatabaseConnection.rollbackOnException(status, e);
+			} catch (Exception ex) {
+				// ignore
+			}
+			status = null; // so we do not try to commit
+		}
+		if (status != null) {
+			DatabaseConnection.commit(status);
+		}
+		return messages;
+	}
+
+	/**
+	 * The following updates the jam_virtual_wiki table, but these changes are required for
+	 * a successful 0.9.0 upgrade so move them into a separate method so that they can be
+	 * executed before anything else.
+	 */
+	public static List<WikiMessage> preUpgrade100(List<WikiMessage> messages) throws WikiException {
+		TransactionStatus status = null;
+		try {
+			status = DatabaseConnection.startTransaction(getTransactionDefinition());
+			Connection conn = DatabaseConnection.getConnection();
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_ADD_VIRTUAL_WIKI_LOGO_URL", conn);
+			messages.add(new WikiMessage("upgrade.message.db.column.added", "logo_image_url", "jam_virtual_wiki"));
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_ADD_VIRTUAL_WIKI_SITE_NAME", conn);
+			messages.add(new WikiMessage("upgrade.message.db.column.added", "site_name", "jam_virtual_wiki"));
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_ADD_VIRTUAL_WIKI_META_DESCRIPTION", conn);
+			messages.add(new WikiMessage("upgrade.message.db.column.added", "meta_description", "jam_virtual_wiki"));
+		} catch (SQLException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			logger.error("Database failure during upgrade", e);
+			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
+		}
+		DatabaseConnection.commit(status);
+		return messages;
+	}
+
+	/**
+	 *
+	 */
+	public static List<WikiMessage> upgrade100(List<WikiMessage> messages) throws WikiException {
+		TransactionStatus status = null;
+		try {
+			status = DatabaseConnection.startTransaction(getTransactionDefinition());
+			Connection conn = DatabaseConnection.getConnection();
+			// add the jam_topic_links table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_LINKS_TABLE", conn);
+			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_topic_links"));
+			// add the interwiki table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_INTERWIKI_TABLE", conn);
+			// populate the jam_interwiki table
+			WikiDatabase.setupDefaultInterwikis();
+			messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_interwiki"));
+			// add the jam_configuration table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_CONFIGURATION_TABLE", conn);
+			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_configuration"));
+			// drop the not null constraints for jam_virtual_wiki.default_topic_name
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_DROP_VIRTUAL_WIKI_DEFAULT_TOPIC_NOT_NULL", conn);
+			messages.add(new WikiMessage("upgrade.message.db.column.modified", "default_topic_name", "jam_virtual_wiki"));
+		} catch (DataAccessException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			logger.error("Database failure during upgrade", e);
+			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
+		} catch (SQLException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			logger.error("Database failure during upgrade", e);
+			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
+		}
+		DatabaseConnection.commit(status);
+		try {
+			// perform a separate transaction to update existing data.  this code is in its own
+			// transaction since if it fails the upgrade can still be considered successful.
+			status = DatabaseConnection.startTransaction(getTransactionDefinition());
+			Connection conn = DatabaseConnection.getConnection();
+			// add an index to the jam_topic_links table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_LINKS_INDEX", conn);
+			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic_links"));
+			// add an index to the jam_category table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_CATEGORY_INDEX", conn);
+			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_category"));
+			// add indexes to the jam_topic table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_CURRENT_VERSION_INDEX", conn);
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_NAMESPACE_INDEX", conn);
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_VIRTUAL_WIKI_INDEX", conn);
+			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic"));
+			// add several indexes to the jam_topic_version table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_VERSION_PREVIOUS_INDEX", conn);
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_VERSION_USER_DISPLAY_INDEX", conn);
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_VERSION_USER_ID_INDEX", conn);
+			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic_version"));
+		} catch (SQLException e) {
+			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
+			// do not throw this error and halt the upgrade process - populating the field
+			// is not required for existing systems.
+			logger.warn("Non-fatal error while upgrading.", e);
 			try {
 				DatabaseConnection.rollbackOnException(status, e);
 			} catch (Exception ex) {

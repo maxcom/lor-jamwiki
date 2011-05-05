@@ -30,6 +30,7 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.db.WikiDatabase;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
@@ -71,7 +72,8 @@ public class SetupServlet extends JAMWikiServlet {
 				throw new WikiException(new WikiMessage("setup.error.jdk", Integer.valueOf(MINIMUM_JDK_VERSION).toString(), System.getProperty("java.version")));
 			}
 			if (!StringUtils.isBlank(function) && initialize(request, next, pageInfo)) {
-				ServletUtil.redirect(next, Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT), Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
+				VirtualWiki virtualWiki = VirtualWiki.defaultVirtualWiki();
+				ServletUtil.redirect(next, virtualWiki.getName(), virtualWiki.getRootTopicName());
 			} else {
 				view(request, next, pageInfo);
 			}
@@ -88,12 +90,12 @@ public class SetupServlet extends JAMWikiServlet {
 		// reset properties
 		Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, false);
 		if (!(e instanceof WikiException)) {
-			logger.severe("Setup error", e);
+			logger.error("Setup error", e);
 		}
 		try {
 			this.view(request, next, pageInfo);
 		} catch (Exception ex) {
-			logger.severe("Unable to set up page view object for setup.jsp", ex);
+			logger.error("Unable to set up page view object for setup.jsp", ex);
 		}
 		if (e instanceof WikiException) {
 			WikiException we = (WikiException)e;
@@ -140,7 +142,7 @@ public class SetupServlet extends JAMWikiServlet {
 		String newPassword = request.getParameter("newPassword");
 		String encryptedPassword = Encryption.encrypt(newPassword);
 		WikiBase.reset(request.getLocale(), user, username, encryptedPassword);
-		Environment.saveProperties();
+		Environment.saveConfiguration();
 		// the setup process does not add new topics to the index (currently)
 		// TODO - remove this once setup uses safe connection handling
 		WikiBase.getSearchEngine().refreshIndex();
@@ -230,7 +232,7 @@ public class SetupServlet extends JAMWikiServlet {
 		pageInfo.setPageTitle(new WikiMessage("setup.title", WikiVersion.CURRENT_WIKI_VERSION));
 		List<WikiConfigurationObject> dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
 		next.addObject("dataHandlers", dataHandlers);
-		WikiMessage logMessage = new WikiMessage("setup.help.logfile", WikiLogger.getDefaultLogFile(), WikiLogger.getLogConfigFile());
+		WikiMessage logMessage = new WikiMessage("setup.help.logfile", WikiLogger.LOGGING_CONFIGURATION_FILE_PATH);
 		next.addObject("logMessage", logMessage);
 	}
 }

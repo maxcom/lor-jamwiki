@@ -9,9 +9,9 @@
 
 === Other useful pages ===
 
-* [[Special:Specialpages]] - An index of wiki "Special" pages.
+* [[Special:SpecialPages]] - An index of wiki "Special" pages.
 * [[Special:RecentChanges]] - A list of recently modified Wiki topics.
 * [[Special:Upload]] - Used to upload files and images to the Wiki.
 * [[Special:Search]] - Search the Wiki.
 * [[Special:Account]] - Create an account so that edits are properly credited.
-* [[Special:Allpages]] - A list of all the topics in the Wiki.
+* [[Special:AllPages]] - A list of all the topics in the Wiki.

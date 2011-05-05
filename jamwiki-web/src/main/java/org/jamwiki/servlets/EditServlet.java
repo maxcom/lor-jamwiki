@@ -150,7 +150,7 @@ public class EditServlet extends JAMWikiServlet {
 		pageInfo.setTopicName(topicName);
 		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, topicName);
 		if (wikiLink.getNamespace().getId().equals(Namespace.CATEGORY_ID)) {
-			ServletUtil.loadCategoryContent(next, virtualWiki, topicName);
+			ServletUtil.loadCategoryContent(request, next, virtualWiki, topicName);
 		}
 		if (request.getParameter("editComment") != null) {
 			next.addObject("editComment", request.getParameter("editComment"));
@@ -220,13 +220,11 @@ public class EditServlet extends JAMWikiServlet {
 	 *
 	 */
 	private ParserInput parserInput(HttpServletRequest request, WikiUser user, String virtualWiki, String topicName) {
-		ParserInput parserInput = new ParserInput();
+		ParserInput parserInput = new ParserInput(virtualWiki, topicName);
 		parserInput.setContext(request.getContextPath());
 		parserInput.setLocale(request.getLocale());
-		parserInput.setTopicName(topicName);
 		parserInput.setWikiUser(user);
 		parserInput.setUserDisplay(ServletUtil.getIpAddress(request));
-		parserInput.setVirtualWiki(virtualWiki);
 		return parserInput;
 	}
 
@@ -290,7 +288,7 @@ public class EditServlet extends JAMWikiServlet {
 			sectionName = parserOutput.getSectionName();
 		}
 		if (contents == null) {
-			logger.warning("The topic " + topicName + " has no content");
+			logger.warn("The topic " + topicName + " has no content");
 			throw new WikiException(new WikiMessage("edit.exception.nocontent", topicName));
 		}
 		// strip line feeds

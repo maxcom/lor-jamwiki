@@ -198,7 +198,7 @@ public class WikiUserDetailsImpl implements UserDetails {
 	 */
 	public boolean hasRole(GrantedAuthority authority) {
 		if (this.authorities == null) {
-			logger.warning("No roles assigned for user " + this.getUsername());
+			logger.warn("No roles assigned for user " + this.getUsername());
 			return false;
 		}
 		return authorities.contains(authority);

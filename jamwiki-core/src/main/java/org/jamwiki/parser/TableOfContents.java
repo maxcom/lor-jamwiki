@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.LinkUtil;
 
 /**
  * This class is used to generate a table of contents based on values passed in
@@ -79,7 +79,7 @@ public class TableOfContents {
 		if (this.status != STATUS_NO_TOC && this.status != STATUS_TOC_INITIALIZED) {
 			this.setStatus(STATUS_TOC_INITIALIZED);
 		}
-		name = this.checkForUniqueName(name);
+		name = this.buildUniqueName(name);
 		TableOfContentsEntry entry = new TableOfContentsEntry(name, text, level);
 		this.entries.put(name, entry);
 		if (level < minLevel) {
@@ -124,20 +124,21 @@ public class TableOfContents {
 	 * @return A unique name for use in the TOC, of the form "name" or "name_1"
 	 *  if "name" is already in use.
 	 */
-	public String checkForUniqueName(String name) {
+	public String buildUniqueName(String name) {
 		if (StringUtils.isBlank(name)) {
 			name = "empty";
 		}
 		int count = 0;
-		String candidate = name;
+		// ensure that all characters in the name are valid for use in an anchor name
+		String escapedName = LinkUtil.buildAnchorText(name);
+		String candidate = escapedName;
 		while (count < 1000) {
 			if (this.entries.get(candidate) == null) {
-				return candidate;
+				break;
 			}
 			count++;
-			candidate = name + "_" + count;
+			candidate = escapedName + "_" + count;
 		}
-		logger.warning("Unable to find appropriate TOC name after " + count + " iterations for value " + name);
 		return candidate;
 	}
 
@@ -257,7 +258,7 @@ public class TableOfContents {
 				// only display if not nested deeper than max
 				closeList(adjustedLevel, text, previousLevel);
 				openList(adjustedLevel, text, previousLevel);
-				text.append("<a href=\"#").append(Utilities.encodeAndEscapeTopicName(entry.name)).append("\">");
+				text.append("<a href=\"#").append(entry.name).append("\">");
 				text.append("<span class=\"tocnumber\">").append(this.nextTocPrefix(adjustedLevel - 1)).append("</span> ");
 				text.append("<span class=\"toctext\">").append(entry.text).append("</span></a>");
 				previousLevel = adjustedLevel;

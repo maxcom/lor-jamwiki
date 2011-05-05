@@ -25,6 +25,7 @@ import org.jamwiki.DataAccessException;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.ImageBorderEnum;
 import org.jamwiki.utils.ImageHorizontalAlignmentEnum;
 import org.jamwiki.utils.ImageVerticalAlignmentEnum;
@@ -57,7 +58,7 @@ public class ImageLinkTag implements JFlexParserTag {
 			// parse as a link if not doing a full parse
 			return lexer.parse(JFlexLexer.TAG_TYPE_WIKI_LINK, raw);
 		}
-		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(lexer.getParserInput(), raw);
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(lexer.getParserInput(), lexer.getParserOutput(), raw);
 		if (StringUtils.isBlank(wikiLink.getDestination())) {
 			// no destination or section
 			return raw;
@@ -67,7 +68,7 @@ public class ImageLinkTag implements JFlexParserTag {
 			return lexer.parse(JFlexLexer.TAG_TYPE_WIKI_LINK, raw);
 		}
 		try {
-			String result = this.parseImageLink(lexer.getParserInput(), lexer.getMode(), wikiLink);
+			String result = this.parseImageLink(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), wikiLink);
 			// depending on image alignment/border the image may be contained within a div.  If that's the
 			// case, close any open paragraph tags prior to pushing the image onto the stack
 			if (result.startsWith("<div") && lexer.peekTag().getTagType().equals("p")) {
@@ -86,10 +87,10 @@ public class ImageLinkTag implements JFlexParserTag {
 				return result;
 			}
 		} catch (DataAccessException e) {
-			logger.severe("Failure while parsing link " + raw, e);
+			logger.error("Failure while parsing link " + raw, e);
 			return "";
 		} catch (ParserException e) {
-			logger.severe("Failure while parsing link " + raw, e);
+			logger.error("Failure while parsing link " + raw, e);
 			return "";
 		}
 	}
@@ -97,35 +98,35 @@ public class ImageLinkTag implements JFlexParserTag {
 	/**
 	 *
 	 */
-	private String parseImageLink(ParserInput parserInput, int mode, WikiLink wikiLink) throws DataAccessException, ParserException {
+	private String parseImageLink(ParserInput parserInput, ParserOutput parserOutput, int mode, WikiLink wikiLink) throws DataAccessException, ParserException {
 		String context = parserInput.getContext();
-		String virtualWiki = parserInput.getVirtualWiki();
-		ImageMetadata imageMetadata = parseImageParams(wikiLink.getText());
-		if (!StringUtils.isBlank(imageMetadata.getCaption())) {
-			imageMetadata.setCaption(JFlexParserUtil.parseFragment(parserInput, imageMetadata.getCaption(), mode));
-		}
+		ImageMetadata imageMetadata = parseImageParams(parserInput, parserOutput, mode, wikiLink.getText());
 		if (imageMetadata.getAlt() == null) {
 			// use the image name as the alt tag if no other value has been set
 			imageMetadata.setAlt(wikiLink.getArticle());
 		}
 		// do not escape html for caption since parser does it above
 		try {
+			String virtualWiki = (wikiLink.getVirtualWiki() == null) ? parserInput.getVirtualWiki() : wikiLink.getVirtualWiki().getName();
 			return ImageUtil.buildImageLinkHtml(context, virtualWiki, wikiLink.getDestination(), imageMetadata, null, false);
 		} catch (IOException e) {
-			throw new ParserException("I/O Failure while parsing image link: " + e.getMessage(), e);
+			// FIXME - display a broken image icon or something better
+			logger.warn("I/O Failure while parsing image link: " + e.getMessage(), e);
+			return wikiLink.getDestination();
 		}
 	}
 
 	/**
 	 *
 	 */
-	private ImageMetadata parseImageParams(String paramText) {
+	private ImageMetadata parseImageParams(ParserInput parserInput, ParserOutput parserOutput, int mode, String paramText) throws ParserException {
 		ImageMetadata imageMetadata = new ImageMetadata();
 		if (StringUtils.isBlank(paramText)) {
 			return imageMetadata;
 		}
 		String[] tokens = paramText.split("\\|");
 		Matcher matcher;
+		String caption = "";
 		tokenLoop: for (int i = 0; i < tokens.length; i++) {
 			String token = tokens[i];
 			if (StringUtils.isBlank(token)) {
@@ -180,13 +181,19 @@ public class ImageLinkTag implements JFlexParserTag {
 				imageMetadata.setLink(matcher.group(1).trim());
 				continue tokenLoop;
 			}
-			// FIXME - this is a hack.  images may contain piped links, so if
-			// there was previous caption info append the new info.
-			if (StringUtils.isBlank(imageMetadata.getCaption())) {
-				imageMetadata.setCaption(token);
-			} else {
-				imageMetadata.setCaption(imageMetadata.getCaption() + "|" + token);
+			// this is a bit hackish.  string together any remaining content as a possible
+			// caption, then parse it and strip out anything after the first pipe character
+			caption += (StringUtils.isBlank(caption)) ? token : "|" + token;
+		}
+		// parse the caption and strip anything prior to the last "|" to handle syntax of
+		// the form "[[Image:Example.gif|caption1|caption2]]".
+		if (!StringUtils.isBlank(caption)) {
+			caption = JFlexParserUtil.parseFragment(parserInput, parserOutput, caption, mode);
+			int pos = caption.indexOf('|');
+			if (pos != -1) {
+				caption = (pos >= (caption.length() - 1)) ? " " : caption.substring(pos + 1);
 			}
+			imageMetadata.setCaption(caption);
 		}
 		if (imageMetadata.getVerticalAlignment() != ImageVerticalAlignmentEnum.NOT_SPECIFIED && (imageMetadata.getBorder() == ImageBorderEnum.THUMB || imageMetadata.getBorder() == ImageBorderEnum.FRAME)) {
 			// per spec, vertical alignment can only be set for non-thumb and non-frame

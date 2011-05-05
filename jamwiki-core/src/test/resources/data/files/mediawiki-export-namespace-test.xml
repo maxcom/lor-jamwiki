@@ -51,6 +51,11 @@
       Category talk:Test - [[Category talk:Test]]
       Custom:Test - [[Custom:Test]]
       Custom talk:Test - [[Custom talk:Test]]
+      Pattern test - [[  User talk:Test ]]
+      Case-sensitive test - [[ User Talk:Test]]
+      Inclusion test - [[:User talk:Test]]
+      Template inclusion test 1 - {{User talk:Test}}
+      Template inclusion test 2 - {{:User talk:Test}}
       </text>
     </revision>
   </page>

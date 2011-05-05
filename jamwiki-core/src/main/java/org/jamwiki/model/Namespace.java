@@ -249,7 +249,7 @@ public class Namespace implements Serializable {
 		try {
 			return WikiBase.getDataHandler().lookupNamespaceById(namespaceId);
 		} catch (DataAccessException e) {
-			logger.severe("Failure while retrieving namespace for ID: " + namespaceId, e);
+			logger.error("Failure while retrieving namespace for ID: " + namespaceId, e);
 		}
 		return null;
 	}

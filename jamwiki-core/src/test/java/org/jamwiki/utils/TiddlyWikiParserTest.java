@@ -26,9 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.JAMWikiUnitTest;
 import org.jamwiki.WikiException;
@@ -48,11 +45,6 @@ public class TiddlyWikiParserTest extends JAMWikiUnitTest {
 	 */
 	@Test
 	public void testParse() throws Exception {
-		Handler[] h = Logger.getLogger("").getHandlers();
-		for (int i = 0; i < h.length; i++) {
-			h[i].setLevel(Level.ALL);
-		}
-		Logger.getLogger("").setLevel(Level.ALL);
 		WikiBaseMock mock = new WikiBaseMock();
 		TiddlyWikiParser parser = new TiddlyWikiParser("myvirtual", null, "", mock);
 		String testLine = "<div tiddler=\""+ NAME + "\" modified=\"" + DATUM + "\">" + CONTENT+ "</div>";

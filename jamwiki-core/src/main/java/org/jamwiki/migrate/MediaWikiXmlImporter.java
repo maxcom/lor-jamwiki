@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
@@ -34,6 +36,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.jamwiki.DataAccessException;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -135,18 +138,32 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 	 */
 	private void convertToJAMWikiNamespaces(StringBuilder builder) {
 		// convert all namespaces names from MediaWiki to JAMWiki local representation
-		String jamwikiNamespace, mediawikiPattern, jamwikiPattern;
-		int start = 0;
+		String jamwikiNamespace;
 		for (String mediawikiNamespace : mediawikiNamespaceMap.keySet()) {
 			jamwikiNamespace = mediawikiNamespaceMap.get(mediawikiNamespace);
-			if (jamwikiNamespace == null || StringUtils.equals(jamwikiNamespace, mediawikiNamespace)) {
+			if (jamwikiNamespace == null || StringUtils.equalsIgnoreCase(jamwikiNamespace, mediawikiNamespace)) {
 				continue;
 			}
-			mediawikiPattern = "[[" + mediawikiNamespace + Namespace.SEPARATOR;
-			jamwikiPattern = "[[" + jamwikiNamespace + Namespace.SEPARATOR;
-			while ((start = builder.indexOf(mediawikiPattern, start + 1)) != -1) {
-				builder.replace(start, start + mediawikiPattern.length(), jamwikiPattern);
-			}
+			// convert from Mediawiki to JAMWiki namespaces.  handle "[[", "[[:", "{{", "{{:".
+			String wikiLinkPatternString = "(\\[\\[[ ]*(:)?)" + mediawikiNamespace + Namespace.SEPARATOR;
+			this.replaceNamespace(builder, jamwikiNamespace, wikiLinkPatternString);
+			String templatePatternString = "(\\{\\{[ ]*(:)?)" + mediawikiNamespace + Namespace.SEPARATOR;
+			this.replaceNamespace(builder, jamwikiNamespace, templatePatternString);
+		}
+	}
+
+	/**
+	 * Utility method for replacing the original namespaces from the XML with
+	 * namespaces configured for the current JAMWiki instance.
+	 */
+	private void replaceNamespace(StringBuilder builder, String jamwikiNamespace, String patternString) {
+		Pattern mediawikiPattern = Pattern.compile(patternString, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+		Matcher matcher = mediawikiPattern.matcher(builder);
+		String replacement;
+		while (matcher.find()) {
+			replacement = matcher.group(1) + jamwikiNamespace + Namespace.SEPARATOR;
+			builder.replace(0, builder.length(), matcher.replaceFirst(replacement));
+			matcher.reset(builder);
 		}
 	}
 
@@ -167,19 +184,26 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 	 * Initialize the current topic, validating that it does not yet exist.
 	 */
 	private void initCurrentTopic(String topicName) throws SAXException {
+		topicName = convertArticleNameFromWikipediaToJAMWiki(topicName);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(this.virtualWiki, topicName);
 		Topic existingTopic = null;
 		try {
 			existingTopic = WikiBase.getDataHandler().lookupTopic(this.virtualWiki, topicName, false, null);
 		} catch (DataAccessException e) {
 			throw new SAXException("Failure while validating topic name: " + topicName, e);
 		}
-		if (existingTopic != null) {
-			// FIXME - update so that this merges any new versions instead of throwing an error
-			WikiException e = new WikiException(new WikiMessage("import.error.topicexists", topicName));
-			throw new SAXException("Topic " + topicName + " already exists and cannot be imported", e);
+		if (existingTopic != null && existingTopic.getVirtualWiki().equals(this.virtualWiki)) {
+			// do a second comparison of capitalized topic names in a case-sensitive way
+			// since the initial topic lookup will return a case-insensitive match for some
+			// namespaces.
+			String existingTopicName = (Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_CAPITALIZATION)) ? StringUtils.capitalize(existingTopic.getPageName()) : existingTopic.getPageName();
+			String importTopicName = (Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_CAPITALIZATION)) ? StringUtils.capitalize(wikiLink.getArticle()) : wikiLink.getArticle();
+			if (StringUtils.equals(existingTopicName, importTopicName)) {
+				// FIXME - update so that this merges any new versions instead of throwing an error
+				WikiException e = new WikiException(new WikiMessage("import.error.topicexists", topicName));
+				throw new SAXException("Topic " + topicName + " already exists and cannot be imported", e);
+			}
 		}
-		topicName = convertArticleNameFromWikipediaToJAMWiki(topicName);
-		WikiLink wikiLink = LinkUtil.parseWikiLink(this.virtualWiki, topicName);
 		this.currentTopic = new Topic(this.virtualWiki, topicName);
 		this.currentTopic.setTopicType(WikiUtil.findTopicTypeForNamespace(wikiLink.getNamespace()));
 	}
@@ -302,7 +326,14 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 		} else if (MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC_VERSION_EDIT_DATE.equals(qName)) {
 			this.currentTopicVersion.setEditDate(this.parseMediaWikiTimestamp(currentElementBuffer.toString().trim()));
 		} else if (MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC_VERSION_IP.equals(qName) || MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC_VERSION_USERNAME.equals(qName)) {
-			this.currentTopicVersion.setAuthorDisplay(currentElementBuffer.toString().trim());
+			// Login name in Mediawiki can be longer than 100 characters, so trim to conform to
+			// JAMWiki limits.  In general very long login names seem to be used only by vandals,
+			// so this should be an acceptable workaround.
+			String authorDisplay = currentElementBuffer.toString().trim();
+			if (authorDisplay.length() > 100) {
+				authorDisplay = authorDisplay.substring(0, 100);
+			}
+			this.currentTopicVersion.setAuthorDisplay(authorDisplay);
 		} else if (MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC_VERSION.equals(qName)) {
 			this.commitTopicVersion();
 		} else if (MediaWikiConstants.MEDIAWIKI_ELEMENT_TOPIC.equals(qName)) {

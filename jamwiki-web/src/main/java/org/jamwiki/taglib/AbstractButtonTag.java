@@ -74,7 +74,7 @@ public abstract class AbstractButtonTag extends TagSupport {
 		try {
 			this.pageContext.getOut().print(output.toString());
 		} catch (IOException e) {
-			logger.severe("Failure in " + getButtonType() + " tag for " + this.id + " / " + this.name + " / " + this.style + " / " + this.value, e);
+			logger.error("Failure in " + getButtonType() + " tag for " + this.id + " / " + this.name + " / " + this.style + " / " + this.value, e);
 			throw new JspException(e);
 		}
 		return EVAL_PAGE;

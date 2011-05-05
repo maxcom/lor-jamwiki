@@ -32,11 +32,11 @@
 	</div>
 	<br />
 	<c:if test="${!empty leftMenu && leftMenu != '<br/><br/>'}">
-	<div id="nav-menu">
+	<div id="nav-menu" class="portlet">
 	<c:out value="${leftMenu}" escapeXml="false" />
 	</div>
 	</c:if>
-	<div id="nav-search">
+	<div id="nav-search" class="portlet">
 	<form method="post" action="<jamwiki:link value="Special:Search" />">
 	<input type="text" name="text" value="" />
 	<br />
@@ -44,6 +44,26 @@
 	<input type="submit" name="jumpto" value='<fmt:message key="generalmenu.jumpto"/>'/>
 	</form>
 	</div>
+	<c:if test="${!empty virtualWikiLinks}">
+	<div id="p-lang" class="portlet">
+	<h5><fmt:message key="generalmenu.title.virtualwiki" /></h5>
+	<ul>
+	<c:forEach items="${virtualWikiLinks}" var="virtualWikiLink">
+	<li>${virtualWikiLink}</li>
+	</c:forEach>
+	</ul>
+	</div>
+	</c:if>
+	<c:if test="${!empty interwikiLinks}">
+	<div id="p-sites" class="portlet">
+	<h5><fmt:message key="generalmenu.title.interwiki" /></h5>
+	<ul>
+	<c:forEach items="${interwikiLinks}" var="interwikiLink">
+	<li>${interwikiLink}</li>
+	</c:forEach>
+	</ul>
+	</div>
+	</c:if>
 </div>
 <div id="wiki-content">
 	<%@ include file="user-menu.jsp"%>
@@ -51,7 +71,7 @@
 	<div id="contents" >
 	<h1 id="contents-header"><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /></fmt:message></h1>
 	<c:if test="${!empty pageInfo.redirectUrl}">
-	<div id="contents-subheader"><fmt:message key="topic.redirect.from"><fmt:param><a href="<c:out value="${pageInfo.redirectUrl}" />"><c:out value="${pageInfo.redirectName}" /></a></fmt:param></fmt:message></div>
+	<div id="contentSub"><fmt:message key="topic.redirect.from"><fmt:param><a href="<c:out value="${pageInfo.redirectUrl}" />"><c:out value="${pageInfo.redirectName}" /></a></fmt:param></fmt:message></div>
 	</c:if>
 <c:set var="contentJsp" scope="page" value="${pageInfo.contentJsp}" />
 <%

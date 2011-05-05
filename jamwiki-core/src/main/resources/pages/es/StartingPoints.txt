@@ -14,5 +14,5 @@ Otras funciones útiles:
 * [[Special:Upload]] - Se utiliza para subir archivos e imágenes al Wiki.
 * [[Special:Search]] - Buscar en el Wiki.
 * [[Special:Account]] - Crear una cuenta para que las modificaciones se acrediten correctamente.
-* [[Special:Allpages]] - Lista de todos los temas del Wiki.
-* [[Special:Specialpages]] - Un índice de las páginas "Especiales" del Wiki.
+* [[Special:AllPages]] - Lista de todos los temas del Wiki.
+* [[Special:SpecialPages]] - Un índice de las páginas "Especiales" del Wiki.

@@ -16,22 +16,16 @@
  */
 package org.jamwiki.utils;
 
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import javax.imageio.ImageIO;
 import net.sf.ehcache.Element;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
@@ -54,24 +48,16 @@ import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
 
 /**
- * Utility methods for readding images from disk, saving images to disk,
- * resizing images, and returning information about images such as width and
- * height.
+ * Utility methods for performing wiki-specific image tasks, such as generating
+ * HTML to display an image or building links to images.
  */
 public class ImageUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(ImageUtil.class.getName());
 	/** Cache name for the cache of image dimensions. */
 	private static final String CACHE_IMAGE_DIMENSIONS = "org.jamwiki.utils.ImageUtil.CACHE_IMAGE_DIMENSIONS";
-
-	static {
-		// manually set the ImageIO temp directory so that systems with incorrect defaults won't fail
-		// when processing images.
-		File directory = WikiUtil.getTempDirectory();
-		if (directory.exists()) {
-			ImageIO.setCacheDirectory(directory);
-		}
-	}
+	/** Sub-folder of the "files" directory into which to place resized images. */
+	private static final String RESIZED_IMAGE_SUBFOLDER = "resized";
 
 	/**
 	 *
@@ -82,8 +68,7 @@ public class ImageUtil {
 	/**
 	 *
 	 */
-	private static void addToCache(WikiImage wikiImage, int width, int height) {
-		ImageDimensions dimensions = new ImageDimensions(width, height);
+	private static void addToCache(WikiImage wikiImage, Dimension dimensions) {
 		String key = wikiImage.getVirtualWiki() + "/" + wikiImage.getUrl();
 		WikiCache.addToCache(CACHE_IMAGE_DIMENSIONS, key, dimensions);
 	}
@@ -93,25 +78,24 @@ public class ImageUtil {
 	 * page).  If the file does not exist then this method will return
 	 * <code>null</code>.
 	 *
-	 * @param context The current servlet context.
 	 * @param virtualWiki The virtual wiki for the URL that is being created.
 	 * @param topicName The name of the image for which a link is being created.
 	 * @return The URL to an image file (not the image topic) or <code>null</code>
 	 *  if the file does not exist.
 	 * @throws DataAccessException Thrown if any error occurs while retrieving file info.
 	 */
-	public static String buildImageFileUrl(String context, String virtualWiki, String topicName) throws DataAccessException {
+	public static String buildImageFileUrl(String virtualWiki, String topicName) throws DataAccessException {
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
 		if (wikiFile == null) {
 			return null;
 		}
-		return buildRelativeImageUrl(context, virtualWiki, wikiFile.getUrl());
+		return buildRelativeImageUrl(wikiFile.getUrl());
 	}
 
 	/**
 	 *
 	 */
-	private static String buildRelativeImageUrl(String context, String virtualWiki, String filename) {
+	private static String buildRelativeImageUrl(String filename) {
 		String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + filename);
 		return FilenameUtils.separatorsToUnix(url);
 	}
@@ -121,7 +105,8 @@ public class ImageUtil {
 	 * and includes the HTML image tag to display the image.
 	 *
 	 * @param context The servlet context for the link that is being created.
-	 * @param virtualWiki The virtual wiki for the link that is being created.
+	 * @param linkVirtualWiki The virtual wiki to use when looking up the
+	 *  image/file, and when linking to the image/file topic page.
 	 * @param topicName The name of the image for which a link is being
 	 *  created.
 	 * @param imageMetadata A container for the image display params, such as
@@ -138,42 +123,37 @@ public class ImageUtil {
 	 *  information.
 	 * @throws IOException Thrown if any error occurs while reading image information.
 	 */
-	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, ImageMetadata imageMetadata, String style, boolean escapeHtml) throws DataAccessException, IOException {
-		String url = ImageUtil.buildImageFileUrl(context, virtualWiki, topicName);
+	public static String buildImageLinkHtml(String context, String linkVirtualWiki, String topicName, ImageMetadata imageMetadata, String style, boolean escapeHtml) throws DataAccessException, IOException {
+		String url = ImageUtil.buildImageFileUrl(linkVirtualWiki, topicName);
 		if (url == null) {
-			return ImageUtil.buildUploadLink(context, virtualWiki, topicName);
+			return ImageUtil.buildUploadLink(context, linkVirtualWiki, topicName);
 		}
-		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(linkVirtualWiki, topicName, false, null);
 		StringBuilder html = new StringBuilder();
 		String caption = imageMetadata.getCaption();
 		if (topic.getTopicType() == TopicType.FILE) {
-			// file, not an image
-			if (StringUtils.isBlank(caption)) {
-				caption = topicName.substring(Namespace.namespace(Namespace.FILE_ID).getLabel(virtualWiki).length() + 1);
-			}
-			html.append("<a href=\"").append(url).append("\">");
-			if (escapeHtml) {
-				html.append(StringEscapeUtils.escapeHtml(caption));
-			} else {
-				html.append(caption);
-			}
-			html.append("</a>");
-			return html.toString();
+			// file, not an image - use the file name, minus the translated/untranslated namespace
+			return ImageUtil.buildLinkToFile(url, topic, caption, escapeHtml);
 		}
+		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(topic.getVirtualWiki(), topic.getName());
 		WikiImage wikiImage = null;
 		try {
-			wikiImage = ImageUtil.initializeImage(wikiFile, imageMetadata);
+			wikiImage = ImageUtil.initializeWikiImage(wikiFile, imageMetadata);
 		} catch (FileNotFoundException e) {
 			// do not log the full exception as the logs can fill up very for this sort of error, and it is generally due to a bad configuration.  instead log a warning message so that the administrator can try to fix the problem
-			logger.warning("File not found while parsing image link for topic: " + virtualWiki + " / " + topicName + ".  Make sure that the following file exists and is readable by the JAMWiki installation: " + e.getMessage());
-			return ImageUtil.buildUploadLink(context, virtualWiki, topicName);
+			logger.warn("File not found while parsing image link for topic: " + topic.getVirtualWiki() + " / " + topicName + ".  Make sure that the following file exists and is readable by the JAMWiki installation: " + e.getMessage());
+			return ImageUtil.buildUploadLink(context, topic.getVirtualWiki(), topicName);
+		}
+		if (wikiImage == null) {
+			return ImageUtil.buildLinkToFile(url, topic, caption, escapeHtml);
 		}
 		String imageWrapperDiv = ImageUtil.buildImageWrapperDivs(imageMetadata, wikiImage.getWidth());
 		if (!StringUtils.isWhitespace(imageMetadata.getLink())) {
 			if (imageMetadata.getLink() == null) {
-				// no link set, link to the image topic page
-				String link = LinkUtil.buildTopicUrl(context, virtualWiki, topicName, true);
+				// no link set, link to the image topic page.  At this point we have validated
+				// that the link is an image, so do not perform further validation and link to the
+				// CURRENT virtual wiki, even if it is a shared image
+				String link = LinkUtil.buildTopicUrl(context, linkVirtualWiki, topicName, false);
 				html.append("<a class=\"wikiimg\" href=\"").append(link).append("\">");
 			} else {
 				try {
@@ -182,9 +162,9 @@ public class ImageUtil {
 					html.append(openTag);
 				} catch (ParserException e) {
 					// not an external link, but an internal link
-					WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, imageMetadata.getLink());
-					String linkVirtualWiki = ((wikiLink.getVirtualWiki() != null) ? wikiLink.getVirtualWiki().getName() : virtualWiki);
-					String link = LinkUtil.buildTopicUrl(context, linkVirtualWiki, wikiLink);
+					WikiLink wikiLink = LinkUtil.parseWikiLink(topic.getVirtualWiki(), imageMetadata.getLink());
+					String internalLinkVirtualWiki = ((wikiLink.getVirtualWiki() != null) ? wikiLink.getVirtualWiki().getName() : linkVirtualWiki);
+					String link = LinkUtil.buildTopicUrl(context, internalLinkVirtualWiki, wikiLink);
 					html.append("<a class=\"wikiimg\" href=\"").append(link).append("\">");
 				}
 			}
@@ -196,7 +176,7 @@ public class ImageUtil {
 			style += " thumbborder";
 		}
 		html.append("<img class=\"").append(style).append("\" src=\"");
-		html.append(buildRelativeImageUrl(context, virtualWiki, wikiImage.getUrl()));
+		html.append(buildRelativeImageUrl(wikiImage.getUrl()));
 		html.append('\"');
 		html.append(" width=\"").append(wikiImage.getWidth()).append('\"');
 		html.append(" height=\"").append(wikiImage.getHeight()).append('\"');
@@ -223,14 +203,14 @@ public class ImageUtil {
 	}
 
 	/**
-	 * Given a file URL and a maximum dimension, return a path for the file.
+	 * Given a file URL and a maximum dimension, return a relative path for the file.
 	 */
 	private static String buildImagePath(String currentUrl, int originalWidth, int scaledWidth) {
 		if (originalWidth <= scaledWidth) {
 			// no resizing necessary, return the original URL
 			return currentUrl;
 		}
-		String path = currentUrl;
+		String path = FilenameUtils.normalize(RESIZED_IMAGE_SUBFOLDER + "/" + currentUrl);
 		String dimensionInfo = "-" + scaledWidth + "px";
 		int pos = path.lastIndexOf('.');
 		if (pos != -1) {
@@ -272,6 +252,24 @@ public class ImageUtil {
 	}
 
 	/**
+	 * Generate an HTML link to the image file without any resizing.
+	 */
+	private static String buildLinkToFile(String url, Topic topic, String caption, boolean escapeHtml) {
+		StringBuilder html = new StringBuilder();
+		if (StringUtils.isBlank(caption)) {
+			caption = topic.getPageName();
+		}
+		html.append("<a href=\"").append(url).append("\">");
+		if (escapeHtml) {
+			html.append(StringEscapeUtils.escapeHtml(caption));
+		} else {
+			html.append(caption);
+		}
+		html.append("</a>");
+		return html.toString();
+	}
+
+	/**
 	 *
 	 */
 	private static String buildUploadLink(String context, String virtualWiki, String topicName) throws DataAccessException {
@@ -282,10 +280,9 @@ public class ImageUtil {
 	/**
 	 *
 	 */
-	private static int calculateImageIncrement(int dimension) {
+	private static int calculateImageIncrement(double dimension) {
 		int increment = Environment.getIntValue(Environment.PROP_IMAGE_RESIZE_INCREMENT);
-		double result = Math.ceil((double)dimension / (double)increment) * increment;
-		return (int)result;
+		return (int)(Math.ceil(dimension / (double)increment) * increment);
 	}
 
 	/**
@@ -293,7 +290,7 @@ public class ImageUtil {
 	 * given a max width and height.  For example, if the original dimensions are 800x400,
 	 * the max width height are 200, and the increment is 400, the result is 400x200.
 	 */
-	private static ImageDimensions calculateIncrementalDimensions(WikiImage wikiImage, ImageDimensions originalDimensions, ImageDimensions scaledDimensions) throws IOException {
+	private static Dimension calculateIncrementalDimensions(WikiImage wikiImage, Dimension originalDimensions, Dimension scaledDimensions) throws IOException {
 		int increment = Environment.getIntValue(Environment.PROP_IMAGE_RESIZE_INCREMENT);
 		// use width for incremental resizing
 		int incrementalWidth = calculateImageIncrement(scaledDimensions.getWidth());
@@ -303,44 +300,26 @@ public class ImageUtil {
 		}
 		int incrementalHeight = (int)Math.round(((double)incrementalWidth / (double)originalDimensions.getWidth()) * (double)originalDimensions.getHeight());
 		// check to see if an image with the desired dimensions already exists on the filesystem
-		String newUrl = buildImagePath(wikiImage.getUrl(), originalDimensions.getWidth(), incrementalWidth);
+		String newUrl = buildImagePath(wikiImage.getUrl(), (int)originalDimensions.getWidth(), incrementalWidth);
 		File newImageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), newUrl);
 		if (newImageFile.exists()) {
-			return new ImageDimensions(incrementalWidth, incrementalHeight);
+			return new Dimension(incrementalWidth, incrementalHeight);
 		}
 		// otherwise generate a scaled instance
 		File imageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
-		BufferedImage original = ImageUtil.loadImage(imageFile);
-		BufferedImage bufferedImage = null;
-		try {
-			Graphics2D g2dIn = original.createGraphics();
-			GraphicsConfiguration gc = g2dIn.getDeviceConfiguration();
-			g2dIn.dispose();
-			bufferedImage = gc.createCompatibleImage(incrementalWidth, incrementalHeight, original.getColorModel().getTransparency());
-			Graphics2D g2dOut = bufferedImage.createGraphics();
-			g2dOut.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-			double xScale = ((double)incrementalWidth) / (double)originalDimensions.getWidth();
-			double yScale = ((double)incrementalHeight) / (double)originalDimensions.getHeight();
-			AffineTransform at = AffineTransform.getScaleInstance(xScale, yScale);
-			g2dOut.drawRenderedImage(original, at);
-			g2dOut.dispose();
-		} catch (Throwable t) {
-			logger.severe("Unable to resize image.  This problem sometimes occurs due to dependencies between Java and X on UNIX systems.  Consider enabling an X server or setting the java.awt.headless parameter to true for your JVM.", t);
-			bufferedImage = original;
-		}
-		newUrl = buildImagePath(wikiImage.getUrl(), originalDimensions.getWidth(), bufferedImage.getWidth());
+		BufferedImage bufferedImage = ImageProcessor.resizeImage(imageFile, incrementalWidth, incrementalHeight);
+		newUrl = buildImagePath(wikiImage.getUrl(), (int)originalDimensions.getWidth(), bufferedImage.getWidth());
 		newImageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), newUrl);
-		ImageUtil.saveImage(bufferedImage, newImageFile);
-		return new ImageDimensions(bufferedImage.getWidth(), bufferedImage.getHeight());
+		ImageProcessor.saveImage(bufferedImage, newImageFile);
+		return new Dimension(bufferedImage.getWidth(), bufferedImage.getHeight());
 	}
-
 
 	/**
 	 * Determine the scaled dimensions, given a max width and height.  For example, if
 	 * the original dimensions are 800x400 and the max width height are 200, the result
 	 * is 200x100.
 	 */
-	private static ImageDimensions calculateScaledDimensions(ImageDimensions originalDimensions, int maxWidth, int maxHeight) {
+	private static Dimension calculateScaledDimensions(Dimension originalDimensions, int maxWidth, int maxHeight) {
 		if (maxWidth <= 0 && maxHeight <=0) {
 			return originalDimensions;
 		}
@@ -361,13 +340,16 @@ public class ImageUtil {
 			width = (int)Math.round(widthScalingFactor * (double)originalDimensions.getWidth());
 			height = (int)Math.round(widthScalingFactor * (double)originalDimensions.getHeight());
 		}
-		return new ImageDimensions(width, height);
+		return new Dimension(width, height);
 	}
 
 	/**
 	 * Given a filename, generate the URL to use to store the file on the filesystem.
 	 */
-	public static String generateFileUrl(String filename, Date date) throws WikiException {
+	public static String generateFileUrl(String virtualWiki, String filename, Date date) throws WikiException {
+		if (StringUtils.isBlank(virtualWiki)) {
+			throw new WikiException(new WikiMessage("common.exception.novirtualwiki"));
+		}
 		String url = filename;
 		if (StringUtils.isBlank(url)) {
 			throw new WikiException(new WikiMessage("upload.error.filename"));
@@ -397,10 +379,10 @@ public class ImageUtil {
 		int pos = url.lastIndexOf('.');
 		url = (pos == -1) ? url + suffix : url.substring(0, pos) + suffix + url.substring(pos);
 		// now pre-pend the file system directory
-		// subdirectory is composed of year/month
+		// subdirectory is composed of vwiki/year/month
 		String year = Integer.toString(cal.get(Calendar.YEAR));
 		String month = Integer.toString(cal.get(Calendar.MONTH) + 1);
-		String subdirectory = "/" + year + "/" + month;
+		String subdirectory = "/" + virtualWiki + "/" + year + "/" + month;
 		File directory = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), subdirectory);
 		if (!directory.exists() && !directory.mkdirs()) {
 			throw new WikiException(new WikiMessage("upload.error.directorycreate", directory.getAbsolutePath()));
@@ -432,30 +414,33 @@ public class ImageUtil {
 	 * @throws IOException Thrown if an error occurs while initializing the
 	 *  WikiImage object.
 	 */
-	private static WikiImage initializeImage(WikiFile wikiFile, ImageMetadata imageMetadata) throws DataAccessException, IOException {
+	private static WikiImage initializeWikiImage(WikiFile wikiFile, ImageMetadata imageMetadata) throws DataAccessException, IOException {
 		if (wikiFile == null) {
 			throw new IllegalArgumentException("wikiFile may not be null");
 		}
 		WikiImage wikiImage = new WikiImage(wikiFile);
 		// get the size of the original (unresized) image
-		ImageDimensions originalDimensions = ImageUtil.retrieveFromCache(wikiImage);
+		Dimension originalDimensions = ImageUtil.retrieveFromCache(wikiImage);
 		if (originalDimensions == null) {
 			File file = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
-			BufferedImage imageObject = ImageUtil.loadImage(file);
-			originalDimensions = new ImageDimensions(imageObject.getWidth(), imageObject.getHeight());
-			addToCache(wikiImage, imageObject.getWidth(), imageObject.getHeight());
+			originalDimensions = ImageProcessor.retrieveImageDimensions(file);
+			if (originalDimensions == null) {
+				logger.info("Unable to determine dimensions for image: " + wikiImage.getUrl());
+				return null;
+			}
+			addToCache(wikiImage, originalDimensions);
 		}
 		if (!imageMetadata.getAllowEnlarge() && imageMetadata.getMaxWidth() > originalDimensions.getWidth() && imageMetadata.getMaxHeight() > originalDimensions.getHeight()) {
-			imageMetadata.setMaxWidth(originalDimensions.getWidth());
-			imageMetadata.setMaxHeight(originalDimensions.getHeight());
+			imageMetadata.setMaxWidth((int)originalDimensions.getWidth());
+			imageMetadata.setMaxHeight((int)originalDimensions.getHeight());
 		}
 		// determine the width & height of scaled image (if needed)
-		ImageDimensions scaledDimensions = calculateScaledDimensions(originalDimensions, imageMetadata.getMaxWidth(), imageMetadata.getMaxHeight());
-		wikiImage.setWidth(scaledDimensions.getWidth());
-		wikiImage.setHeight(scaledDimensions.getHeight());
+		Dimension scaledDimensions = calculateScaledDimensions(originalDimensions, imageMetadata.getMaxWidth(), imageMetadata.getMaxHeight());
+		wikiImage.setWidth((int)scaledDimensions.getWidth());
+		wikiImage.setHeight((int)scaledDimensions.getHeight());
 		// return an appropriate WikiImage object with URL to the scaled image, proper width, and proper height
-		ImageDimensions incrementalDimensions = calculateIncrementalDimensions(wikiImage, originalDimensions, scaledDimensions);
-		String url = buildImagePath(wikiImage.getUrl(), originalDimensions.getWidth(), incrementalDimensions.getWidth());
+		Dimension incrementalDimensions = calculateIncrementalDimensions(wikiImage, originalDimensions, scaledDimensions);
+		String url = buildImagePath(wikiImage.getUrl(), (int)originalDimensions.getWidth(), (int)incrementalDimensions.getWidth());
 		wikiImage.setUrl(url);
 		return wikiImage;
 	}
@@ -493,44 +478,16 @@ public class ImageUtil {
 
 	/**
 	 * Given a File object, determine if the file is an image or if it is some
-	 * other type of file.  Note that this method will read in the entire file,
-	 * so there are performance implications for large files.
+	 * other type of file.
 	 *
 	 * @param file The File object for the file that is being examined.
 	 * @return Returns <code>true</code> if the file is an image object.
 	 */
 	public static boolean isImage(File file) {
 		try {
-			return (ImageUtil.loadImage(file) != null);
+			return (ImageProcessor.retrieveImageDimensions(file) != null);
 		} catch (IOException x) {
 			return false;
-		}
-	}
-
-	/**
-	 * Given a file that corresponds to an existing image, return a
-	 * BufferedImage object.
-	 */
-	private static BufferedImage loadImage(File file) throws IOException {
-		if (!file.exists()) {
-			throw new FileNotFoundException("File does not exist: " + file.getAbsolutePath());
-		}
-		// use a FileInputStream and make sure it gets closed to prevent unclosed file
-		// errors on some operating systems
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(file);
-			BufferedImage image = ImageIO.read(fis);
-			if (image == null) {
-				throw new IOException("JDK is unable to process image file, possibly indicating file corruption: " + file.getAbsolutePath());
-			}
-			return image;
-		} finally {
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {}
-			}
 		}
 	}
 
@@ -538,10 +495,10 @@ public class ImageUtil {
 	 * Determine if image information is available in the cache.  If so return it,
 	 * otherwise return <code>null</code>.
 	 */
-	private static ImageDimensions retrieveFromCache(WikiImage wikiImage) throws DataAccessException {
+	private static Dimension retrieveFromCache(WikiImage wikiImage) throws DataAccessException {
 		String key = wikiImage.getVirtualWiki() + "/" + wikiImage.getUrl();
 		Element cachedDimensions = WikiCache.retrieveFromCache(CACHE_IMAGE_DIMENSIONS, key);
-		return (cachedDimensions != null) ? (ImageDimensions)cachedDimensions.getObjectValue() : null;
+		return (cachedDimensions != null) ? (Dimension)cachedDimensions.getObjectValue() : null;
 	}
 
 	/**
@@ -559,35 +516,6 @@ public class ImageUtil {
 		filename = FilenameUtils.getName(filename);
 		filename = StringUtils.replace(filename.trim(), " ", "_");
 		return filename;
-	}
-
-	/**
-	 * Save an image to a specified file.
-	 */
-	private static void saveImage(BufferedImage image, File file) throws IOException {
-		String filename = file.getName();
-		int pos = filename.lastIndexOf('.');
-		if (pos == -1 || (pos + 1) >= filename.length()) {
-			throw new IOException("Unknown image file type " + filename);
-		}
-		String imageType = filename.substring(pos + 1);
-		File imageFile = new File(file.getParent(), filename);
-		// use a FileOutputStream and make sure it gets closed to prevent unclosed file
-		// errors on some operating systems
-		FileOutputStream fos = null;
-		try {
-			fos = new FileOutputStream(imageFile);
-			boolean result = ImageIO.write(image, imageType, imageFile);
-			if (!result) {
-				throw new IOException("No appropriate writer found when writing image: " + filename);
-			}
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException e) {}
-			}
-		}
 	}
 
 	/**
@@ -614,11 +542,24 @@ public class ImageUtil {
 	}
 
 	/**
+	 * Add/Update a WikiFile record, and add a WikiFileVersion record.
 	 *
+	 * @param topic The Topic record corresponding to this WikiFile.
+	 * @param wikiFileVersion A skeleton WikiFileVersion record.  Most of the values of this
+	 *  record will be populated from other parameters passed to this method, but fields
+	 *  such as uploadComment should be populated prior to calling this method.
+	 * @param user The user who is creating the file record, or <code>null</code> if the user
+	 *  creating the file record is anonymous.
+	 * @param ipAddress The IP address of the user creating the file record.
+	 * @param filename The path on the filesystem relative to the file upload root for the
+	 *  file version being created.
+	 * @param url The relative URL for the file version being created.
+	 * @param contentType The MIME type of the file version record being created.  For
+	 *  example, "image/jpeg".
+	 * @param fileSize The size of the file version record in bytes.
+	 * @return The new or updated WikiFile record.
 	 */
-	public static WikiFile writeWikiFile(Topic topic, WikiUser user, String ipAddress, String filename, String url, String contentType, long fileSize) throws DataAccessException, WikiException {
-		WikiFileVersion wikiFileVersion = new WikiFileVersion();
-		wikiFileVersion.setUploadComment(topic.getTopicContent());
+	public static WikiFile writeWikiFile(Topic topic, WikiFileVersion wikiFileVersion, WikiUser user, String ipAddress, String filename, String url, String contentType, long fileSize) throws DataAccessException, WikiException {
 		wikiFileVersion.setAuthorDisplay(ipAddress);
 		Integer authorId = null;
 		if (user != null && user.getUserId() > 0) {

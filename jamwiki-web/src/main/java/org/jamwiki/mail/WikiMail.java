@@ -83,7 +83,7 @@ public class WikiMail {
 			message.saveChanges();
 			Transport.send(message);
 		} catch (MessagingException e) {
-			logger.warning("Mail error", e);
+			logger.warn("Mail error", e);
 		}
 	}
 

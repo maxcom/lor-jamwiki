@@ -12,14 +12,13 @@
 <p><a href="/wiki/en/Special:Upload" title="Special:Upload">Special:Upload</a></p>
 <p><a href="/wiki/en/Special:Edit?topic=%2B" class="edit" title="+">+</a></p>
 <p><a href="/wiki/en/Special:Edit?topic=%2B_start" class="edit" title="+ start">+ start</a></p>
-<p><a href="/wiki/en/Special:Edit?topic=end_%2B" class="edit" title="end +">end +</a></p>
-<p><a href="/wiki/en/Special:Edit?topic=at_the_%2B_middle" class="edit" title="at the + middle">at the + middle</a></p>
+<p><a href="/wiki/en/Special:Edit?topic=End_%2B" class="edit" title="end +">end +</a></p>
+<p><a href="/wiki/en/Special:Edit?topic=At_the_%2B_middle" class="edit" title="at the + middle">at the + middle</a></p>
 <p><b>WikiLink1</b></p>
 <p><b>alt text</b></p>
 <p><b><i>italic</i> text</b></p>
 <p><b>WikiLink1</b></p>
 <p><b>WikiLink1</b></p>
-<p><a href="/wiki/test/WikiLink1" title="WikiLink1">WikiLink1</a></p>
 <p><a href="/wiki/test/WikiLink1" title="WikiLink1">WikiLink1</a></p>
 <p><b>WikiLink1</b></p>
 <p><a href="/wiki/en/Special:Edit?topic=Help:WikiLink1" class="edit" title="Help:WikiLink1">Help:WikiLink1</a></p>
@@ -42,3 +41,5 @@
 <p><a href="/wiki/en/WikiLink1#Section_1" title="WikiLink1">WikiLink1#Section 1</a></p>
 <p><a href="#Section_1" title="Section 1">alt text</a></p>
 <p><a href="/wiki/en/WikiLink1#Section_1" title="WikiLink1">alt text</a></p>
+<p><a href="/wiki/en/Example1" title="example1">example1</a></p>
+<p><a href="/wiki/en/Special:Edit?topic=EXample1" class="edit" title="eXample1">eXample1</a></p>

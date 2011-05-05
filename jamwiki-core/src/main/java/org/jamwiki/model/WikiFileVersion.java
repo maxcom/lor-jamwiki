@@ -17,6 +17,7 @@
 package org.jamwiki.model;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
 
@@ -154,6 +155,13 @@ public class WikiFileVersion {
 	 */
 	public void setUploadDate(Timestamp uploadDate) {
 		this.uploadDate = uploadDate;
+	}
+
+	/**
+	 *
+	 */
+	public void setUploadDate(Date uploadDate) {
+		this.uploadDate = new Timestamp(uploadDate.getTime());
 	}
 
 	/**

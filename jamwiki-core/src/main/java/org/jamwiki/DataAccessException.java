@@ -34,7 +34,7 @@ public class DataAccessException extends Exception {
 	 */
 	public DataAccessException(String message) {
 		super(message);
-		this.init(message, null);
+		this.init(null);
 	}
 
 	/**
@@ -46,7 +46,7 @@ public class DataAccessException extends Exception {
 	 */
 	public DataAccessException(String message, Throwable t) {
 		super(message, t);
-		this.init(message, t);
+		this.init(t);
 	}
 
 	/**
@@ -56,13 +56,13 @@ public class DataAccessException extends Exception {
 	 */
 	public DataAccessException(Throwable t) {
 		super(t);
-		this.init(null, t);
+		this.init(t);
 	}
 
 	/**
 	 *
 	 */
-	private void init(String message, Throwable t) {
+	private void init(Throwable t) {
 		if (t instanceof SQLException) {
 			this.nextException = ((SQLException)t).getNextException();
 		}

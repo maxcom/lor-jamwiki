@@ -28,6 +28,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Namespace;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -43,6 +44,7 @@ public class WikiPageInfo {
 	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_TOPIC = "topic.jsp";
 	private boolean admin = false;
+	private String canonicalUrl = null;
 	private String contentJsp = JSP_TOPIC;
 	private WikiMessage pageTitle = null;
 	private WikiMessage exception = null;
@@ -61,8 +63,8 @@ public class WikiPageInfo {
 	protected WikiPageInfo(HttpServletRequest request) {
 		this.virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
 		if (this.virtualWikiName == null) {
-			logger.severe("No virtual wiki available for page request " + request.getRequestURI());
-			this.virtualWikiName = Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT);
+			logger.error("No virtual wiki available for page request " + request.getRequestURI());
+			this.virtualWikiName = VirtualWiki.defaultVirtualWiki().getName();
 		}
 	}
 
@@ -106,6 +108,30 @@ public class WikiPageInfo {
 	}
 
 	/**
+	 * The canonical URL is used with search engines to indicate the primary
+	 * URL for a topic.  For redirects and shared images this is the target
+	 * URL.
+	 *
+	 * @return The canonical URL is used with search engines to indicate the primary
+	 * URL for a topic.
+	 */
+	public String getCanonicalUrl() {
+		return this.canonicalUrl;
+	}
+
+	/**
+	 * The canonical URL is used with search engines to indicate the primary
+	 * URL for a topic.  For redirects and shared images this is the target
+	 * URL.
+	 *
+	 * @param canonicalUrl The canonical URL is used with search engines to indicate
+	 * the primary URL for a topic.
+	 */
+	public void setCanonicalUrl(String canonicalUrl) {
+		this.canonicalUrl = canonicalUrl;
+	}
+
+	/**
 	 * Retrieve the name of the JSP page that will be used to display the
 	 * results of this page request.
 	 *
@@ -126,6 +152,39 @@ public class WikiPageInfo {
 	 */
 	public void setContentJsp(String contentJsp) {
 		this.contentJsp = contentJsp;
+	}
+
+	/**
+	 * Return the property representing the date pattern to use for dates
+	 * that include date and time.
+	 *
+	 * @return The property representing the date pattern to use for dates
+	 * that include date and time.
+	 */
+	public String getDatePatternDateAndTime() {
+		return Environment.getDatePatternValue(Environment.PROP_DATE_PATTERN_DATE_AND_TIME, true, true);
+	}
+
+	/**
+	 * Return the property representing the date pattern to use for date-only
+	 * dates.
+	 *
+	 * @return The property representing the date pattern to use for date-only
+	 * dates.
+	 */
+	public String getDatePatternDateOnly() {
+		return Environment.getDatePatternValue(Environment.PROP_DATE_PATTERN_DATE_ONLY, true, false);
+	}
+
+	/**
+	 * Return the property representing the date pattern to use for time-only
+	 * dates.
+	 *
+	 * @return The property representing the date pattern to use for time-only
+	 * dates.
+	 */
+	public String getDatePatternTimeOnly() {
+		return Environment.getDatePatternValue(Environment.PROP_DATE_PATTERN_TIME_ONLY, false, true);
 	}
 
 	/**
@@ -156,7 +215,7 @@ public class WikiPageInfo {
 	 *  meta tag.
 	 */
 	public String getMetaDescription() {
-		String pattern = Environment.getValue(Environment.PROP_BASE_META_DESCRIPTION);
+		String pattern = this.getVirtualWiki().getMetaDescription();
 		if (StringUtils.isBlank(pattern)) {
 			return "";
 		}
@@ -167,14 +226,19 @@ public class WikiPageInfo {
 	}
 
 	/**
-	 * Return a map of default namespace name and the virtual wiki translation for the
-	 * namespace.
+	 * Return a map whose keys are virtual wikis, and whose values is a mapping of
+	 * namespace id and value for the virtual wiki.
 	 */
-	public Map<String, String> getNamespaces() throws DataAccessException {
+	public Map<String, Map<String, String>> getNamespaces() throws DataAccessException {
+		Map<String, Map<String, String>> results = new HashMap<String, Map<String, String>>();
 		List<Namespace> namespaces = WikiBase.getDataHandler().lookupNamespaces();
-		Map<String, String> results = new HashMap<String, String>();
-		for (Namespace namespace : namespaces) {
-			results.put(namespace.getDefaultLabel(), namespace.getLabel(this.virtualWikiName));
+		List<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
+		for (VirtualWiki virtualWiki : virtualWikis) {
+			Map<String, String> namespaceMap = new HashMap<String, String>();
+			for (Namespace namespace : namespaces) {
+				namespaceMap.put(namespace.getDefaultLabel(), namespace.getLabel(virtualWiki.getName()));
+			}
+			results.put(virtualWiki.getName(), namespaceMap);
 		}
 		return results;
 	}
@@ -255,7 +319,7 @@ public class WikiPageInfo {
 	 * @return The base title used with RSS feeds.
 	 */
 	public String getRSSTitle() {
-		return Environment.getValue("rss-title");
+		return Environment.getValue(Environment.PROP_RSS_TITLE);
 	}
 
 	/**
@@ -288,7 +352,7 @@ public class WikiPageInfo {
 	 *  wiki.  This value is configurable through the Special:Admin interface.
 	 */
 	public String getSiteName() {
-		return Environment.getValue(Environment.PROP_SITE_NAME);
+		return this.getVirtualWiki().getSiteName();
 	}
 
 	/**
@@ -377,15 +441,26 @@ public class WikiPageInfo {
 	}
 
 	/**
+	 * Utility method for retrieving a VirtualWiki object given the virtual wiki
+	 * name.
+	 */
+	public VirtualWiki getVirtualWiki() {
+		VirtualWiki virtualWiki = VirtualWiki.defaultVirtualWiki();
+		try {
+			virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(this.getVirtualWikiName());
+		} catch (DataAccessException e) {
+			logger.error("Failure while retrieving virtual wiki: " + this.getVirtualWikiName(), e);
+		}
+		return virtualWiki;
+	}
+
+	/**
 	 * Return the name of the virtual wiki associated with the page info being
 	 * created.  This will normally be taken directly from the request and default
 	 * to the wiki default virtual wiki, although in rare cases (such as redirects
 	 * to other virtual wikis) it may differ.
 	 */
 	public String getVirtualWikiName() {
-		if (StringUtils.isBlank(virtualWikiName)) {
-			throw new IllegalArgumentException("Cannot pass a null or empty virtual wiki name");
-		}
 		return this.virtualWikiName;
 	}
 
@@ -398,6 +473,9 @@ public class WikiPageInfo {
 	 * @param virtualWikiName The name of the virtual wiki to set.
 	 */
 	public void setVirtualWikiName(String virtualWikiName) {
+		if (StringUtils.isBlank(virtualWikiName)) {
+			throw new IllegalArgumentException("Cannot pass a null or empty virtual wiki name");
+		}
 		this.virtualWikiName = virtualWikiName;
 	}
 

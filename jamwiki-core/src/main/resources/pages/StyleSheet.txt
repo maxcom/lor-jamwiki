@@ -1,5 +1,3 @@
-/* blue theme */
-
 /* defaults */
 
 body {
@@ -22,6 +20,9 @@ a.logo {
 	border: 0;
 }
 a.externallink:after {
+	content:url("../images/external.png");
+}
+a.interwikilink:after {
 	content:url("../images/external.png");
 }
 a.edit {
@@ -52,6 +53,12 @@ h1, h2, h3, h4, h5 {
 	padding: 0.5em 0em 0.2em 0em;
 	text-align: left;
 }
+h1, h2 {
+	margin-bottom: 0.5em;
+}
+h3, h4, h5 {
+	margin-bottom: 0.2em;
+}
 h1 {
 	border-bottom: 1px solid #D8D8E7;
 	font-size: 200%;
@@ -75,8 +82,8 @@ h5 {
 	font-weight: bold;
 }
 pre {
-	background-color: #FBFBFD;
-	border: 1px dashed #7E7ECB;
+	background-color: #fbfbfd;
+	border: 1px dashed #7e7ecb;
 	color: black;
 	font-size: 110%;
 	line-height: 1.1em;
@@ -129,11 +136,11 @@ legend {
 }
 .red {
 	font-weight: bold;
-	color: #ff0000;
+	color: #f00;
 }
 .green {
 	font-weight: bold;
-	color: #009900;
+	color: #090;
 }
 div.message {
 	margin: 1.5em 0 1.5em 0;
@@ -145,6 +152,9 @@ div.submenu {
 }
 .clear {
 	clear: both;
+}
+.hidden {
+	display: none;
 }
 
 /* global positioning */
@@ -188,12 +198,9 @@ div.submenu {
 #contents-header {
 	margin-bottom: 0.1em;
 }
-#contents-subheader {
-	font-size: 100%;
-	line-height: 1.2em;
-	margin: 0 0 1.4em 1em;
+#contentSub {
 	color: #7d7d7d;
-	width: auto;
+	margin: 0 0 1em 1em;
 }
 
 /* navbar elements */
@@ -204,12 +211,22 @@ div.submenu {
 	text-align: center;
 	vertical-align: middle;
 }
-#nav-menu {
+.portlet {
 	background: white;
 	border: 1px solid #D8D8E7;
-	border-bottom: 0;
 	font-size: 90%;
-	margin: 2px 0 8px 0;
+	margin: 16px 0 8px;
+	padding: 0 8px 8px;
+}
+.portlet h5 {
+	font-size: 90%;
+	font-weight: normal;
+	padding: 5px 0 0;
+}
+#nav-menu {
+	border-bottom: 0;
+	margin-top: 2px;
+	padding: 0;
 }
 #nav-menu hr {
 	display: none;
@@ -222,12 +239,7 @@ div.submenu {
 	margin-left: 0;
 }
 #nav-search {
-	background: white;
-	margin: 18px 0 8px 0;
-	padding: 8px;
-	padding-top: 0;
 	text-align: center;
-	border: 1px solid #D8D8E7;
 }
 #nav-search form {
 	padding: 0;
@@ -247,47 +259,56 @@ div.submenu {
 
 /* diff page */
 
+#diff_heading {
+	margin-top: 10px;
+	width: 98%;
+}
+#diff_heading td {
+	text-align: center;
+	vertical-align: top;
+	width: 50%;
+}
+#left_revision, #right_revision {
+	font-weight: bold;
+}
+table#diff {
+	table-layout: fixed;
+	width: 98%;
+}
+table#diff col.diff-marker {
+	width: 2%;
+}
+table#diff col.diff-content {
+	width: 48%;
+}
 .diff-delete {
-	float: left;
-	position: relative;
 	background: #eeee88;
 	font-weight: bold;
 	padding: 0.1em;
-	width: 48%;
 	overflow: hidden;
 }
 .diff-add {
-	float: left;
-	position: relative;
 	background: #88ee88;
 	font-weight: bold;
 	padding: 0.1em;
-	width: 48%;
 	overflow: hidden;
 }
 .diff-unchanged {
-	float: left;
-	position: relative;
 	background: #dddddd;
 	padding: 0.1em;
-	width: 48%;
 	overflow: hidden;
 }
 .diff-indicator {
-	float: left;
-	position: relative;
 	font-weight: bold;
 	padding: 0.1em;
 	text-align: right;
 	width: 7px;
 }
 .diff-line {
-	clear: both;
 	padding: 0.5em 0.1em 0.1em 0.1em;
 	font-weight: bold;
 }
 .diff-entry {
-	clear: both;
 	margin: 1px;
 	padding: 1px;
 }
@@ -329,32 +350,62 @@ div.submenu {
 
 /* tab menu */
 
-ul#tab-menu {
-	padding: 0;
-	margin: 0;
-	margin-left: 6px;
+ul.tab-menu {
 	display: inline-block;
 	list-style: inherit;
 	list-style-type: none;
 }
-ul#tab-menu li {
+ul.tab-menu li {
 	float: left;
-	background: white;
+	background-color: #fff;
 	color: blue;
 	border: 1px solid #D8D8E7;
 	border-bottom: none;
+	min-width: 40px;
+	text-align: center;
+}
+ul.tab-menu li.active {
+	margin-bottom: -1px !important;
+	border-bottom: 1px solid #fff;
+	font-weight: bold;
+}
+ul.tab-menu li.active a:hover {
+	border-bottom: none;
+}
+ul#tab_menu {
+	padding: 0;
+	margin: 0;
+	margin-left: 6px;
+}
+ul#tab_menu li {
 	padding: 0 0.5em;
 	margin: 0;
 	margin-right: 4px;
-	min-width: 40px;
 	font-size: 85%;
-	text-align: center;
 }
-ul#tab-menu li.active {
-	margin-bottom: -1px;
-	border-bottom: 1px solid #fff;
+ul#tab_menu li.active {
 	font-size: 90%;
-	font-weight: bold;
+}
+ul#tab_submenu {
+	margin: 10px 0 0;
+}
+ul#tab_submenu li {
+	background-color: #f9f9f9;
+	padding: 5px 7px;
+	margin: 0 0 0 8px;
+	-moz-border-radius-topleft: 5px;
+	-webkit-border-top-left-radius: 5px;
+	-moz-border-radius-topright: 5px;
+	-webkit-border-top-right-radius: 5px;
+}
+ul#tab_submenu li.active {
+	background-color: #fff;
+}
+.submenu-tab-content {
+	background: white;
+	padding: 14px;
+	padding-bottom: 25px;
+	border: 1px solid #D8D8E7;
 }
 
 /* user menu */
@@ -423,6 +474,14 @@ span.section-link a {
 	margin-left: 5px;
 	position: relative;
 }
+#shared-image-message {
+	border: 1px solid red;
+	font-size: 125%;
+	font-weight: bold;
+	margin: 10px 50px;
+	padding: 10px;
+	text-align:center;
+}
 
 /* images */
 
@@ -476,7 +535,7 @@ div.thumb {
 	width:auto;
 }
 div.thumbinner  {
-	background-color:#F9F9F9;
+	background-color:#f9f9f9;
 	border: 1px solid #ccc;
 	font-size:94%;
 	overflow:hidden;
@@ -516,6 +575,13 @@ img.gallery {
 #toolbar a img:hover {
 	border-color: #D8D8E7;
 }
+table.categories {
+	width: 100%;
+}
+table.categories td {
+	vertical-align: top;
+	width: 33%;
+}
 
 /* search results */
 
@@ -545,12 +611,6 @@ img.gallery {
 	color: #5f5f5f;
 	clear: both;
 }
-.lightbg {
-	background-color: #ffffff;
-}
-.mediumbg {
-	background-color: #e9e9f8;
-}
 .darkbg {
 	background-color: #d8d8e7;
 }
@@ -569,6 +629,32 @@ textarea.translation {
 textarea.medium {
 	width: 400px;
 	height: 60px;
+}
+table.wiki-admin {
+	border: 1px solid #fff;
+	border-collapse: collapse;
+	border-spacing: 0;
+	margin: 0 auto;
+	width: 99%;
+}
+table.wiki-admin th {
+	background-color: #d8d8e7;
+	border: 1px solid #fff;
+	text-align: center;
+	padding: 5px;
+}
+table.wiki-admin th.first {
+	width: 250px;
+}
+table.wiki-admin td {
+	border-bottom: 1px solid #fff;
+	padding: 5px;
+}
+.noborder {
+	border: none !important;
+}
+.center {
+	text-align: center;
 }
 div.row {
 	clear: right;
@@ -612,6 +698,14 @@ div.row label.nonblock {
 	text-align: inherit;
 	width: auto;
 	font-weight: inherit;
+}
+div.callout {
+	border: 1px solid #e9e9e9;
+	margin: 10px;
+	padding: 10px;
+}
+div.callout input {
+	margin-right: 20px;
 }
 #manage div.row label, #move div.row label, #register div.row label {
 	width: 180px;

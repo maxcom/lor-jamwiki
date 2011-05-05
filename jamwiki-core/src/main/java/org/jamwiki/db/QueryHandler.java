@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import org.jamwiki.model.Category;
+import org.jamwiki.model.Interwiki;
 import org.jamwiki.model.LogItem;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.RecentChange;
@@ -100,6 +101,16 @@ public interface QueryHandler {
 	void deleteGroupAuthorities(int groupId, Connection conn) throws SQLException;
 
 	/**
+	 * Delete an interwiki record from the interwiki table.
+	 *
+	 * @param interwiki The Interwiki record to be deleted.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	void deleteInterwiki(Interwiki interwiki, Connection conn) throws SQLException;
+
+	/**
 	 * Delete all records from the recent changes table for a specific topic.
 	 *
 	 * @param topicId The topic id for which recent changes are being deleted.
@@ -119,6 +130,17 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	void deleteTopicCategories(int topicId, Connection conn) throws SQLException;
+
+	/**
+	 * Delete all topic links associated with a topic.
+	 *
+	 * @param topicId The topic for which link association records are being
+	 *  deleted.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	void deleteTopicLinks(int topicId, Connection conn) throws SQLException;
 
 	/**
 	 * Delete all authorities for a specific user.
@@ -455,6 +477,17 @@ public interface QueryHandler {
 	void insertGroupMember(String username, int groupId, Connection conn) throws SQLException;
 
 	/**
+	 * Add an interwiki record to the database.  Note that this method will fail if a
+	 * record with the same prefix already exists.
+	 *
+	 * @param interwiki The Interwiki record to insert into the database.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	void insertInterwiki(Interwiki interwiki, Connection conn) throws SQLException;
+
+	/**
 	 * Add a new log item record to the database.
 	 *
 	 * @param logItem The LogItem record that is to be added to the database.
@@ -498,6 +531,19 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	void insertTopic(Topic topic, int virtualWikiId, Connection conn) throws SQLException;
+
+	/**
+	 * Add new topic link records for a topic to the database.  Note that this
+	 * method will fail if an existing link of the same name is already associated
+	 * with the topic.
+	 *
+	 * @param links A list of topic link records to create.
+	 * @param topicId The ID of the topic record to which the links are being added.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	void insertTopicLinks(List<String> links, int topicId, Connection conn) throws SQLException;
 
 	/**
 	 * Add a new topic version record to the database.  The topic version must
@@ -623,6 +669,26 @@ public interface QueryHandler {
 	List<Category> lookupCategoryTopics(int virtualWikiId, String virtualWikiName, String categoryName) throws SQLException;
 
 	/**
+	 * Return a map of key-value pairs corresponding to all configuration values
+	 * currently set up for the system.
+	 *
+	 * @return A map of key-value pairs corresponding to all configuration values
+	 * currently set up for the system.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	public Map<String, String> lookupConfiguration() throws SQLException;
+
+	/**
+	 * Return all interwiki records currently available for the wiki.
+	 *
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @return A list of all Interwiki records currently available for the wiki.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	List<Interwiki> lookupInterwikis(Connection conn) throws SQLException;
+
+	/**
 	 * Retrieve a list of all current namespace objects.
 	 *
 	 * @param conn A database connection to use when connecting to the database
@@ -639,7 +705,9 @@ public interface QueryHandler {
 	 *  being retrieved.
 	 * @param virtualWikiName The name of the virtual wiki for the virtual wiki of
 	 *  the topic being retrieved.
-	 * @param topicName The name of the topic being retrieved.
+	 * @param namespace The Namespace for the topic being retrieved.
+	 * @param pageName The topic pageName (topic name without the namespace) for
+	 *  the topic being retrieved.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @return A topic containing all topic information for the given topic
@@ -647,7 +715,7 @@ public interface QueryHandler {
 	 *  returned.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	Topic lookupTopic(int virtualWikiId, String virtualWikiName, String topicName, Connection conn) throws SQLException;
+	Topic lookupTopic(int virtualWikiId, String virtualWikiName, Namespace namespace, String pageName, Connection conn) throws SQLException;
 
 	/**
 	 * Retrieve a topic that matches a given topic ID and virtual wiki.
@@ -706,20 +774,45 @@ public interface QueryHandler {
 	int lookupTopicCount(int virtualWikiId, int namespaceStart, int namespaceEnd) throws SQLException;
 
 	/**
-	 * Given a topic name and virtual wiki, return the corresponding topic ID, or
-	 * <code>null</code> if no matching topic exists.  This method will return only
-	 * non-deleted topics and performs better for cases where a caller only needs to
-	 * know if a topic exists, but does not need a full Topic object.
+	 * This method is used primarily to determine if a topic with a given name exists,
+	 * taking as input a topic name and virtual wiki and returning the corresponding
+	 * topic name, or <code>null</code> if no matching topic exists.  This method will
+	 * return only non-deleted topics and performs better for cases where a caller only
+	 * needs to know if a topic exists, but does not need a full Topic object.
 	 *
 	 * @param virtualWikiId The ID of the virtual wiki for the topic being queried.
 	 * @param virtualWikiName The name of the virtual wiki for the virtual wiki of
 	 *  the topic being retrieved.
-	 * @param topicName The name of the topic being queried.
-	 * @return The ID of the Topic object that matches the given virtual wiki and topic
+	 * @param namespace The Namespace for the topic being retrieved.
+	 * @param pageName The topic pageName (topic name without the namespace) for
+	 *  the topic being retrieved.
+	 * @return The name of the Topic object that matches the given virtual wiki and topic
 	 * name, or <code>null</code> if no matching topic exists.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	Integer lookupTopicId(int virtualWikiId, String virtualWikiName, String topicName) throws SQLException;
+	String lookupTopicName(int virtualWikiId, String virtualWikiName, Namespace namespace, String pageName) throws SQLException;
+
+	/**
+	 * Find the names for all topics that link to a specified topic.
+	 *
+	 * @param virtualWikiId The virtual wiki id for the topic being queried.
+	 * @return A list of topic names for all topics that link to the
+	 *  specified topic.  If no results are found then an empty list is
+	 *  returned.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	List<String> lookupTopicLinks(int virtualWikiId, String topicName) throws SQLException;
+
+	/**
+	 * Find the names for all un-linked topics in the main namespace.
+	 *
+	 * @param virtualWikiId The virtual wiki id to query against.
+	 * @param namespaceId The ID for the namespace being retrieved.
+	 * @return A list of topic names for all topics that are not linked to by
+	 *  any other topic.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	List<String> lookupTopicLinkOrphans(int virtualWikiId, int namespaceId) throws SQLException;
 
 	/**
 	 * Retrieve a result set containing a specific topic version.
@@ -729,6 +822,18 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	TopicVersion lookupTopicVersion(int topicVersionId) throws SQLException;
+
+	/**
+	 * Retrieve the next topic version ID chronologically for a given topic
+	 * version, or <code>null</code> if there is no next topic version ID.
+	 *
+	 * @param topicVersionId The ID of the topic version whose next topic version
+	 *  ID is being retrieved.
+	 * @return The next topic version ID chronologically for a given topic
+	 * version, or <code>null</code> if there is no next topic version ID.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	Integer lookupTopicVersionNextId(int topicVersionId) throws SQLException;
 
 	/**
 	 * Retrieve a list of all topic names within a virtual wiki.
@@ -858,6 +963,20 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	void reloadRecentChanges(Connection conn) throws SQLException;
+
+	/**
+	 * Replace the existing configuration records with a new set of values.  This
+	 * method will delete all existing records and replace them with the records
+	 * specified.
+	 *
+	 * @param configuration A map of key-value pairs corresponding to the new
+	 *  configuration information.  These values will replace all existing
+	 *  configuration values in the system.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	public void updateConfiguration(Map<String, String> configuration, Connection conn) throws SQLException;
 
 	/**
 	 * Add or update a namespace.  This method will add a new record if the

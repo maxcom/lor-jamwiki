@@ -106,7 +106,6 @@ misc_inline        = ins|del|script
 misc               = noscript|{misc_inline}
 inline             = a|{special}|{fontstyle}|{phrase}|{inline_forms}
 Inline             = ({PCDATA}|{inline}|{misc_inline})*
-heading            = h1|h2|h3|h4|h5|h6
 lists              = ul|ol|dl
 blocktext          = pre|hr|blockquote|address|center|noframes
 block              = p|{heading}|div|{lists}|{blocktext}|isindex|fieldset|table
@@ -116,7 +115,6 @@ form_content       = ({PCDATA}|{block}|{inline}|{misc})*
 button_content     = ({PCDATA}|p|{heading}|div|{lists}|{blocktext}|table|br|span|object|applet|img|map|{fontstyle}|{phrase}|{misc})*
 noscriptAttr       = {attrs}
 iframeAttr         = {coreattrs}|longdesc|name|src|frameborder|marginwidth|marginheight|scrolling|align|height|width
-headingAttr        = {attrs}|{TextAlign}
 hrAttr             = {attrs}|align|noshade|size|width
 qAttr              = {attrs}|cite
 basefontAttr       = id|size|color|face
@@ -142,6 +140,7 @@ divAttr            = {attrs}|{TextAlign}
 dlAttr             = {attrs}|compact
 dtAttr             = {attrs}
 emAttr             = {attrs}
+headingAttr        = {attrs}|{TextAlign}
 iAttr              = {attrs}
 insAttr            = {attrs}|cite|datetime
 liAttr             = {attrs}|type|value
@@ -197,8 +196,9 @@ areaAttr           = {attrs}|{focus}|shape|coords|href|nohref|alt|target
 */
 
 
+heading            = h1|h2|h3|h4|h5|h6
 inlineTag          = abbr|b|big|br|cite|code|del|em|font|i|ins|pre|s|small|span|strike|strong|sub|sup|tt|u|var
-blockLevelTag      = blockquote|caption|center|col|colgroup|dd|div|dl|dt|hr|li|ol|p|table|tbody|td|tfoot|th|thead|tr|ul
+blockLevelTag      = blockquote|caption|center|col|colgroup|dd|div|dl|dt|{heading}|hr|li|ol|p|table|tbody|td|tfoot|th|thead|tr|ul
 htmlTag            = {inlineTag}|{blockLevelTag}
 
 tagContent         = "<" ({whitespace})* ({htmlTag}) [^\n]* ">"
@@ -287,6 +287,8 @@ tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespa
         if (this.tagType.equals("div")) {
             beginState(ATTRS_TEXTALIGN_ATTRIBUTE_KEY);
         } else if (this.tagType.equals("p")) {
+            beginState(ATTRS_TEXTALIGN_ATTRIBUTE_KEY);
+        } else if (this.tagType.equals("h1") || this.tagType.equals("h2") || this.tagType.equals("h3") || this.tagType.equals("h4") || this.tagType.equals("h5") || this.tagType.equals("h6")) {
             beginState(ATTRS_TEXTALIGN_ATTRIBUTE_KEY);
         } else if (this.tagType.equals("center")) {
             beginState(ATTRS_ATTRIBUTE_KEY);

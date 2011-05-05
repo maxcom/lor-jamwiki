@@ -16,6 +16,7 @@
  */
 package org.jamwiki;
 
+import java.io.IOException;
 import java.util.List;
 import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.model.Topic;
@@ -35,10 +36,16 @@ public interface SearchEngine {
 	 * Add a topic to the search index.
 	 *
 	 * @param topic The Topic object that is to be added to the index.
-	 * @param links A list containing the topic names for all topics that link
-	 *  to the current topic.
 	 */
-	void addToIndex(Topic topic, List<String> links);
+	void addToIndex(Topic topic);
+
+	/**
+	 * Force a flush of any pending commits to the search index.
+	 *
+	 * @param virtualWiki The virtual wiki for which pending updates are being
+	 *  committed.
+	 */
+	void commit(String virtualWiki);
 
 	/**
 	 * Remove a topic from the search index.
@@ -46,16 +53,6 @@ public interface SearchEngine {
 	 * @param topic The topic object that is to be removed from the index.
 	 */
 	void deleteFromIndex(Topic topic);
-
-	/**
-	 * Find all documents that link to a specified topic.
-	 *
-	 * @param virtualWiki The virtual wiki for the topic.
-	 * @param topicName The name of the topic.
-	 * @return A list of SearchResultEntry objects for all documents that
-	 *  link to the topic.
-	 */
-	List<SearchResultEntry> findLinkedTo(String virtualWiki, String topicName);
 
 	/**
 	 * Find all documents that contain a specific search term, ordered by relevance.
@@ -75,11 +72,28 @@ public interface SearchEngine {
 	void refreshIndex() throws Exception;
 
 	/**
+	 * Set a flag indicating whether or not every update of the search index
+	 * should be immediately committed to the index.  This is useful mainly
+	 * during batch updates when for performance reasons it is advantageous
+	 * to commit only after the update is done.
+	 *
+	 * @param autoCommit A boolean indicating whether or not every update of
+	 *  the search index should be immediately committed to the index.
+	 */
+	void setAutoCommit(boolean autoCommit);
+
+	/**
+	 * Trigger a shutdown of a search engine instance, allowing resources to
+	 * be freed and any pending changes committed.
+	 *
+	 * @throws IOException Thrown if a failure occurs during shutdown.
+	 */
+	void shutdown() throws IOException;
+
+	/**
 	 * Update a topic in the search index.
 	 *
 	 * @param topic The Topic object that is to be updated in the index.
-	 * @param links A list containing the topic names for all topics that link
-	 *  to the current topic.
 	 */
-	void updateInIndex(Topic topic, List<String> links);
+	void updateInIndex(Topic topic);
 }

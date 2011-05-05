@@ -18,8 +18,8 @@ package org.jamwiki;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.Utilities;
 
@@ -85,30 +85,9 @@ public class TestFileUtil {
 	 */
 	public static String retrieveFileContent(String directory, String fileName) throws IOException, FileNotFoundException {
 		File file = TestFileUtil.retrieveFile(directory, fileName);
-		return TestFileUtil.retrieveFileContent(file);
-	}
-
-	/**
-	 *
-	 */
-	public static String retrieveFileContent(File file) throws IOException, FileNotFoundException {
-		FileReader reader = null;
-		try {
-			if (file == null || !file.exists()) {
-				return null;
-			}
-			reader = new FileReader(file);
-			StringBuilder output = new StringBuilder();
-			char[] buf = new char[4096];
-			int c;
-			while ((c = reader.read(buf, 0, buf.length)) != -1) {
-				output.append(buf, 0, c);
-			}
-			return output.toString();
-		} finally {
-			if (reader != null) {
-				try { reader.close(); } catch (Exception e) { }
-			}
+		if (file == null || !file.exists()) {
+			return null;
 		}
+		return FileUtils.readFileToString(file, "UTF-8");
 	}
 }

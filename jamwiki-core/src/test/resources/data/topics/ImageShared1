@@ -1,0 +1,22 @@
+<!-- test use of shared image repository -->
+shared images
+
+[[Image:Test Image2.jpg]]
+
+[[Image:Test Image.jpg]]
+
+[[en:Image:Test Image.jpg]]
+
+[[test:Image:Test Image.jpg]]
+
+[[Image:Test Image2.jpg]]
+
+[[test:Image:Test Image2.jpg]]
+
+shared image links
+
+[[:Image:Test Image2.jpg]]
+
+[[:en:Image:Test Image.jpg]]
+
+[[:test:Image:Test Image.jpg]]

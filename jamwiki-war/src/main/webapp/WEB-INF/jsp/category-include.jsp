@@ -22,7 +22,7 @@
 <h3><fmt:message key="topic.category.subcategories"><fmt:param value="${categoryName}" /></fmt:message></h3>
 <div class="message"><fmt:message key="topic.category.numsubcategories"><fmt:param value="${numSubCategories}" /><fmt:param value="${categoryName}" /></fmt:message></div>
 
-<table width="100%"><tr><td>
+<table class="categories"><tr><td>
 <ul>
 		<c:set var="columnCount" value="1" />
 		<c:forEach items="${subCategories}" var="subCategory" varStatus="status">
@@ -45,27 +45,31 @@
 <table class="gallery" cellpadding="0" cellspacing="0"><tr>
 		<%-- FIXME - number of columns and max image size are hard-coded --%>
 		<c:forEach items="${categoryImages}" var="categoryImage" varStatus="status">
-<td><a href="<jamwiki:link value="${categoryImage.childTopicName}" />" class="wikiimg"><jamwiki:image value="${categoryImage.childTopicName}" maxWidth="120" maxHeight="120" style="gallery" /></a></td>
-			<c:if test="${(status.count % 4) == 0}">
+			<c:if test="${status.count != 1 && (status.count % 4) == 1}">
 </tr><tr>
 			</c:if>
+<td><a href="<jamwiki:link value="${categoryImage.childTopicName}" />" class="wikiimg"><jamwiki:image value="${categoryImage.childTopicName}" maxWidth="120" maxHeight="120" style="gallery" /></a></td>
 		</c:forEach>
-		<c:forEach begin="1" end="${4 - (numCategoryImages % 4)}">
+		<c:if test="${(numCategoryImages % 4) != 0}">
+			<c:forEach begin="1" end="${4 - (numCategoryImages % 4)}">
 <td>&#160;</td>
-		</c:forEach>
+			</c:forEach>
+		</c:if>
 </tr></table>
 	</c:if>
 
 <h3><fmt:message key="topic.category.topics"><fmt:param value="${categoryName}" /></fmt:message></h3>
+
 <div class="message"><fmt:message key="topic.category.numtopics"><fmt:param value="${numCategoryTopics}" /><fmt:param value="${categoryName}" /></fmt:message></div>
 	<c:if test="${numCategoryTopics > 0}">
-<table width="100%"><tr><td>
+<div class="message"><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${displayCategoryCount}" rootUrl="${pageInfo.topicName}" /></div>
+<table class="categories"><tr><td>
 <ul>
 		<c:set var="columnCount" value="1" />
 		<c:forEach items="${categoryTopics}" var="subtopic" varStatus="status">
 <li><jamwiki:link value="${subtopic.childTopicName}" text="${subtopic.childTopicName}" /></li>
 			<%-- FIXME - do not hard code min num topics and num columns --%>
-			<c:if test="${(numCategoryTopics > 9) && (columnCount < 3) && ((status.count * 3) >= (numCategoryTopics * columnCount))}">
+			<c:if test="${(displayCategoryCount > 9) && (columnCount < 3) && ((status.count * 3) >= (displayCategoryCount * columnCount))}">
 				<c:set var="columnCount" value="${columnCount + 1}" />
 </ul></td><td><ul>
 			</c:if>

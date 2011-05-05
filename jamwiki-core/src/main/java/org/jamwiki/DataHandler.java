@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.jamwiki.model.Category;
+import org.jamwiki.model.Interwiki;
 import org.jamwiki.model.LogItem;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.RecentChange;
@@ -68,6 +69,8 @@ public interface DataHandler {
 	public static final String DATA_HANDLER_POSTGRES = "org.jamwiki.db.PostgresDataHandler";
 	/** Sybase ASA data handler class */
 	public static final String DATA_HANDLER_ASA = "org.jamwiki.db.SybaseASADataHandler";
+	/** Intersystems Cache data handler class */
+	public static final String DATA_HANDLER_CACHE = "org.jamwiki.db.CacheDataHandler";
 
 	/**
 	 * Determine if a value matching the given username and password exists in
@@ -95,6 +98,14 @@ public interface DataHandler {
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
 	boolean canMoveTopic(Topic fromTopic, String destination) throws DataAccessException;
+
+	/**
+	 * Delete an interwiki record from the interwiki table.
+	 *
+	 * @param interwiki The Interwiki record to be deleted.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	void deleteInterwiki(Interwiki interwiki) throws DataAccessException;
 
 	/**
 	 * Mark a topic deleted by setting its delete date to a non-null value.
@@ -380,6 +391,35 @@ public interface DataHandler {
 	List<Category> lookupCategoryTopics(String virtualWiki, String categoryName) throws DataAccessException;
 
 	/**
+	 * Return a map of key-value pairs corresponding to all configuration values
+	 * currently set up for the system.
+	 *
+	 * @return A map of key-value pairs corresponding to all configuration values
+	 * currently set up for the system.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	public Map<String, String> lookupConfiguration() throws DataAccessException;
+
+	/**
+	 * Given an interwiki prefix, return the Interwiki that corresponds to that prefix,
+	 * or <code>null</code> if no match exists.
+	 *
+	 * @param interwikiPrefix The value to query to see if a matching interwiki record
+	 *  exists.
+	 * @return The matching Interwiki object, or <code>null</code> if no match is found.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	Interwiki lookupInterwiki(String interwikiPrefix) throws DataAccessException;
+
+	/**
+	 * Return all interwiki records currently available for the wiki.
+	 *
+	 * @return A list of all Interwiki records currently available for the wiki.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	List<Interwiki> lookupInterwikis() throws DataAccessException;
+
+	/**
 	 * Given a namespace string, return the namespace that corresponds to that string,
 	 * or <code>null</code> if no match exists.
 	 *
@@ -410,7 +450,10 @@ public interface DataHandler {
 
 	/**
 	 * Retrieve a Topic object that matches the given virtual wiki and topic
-	 * name.
+	 * name.  Note that when a shared image repository is in use this method
+	 * should first try to retrieve images from the specified virtual wiki,
+	 * but if that search fails then a second search should be performed
+	 * against the shared repository.
 	 *
 	 * @param virtualWiki The virtual wiki for the topic being queried.
 	 * @param topicName The name of the topic being queried.
@@ -475,18 +518,19 @@ public interface DataHandler {
 	Map<Integer, String> lookupTopicByType(String virtualWiki, TopicType topicType1, TopicType topicType2, Integer namespaceId, Pagination pagination) throws DataAccessException;
 
 	/**
-	 * Given a topic name and virtual wiki, return the corresponding topic ID, or
-	 * <code>null</code> if no matching topic exists.  This method will return only
-	 * non-deleted topics and performs better for cases where a caller only needs to
-	 * know if a topic exists, but does not need a full Topic object.
+	 * This method is used primarily to determine if a topic with a given name exists,
+	 * taking as input a topic name and virtual wiki and returning the corresponding
+	 * topic name, or <code>null</code> if no matching topic exists.  This method will
+	 * return only non-deleted topics and performs better for cases where a caller only
+	 * needs to know if a topic exists, but does not need a full Topic object.
 	 *
 	 * @param virtualWiki The virtual wiki for the topic being queried.
 	 * @param topicName The name of the topic being queried.
-	 * @return The ID of the Topic object that matches the given virtual wiki and topic
+	 * @return The name of the Topic object that matches the given virtual wiki and topic
 	 * name, or <code>null</code> if no matching topic exists.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	Integer lookupTopicId(String virtualWiki, String topicName) throws DataAccessException;
+	String lookupTopicName(String virtualWiki, String topicName) throws DataAccessException;
 
 	/**
 	 * Retrieve a TopicVersion object for a given topic version ID.
@@ -497,6 +541,41 @@ public interface DataHandler {
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
 	TopicVersion lookupTopicVersion(int topicVersionId) throws DataAccessException;
+
+	/**
+	 * Retrieve the next topic version ID chronologically for a given topic
+	 * version, or <code>null</code> if there is no next topic version ID.
+	 *
+	 * @param topicVersionId The ID of the topic version whose next topic version
+	 *  ID is being retrieved.
+	 * @return The next topic version ID chronologically for a given topic
+	 * version, or <code>null</code> if there is no next topic version ID.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	Integer lookupTopicVersionNextId(int topicVersionId) throws DataAccessException;
+
+	/**
+	 * Find the names for all topics that link to a specified topic.
+	 *
+	 * @param virtualWiki The virtual wiki for the topic.
+	 * @param topicName The name of the topic.
+	 * @return A list of topic names for all topics that link to the
+	 *  specified topic.  If no results are found then an empty list is
+	 *  returned.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	List<String> lookupTopicLinks(String virtualWiki, String topicName) throws DataAccessException;
+
+	/**
+	 * Find the names for all un-linked topics in the main namespace.
+	 *
+	 * @param virtualWiki The virtual wiki to query against.
+	 * @param namespaceId The ID for the namespace being retrieved.
+	 * @return A list of topic names for all topics that are not linked to by
+	 *  any other topic.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	List<String> lookupTopicLinkOrphans(String virtualWiki, int namespaceId) throws DataAccessException;
 
 	/**
 	 * Given a virtual wiki name, return the corresponding VirtualWiki object.
@@ -700,6 +779,19 @@ public interface DataHandler {
 	void updateSpecialPage(Locale locale, String virtualWiki, String topicName, String userDisplay) throws DataAccessException, WikiException;
 
 	/**
+	 * Replace the existing configuration records with a new set of values.  This
+	 * method will delete all existing records and replace them with the records
+	 * specified.
+	 *
+	 * @param configuration A map of key-value pairs corresponding to the new
+	 *  configuration information.  These values will replace all existing
+	 *  configuration values in the system.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the configuration information is invalid.
+	 */
+	public void writeConfiguration(Map<String, String> configuration) throws DataAccessException, WikiException;
+
+	/**
 	 * Add or update a WikiFile object.  This method will add a new record if
 	 * the WikiFile does not have a file ID, otherwise it will perform an update.
 	 * A WikiFileVersion object will also be created to capture the author, date,
@@ -714,6 +806,17 @@ public interface DataHandler {
 	 * @throws WikiException Thrown if the file information is invalid.
 	 */
 	void writeFile(WikiFile wikiFile, WikiFileVersion wikiFileVersion) throws DataAccessException, WikiException;
+
+	/**
+	 * Add or update an Interwiki record.  This method will first delete any
+	 * existing method with the same prefix and then add the new record.
+	 *
+	 * @param interwiki The Interwiki record to add or update.  If a record
+	 *  already exists with the same prefix then that record will be deleted.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the interwiki information is invalid.
+	 */
+	void writeInterwiki(Interwiki interwiki) throws DataAccessException, WikiException;
 
 	/**
 	 * Add or update a namespace.  This method will add a new record if the

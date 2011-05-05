@@ -27,13 +27,13 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
-import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
@@ -57,7 +57,7 @@ public class MediaWikiXmlExporter implements TopicExporter {
 		try {
 			writer = new FileWriter(file);
 			writer.write("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
-			this.writeSiteInfo(writer);
+			this.writeSiteInfo(writer, virtualWiki);
 			this.writePages(writer, virtualWiki, topicNames, excludeHistory);
 			writer.write("\n</mediawiki>");
 			success = true;
@@ -81,9 +81,10 @@ public class MediaWikiXmlExporter implements TopicExporter {
 	/**
 	 *
 	 */
-	private void writeSiteInfo(FileWriter writer) throws DataAccessException, IOException {
+	private void writeSiteInfo(FileWriter writer, String virtualWikiName) throws DataAccessException, IOException {
+		VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
 		writer.write("\n<siteinfo>");
-		String sitename = Environment.getValue(Environment.PROP_SITE_NAME);
+		String sitename = virtualWiki.getSiteName();
 		writer.write('\n' + XMLUtil.buildTag("sitename", sitename, true));
 		String base = WikiUtil.getBaseUrl();
 		writer.write('\n' + XMLUtil.buildTag("base", base, true));

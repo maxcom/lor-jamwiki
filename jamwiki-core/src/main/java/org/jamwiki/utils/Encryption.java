@@ -16,7 +16,6 @@
  */
 package org.jamwiki.utils;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -29,6 +28,7 @@ import javax.crypto.spec.DESKeySpec;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiException;
 
 /**
  * Provide capability for encrypting and decrypting values.  Inspired by an
@@ -75,7 +75,7 @@ public class Encryption {
 		try {
 			md = MessageDigest.getInstance(encryptionAlgorithm);
 		} catch (NoSuchAlgorithmException e) {
-			logger.warning("JDK does not support the " + encryptionAlgorithm + " encryption algorithm.  Weaker encryption will be attempted.");
+			logger.warn("JDK does not support the " + encryptionAlgorithm + " encryption algorithm.  Weaker encryption will be attempted.");
 		}
 		if (md == null) {
 			// fallback to weaker encryption algorithm if nothing better is available
@@ -88,18 +88,18 @@ public class Encryption {
 			// still use passwords encrypted with the weaker algorithm
 			Environment.setValue(Environment.PROP_ENCRYPTION_ALGORITHM, "SHA-1");
 			try {
-				Environment.saveProperties();
-			} catch (IOException e) {
+				Environment.saveConfiguration();
+			} catch (WikiException e) {
+				// FIXME - shouldn't this be better handled ???
 				logger.info("Failure while saving encryption algorithm property", e);
 			}
 		}
 		try {
 			md.update(unencryptedString.getBytes("UTF-8"));
 			byte raw[] = md.digest();
-			encrypt64(raw);
-			return unencryptedString; 		
+			return encrypt64(raw);
 		} catch (GeneralSecurityException e) {
-			logger.severe("Encryption failure", e);
+			logger.error("Encryption failure", e);
 			throw new IllegalStateException("Failure while encrypting value");
 		} catch (UnsupportedEncodingException e) {
 			// this should never happen
@@ -168,16 +168,16 @@ public class Encryption {
 		} catch (GeneralSecurityException e) {
 			String value = Environment.getValue(name);
 			if (props != null || StringUtils.isBlank(value)) {
-				logger.severe("Encryption failure or no value available for property: " + name, e);
+				logger.error("Encryption failure or no value available for property: " + name, e);
 				throw new IllegalStateException("Failure while retrieving encrypted property: " + name);
 			}
 			// the property might have been unencrypted in the property file, so encrypt, save, and return the value
-			logger.warning("Found unencrypted property file value: " + name + ".  Assuming that this value manually un-encrypted in the property file so re-encrypting and re-saving.");
+			logger.warn("Found unencrypted property file value: " + name + ".  Assuming that this value manually un-encrypted in the property file so re-encrypting and re-saving.");
 			Encryption.setEncryptedProperty(name, value, null);
 			try {
-				Environment.saveProperties();
-			} catch (IOException ex) {
-				logger.severe("Failure while saving properties", ex);
+				Environment.saveConfiguration();
+			} catch (WikiException ex) {
+				logger.error("Failure while saving properties", ex);
 				throw new IllegalStateException("Failure while saving properties");
 			}
 			return value;
@@ -201,7 +201,7 @@ public class Encryption {
 				unencryptedBytes = value.getBytes("UTF8");
 				encrypted = Encryption.encrypt64(unencryptedBytes);
 			} catch (GeneralSecurityException e) {
-				logger.severe("Encryption failure", e);
+				logger.error("Encryption failure", e);
 				throw new IllegalStateException("Failure while encrypting value");
 			} catch (UnsupportedEncodingException e) {
 				// this should never happen

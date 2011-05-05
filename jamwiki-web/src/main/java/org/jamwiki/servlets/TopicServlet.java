@@ -19,7 +19,6 @@ package org.jamwiki.servlets;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
-import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
@@ -45,27 +44,28 @@ public class TopicServlet extends JAMWikiServlet {
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		view(request, next, pageInfo);
+		view(request, response, next, pageInfo);
 		return next;
 	}
 
 	/**
 	 *
 	 */
-	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	private void view(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromURI(request);
 		if (StringUtils.isBlank(topicName)) {
 			String virtualWikiName = pageInfo.getVirtualWikiName();
 			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
-			topicName = virtualWiki.getDefaultTopicName();
+			topicName = virtualWiki.getRootTopicName();
 		}
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		if (StringUtils.isBlank(virtualWiki)) {
-			virtualWiki = Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT);
+			virtualWiki = VirtualWiki.defaultVirtualWiki().getName();
 		}
 		Topic topic = ServletUtil.initializeTopic(virtualWiki, topicName);
 		if (topic.getTopicId() <= 0) {
-			// topic does not exist, display empty page
+			// topic does not exist, return 404 and display empty page
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			WikiMessage wikiMessage = new WikiMessage("topic.notcreated");
 			// topic name is escaped from WikiUtil.getTopicFromURI, so do not double-escape
 			wikiMessage.setParamsWithoutEscaping(new String[]{topicName});

@@ -35,10 +35,12 @@ import org.jamwiki.utils.WikiUtil;
 public class LinkTag extends BodyTagSupport {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(LinkTag.class.getName());
+	private String escape = null;
 	private String style = null;
 	private String target = null;
 	private String text = null;
 	private String value = null;
+	private String virtualWiki = null;
 	private String queryParams = "";
 
 	/**
@@ -52,25 +54,26 @@ public class LinkTag extends BodyTagSupport {
 		String tagText = buildLinkText();
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		String url = null;
-		String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
-		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, this.value);
+		String tagVirtualWiki = (StringUtils.isBlank(this.virtualWiki)) ? WikiUtil.getVirtualWikiFromRequest(request) : this.virtualWiki;
+		WikiLink wikiLink = LinkUtil.parseWikiLink(tagVirtualWiki, this.value);
 		if (!StringUtils.isBlank(this.queryParams)) {
 			wikiLink.setQuery(this.queryParams);
 		}
 		try {
 			if (!StringUtils.isBlank(tagText)) {
+				boolean tagEscape = (!StringUtils.equalsIgnoreCase(this.escape, "false"));
 				// return formatted link of the form "<a href="/wiki/en/Special:Edit">text</a>"
-				url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, wikiLink, tagText, this.style, tagTarget, true);
+				url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), tagVirtualWiki, wikiLink, tagText, this.style, tagTarget, tagEscape);
 			} else {
 				// return raw link of the form "/wiki/en/Special:Edit"
-				url = LinkUtil.buildTopicUrl(request.getContextPath(), virtualWiki, wikiLink);
+				url = LinkUtil.buildTopicUrl(request.getContextPath(), tagVirtualWiki, wikiLink);
 			}
 			this.pageContext.getOut().print(url);
 		} catch (DataAccessException e) {
-			logger.severe("Failure while building url " + url + " with value " + this.value + " and text " + this.text, e);
+			logger.error("Failure while building url " + url + " with value " + this.value + " and text " + this.text, e);
 			throw new JspException(e);
 		} catch (IOException e) {
-			logger.severe("Failure while building url " + url + " with value " + this.value + " and text " + this.text, e);
+			logger.error("Failure while building url " + url + " with value " + this.value + " and text " + this.text, e);
 			throw new JspException(e);
 		} finally {
 			this.queryParams = "";
@@ -106,6 +109,21 @@ public class LinkTag extends BodyTagSupport {
 			tagText = body;
 		}
 		return tagText;
+	}
+
+	/**
+	 * Parameter indicating whether to escape HTML for the tag text.  Defaults to
+	 * true unless this value is explicitly set to false.
+	 */
+	public String getEscape() {
+		return this.escape;
+	}
+
+	/**
+	 *
+	 */
+	public void setEscape(String escape) {
+		this.escape = escape;
 	}
 
 	/**
@@ -162,5 +180,19 @@ public class LinkTag extends BodyTagSupport {
 	 */
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	/**
+	 *
+	 */
+	public String getVirtualWiki() {
+		return this.virtualWiki;
+	}
+
+	/**
+	 *
+	 */
+	public void setVirtualWiki(String virtualWiki) {
+		this.virtualWiki = virtualWiki;
 	}
 }

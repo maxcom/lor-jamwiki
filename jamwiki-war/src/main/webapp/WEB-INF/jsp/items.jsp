@@ -25,7 +25,9 @@
 
 <div id="items">
 
+<c:if test="${!empty items}">
 <div class="message"><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${itemCount}" rootUrl="${rootUrl}" /></div>
+</c:if>
 
 <c:if test="${!empty namespaces}">
 <div class="message">
@@ -44,6 +46,15 @@
 	</div>
 	</fieldset>
 	</form>
+</div>
+</c:if>
+<c:if test="${!empty message}">
+<div class="message">
+	<fmt:message key="${message.key}">
+		<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
+		<fmt:param><c:if test="${message.paramsLength >= 1}">${message.params[0]}</c:if></fmt:param>
+		<fmt:param><c:if test="${message.paramsLength >= 2}">${message.params[1]}</c:if></fmt:param>
+	</fmt:message>
 </div>
 </c:if>
 

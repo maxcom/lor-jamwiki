@@ -1,4 +1,210 @@
-﻿0.9.5
+﻿1.0.5
+=====
+
+New Features:
+
+  * Updated spam filter patterns.
+
+Bugfixes:
+
+  * Fix an issue that broke the TOC for some browsers when using non-Latin
+    characters.  Reported by by Felipe Avilis.
+  * Fix an issue where parsing multiple pages at the same time could generate
+    parser errors due to shared resource conflicts.
+
+Translation Updates:
+
+  * None.
+
+
+1.0.4
+=====
+
+New Features:
+
+  * None.
+
+Bugfixes:
+
+  * Fix a template parser issue when parsing content of the form
+    "{{{{PAGENAME}}/info}}".  Reported by Felipe Avilis.
+  * PDFs and other non-image files in the "Image:" namespace were not appearing
+    on Special:AllPages.  Reported by Felipe Avilis.
+
+Translation Updates:
+
+  * Updated Polish translations (dlpa).
+
+
+1.0.3
+=====
+
+New Features:
+
+  * None.
+
+Bugfixes:
+
+  * Fix an XSS vulnerability with the search results page (Maxim Valyanskiy).
+  * Fix an XSS vulnerability with the user contributions page (Maxim
+    Valyanskiy).
+
+Translation Updates:
+
+  * Updated Chinese translations (hfl).
+  * Updated Dutch translations (Angel).
+
+
+1.0.2
+=====
+
+New Features:
+
+  * Updated spam filter patterns.
+
+Bugfixes:
+
+  * Fix MS SQL errors on the Special:ImageList and similar pages.  Fix provided
+    by Scott Barlow and Filip Rysavy.
+
+Translation Updates:
+
+  * Updated German translations (axelclk).
+
+
+1.0.1
+=====
+
+Bugfixes:
+
+  * Fix a locking issue with Lucene that could prevent the search index from
+    being updated when topics are changed immediately after upgrading.
+  * Update ASA database support for JAMWiki version 1.0.x, tested with SQL
+    Anywhere 11.0.1 (dallas).
+  * Fix the subst: tag to properly substitute content when a topic is saved.
+    Reported by Gregory Brown.
+  * Namespaces should be handled case-insensitive, but instead variations in
+    case-sensitivity could throw IllegalArgumentException.  Reported by Quynh
+    Nguyen and Tan-Vinh Nguyen.
+
+Translation Updates:
+
+  * Updated German translations (axelclk).
+
+
+1.0.0
+=====
+
+New Features:
+
+  * Add an option to specify a "shared file repository" from the Special:Admin
+    page. If set, then any virtual wiki will be able to access images from the
+    "shared" virtual wiki as if they were on the same virtual wiki.
+  * Use a new algorithm for image resizing to greatly improve image quality.
+  * Update the Special:Diff UI to display additional information, including
+    revision dates, edit comments, and links to previous/next diff.
+  * Display author, revision information, and links to previous/next revision
+    when viewing an old version of a topic.
+  * Virtual wiki enhancements including the ability to configure a different
+    site name, meta description and logo for each virtual wiki.
+  * Support the #switch parser functions. Usage:
+    "{{#switch: value | case1 = result | case2 = result | default}}".
+  * Support the #ifexist parser function. Usage:
+    "{{#ifexist: topic | exists | does not exist}}".
+  * Support the Mediawiki <onlyinclude> tag for template content.
+  * Allow use of HTML heading tags (<h1>, <h2>, etc).
+  * Use SLF4J for logging instead of java.util.logging to allow consolidated
+    logging from core code and dependencies such as Spring and ehcache. Site
+    admins will need to configure the /WEB-INF/classes/logback.xml file.
+  * Update the admin page UI to improve usability - content is now organized
+    using tabs, and some options have been re-worked.
+  * Store interwiki patterns in the database and add a management interface for
+    interwiki links to the Special:VirtualWiki page. Not all of the patterns
+    from the old interwiki.properties file have been migrated, so sites using
+    patterns that were not migrated will need to manually add them.
+  * Display interwiki and virtual wiki links in boxes in the left nav by
+    default. Sites needing the old behavior (inline links) can re-enable it
+    from the parser tab of the Special:Admin page.
+  * Use the database rather than the search engine to generate results for the
+    Special:LinkTo page and add pagination and sorting to Special:LinkTo.
+  * Refactor Special:OrphanedPages to vastly improve speed & scalability.
+  * SEO optimizations: return HTTP 404 when requesting a page for a topic that
+    does not exist, return HTTP 500 for error pages, and specify the
+    "canonical" meta tag for redirected topics.
+  * Wiki date patterns can now be configured from the Special:Admin page.
+    Suggested by Michael Osipov (mosipov).
+  * Add support for the Caché database (dprekker).
+  * Add an option to treat capitalized and lowercase topic names as a single
+    record. For example, "Topic" and "topic" would refer to the same topic.
+  * Display pagination options when viewing topic categories.
+  * Reduce the amount of parsing the must be done when importing topics in
+    order to improve performance.
+  * Use a separate "resized" folder to cache resized images in order to more
+    clearly separate original uploads from thumbnail and resized images.
+  * Organize new file uploads by virtual wiki on the file system.
+  * A new "Regenerate Topic Metadata Records" tool has been added to the
+    Special:Maintenance page to allow regeneration of all topic metadata
+    including categories and "link to" records.
+  * Remove ability to automatically upgrade from versions prior to 0.8.0.
+  * Remove unused/obsolete Javascript and namespace the remaining code.
+  * Add several indexes to the database to improve query performance.
+  * Persist configuration information to a new jam_configuration table in
+    addition to the jamwiki.properties file. This table will be used in future
+    releases.
+  * Removed Java Diff from JAMWiki source and moved to Maven Central repository.
+  * Reworked internal POM structure and made build process easier than ever
+    before.
+  * Upgrade to Spring Framework 3.0.5.RELEASE.
+  * Upgrade to Spring Security 3.0.5.RELEASE.
+  * Upgrade to Ehcache 2.1.0.
+  * Upgrade to Lucene Search 3.0.3.
+  * Upgrade to commons-fileupload-1.2.2.
+  * Upgrade to commons-io-2.0.
+  * Upgrade to bliki-core 3.0.16.
+
+Bugfixes:
+
+  * Fix template parsing when <includeonly>|</includeonly> is used.
+  * Fix template parsing for syntax like "{{{template}}".
+  * Interwiki links and virtual wiki links with no topic name of the form
+    "[[interwiki:]]" or "[[:virtualwiki:]]" should link to the root page of
+    the link target.
+  * Images with multiple captions ([[Image:Example.gif|caption1|caption2]])
+    should only render the last caption value specified.
+  * Fix a design flaw in processing of nested metadata, such as categories
+    included via templates or "link to" in records in image captions, that
+    could cause nested information to not be processed for the parsed topic.
+  * A corrupt image should not halt page parsing; instead just display the
+    image name as text.
+  * Refactor image processing code to use less memory and avoid OOM errors.
+  * For SVG images and other images that cannot be resized by the JVM, return
+    a link to the image file rather than an upload link or error message.
+  * When importing topics with Special:Import convert from Mediawiki to JAMWiki
+    namespace for additional patterns including "[[:", "{{", and "{{:".
+  * Fix parsing of category when the category name is a template parameter
+    such as "[[Category: {{{1}}}]]".
+  * Templates and signatures should be expanded when using wiki preformatted
+    sytnax (" ~~~~") but not when using HTML preformatted syntax
+    ("<pre>~~~~</pre>).
+  * Convert all Special: pages to use proper camel case, and create redirects
+    for the non-camel case versions. Reported by Michael Osipov.
+  * Clicking the "diff" button on the Special:History page for topics with only
+    one revision should not generate a system error.  Reported by shar.
+  * Make the parser's infinite loop detection more robust.
+  * Fix an issue that caused non-link signatures ("my sig") to display tildes
+    instead of the signature text.
+  * When importing Mediawiki XML the Special:Import tool should trim author
+    names longer than 100 characters to conform to JAMWiki database limits.
+  * Do not throw a "topic already exists" error if importing a topic when the
+    existing topic name differs from the new topic in a case-sensitive way.
+
+Translation Updates:
+
+  * Updated German translations (axelclk).
+  * Updated Russian translations (shar).
+
+
+0.9.5
 =====
 
 Bugfixes:
@@ -21,10 +227,10 @@ Bugfixes:
 
   * The SERVERNAME magic word was previously implemented incorrectly and has
     been fixed to return only the server URL ("www.example.com") without an
-    "http://" prefix.  Reported by an anonymous user.
-  * Several pages including the Special:History page could generate errors on
+    "http://" prefix. Reported by an anonymous user.
+  * Several pages including the Special:History page could generated errors on
     Apache 7.0.x due to an invalid JSTL naming convention used with import
-    revisions.  Reported by anonymous users.
+    revisions. Reported by anonymous users.
 
 
 0.9.3
@@ -37,13 +243,13 @@ New Features:
 
 Bugfixes:
 
-  * Fix a potential infinite loop with nested template includes.  Inclusions
+  * Fix a potential infinite loop with nested template includes. Inclusions
     are now limited to a maximum of 250 per page.
   * Setting the default file upload properties could cause initialization
     failures in cases where JAMWiki was deployed without the JAMWiki WAR, such
-    as on the Liferay server.  Reported with proposed fixes by Igor Spasic.
+    as on the Liferay server. Reported with proposed fixes by Igor Spasic.
   * The {{DISPLAYTITLE}} magic word should affect page title during editing
-    and preview.  Reported by an anonymous user.
+    and preview. Reported by an anonymous user.
 
 
 0.9.2
@@ -52,7 +258,7 @@ Bugfixes:
 New Features:
 
   * Update the LDAP sample in applicationContext-security.xml with an example
-    of using LDAP for authentication and JAMWiki for role management.  Provided
+    of using LDAP for authentication and JAMWiki for role management. Provided
     by Bobby Lawrence.
 
 Bugfixes:
@@ -61,7 +267,7 @@ Bugfixes:
   * Fix the manual upgrade steps for namespace in the UPGRADE.txt document.
     Reported by an anonymous user.
   * Fix an issue in which non-image file uploads could fail on some operating
-    systems.  Reported by an anonymous user.
+    systems. Reported by an anonymous user.
   * Fix an invalid "You may not remove ROLE_SYSADMIN from your own account"
     message on the Special:Roles page when updating the sysadmin account.
   * Make sure all tables are properly migrated when using the
@@ -79,13 +285,13 @@ Bugfixes:
 
   * __NOEDITSECTION__ was being improperly stripped from topics.
   * Fix a potental JDBC error with FORWARD_ONLY result sets when parsing
-    deleted topics.  Reported by cmasuch.
+    deleted topics. Reported by cmasuch.
   * Case-insensitive topic names and deleted topics were not being properly
     updated in the cache.
   * Exclude redirects when calculating the number of articles using the
     NUMBEROFARTICLES magic word.
   * Upgrade to Lucene Search 3.0.2 to resolve a LockObtainFailedException
-    error.  Reported by TimStone.
+    error. Reported by TimStone.
 
 
 0.9.0
@@ -98,13 +304,13 @@ New Features:
   * New Special:VirtualWiki page for administering virtual wikis and
     namespaces, including the ability to configure translated / alternate
     namespaces and to change the default virtual wiki from "en".
-  * Support the #if: and the #ifeq parser functions.  Usage:
+  * Support the #if: and the #ifeq parser functions. Usage:
     "{{#if: test | true | false}}" and "{{#ifeq: 1 | 2 | true | false}}".
-  * Basic support for the #expr: parser function.  Only basic operations are
+  * Basic support for the #expr: parser function. Only basic operations are
     supported (+, -, /, *) and parentheses must be used to ensure that the
     order of operations is followed.
   * Support added for the {{ns:}} and {{nse:}} parser functions.
-  * Support Mediawiki's {{subst:}} syntax.  Usage: {{subst:template}}.
+  * Support Mediawiki's {{subst:}} syntax. Usage: {{subst:template}}.
   * Support added for the __NOEDITSECTION__ behavior switch.
   * Support added for the {{NUMBEROFARTICLES}}, {{REVISIONUSER}} and
     {{REVISIONID}} magic words.
@@ -114,11 +320,11 @@ New Features:
     add/update.
   * Topic history retrieval speed improved by a factor of up to 100x for
     large data sets by adding an additional database index.
-  * Search engine optimizations.  Existing JAMWiki installs should rebuild
+  * Search engine optimizations. Existing JAMWiki installs should rebuild
     their search index using the tools on the Special:Maintenance page.
   * "Filter results by namespace" added to Special:Allpages.
-  * Update the CSS & HTML used for forms.  Requires StyleSheet topic update.
-  * Support ehcache.xml configuration.  Based on code by Daniel Fisla (dfisla).
+  * Update the CSS & HTML used for forms. Requires StyleSheet topic update.
+  * Support ehcache.xml configuration. Based on code by Daniel Fisla (dfisla).
   * Automatically populate sample JDBC values based on database type on the
     setup and admin pages.
   * Remove all dependencies on Spring Security from the jamwiki-core project by
@@ -130,7 +336,7 @@ New Features:
     support for "frameless", "link=", "alt=", "{width}x{height}" and the
     "Media:" namespace.
   * Allow parameters to be used when topics not in the template namespace are
-    are utilized as templates.  Example: "{{myTopic|arg1=test1|arg2=test2}}".
+    are utilized as templates. Example: "{{myTopic|arg1=test1|arg2=test2}}".
   * Remove ability to automatically upgrade from versions prior to 0.7.0.
   * Move the database code into the jamwiki-core project.
   * All unit tests now use HSQL as a test database, rather than the dummy
@@ -140,7 +346,7 @@ New Features:
     is now possible to export to XML and migrate databases this capability
     is no longer needed.
   * Highlight the currently selected tab on each page by adding an "active" CSS
-    class.  Suggested by cstenkes.
+    class. Suggested by cstenkes.
   * Resize large images on Image: pages to a maximum dimension of 800x600.
   * Upgrade to Spring Framework 3.0.1.RELEASE.
   * Upgrade to Spring Security 3.0.2.RELEASE.
@@ -159,7 +365,7 @@ Bugfixes:
   * Properly parse template parameters that are themselves templates, such as
     "{{{{{template_name}}}}}" or "{{{1|{{PAGENAME}}}}}".
   * Process interwiki links only if the link does not contain a virtual wiki
-    or namespace.  Thus if a wiki has a namespace of "Test" and an interwiki
+    or namespace. Thus if a wiki has a namespace of "Test" and an interwiki
     of "Test", the link "Test:Topic" will parse as an internal link rather than
     an interwiki link.
   * Trim leading and trailing whitespace during parsing when a template is
@@ -181,12 +387,12 @@ Bugfixes:
     HTML pre ("<pre>pre <span>HTML</span></pre>") should not.
   * Fix an issue that caused the original image URL (instead of the resized
     image URL) to be used for syntax such as "[[Image:Example.jpg|200px]]".
-  * Use MEDIUMTEXT instead of TEXT for storing topic content on MySQL.  This
+  * Use MEDIUMTEXT instead of TEXT for storing topic content on MySQL. This
     increases the maximum allowed topic size from 64kb to 16MB.
   * Fix issues where image transparency was lost after resizing.
   * Fix issue that prevented use of wiki headings within tables.
   * The Bliki parser was not included in the distribution and thus could not
-    be selected from the Special:Admin page.  Reported by cstenkes.
+    be selected from the Special:Admin page. Reported by cstenkes.
   * Fix parsing of links followed by quotation marks: "http://example.com".
 
 Translation Updates:
@@ -203,10 +409,10 @@ Translation Updates:
 
 Bugfixes:
 
-  * Wiki tables placed after lists were being incorrectly indented.  Reported
+  * Wiki tables placed after lists were being incorrectly indented. Reported
     by Rudi Wiesmayr.
   * Fix incorrect parsing when inline tags (such as wiki bold) are left
-    unclosed before or after list tags.  Reported by Rudi Wiesmayr.
+    unclosed before or after list tags. Reported by Rudi Wiesmayr.
   * Parsing of the <references /> tag produced an unclosed ordered list.
     Reported by Rudi Wiesmayr and an anonymous user.
   * Fix potential XSS attack with URLs of the form Special:Login?message=XSS.
@@ -223,10 +429,10 @@ Bugfixes:
 Bugfixes:
 
   * When renaming a topic, the data could be incorrectly stored in the database
-    if the new topic name included an underscore or a plus sign.  Test case
+    if the new topic name included an underscore or a plus sign. Test case
     provided by Rudi Wiesmayr.
   * Links to a virtual wiki page with the same page name ("[[:test:PageName]]")
-    will now parse correctly again.  Reported by Tom Schueller.
+    will now parse correctly again. Reported by Tom Schueller.
   * Update the default footer page's copyright notice to 2010.
 
 Translation Updates:
@@ -261,14 +467,14 @@ Translation Updates:
 Bugfixes:
 
   * A link from a topic page to itself should be formatted as plain bold text,
-    not as a link.  Reported by floatingworld.
+    not as a link. Reported by floatingworld.
   * XML imports of redirect topics were not redirecting properly.
-  * Fix non-fatal MySQL upgrade warnings.  Reported by an anonymous user.
+  * Fix non-fatal MySQL upgrade warnings. Reported by an anonymous user.
   * Fix code that could potentially leave database connections open during
     authentication.
   * Fix an issue that caused the Special:Maintenance "database migration"
     functionality to fail.
-  * Templates will now be listed on Special:Allpages.  Reported by
+  * Templates will now be listed on Special:Allpages. Reported by
     floatingworld.
 
 Translation Updates:
@@ -282,7 +488,7 @@ Translation Updates:
 
 New Features:
 
-  * Drop support for JDK 1.4.  Java 5 or later is now required to run JAMWiki.
+  * Drop support for JDK 1.4. Java 5 or later is now required to run JAMWiki.
   * Special:Import can now import Mediawiki files with full history, edit
     dates, and edit comments.
   * Special:Export can now export topics in Mediawiki format with full history,
@@ -301,7 +507,7 @@ New Features:
     hard-coded in English.
   * Remove ability to automatically upgrade from versions prior to 0.6.0.
   * For databases that support it use auto incrementing primary keys during
-    inserts to improve performance.  Suggested by Daniel Fisla (dfisla).
+    inserts to improve performance. Suggested by Daniel Fisla (dfisla).
   * Implement caching for diffs, user information and topic versions to speed
     up page rendering.
   * Allow the HTML pre tag to be used with attributes (suggested by Skotty).
@@ -329,7 +535,7 @@ Bugfixes:
     FilterInvocationDefinitionSourceEditor class.
   * Fix the Bliki local Maven repository metadata to resolve build warnings.
   * Do not use the category sort key for display purposes, only for sorting,
-    which is consistent with Mediawiki.  Reported by hanspeterklapf.
+    which is consistent with Mediawiki. Reported by hanspeterklapf.
   * Allow use of magic words and templates in category sort keys, such as
     [[Category:Test|{{PAGENAME}}]].
   * Throw an error when trying to rename images or categories with topic names
@@ -337,17 +543,17 @@ Bugfixes:
   * Viewing a topic that is currently a redirect from its history page should
     not redirect.
   * Templates containing signature were displaying the signature for the user
-    viewing the page, rather than the user who saved the page.  Example:
+    viewing the page, rather than the user who saved the page. Example:
     {{template-name|~~~~}}
   * Use the wiki system directory for temp file storage in ImageIO processing
-    to prevent errors on misconfigured systems.  Reported by jfbraz.
+    to prevent errors on misconfigured systems. Reported by jfbraz.
   * Validate that properties which must be numeric are set as numbers from
     Special:Admin.
   * When deleting, undeleting, or moving a page, if the "delete associated
     comments page" box was checked a NullPointerException would be generated
     for topics with non-ASCII topic names.
   * Template parameter names should ignore whitespace so that
-    {{template|name=foo}} is the same as {{template|  name = foo}}.  Reported
+    {{template|name=foo}} is the same as {{template|  name = foo}}. Reported
     by floatingworld.
   * Do not allow creation of topics that start with "/" or that are of the form
     Namespace:/Topic.
@@ -374,22 +580,22 @@ New Features:
 
 Bugfixes:
 
-  * Fix missing edit toolbar during preview.  Reported by hanspeterklapf.
+  * Fix missing edit toolbar during preview. Reported by hanspeterklapf.
   * Fix MS SQL error when searching for user contributions (hanspeterklapf).
   * Fix MS SQL upgrade errors (hanspeterklapf).
   * Fix "array index '1' is invalid" error during setup with Resin 3.2.1.
     Reported by James.
   * Fix TOC rendering issue when depth exceeds the configured max depth.
   * Fix double-escaping of non-existent topic names when using URLs such as
-    http://jamwiki.org/wiki/en/TestÜmlaut.  Reported by hanspeterklapf.
+    http://jamwiki.org/wiki/en/TestÜmlaut. Reported by hanspeterklapf.
   * Fix breakage when moving topics containing special characters such as
-    "TestÜmlaut".  Reported by hanspeterklapf.
+    "TestÜmlaut". Reported by hanspeterklapf.
   * Display any editable category topic text above the list of category items.
     Reported by axcelclk.
-  * Fix failures when upgrading from versions earlier than 0.6.0.  Reported by
+  * Fix failures when upgrading from versions earlier than 0.6.0. Reported by
     Eric.
   * Groups were not being displayed on the Special:Roles page when no roles were
-    assigned to the group.  Reported by hanspeterklapf.
+    assigned to the group. Reported by hanspeterklapf.
 
 Translation Updates:
 
@@ -408,8 +614,8 @@ New Features:
 Bugfixes:
 
   * Search by login on the Special:Roles page returned no results for users
-    without at least one role.  Reported by tapaya and rebecca.
-  * Fix incorrect LDAP sample configuration.  Reported with a fix by Tobias
+    without at least one role. Reported by tapaya and rebecca.
+  * Fix incorrect LDAP sample configuration. Reported with a fix by Tobias
     Kalbitz.
   * Display signatures even if there is no email addresss specified (axelclk).
 
@@ -433,13 +639,13 @@ New Features:
   * Number of characters changed in a diff is now displayed on recent changes,
     history and other pages to match Mediawiki.
   * Signficant (5-10x or more) performance improvement of image rendering by
-    making better use of cache.  Suggestions from Jim.
+    making better use of cache. Suggestions from Jim.
   * Allow users to create custom signatures, rather than using the same
     signature pattern for all users.
   * Modify Special:Specialpages so that it is localized for each visitor,
     rather than always defaulting to the language for which the wiki was setup.
   * Provide the capability to redirect to a virtual wiki using syntax of the
-    form "#REDIRECT [[:virtual:Topic]].  Requested by tfschueller.
+    form "#REDIRECT [[:virtual:Topic]]. Requested by tfschueller.
   * Login will now always take the user back to the page from which 'login' was
     clicked, as requested by many users and as implemented by Mediawiki.
   * Allow updating of account information on Special:Register without entering
@@ -463,16 +669,16 @@ Bugfixes:
   * Fix category pagination when using MS SQL (hanspeterklapf).
   * Fix broken links to Lucene search help on the search page (hanspeterklapf).
   * Ensure that URI parameters of the form ";jsessionid=1234" are not included
-    in topic names.  Affects Jetty and possibly other containers, reported by
+    in topic names. Affects Jetty and possibly other containers, reported by
     spiralmike.
   * Use a default MIME type of "application/unknown" for file uploads without
-    MIME types to prevent database errors.  Reported by Tim.
+    MIME types to prevent database errors. Reported by Tim.
   * Fix incorrect paragraph parsing when there is a blank line containing
-    one or more whitespace characters between the paragraphs.  Reported by
+    one or more whitespace characters between the paragraphs. Reported by
     James Teer.
   * Fix parsing of multiple newlines to match Mediawiki.
   * Fix parsing of links containing parantheses such as
-    http://example.com/page_(page).  Reported by  Michael Habbert.
+    http://example.com/page_(page). Reported by  Michael Habbert.
   * Fix parsing of nested tags of the form <tt><tt>test</tt></tt> which were
     producing an extra closing tag.
   * Fix issues with the database migration code that could cause failures
@@ -499,7 +705,7 @@ New Features:
 Bugfixes:
 
   * JDK 1.6 and greater changed the behavior of the JDBC getColumnName() method
-    causing the watchlist tab to break.  Fix suggested by Luc.
+    causing the watchlist tab to break. Fix suggested by Luc.
   * Virtual wiki default topics with spaces were incorrectly being stored with
     spaces converted to underscores ("Main_Page" instead of "Main Page").
   * Null pointer exception when viewing URLs with no topic and no trailing
@@ -508,18 +714,18 @@ Bugfixes:
     saved - this is now fixed.
   * Links of the form [[#section]] and [[#section|text]] will now be parsed
     correctly.
-  * Fix broken parsing of links containing + such as [[start + end]].  Reported
+  * Fix broken parsing of links containing + such as [[start + end]]. Reported
     by MarioF.
   * Fix broken parsing of wiki preformatted text that follows a paragraph.
     Reported by tfschueller.
   * Numerous fixes for issues related to umlauts (ü) and other special
-    characters in topic and section names.  Reported by ihbrune.
+    characters in topic and section names. Reported by ihbrune.
   * Editing a section of a topic did not always redirect back to that section
     after saving the topic in cases of section names with umlauts or other
     special characters.
-  * Resolve a CSS issue that impacted edit links on IE6.  Reported by an
+  * Resolve a CSS issue that impacted edit links on IE6. Reported by an
     anonymous user.
-  * Resolve a CSS issue that impacted images with frames on IE6.  Reported by
+  * Resolve a CSS issue that impacted images with frames on IE6. Reported by
     an anonymous user.
 
 Translation Updates:
@@ -551,10 +757,10 @@ New Features:
   * Support added for definition lists of the form "; term : definition".
   * Support added to allow use of HTML list tags ("ol", "dl", "dt", "li", and
     "ul").
-  * Support added for plural wiki links of the form [[Topic]]s.  Suggested by
+  * Support added for plural wiki links of the form [[Topic]]s. Suggested by
     axelclk.
   * Sub-headings in the table of contents should be of the form "1.1.1" to
-    match Mediawiki.  Reported by Sil68.
+    match Mediawiki. Reported by Sil68.
   * Updated spam filter patterns.
   * Upgrade to the Bliki 3.0 parser (axelclk).
   * Upgrade to Spring Framework 2.5.4.
@@ -565,17 +771,17 @@ New Features:
 Bugfixes:
 
   * Unbalanced / unclosed HTML tags will now be automatically closed by the
-    parser.  Originally reported by Michael Habbert.
+    parser. Originally reported by Michael Habbert.
   * Fix an issue that prevented error messages from being correctly reported on
     the Special:Maintenance page.
   * Resolve a problem that prevented __TOC__ tags within tables from being
-    processed.  Reported by an anonymous user.
+    processed. Reported by an anonymous user.
   * Wiki table captions now process table CSS such as |+align="bottom"|caption.
     Reported by an anonymous user.
   * Image files were being cached unnecessarily, leading to excessive memory
-    use.  Reported by Jim.
+    use. Reported by Jim.
   * Underscores in template names should be ignored so that {{Template Name}}
-    and {{Template_Name}} are seen as equivalent.  Reported by yesesnono.
+    and {{Template_Name}} are seen as equivalent. Reported by yesesnono.
   * Fix an issue where in some cases (most commonly after server restarts) a
     remembered user could be incorrectly loaded as a null user.
 
@@ -600,15 +806,15 @@ Bugfixes:
   * Fix a problem that could cause HSQL to generate locking errors on context
     reload (dallas).
   * Resolve a problem that could cause database connection lockups during
-    setup on MS SQL and some other databases.  Reported by multiple users, with
+    setup on MS SQL and some other databases. Reported by multiple users, with
     significant debugging help provided by dallas.
-  * Fix a regression that broke the Special:Manage page.  Bug reported with a
+  * Fix a regression that broke the Special:Manage page. Bug reported with a
     suggested fix by tfschueller.
   * Fix a regression that broke the Special:Move page (dallas).
   * Resolve a logic error that prevented topics from being retrieved from the
-    cache at appropriate times.  Pointed out by Jim.
+    cache at appropriate times. Pointed out by Jim.
   * The "Special" tab on the Special:Contributions page did not have the
-    correct URL.  Reported by yesesnono.
+    correct URL. Reported by yesesnono.
 
 Translation Updates:
 
@@ -621,7 +827,7 @@ Translation Updates:
 New Features:
 
   * Update and reorganize the monolithic jamwiki project structure into the
-    more modular jamwiki-core, jamwiki-web and jamwiki-war sub-projects.  As
+    more modular jamwiki-core, jamwiki-web and jamwiki-war sub-projects. As
     a result of this change it is now possible to use the JAMWiki parser as a
     standalone library.
   * Update the parser to generate syntax that more exactly matches the parsed
@@ -637,19 +843,19 @@ New Features:
 Bugfixes:
 
   * Resolve broken parsing of Javascript tags for wikis that have enabled the
-    "allow Javascript" option.  Reported by ksdprasad.
+    "allow Javascript" option. Reported by ksdprasad.
   * Resolve potential issues with invalid URLs that contain multiple "/"
-    characters such as http://example.com/wiki//en/StartingPoints.  Reported
+    characters such as http://example.com/wiki//en/StartingPoints. Reported
     with a suggested fix by an anonymous JAMWiki user.
   * Resolve an issue that prevented viewing user contributions for users with
-    logins containing underscores.  Reported by yesesnono.
+    logins containing underscores. Reported by yesesnono.
   * Add field-length checks to all database inserts/updates and either trim the
     field or report an error when a field exceeds the maximum allowed length.
   * Fix an issue that prevented template <noinclude> and <includeonly> sections
     from displaying templates, signatures, and other content that requires
-    parser pre-processing.  Reported by ean.
+    parser pre-processing. Reported by ean.
   * Category pages were previously displaying only images, articles, and
-    sub-categories, leaving out templates.  Reported by ean.
+    sub-categories, leaving out templates. Reported by ean.
   * Links of the form [http://example.com '''Bold text'''] will now properly
     parse markup for the link caption.
   * Fix a parser issue that could cause wiki tables to be generated with
@@ -672,20 +878,20 @@ New Features:
   * The Special:Translation page will now default to the user's default
     language instead of defaulting to English.
   * Upgrade to Acegi Security 1.0.6.
-  * Add support for IPv6 to prevent database errors on IPv6 systems.  Problem
+  * Add support for IPv6 to prevent database errors on IPv6 systems. Problem
     reported by huntc.
 
 Bugfixes:
 
   * Umlauts, ampersands and other special characters were being double-escaped
-    in the user menu.  Bug reported by Толик.
-  * Resolve a CSS issue that impacted display of diffs.  Reported by legendsen.
+    in the user menu. Bug reported by Толик.
+  * Resolve a CSS issue that impacted display of diffs. Reported by legendsen.
   * When an access denied message is displayed make sure that the login page
-    displayed is in the same virtual wiki as the orginal page request.  Bug
+    displayed is in the same virtual wiki as the orginal page request. Bug
     reported by Feilong Huang.
   * Fix several potential (although unlikely) NPE scenarios identified by
     static code analysis tools.
-  * Update the CSS for pre tags to prevent overflows in tables.  Reported by
+  * Update the CSS for pre tags to prevent overflows in tables. Reported by
     Michael Habbert.
   * Fix a bug that broke the Special:Contributions when using a non-ASCII user
     login.
@@ -705,7 +911,7 @@ Translation Updates:
 
 New Features:
 
-  * Upgrade project dependencies to Servlet 2.4 and JSP 2.0.  Bugs in previous
+  * Upgrade project dependencies to Servlet 2.4 and JSP 2.0. Bugs in previous
     JAMWiki configuration settings required these dependencies, so this change
     should be backwards-compatible.
   * Upgrade to JSTL 1.1.2 (from 1.0.6).
@@ -722,10 +928,10 @@ New Features:
 
 Bugfixes:
 
-  * Resolve a CSS issue that caused the TOC to be invisible on IE6.  Reported
+  * Resolve a CSS issue that caused the TOC to be invisible on IE6. Reported
     by bvold.
   * Umlauts, ampersands and other special characters were being double-escaped
-    in the TOC.  Fix contributed by Louis Martin.
+    in the TOC. Fix contributed by Louis Martin.
   * Fix issue where search terms were double-escaped when no search results
     were found.
   * Reload data handler and other values after upgrade to (hopefully) avoid
@@ -752,13 +958,13 @@ New Features:
 
 Bugfixes:
 
-  * "Open printable link in new window" functionality was broken in 0.6.0.  Bug
+  * "Open printable link in new window" functionality was broken in 0.6.0. Bug
     found and fix suggested by Ernesto Arteaga (arterzatij@radioactivo.com) and
     Esteban Dueas (edvjar@hotmail.com).
   * Fix an issue where redirection from index.jsp would lead to the wrong topic
     when the default topic has previously been changed.
   * Allow access to CSS and JAMWiki images even if a user does not have
-    ROLE_VIEW.  This change prevents display issues on the Special:Login page.
+    ROLE_VIEW. This change prevents display issues on the Special:Login page.
   * Fix an issue with DB2 installation by trimming all SQL constraint names to
     less than 18 characters.
   * If two entries in the TOC have the same text make sure that the links do
@@ -806,19 +1012,19 @@ Bugfixes:
   * Resolve a JNDI database connectivity issue (mnencia).
   * Fix an issue related to the SHA-512 algorithm that broke installations
     on JDK versions prior to 1.4.2.
-  * UNIX systems without X could crash on image resizing.  Modify error
+  * UNIX systems without X could crash on image resizing. Modify error
     handling to catch Throwable rather than Exception and log a message
-    explaining how to work around this particular issue.  Reported and
+    explaining how to work around this particular issue. Reported and
     debugged by Michael Osipov, who also provided a suggested fix.
   * Fix parsing of bold italic ('''''), which produced incorrect HTML in
-    previous releases.  Reported by RegisDecamps.
+    previous releases. Reported by RegisDecamps.
   * Oracle stores empty strings as NULL, which causes breakage with empty
-    topics.  Issue should now be resolved.
+    topics. Issue should now be resolved.
   * Wiki signatures could generate incorrectly for users without display names.
   * Fix missing apostrophe in SQL used by MS SQL when displaying the
-    Special:Listusers pages.  Reported by yesesnono.
+    Special:Listusers pages. Reported by yesesnono.
   * Fix incorrect constraint in SQL used by MS SQL that prevents recreating
-    topics that have been deleted.  Reported by yesesnono.
+    topics that have been deleted. Reported by yesesnono.
 
 Translation Updates:
 
@@ -1158,7 +1364,7 @@ Bugfixes:
   * Fix issue with shared library files not being loaded.
   * Modify search engine initialization to avoid setup errors.
   * Correctly maintain file history when redirecting using file persistency.
-  * Topic names containing percent signs ("%") caused errors.  Fixed.
+  * Topic names containing percent signs ("%") caused errors. Fixed.
   * Do not display option to change user login in Special:Account.
 
 Translation Updates:
@@ -1211,7 +1417,7 @@ Bugfixes:
   * <pre> tags might not be closed by the parser.
   * Use of the edit resolve functionality with a section edit could cause the
     resulting edit to splice together too much text.
-  * Upgrade could fail if no user logged in.  Reported by colinbes.
+  * Upgrade could fail if no user logged in. Reported by colinbes.
   * Login page displayed the wrong login message.
   * Do not allow user names that vary only by case ("user" vs. "uSer").
   * Fix issue with browsers that encode URL as UTF-8 instead of ISO-8859-1.
@@ -1235,7 +1441,7 @@ New Features:
   * Add Special:Manage, remove Special:Delete.
   * Add support for undeleting a topic.
   * Drop jam_image table - unused.
-  * Major parser architecture updates.  Parser should be slightly faster when
+  * Major parser architecture updates. Parser should be slightly faster when
     parsing edits.
   * Fix reloading of recent changes in ANSI database mode.
   * Special:AllTopics renamed to Special:Allpages for Mediawiki compatibility.
@@ -1247,7 +1453,7 @@ Bugfixes:
   * Possible null pointer exception in file persistency mode, pointed out by
     User:garem.
   * Image uploads in file persistency mode set wrong path.
-  * Fix possible PageInfo corruption.  Pointed out by Scott Crocco.
+  * Fix possible PageInfo corruption. Pointed out by Scott Crocco.
   * Upgrade to javadiff 1.0.5 to fix several diff issues.
   * Parser was not parsing links of the form [[#Section]] properly.
   * Parser was not parsing links with parentheses (such as
@@ -1299,7 +1505,7 @@ New Features:
   * Upgrade to log4j 1.2.13.
   * Use <label> tag with form elements.
   * Upgrade javadiff from 1.0.3 to 1.0.4.
-  * Upgrade Spring from 1.1.5 to 1.2.8.  Include only those components that
+  * Upgrade Spring from 1.1.5 to 1.2.8. Include only those components that
     are used by JAMWiki (saves over 500 kb).
   * Update commons-dbcp from 1.0 to 1.2.1.
   * Display file deletion information in recent changes.
@@ -1362,7 +1568,7 @@ Translation Updates:
   thrown in exceptions.
 * FEATURE: Updated Chinese and Hungarian translations from ewen0930 and
   bDaneE.
-* FEATURE: Remove the RSS code.  Will be implemented differently in a
+* FEATURE: Remove the RSS code. Will be implemented differently in a
   future version of JAMWiki.
 * FEATURE: Remove the "history list" code - it was unused.
 * FEATURE: Move default topic pages into a language-specific directory
@@ -1378,7 +1584,7 @@ Translation Updates:
 * FEATURE: Add Special:Translation GUI for entering language translations.
 * FEATURE: TopArea is no longer an editable topic - admin property
   added to set the logo image.
-* BUG: Parser would allow Javascript in Wiki syntax.  Disabled unless
+* BUG: Parser would allow Javascript in Wiki syntax. Disabled unless
   explicitly enabled via the admin tool.
 * FEATURE: Parser will reformat badly written HTML (such as "< sTriKe >").
 * BUG: Parser is now more strict about what HTML is allowed.
@@ -1390,10 +1596,10 @@ Translation Updates:
 * FEATURE: Empty jamwiki.properties file removed from WAR file to prevent
   accidentally overwriting properties during upgrade.
 * FEATURE: Move all SQL to property files.
-* FEATURE: Remove copyvio'd background image from Mediawiki.  Existing
+* FEATURE: Remove copyvio'd background image from Mediawiki. Existing
   JAMWiki installs will want to replace "headbg.jpg" in the StyleSheet
   topic with "denalibg.jpg".
-* FEATURE: Keep ugly logo, but make background transparent.  Existing
+* FEATURE: Keep ugly logo, but make background transparent. Existing
   JAMWiki installs will want to replace "logo.jpg" in the StyleSheet
   topic with "logo.gif".
 * FEATURE: Update HTTP cache headers.
@@ -1414,7 +1620,7 @@ Translation Updates:
   [[:virtual:Topic]]).
 * FEATURE: Allow each virtual wiki to have a different default topic
   (requested by colinbes)
-* FEATURE: Add default_topic_name column to jam_virtual_wiki.  Upgrade
+* FEATURE: Add default_topic_name column to jam_virtual_wiki. Upgrade
   should be automatic, so no manual SQL needs to be executed.
 * FEATURE: Use a simpler page layout during setup/upgrade to avoid
   possible errors.
@@ -1449,8 +1655,8 @@ Translation Updates:
 0.0.7
 =====
 
-* BUG: Handle non ISO-8859-1 characters properly.  May require additional
-  configuration for some databases and application servers.  Issue reported
+* BUG: Handle non ISO-8859-1 characters properly. May require additional
+  configuration for some databases and application servers. Issue reported
   by Alexey.
 * BUG: Make web.xml and the taglib definitions more standards compliant.
   Note that this allows JAMWiki to run on Websphere.
@@ -1487,7 +1693,7 @@ Translation Updates:
 
 * FEATURE: Add support for uploading files and viewing them as images.
 * FEATURE: Update the look & feel of the edit preview display.
-* BUG: Shrink generated JSP class files by using <jsp:include>.  Resolves
+* BUG: Shrink generated JSP class files by using <jsp:include>. Resolves
   issues with Resin app server (reported by Alexi).
 * BUG: Resolve issue of HTML characters being incorrectly escaped during
   edits.
@@ -1496,16 +1702,16 @@ Translation Updates:
 * BUG: Resolve more "fails to redirect after login" issues.
 * FEATURE: Upgrade to commons-fileupload-1.1.1.jar.
 * FEATURE: Add commons-io-1.2.jar.
-* BUG: Add commons-logging-1.1.jar which is required by Spring.  Reported
+* BUG: Add commons-logging-1.1.jar which is required by Spring. Reported
   by Alexi.
-* BUG: Update cache headers to resolve issues with Opera.  Reported with a
+* BUG: Update cache headers to resolve issues with Opera. Reported with a
   suggested fix by Alexi.
 * BUG: Author IP address not being retrieved in file persistency mode.
 * FEATURE: Support Mediawiki image links ([[:Image:Foo]]).
 * FEATURE: Display image file history for image pages.
 * BUG: Remove several hard-coded message strings, replace with messages
   that can be translated into local languages.
-* BUG: Fix file persistency to database persistency conversion.  Required
+* BUG: Fix file persistency to database persistency conversion. Required
   removal of database sequences.
 * FEATURE: Hide panic and email notification options in admin - not
   currently supported.
@@ -1557,14 +1763,14 @@ Translation Updates:
 * FEATURE: Hide LDAP and other unused / unsupported options in admin tool.
 * FEATURE: Always encode passwords by default, remove option to have
   unencoded passwords.
-* FEATURE: Code cleanups including deletion of unused code.  PDF search no
-  longer supported.  War file size should now be about 450K smaller.
+* FEATURE: Code cleanups including deletion of unused code. PDF search no
+  longer supported. War file size should now be about 450K smaller.
 * FEATURE: New utility class for handling prepared statements.
 * FEATURE: Added new WikiPageInfo class to hold basic page data.
 * FEATURE: Utilize more of the Spring framework functionality, should ensure
   that cache headers always get set properly.
 * FEATURE: Update from JFlex 1.3.5 to 1.4.1 - slightly faster.
-* FEATURE: Add previous_topic_version_id column to jam_topic_version.  BREAKS
+* FEATURE: Add previous_topic_version_id column to jam_topic_version. BREAKS
   ANY EXISTING INSTALLATION!  See the release notes for the database update
   syntax.
 * BUG: "Article" tab from comments pages fixed.
@@ -1578,9 +1784,9 @@ Translation Updates:
 * FEATURE: Setup now requires creation of a default admin account.
 * FEATURE: Remove admin password option from admin pages.
 * FEATURE: Top navigation now shows login/logout option.
-* FEATURE: Code cleanups including deletion of unused code.  War file size
+* FEATURE: Code cleanups including deletion of unused code. War file size
   should now be about 200K smaller.
-* FEATURE: Remove and update several database field values.  BREAKS ANY
+* FEATURE: Remove and update several database field values. BREAKS ANY
   EXISTING INSTALLATION!
 * FEATURE: Include copy of LGPL in WAR file distribution.
 * FEATURE: History page now displays author & edit comment.
@@ -1603,5 +1809,5 @@ Translation Updates:
 * BUG: Background of external link image not transparent.
 * BUG: Editing cached topic was not viewable until the second page view after
   the edit.
-* FEATURE: Rename and reorganize database tables.  BREAKS ANY EXISTING
+* FEATURE: Rename and reorganize database tables. BREAKS ANY EXISTING
   INSTALLATION!

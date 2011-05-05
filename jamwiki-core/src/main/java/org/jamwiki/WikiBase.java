@@ -72,7 +72,7 @@ public class WikiBase {
 		try {
 			WikiBase.instance = new WikiBase();
 		} catch (Exception e) {
-			logger.severe("Failure while initializing WikiBase", e);
+			logger.error("Failure while initializing WikiBase", e);
 		}
 	}
 
@@ -128,6 +128,9 @@ public class WikiBase {
 	 */
 	public static void reload() throws IOException {
 		WikiBase.dataHandler = WikiUtil.dataHandlerInstance();
+		if (WikiBase.searchEngine != null) {
+			WikiBase.searchEngine.shutdown();
+		}
 		WikiBase.searchEngine = WikiUtil.searchEngineInstance();
 	}
 

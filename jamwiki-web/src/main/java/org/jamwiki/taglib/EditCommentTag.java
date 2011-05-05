@@ -50,7 +50,7 @@ public class EditCommentTag extends TagSupport {
 		try {
 			this.pageContext.getOut().print(result);
 		} catch (IOException e) {
-			logger.severe("Failure while building edit comment for comment " + this.comment, e);
+			logger.error("Failure while building edit comment for comment " + this.comment, e);
 			throw new JspException(e);
 		}
 		return EVAL_PAGE;
@@ -109,7 +109,7 @@ public class EditCommentTag extends TagSupport {
 		try {
 			result.append(LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, wikiLink, "&rarr;", null, null, false));
 		} catch (DataAccessException e) {
-			logger.severe("Failure while building edit comment for comment " + this.comment, e);
+			logger.error("Failure while building edit comment for comment " + this.comment, e);
 			throw new JspException(e);
 		}
 		result.append(StringEscapeUtils.escapeXml(sectionName) + (!StringUtils.isBlank(additionalComment) ? " -" : ""));

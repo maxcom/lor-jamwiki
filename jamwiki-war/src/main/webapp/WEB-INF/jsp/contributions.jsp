@@ -19,11 +19,13 @@
 <%@ page errorPage="/WEB-INF/jsp/error.jsp"
     contentType="text/html; charset=utf-8"
 %>
+
 <%@ include file="page-init.jsp" %>
 
 <div id="change">
+
 <c:url var="rootUrl" value="Special:Contributions">
-    <c:param name="contributor" value="contributor"/>
+	<c:param name="contributor" value="${contributor}"/>
 </c:url>
 <div class="message"><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${numContributions}" rootUrl="${rootUrl}" /></div>
 
@@ -38,8 +40,7 @@
 	&#160;
 	(<jamwiki:link value="Special:History"><jamwiki:linkParam key="topic" value="${change.topicName}" /><fmt:message key="common.caption.history" /></jamwiki:link>)
 	&#160;
-	<%-- FIXME: do not hardcode date pattern --%>
-	<fmt:formatDate value="${change.changeDate}" type="both" pattern="dd-MMM-yyyy HH:mm" />
+	<fmt:formatDate value="${change.changeDate}" type="both" pattern="${pageInfo.datePatternDateAndTime}" />
 	&#160;.&#160;.&#160;
 	<%-- the "+" symbol could be added using a pattern attribute, but there does not seem to be a way to avoid having "+0" show up when that approach is used. --%>
 	(<c:if test="${change.charactersChanged > 0}">+</c:if><fmt:formatNumber value="${change.charactersChanged}" />)

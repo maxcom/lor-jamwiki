@@ -44,7 +44,7 @@ public class AuthMsgTag extends TagSupport {
 			try {
 				this.pageContext.getOut().print(output);
 			} catch (IOException e) {
-				logger.severe("Failure in authmsg tag", e);
+				logger.error("Failure in authmsg tag", e);
 				throw new JspException(e);
 			}
 		}

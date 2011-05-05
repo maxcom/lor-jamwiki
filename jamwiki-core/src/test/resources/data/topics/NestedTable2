@@ -9,7 +9,7 @@
 |}
 | valign="bottom" | the original table again
 | style="width:100px;" |
-{| border="2" style="background:#ABCDEF;;"
+{| border="2" style="background:#ABCDEF;"
 | A
 |}
 {| border="2" style="background:#ABCDEF;"

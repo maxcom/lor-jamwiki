@@ -49,7 +49,7 @@ public class SortedProperties extends Properties {
 	/**
 	 * Override the Properties.keys() method so that the keyset returned is sorted.
 	 */
-	public Enumeration<java.lang.Object> keys() {
+	public Enumeration keys() {
 		Enumeration keyEnum = super.keys();
 		Vector keys = new Vector();
 		while (keyEnum.hasMoreElements()) {

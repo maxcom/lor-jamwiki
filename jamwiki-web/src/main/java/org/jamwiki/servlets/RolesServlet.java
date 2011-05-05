@@ -134,7 +134,7 @@ public class RolesServlet extends JAMWikiServlet {
 		} catch (WikiException e) {
 			errors.add(e.getWikiMessage());
 		} catch (Exception e) {
-			logger.severe("Failure while adding role", e);
+			logger.error("Failure while adding role", e);
 			errors.add(new WikiMessage("roles.message.rolefail", e.getMessage()));
 		}
 		if (!errors.isEmpty()) {
@@ -167,7 +167,7 @@ public class RolesServlet extends JAMWikiServlet {
 			} catch (WikiException e) {
 				next.addObject("message", e.getWikiMessage());
 			} catch (Exception e) {
-				logger.severe("Failure while adding role", e);
+				logger.error("Failure while adding role", e);
 				next.addObject("message", new WikiMessage("roles.message.rolefail", e.getMessage()));
 			}
 		} else if (!StringUtils.isBlank(updateRole)) {
@@ -204,7 +204,7 @@ public class RolesServlet extends JAMWikiServlet {
 			}
 			next.addObject("roleMapUsers", roleMapUsers);
 		} catch (Exception e) {
-			logger.severe("Failure while retrieving role", e);
+			logger.error("Failure while retrieving role", e);
 			next.addObject("message", new WikiMessage("roles.message.rolesearchfail", e.getMessage()));
 		}
 		this.view(request, next, pageInfo);

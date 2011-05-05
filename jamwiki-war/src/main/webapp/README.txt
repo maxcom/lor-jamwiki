@@ -58,11 +58,11 @@ The basic steps for performing a new JAMWiki install are:
      double-byte character sets be sure that the database uses UTF-8 encoding.
   4. (Optional) If using an external database verify that your JDBC driver is
      in the web application server's classpath.
-  5. Update the org.jamwiki.pattern value in the logging.properties file with
-     the location where log files should be written.  The logging.properties
-     file can be found in the /WEB-INF/classes/ directory of your installation.
-     Note that the web application server must have permission to write to the
-     specified log location.
+  5. (Optional) Update the logback.xml configuration file with appropriate log
+     configuration information.  The logback.xml file can be found in the
+     /WEB-INF/classes/ directory of your installation.  Note that the web
+     application server must have appropriate permissions if logging to a
+     specific file or directory.
   6. Once the JAMWiki WAR file has been deployed and the web application
      server started, view the http://<server>/<context>/ page, where <server>
      is the application server URL, and <context> is the application server

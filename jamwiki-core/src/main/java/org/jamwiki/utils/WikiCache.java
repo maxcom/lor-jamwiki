@@ -18,6 +18,7 @@ package org.jamwiki.utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
@@ -121,12 +122,10 @@ public class WikiCache {
 				WikiCache.cacheManager = CacheManager.create();
 			} else {
 				Configuration configuration = new Configuration();
-				CacheConfiguration defaultCacheConfiguration = new CacheConfiguration();
+				CacheConfiguration defaultCacheConfiguration = new CacheConfiguration("jamwikiCache", Environment.getIntValue(Environment.PROP_CACHE_TOTAL_SIZE));
 				defaultCacheConfiguration.setDiskPersistent(false);
 				defaultCacheConfiguration.setEternal(false);
 				defaultCacheConfiguration.setOverflowToDisk(true);
-				defaultCacheConfiguration.setMaxElementsInMemory(Environment.getIntValue(Environment.PROP_CACHE_TOTAL_SIZE));
-				defaultCacheConfiguration.setName("defaultCache");
 				configuration.addDefaultCache(defaultCacheConfiguration);
 				DiskStoreConfiguration diskStoreConfiguration = new DiskStoreConfiguration();
 //				diskStoreConfiguration.addExpiryThreadPool(new ThreadPoolConfiguration("", 5, 5));
@@ -135,10 +134,11 @@ public class WikiCache {
 				configuration.addDiskStore(diskStoreConfiguration);
 				WikiCache.cacheManager = new CacheManager(configuration);
 			}
-		} catch (RuntimeException e) {
-			logger.severe("Failure while initializing cache", e);
-			throw e;
+		} catch (Exception e) {
+			logger.error("Failure while initializing cache", e);
+			throw new RuntimeException(e);
 		}
+		logger.info("Initializing cache 9");
 	}
 
 	public static void shutdown() {
@@ -200,6 +200,21 @@ public class WikiCache {
 	public static void removeFromCache(String cacheName, Object key) {
 		Cache cache = WikiCache.getCache(cacheName);
 		cache.remove(key);
+	}
+
+	/**
+	 * Remove a key from the cache in a case-insensitive manner.  This method
+	 * is significantly slower than removeFromCache and should only be used when
+	 * the key values may not be exactly known.
+	 */
+	public static void removeFromCacheCaseInsensitive(String cacheName, String key) {
+		Cache cache = WikiCache.getCache(cacheName);
+		List cacheKeys = cache.getKeys();
+		for (Object cacheKey : cacheKeys) {
+			if (cacheKey.toString().equalsIgnoreCase(key)) {
+				cache.remove(cacheKey);
+			}
+		}
 	}
 
 	/**

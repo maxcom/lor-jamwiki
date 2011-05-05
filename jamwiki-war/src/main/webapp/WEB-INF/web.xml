@@ -89,18 +89,7 @@
 
 	<error-page>
 		<error-code>403</error-code>
-		<location>/403.jsp</location>
+		<location>/WEB-INF/jsp/403.jsp</location>
 	</error-page>
-
-	<jsp-config>
-		<taglib>
-			<taglib-uri>http://jamwiki.org/taglib</taglib-uri>
-			<taglib-location>/WEB-INF/jamwiki.tld</taglib-location>
-		</taglib>
-		<taglib>
-			<taglib-uri>http://www.springframework.org/security/tags</taglib-uri>
-			<taglib-location>/WEB-INF/security.tld</taglib-location>
-		</taglib>
-	</jsp-config>
 
 </web-app>

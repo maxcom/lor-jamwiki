@@ -51,13 +51,6 @@ function onRSS() {
 
 <div id="configuration" class="admin">
 
-<form name="form1" method="post" action="<jamwiki:link value="Special:Admin" />">
-
-<div class="submenu">
-<a href="#general"><fmt:message key="admin.header.general" /></a> | <a href="#parser"><fmt:message key="admin.header.parser" /></a> | <a href="#database"><fmt:message key="admin.header.persistence" /></a> | <a href="#upload"><fmt:message key="admin.header.upload" /></a><br />
-<a href="#cache"><fmt:message key="admin.header.cache" /></a> | <a href="#rss"><fmt:message key="admin.header.rss" /></a> | <a href="#save"><fmt:message key="admin.action.save" /></a>
-</div>
-
 <c:if test="${!empty message}">
 <div class="message red">
 	<fmt:message key="${message.key}">
@@ -79,7 +72,30 @@ function onRSS() {
 </div>
 </c:if>
 
+<!-- sub-menu tabs -->
+<ul class="tab-menu" id="tab_submenu">
+<li><a href="#general"><fmt:message key="admin.header.general" /></a></li>
+<li><a href="#parser"><fmt:message key="admin.header.parser" /></a></li>
+<li><a href="#database"><fmt:message key="admin.header.persistence" /></a></li>
+<li><a href="#upload"><fmt:message key="admin.header.upload" /></a></li>
+<li><a href="#cache"><fmt:message key="admin.header.cache" /></a></li>
+<li><a href="#rss"><fmt:message key="admin.header.rss" /></a></li>
+</ul>
+<div class="submenu-tab-content">
+
+<form name="form1" method="post" action="<jamwiki:link value="Special:Admin" />">
+
+<div class="callout">
+	<table>
+	<tr>
+		<td><input type="submit" name="Submit" value="<fmt:message key="admin.action.save" />" /></td>
+		<td><fmt:message key="admin.message.savechanges" /></td>
+	</tr>
+	</table>
+</div>
+
 <!-- BEGIN GENERAL SETTINGS -->
+<div id="general" class="submenu-tab-item">
 <a name="general"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.general" /></legend>
@@ -142,16 +158,6 @@ function onRSS() {
 	<div class="formhelp"><fmt:message key="admin.help.editor" /></div>
 </div>
 <div class="row">
-	<label for="<%= Environment.PROP_PRINT_NEW_WINDOW %>"><fmt:message key="admin.caption.printnewwindow" /></label>
-	<c:set var="PROP_PRINT_NEW_WINDOW"><%= Environment.PROP_PRINT_NEW_WINDOW %></c:set>
-	<span><jamwiki:checkbox name="${PROP_PRINT_NEW_WINDOW}" value="true" checked="${props[PROP_PRINT_NEW_WINDOW]}" id="${PROP_PRINT_NEW_WINDOW}" /></span>
-</div>
-<div class="row">
-	<label for="<%= Environment.PROP_EXTERNAL_LINK_NEW_WINDOW %>"><fmt:message key="admin.caption.externallinknewwindow" /></label>
-	<c:set var="PROP_EXTERNAL_LINK_NEW_WINDOW"><%= Environment.PROP_EXTERNAL_LINK_NEW_WINDOW %></c:set>
-	<span><jamwiki:checkbox name="${PROP_EXTERNAL_LINK_NEW_WINDOW}" value="true" checked="${props[PROP_EXTERNAL_LINK_NEW_WINDOW]}" id="${PROP_EXTERNAL_LINK_NEW_WINDOW}" /></span>
-</div>
-<div class="row">
 	<label for="<%= Environment.PROP_BASE_META_DESCRIPTION %>"><fmt:message key="admin.caption.metadescription" /></label>
 	<c:set var="PROP_BASE_META_DESCRIPTION"><%= Environment.PROP_BASE_META_DESCRIPTION %></c:set>
 	<span><textarea class="medium" name="<%= Environment.PROP_BASE_META_DESCRIPTION %>" id="<%= Environment.PROP_BASE_META_DESCRIPTION %>"><c:out value="${props[PROP_BASE_META_DESCRIPTION]}" /></textarea></span>
@@ -176,21 +182,35 @@ function onRSS() {
 	<div class="formhelp"><fmt:message key="admin.help.defaulttopic" /></div>
 </div>
 <div class="row">
-	<label for="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>"><fmt:message key="admin.caption.imageresize" /></label>
-	<c:set var="PROP_IMAGE_RESIZE_INCREMENT"><%= Environment.PROP_IMAGE_RESIZE_INCREMENT %></c:set>
-	<span><jamwiki:text name="${PROP_IMAGE_RESIZE_INCREMENT}" size="5" maxlength="4" value="${props[PROP_IMAGE_RESIZE_INCREMENT]}" id="${PROP_IMAGE_RESIZE_INCREMENT}" /></span>
-	<div class="formhelp"><fmt:message key="admin.help.imageresize" /></div>
-</div>
-<div class="row">
 	<label for="<%= Environment.PROP_MAX_TOPIC_VERSION_EXPORT %>"><fmt:message key="admin.caption.maxversionexport" /></label>
 	<c:set var="PROP_MAX_TOPIC_VERSION_EXPORT"><%= Environment.PROP_MAX_TOPIC_VERSION_EXPORT %></c:set>
 	<span><jamwiki:text name="${PROP_MAX_TOPIC_VERSION_EXPORT}" size="5" maxlength="4" value="${props[PROP_MAX_TOPIC_VERSION_EXPORT]}" id="${PROP_MAX_TOPIC_VERSION_EXPORT}" /></span>
 	<div class="formhelp"><fmt:message key="admin.help.maxversionexport" /></div>
 </div>
+<div class="row">
+	<label for="<%= Environment.PROP_DATE_PATTERN_DATE_AND_TIME %>"><fmt:message key="admin.caption.date.dateandtime" /></label>
+	<c:set var="PROP_DATE_PATTERN_DATE_AND_TIME"><%= Environment.PROP_DATE_PATTERN_DATE_AND_TIME %></c:set>
+	<span><jamwiki:text name="${PROP_DATE_PATTERN_DATE_AND_TIME}" size="30" value="${props[PROP_DATE_PATTERN_DATE_AND_TIME]}" id="${PROP_DATE_PATTERN_DATE_AND_TIME}" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.date.dateandtime" /> <fmt:message key="admin.help.date.common" /></div>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_DATE_PATTERN_DATE_ONLY %>"><fmt:message key="admin.caption.date.dateonly" /></label>
+	<c:set var="PROP_DATE_PATTERN_DATE_ONLY"><%= Environment.PROP_DATE_PATTERN_DATE_ONLY %></c:set>
+	<span><jamwiki:text name="${PROP_DATE_PATTERN_DATE_ONLY}" size="30" value="${props[PROP_DATE_PATTERN_DATE_ONLY]}" id="${PROP_DATE_PATTERN_DATE_ONLY}" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.date.dateonly" /> <fmt:message key="admin.help.date.common" /></div>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_DATE_PATTERN_TIME_ONLY %>"><fmt:message key="admin.caption.date.timeonly" /></label>
+	<c:set var="PROP_DATE_PATTERN_TIME_ONLY"><%= Environment.PROP_DATE_PATTERN_TIME_ONLY %></c:set>
+	<span><jamwiki:text name="${PROP_DATE_PATTERN_TIME_ONLY}" size="30" value="${props[PROP_DATE_PATTERN_TIME_ONLY]}" id="${PROP_DATE_PATTERN_TIME_ONLY}" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.date.timeonly" /> <fmt:message key="admin.help.date.common" /></div>
+</div>
 </fieldset>
+</div>
 <!-- END GENERAL SETTINGS -->
 
 <!-- BEGIN PARSER -->
+<div id="parser" class="submenu-tab-item">
 <a name="parser"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.parser" /></legend>
@@ -204,17 +224,6 @@ function onRSS() {
 		</c:forEach>
 		</select>
 	</span>
-</div>
-<div class="row">
-	<label for="<%= Environment.PROP_PARSER_TOC %>"><fmt:message key="admin.parser.caption.tableofcontents" /></label>
-	<c:set var="PROP_PARSER_TOC"><%= Environment.PROP_PARSER_TOC %></c:set>
-	<span><jamwiki:checkbox name="${PROP_PARSER_TOC}" value="true" checked="${props[PROP_PARSER_TOC]}" id="${PROP_PARSER_TOC}" /></span>
-</div>
-<div class="row">
-	<label for="<%= Environment.PROP_PARSER_TOC_DEPTH %>"><fmt:message key="admin.parser.caption.tableofcontentsdepth" /></label>
-	<c:set var="PROP_PARSER_TOC_DEPTH"><%= Environment.PROP_PARSER_TOC_DEPTH %></c:set>
-	<span><jamwiki:text name="${PROP_PARSER_TOC_DEPTH}" value="${props[PROP_PARSER_TOC_DEPTH]}" size="5" maxlength="1" id="${PROP_PARSER_TOC_DEPTH}" /></span>
-	<div class="formhelp"><fmt:message key="admin.parser.help.tableofcontentsdepth" /></div>
 </div>
 <div class="row">
 	<label for="<%= Environment.PROP_PARSER_ALLOW_HTML %>"><fmt:message key="admin.parser.caption.allowhtml" /></label>
@@ -232,6 +241,51 @@ function onRSS() {
 	<span><jamwiki:checkbox name="${PROP_PARSER_ALLOW_TEMPLATES}" value="true" checked="${props[PROP_PARSER_ALLOW_TEMPLATES]}" id="${PROP_PARSER_ALLOW_TEMPLATES}" /></span>
 </div>
 <div class="row">
+	<label for="<%= Environment.PROP_PRINT_NEW_WINDOW %>"><fmt:message key="admin.caption.printnewwindow" /></label>
+	<c:set var="PROP_PRINT_NEW_WINDOW"><%= Environment.PROP_PRINT_NEW_WINDOW %></c:set>
+	<span><jamwiki:checkbox name="${PROP_PRINT_NEW_WINDOW}" value="true" checked="${props[PROP_PRINT_NEW_WINDOW]}" id="${PROP_PRINT_NEW_WINDOW}" /></span>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_EXTERNAL_LINK_NEW_WINDOW %>"><fmt:message key="admin.caption.externallinknewwindow" /></label>
+	<c:set var="PROP_EXTERNAL_LINK_NEW_WINDOW"><%= Environment.PROP_EXTERNAL_LINK_NEW_WINDOW %></c:set>
+	<span><jamwiki:checkbox name="${PROP_EXTERNAL_LINK_NEW_WINDOW}" value="true" checked="${props[PROP_EXTERNAL_LINK_NEW_WINDOW]}" id="${PROP_EXTERNAL_LINK_NEW_WINDOW}" /></span>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_PARSER_TOC %>"><fmt:message key="admin.parser.caption.tableofcontents" /></label>
+	<c:set var="PROP_PARSER_TOC"><%= Environment.PROP_PARSER_TOC %></c:set>
+	<span><jamwiki:checkbox name="${PROP_PARSER_TOC}" value="true" checked="${props[PROP_PARSER_TOC]}" id="${PROP_PARSER_TOC}" /></span>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_PARSER_TOC_DEPTH %>"><fmt:message key="admin.parser.caption.tableofcontentsdepth" /></label>
+	<c:set var="PROP_PARSER_TOC_DEPTH"><%= Environment.PROP_PARSER_TOC_DEPTH %></c:set>
+	<span><jamwiki:text name="${PROP_PARSER_TOC_DEPTH}" value="${props[PROP_PARSER_TOC_DEPTH]}" size="5" maxlength="1" id="${PROP_PARSER_TOC_DEPTH}" /></span>
+	<div class="formhelp"><fmt:message key="admin.parser.help.tableofcontentsdepth" /></div>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_PARSER_ALLOW_CAPITALIZATION %>"><fmt:message key="admin.parser.caption.allowcapitalized" /></label>
+	<c:set var="PROP_PARSER_ALLOW_CAPITALIZATION"><%= Environment.PROP_PARSER_ALLOW_CAPITALIZATION %></c:set>
+	<span><jamwiki:checkbox name="${PROP_PARSER_ALLOW_CAPITALIZATION}" value="true" checked="${props[PROP_PARSER_ALLOW_CAPITALIZATION]}" id="${PROP_PARSER_ALLOW_CAPITALIZATION}" /></span>
+	<div class="formhelp"><fmt:message key="admin.parser.help.allowcapitalized" /></div>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE %>"><fmt:message key="admin.parser.caption.interwikiinline" /></label>
+	<c:set var="PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE"><%= Environment.PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE %></c:set>
+	<span><jamwiki:checkbox name="${PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE}" value="true" checked="${props[PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE]}" id="${PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE}" /></span>
+	<div class="formhelp"><fmt:message key="admin.parser.help.interwikiinline" /></div>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE %>"><fmt:message key="admin.parser.caption.virtualwikiinline" /></label>
+	<c:set var="PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE"><%= Environment.PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE %></c:set>
+	<span><jamwiki:checkbox name="${PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE}" value="true" checked="${props[PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE]}" id="${PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE}" /></span>
+	<div class="formhelp"><fmt:message key="admin.parser.help.virtualwikiinline" /></div>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>"><fmt:message key="admin.caption.imageresize" /></label>
+	<c:set var="PROP_IMAGE_RESIZE_INCREMENT"><%= Environment.PROP_IMAGE_RESIZE_INCREMENT %></c:set>
+	<span><jamwiki:text name="${PROP_IMAGE_RESIZE_INCREMENT}" size="5" maxlength="4" value="${props[PROP_IMAGE_RESIZE_INCREMENT]}" id="${PROP_IMAGE_RESIZE_INCREMENT}" /></span>
+	<div class="formhelp"><fmt:message key="admin.help.imageresize" /></div>
+</div>
+<div class="row">
 	<label for="<%= Environment.PROP_PARSER_SIGNATURE_USER_PATTERN %>"><fmt:message key="admin.parser.caption.signatureuser" /></label>
 	<c:set var="PROP_PARSER_SIGNATURE_USER_PATTERN"><%= Environment.PROP_PARSER_SIGNATURE_USER_PATTERN %></c:set>
 	<span><jamwiki:text name="${PROP_PARSER_SIGNATURE_USER_PATTERN}" value="${props[PROP_PARSER_SIGNATURE_USER_PATTERN]}" size="50" id="${PROP_PARSER_SIGNATURE_USER_PATTERN}" /></span>
@@ -241,15 +295,17 @@ function onRSS() {
 	<label for="<%= Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN %>"><fmt:message key="admin.parser.caption.signaturedate" /></label>
 	<c:set var="PROP_PARSER_SIGNATURE_DATE_PATTERN"><%= Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN %></c:set>
 	<span><jamwiki:text name="${PROP_PARSER_SIGNATURE_DATE_PATTERN}" value="${props[PROP_PARSER_SIGNATURE_DATE_PATTERN]}" size="50" id="${PROP_PARSER_SIGNATURE_DATE_PATTERN}" /></span>
-	<div class="formhelp"><fmt:message key="admin.parser.help.signaturedate" /></div>
+	<div class="formhelp"><fmt:message key="admin.parser.help.signaturedate" /> <fmt:message key="admin.help.date.common" /></div>
 </div>
 </fieldset>
+</div>
 <!-- END PARSER -->
 
 <%--
 FIXME - Email not supported right now, comment this out
 
 <!-- BEGIN EMAIL -->
+<div id="email" class="submenu-tab-item">
 <a name="email"></a>
 <fieldset>
 <legend><fmt:message key="admin.smtp.caption" /></legend>
@@ -273,11 +329,13 @@ FIXME - Email not supported right now, comment this out
 	<span><jamwiki:text name="${PROP_EMAIL_REPLY_ADDRESS}" value="${props[PROP_EMAIL_REPLY_ADDRESS]}" size="50" id="${PROP_EMAIL_REPLY_ADDRESS}" /></span>
 </div>
 </fieldset>
+</div>
 <!-- END EMAIL -->
 
 --%>
 
 <!-- BEGIN DATABASE PERSISTENCE -->
+<div id="database" class="submenu-tab-item">
 <a name="database"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.persistence" /></legend>
@@ -377,9 +435,11 @@ FIXME - Email not supported right now, comment this out
 	</span>
 </div>
 </fieldset>
+</div>
 <!-- END DATABASE PERSISTENCE -->
 
 <!-- BEGIN FILE UPLOAD -->
+<div id="upload" class="submenu-tab-item">
 <a name="upload"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.upload" /></legend>
@@ -406,6 +466,19 @@ FIXME - Email not supported right now, comment this out
 	<div class="formhelp"><fmt:message key="admin.upload.help.serverurl" /></div>
 </div>
 <div class="row">
+	<label for="<%= Environment.PROP_SHARED_UPLOAD_VIRTUAL_WIKI %>"><fmt:message key="admin.upload.caption.sharedrepository" /></label>
+	<span>
+		<c:set var="PROP_SHARED_UPLOAD_VIRTUAL_WIKI"><%= Environment.PROP_SHARED_UPLOAD_VIRTUAL_WIKI %></c:set>
+		<select name="<%= Environment.PROP_SHARED_UPLOAD_VIRTUAL_WIKI %>" id="<%= Environment.PROP_SHARED_UPLOAD_VIRTUAL_WIKI %>" onchange="onUploadType()">
+		<option value=""></option>
+		<c:forEach items="${virtualwikis}" var="virtualwiki">
+		<option value="<c:out value="${virtualwiki.name}" />"<c:if test="${props[PROP_SHARED_UPLOAD_VIRTUAL_WIKI] == virtualwiki.name}"> selected="selected"</c:if>>${virtualwiki.name}</option>
+		</c:forEach>
+		</select>
+	</span>
+	<div class="formhelp"><fmt:message key="admin.upload.help.sharedrepository" /></div>
+</div>
+<div class="row">
 	<label for="<%= Environment.PROP_FILE_BLACKLIST_TYPE %>"><fmt:message key="admin.upload.caption.blacklisttype" /></label>
 	<span>
 		<c:set var="PROP_FILE_BLACKLIST_TYPE"><%= Environment.PROP_FILE_BLACKLIST_TYPE %></c:set>
@@ -429,9 +502,11 @@ FIXME - Email not supported right now, comment this out
 	<div class="formhelp"><fmt:message key="admin.upload.help.whitelist" /></div>
 </div>
 </fieldset>
+</div>
 <!-- END FILE UPLOAD -->
 
 <!-- BEGIN CACHE -->
+<div id="cache" class="submenu-tab-item">
 <a name="cache"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.cache" /></legend>
@@ -461,9 +536,11 @@ FIXME - Email not supported right now, comment this out
 	<span><jamwiki:text name="${PROP_CACHE_MAX_IDLE_AGE}" id="${PROP_CACHE_MAX_IDLE_AGE}" value="${props[PROP_CACHE_MAX_IDLE_AGE]}" size="10" /></span>
 </div>
 </fieldset>
+</div>
 <!-- END CACHE -->
 
 <!-- BEGIN RSS -->
+<div id="rss" class="submenu-tab-item">
 <a name="rss"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.rss" /></legend>
@@ -478,14 +555,8 @@ FIXME - Email not supported right now, comment this out
 	<span><jamwiki:text name="${PROP_RSS_TITLE}" id="${PROP_RSS_TITLE}" value="${props[PROP_RSS_TITLE]}" size="50" /></span>
 </div>
 </fieldset>
+</div>
 <!-- END RSS -->
-
-<a name="save"></a>
-<table border="0" class="contents" width="99%">
-<tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2" align="center"><input type="submit" name="Submit" value="<fmt:message key="admin.action.save" />" /></td></tr>
-<tr><td colspan="2">&nbsp;</td></tr>
-</table>
 
 <input type="hidden" name="function" value="properties" />
 
@@ -498,5 +569,7 @@ FIXME - Email not supported right now, comment this out
 
 <input type="password" name="fakePassword" value="" style="display:none" />
 </form>
+
+</div>
 
 </div>

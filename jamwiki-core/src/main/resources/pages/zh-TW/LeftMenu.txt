@@ -2,8 +2,8 @@
 * [[Special:RecentChanges|最近變更]]
 * [[Special:Search|搜尋]]
 ----
-* [[Special:Allpages|所有主題]]
-* [[Special:Specialpages|特殊頁面]]
+* [[Special:AllPages|所有主題]]
+* [[Special:SpecialPages|特殊頁面]]
 * [[Special:Upload|檔案上傳]]
 ----
 * [http://jamwiki.org/ JAMWiki]

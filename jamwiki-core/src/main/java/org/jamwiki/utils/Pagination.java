@@ -16,6 +16,10 @@
  */
 package org.jamwiki.utils;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Utility class useful for paginating through a result set.
  */
@@ -80,5 +84,32 @@ public class Pagination {
 	 */
 	public int getStart() {
 		return this.offset;
+	}
+
+	/**
+	 * Utility method for retrieving a list that is a subset of a larger list
+	 * containing only the items specified by the pagination object.
+	 *
+	 * @param pagination The pagination object being used to generate the subset.
+	 * @param items The full list of items that is being paginated.
+	 * @return A subset of the original list corresponding only to those items
+	 *  that match the pagination parameters.
+	 */
+	public static <T> List<T> retrievePaginatedSubset(Pagination pagination, Collection<T> items) {
+		List<T> results = new ArrayList<T>();
+		if (items != null && !items.isEmpty()) {
+			int count = 0;
+			for (T item : items) {
+				count++;
+				if (count < (pagination.getOffset() + 1)) {
+					continue;
+				}
+				if (count > (pagination.getOffset() + pagination.getNumResults())) {
+					break;
+				}
+				results.add(item);
+			}
+		}
+		return results;
 	}
 }

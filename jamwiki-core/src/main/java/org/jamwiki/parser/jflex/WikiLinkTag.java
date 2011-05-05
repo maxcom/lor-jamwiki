@@ -18,6 +18,7 @@ package org.jamwiki.parser.jflex;
 
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
+import org.jamwiki.Environment;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
@@ -42,8 +43,8 @@ public class WikiLinkTag implements JFlexParserTag {
 	 */
 	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
 		boolean containsNestedLinks = (args.length > 0 && StringUtils.equals(args[0].toString(), "nested"));
-		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(lexer.getParserInput(), raw);
-		if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(lexer.getParserInput(), lexer.getParserOutput(), raw);
+		if (wikiLink.getInterwiki() == null && StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
 			// no destination or section
 			return raw;
 		}
@@ -53,7 +54,7 @@ public class WikiLinkTag implements JFlexParserTag {
 				int start = raw.indexOf("[[");
 				int end = raw.lastIndexOf("]]");
 				String content = raw.substring(start + "[[".length(), end);
-				return "[[" + JFlexParserUtil.parseFragment(lexer.getParserInput(), content, lexer.getMode()) + "]]";
+				return "[[" + JFlexParserUtil.parseFragment(lexer.getParserInput(), lexer.getParserOutput(), content, lexer.getMode()) + "]]";
 			}
 		}
 		raw = this.processLinkMetadata(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), raw, wikiLink);
@@ -66,14 +67,27 @@ public class WikiLinkTag implements JFlexParserTag {
 			return lexer.parse(JFlexLexer.TAG_TYPE_IMAGE_LINK, raw);
 		}
 		try {
-			if (!StringUtils.isBlank(wikiLink.getInterWiki())) {
+			if (wikiLink.getInterwiki() != null) {
 				// inter-wiki link
-				return LinkUtil.interWiki(wikiLink);
+				if (!wikiLink.getColon() && !Environment.getBooleanValue(Environment.PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE)) {
+					wikiLink.setText(wikiLink.getInterwiki().getInterwikiDisplay());
+					String url = LinkUtil.interwiki(wikiLink);
+					lexer.getParserOutput().addInterwikiLink(url);
+					return "";
+				} else {
+					return LinkUtil.interwiki(wikiLink);
+				}
 			}
 			String virtualWiki = lexer.getParserInput().getVirtualWiki();
-			if (wikiLink.getVirtualWiki() != null) {
+			if (wikiLink.getVirtualWiki() != null && !StringUtils.equals(wikiLink.getVirtualWiki().getName(), virtualWiki)) {
 				// link to another virtual wiki
 				virtualWiki = wikiLink.getVirtualWiki().getName();
+				if (!wikiLink.getColon() && !Environment.getBooleanValue(Environment.PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE)) {
+					wikiLink.setText(wikiLink.getVirtualWiki().getName() + Namespace.SEPARATOR + wikiLink.getDestination());
+					String url = LinkUtil.buildInternalLinkHtml(lexer.getParserInput().getContext(), virtualWiki, wikiLink, wikiLink.getText(), null, null, false);
+					lexer.getParserOutput().addVirtualWikiLink(url);
+					return "";
+				}
 			}
 			if (StringUtils.isBlank(wikiLink.getText()) && !StringUtils.isBlank(wikiLink.getDestination())) {
 				wikiLink.setText(wikiLink.getDestination());
@@ -85,7 +99,7 @@ public class WikiLinkTag implements JFlexParserTag {
 			} else {
 				// pass a parameter via the parserInput to prevent nested links from being generated
 				lexer.getParserInput().getTempParams().put(LINK_CAPTION, true);
-				wikiLink.setText(JFlexParserUtil.parseFragment(lexer.getParserInput(), wikiLink.getText(), lexer.getMode()));
+				wikiLink.setText(JFlexParserUtil.parseFragment(lexer.getParserInput(), lexer.getParserOutput(), wikiLink.getText(), lexer.getMode()));
 				lexer.getParserInput().getTempParams().remove(LINK_CAPTION);
 			}
 			if (StringUtils.equals(wikiLink.getDestination(), lexer.getParserInput().getTopicName()) && StringUtils.equals(virtualWiki, lexer.getParserInput().getVirtualWiki()) && StringUtils.isBlank(wikiLink.getSection())) {
@@ -95,10 +109,10 @@ public class WikiLinkTag implements JFlexParserTag {
 			// do not escape text html - already done by parser
 			return LinkUtil.buildInternalLinkHtml(lexer.getParserInput().getContext(), virtualWiki, wikiLink, wikiLink.getText(), null, null, false);
 		} catch (DataAccessException e) {
-			logger.severe("Failure while parsing link " + raw, e);
+			logger.error("Failure while parsing link " + raw, e);
 			return "";
 		} catch (ParserException e) {
-			logger.severe("Failure while parsing link " + raw, e);
+			logger.error("Failure while parsing link " + raw, e);
 			return "";
 		}
 	}
@@ -107,11 +121,15 @@ public class WikiLinkTag implements JFlexParserTag {
 	 *
 	 */
 	private String processLinkMetadata(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw, WikiLink wikiLink) throws ParserException {
+		if (wikiLink.getInterwiki() != null || (wikiLink.getVirtualWiki() != null && !StringUtils.equals(wikiLink.getVirtualWiki().getName(), parserInput.getVirtualWiki()))) {
+			// no link metadata for interwiki or virtual wiki links
+			return raw;
+		}
 		String result = raw;
 		if (!wikiLink.getColon() && wikiLink.getNamespace().getId().equals(Namespace.CATEGORY_ID)) {
 			String sortKey = wikiLink.getText();
 			if (!StringUtils.isBlank(sortKey)) {
-				sortKey = JFlexParserUtil.parseFragment(parserInput, sortKey, JFlexParser.MODE_PREPROCESS);
+				sortKey = JFlexParserUtil.parseFragment(parserInput, parserOutput, sortKey, JFlexParser.MODE_PREPROCESS);
 			}
 			parserOutput.addCategory(wikiLink.getDestination(), sortKey);
 			if (mode > JFlexParser.MODE_MINIMAL) {
@@ -119,7 +137,7 @@ public class WikiLinkTag implements JFlexParserTag {
 				result = "";
 			}
 		}
-		if (!StringUtils.isBlank(wikiLink.getDestination())) {
+		if (wikiLink.getInterwiki() == null && (wikiLink.getVirtualWiki() == null || StringUtils.equals(wikiLink.getVirtualWiki().getName(), parserInput.getVirtualWiki())) && !StringUtils.isBlank(wikiLink.getDestination())) {
 			parserOutput.addLink(wikiLink.getDestination());
 		}
 		return result;

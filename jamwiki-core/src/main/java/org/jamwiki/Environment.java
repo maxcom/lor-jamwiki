@@ -21,13 +21,17 @@ import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Enumeration;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 // FIXME - remove this import
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.jamwiki.utils.Utilities;
 
 /**
@@ -51,6 +55,9 @@ public class Environment {
 	public static final String PROP_CACHE_MAX_AGE = "cache-max-age";
 	public static final String PROP_CACHE_MAX_IDLE_AGE = "cache-max-idle-age";
 	public static final String PROP_CACHE_TOTAL_SIZE = "cache-total-size";
+	public static final String PROP_DATE_PATTERN_DATE_AND_TIME = "date-pattern-date-and-time";
+	public static final String PROP_DATE_PATTERN_DATE_ONLY = "date-pattern-date-only";
+	public static final String PROP_DATE_PATTERN_TIME_ONLY = "date-pattern-time-only";
 	public static final String PROP_DB_DRIVER = "driver";
 	public static final String PROP_DB_PASSWORD = "db-password";
 	public static final String PROP_DB_TYPE = "database-type";
@@ -80,12 +87,17 @@ public class Environment {
 	public static final String PROP_FILE_WHITELIST = "file-whitelist";
 	public static final String PROP_IMAGE_RESIZE_INCREMENT = "image-resize-increment";
 	public static final String PROP_MAX_TOPIC_VERSION_EXPORT = "max-topic-version-export";
+	public static final String PROP_PARSER_ALLOW_CAPITALIZATION = "allow-capitalization";
 	public static final String PROP_PARSER_ALLOW_HTML = "allowHTML";
 	public static final String PROP_PARSER_ALLOW_JAVASCRIPT = "allow-javascript";
 	public static final String PROP_PARSER_ALLOW_TEMPLATES = "allow-templates";
 	public static final String PROP_PARSER_CLASS = "parser";
+	public static final String PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE = "parser-interwiki-links-inline";
+	public static final String PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE = "parser-virtualwiki-links-inline";
 	/** Maximum number of template inclusions allowed on a page. */
 	public static final String PROP_PARSER_MAX_INCLUSIONS = "parser-max-inclusions";
+	/** This constant controls how many infinite loops a topic can hold before parsing aborts. */
+	public static final String PROP_PARSER_MAXIMUM_INFINITE_LOOP_LIMIT = "parser-infinite-loop-limit";
 	/** Maximum number of parser iterations allowed for a single parsing run. */
 	public static final String PROP_PARSER_MAX_PARSER_ITERATIONS = "parser-max-iterations";
 	/** Maximum depth to which templates can be included for a single parsing run. */
@@ -104,6 +116,7 @@ public class Environment {
 	public static final String PROP_RSS_ALLOWED = "rss-allowed";
 	public static final String PROP_RSS_TITLE = "rss-title";
 	public static final String PROP_SERVER_URL = "server-url";
+	public static final String PROP_SHARED_UPLOAD_VIRTUAL_WIKI = "shared-upload-virtual-wiki";
 	public static final String PROP_SITE_NAME = "site-name";
 	public static final String PROP_TOPIC_EDITOR = "default-editor";
 	public static final String PROP_TOPIC_SPAM_FILTER = "use-spam-filter";
@@ -122,12 +135,12 @@ public class Environment {
 	 */
 	private Environment() {
 		this.initDefaultProperties();
-		logger.fine("Default properties initialized: " + this.defaults.toString());
+		logger.debug("Default properties initialized: " + this.defaults.toString());
 		this.props = loadProperties(PROPERTY_FILE_NAME, this.defaults);
 		if ("true".equals(System.getProperty("jamwiki.override.file.properties"))) {
 			overrideFromSystemProperties();
 		}
-		logger.fine("JAMWiki properties initialized: " + this.props.toString());
+		logger.debug("JAMWiki properties initialized: " + this.props.toString());
 	}
 
 	/**
@@ -138,13 +151,12 @@ public class Environment {
 	*/
 	private void overrideFromSystemProperties() {
 		logger.info("Overriding file properties with system properties.");
-		Enumeration properties = this.props.propertyNames();
-		while (properties.hasMoreElements()) {
-			String property = String.valueOf(properties.nextElement());
-			String value = System.getProperty("jamwiki." + property);
+		Map<String, String> properties = propertiesToMap(this.props);
+		for (String key : properties.keySet()) {
+			String value = System.getProperty("jamwiki." + key);
 			if (value != null) {
-				this.props.setProperty(property, value);
-				logger.info("Replaced property " + property + " with value: " + value);
+				this.props.setProperty(key, value);
+				logger.info("Replaced property " + key + " with value: " + value);
 			}
 		}
 	}
@@ -188,6 +200,9 @@ public class Environment {
 		this.defaults.setProperty(PROP_CACHE_MAX_AGE, "300");
 		this.defaults.setProperty(PROP_CACHE_MAX_IDLE_AGE, "150");
 		this.defaults.setProperty(PROP_CACHE_TOTAL_SIZE, "3000");
+		this.defaults.setProperty(PROP_DATE_PATTERN_DATE_AND_TIME, "dd MMMM yyyy HH:mm");
+		this.defaults.setProperty(PROP_DATE_PATTERN_DATE_ONLY, "dd MMMM yyyy");
+		this.defaults.setProperty(PROP_DATE_PATTERN_TIME_ONLY, "HH:mm");
 		this.defaults.setProperty(PROP_DB_DRIVER, "");
 		this.defaults.setProperty(PROP_DB_PASSWORD, "");
 		this.defaults.setProperty(PROP_DB_TYPE, "");
@@ -216,11 +231,15 @@ public class Environment {
 		this.defaults.setProperty(PROP_FILE_WHITELIST, "bmp,gif,jpeg,jpg,pdf,png,properties,svg,txt,zip");
 		this.defaults.setProperty(PROP_IMAGE_RESIZE_INCREMENT, "100");
 		this.defaults.setProperty(PROP_MAX_TOPIC_VERSION_EXPORT, "200");
+		this.defaults.setProperty(PROP_PARSER_ALLOW_CAPITALIZATION, Boolean.TRUE.toString());
 		this.defaults.setProperty(PROP_PARSER_ALLOW_HTML, Boolean.TRUE.toString());
 		this.defaults.setProperty(PROP_PARSER_ALLOW_JAVASCRIPT, Boolean.FALSE.toString());
 		this.defaults.setProperty(PROP_PARSER_ALLOW_TEMPLATES, Boolean.TRUE.toString());
 		this.defaults.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.jflex.JFlexParser");
+		this.defaults.setProperty(PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE, Boolean.FALSE.toString());
+		this.defaults.setProperty(PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE, Boolean.FALSE.toString());
 		this.defaults.setProperty(PROP_PARSER_MAX_INCLUSIONS, "250");
+		this.defaults.setProperty(PROP_PARSER_MAXIMUM_INFINITE_LOOP_LIMIT, "5");
 		this.defaults.setProperty(PROP_PARSER_MAX_PARSER_ITERATIONS, "100");
 		this.defaults.setProperty(PROP_PARSER_MAX_TEMPLATE_DEPTH, "100");
 		this.defaults.setProperty(PROP_PARSER_SIGNATURE_DATE_PATTERN, "dd-MMM-yyyy HH:mm zzz");
@@ -237,6 +256,7 @@ public class Environment {
 		this.defaults.setProperty(PROP_RSS_ALLOWED, Boolean.TRUE.toString());
 		this.defaults.setProperty(PROP_RSS_TITLE, "Wiki Recent Changes");
 		this.defaults.setProperty(PROP_SERVER_URL, "");
+		this.defaults.setProperty(PROP_SHARED_UPLOAD_VIRTUAL_WIKI, "");
 		this.defaults.setProperty(PROP_SITE_NAME, "JAMWiki");
 		// FIXME - hard coding
 		this.defaults.setProperty(PROP_TOPIC_EDITOR, "toolbar");
@@ -258,6 +278,44 @@ public class Environment {
 	 */
 	public static boolean getBooleanValue(String name) {
 		return Boolean.valueOf(getValue(name));
+	}
+
+	/**
+	 * Utility method for processing a SimpleDateFormatPattern property value.
+	 *
+	 * @param name The name of the property whose value is to be retrieved.
+	 * @param date Boolean value indicating whether or not to include the date
+	 *  pattern for SHORT, MEDIUM, LONG or FULL pattern values.  This parameter
+	 *  is ignored if the property value is an actual pattern rather than the
+	 *  constant name.
+	 * @param time Boolean value indicating whether or not to include the time
+	 *  pattern for SHORT, MEDIUM, LONG or FULL pattern values.  This parameter
+	 *  is ignored if the property value is an actual pattern rather than the
+	 *  constant name.
+	 * @return The value of the property.
+	 */
+	public static String getDatePatternValue(String name, boolean date, boolean time) {
+		String result = getValue(name);
+		int style = -1;
+		if (StringUtils.equalsIgnoreCase(result, "SHORT")) {
+			style = SimpleDateFormat.SHORT;
+		} else if (StringUtils.equalsIgnoreCase(result, "MEDIUM")) {
+			style = SimpleDateFormat.MEDIUM;
+		} else if (StringUtils.equalsIgnoreCase(result, "LONG")) {
+			style = SimpleDateFormat.LONG;
+		} else if (StringUtils.equalsIgnoreCase(result, "FULL")) {
+			style = SimpleDateFormat.FULL;
+		}
+		if (style != -1) {
+			if (date && time) {
+				result = ((SimpleDateFormat)SimpleDateFormat.getDateTimeInstance(style, style)).toPattern();
+			} else if (date) {
+				result = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(style)).toPattern();
+			} else if (time) {
+				result = ((SimpleDateFormat)SimpleDateFormat.getTimeInstance(style)).toPattern();
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -283,7 +341,7 @@ public class Environment {
 	public static int getIntValue(String name) {
 		int value = NumberUtils.toInt(getValue(name), -1);
 		if (value == -1) {
-			logger.warning("Invalid integer property " + name + " with value " + value);
+			logger.warn("Invalid integer property " + name + " with value " + value);
 		}
 		// FIXME - should this otherwise indicate an invalid property?
 		return value;
@@ -298,7 +356,7 @@ public class Environment {
 	public static long getLongValue(String name) {
 		long value = NumberUtils.toLong(getValue(name), -1);
 		if (value == -1) {
-			logger.warning("Invalid long property " + name + " with value " + value);
+			logger.warn("Invalid long property " + name + " with value " + value);
 		}
 		// FIXME - should this otherwise indicate an invalid property?
 		return value;
@@ -343,16 +401,16 @@ public class Environment {
 		try {
 			file = findProperties(propertyFile);
 			if (file == null) {
-				logger.warning("Property file " + propertyFile + " does not exist");
+				logger.warn("Property file " + propertyFile + " does not exist");
 			} else if (!file.exists()) {
-				logger.warning("Property file " + file.getPath() + " does not exist");
+				logger.warn("Property file " + file.getPath() + " does not exist");
 			} else {
-				logger.config("Loading properties from " + file.getPath());
+				logger.info("Loading properties from " + file.getPath());
 				fis = new FileInputStream(file);
 				properties.load(fis);
 			}
 		} catch (IOException e) {
-			logger.severe("Failure while trying to load properties file " + file.getPath(), e);
+			logger.error("Failure while trying to load properties file " + file.getPath(), e);
 		} finally {
 			if (fis != null) {
 				try {
@@ -363,6 +421,17 @@ public class Environment {
 			}
 		}
 		return properties;
+	}
+
+	/**
+	 * Convert a Properties object to a Map object.
+	 */
+	private static Map<String, String> propertiesToMap(Properties properties) {
+		Map<String, String> map = new HashMap<String, String>();
+		for (Object key : properties.keySet()) {
+			map.put(key.toString(), properties.get(key).toString());
+		}
+		return map;
 	}
 
 	/**
@@ -380,16 +449,16 @@ public class Environment {
 			File webAppRoot = Utilities.getClassLoaderRoot();
 			// the class loader root should be /WEB-INF/classes, but if deployed as anything
 			// other than a WAR then it might just be the temp directory.
-			if (webAppRoot.getParentFile() != null && webAppRoot.getName().toLowerCase().equals("classes")) {
+			if (webAppRoot.getParentFile() != null && webAppRoot.getName().equalsIgnoreCase("classes")) {
 				webAppRoot = webAppRoot.getParentFile();
-				if (webAppRoot.getParentFile() != null && webAppRoot.getName().toLowerCase().equals("web-inf")) {
+				if (webAppRoot.getParentFile() != null && webAppRoot.getName().equalsIgnoreCase("web-inf")) {
 					webAppRoot = webAppRoot.getParentFile();
 				}
 			}
 			defaultRelativeUploadDirectory = "/" + webAppRoot.getName() + "/upload/";
 			defaultUploadDirectory = new File(webAppRoot, "upload").getPath();
 		} catch (Throwable t) {
-			logger.severe("Failure while setting file upload defaults", t);
+			logger.error("Failure while setting file upload defaults", t);
 		}
 		this.defaults.setProperty(PROP_FILE_DIR_FULL_PATH, defaultUploadDirectory);
 		this.defaults.setProperty(PROP_FILE_DIR_RELATIVE_PATH, defaultRelativeUploadDirectory);
@@ -414,19 +483,28 @@ public class Environment {
 		try {
 			return new File(Utilities.getClassLoaderRoot(), filename);
 		} catch (FileNotFoundException e) {
-			logger.severe("Error while searching for resource " + filename, e);
+			logger.error("Error while searching for resource " + filename, e);
 		}
 		return null;
 	}
 
 	/**
-	 * Save the current Wiki system properties to the filesystem.
+	 * Persist the current wiki system configuration and reload all values.
 	 *
-	 * @throws IOException Thrown if the file cannot be found or if an I/O
-	 *  error occurs.
+	 * @throws WikiException Thrown if a failure occurs while saving the
+	 *  configuration values.
 	 */
-	public static void saveProperties() throws IOException {
-		Environment.saveProperties(PROPERTY_FILE_NAME, getInstance(), null);
+	public static void saveConfiguration() throws WikiException {
+		try {
+			Environment.saveProperties(PROPERTY_FILE_NAME, getInstance(), null);
+			// do not use WikiBase.getDataHandler() directly since properties are
+			// being changed
+			WikiUtil.dataHandlerInstance().writeConfiguration(propertiesToMap(getInstance()));
+		} catch (IOException e) {
+			throw new WikiException(new WikiMessage("error.unknown", e.getMessage()));
+		} catch (DataAccessException e) {
+			throw new WikiException(new WikiMessage("error.unknown", e.getMessage()));
+		}
 	}
 
 	/**

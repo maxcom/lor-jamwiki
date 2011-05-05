@@ -34,8 +34,8 @@ public class WikiReferencesTag implements JFlexParserTag {
 	 *
 	 */
 	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
-		if (logger.isFinerEnabled()) {
-			logger.finer("references: " + raw + " (" + lexer.yystate() + ")");
+		if (logger.isTraceEnabled()) {
+			logger.trace("references: " + raw + " (" + lexer.yystate() + ")");
 		}
 		if (lexer.getMode() < JFlexParser.MODE_POSTPROCESS) {
 			return raw;
@@ -81,7 +81,7 @@ public class WikiReferencesTag implements JFlexParserTag {
 				html.append(reference.getCitation()).append("</a>&#160;");
 			}
 			html.append("</sup>");
-			html.append(JFlexParserUtil.parseFragment(lexer.getParserInput(), reference.getContent(), JFlexParser.MODE_PROCESS));
+			html.append(JFlexParserUtil.parseFragment(lexer.getParserInput(), lexer.getParserOutput(), reference.getContent(), JFlexParser.MODE_PROCESS));
 			html.append("</li>");
 		}
 		html.append("\n</ol>");

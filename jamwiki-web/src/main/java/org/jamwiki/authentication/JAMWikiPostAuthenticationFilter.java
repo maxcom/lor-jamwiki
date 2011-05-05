@@ -123,12 +123,12 @@ public class JAMWikiPostAuthenticationFilter implements Filter {
 			username = String.valueOf(principal);
 		} else {
 			// no known principal was found
-			logger.warning("Unknown principal type: " + principal);
+			logger.warn("Unknown principal type: " + principal);
 			username = null;
 			return;
 		}
 		if (StringUtils.isBlank(username)) {
-			logger.warning("Null or empty username found for authenticated principal");
+			logger.warn("Null or empty username found for authenticated principal");
 			return;
 		}
 		// for LDAP and other authentication methods, verify that JAMWiki database records exist
@@ -141,10 +141,10 @@ public class JAMWikiPostAuthenticationFilter implements Filter {
 				WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword);
 			}
 		} catch (DataAccessException e) {
-			logger.severe("Failure while processing user credentials for " + username, e);
+			logger.error("Failure while processing user credentials for " + username, e);
 			throw new ServletException(e);
 		} catch (WikiException e) {
-			logger.severe("Failure while processing user credentials for " + username, e);
+			logger.error("Failure while processing user credentials for " + username, e);
 			throw new ServletException(e);
 		}
 	}

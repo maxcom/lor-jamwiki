@@ -51,7 +51,7 @@ DATABASE_SAMPLE_VALUES["<%= DataHandler.DATA_HANDLER_MYSQL %>"] ={
 	<%= Environment.PROP_DB_DRIVER %>: "com.mysql.jdbc.Driver", <%= Environment.PROP_DB_URL %>: "jdbc:mysql://localhost:3306/database"
 };
 DATABASE_SAMPLE_VALUES["<%= DataHandler.DATA_HANDLER_ORACLE %>"] ={
-	<%= Environment.PROP_DB_DRIVER %>: "oracle.jdbc.driver.OracleDriver", <%= Environment.PROP_DB_URL %>: " jdbc:oracle:thin:@localhost:1521:sid"
+	<%= Environment.PROP_DB_DRIVER %>: "oracle.jdbc.driver.OracleDriver", <%= Environment.PROP_DB_URL %>: "jdbc:oracle:thin:@localhost:1521:sid"
 };
 DATABASE_SAMPLE_VALUES["<%= DataHandler.DATA_HANDLER_POSTGRES %>"] = {
 	<%= Environment.PROP_DB_DRIVER %>: "org.postgresql.Driver", <%= Environment.PROP_DB_URL %>: "jdbc:postgresql://localhost:5432/database"

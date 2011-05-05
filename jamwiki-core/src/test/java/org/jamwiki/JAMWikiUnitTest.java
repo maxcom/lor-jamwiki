@@ -20,30 +20,30 @@ package org.jamwiki;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Locale;
 import org.apache.commons.io.FileUtils;
-import org.jamwiki.DataAccessException;
-import org.jamwiki.Environment;
-import org.jamwiki.WikiBase;
-import org.jamwiki.WikiException;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
+import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.ImageUtil;
 import org.junit.Before;
 
 /**
  * JAMWiki parent class for unit tests.  This class will verify that a test
- * DataHandler is available and perform other required initialization.
+ * JAMWiki instance is available and that is has been loaded with sample topics,
+ * virtual wikis, and a default user account.
  */
 public abstract class JAMWikiUnitTest {
 
 	/**
-	 *
+	 * If a test JAMWiki instance does not yet exist, create one to allow running
+	 * of unit tests that require a working JAMWiki instance.  Note that this
+	 * method is run only once per target, since if the test instance already
+	 * exists a new one will not be set up.
 	 */
 	@Before
 	public void setup() throws Exception {
@@ -65,7 +65,8 @@ public abstract class JAMWikiUnitTest {
 	}
 
 	/**
-	 *
+	 * Initialize a test HSQL database for JAMWiki including two virtual wikis
+	 * and a default user account.
 	 */
 	private void setupDatabase() throws Exception {
 		WikiDatabase.setupDefaultDatabase(Environment.getInstance());
@@ -75,26 +76,10 @@ public abstract class JAMWikiUnitTest {
 		WikiUser wikiUser = new WikiUser(username);
 		WikiBase.reset(locale, wikiUser, username, password);
 		// set up a second "test" virtual wiki
-		VirtualWiki virtualWiki = new VirtualWiki();
-		virtualWiki.setName("test");
-		virtualWiki.setDefaultTopicName("StartingPoints");
+		VirtualWiki virtualWiki = new VirtualWiki("test");
+		virtualWiki.setRootTopicName("StartingPoints");
 		WikiBase.getDataHandler().writeVirtualWiki(virtualWiki);
 		WikiBase.getDataHandler().setupSpecialPages(locale, wikiUser, virtualWiki);
-	}
-
-	/**
-	 * Read and load default topics from the file system.
-	 */
-	protected void setupTopics() throws DataAccessException, IOException, WikiException {
-		File topicDir = TestFileUtil.getClassLoaderFile(TestFileUtil.TEST_TOPICS_DIR);
-		File[] topicFiles = topicDir.listFiles();
-		List<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
-		for (VirtualWiki virtualWiki : virtualWikis) {
-			for (File topicFile : topicFiles) {
-				String fileName = topicFile.getName();
-				this.setupTopic(virtualWiki, fileName);
-			}
-		}
 	}
 
 	/**
@@ -110,17 +95,36 @@ public abstract class JAMWikiUnitTest {
 		topic.setTopicContent(contents);
 		int charactersChanged = (contents == null) ? 0 : contents.length();
 		TopicVersion topicVersion = new TopicVersion(null, "127.0.0.1", null, contents, charactersChanged);
-		if (topicName.toLowerCase().startsWith("image:") && !virtualWiki.getName().equals("en")) {
+		if (topicName.toLowerCase().startsWith("image:")) {
+			this.setupImage(virtualWiki, topic, topicVersion);
 			return;
 		}
-		if (topicName.toLowerCase().startsWith("image:")) {
-			topic.setTopicType(TopicType.IMAGE);
-			topicVersion.setEditType(TopicVersion.EDIT_UPLOAD);
-		}
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
-		if (topicName.toLowerCase().startsWith("image:")) {
-			// hard-coding for now since there is only one test image
-			ImageUtil.writeWikiFile(topic, null, "127.0.0.1", "test_image.jpg", "/test_image.jpg", "image/jpeg", 61);
+	}
+
+	/**
+	 * Set up images separately - one image is created in both virtual wikis, the
+	 * second image is set up in only the shared virtual wiki.
+	 */
+	private void setupImage(VirtualWiki virtualWiki, Topic topic, TopicVersion topicVersion) throws DataAccessException, IOException, WikiException {
+		if (!topic.getName().toLowerCase().startsWith("image:")) {
+			throw new IllegalArgumentException("Cannot call JAMWikiUtilTest.setupImage for non-image topics");
+		}
+		topic.setTopicType(TopicType.IMAGE);
+		topicVersion.setEditType(TopicVersion.EDIT_UPLOAD);
+		// hard code image details - Image:Test Image.jpg will be created for both the "en"
+		// and "test" virtual wikis, while Image:Test Image2.jpg will be created only for
+		// the "test" virtual wiki.
+		WikiFileVersion wikiFileVersion = new WikiFileVersion();
+		if (topic.getName().equals("Image:Test Image.jpg") && virtualWiki.getName().equals("en")) {
+			WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
+			ImageUtil.writeWikiFile(topic, wikiFileVersion, null, "127.0.0.1", "test_image.jpg", "/test_image.jpg", "image/jpeg", 61136);
+		} else if (topic.getName().equals("Image:Test Image.jpg") && virtualWiki.getName().equals("test")) {
+			WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
+			ImageUtil.writeWikiFile(topic, wikiFileVersion, null, "127.0.0.1", "test_image_shared.jpg", "/test_image_shared.jpg", "image/jpeg", 61136);
+		} else if (topic.getName().equals("Image:Test Image2.jpg") && virtualWiki.getName().equals("test")) {
+			WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
+			ImageUtil.writeWikiFile(topic, wikiFileVersion, null, "127.0.0.1", "test_image2_shared.jpg", "/test_image2_shared.jpg", "image/jpeg", 61136);
 		}
 	}
 }

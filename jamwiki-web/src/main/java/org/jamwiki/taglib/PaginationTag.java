@@ -45,7 +45,7 @@ public class PaginationTag extends BodyTagSupport {
 		try {
 			this.pageContext.getOut().print(pagination(this.rootUrl, Integer.valueOf(this.total)));
 		} catch (IOException e) {
-			logger.severe("Failure while building pagination object", e);
+			logger.error("Failure while building pagination object", e);
 			throw new JspException(e);
 		}
 		return EVAL_PAGE;
@@ -70,7 +70,7 @@ public class PaginationTag extends BodyTagSupport {
 		try {
 			output.append(LinkUtil.buildTopicUrl(request.getContextPath(), virtualWiki, wikiLink));
 		} catch (DataAccessException e) {
-			logger.warning("Failure while building pagination element", e);
+			logger.warn("Failure while building pagination element", e);
 			return new StringBuilder();
 		}
 		output.append("\">");
@@ -125,7 +125,7 @@ public class PaginationTag extends BodyTagSupport {
 		try {
 			output.append(LinkUtil.buildTopicUrl(request.getContextPath(), virtualWiki, wikiLink));
 		} catch (DataAccessException e) {
-			logger.warning("Failure while building pagination element", e);
+			logger.warn("Failure while building pagination element", e);
 			return new StringBuilder();
 		}
 		output.append("\">");

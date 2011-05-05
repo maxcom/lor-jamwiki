@@ -30,14 +30,12 @@ import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -55,19 +53,10 @@ public class Utilities {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(Utilities.class.getName());
 
-	private static Pattern VALID_IPV4_PATTERN = null;
-	private static Pattern VALID_IPV6_PATTERN = null;
 	private static final String ipv4Pattern = "(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])";
 	private static final String ipv6Pattern = "([0-9a-f]{1,4}:){7}([0-9a-f]){1,4}";
-
-	static {
-		try {
-			VALID_IPV4_PATTERN = Pattern.compile(ipv4Pattern, Pattern.CASE_INSENSITIVE);
-			VALID_IPV6_PATTERN = Pattern.compile(ipv6Pattern, Pattern.CASE_INSENSITIVE);
-		} catch (PatternSyntaxException e) {
-			logger.severe("Unable to compile pattern", e);
-		}
-	}
+	private static final Pattern VALID_IPV4_PATTERN = Pattern.compile(ipv4Pattern, Pattern.CASE_INSENSITIVE);
+	private static final Pattern VALID_IPV6_PATTERN = Pattern.compile(ipv6Pattern, Pattern.CASE_INSENSITIVE);
 
 	/**
 	 *
@@ -88,18 +77,18 @@ public class Utilities {
 			return text;
 		}
 		if (StringUtils.isBlank(fromEncoding)) {
-			logger.warning("No character encoding specified to convert from, using UTF-8");
+			logger.warn("No character encoding specified to convert from, using UTF-8");
 			fromEncoding = "UTF-8";
 		}
 		if (StringUtils.isBlank(toEncoding)) {
-			logger.warning("No character encoding specified to convert to, using UTF-8");
+			logger.warn("No character encoding specified to convert to, using UTF-8");
 			toEncoding = "UTF-8";
 		}
 		try {
 			text = new String(text.getBytes(fromEncoding), toEncoding);
 		} catch (UnsupportedEncodingException e) {
 			// bad encoding
-			logger.warning("Unable to convert value " + text + " from " + fromEncoding + " to " + toEncoding, e);
+			logger.warn("Unable to convert value " + text + " from " + fromEncoding + " to " + toEncoding, e);
 		}
 		return text;
 	}
@@ -346,7 +335,7 @@ public class Utilities {
 		try {
 			loader = Thread.currentThread().getContextClassLoader();
 		} catch (SecurityException e) {
-			logger.fine("Unable to retrieve thread class loader, trying default");
+			logger.debug("Unable to retrieve thread class loader, trying default");
 		}
 		if (loader == null) {
 			loader = Utilities.class.getClassLoader();
@@ -443,7 +432,7 @@ public class Utilities {
 		if (StringUtils.isBlank(className)) {
 			throw new IllegalArgumentException("Cannot call instantiateClass with an empty class name");
 		}
-		logger.fine("Instantiating class: " + className);
+		logger.debug("Instantiating class: " + className);
 		try {
 			Class clazz = ClassUtils.getClass(className);
 			Class[] parameterTypes = new Class[0];
@@ -466,14 +455,12 @@ public class Utilities {
 	/**
 	 * Utility method for determining common elements in two Map objects.
 	 */
-	public static Map intersect(Map map1, Map map2) {
+	public static <K, V> Map<K, V> intersect(Map<K, V> map1, Map<K, V> map2) {
 		if (map1 == null || map2 == null) {
 			throw new IllegalArgumentException("Utilities.intersection() requires non-null arguments");
 		}
-		Map result = new HashMap();
-		Iterator keys = map1.keySet().iterator();
-		while (keys.hasNext()) {
-			Object key = keys.next();
+		Map<K, V> result = new HashMap<K, V>();
+		for (K key : map1.keySet()) {
 			if (ObjectUtils.equals(map1.get(key), map2.get(key))) {
 				result.put(key, map1.get(key));
 			}

@@ -35,11 +35,11 @@ class JFlexTagItem {
 	private static final List<String> EMPTY_BODY_TAGS = Arrays.asList("br", "col", "div", "hr", "td", "th");
 	private static final List<String> LIST_ITEM_TAGS = Arrays.asList("dd", "dt", "li");
 	private static final List<String> LIST_TAGS = Arrays.asList("dd", "dl", "dt", "li", "ol", "ul");
-	private static final List<String> NON_NESTING_TAGS = Arrays.asList("col", "colgroup", "dd", "dl", "dt", "hr", "li", "ol", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "ul");
+	private static final List<String> NON_NESTING_TAGS = Arrays.asList("col", "colgroup", "dd", "dl", "dt", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "li", "ol", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "ul");
 	private static final List<String> NON_TEXT_BODY_TAGS = Arrays.asList("col", "colgroup", "dl", "ol", "table", "tbody", "tfoot", "thead", "tr", "ul");
-	private static final List<String> NON_INLINE_TAGS = Arrays.asList("caption", "col", "colgroup", "dd", "div", "dl", "dt", "hr", "li", "ol", "p", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "ul");
-	private static final String nonInlineTagPattern = "(caption|col|colgroup|dd|div|dl|dt|hr|li|ol|p|table|tbody|td|tfoot|th|thead|tr|ul)";
-	private static final String nonInlineTagStartPattern = "<" + nonInlineTagPattern + ">.*";
+	private static final List<String> NON_INLINE_TAGS = Arrays.asList("caption", "col", "colgroup", "dd", "div", "dl", "dt", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "li", "ol", "p", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "ul");
+	private static final String nonInlineTagPattern = "(caption|col|colgroup|dd|div|dl|dt|h1|h2|h3|h4|h5|h6|hr|li|ol|p|table|tbody|td|tfoot|th|thead|tr|ul)";
+	private static final String nonInlineTagStartPattern = "<" + nonInlineTagPattern + "[ >].*";
 	private static final String nonInlineTagEndPattern = ".*</" + nonInlineTagPattern + ">";
 	private static final Pattern NON_INLINE_TAG_START_PATTERN = Pattern.compile(nonInlineTagStartPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 	private static final Pattern NON_INLINE_TAG_END_PATTERN = Pattern.compile(nonInlineTagEndPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);

@@ -48,20 +48,20 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 /* ----- nowiki ----- */
 
 <YYINITIAL, PRE>{nowiki} {
-    if (logger.isFinerEnabled()) logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("nowiki: " + yytext() + " (" + yystate() + ")");
     return JFlexParserUtil.tagContent(yytext());
 }
 
 /* ----- pre ----- */
 
 <YYINITIAL>{htmlprestart} {
-    if (logger.isFinerEnabled()) logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("htmlprestart: " + yytext() + " (" + yystate() + ")");
     beginState(PRE);
     return yytext();
 }
 
 <PRE>{htmlpreend} {
-    if (logger.isFinerEnabled()) logger.finer("htmlpreend: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("htmlpreend: " + yytext() + " (" + yystate() + ")");
     endState();
     return yytext();
 }
@@ -69,21 +69,21 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 /* ----- processing commands ----- */
 
 <YYINITIAL>{toc} {
-    if (logger.isFinerEnabled()) logger.finer("toc: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("toc: " + yytext() + " (" + yystate() + ")");
     return this.parserInput.getTableOfContents().attemptTOCInsertion();
 }
 
 /* ----- references ----- */
 
 <YYINITIAL>{references} {
-    if (logger.isFinerEnabled()) logger.finer("references: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("references: " + yytext() + " (" + yystate() + ")");
     return this.parse(TAG_TYPE_WIKI_REFERENCES, yytext());
 }
 
 /* ----- javascript ----- */
 
 <YYINITIAL>{javascript} {
-    if (logger.isFinerEnabled()) logger.finer("javascript: " + yytext() + " (" + yystate() + ")");
+    if (logger.isTraceEnabled()) logger.trace("javascript: " + yytext() + " (" + yystate() + ")");
     // javascript tags are parsed in the processor step, but parse again here as a security
     // check against potential XSS attacks.
     return this.parse(TAG_TYPE_JAVASCRIPT, yytext());

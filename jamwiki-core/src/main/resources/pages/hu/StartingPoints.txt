@@ -14,5 +14,5 @@ Néhány hasznos funkció:
 * [[Special:Upload]] - Fájlok és képek feltöltése a wikibe.
 * [[Special:Search]] - Keresés a wikiben.
 * [[Special:Account]] - Felhasználó készítése.
-* [[Special:Allpages]] - A wikiben található összes szócikk listája.
-* [[Special:Specialpages]] - A speciális oldalak listája.
+* [[Special:AllPages]] - A wikiben található összes szócikk listája.
+* [[Special:SpecialPages]] - A speciális oldalak listája.

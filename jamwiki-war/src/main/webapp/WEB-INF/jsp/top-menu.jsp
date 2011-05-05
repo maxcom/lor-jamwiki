@@ -16,7 +16,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
-<ul id="tab-menu">
+<ul id="tab_menu" class="tab-menu">
 <c:forEach items="${pageInfo.tabMenu}" var="menuItem" varStatus="status">
 	<c:set var="menuText" value="${menuItem.value}" />
 	<%-- FIXME - the print target check is an ugly hack.  need to find a better way. --%>

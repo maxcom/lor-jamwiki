@@ -21,7 +21,7 @@ To upgrade using this automated process follow these steps:
   2.  The following files will need to be backed up from the webapp
       installation directory:
         1.  /WEB-INF/classes/jamwiki.properties
-        2.  /WEB-INF/classes/logging.properties
+        2.  /WEB-INF/classes/logback.xml (new in JAMWiki 1.0.0)
         3.  (Optional) The content found in the /upload/ directory. This step
             is necessary only if the default file upload directory is being
             used.
@@ -80,6 +80,115 @@ otherwise noted.  For example, if upgrading from version 0.6.0 to version
 followed by 0.6.3.
 
 
+  JAMWiki 1.0.5
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "1.0.5".
+
+
+  JAMWiki 1.0.4
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "1.0.4".
+
+
+  JAMWiki 1.0.3
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "1.0.3".
+
+
+  JAMWiki 1.0.2
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "1.0.2".
+
+
+  JAMWiki 1.0.1
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "1.0.1".
+
+
+  JAMWiki 1.0.0
+  =============
+
+  SPECIAL NOTES:
+
+  * The Lucene search engine has been updated in this release.  As a result
+    most users will want to rebuild their search index using the tools on
+    the Special:Maintenance page.
+  * This release updates the default StyleSheet topic.  See below for
+    instructions on manaully updating this topic with the new styles.
+  * By default interwiki links that are not preceded by colons
+    ("[[:inter:Topic]]") will not be parsed as inline links.  This behavior
+    can be changed from the "Parser" tab of the Special:Admin page.
+  * This release changes how the "Link To" records for a topic are calculated.
+    See below for steps to initialize the new data after upgrading.
+
+  UPGRADE STEPS:
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "1.0.0".
+  2. CSS styles have changed during this release.  An up-to-date version of
+     the default StyleSheet topic can be found in the
+     /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
+     should only be edited AFTER all other upgrade steps have been completed.
+  3. Update the database schema by executing the following SQL statements:
+       a) Create the jam_topic_links table.
+              CREATE TABLE jam_topic_links ( 
+                topic_id INTEGER NOT NULL, 
+                link_topic_name VARCHAR(200) NOT NULL, 
+                CONSTRAINT jam_p_topic_links PRIMARY KEY (topic_id, link_topic_name), 
+                CONSTRAINT jam_f_tlink_topic_id FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id) 
+              );
+       b) Create the jam_interwiki table.
+              CREATE TABLE jam_interwiki ( 
+                interwiki_prefix VARCHAR(30) NOT NULL, 
+                interwiki_pattern VARCHAR(200) NOT NULL, 
+                interwiki_type INTEGER NOT NULL, 
+                CONSTRAINT jam_p_interw PRIMARY KEY (interwiki_prefix) 
+              );
+       c) Add new columns to the jam_virtul_wiki table.
+            Oracle & MS SQL:
+              alter table jam_virtual_wiki add logo_image_url VARCHAR(200);
+              alter table jam_virtual_wiki add site_name VARCHAR(200);
+              alter table jam_virtual_wiki add meta_description VARCHAR(500);
+            Other Databases:
+              alter table jam_virtual_wiki add column logo_image_url VARCHAR(200);
+              alter table jam_virtual_wiki add column site_name VARCHAR(200);
+              alter table jam_virtual_wiki add column meta_description VARCHAR(500);
+       d) Drop the NOT NULL constraint on jam_virtual_wiki.default_topic_name:
+            Oracle & MySQL:
+              alter table jam_virtual_wiki modify default_topic_name VARCHAR(200) NULL;
+            Postgres:
+              alter table jam_virtual_wiki alter column default_topic_name drop NOT NULL;
+            Other Databases:
+              alter table jam_virtual_wiki alter column default_topic_name VARCHAR(200) NULL;
+       e) Add indexes to tables.
+              CREATE INDEX jam_i_topic_links_tnm on jam_topic_links (link_topic_name);
+              CREATE INDEX jam_i_category_cti on jam_category (child_topic_id);
+              CREATE INDEX jam_i_topic_cver on jam_topic (current_version_id);
+              CREATE INDEX jam_i_topic_nmsp on jam_topic (namespace_id);
+              CREATE INDEX jam_i_topic_vwiki on jam_topic (virtual_wiki_id);
+              CREATE INDEX jam_i_topicv_prv on jam_topic_version (previous_topic_version_id);
+              CREATE INDEX jam_i_topicv_udisp on jam_topic_version (wiki_user_display);
+              CREATE INDEX jam_i_topicv_uid on jam_topic_version (wiki_user_id);
+       f) Create the jam_configuration table.
+              CREATE TABLE jam_configuration ( 
+                config_key VARCHAR(50) NOT NULL, 
+                config_value VARCHAR(500) NOT NULL, 
+                CONSTRAINT jam_p_config PRIMARY KEY (config_key) 
+              );
+  4. Once the database upgrades are complete the "Regenerate Topic Metadata
+     Records" tool should be invoked from the Special:Maintenance page.
+
+
   JAMWiki 0.9.5
   =============
 
@@ -136,7 +245,7 @@ followed by 0.6.3.
      jamwiki-configuration.xml will need to be re-configured using the new
      interface.
   5. Update the database schema by executing the following SQL statements:
-       a) Create the jam_namespace table
+       a) Create the jam_namespace table.
               CREATE TABLE jam_namespace ( 
                 namespace_id INTEGER NOT NULL, 
                 namespace VARCHAR(200) NOT NULL, 
@@ -348,8 +457,8 @@ followed by 0.6.3.
                 CONSTRAINT jam_f_log_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id),
                 CONSTRAINT jam_f_log_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id)
               )
-       c) Add the wiki_user_display column to the jam_topic_version,
-          jam_recent_change and jam_file_version tables.
+       c) Add the wiki_user_display column to the jam_topic_version and
+          jam_file_version tables.
             Oracle:
               alter table jam_topic_version add (wiki_user_display VARCHAR(100));
               alter table jam_file_version add (wiki_user_display VARCHAR(100));
@@ -359,12 +468,12 @@ followed by 0.6.3.
             Other Databases:
               alter table jam_topic_version add column wiki_user_display VARCHAR(100);
               alter table jam_file_version add column wiki_user_display VARCHAR(100);
-       d) Populate the new wiki_user_display columns in the jam_topic_version,
-          jam_recent_change and jam_file_version tables.
+       d) Populate the new wiki_user_display columns in the jam_topic_version
+          and jam_file_version tables.
               update jam_topic_version set wiki_user_display = wiki_user_ip_address;
               update jam_file_version set wiki_user_display = wiki_user_ip_address;
-       e) Drop the unused wiki_user_ip_address column from the jam_topic_version,
-          jam_recent_change and jam_file_version tables.
+       e) Drop the unused wiki_user_ip_address column from the jam_topic_version
+          and jam_file_version tables.
               alter table jam_topic_version drop column wiki_user_ip_address;
               alter table jam_file_version drop column wiki_user_ip_address;
        f) Add the version_params column to the jam_topic_version table.

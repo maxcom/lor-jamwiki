@@ -2,8 +2,8 @@
 * [[Special:RecentChanges|Cambios Recientes]]
 * [[Special:Search|Buscar]]
 ----
-* [[Special:Allpages|Todas las Páginas]]
-* [[Special:Specialpages|Páginas Especiales]]
+* [[Special:AllPages|Todas las Páginas]]
+* [[Special:SpecialPages|Páginas Especiales]]
 * [[Special:Upload|Subir Archivo]]
 ----
 * [http://jamwiki.org/ JAMWiki]

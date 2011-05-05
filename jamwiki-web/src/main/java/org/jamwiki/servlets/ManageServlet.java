@@ -81,7 +81,7 @@ public class ManageServlet extends JAMWikiServlet {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, null);
 		if (topic.getDeleted()) {
-			logger.warning("Attempt to delete a topic that is already deleted: " + virtualWiki + " / " + topicName);
+			logger.warn("Attempt to delete a topic that is already deleted: " + virtualWiki + " / " + topicName);
 			return;
 		}
 		int charactersChanged = 0 - StringUtils.length(topic.getTopicContent());
@@ -143,7 +143,7 @@ public class ManageServlet extends JAMWikiServlet {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, null);
 		if (!topic.getDeleted()) {
-			logger.warning("Attempt to undelete a topic that is not deleted: " + virtualWiki + " / " + topicName);
+			logger.warn("Attempt to undelete a topic that is not deleted: " + virtualWiki + " / " + topicName);
 			return;
 		}
 		TopicVersion previousVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId());

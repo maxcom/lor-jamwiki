@@ -20,6 +20,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.utils.ImageMetadata;
 import org.jamwiki.utils.ImageUtil;
@@ -38,6 +39,7 @@ public class ImageLinkTag extends TagSupport {
 	private String maxWidth = null;
 	private String style = null;
 	private String value = null;
+	private String virtualWiki = null;
 
 	/**
 	 *
@@ -46,7 +48,7 @@ public class ImageLinkTag extends TagSupport {
 		int linkHeight = (this.maxHeight != null) ? Integer.valueOf(this.maxHeight) : -1;
 		int linkWidth = (this.maxWidth != null) ? Integer.valueOf(this.maxWidth) : -1;
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
-		String virtualWiki = retrieveVirtualWiki(request);
+		String tagVirtualWiki = (StringUtils.isBlank(this.virtualWiki)) ? WikiUtil.getVirtualWikiFromRequest(request) : this.virtualWiki;
 		String html = null;
 		ImageMetadata imageMetadata = new ImageMetadata();
 		imageMetadata.setMaxHeight(linkHeight);
@@ -58,31 +60,23 @@ public class ImageLinkTag extends TagSupport {
 		}
 		try {
 			try {
-				html = ImageUtil.buildImageLinkHtml(request.getContextPath(), virtualWiki, this.value, imageMetadata, this.style, true);
+				html = ImageUtil.buildImageLinkHtml(request.getContextPath(), tagVirtualWiki, this.value, imageMetadata, this.style, true);
+			} catch (IOException e) {
+				// FIXME - display a broken image icon or something better
+				logger.warn("I/O Failure while parsing image link: " + e.getMessage(), e);
+				html = this.value;
 			} catch (DataAccessException e) {
-				logger.severe("Failure while building url " + html + " with value " + this.value, e);
+				logger.error("Failure while building url " + html + " with value " + this.value, e);
 				throw new JspException(e);
 			}
 			if (html != null) {
 				this.pageContext.getOut().print(html);
 			}
 		} catch (IOException e) {
-			logger.severe("Failure while building url " + html + " with value " + this.value, e);
+			logger.error("Failure while building url " + html + " with value " + this.value, e);
 			throw new JspException(e);
 		}
 		return EVAL_PAGE;
-	}
-
-	/**
-	 *
-	 */
-	private static String retrieveVirtualWiki(HttpServletRequest request) throws JspException {
-		String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
-		if (virtualWiki == null) {
-			logger.severe("No virtual wiki found for context path: " + request.getContextPath());
-			throw new JspException("No virtual wiki value found");
-		}
-		return virtualWiki;
 	}
 
 	/**
@@ -153,5 +147,19 @@ public class ImageLinkTag extends TagSupport {
 	 */
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	/**
+	 *
+	 */
+	public String getVirtualWiki() {
+		return this.virtualWiki;
+	}
+
+	/**
+	 *
+	 */
+	public void setVirtualWiki(String virtualWiki) {
+		this.virtualWiki = virtualWiki;
 	}
 }

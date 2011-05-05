@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -52,26 +51,14 @@ public class WikiUtil {
 
 	/** webapp context path, initialized from JAMWikiFilter. */
 	public static String WEBAPP_CONTEXT_PATH = null;
-	private static Pattern INVALID_NAMESPACE_NAME_PATTERN = null;
-	private static Pattern INVALID_ROLE_NAME_PATTERN = null;
-	private static Pattern INVALID_TOPIC_NAME_PATTERN = null;
-	private static Pattern VALID_USER_LOGIN_PATTERN = null;
-	private static Pattern VALID_VIRTUAL_WIKI_PATTERN = null;
+	private static final Pattern INVALID_NAMESPACE_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_NAMESPACE_NAME));
+	private static final Pattern INVALID_ROLE_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_ROLE_NAME));
+	private static final Pattern INVALID_TOPIC_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_TOPIC_NAME));
+	private static final Pattern VALID_USER_LOGIN_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_VALID_USER_LOGIN));
+	private static final Pattern VALID_VIRTUAL_WIKI_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_VALID_VIRTUAL_WIKI));
 	public static final String PARAMETER_TOPIC = "topic";
 	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
 	public static final String PARAMETER_WATCHLIST = "watchlist";
-
-	static {
-		try {
-			INVALID_NAMESPACE_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_NAMESPACE_NAME));
-			INVALID_ROLE_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_ROLE_NAME));
-			INVALID_TOPIC_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_TOPIC_NAME));
-			VALID_USER_LOGIN_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_VALID_USER_LOGIN));
-			VALID_VIRTUAL_WIKI_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_VALID_VIRTUAL_WIKI));
-		} catch (PatternSyntaxException e) {
-			logger.severe("Unable to compile pattern", e);
-		}
-	}
 
 	/**
 	 * Create a pagination object based on parameters found in the current
@@ -111,7 +98,7 @@ public class WikiUtil {
 	public static DataHandler dataHandlerInstance() throws IOException {
 		if (StringUtils.isBlank(Environment.getValue(Environment.PROP_DB_TYPE))) {
 			// this is a problem, but it should never occur
-			logger.warning("WikiUtil.dataHandlerInstance called without a valid PROP_DB_TYPE value");
+			logger.warn("WikiUtil.dataHandlerInstance called without a valid PROP_DB_TYPE value");
 		}
 		String dataHandlerClass = Environment.getValue(Environment.PROP_DB_TYPE);
 		try {
@@ -198,17 +185,15 @@ public class WikiUtil {
 	 * Determine the URL for the default virtual wiki topic, not including the application server context.
 	 */
 	public static String findDefaultVirtualWikiUrl(String virtualWikiName) {
-		if (StringUtils.isBlank(virtualWikiName)) {
-			virtualWikiName = Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT);
+		VirtualWiki virtualWiki = VirtualWiki.defaultVirtualWiki();
+		if (!StringUtils.isBlank(virtualWikiName)) {
+			try {
+				virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
+			} catch (DataAccessException e) {
+				logger.warn("Unable to retrieve default topic for virtual wiki", e);
+			}
 		}
-		String target = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
-		try {
-			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
-			target = virtualWiki.getDefaultTopicName();
-		} catch (DataAccessException e) {
-			logger.warning("Unable to retrieve default topic for virtual wiki", e);
-		}
-		return "/" + virtualWikiName + "/" + target;
+		return "/" + virtualWiki.getName() + "/" + virtualWiki.getRootTopicName();
 	}
 
 	/**
@@ -226,7 +211,7 @@ public class WikiUtil {
 		int count = attempts;
 		String target = parent.getRedirectTo();
 		if (parent.getTopicType() != TopicType.REDIRECT || StringUtils.isBlank(target)) {
-			logger.severe("getRedirectTarget() called for non-redirect topic " + parent.getName());
+			logger.error("getRedirectTarget() called for non-redirect topic " + parent.getName());
 			return parent;
 		}
 		// avoid infinite redirection
@@ -285,8 +270,9 @@ public class WikiUtil {
 	 * @throws DataAccessException Thrown if any error occurs while retrieving data.
 	 */
 	public static String getBaseUrl() throws DataAccessException {
+		VirtualWiki virtualWiki = VirtualWiki.defaultVirtualWiki();
 		String url = Environment.getValue(Environment.PROP_SERVER_URL);
-		url += LinkUtil.buildTopicUrl(WEBAPP_CONTEXT_PATH, Environment.getValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT), Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC), true);
+		url += LinkUtil.buildTopicUrl(WEBAPP_CONTEXT_PATH, virtualWiki.getName(), virtualWiki.getRootTopicName(), true);
 		return url;
 	}
 
@@ -377,7 +363,7 @@ public class WikiUtil {
 		if (pos != -1) {
 			// strip everything after and including '#'
 			if (pos == 0) {
-				logger.warning("No topic in URL: " + request.getRequestURI());
+				logger.warn("No topic in URL: " + request.getRequestURI());
 				return null;
 			}
 			topic = topic.substring(0, pos);
@@ -386,7 +372,7 @@ public class WikiUtil {
 		if (pos != -1) {
 			// strip everything after and including '?'
 			if (pos == 0) {
-				logger.warning("No topic in URL: " + request.getRequestURI());
+				logger.warn("No topic in URL: " + request.getRequestURI());
 				return null;
 			}
 			topic = topic.substring(0, pos);
@@ -395,7 +381,7 @@ public class WikiUtil {
 		if (pos != -1) {
 			// some servlet containers return parameters of the form ";jsessionid=1234" when getRequestURI is called.
 			if (pos == 0) {
-				logger.warning("No topic in URL: " + request.getRequestURI());
+				logger.warn("No topic in URL: " + request.getRequestURI());
 				return null;
 			}
 			topic = topic.substring(0, pos);

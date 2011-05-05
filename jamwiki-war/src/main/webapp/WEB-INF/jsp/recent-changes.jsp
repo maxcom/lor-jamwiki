@@ -27,17 +27,16 @@
 <div class="message">
 <fmt:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:RecentChanges" />
 <br /><br />
-<%-- FIXME: do not hardcode date patterns --%>
-<fmt:message key="recentchanges.caption.time"><fmt:param><jsp:useBean id="now" class="java.util.Date" /><fmt:formatDate value="${now}" type="both" pattern="dd MMMM yyyy HH:mm" /></fmt:param></fmt:message> <jamwiki:enabled property="PROP_RSS_ALLOWED">(<jamwiki:link value="Special:RecentChangesFeed"><fmt:message key="recentchanges.caption.rss" /></jamwiki:link>)</jamwiki:enabled>
+<fmt:message key="recentchanges.caption.time"><fmt:param><jsp:useBean id="now" class="java.util.Date" /><fmt:formatDate value="${now}" type="both" pattern="${pageInfo.datePatternDateAndTime}" /></fmt:param></fmt:message> <jamwiki:enabled property="PROP_RSS_ALLOWED">(<jamwiki:link value="Special:RecentChangesFeed"><fmt:message key="recentchanges.caption.rss" /></jamwiki:link>)</jamwiki:enabled>
 </div>
 
 <form name="num-changes" method="get" action="<jamwiki:link value="Special:RecentChanges" />">
 
-<c:set var="previousDate"><fmt:formatDate value="${changes[0].changeDate}" type="both" pattern="dd MMMM yyyy" /></c:set>
+<c:set var="previousDate"><fmt:formatDate value="${changes[0].changeDate}" type="both" pattern="${pageInfo.datePatternDateOnly}" /></c:set>
 <h4><c:out value="${previousDate}" /></h4>
 <ul>
 <c:forEach items="${changes}" var="change">
-<c:set var="currentDate"><fmt:formatDate value="${change.changeDate}" type="both" pattern="dd MMMM yyyy" /></c:set>
+<c:set var="currentDate"><fmt:formatDate value="${change.changeDate}" type="both" pattern="${pageInfo.datePatternDateOnly}" /></c:set>
 <c:if test="${currentDate != previousDate}">
 </ul>
 <h4><c:out value="${currentDate}" /></h4>
@@ -53,7 +52,7 @@
 		(<jamwiki:link value="Special:Log"><jamwiki:linkParam key="logType" value="${change.logType}" /><fmt:message key="${change.logWikiLinkCaption}" /></jamwiki:link>)
 	</c:if>
 	&#160;
-	<fmt:formatDate value="${change.changeDate}" type="both" pattern="HH:mm" />
+	<fmt:formatDate value="${change.changeDate}" type="both" pattern="${pageInfo.datePatternTimeOnly}" />
 	&#160;
 	<c:if test="${!empty change.topicName}">
 		<jamwiki:watchlist topic="${change.topicName}">
@@ -65,8 +64,7 @@
 		(<c:if test="${change.charactersChanged > 0}">+</c:if><fmt:formatNumber value="${change.charactersChanged}" />)
 	</c:if>
 	&#160;.&#160;.&#160;
-	<jamwiki:link value="${pageInfo.namespaces['User']}:${change.authorName}" text="${change.authorName}" />
-	(<jamwiki:link value="${pageInfo.namespaces['User comments']}:${change.authorName}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${change.authorName}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
+	<jamwiki_t:userLinks pageInfo="${pageInfo}" userDisplay="${change.authorName}" />
 	<c:if test="${!empty change.changeTypeNotification}">&#160;<b><c:out value="${change.changeTypeNotification}" /></b></c:if>
 	<c:if test="${!empty change.changeWikiMessage}">
 		&#160;
