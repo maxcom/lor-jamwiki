@@ -23,7 +23,7 @@
 
 <div id="change">
 <c:url var="rootUrl" value="Special:Contributions">
-    <c:param name="contributor" value="contributor"/>
+    <c:param name="contributor" value="${contributor}"/>
 </c:url>
 <div class="message"><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${numContributions}" rootUrl="${rootUrl}" /></div>
 
