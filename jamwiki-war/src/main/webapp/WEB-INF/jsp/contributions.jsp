@@ -19,12 +19,13 @@
 <%@ page errorPage="/WEB-INF/jsp/error.jsp"
     contentType="text/html; charset=utf-8"
 %>
-
 <%@ include file="page-init.jsp" %>
 
 <div id="change">
-
-<div class="message"><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${numContributions}" rootUrl="Special:Contributions?contributor=${contributor}" /></div>
+<c:url var="rootUrl" value="Special:Contributions">
+    <c:param name="contributor" value="contributor"/>
+</c:url>
+<div class="message"><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${numContributions}" rootUrl="${rootUrl}" /></div>
 
 <form name="num-changes" method="get" action="<jamwiki:link value="Special:Contributions" />">
 <input type="hidden" name="contributor" value="<c:out value="${contributor}" />" />
