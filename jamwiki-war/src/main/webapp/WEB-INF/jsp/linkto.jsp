@@ -33,5 +33,5 @@
 </c:if>
 
 <c:if test="${empty results}">
-<div class="message"><fmt:message key="linkto.none"><fmt:param value="${link}" /></fmt:message></div>
+<div class="message"><fmt:message key="linkto.none"><fmt:param><c:out value="${link}" escapeXml="true"/></fmt:param></fmt:message></div>
 </c:if>
