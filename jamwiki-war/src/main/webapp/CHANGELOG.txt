@@ -7,8 +7,9 @@ New Features:
 
 Bugfixes:
 
-  * Fix an XSS vulnerability with the search results page (Max Valjanski).
-  * Fix an XSS vulnerability with the user contributions page (Max Valjanski).
+  * Fix an XSS vulnerability with the search results page (Maxim Valyanskiy).
+  * Fix an XSS vulnerability with the user contributions page (Maxim
+    Valyanskiy).
 
 Translation Updates:
 
