@@ -30,8 +30,8 @@
 <div class="searchsummary"><c:out value="${result.summary}" escapeXml="false" /></div>
 </c:forEach>
 <c:if test="${empty results}">
-<div class="message"><fmt:message key="searchresult.notfound"><fmt:param value="${searchField}" /></fmt:message></div>
-<div class="message"><fmt:message key="topic.notcreated"><fmt:param value="${searchField}" /><fmt:param><jamwiki:link value="${searchField}" text="${searchField}" /></fmt:param></fmt:message></div>
+<div class="message"><fmt:message key="searchresult.notfound"><fmt:param><c:out value="${searchField}" escapeXml="true"/></fmt:param></fmt:message></div>
+<div class="message"><fmt:message key="topic.notcreated"><fmt:param><c:out value="${searchField}" escapeXml="true" /></fmt:param><fmt:param><jamwiki:link value="${searchField}" text="${searchField}" /></fmt:param></fmt:message></div>
 </c:if>
 <br /><br /><br />
 <font size="-1"><i><fmt:message key="search.poweredby" /></i></font>
