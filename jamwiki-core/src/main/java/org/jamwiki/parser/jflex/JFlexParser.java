@@ -17,8 +17,6 @@
 package org.jamwiki.parser.jflex;
 
 import java.io.StringReader;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.parser.AbstractParser;
@@ -26,7 +24,6 @@ import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 
@@ -60,9 +57,6 @@ public class JFlexParser extends AbstractParser {
 	/** Post-process mode indicates that the pre-processor, processor and post-processor should be run in full, parsing all Wiki syntax into formatted output and adding layout tags such as paragraphs and TOC. */
 	public static final int MODE_POSTPROCESS = 9;
 
-	/** Pattern to determine if the topic is a redirect. */
-	private static final Pattern REDIRECT_PATTERN = Pattern.compile("#REDIRECT[ ]*\\[\\[([^\\n\\r\\]]+)\\]\\]", Pattern.CASE_INSENSITIVE);
-
 	/**
 	 * The constructor creates a parser instance, initialized with the
 	 * specified parser input settings.
@@ -85,18 +79,6 @@ public class JFlexParser extends AbstractParser {
 	 */
 	public String buildRedirectContent(String topicName) {
 		return "#REDIRECT [[" + topicName + "]]";
-	}
-
-	/**
-	 * Determine if a string of wikitext is a redirect.  Note that any templates, categories,
-	 * comments, or other syntax should be parsed PRIOR to calling this method.
-	 */
-	protected String isRedirect(String raw) throws ParserException {
-		if (StringUtils.isBlank(raw)) {
-			return null;
-		}
-		Matcher m = REDIRECT_PATTERN.matcher(raw.trim());
-		return (m.matches()) ? Utilities.decodeAndEscapeTopicName(m.group(1).trim(), true) : null;
 	}
 
 	/**
@@ -260,17 +242,7 @@ public class JFlexParser extends AbstractParser {
 		StringReader reader = toStringReader(raw);
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(reader);
 		int preMode = (mode > JFlexParser.MODE_PREPROCESS) ? JFlexParser.MODE_PREPROCESS : mode;
-		String result = this.lex(lexer, raw, parserOutput, preMode);
-		// if the topic is a redirect store the redirect target
-		String redirect = this.isRedirect(result);
-		if (!StringUtils.isBlank(redirect)) {
-			boolean colon = (redirect.length() > 1 && redirect.charAt(0) == ':');
-			if (colon) {
-				redirect = redirect.substring(1);
-			}
-			parserOutput.setRedirect(redirect);
-		}
-		return result;
+		return this.lex(lexer, raw, parserOutput, preMode);
 	}
 
 	/**
@@ -324,9 +296,11 @@ public class JFlexParser extends AbstractParser {
 	 * @throws ParserException Thrown if any error occurs during parsing.
 	 */
 	protected String parseRedirect(ParserOutput parserOutput, String raw) throws ParserException {
-		// pre-process the text to remove comments, categories, etc.
-		String preprocessed = JFlexParserUtil.parseFragment(this.parserInput, parserOutput, raw, JFlexParser.MODE_PREPROCESS);
-		String redirect = this.isRedirect(preprocessed);
+		// flush any existing links or categories since this will be re-parsed
+		parserOutput.reset();
+		// pre-process the text to get the redirect and process metadata
+		JFlexParserUtil.parseFragment(this.parserInput, parserOutput, raw, JFlexParser.MODE_PREPROCESS);
+		String redirect = parserOutput.getRedirect();
 		WikiLink wikiLink = JFlexParserUtil.parseWikiLink(this.parserInput, parserOutput, "[[" + redirect + "]]");
 		String style = "redirect";
 		try {

@@ -48,6 +48,9 @@ wikilinkcontent    = [^\n\]] | "]" [^\n\]] | {htmllink}
 wikilink           = "[[" ({wikilinkcontent})+ "]]" [a-z]*
 nestedwikilink     = "[[" ({wikilinkcontent})+ "|" ({wikilinkcontent} | {wikilink})+ "]]"
 
+/* redirect */
+redirect           = "#REDIRECT" [ ]* {wikilink}
+
 /* image gallery */
 gallery            = (<[ ]*gallery[^>]*>) ~(<[ ]*\/[ ]*gallery[ ]*>)
 
@@ -60,6 +63,13 @@ gallery            = (<[ ]*gallery[^>]*>) ~(<[ ]*\/[ ]*gallery[ ]*>)
 <YYINITIAL, WIKIPRE>{nowiki} {
     if (logger.isTraceEnabled()) logger.trace("nowiki: " + yytext() + " (" + yystate() + ")");
     return yytext();
+}
+
+/* ----- redirect ----- */
+
+<YYINITIAL>^{redirect} {
+    if (logger.isTraceEnabled()) logger.trace("redirect: " + yytext() + " (" + yystate() + ")");
+    return this.parse(TAG_TYPE_REDIRECT, yytext());
 }
 
 /* ----- pre ----- */

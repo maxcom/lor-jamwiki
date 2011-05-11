@@ -230,6 +230,28 @@ public class ParserTest extends JAMWikiUnitTest {
 	}
 
 	/**
+	 *
+	 */
+	@Test
+	public void testRedirectCategory1() throws Throwable {
+		ParserOutput parserOutput = this.executeCategoryTest("Redirect4");
+		assertEquals("Expected redirect target to be Example1", "Example1", parserOutput.getRedirect());
+		assertEquals("Expected one category", 1, parserOutput.getCategories().size());
+		assertEquals("Expected two links", 2, parserOutput.getLinks().size());
+	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testRedirectCategory2() throws Throwable {
+		ParserOutput parserOutput = this.executeCategoryTest("Category:Redirected");
+		assertEquals("Expected redirect target to be Category:Test", "Category:Test", parserOutput.getRedirect());
+		assertEquals("Expected one category", 1, parserOutput.getCategories().size());
+		assertEquals("Expected two links", 2, parserOutput.getLinks().size());
+	}
+
+	/**
 	 * Generate a generic ParserInput object that can be used for testing.
 	 */
 	private ParserInput parserInput(String topicName) {

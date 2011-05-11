@@ -44,6 +44,21 @@ public class ParserOutput implements Serializable {
 	}
 
 	/**
+	 * Reset this ParserOutput instance to its default state.
+	 */
+	public void reset() {
+		this.cacheable = true;
+		this.categories.clear();
+		this.interwikiLinks.clear();
+		this.links.clear();
+		this.virtualWikiLinks.clear();
+		this.pageTitle = null;
+		this.redirect = null;
+		this.sectionName = null;
+		this.templates.clear();
+	}
+
+	/**
 	 * When a document contains a token indicating that the document belongs
 	 * to a specific category this method should be called to add that
 	 * category to the output metadata.

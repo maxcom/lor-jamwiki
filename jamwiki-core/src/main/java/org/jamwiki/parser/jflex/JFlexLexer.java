@@ -51,6 +51,7 @@ public abstract class JFlexLexer {
 	protected static final int TAG_TYPE_JAVASCRIPT = 25;
 	protected static final int TAG_TYPE_NO_INCLUDE = 30;
 	protected static final int TAG_TYPE_ONLY_INCLUDE = 33;
+	protected static final int TAG_TYPE_REDIRECT = 34;
 	protected static final int TAG_TYPE_TEMPLATE = 35;
 	protected static final int TAG_TYPE_WIKI_BOLD_ITALIC = 40;
 	protected static final int TAG_TYPE_WIKI_HEADING = 45;
@@ -66,6 +67,7 @@ public abstract class JFlexLexer {
 	private static final JavascriptTag TAG_JAVASCRIPT = new JavascriptTag();
 	private static final NoIncludeTag TAG_NO_INCLUDE = new NoIncludeTag();
 	private static final OnlyIncludeTag TAG_ONLY_INCLUDE = new OnlyIncludeTag();
+	private static final RedirectTag TAG_REDIRECT = new RedirectTag();
 	private static final TemplateTag TAG_TEMPLATE = new TemplateTag();
 	private static final WikiBoldItalicTag TAG_WIKI_BOLD_ITALIC = new WikiBoldItalicTag();
 	private static final WikiHeadingTag TAG_WIKI_HEADING = new WikiHeadingTag();
@@ -234,6 +236,9 @@ public abstract class JFlexLexer {
 				break;
 			case TAG_TYPE_ONLY_INCLUDE:
 				jflexParserTag = TAG_ONLY_INCLUDE;
+				break;
+			case TAG_TYPE_REDIRECT:
+				jflexParserTag = TAG_REDIRECT;
 				break;
 			case TAG_TYPE_TEMPLATE:
 				jflexParserTag = TAG_TEMPLATE;
