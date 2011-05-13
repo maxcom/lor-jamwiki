@@ -48,7 +48,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private static final WikiLogger logger = WikiLogger.getLogger(UpgradeServlet.class.getName());
 	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_UPGRADE = "upgrade.jsp";
-	private static final int MAX_TOPICS_FOR_AUTOMATIC_SEARCH_REBUILD = 200;
+	private static final int MAX_TOPICS_FOR_AUTOMATIC_SEARCH_REBUILD = 1000;
 
 	/**
 	 * This method handles the request after its parent class receives control.

@@ -13,6 +13,10 @@ New Features:
     Special:Manage page.
   * Enable DBCP prepared statement pooling to improve performance.
   * Remove ability to automatically upgrade from versions prior to 0.9.0.
+  * Improve search performance, exclude redirects from search indexing, and
+    weight topic names more heavily than topic content to improve accuracy.
+    Existing JAMWiki installs should rebuild their search index using the
+    tools on the Special:Maintenance page.
   * Add RankingAlgorithm search engine support (nnagarajayya).
   * Limit the number of recent changes loaded by the "Reload Recent Changes"
     task on the Special:Maintenance page to improve performance.

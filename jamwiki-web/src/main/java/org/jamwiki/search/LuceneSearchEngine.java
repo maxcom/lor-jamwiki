@@ -52,6 +52,7 @@ import org.jamwiki.SearchEngine;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicType;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.WikiLogger;
 
@@ -108,6 +109,10 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * @param topic The Topic object that is to be added to the index.
 	 */
 	private void addToIndex(IndexWriter writer, Topic topic) throws IOException {
+		if (topic.getTopicType() == TopicType.REDIRECT) {
+			// do not index redirects
+			return;
+		}
 		Document standardDocument = createStandardDocument(topic);
 		writer.addDocument(standardDocument);
 		this.resetIndexSearcher(topic.getVirtualWiki());
@@ -164,8 +169,12 @@ public class LuceneSearchEngine implements SearchEngine {
 		}
 		Document doc = new Document();
 		// index topic name & content and store for later display in search results
-		doc.add(new Field(FIELD_TOPIC_NAME, topic.getName(), Field.Store.YES, Field.Index.ANALYZED));
-		doc.add(new Field(FIELD_TOPIC_CONTENT, topicContent, Field.Store.YES, Field.Index.ANALYZED));
+		Field nameField = new Field(FIELD_TOPIC_NAME, topic.getName(), Field.Store.YES, Field.Index.ANALYZED);
+		// make the topic name worth 3x as much as topic content in searches
+		nameField.setBoost(3.0f);
+		doc.add(nameField);
+		Field contentField = new Field(FIELD_TOPIC_CONTENT, topicContent, Field.Store.YES, Field.Index.ANALYZED);
+		doc.add(contentField);
 		return doc;
 	}
 
