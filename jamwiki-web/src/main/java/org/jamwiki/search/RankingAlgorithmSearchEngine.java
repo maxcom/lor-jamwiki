@@ -93,7 +93,7 @@ public class RankingAlgorithmSearchEngine extends LuceneSearchEngine {
 					Object scoreobject = methodRH_score.invoke(hitsobject, args);
 					float score = ((Float)scoreobject).floatValue();
 					result.setRanking(score);
-					result.setTopic(doc.get(ITYPE_TOPIC_PLAIN));
+					result.setTopic(doc.get(FIELD_TOPIC_NAME));
 					result.setSummary(summary);
 					results.add(result);
 				}

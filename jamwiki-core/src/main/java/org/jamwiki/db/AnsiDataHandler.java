@@ -1989,8 +1989,10 @@ public class AnsiDataHandler implements DataHandler {
 					this.addTopicLinks(links, topic.getTopicId(), conn);
 				}
 			}
-			// only update the search engine if metadata is available
-			WikiBase.getSearchEngine().updateInIndex(topic);
+			if (topicVersion != null) {
+				// topic version is only null during changes that aren't user visible
+				WikiBase.getSearchEngine().updateInIndex(topic);
+			}
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
