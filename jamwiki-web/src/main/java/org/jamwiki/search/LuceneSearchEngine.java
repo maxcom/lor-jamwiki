@@ -67,10 +67,12 @@ public class LuceneSearchEngine implements SearchEngine {
 	private static final WikiLogger logger = WikiLogger.getLogger(LuceneSearchEngine.class.getName());
 	/** Directory for search index files */
 	private static final String SEARCH_DIR = "search";
-	/** Id stored with documents to indicate the raw Wiki markup */
-	private static final String FIELD_TOPIC_CONTENT = "content_plain";
-	/** Id stored with documents to indicate the topic name. */
-	protected static final String FIELD_TOPIC_NAME = "topic_plain";
+	/** Name of the search index field that holds the processed topic content. */
+	private static final String FIELD_TOPIC_CONTENT = "topic_content";
+	/** Name of the search index field that holds the un-processed topic name. */
+	protected static final String FIELD_TOPIC_NAME = "topic_name";
+	/** Name of the search index field that holds the processed topic name. */
+	private static final String FIELD_TOPIC_NAME_ANALYZED = "topic_name_analyzed";
 	/** Lucene compatibility version. */
 	protected static final Version USE_LUCENE_VERSION = Version.LUCENE_31;
 	/** Maximum number of results to return per search. */
@@ -149,7 +151,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	protected Query createSearchQuery(IndexSearcher searcher, StandardAnalyzer analyzer, String text) throws IOException, ParseException {
 		BooleanQuery query = new BooleanQuery();
 		QueryParser qp;
-		qp = new QueryParser(USE_LUCENE_VERSION, FIELD_TOPIC_NAME, analyzer);
+		qp = new QueryParser(USE_LUCENE_VERSION, FIELD_TOPIC_NAME_ANALYZED, analyzer);
 		query.add(qp.parse(text), Occur.SHOULD);
 		qp = new QueryParser(USE_LUCENE_VERSION, FIELD_TOPIC_CONTENT, analyzer);
 		query.add(qp.parse(text), Occur.SHOULD);
@@ -168,13 +170,16 @@ public class LuceneSearchEngine implements SearchEngine {
 			topicContent = "";
 		}
 		Document doc = new Document();
-		// index topic name & content and store for later display in search results
-		Field nameField = new Field(FIELD_TOPIC_NAME, topic.getName(), Field.Store.YES, Field.Index.ANALYZED);
+		// store the (not analyzed) topic name to use when deleting records from the index.
+		doc.add(new Field(FIELD_TOPIC_NAME, topic.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+		// analyze the topic name so that (for example) a search for "New York" will match "New York City"
+		Field nameField = new Field(FIELD_TOPIC_NAME_ANALYZED, topic.getName(), Field.Store.NO, Field.Index.ANALYZED);
 		// make the topic name worth 3x as much as topic content in searches
 		nameField.setBoost(3.0f);
 		doc.add(nameField);
-		Field contentField = new Field(FIELD_TOPIC_CONTENT, topicContent, Field.Store.YES, Field.Index.ANALYZED);
-		doc.add(contentField);
+		// analyze & store the topic content so that it is searchable and also usable for display in
+		// search result summaries
+		doc.add(new Field(FIELD_TOPIC_CONTENT, topicContent, Field.Store.YES, Field.Index.ANALYZED));
 		return doc;
 	}
 
