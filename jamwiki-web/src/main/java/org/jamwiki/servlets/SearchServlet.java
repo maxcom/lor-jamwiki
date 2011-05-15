@@ -85,13 +85,7 @@ public class SearchServlet extends JAMWikiServlet {
 		}
 		next.addObject("searchConfig", WikiConfiguration.getCurrentSearchConfiguration());
 		// add a map of namespace id & label for display on the front end.
-		List<Namespace> namespaces = WikiBase.getDataHandler().lookupNamespaces();
-		Map<Integer, String> namespaceMap = new TreeMap<Integer, String>();
-		for (Namespace namespace : namespaces) {
-			if (namespace.getId() >= 0) {
-				namespaceMap.put(namespace.getId(), namespace.getLabel(virtualWiki));
-			}
-		}
+		Map<Integer, String> namespaceMap = ServletUtil.loadNamespaceDisplayMap(virtualWiki, ServletUtil.retrieveUserLocale(request));
 		next.addObject("namespaces", namespaceMap);
 		List<Integer> selectedNamespaces = null;
 		if (request.getParameter("ns") != null) {

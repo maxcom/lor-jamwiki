@@ -24,7 +24,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import net.sf.ehcache.Element;
@@ -459,6 +461,33 @@ public class ServletUtil {
 		next.addObject("subCategories", subCategories);
 		next.addObject("numSubCategories", subCategories.size());
 		next.addObject("displayCategoryCount", paginatedCategories.size());
+	}
+
+	/**
+	 * Generate a map of key-value pairs consisting of a namespace ID and a
+	 * display label, suitable for use in drop-downs or other namepsace
+	 * selection tools on the front-end.  This method will automatically
+	 * filter out internal namespaces (ie those with ID < 0).
+	 *
+	 * @param virtualWiki The virtual wiki for the namespace map being
+	 *  retrieved.
+	 * @param locale The user's current locale, used to format a message key
+	 *  for the default namespace.
+	 * @return A map of namespace ID - display value for use on the front end.
+	 * @throws DataAccessException Thrown if an error occurs while retrieving
+	 *  namespace data.
+	 */
+	protected static Map<Integer, String> loadNamespaceDisplayMap(String virtualWiki, Locale locale) throws DataAccessException {
+		List<Namespace> namespaces = WikiBase.getDataHandler().lookupNamespaces();
+		Map<Integer, String> namespaceMap = new TreeMap<Integer, String>();
+		for (Namespace namespace : namespaces) {
+			if (namespace.getId() < 0) {
+				continue;
+			}
+			String label = (namespace.getId() == Namespace.MAIN_ID) ? Utilities.formatMessage("common.namespace.main", locale) : namespace.getLabel(virtualWiki);
+			namespaceMap.put(namespace.getId(), label);
+		}
+		return namespaceMap;
 	}
 
 	/**
