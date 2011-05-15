@@ -88,7 +88,7 @@ public class SearchServlet extends JAMWikiServlet {
 			return;
 		}
 		// grab search engine instance and find
-		List<SearchResultEntry> results = WikiBase.getSearchEngine().findResults(virtualWiki, searchField);
+		List<SearchResultEntry> results = WikiBase.getSearchEngine().findResults(virtualWiki, searchField, null);
 		next.addObject("searchField", searchField);
 		next.addObject("results", results);
 		pageInfo.setContentJsp(JSP_SEARCH_RESULTS);

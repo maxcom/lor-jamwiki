@@ -60,10 +60,13 @@ public interface SearchEngine {
 	 *
 	 * @param virtualWiki The virtual wiki for the topic.
 	 * @param text The search term being searched for.
+	 * @param namespaces A list of all namespaces that should be searched when
+	 *  retrieving results.  If this list is <code>null</code> or empty then all
+	 *  namespaces will be searched.
 	 * @return A list of SearchResultEntry objects for all documents that
 	 *  contain the search term.
 	 */
-	List<SearchResultEntry> findResults(String virtualWiki, String text);
+	List<SearchResultEntry> findResults(String virtualWiki, String text, List<Integer> namespaces);
 
 	/**
 	 * Refresh the current search index by re-visiting all topic pages.

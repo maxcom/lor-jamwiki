@@ -47,7 +47,7 @@ public class TestSearchEngine implements SearchEngine {
 	/**
 	 *
 	 */
-	public List<SearchResultEntry> findResults(String virtualWiki, String text) {
+	public List<SearchResultEntry> findResults(String virtualWiki, String text, List<Integer> namespaces) {
 		return new ArrayList<SearchResultEntry>();
 	}
 

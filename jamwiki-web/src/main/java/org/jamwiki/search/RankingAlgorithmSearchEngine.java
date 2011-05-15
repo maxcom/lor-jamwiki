@@ -52,13 +52,13 @@ public class RankingAlgorithmSearchEngine extends LuceneSearchEngine {
 	 * @return A list of SearchResultEntry objects for all documents that
 	 *  contain the search term.
 	 */
-	public List<SearchResultEntry> findResults(String virtualWiki, String text) {
+	public List<SearchResultEntry> findResults(String virtualWiki, String text, List<Integer> namespaces) {
 		StandardAnalyzer analyzer = new StandardAnalyzer(USE_LUCENE_VERSION);
 		List<SearchResultEntry> results = new ArrayList<SearchResultEntry>();
 		logger.trace("search text: " + text);
 		try {
 			IndexSearcher searcher = this.retrieveIndexSearcher(virtualWiki);
-			Query query = this.createSearchQuery(searcher, analyzer, text);
+			Query query = this.createSearchQuery(searcher, analyzer, text, namespaces);
 			// actually perform the search
 			TopScoreDocCollector collector = TopScoreDocCollector.create(MAXIMUM_RESULTS_PER_SEARCH, true);
 			Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>"), new SimpleHTMLEncoder(), new QueryScorer(query));

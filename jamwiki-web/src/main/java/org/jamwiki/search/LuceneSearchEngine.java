@@ -73,6 +73,8 @@ public class LuceneSearchEngine implements SearchEngine {
 	protected static final String FIELD_TOPIC_NAME = "topic_name";
 	/** Name of the search index field that holds the processed topic name. */
 	private static final String FIELD_TOPIC_NAME_ANALYZED = "topic_name_analyzed";
+	/** Name of the search index field that holds the un-processed topic namespace. */
+	private static final String FIELD_TOPIC_NAMESPACE = "topic_namespace";
 	/** Lucene compatibility version. */
 	protected static final Version USE_LUCENE_VERSION = Version.LUCENE_31;
 	/** Maximum number of results to return per search. */
@@ -148,16 +150,34 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * Given the search text, searcher object, and query analyzer generate an
 	 * appropriate Lucene search query.
 	 */
-	protected Query createSearchQuery(IndexSearcher searcher, StandardAnalyzer analyzer, String text) throws IOException, ParseException {
-		BooleanQuery query = new BooleanQuery();
+	protected Query createSearchQuery(IndexSearcher searcher, StandardAnalyzer analyzer, String text, List<Integer> namespaces) throws IOException, ParseException {
+		BooleanQuery fullQuery = new BooleanQuery();
 		QueryParser qp;
+		// build the namespace portion the query
+		if (namespaces != null && !namespaces.isEmpty()) {
+			qp = new QueryParser(USE_LUCENE_VERSION, FIELD_TOPIC_NAMESPACE, analyzer);
+			StringBuilder namespaceText = new StringBuilder();
+			for (Integer namespaceId : namespaces) {
+				if (namespaceText.length() != 0) {
+					namespaceText.append(" ").append(QueryParser.Operator.OR).append(" ");
+				}
+				namespaceText.append(namespaceId);
+			}
+			fullQuery.add(qp.parse(namespaceText.toString()), Occur.MUST);
+		}
+		// create a sub-query for topic name & topic text
+		BooleanQuery nameAndContentQuery = new BooleanQuery();
+		// topic name
 		qp = new QueryParser(USE_LUCENE_VERSION, FIELD_TOPIC_NAME_ANALYZED, analyzer);
-		query.add(qp.parse(text), Occur.SHOULD);
+		nameAndContentQuery.add(qp.parse(text), Occur.SHOULD);
+		// topic content
 		qp = new QueryParser(USE_LUCENE_VERSION, FIELD_TOPIC_CONTENT, analyzer);
-		query.add(qp.parse(text), Occur.SHOULD);
-		// rewrite the query to expand it - required for wildcards to work with highlighter
-		Query rewrittenQuery = searcher.rewrite(query);
-		return rewrittenQuery;
+		nameAndContentQuery.add(qp.parse(text), Occur.SHOULD);
+		// rewrite the sub-query to expand it - required for wildcards to work with highlighter
+		Query subQuery = searcher.rewrite(nameAndContentQuery);
+		// add the sub-query to the main query
+		fullQuery.add(subQuery, Occur.MUST);
+		return fullQuery;
 	}
 
 	/**
@@ -172,6 +192,9 @@ public class LuceneSearchEngine implements SearchEngine {
 		Document doc = new Document();
 		// store the (not analyzed) topic name to use when deleting records from the index.
 		doc.add(new Field(FIELD_TOPIC_NAME, topic.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+		// add the topic namespace (not analyzed) topic namespace to allow retrieval by namespace.
+		// this field is used internally in searches.
+		doc.add(new Field(FIELD_TOPIC_NAMESPACE, topic.getNamespace().getId().toString(), Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
 		// analyze the topic name so that (for example) a search for "New York" will match "New York City"
 		Field nameField = new Field(FIELD_TOPIC_NAME_ANALYZED, topic.getName(), Field.Store.NO, Field.Index.ANALYZED);
 		// make the topic name worth 3x as much as topic content in searches
@@ -223,13 +246,13 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * @return A list of SearchResultEntry objects for all documents that
 	 *  contain the search term.
 	 */
-	public List<SearchResultEntry> findResults(String virtualWiki, String text) {
+	public List<SearchResultEntry> findResults(String virtualWiki, String text, List<Integer> namespaces) {
 		StandardAnalyzer analyzer = new StandardAnalyzer(USE_LUCENE_VERSION);
 		List<SearchResultEntry> results = new ArrayList<SearchResultEntry>();
 		logger.trace("search text: " + text);
 		try {
 			IndexSearcher searcher = this.retrieveIndexSearcher(virtualWiki);
-			Query query = this.createSearchQuery(searcher, analyzer, text);
+			Query query = this.createSearchQuery(searcher, analyzer, text, namespaces);
 			// actually perform the search
 			TopScoreDocCollector collector = TopScoreDocCollector.create(MAXIMUM_RESULTS_PER_SEARCH, true);
 			searcher.search(query, collector);
