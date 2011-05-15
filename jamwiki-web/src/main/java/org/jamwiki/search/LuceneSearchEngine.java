@@ -256,7 +256,7 @@ public class LuceneSearchEngine implements SearchEngine {
 			// actually perform the search
 			TopScoreDocCollector collector = TopScoreDocCollector.create(MAXIMUM_RESULTS_PER_SEARCH, true);
 			searcher.search(query, collector);
-			Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>"), new SimpleHTMLEncoder(), new QueryScorer(query));
+			Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>"), new SimpleHTMLEncoder(), new QueryScorer(query, FIELD_TOPIC_CONTENT));
 			ScoreDoc[] hits = collector.topDocs().scoreDocs;
 			for (int i = 0; i < hits.length; i++) {
 				int docId = hits[i].doc;

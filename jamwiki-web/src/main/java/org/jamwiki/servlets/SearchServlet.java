@@ -16,14 +16,19 @@
  */
 package org.jamwiki.servlets;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Namespace;
 import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiLogger;
@@ -39,8 +44,6 @@ public class SearchServlet extends JAMWikiServlet {
 	private static final WikiLogger logger = WikiLogger.getLogger(SearchServlet.class.getName());
 	/** The name of the JSP file used to render the servlet output when searching. */
 	protected static final String JSP_SEARCH = "search.jsp";
-	/** The name of the JSP file used to render the servlet output when displaying search results. */
-	protected static final String JSP_SEARCH_RESULTS = "search-results.jsp";
 
 	/**
 	 *
@@ -81,17 +84,32 @@ public class SearchServlet extends JAMWikiServlet {
 			pageInfo.setPageTitle(new WikiMessage("searchresult.title", searchField));
 		}
 		next.addObject("searchConfig", WikiConfiguration.getCurrentSearchConfiguration());
-		// forward back to the search page if the request is blank or null
-		if (StringUtils.isBlank(searchField)) {
-			pageInfo.setContentJsp(JSP_SEARCH);
-			pageInfo.setSpecial(true);
-			return;
+		// add a map of namespace id & label for display on the front end.
+		List<Namespace> namespaces = WikiBase.getDataHandler().lookupNamespaces();
+		Map<Integer, String> namespaceMap = new TreeMap<Integer, String>();
+		for (Namespace namespace : namespaces) {
+			if (namespace.getId() >= 0) {
+				namespaceMap.put(namespace.getId(), namespace.getLabel(virtualWiki));
+			}
 		}
-		// grab search engine instance and find
-		List<SearchResultEntry> results = WikiBase.getSearchEngine().findResults(virtualWiki, searchField, null);
-		next.addObject("searchField", searchField);
-		next.addObject("results", results);
-		pageInfo.setContentJsp(JSP_SEARCH_RESULTS);
+		next.addObject("namespaces", namespaceMap);
+		List<Integer> selectedNamespaces = null;
+		if (request.getParameter("ns") != null) {
+			Map<Integer, Integer> selectedNamespaceMap = new TreeMap<Integer, Integer>();
+			selectedNamespaces = new ArrayList<Integer>();
+			for (String namespaceId : request.getParameterValues("ns")) {
+				selectedNamespaces.add(NumberUtils.toInt(namespaceId));
+				selectedNamespaceMap.put(NumberUtils.toInt(namespaceId), NumberUtils.toInt(namespaceId));
+			}
+			next.addObject("selectedNamespaces", selectedNamespaceMap);
+		}
+		if (!StringUtils.isBlank(searchField)) {
+			// grab search engine instance and find results
+			List<SearchResultEntry> results = WikiBase.getSearchEngine().findResults(virtualWiki, searchField, selectedNamespaces);
+			next.addObject("searchField", searchField);
+			next.addObject("results", results);
+		}
+		pageInfo.setContentJsp(JSP_SEARCH);
 		pageInfo.setSpecial(true);
 	}
 }

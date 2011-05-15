@@ -9,6 +9,7 @@ New Features:
     configuration options.
   * Add a "View Source" tab to allow users who do not have permission to edit
     a topic to view its wiki markup.
+  * Add a "Filter search results by namespace" option to the search page.
   * Add the ability for sysadmins to permanently delete topic versions from the
     Special:Manage page.
   * Enable DBCP prepared statement pooling to improve performance.
