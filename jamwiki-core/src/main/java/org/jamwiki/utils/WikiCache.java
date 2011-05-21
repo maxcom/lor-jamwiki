@@ -211,7 +211,8 @@ public class WikiCache {
 		Cache cache = WikiCache.getCache(cacheName);
 		List cacheKeys = cache.getKeys();
 		for (Object cacheKey : cacheKeys) {
-			if (cacheKey.toString().equalsIgnoreCase(key)) {
+			// with the upgrade to ehcache 2.4.2 it seems that null cache keys are possible...
+			if (cacheKey != null && cacheKey.toString().equalsIgnoreCase(key)) {
 				cache.remove(cacheKey);
 			}
 		}
