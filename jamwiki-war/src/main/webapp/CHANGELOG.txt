@@ -41,6 +41,23 @@ Translation Updates:
   * Updated Russian translations (shar).
 
 
+1.0.4
+=====
+
+New Features:
+
+  * None.
+
+Bugfixes:
+
+  * Fix a template parser issue when parsing content of the form
+    "{{{{PAGENAME}}/info}}".  Reported by felipeavilis.
+
+Translation Updates:
+
+  * None.
+
+
 1.0.3
 =====
 
