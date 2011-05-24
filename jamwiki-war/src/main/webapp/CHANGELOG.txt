@@ -1,4 +1,4 @@
-﻿1.0.3
+﻿1.0.4
 =====
 
 New Features:
@@ -8,11 +8,11 @@ New Features:
 Bugfixes:
 
   * Fix a template parser issue when parsing content of the form
-    "{{{{PAGENAME}}/info}}".  Reported by felipeavilis.
+    "{{{{PAGENAME}}/info}}".  Reported by Felipe Avilis.
 
 Translation Updates:
 
-  * None.
+  * Updated Polish translations (dlpa).
 
 
 1.0.3
