@@ -53,7 +53,7 @@ htmlpre            = ({htmlprestart}) ~({htmlpreend})
 htmlcomment        = "<!--" ~"-->"
 
 /* templates */
-templatestart      = "{{" [^\{]
+templatestart      = "{{" (.{2})
 templateendchar    = "}"
 templateparam      = "{{{" [^\{\}\n]+ "}}}"
 includeonly        = (<[ ]*includeonly[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*includeonly[ ]*>)
@@ -85,13 +85,27 @@ wikisignature      = ([~]{3,5})
 
 <YYINITIAL, TEMPLATE>{templatestart} {
     if (logger.isTraceEnabled()) logger.trace("templatestart: " + yytext() + " (" + yystate() + ")");
-    // push back the one non-template character that matched
-    yypushback(1);
+    // four characters will be matched.  there are multiple possibilities:
+    //   * "{{xy" = template start
+    //   * "{{{x" = possibly a param start
+    //   * "{{{{" = template start + either another template or a param
     String raw = yytext();
+    boolean isParam = (!raw.equals("{{{{") && raw.startsWith("{{{"));
+    if (isParam) {
+        yypushback(3);
+        if (yystate() == YYINITIAL) {
+            return raw.substring(0, 1);
+        } else {
+            this.templateString += raw.substring(0, 1);
+            return "";
+        }
+    }
+    // push back the two extra characters
+    yypushback(2);
     if (!allowTemplates()) {
         return yytext();
     }
-    this.templateString += raw;
+    this.templateString += raw.substring(0, 2);
     if (yystate() != TEMPLATE) {
         beginState(TEMPLATE);
     }

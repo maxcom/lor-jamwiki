@@ -7,6 +7,23 @@ New Features:
 
 Bugfixes:
 
+  * Fix a template parser issue when parsing content of the form
+    "{{{{PAGENAME}}/info}}".  Reported by felipeavilis.
+
+Translation Updates:
+
+  * None.
+
+
+1.0.3
+=====
+
+New Features:
+
+  * None.
+
+Bugfixes:
+
   * Fix an XSS vulnerability with the search results page (Maxim Valyanskiy).
   * Fix an XSS vulnerability with the user contributions page (Maxim
     Valyanskiy).

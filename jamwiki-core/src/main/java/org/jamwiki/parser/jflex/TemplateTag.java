@@ -148,6 +148,8 @@ public class TemplateTag implements JFlexParserTag {
 		// extract the template name
 		WikiLink wikiLink = this.parseTemplateName(parserInput.getVirtualWiki(), templateContent);
 		String name = wikiLink.getDestination();
+		// parse in case of something like "{{PAGENAME}}/template"
+		name = JFlexParserUtil.parseFragment(parserInput, parserOutput, name, JFlexParser.MODE_TEMPLATE);
 		// now see if a template with that name exists or if this is an inclusion
 		Topic templateTopic = null;
 		boolean inclusion = wikiLink.getColon();
