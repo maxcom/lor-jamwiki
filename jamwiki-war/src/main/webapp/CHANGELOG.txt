@@ -9,6 +9,8 @@ Bugfixes:
 
   * Fix a template parser issue when parsing content of the form
     "{{{{PAGENAME}}/info}}".  Reported by Felipe Avilis.
+  * PDFs and other non-image files in the "Image:" namespace were not appearing
+    on Special:AllPages.  Reported by Felipe Avilis.
 
 Translation Updates:
 

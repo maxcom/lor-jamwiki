@@ -192,10 +192,11 @@ public class ItemsServlet extends JAMWikiServlet {
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		List<Namespace> namespaces = WikiBase.getDataHandler().lookupNamespaces();
 		// find the current namespace and topic type
-		Integer namespaceId = (request.getParameter("namespace") == null) ? Namespace.MAIN_ID : Integer.valueOf(request.getParameter("namespace"));
-		TopicType topicType = WikiUtil.findTopicTypeForNamespace(WikiBase.getDataHandler().lookupNamespaceById(namespaceId.intValue()));
+		int namespaceId = (request.getParameter("namespace") == null) ? Namespace.MAIN_ID : Integer.valueOf(request.getParameter("namespace"));
+		TopicType topicType1 = (namespaceId == Namespace.FILE_ID) ? TopicType.FILE : TopicType.ARTICLE;
+		TopicType topicType2 = WikiUtil.findTopicTypeForNamespace(WikiBase.getDataHandler().lookupNamespaceById(namespaceId));
 		// retrieve a list of topics for the namespace
-		Map<Integer, String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, TopicType.ARTICLE, topicType, namespaceId, pagination);
+		Map<Integer, String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, topicType1, topicType2, namespaceId, pagination);
 		next.addObject("itemCount", items.size());
 		next.addObject("items", items.values());
 		String rootUrl = "Special:AllPages";
