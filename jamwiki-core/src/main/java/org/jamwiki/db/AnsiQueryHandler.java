@@ -1303,11 +1303,9 @@ public class AnsiQueryHandler implements QueryHandler {
 	}
 
 	/**
-	 *
-	 * had to override the insertTopicVersion method for the Caché implementation
-	 * need this to be public so that CacheQueryHandler can use it
+	 * Initialize a recent change record from a result set.
 	 */
-	public RecentChange initRecentChange(ResultSet rs) throws SQLException {
+	protected RecentChange initRecentChange(ResultSet rs) throws SQLException {
 		RecentChange change = new RecentChange();
 		int topicVersionId = rs.getInt("topic_version_id");
 		if (topicVersionId > 0) {
@@ -1336,9 +1334,10 @@ public class AnsiQueryHandler implements QueryHandler {
 			change.initChangeWikiMessageForVersion(editType, rs.getString("log_params"));
 		}
 		int logType = rs.getInt("log_type");
+		Integer logSubType = (rs.getInt("log_sub_type") <= 0) ? null : rs.getInt("log_sub_type");
 		if (logType > 0) {
 			change.setLogType(logType);
-			change.initChangeWikiMessageForLog(logType, rs.getString("log_params"), change.getTopicVersionId());
+			change.initChangeWikiMessageForLog(logType, logSubType, rs.getString("log_params"), change.getTopicVersionId());
 		}
 		change.setVirtualWiki(rs.getString("virtual_wiki_name"));
 		return change;
@@ -1578,17 +1577,22 @@ public class AnsiQueryHandler implements QueryHandler {
 			}
 			stmt.setString(4, logItem.getUserDisplayName());
 			stmt.setInt(5, logItem.getLogType());
-			stmt.setString(6, logItem.getLogComment());
-			stmt.setString(7, logItem.getLogParamString());
-			if (logItem.getTopicId() == null) {
-				stmt.setNull(8, Types.INTEGER);
+			if (logItem.getLogSubType() == null) {
+				stmt.setNull(6, Types.INTEGER);
 			} else {
-				stmt.setInt(8, logItem.getTopicId());
+				stmt.setInt(6, logItem.getLogSubType());
 			}
-			if (logItem.getTopicVersionId() == null) {
+			stmt.setString(7, logItem.getLogComment());
+			stmt.setString(8, logItem.getLogParamString());
+			if (logItem.getTopicId() == null) {
 				stmt.setNull(9, Types.INTEGER);
 			} else {
-				stmt.setInt(9, logItem.getTopicVersionId());
+				stmt.setInt(9, logItem.getTopicId());
+			}
+			if (logItem.getTopicVersionId() == null) {
+				stmt.setNull(10, Types.INTEGER);
+			} else {
+				stmt.setInt(10, logItem.getTopicVersionId());
 			}
 			stmt.executeUpdate();
 		} finally {
@@ -1644,7 +1648,12 @@ public class AnsiQueryHandler implements QueryHandler {
 			} else {
 				stmt.setInt(13, change.getLogType());
 			}
-			stmt.setString(14, change.getParamString());
+			if (change.getLogSubType() == null) {
+				stmt.setNull(14, Types.INTEGER);
+			} else {
+				stmt.setInt(14, change.getLogSubType());
+			}
+			stmt.setString(15, change.getParamString());
 			stmt.executeUpdate();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);

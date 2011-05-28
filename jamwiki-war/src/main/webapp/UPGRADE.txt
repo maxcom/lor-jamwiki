@@ -106,6 +106,15 @@ followed by 0.6.3.
      the default StyleSheet topic can be found in the
      /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
      should only be edited AFTER all other upgrade steps have been completed.
+  3. Update the database schema by executing the following SQL statements:
+       a) Add the log_sub_type column to the jam_log and jam_recent_change
+          tables.
+            Oracle & MS SQL:
+              alter table jam_log add log_sub_type INTEGER;
+              alter table jam_recent_change add log_sub_type INTEGER;
+            Other Databases:
+              alter table jam_log add column logo_sub_type INTEGER;
+              alter table jam_recent_change add column logo_sub_type INTEGER;
 
 
   JAMWiki 1.0.3

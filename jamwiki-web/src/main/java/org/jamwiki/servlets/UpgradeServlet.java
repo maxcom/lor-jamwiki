@@ -189,6 +189,12 @@ public class UpgradeServlet extends JAMWikiServlet {
 				messages = DatabaseUpgrades.upgrade100(messages);
 			}
 		}
+		if (oldVersion.before(1, 1, 0)) {
+			upgradeRequired = true;
+			if (performUpgrade) {
+				messages = DatabaseUpgrades.upgrade110(messages);
+			}
+		}
 		return upgradeRequired;
 	}
 

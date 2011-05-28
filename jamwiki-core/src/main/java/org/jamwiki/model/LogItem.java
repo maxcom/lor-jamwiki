@@ -53,6 +53,7 @@ public class LogItem {
 	private String logComment = null;
 	private Timestamp logDate = null;
 	private List<String> logParams = null;
+	private Integer logSubType = null;
 	private int logType = -1;
 	private Integer topicId = null;
 	private Integer topicVersionId = null;
@@ -156,7 +157,7 @@ public class LogItem {
 	/**
 	 *
 	 */
-	public static WikiMessage retrieveLogWikiMessage(int logType, String logParamString, Integer topicVersionId) {
+	public static WikiMessage retrieveLogWikiMessage(int logType, Integer logSubType, String logParamString, Integer topicVersionId) {
 		String[] logParams = null;
 		if (!StringUtils.isBlank(logParamString)) {
 			logParams = logParamString.split("\\|");
@@ -251,14 +252,34 @@ public class LogItem {
 	}
 
 	/**
-	 *
+	 * In most cases the log type is sufficient to determine how to classify a log
+	 * item, but in some cases further granularity is required.  One such example
+	 * is deletion/undeletion, which are both part of the "deletion" log type.
+	 */
+	public Integer getLogSubType() {
+		return this.logSubType;
+	}
+
+	/**
+	 * In most cases the log type is sufficient to determine how to classify a log
+	 * item, but in some cases further granularity is required.  One such example
+	 * is deletion/undeletion, which are both part of the "deletion" log type.
+	 */
+	public void setLogSubType(Integer logSubType) {
+		this.logSubType = logSubType;
+	}
+
+	/**
+	 * The log type determines what log (deletion, upload, etc) the log record will
+	 * be classified under.
 	 */
 	public int getLogType() {
 		return this.logType;
 	}
 
 	/**
-	 *
+	 * The log type determines what log (deletion, upload, etc) the log record will
+	 * be classified under.
 	 */
 	public void setLogType(int logType) {
 		this.logType = logType;
@@ -276,7 +297,7 @@ public class LogItem {
 	 * params.
 	 */
 	public WikiMessage getLogWikiMessage() {
-		return LogItem.retrieveLogWikiMessage(this.getLogType(), this.getLogParamString(), this.getTopicVersionId());
+		return LogItem.retrieveLogWikiMessage(this.getLogType(), this.getLogSubType(), this.getLogParamString(), this.getTopicVersionId());
 	}
 
 	/**

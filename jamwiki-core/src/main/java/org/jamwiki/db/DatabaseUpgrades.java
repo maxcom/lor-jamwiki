@@ -144,4 +144,26 @@ public class DatabaseUpgrades {
 		}
 		return messages;
 	}
+
+	/**
+	 *
+	 */
+	public static List<WikiMessage> upgrade110(List<WikiMessage> messages) throws WikiException {
+		TransactionStatus status = null;
+		try {
+			status = DatabaseConnection.startTransaction(getTransactionDefinition());
+			Connection conn = DatabaseConnection.getConnection();
+			// add the log_sub_type column to the jam_log and jam_recent_change tables
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_110_ADD_LOG_SUB_TYPE", conn);
+			messages.add(new WikiMessage("upgrade.message.db.column.added", "log_sub_type", "jam_log"));
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_110_ADD_RECENT_CHANGE_LOG_SUB_TYPE", conn);
+			messages.add(new WikiMessage("upgrade.message.db.column.added", "log_sub_type", "jam_recent_change"));
+		} catch (SQLException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			logger.error("Database failure during upgrade", e);
+			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
+		}
+		DatabaseConnection.commit(status);
+		return messages;
+	}
 }

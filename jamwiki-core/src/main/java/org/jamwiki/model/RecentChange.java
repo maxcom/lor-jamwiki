@@ -36,6 +36,7 @@ public class RecentChange {
 	private Timestamp changeDate = null;
 	private transient WikiMessage changeWikiMessage = null;
 	private Integer editType = null;
+	private Integer logSubType = null;
 	private Integer logType = null;
 	private List<String> params = null;
 	private Integer previousTopicVersionId = null;
@@ -82,16 +83,17 @@ public class RecentChange {
 		recentChange.setChangeDate(logItem.getLogDate());
 		recentChange.setVirtualWiki(logItem.getVirtualWiki());
 		recentChange.setParamString(logItem.getLogParamString());
+		recentChange.setLogSubType(logItem.getLogSubType());
 		recentChange.setLogType(logItem.getLogType());
-		recentChange.initChangeWikiMessageForLog(logItem.getLogType(), logItem.getLogParamString(), logItem.getTopicVersionId());
+		recentChange.initChangeWikiMessageForLog(logItem.getLogType(), logItem.getLogSubType(), logItem.getLogParamString(), logItem.getTopicVersionId());
 		return recentChange;
 	}
 
 	/**
 	 *
 	 */
-	public void initChangeWikiMessageForLog(int logType, String logParamString, Integer topicVersionId) {
-		this.setChangeWikiMessage(LogItem.retrieveLogWikiMessage(logType, logParamString, topicVersionId));
+	public void initChangeWikiMessageForLog(int logType, Integer logSubType, String logParamString, Integer topicVersionId) {
+		this.setChangeWikiMessage(LogItem.retrieveLogWikiMessage(logType, logSubType, logParamString, topicVersionId));
 	}
 
 	/**
@@ -238,14 +240,34 @@ public class RecentChange {
 	}
 
 	/**
-	 *
+	 * In most cases the log type is sufficient to determine how to classify a log
+	 * item, but in some cases further granularity is required.  One such example
+	 * is deletion/undeletion, which are both part of the "deletion" log type.
+	 */
+	public Integer getLogSubType() {
+		return this.logSubType;
+	}
+
+	/**
+	 * In most cases the log type is sufficient to determine how to classify a log
+	 * item, but in some cases further granularity is required.  One such example
+	 * is deletion/undeletion, which are both part of the "deletion" log type.
+	 */
+	public void setLogSubType(Integer logSubType) {
+		this.logSubType = logSubType;
+	}
+
+	/**
+	 * The log type determines what log (deletion, upload, etc) the log record will
+	 * be classified under.
 	 */
 	public Integer getLogType() {
 		return this.logType;
 	}
 
 	/**
-	 *
+	 * The log type determines what log (deletion, upload, etc) the log record will
+	 * be classified under.
 	 */
 	public void setLogType(Integer logType) {
 		this.logType = logType;
