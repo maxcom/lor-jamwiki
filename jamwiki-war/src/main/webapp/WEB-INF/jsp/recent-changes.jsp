@@ -68,11 +68,7 @@
 	<c:if test="${!empty change.changeTypeNotification}">&#160;<b><c:out value="${change.changeTypeNotification}" /></b></c:if>
 	<c:if test="${!empty change.changeWikiMessage}">
 		&#160;
-		<fmt:message key="${change.changeWikiMessage.key}">
-			<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
-			<fmt:param><c:if test="${change.changeWikiMessage.paramsLength >= 1}"><jamwiki:link value="${change.changeWikiMessage.params[0]}" text="${change.changeWikiMessage.params[0]}" /></c:if></fmt:param>
-			<fmt:param><c:if test="${change.changeWikiMessage.paramsLength >= 2}"><jamwiki:link value="${change.changeWikiMessage.params[1]}" text="${change.changeWikiMessage.params[1]}" /></c:if></fmt:param>
-		</fmt:message>
+		<jamwiki_t:wikiMessage message="${change.changeWikiMessage}" />
 	</c:if>
 	<c:if test="${!empty change.changeComment}">&#160;(<span class="edit-comment"><jamwiki:editComment comment="${change.changeComment}" topic="${change.topicName}" /></span>)</c:if>
 </li>

@@ -9,8 +9,28 @@
 
 <fmt:message key="${message.key}">
 	<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
-	<c:if test="${message.paramsLength >= 1}"><fmt:param>${message.params[0]}</fmt:param></c:if>
-	<c:if test="${message.paramsLength >= 2}"><fmt:param>${message.params[1]}</fmt:param></c:if>
-	<c:if test="${message.paramsLength >= 3}"><fmt:param>${message.params[2]}</fmt:param></c:if>
-	<c:if test="${message.paramsLength >= 4}"><fmt:param>${message.params[3]}</fmt:param></c:if>
+	<c:if test="${message.paramsLength >= 1}">
+		<c:choose>
+			<c:when test="${message.params[0].wikiLink}"><fmt:param><jamwiki:link value="${message.params[0]}" text="${message.params[0]}" /></fmt:param></c:when>
+			<c:otherwise><fmt:param>${message.params[0]}</fmt:param></c:otherwise>
+		</c:choose>
+	</c:if>
+	<c:if test="${message.paramsLength >= 2}">
+		<c:choose>
+			<c:when test="${message.params[1].wikiLink}"><fmt:param><jamwiki:link value="${message.params[1]}" text="${message.params[1]}" /></fmt:param></c:when>
+			<c:otherwise><fmt:param>${message.params[1]}</fmt:param></c:otherwise>
+		</c:choose>
+	</c:if>
+	<c:if test="${message.paramsLength >= 3}">
+		<c:choose>
+			<c:when test="${message.params[2].wikiLink}"><fmt:param><jamwiki:link value="${message.params[2]}" text="${message.params[2]}" /></fmt:param></c:when>
+			<c:otherwise><fmt:param>${message.params[2]}</fmt:param></c:otherwise>
+		</c:choose>
+	</c:if>
+	<c:if test="${message.paramsLength >= 4}">
+		<c:choose>
+			<c:when test="${message.params[3].wikiLink}"><fmt:param><jamwiki:link value="${message.params[3]}" text="${message.params[3]}" /></fmt:param></c:when>
+			<c:otherwise><fmt:param>${message.params[3]}</fmt:param></c:otherwise>
+		</c:choose>
+	</c:if>
 </fmt:message>

@@ -59,11 +59,7 @@
 	&#160;
 	<c:if test="${!empty logItem.logWikiMessage}">
 		&#160;
-		<fmt:message key="${logItem.logWikiMessage.key}">
-			<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
-			<fmt:param><c:if test="${logItem.logWikiMessage.paramsLength >= 1}"><jamwiki:link value="${logItem.logWikiMessage.params[0]}" text="${logItem.logWikiMessage.params[0]}" /></c:if></fmt:param>
-			<fmt:param><c:if test="${logItem.logWikiMessage.paramsLength >= 2}"><jamwiki:link value="${logItem.logWikiMessage.params[1]}" text="${logItem.logWikiMessage.params[1]}" /></c:if></fmt:param>
-		</fmt:message>
+		<jamwiki_t:wikiMessage message="${logItem.logWikiMessage}" />
 	</c:if>
 	<c:if test="${!empty logItem.logComment}">&#160;<span class="edit-comment">(<c:out value="${logItem.logComment}" />)</span></c:if>
 </li>

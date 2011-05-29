@@ -144,6 +144,7 @@ public class LogItem {
 	public static LogItem initLogItemPurge(Topic topic, TopicVersion topicVersion, WikiUser user, String ipAddress) {
 		LogItem logItem = new LogItem();
 		logItem.addLogParam(topic.getName());
+		logItem.addLogParam(Integer.toString(topicVersion.getTopicVersionId()));
 		logItem.setLogType(LOG_TYPE_DELETE);
 		logItem.setLogSubType(LOG_SUBTYPE_DELETE_PURGE);
 		logItem.setLogDate(new Timestamp(System.currentTimeMillis()));
@@ -169,22 +170,35 @@ public class LogItem {
 		WikiMessage logWikiMessage = null;
 		if (logType == LogItem.LOG_TYPE_DELETE) {
 			if (logSubType != null && logSubType.intValue() == LOG_SUBTYPE_DELETE_UNDELETE) {
-				logWikiMessage = new WikiMessage("log.message.undeletion", logParams);
+				logWikiMessage = new WikiMessage("log.message.undeletion");
 			} else if (logSubType != null && logSubType.intValue() == LOG_SUBTYPE_DELETE_PURGE) {
-				logWikiMessage = new WikiMessage("log.message.purge", logParams);
+				logWikiMessage = new WikiMessage("log.message.purge");
+				// first param is the topic name, second is the version number
+				if (logParams != null && logParams.length > 0) {
+					logWikiMessage.addWikiLinkParam(logParams[0]);
+				}
+				if (logParams != null && logParams.length > 1) {
+					logWikiMessage.addParam(logParams[1]);
+				}
 			} else {
-				logWikiMessage = new WikiMessage("log.message.deletion", logParams);
+				logWikiMessage = new WikiMessage("log.message.deletion");
 			}
 		} else if (logType == LogItem.LOG_TYPE_IMPORT) {
-			logWikiMessage = new WikiMessage("log.message.import", logParams);
+			logWikiMessage = new WikiMessage("log.message.import");
 		} else if (logType == LogItem.LOG_TYPE_MOVE) {
-			logWikiMessage = new WikiMessage("log.message.move", logParams);
+			logWikiMessage = new WikiMessage("log.message.move");
 		} else if (logType == LogItem.LOG_TYPE_PERMISSION) {
-			logWikiMessage = new WikiMessage("log.message.permission", logParams);
+			logWikiMessage = new WikiMessage("log.message.permission");
 		} else if (logType == LogItem.LOG_TYPE_UPLOAD) {
-			logWikiMessage = new WikiMessage("log.message.upload", logParams);
+			logWikiMessage = new WikiMessage("log.message.upload");
 		} else if (logType == LogItem.LOG_TYPE_USER_CREATION) {
 			logWikiMessage = new WikiMessage("log.message.user");
+		}
+		// format params as links if they haven't already been set
+		if (logParams != null && logWikiMessage.getParamsLength() == 0) {
+			for (String logParam : logParams) {
+				logWikiMessage.addWikiLinkParam(logParam);
+			}
 		}
 		return logWikiMessage;
 	}

@@ -18,17 +18,20 @@ package org.jamwiki;
 
 import java.util.List;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiMessageParam;
 import org.apache.commons.lang.StringUtils;
 
 /**
  * This class is a utility class useful for storing messages key and object
  * values that can later be displayed using the jstl fmt:message tag.
+ *
+ * @see org.jamwiki.utils.WikiMessageParam
  */
 public class WikiMessage {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiMessage.class.getName());
 	private final String key;
-	private String[] params = null;
+	private WikiMessageParam[] params = null;
 
 	/**
 	 * Create a new message that is mapped to the specified ApplicationResources
@@ -53,8 +56,8 @@ public class WikiMessage {
 	 */
 	public WikiMessage(String key, String param1) {
 		this.key = key;
-		this.params = new String[1];
-		params[0] = this.escapeHtml(param1);
+		this.params = new WikiMessageParam[1];
+		params[0] = new WikiMessageParam(this.escapeHtml(param1));
 	}
 
 	/**
@@ -72,9 +75,9 @@ public class WikiMessage {
 	 */
 	public WikiMessage(String key, String param1, String param2) {
 		this.key = key;
-		this.params = new String[2];
-		params[0] = this.escapeHtml(param1);
-		params[1] = this.escapeHtml(param2);
+		this.params = new WikiMessageParam[2];
+		params[0] = new WikiMessageParam(this.escapeHtml(param1));
+		params[1] = new WikiMessageParam(this.escapeHtml(param2));
 	}
 
 	/**
@@ -90,9 +93,9 @@ public class WikiMessage {
 	public WikiMessage(String key, String[] params) {
 		this.key = key;
 		if (params != null) {
-			this.params = new String[params.length];
+			this.params = new WikiMessageParam[params.length];
 			for (int i = 0; i < params.length; i++) {
-				this.params[i] = this.escapeHtml(params[i]);
+				this.params[i] = new WikiMessageParam(this.escapeHtml(params[i]));
 			}
 		}
 	}
@@ -110,12 +113,51 @@ public class WikiMessage {
 	public WikiMessage(String key, List<String> paramList) {
 		this.key = key;
 		if (paramList != null && !paramList.isEmpty()) {
-			this.params = new String[paramList.size()];
+			this.params = new WikiMessageParam[paramList.size()];
 			int i = 0;
 			for (String param : paramList) {
-				this.params[i++] = this.escapeHtml(param);
+				this.params[i++] = new WikiMessageParam(this.escapeHtml(param));
 			}
 		}
+	}
+
+	/**
+	 * Add a string param to this WikiMessage object.  The param will be HTML-escaped
+	 * to prevent formatting issues or XSS issues.
+	 *
+	 * @param param A string that will be processed with the fmt:param tag
+	 *  when this wiki message is rendered.
+	 */
+	public void addParam(String param) {
+		WikiMessageParam wikiMessageParam = new WikiMessageParam(this.escapeHtml(param));
+		this.addParam(wikiMessageParam);
+	}
+
+	/**
+	 * Add a wiki link param to this WikiMessage object.
+	 *
+	 * @param wikiLinkParam A string that will be processed with the jamwiki:link tag
+	 *  when this wiki message is rendered.
+	 */
+	public void addWikiLinkParam(String wikiLinkParam) {
+		WikiMessageParam wikiMessageParam = new WikiMessageParam(wikiLinkParam, true);
+		this.addParam(wikiMessageParam);
+	}
+
+	/**
+	 * Update the list of params for this WikiMessage, adding the new
+	 * param to the end of the parameter array.
+	 */
+	private void addParam(WikiMessageParam wikiMessageParam) {
+		WikiMessageParam[] newParams = new WikiMessageParam[this.getParamsLength() + 1];
+		int i = 0;
+		if (this.params != null) {
+			for (WikiMessageParam param : this.params) {
+				newParams[i++] = param;
+			}
+		}
+		newParams[i] = wikiMessageParam;
+		this.params = newParams;
 	}
 
 	/**
@@ -132,7 +174,7 @@ public class WikiMessage {
 	 *
 	 * @return The array of parameter objects associated with this message.
 	 */
-	public String[] getParams() {
+	public WikiMessageParam[] getParams() {
 		return this.params;
 	}
 
@@ -154,7 +196,10 @@ public class WikiMessage {
 	 * @param params The array of parameter objects to associate with this message.
 	 */
 	public void setParamsWithoutEscaping(String[] params) {
-		this.params = params;
+		this.params = new WikiMessageParam[params.length];
+		for (int i = 0; i < params.length; i++) {
+			this.params[i] = new WikiMessageParam(params[i]);
+		}
 	}
 	
 	/**
@@ -184,7 +229,7 @@ public class WikiMessage {
 		if (this.params == null || this.params.length <= index) {
 			throw new IllegalArgumentException("Attempt to replace index " + index + " for an array that has " + ((this.params == null) ? "0" : this.params.length) + " parameters");
 		}
-		this.params[index] = this.escapeHtml(parameter);
+		this.params[index] = new WikiMessageParam(this.escapeHtml(parameter));
 	}
 
 	/**
@@ -198,8 +243,8 @@ public class WikiMessage {
 	public String toString() {
 		String result = this.key;
 		if (this.params != null) {
-			for (String param : this.params) {
-				result += " | " + param;
+			for (WikiMessageParam param : this.params) {
+				result += " | " + param.toString();
 			}
 		}
 		return result;

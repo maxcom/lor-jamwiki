@@ -93,29 +93,5 @@ public class WikiMessageTest extends JAMWikiUnitTest {
 		String result = new WikiMessage("testWikiMessageKey").getKey();
 		assertSame("result", "testWikiMessageKey", result);
 	}
-
-	/**
-	 *
-	 */
-	@Test
-	public void testGetParams() throws Throwable {
-		String[] strings = new String[3];
-		WikiMessage wikiMessage = new WikiMessage("testWikiMessageKey");
-		wikiMessage.setParamsWithoutEscaping(strings);
-		String[] result = wikiMessage.getParams();
-		assertSame("result", strings, result);
-		assertNull("strings[0]", strings[0]);
-	}
-
-	/**
-	 *
-	 */
-	@Test
-	public void testSetParamsWithoutEscaping() throws Throwable {
-		String[] strings = new String[3];
-		WikiMessage wikiMessage = new WikiMessage("testWikiMessageKey");
-		wikiMessage.setParamsWithoutEscaping(strings);
-		assertSame("wikiMessage.getParams()", strings, wikiMessage.getParams());
-	}
 }
 

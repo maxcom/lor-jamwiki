@@ -105,7 +105,11 @@ public class RecentChange {
 			return;
 		}
 		if (editType == TopicVersion.EDIT_MOVE) {
-			this.setChangeWikiMessage(new WikiMessage("move.editcomment", versionParamString.split("\\|")));
+			WikiMessage wikiMessage = new WikiMessage("move.editcomment");
+			for (String param : versionParamString.split("\\|")) {
+				wikiMessage.addWikiLinkParam(param);
+			}
+			this.setChangeWikiMessage(wikiMessage);
 		} else if (editType == TopicVersion.EDIT_PERMISSION) {
 			this.setChangeWikiMessage(new WikiMessage("manage.message.permissions"));
 		}
