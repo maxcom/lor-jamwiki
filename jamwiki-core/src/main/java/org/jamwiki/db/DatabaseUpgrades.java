@@ -164,6 +164,34 @@ public class DatabaseUpgrades {
 			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
 		}
 		DatabaseConnection.commit(status);
+		try {
+			// perform a separate transaction to update existing data.  this code is in its own
+			// transaction since if it fails the upgrade can still be considered successful.
+			status = DatabaseConnection.startTransaction(getTransactionDefinition());
+			Connection conn = DatabaseConnection.getConnection();
+			// set the log_sub_type value in the jam_log table
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_110_UPDATE_LOG_SUB_TYPE_UNDELETE", conn);
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_110_UPDATE_LOG_SUB_TYPE_DELETE", conn);
+			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_log"));
+			// set the log_sub_type value in the jam_recent_change table
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_110_UPDATE_RECENT_CHANGE_LOG_SUB_TYPE_UNDELETE", conn);
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_110_UPDATE_RECENT_CHANGE_LOG_SUB_TYPE_DELETE", conn);
+			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_recent_change"));
+		} catch (SQLException e) {
+			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
+			// do not throw this error and halt the upgrade process - populating the field
+			// is not required for existing systems.
+			logger.warn("Non-fatal error while upgrading.", e);
+			try {
+				DatabaseConnection.rollbackOnException(status, e);
+			} catch (Exception ex) {
+				// ignore
+			}
+			status = null; // so we do not try to commit
+		}
+		if (status != null) {
+			DatabaseConnection.commit(status);
+		}
 		return messages;
 	}
 }

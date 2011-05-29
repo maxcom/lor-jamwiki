@@ -1298,6 +1298,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		logItem.setLogComment(rs.getString("log_comment"));
 		logItem.setLogParamString(rs.getString("log_params"));
 		logItem.setLogType(rs.getInt("log_type"));
+		logItem.setLogSubType(rs.getInt("log_sub_type"));
 		logItem.setVirtualWiki(virtualWikiName);
 		return logItem;
 	}
@@ -1337,6 +1338,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		Integer logSubType = (rs.getInt("log_sub_type") <= 0) ? null : rs.getInt("log_sub_type");
 		if (logType > 0) {
 			change.setLogType(logType);
+			change.setLogSubType(logSubType);
 			change.initChangeWikiMessageForLog(logType, logSubType, rs.getString("log_params"), change.getTopicVersionId());
 		}
 		change.setVirtualWiki(rs.getString("virtual_wiki_name"));

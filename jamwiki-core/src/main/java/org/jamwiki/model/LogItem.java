@@ -39,6 +39,9 @@ public class LogItem {
 	public static final int LOG_TYPE_PERMISSION = 4;
 	public static final int LOG_TYPE_UPLOAD = 6;
 	public static final int LOG_TYPE_USER_CREATION = 7;
+	public static final int LOG_SUBTYPE_DELETE_DELETE = 10;
+	public static final int LOG_SUBTYPE_DELETE_UNDELETE = 11;
+	public static final int LOG_SUBTYPE_DELETE_PURGE = 12;
 	public static Map<Integer, String> LOG_TYPES = new LinkedHashMap<Integer, String>();
 	static {
 		LOG_TYPES.put(LOG_TYPE_ALL, "log.caption.log.all");
@@ -80,11 +83,11 @@ public class LogItem {
 		switch (topicVersion.getEditType()) {
 			case TopicVersion.EDIT_DELETE:
 				logItem.setLogType(LOG_TYPE_DELETE);
+				logItem.setLogSubType(LOG_SUBTYPE_DELETE_DELETE);
 				break;
 			case TopicVersion.EDIT_UNDELETE:
 				logItem.setLogType(LOG_TYPE_DELETE);
-				// add a param to distinguish undeletes from deletes
-				logItem.addLogParam(Integer.toString(TopicVersion.EDIT_UNDELETE));
+				logItem.setLogSubType(LOG_SUBTYPE_DELETE_UNDELETE);
 				break;
 			case TopicVersion.EDIT_MOVE:
 				if (StringUtils.isBlank(topic.getRedirectTo())) {
@@ -141,14 +144,15 @@ public class LogItem {
 	public static LogItem initLogItemPurge(Topic topic, TopicVersion topicVersion, WikiUser user, String ipAddress) {
 		LogItem logItem = new LogItem();
 		logItem.addLogParam(topic.getName());
-		// add a second dummy parameter to distinguish from standard deletes
-		logItem.addLogParam(Integer.toString(topicVersion.getTopicVersionId()));
 		logItem.setLogType(LOG_TYPE_DELETE);
+		logItem.setLogSubType(LOG_SUBTYPE_DELETE_PURGE);
 		logItem.setLogDate(new Timestamp(System.currentTimeMillis()));
 		logItem.setTopicId(topic.getTopicId());
-		logItem.setUserDisplayName(ipAddress);
 		if (user != null && user.getUserId() > 0) {
 			logItem.setUserId(user.getUserId());
+			logItem.setUserDisplayName(user.getUsername());
+		} else {
+			logItem.setUserDisplayName(ipAddress);
 		}
 		logItem.setVirtualWiki(topic.getVirtualWiki());
 		return logItem;
@@ -164,9 +168,9 @@ public class LogItem {
 		}
 		WikiMessage logWikiMessage = null;
 		if (logType == LogItem.LOG_TYPE_DELETE) {
-			if (logParams != null && logParams.length >= 2 && StringUtils.equals(logParams[1], Integer.toString(TopicVersion.EDIT_UNDELETE))) {
+			if (logSubType != null && logSubType.intValue() == LOG_SUBTYPE_DELETE_UNDELETE) {
 				logWikiMessage = new WikiMessage("log.message.undeletion", logParams);
-			} else if (topicVersionId == null) {
+			} else if (logSubType != null && logSubType.intValue() == LOG_SUBTYPE_DELETE_PURGE) {
 				logWikiMessage = new WikiMessage("log.message.purge", logParams);
 			} else {
 				logWikiMessage = new WikiMessage("log.message.deletion", logParams);
