@@ -69,7 +69,7 @@
 	<%@ include file="user-menu.jsp"%>
 	<%@ include file="top-menu.jsp"%>
 	<div id="contents" >
-	<h1 id="contents-header"><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /></fmt:message></h1>
+	<h1 id="contents-header"><jamwiki_t:wikiMessage message="${pageInfo.pageTitle}" /></h1>
 	<c:if test="${!empty pageInfo.redirectUrl}">
 	<div id="contentSub"><fmt:message key="topic.redirect.from"><fmt:param><a href="<c:out value="${pageInfo.redirectUrl}" />"><c:out value="${pageInfo.redirectName}" /></a></fmt:param></fmt:message></div>
 	</c:if>

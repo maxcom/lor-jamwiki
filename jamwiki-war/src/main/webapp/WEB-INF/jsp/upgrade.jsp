@@ -25,7 +25,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /><fmt:param value="${pageInfo.pageTitle.params[1]}" /></fmt:message></title>
+	<title><jamwiki_t:wikiMessage message="${pageInfo.pageTitle}" /></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <style>
 body {
@@ -61,7 +61,7 @@ body, input, select {
 <body>
 <div id="upgrade-container">
 
-<h3><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /><fmt:param value="${pageInfo.pageTitle.params[1]}" /></fmt:message></h3>
+<h3><jamwiki_t:wikiMessage message="${pageInfo.pageTitle}" /></h3>
 
 <form name="adminUpgrade" method="post">
 <input type="hidden" name="function" value="upgrade" />
@@ -70,27 +70,15 @@ body, input, select {
 	<tr>
 		<td colspan="2">
 			<div id="upgrade-messages">
-				<c:if test="${!empty successMessage}"><h4><fmt:message key="${successMessage.key}"><fmt:param value="${successMessage.params[0]}" /></fmt:message></h4></c:if>
+				<c:if test="${!empty successMessage}"><h4><jamwiki_t:wikiMessage message="${successMessage}" /></h4></c:if>
 				<c:if test="${!empty errors}">
 				<c:forEach items="${errors}" var="message">
-					<div class="red">
-						<fmt:message key="${message.key}">
-							<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
-							<fmt:param><c:if test="${message.paramsLength >= 1}">${message.params[0]}</c:if></fmt:param>
-							<fmt:param><c:if test="${message.paramsLength >= 2}">${message.params[1]}</c:if></fmt:param>
-						</fmt:message>
-					</div>
+					<div class="red"><jamwiki_t:wikiMessage message="${message}" /></div>
 				</c:forEach>
 				</c:if>
 				<c:if test="${!empty messages}">
 				<c:forEach items="${messages}" var="message">
-					<div class="green">
-						<fmt:message key="${message.key}">
-							<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
-							<fmt:param><c:if test="${message.paramsLength >= 1}">${message.params[0]}</c:if></fmt:param>
-							<fmt:param><c:if test="${message.paramsLength >= 2}">${message.params[1]}</c:if></fmt:param>
-						</fmt:message>
-					</div>
+					<div class="green"><jamwiki_t:wikiMessage message="${message}" /></div>
 				</c:forEach>
 				</c:if>
 			</div>
@@ -104,11 +92,7 @@ body, input, select {
 			<td colspan="2">
 				<ul>
 					<c:forEach items="${upgradeDetails}" var="upgradeDetail">
-						<li><fmt:message key="${upgradeDetail.key}">
-							<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
-							<fmt:param><c:if test="${upgradeDetail.paramsLength >= 1}">${upgradeDetail.params[0]}</c:if></fmt:param>
-							<fmt:param><c:if test="${upgradeDetail.paramsLength >= 2}">${upgradeDetail.params[1]}</c:if></fmt:param>
-						</fmt:message></li>
+						<li><jamwiki_t:wikiMessage message="${upgradeDetail}" /></li>
 					</c:forEach>
 				</ul>
 			</td>

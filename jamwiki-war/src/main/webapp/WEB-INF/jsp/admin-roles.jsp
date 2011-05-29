@@ -35,10 +35,10 @@
 <div class="message"><fmt:message key="roles.caption.instructions" /></div>
 
 <c:if test="${!empty message}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
 <c:if test="${!empty errors}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 
 <!-- Assign Group Roles -->

@@ -37,10 +37,10 @@
 <div id="vwiki" class="submenu-tab-item">
 <a name="vwiki"></a>
 <c:if test="${!empty message}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
 <c:if test="${!empty errors}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <form action="<jamwiki:link value="Special:VirtualWiki" />#defaultvwiki" method="post">
 <fieldset>
@@ -144,10 +144,10 @@
 <div id="addnamespace" class="submenu-tab-item">
 <a name="addnamespace"></a>
 <c:if test="${!empty message && function == 'addnamespace'}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
 <c:if test="${!empty errors && function == 'addnamespace'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <form action="<jamwiki:link value="Special:VirtualWiki" />#addnamespace" method="post">
 <fieldset>
@@ -182,10 +182,10 @@
 <div id="namespaces" class="submenu-tab-item">
 <a name="namespaces"></a>
 <c:if test="${!empty message && function == 'namespaces'}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
 <c:if test="${!empty errors && function == 'namespaces'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <!-- Select Virtual Wiki -->
 <form action="<jamwiki:link value="Special:VirtualWiki" />#namespaces" method="get" name="selectnamespaces">
@@ -243,10 +243,10 @@
 <div id="interwiki" class="submenu-tab-item">
 <a name="interwiki"></a>
 <c:if test="${!empty message && (function == 'addInterwiki' || function == 'updateInterwiki')}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
 <c:if test="${!empty errors && (function == 'addInterwiki' || function == 'updateInterwiki')}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <%-- Add Interwiki --%>
 <form action="<jamwiki:link value="Special:VirtualWiki" />#interwiki" method="post">

@@ -30,7 +30,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /></fmt:message></title>
+	<title><jamwiki_t:wikiMessage message="${pageInfo.pageTitle}" /></title>
 <style>
 body {
 	background: #f9f9f9;
@@ -65,23 +65,17 @@ td.formhelp {
 <body>
 <div id="setup-container">
 
-<h3><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /></fmt:message></h3>
+<h3><jamwiki_t:wikiMessage message="${pageInfo.pageTitle}" /></h3>
 
 <c:if test="${!empty messageObject}">
-	<p class="red">
-		<fmt:message key="${messageObject.key}">
-			<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
-			<fmt:param><c:if test="${messageObject.paramsLength >= 1}">${messageObject.params[0]}</c:if></fmt:param>
-			<fmt:param><c:if test="${messageObject.paramsLength >= 2}">${messageObject.params[1]}</c:if></fmt:param>
-		</fmt:message>
-	</p>
+	<p class="red"><jamwiki_t:wikiMessage message="${messageObject}" /></p>
 </c:if>
 
 <form name="setup" method="post">
 <input type="hidden" value="<c:out value="${upgrade}" />" />
 <table style="border:2px solid #333333;padding=1em;">
 <c:if test="${!empty errors}">
-<tr><td class="red" colspan="2"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></td></tr>
+<tr><td class="red" colspan="2"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></td></tr>
 </c:if>
 <c:if test="${!empty upgrade}">
 <tr><td colspan="2">&#160;</td></tr>
@@ -160,13 +154,7 @@ td.formhelp {
 	<td class="formelement"><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="setupConfirmPassword" /></td>
 </tr>
 <tr><td colspan="2">&#160;</td></tr>
-<tr><td colspan="2" class="formHelp">
-	<fmt:message key="${logMessage.key}">
-		<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
-		<fmt:param><c:if test="${logMessage.paramsLength >= 1}">${logMessage.params[0]}</c:if></fmt:param>
-		<fmt:param><c:if test="${logMessage.paramsLength >= 2}">${logMessage.params[1]}</c:if></fmt:param>
-	</fmt:message>
-</td></tr>
+<tr><td colspan="2" class="formHelp"><jamwiki_t:wikiMessage message="${logMessage}" /></td></tr>
 <tr><td colspan="2">&#160;</td></tr>
 <tr><td colspan="2" align="center"><input type="submit" name="function" value="<fmt:message key="admin.action.save" />" /></td></tr>
 <tr><td colspan="2">&#160;</td></tr>

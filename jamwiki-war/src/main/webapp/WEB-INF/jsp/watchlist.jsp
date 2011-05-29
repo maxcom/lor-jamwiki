@@ -26,7 +26,7 @@
 
 <div class="message"><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:Watchlist" /></div>
 
-<c:if test="${!empty message}"><div class="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div></c:if>
+<c:if test="${!empty message}"><div class="message"><jamwiki_t:wikiMessage message="${message}" /></div></c:if>
 
 <c:if test="${empty changes}"><div class="message"><fmt:message key="watchlist.caption.empty" /></div></c:if>
 

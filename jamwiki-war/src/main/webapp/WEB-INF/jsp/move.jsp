@@ -27,7 +27,7 @@
 
 <div id="move">
 
-<c:if test="${!empty messageObject}"><div class="message red"><fmt:message key="${messageObject.key}"><fmt:param value="${messageObject.params[0]}" /></fmt:message></div></c:if>
+<c:if test="${!empty messageObject}"><div class="message red"><jamwiki_t:wikiMessage message="${messageObject}" /></div></c:if>
 
 <div class="message"><fmt:message key="move.overview" /></div>
 

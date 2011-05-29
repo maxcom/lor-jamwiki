@@ -25,7 +25,7 @@
 <div style="margin:10px 30px 10px 30px;padding:10px;color:red;text-align:center;border:1px dashed red;"><fmt:message key="common.warning.experimental" /></div>
 
 <c:if test="${!empty error}">
-<div class="message red"><fmt:message key="${error.key}"><fmt:param value="${error.params[0]}" /></fmt:message></div>
+<div class="message red"><jamwiki_t:wikiMessage message="${error}" /></div>
 </c:if>
 
 <form name="form1" method="post" action="<jamwiki:link value="Special:ImportTiddly" />" enctype="multipart/form-data">

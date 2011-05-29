@@ -43,10 +43,10 @@
 
 <!-- Refresh Search Index -->
 <c:if test="${!empty message && function == 'search'}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
 <c:if test="${!empty errors && function == 'search'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.title.refresh" /></legend>
@@ -62,10 +62,10 @@
 
 <!-- Cache -->
 <c:if test="${!empty message && function == 'cache'}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
 <c:if test="${!empty errors && function == 'cache'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.title.cache" /></legend>
@@ -85,10 +85,10 @@
 <a name="spam"></a>
 
 <c:if test="${!empty message && function == 'spam'}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
 <c:if test="${!empty errors && function == 'spam'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.title.spamfilter" /></legend>
@@ -112,10 +112,10 @@
 
 <!-- Recent Changes -->
 <c:if test="${!empty message && function == 'recentchanges'}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
 <c:if test="${!empty errors && function == 'recentchanges'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.title.recentchanges" /></legend>
@@ -131,10 +131,10 @@
 
 <!-- Log Items -->
 <c:if test="${!empty message && function == 'logitems'}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
 <c:if test="${!empty errors && function == 'logitems'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.title.logitems" /></legend>
@@ -150,10 +150,10 @@
 
 <!-- Namespaces -->
 <c:if test="${!empty message && function == 'namespaces'}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
 <c:if test="${!empty errors && function == 'namespaces'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.maintenance.title.namespaces" /></legend>
@@ -169,10 +169,10 @@
 
 <!-- Topic Links -->
 <c:if test="${!empty message && function == 'links'}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
 <c:if test="${!empty errors && function == 'links'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.maintenance.title.links" /></legend>
@@ -192,10 +192,10 @@
 <div id="password" class="submenu-tab-item">
 <a name="password"></a>
 <c:if test="${!empty message && function == 'password'}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
 <c:if test="${!empty errors && function == 'password'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.title.password" /></legend>
@@ -226,10 +226,10 @@
 <div id="adduser" class="submenu-tab-item">
 <a name="adduser"></a>
 <c:if test="${!empty message && function == 'adduser'}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
 <c:if test="${!empty errors && function == 'adduser'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.title.adduser" /></legend>
@@ -268,10 +268,10 @@
 <div id="migrate" class="submenu-tab-item">
 <a name="migrate"></a>
 <c:if test="${!empty message && function == 'migrate'}">
-<div class="message green"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message></div>
+<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
 <c:if test="${!empty errors && function == 'migrate'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><fmt:message key="${message.key}"><fmt:param value="${message.params[0]}" /></fmt:message><br /></c:forEach></div>
+<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.title.migratedatabase" /> (<fmt:message key="common.caption.experimental" />)</legend>

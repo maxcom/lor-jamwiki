@@ -23,7 +23,7 @@
 <%@ include file="page-init.jsp" %>
 
 <c:if test="${!empty hasSpam}">
-<div class="message red"><fmt:message key="${spam.key}"><fmt:param value="${spam.params[0]}" /></fmt:message></div>
+<div class="message red"><jamwiki_t:wikiMessage message="${spam}" /></div>
 </c:if>
 
 <form name="form1" method="post" action="<jamwiki:link value="Special:Upload" />" enctype="multipart/form-data">

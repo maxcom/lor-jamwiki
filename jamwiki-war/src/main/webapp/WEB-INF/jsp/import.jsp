@@ -26,7 +26,7 @@
 
 <c:if test="${!empty errors}">
 <div class="message red">
-	<c:forEach items="${errors}" var="error"><fmt:message key="${error.key}"><fmt:param value="${error.params[0]}" /></fmt:message><br /></c:forEach>
+	<c:forEach items="${errors}" var="error"><jamwiki_t:wikiMessage message="${error}" /><br /></c:forEach>
 </div>
 </c:if>
 <c:if test="${!empty successfulImports}">

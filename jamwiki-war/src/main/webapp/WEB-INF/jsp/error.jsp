@@ -59,13 +59,7 @@ if (exception != null) {
 <p><fmt:message key="error.heading" /></p>
 <c:choose>
 	<c:when test="${!empty pageInfo.exception}">
-		<p><font style="color: red;font-weight:bold">
-		<fmt:message key="${pageInfo.exception.key}">
-			<%-- message formatting uses an embedded c:if instead of a c:forEach in order to work on Resin (tested with version 3.2.1) --%>
-			<fmt:param><c:if test="${pageInfo.exception.paramsLength >= 1}">${pageInfo.exception.params[0]}</c:if></fmt:param>
-			<fmt:param><c:if test="${pageInfo.exception.paramsLength >= 2}">${pageInfo.exception.params[1]}</c:if></fmt:param>
-		</fmt:message>
-		</font></p>
+		<p><font style="color: red;font-weight:bold"><jamwiki_t:wikiMessage message="${pageInfo.exception}" /></font></p>
 	</c:when>
 	<c:otherwise>
 		<p><font style="color: red;font-weight:bold"><%= errorMessage %></font></p>

@@ -25,9 +25,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /></fmt:message> - ${pageInfo.siteName}</title>
+	<title><jamwiki_t:wikiMessage message="${pageInfo.pageTitle}" /> - ${pageInfo.siteName}</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="DC.Title" content="<fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /></fmt:message> - <c:out value="${pageInfo.siteName}" />" />
+	<meta name="DC.Title" content="<jamwiki_t:wikiMessage message="${pageInfo.pageTitle}" /> - <c:out value="${pageInfo.siteName}" />" />
 <c:if test="${!empty pageInfo.metaDescription}">
 	<meta name="description" content="<c:out value="${pageInfo.metaDescription}" />" />
 </c:if>
@@ -39,7 +39,7 @@
 </head>
 <body style="background:none">
 
-<h1 id="contents-header"><fmt:message key="${pageInfo.pageTitle.key}"><fmt:param value="${pageInfo.pageTitle.params[0]}" /></fmt:message></h1>
+<h1 id="contents-header"><jamwiki_t:wikiMessage message="${pageInfo.pageTitle}" /></h1>
 
 <%@ include file="view-topic-include.jsp" %>
 <%@ include file="view-category-include.jsp" %>

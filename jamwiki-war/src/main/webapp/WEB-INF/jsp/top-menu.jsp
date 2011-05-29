@@ -20,7 +20,7 @@
 <c:forEach items="${pageInfo.tabMenu}" var="menuItem" varStatus="status">
 	<c:set var="menuText" value="${menuItem.value}" />
 	<%-- FIXME - the print target check is an ugly hack.  need to find a better way. --%>
-	<c:if test="${menuText.key == 'tab.common.print'}"><li><jamwiki:link value="${menuItem.key}" target="${pageInfo.printTarget}"><fmt:message key="${menuText.key}"><fmt:param value="${menuText.params[0]}" /></fmt:message></jamwiki:link></li></c:if>
-	<c:if test="${menuText.key != 'tab.common.print'}"><li<c:if test="${pageInfo.selectedTab == menuItem.key}"> class="active"</c:if>><jamwiki:link value="${menuItem.key}"><fmt:message key="${menuText.key}"><fmt:param value="${menuText.params[0]}" /></fmt:message></jamwiki:link></li></c:if>
+	<c:if test="${menuText.key == 'tab.common.print'}"><li><jamwiki:link value="${menuItem.key}" target="${pageInfo.printTarget}"><jamwiki_t:wikiMessage message="${menuText}" /></jamwiki:link></li></c:if>
+	<c:if test="${menuText.key != 'tab.common.print'}"><li<c:if test="${pageInfo.selectedTab == menuItem.key}"> class="active"</c:if>><jamwiki:link value="${menuItem.key}"><jamwiki_t:wikiMessage message="${menuText}" /></jamwiki:link></li></c:if>
 </c:forEach>
 </ul>
