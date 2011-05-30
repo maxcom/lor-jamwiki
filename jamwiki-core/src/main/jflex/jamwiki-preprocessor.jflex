@@ -33,8 +33,8 @@ htmlpreattribute   = ([ ]+) {htmlpreattributes} ([ ]*=[^>\n]+[ ]*)*
 htmlprestart       = (<[ ]*pre ({htmlpreattribute})* [ ]* (\/)? [ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
 htmlpre            = ({htmlprestart}) ~({htmlpreend})
-wikiprestart       = (" ")+ ([^ \t\n])
-wikipreend         = ([^ ]) | ({newline})
+wikipre            = (" ") ([^\n])+ ~({newline})
+wikipreend         = [^ ] | {newline}
 
 /* processing commands */
 noeditsection      = ({newline})? "__NOEDITSECTION__"
@@ -79,9 +79,9 @@ gallery            = (<[ ]*gallery[^>]*>) ~(<[ ]*\/[ ]*gallery[ ]*>)
     return yytext();
 }
 
-<YYINITIAL, WIKIPRE>^{wikiprestart} {
-    if (logger.isTraceEnabled()) logger.trace("wikiprestart: " + yytext() + " (" + yystate() + ")");
-    // rollback the one non-pre character so it can be processed
+<YYINITIAL, WIKIPRE>^{wikipre} {
+    if (logger.isTraceEnabled()) logger.trace("wikipre: " + yytext() + " (" + yystate() + ")");
+    // rollback all but the first (space) character for further processing
     yypushback(yytext().length() - 1);
     if (yystate() != WIKIPRE) {
         beginState(WIKIPRE);
@@ -92,9 +92,9 @@ gallery            = (<[ ]*gallery[^>]*>) ~(<[ ]*\/[ ]*gallery[ ]*>)
 <WIKIPRE>^{wikipreend} {
     if (logger.isTraceEnabled()) logger.trace("wikipreend: " + yytext() + " (" + yystate() + ")");
     endState();
-    // rollback the one non-pre character so it can be processed
-    yypushback(1);
-    return yytext();
+    // rollback everything to allow processing as non-pre text
+    yypushback(yytext().length());
+    return "";
 }
 
 /* ----- processing commands ----- */

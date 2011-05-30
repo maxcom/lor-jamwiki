@@ -58,9 +58,8 @@ attributeValueNoQuotes = [^>\n]+
 htmlattribute      = ([ ]+) [a-zA-Z:]+ ([ ]*=[ ]*({attributeValueInQuotes}|{attributeValueInSingleQuotes}|{attributeValueNoQuotes}))*
 htmlprestart       = (<[ ]*pre ({htmlattribute})* [ ]* (\/)? [ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
-wikiprestart       = (" ")+ ([^ \t\n])
-wikiprecontinue    = (" ") ([ \t\n])
-wikipreend         = ([^ ]) | ({newline})
+wikipre            = (" ") ([^\n])+ ~({newline})
+wikipreend         = [^ ] | {newline}
 
 /* allowed html */
 heading            = h1|h2|h3|h4|h5|h6
@@ -118,7 +117,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 /* TODO: this pattern does not match text such as "< is a less than sign" */
 startparagraph     = ({emptyline})? ({emptyline})? ([^< \n])|{inlinetagopen}|{wikilink}|{nestedwikilink}|{htmllink}|{bold}|{bolditalic}|{italic}|{entity}|{nowiki}
 paragraphempty     = ({emptyline}) ({emptyline})+
-endparagraph1      = ({newline}){1,2} ({hr}|{wikiheading}|{listitem}|{wikiprestart}|{tablestart})
+endparagraph1      = ({newline}){1,2} ({hr}|{wikiheading}|{listitem}|{wikipre}|{tablestart})
 endparagraph2      = (({newline})([ \t]*)){2}
 endparagraph3      = {blockleveltagopen}|{htmlprestart}|{blockleveltagclose}
 endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
@@ -177,9 +176,9 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     return "";
 }
 
-<YYINITIAL, WIKIPRE, LIST, TABLE>^{wikiprestart} {
-    if (logger.isTraceEnabled()) logger.trace("wikiprestart: " + yytext() + " (" + yystate() + ")");
-    // rollback the one non-pre character so it can be processed
+<YYINITIAL, WIKIPRE, LIST, TABLE>^{wikipre} {
+    if (logger.isTraceEnabled()) logger.trace("wikipre: " + yytext() + " (" + yystate() + ")");
+    // rollback all but the first (space) character for further processing
     yypushback(yytext().length() - 1);
     if (yystate() != WIKIPRE) {
         beginState(WIKIPRE);
@@ -188,18 +187,11 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     return "";
 }
 
-<WIKIPRE>^{wikiprecontinue} {
-    // this is a corner-case.  if there is a blank line within a wikipre rollback the first
-    // character to prevent extra spaces from being added.
-    if (logger.isTraceEnabled()) logger.trace("wikiprecontinue: " + yytext() + " (" + yystate() + ")");
-    yypushback(1);
-}
-
 <WIKIPRE>^{wikipreend} {
     if (logger.isTraceEnabled()) logger.trace("wikipreend: " + yytext() + " (" + yystate() + ")");
     endState();
-    // rollback the one non-pre character so it can be processed
-    yypushback(1);
+    // rollback everything to allow processing as non-pre text
+    yypushback(yytext().length());
     this.popTag("pre");
     return  "\n";
 }
