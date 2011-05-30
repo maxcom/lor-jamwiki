@@ -67,62 +67,70 @@ wikisignature      = ([~]{3,5})
 
 %%
 
-/* ----- nowiki ----- */
+<YYINITIAL> {
 
-<YYINITIAL>{nowiki} {
-    if (logger.isTraceEnabled()) logger.trace("nowiki: " + yytext() + " (" + yystate() + ")");
-    return yytext();
-}
+    /* ----- nowiki ----- */
 
-/* ----- pre ----- */
+    {nowiki} {
+        if (logger.isTraceEnabled()) logger.trace("nowiki: " + yytext() + " (" + yystate() + ")");
+        return yytext();
+    }
 
-<YYINITIAL>{htmlpre} {
-    if (logger.isTraceEnabled()) logger.trace("htmlpre: " + yytext() + " (" + yystate() + ")");
-    return yytext();
+    /* ----- pre ----- */
+
+    {htmlpre} {
+        if (logger.isTraceEnabled()) logger.trace("htmlpre: " + yytext() + " (" + yystate() + ")");
+        return yytext();
+    }
 }
 
 /* ----- templates ----- */
 
-<YYINITIAL, TEMPLATE>{templatestart} {
-    if (logger.isTraceEnabled()) logger.trace("templatestart: " + yytext() + " (" + yystate() + ")");
-    // four characters will be matched.  there are multiple possibilities:
-    //   * "{{xy" = template start
-    //   * "{{{x" = possibly a param start
-    //   * "{{{{" = template start + either another template or a param
-    String raw = yytext();
-    boolean isParam = (!raw.equals("{{{{") && raw.startsWith("{{{"));
-    if (isParam) {
-        yypushback(3);
-        if (yystate() == YYINITIAL) {
-            return raw.substring(0, 1);
-        } else {
-            this.templateString += raw.substring(0, 1);
-            return "";
+<YYINITIAL, TEMPLATE> {
+    {templatestart} {
+        if (logger.isTraceEnabled()) logger.trace("templatestart: " + yytext() + " (" + yystate() + ")");
+        // four characters will be matched.  there are multiple possibilities:
+        //   * "{{xy" = template start
+        //   * "{{{x" = possibly a param start
+        //   * "{{{{" = template start + either another template or a param
+        String raw = yytext();
+        boolean isParam = (!raw.equals("{{{{") && raw.startsWith("{{{"));
+        if (isParam) {
+            yypushback(3);
+            if (yystate() == YYINITIAL) {
+                return raw.substring(0, 1);
+            } else {
+                this.templateString += raw.substring(0, 1);
+                return "";
+            }
         }
+        // push back the two extra characters
+        yypushback(2);
+        if (!allowTemplates()) {
+            return yytext();
+        }
+        this.templateString += raw.substring(0, 2);
+        if (yystate() != TEMPLATE) {
+            beginState(TEMPLATE);
+        }
+        return "";
     }
-    // push back the two extra characters
-    yypushback(2);
-    if (!allowTemplates()) {
-        return yytext();
+    {includeonly} {
+        if (logger.isTraceEnabled()) logger.trace("includeonly: " + yytext() + " (" + yystate() + ")");
+        String parsed = this.parse(TAG_TYPE_INCLUDE_ONLY, yytext());
+        if (yystate() == TEMPLATE) {
+            this.templateString += parsed;
+        }
+        return (yystate() == YYINITIAL) ? parsed : "";
     }
-    this.templateString += raw.substring(0, 2);
-    if (yystate() != TEMPLATE) {
-        beginState(TEMPLATE);
+    {noinclude} {
+        if (logger.isTraceEnabled()) logger.trace("noinclude: " + yytext() + " (" + yystate() + ")");
+        return this.parse(TAG_TYPE_NO_INCLUDE, yytext());
     }
-    return "";
-}
-
-<TEMPLATE>{templateendchar} {
-    if (logger.isTraceEnabled()) logger.trace("templateendchar: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    this.templateString += raw;
-    if (Utilities.findMatchingEndTag(this.templateString, 0, "{", "}") != -1) {
-        endState();
-        String result = this.parse(TAG_TYPE_TEMPLATE, this.templateString);
-        this.templateString = "";
-        return result;
+    {onlyinclude} {
+        if (logger.isTraceEnabled()) logger.trace("onlyinclude: " + yytext() + " (" + yystate() + ")");
+        return this.parse(TAG_TYPE_ONLY_INCLUDE, yytext());
     }
-    return "";
 }
 
 <YYINITIAL>{templateparam} {
@@ -130,63 +138,59 @@ wikisignature      = ([~]{3,5})
     return yytext();
 }
 
-<TEMPLATE>{whitespace} {
-    // no need to log this
-    this.templateString += yytext();
-    return "";
-}
-
-<TEMPLATE>. {
-    // no need to log this
-    this.templateString += yytext();
-    return "";
-}
-
-<YYINITIAL, TEMPLATE>{includeonly} {
-    if (logger.isTraceEnabled()) logger.trace("includeonly: " + yytext() + " (" + yystate() + ")");
-    String parsed = this.parse(TAG_TYPE_INCLUDE_ONLY, yytext());
-    if (yystate() == TEMPLATE) {
-        this.templateString += parsed;
+<TEMPLATE> {
+    {templateendchar} {
+        if (logger.isTraceEnabled()) logger.trace("templateendchar: " + yytext() + " (" + yystate() + ")");
+        String raw = yytext();
+        this.templateString += raw;
+        if (Utilities.findMatchingEndTag(this.templateString, 0, "{", "}") != -1) {
+            endState();
+            String result = this.parse(TAG_TYPE_TEMPLATE, this.templateString);
+            this.templateString = "";
+            return result;
+        }
+        return "";
     }
-    return (yystate() == YYINITIAL) ? parsed : "";
+    {whitespace} {
+        // no need to log this
+        this.templateString += yytext();
+        return "";
+    }
+    . {
+        // no need to log this
+        this.templateString += yytext();
+        return "";
+    }
 }
 
-<YYINITIAL, TEMPLATE>{noinclude} {
-    if (logger.isTraceEnabled()) logger.trace("noinclude: " + yytext() + " (" + yystate() + ")");
-    return this.parse(TAG_TYPE_NO_INCLUDE, yytext());
-}
+<YYINITIAL> {
 
-<YYINITIAL, TEMPLATE>{onlyinclude} {
-    if (logger.isTraceEnabled()) logger.trace("onlyinclude: " + yytext() + " (" + yystate() + ")");
-    return this.parse(TAG_TYPE_ONLY_INCLUDE, yytext());
-}
+    /* ----- signatures ----- */
 
-/* ----- signatures ----- */
+    {wikisignature} {
+        if (logger.isTraceEnabled()) logger.trace("wikisignature: " + yytext() + " (" + yystate() + ")");
+        return this.parse(TAG_TYPE_WIKI_SIGNATURE, yytext());
+    }
 
-<YYINITIAL>{wikisignature} {
-    if (logger.isTraceEnabled()) logger.trace("wikisignature: " + yytext() + " (" + yystate() + ")");
-    return this.parse(TAG_TYPE_WIKI_SIGNATURE, yytext());
-}
+    /* ----- comments ----- */
 
-/* ----- comments ----- */
+    {htmlcomment} {
+        if (logger.isTraceEnabled()) logger.trace("htmlcomment: " + yytext() + " (" + yystate() + ")");
+        if (this.mode < JFlexParser.MODE_TEMPLATE) {
+            return yytext();
+        }
+        // strip out the comment
+        return "";
+    }
 
-<YYINITIAL>{htmlcomment} {
-    if (logger.isTraceEnabled()) logger.trace("htmlcomment: " + yytext() + " (" + yystate() + ")");
-    if (this.mode < JFlexParser.MODE_TEMPLATE) {
+    /* ----- other ----- */
+
+    {whitespace} {
+        // no need to log this
         return yytext();
     }
-    // strip out the comment
-    return "";
-}
-
-/* ----- other ----- */
-
-<YYINITIAL>{whitespace} {
-    // no need to log this
-    return yytext();
-}
-
-<YYINITIAL>. {
-    // no need to log this
-    return yytext();
+    . {
+        // no need to log this
+        return yytext();
+    }
 }

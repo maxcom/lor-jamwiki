@@ -45,58 +45,79 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 %%
 
-/* ----- nowiki ----- */
+<YYINITIAL, PRE> {
 
-<YYINITIAL, PRE>{nowiki} {
-    if (logger.isTraceEnabled()) logger.trace("nowiki: " + yytext() + " (" + yystate() + ")");
-    return JFlexParserUtil.tagContent(yytext());
+    /* ----- nowiki ----- */
+
+    {nowiki} {
+        if (logger.isTraceEnabled()) logger.trace("nowiki: " + yytext() + " (" + yystate() + ")");
+        return JFlexParserUtil.tagContent(yytext());
+    }
 }
 
-/* ----- pre ----- */
+<YYINITIAL> {
 
-<YYINITIAL>{htmlprestart} {
-    if (logger.isTraceEnabled()) logger.trace("htmlprestart: " + yytext() + " (" + yystate() + ")");
-    beginState(PRE);
-    return yytext();
+    /* ----- pre ----- */
+
+    {htmlprestart} {
+        if (logger.isTraceEnabled()) logger.trace("htmlprestart: " + yytext() + " (" + yystate() + ")");
+        beginState(PRE);
+        return yytext();
+    }
 }
 
-<PRE>{htmlpreend} {
-    if (logger.isTraceEnabled()) logger.trace("htmlpreend: " + yytext() + " (" + yystate() + ")");
-    endState();
-    return yytext();
+<PRE> {
+
+    /* ----- pre ----- */
+
+    {htmlpreend} {
+        if (logger.isTraceEnabled()) logger.trace("htmlpreend: " + yytext() + " (" + yystate() + ")");
+        endState();
+        return yytext();
+    }
+    {whitespace} {
+        // no need to log this
+        return yytext();
+    }
+    . {
+        // no need to log this
+        return yytext();
+    }
 }
 
-/* ----- processing commands ----- */
+<YYINITIAL> {
 
-<YYINITIAL>{toc} {
-    if (logger.isTraceEnabled()) logger.trace("toc: " + yytext() + " (" + yystate() + ")");
-    return this.parserInput.getTableOfContents().attemptTOCInsertion();
-}
+    /* ----- processing commands ----- */
 
-/* ----- references ----- */
+    {toc} {
+        if (logger.isTraceEnabled()) logger.trace("toc: " + yytext() + " (" + yystate() + ")");
+        return this.parserInput.getTableOfContents().attemptTOCInsertion();
+    }
 
-<YYINITIAL>{references} {
-    if (logger.isTraceEnabled()) logger.trace("references: " + yytext() + " (" + yystate() + ")");
-    return this.parse(TAG_TYPE_WIKI_REFERENCES, yytext());
-}
+    /* ----- references ----- */
 
-/* ----- javascript ----- */
+    {references} {
+        if (logger.isTraceEnabled()) logger.trace("references: " + yytext() + " (" + yystate() + ")");
+        return this.parse(TAG_TYPE_WIKI_REFERENCES, yytext());
+    }
 
-<YYINITIAL>{javascript} {
-    if (logger.isTraceEnabled()) logger.trace("javascript: " + yytext() + " (" + yystate() + ")");
-    // javascript tags are parsed in the processor step, but parse again here as a security
-    // check against potential XSS attacks.
-    return this.parse(TAG_TYPE_JAVASCRIPT, yytext());
-}
+    /* ----- javascript ----- */
 
-/* ----- other ----- */
+    {javascript} {
+        if (logger.isTraceEnabled()) logger.trace("javascript: " + yytext() + " (" + yystate() + ")");
+        // javascript tags are parsed in the processor step, but parse again here as a security
+        // check against potential XSS attacks.
+        return this.parse(TAG_TYPE_JAVASCRIPT, yytext());
+    }
 
-<YYINITIAL, PRE>{whitespace} {
-    // no need to log this
-    return yytext();
-}
+    /* ----- other ----- */
 
-<YYINITIAL, PRE>. {
-    // no need to log this
-    return yytext();
+    {whitespace} {
+        // no need to log this
+        return yytext();
+    }
+    . {
+        // no need to log this
+        return yytext();
+    }
 }

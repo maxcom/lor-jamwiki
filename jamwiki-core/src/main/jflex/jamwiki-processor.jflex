@@ -128,17 +128,18 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 /* ----- paragraphs ----- */
 
-<YYINITIAL>^{startparagraph} {
-    if (logger.isTraceEnabled()) logger.trace("startparagraph: " + yytext() + " (" + yystate() + ")");
-    this.parseParagraphStart(yytext());
-    beginState(PARAGRAPH);
-    return "";
-}
-
-<YYINITIAL>^{paragraphempty} {
-    if (logger.isTraceEnabled()) logger.trace("paragraphempty: " + yytext() + " (" + yystate() + ")");
-    this.parseParagraphEmpty(yytext());
-    return "";
+<YYINITIAL> {
+    ^{startparagraph} {
+        if (logger.isTraceEnabled()) logger.trace("startparagraph: " + yytext() + " (" + yystate() + ")");
+        this.parseParagraphStart(yytext());
+        beginState(PARAGRAPH);
+        return "";
+    }
+    ^{paragraphempty} {
+        if (logger.isTraceEnabled()) logger.trace("paragraphempty: " + yytext() + " (" + yystate() + ")");
+        this.parseParagraphEmpty(yytext());
+        return "";
+    }
 }
 
 <PARAGRAPH>{endparagraph} {
@@ -198,23 +199,23 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 /* ----- table of contents ----- */
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{notoc} {
-    if (logger.isTraceEnabled()) logger.trace("notoc: " + yytext() + " (" + yystate() + ")");
-    this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_NO_TOC);
-    return "";
-}
-
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{toc} {
-    if (logger.isTraceEnabled()) logger.trace("toc: " + yytext() + " (" + yystate() + ")");
-    this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_TOC_INITIALIZED);
-    this.parserInput.getTableOfContents().setForceTOC(true);
-    return yytext();
-}
-
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{forcetoc} {
-    if (logger.isTraceEnabled()) logger.trace("forcetoc: " + yytext() + " (" + yystate() + ")");
-    this.parserInput.getTableOfContents().setForceTOC(true);
-    return "";
+<YYINITIAL, LIST, TABLE, PARAGRAPH> {
+    {notoc} {
+        if (logger.isTraceEnabled()) logger.trace("notoc: " + yytext() + " (" + yystate() + ")");
+        this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_NO_TOC);
+        return "";
+    }
+    {toc} {
+        if (logger.isTraceEnabled()) logger.trace("toc: " + yytext() + " (" + yystate() + ")");
+        this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_TOC_INITIALIZED);
+        this.parserInput.getTableOfContents().setForceTOC(true);
+        return yytext();
+    }
+    {forcetoc} {
+        if (logger.isTraceEnabled()) logger.trace("forcetoc: " + yytext() + " (" + yystate() + ")");
+        this.parserInput.getTableOfContents().setForceTOC(true);
+        return "";
+    }
 }
 
 /* ----- tables ----- */
@@ -233,98 +234,94 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     return "";
 }
 
-<TABLE>^{tablecaption} {
-    if (logger.isTraceEnabled()) logger.trace("tablecaption: " + yytext() + " (" + yystate() + ")");
-    processTableStack();
-    if (yytext().length() > 2) {
-        // for captions with CSS specified an extra character is matched
-        yypushback(1);
-    }
-    parseTableCell(yytext(), "caption", "|+");
-    return "";
-}
-
-<TABLE>^{tableheading} {
-    if (logger.isTraceEnabled()) logger.trace("tableheading: " + yytext() + " (" + yystate() + ")");
-    // if a column was already open, close it
-    processTableStack();
-    // FIXME - hack!  make sure that a table row is open
-    if (!this.peekTag().getTagType().equals("tr")) {
-        this.pushTag("tr", null);
-    }
-    if (yytext().length() > 2) {
-        // for headings with CSS specified an extra character is matched
-        yypushback(1);
-    }
-    parseTableCell(yytext(), "th", "!");
-    return "";
-}
-
-<TABLE>^{tablecell} {
-    if (logger.isTraceEnabled()) logger.trace("tablecell: " + yytext() + " (" + yystate() + ")");
-    // if a column was already open, close it
-    processTableStack();
-    // FIXME - hack!  make sure that a table row is open
-    if (!this.peekTag().getTagType().equals("tr")) {
-        this.pushTag("tr", null);
-    }
-    // extra character matched by both regular expressions so push it back
-    yypushback(1);
-    parseTableCell(yytext(), "td", "|");
-    return "";
-}
-
-<TABLE>{tablecells} {
-    if (logger.isTraceEnabled()) logger.trace("tablecells: " + yytext() + " (" + yystate() + ")");
-    if (this.peekTag().getTagType().equals("td") && yytext().equals("||")) {
-        this.popTag("td");
-        this.pushTag("td", null);
+<TABLE> {
+    ^{tablecaption} {
+        if (logger.isTraceEnabled()) logger.trace("tablecaption: " + yytext() + " (" + yystate() + ")");
+        processTableStack();
+        if (yytext().length() > 2) {
+            // for captions with CSS specified an extra character is matched
+            yypushback(1);
+        }
+        parseTableCell(yytext(), "caption", "|+");
         return "";
     }
-    if (this.peekTag().getTagType().equals("th")) {
-        this.popTag("th");
-        this.pushTag("th", null);
+    ^{tableheading} {
+        if (logger.isTraceEnabled()) logger.trace("tableheading: " + yytext() + " (" + yystate() + ")");
+        // if a column was already open, close it
+        processTableStack();
+        // FIXME - hack!  make sure that a table row is open
+        if (!this.peekTag().getTagType().equals("tr")) {
+            this.pushTag("tr", null);
+        }
+        if (yytext().length() > 2) {
+            // for headings with CSS specified an extra character is matched
+            yypushback(1);
+        }
+        parseTableCell(yytext(), "th", "!");
         return "";
     }
-    return yytext();
-}
-
-<TABLE>{tablecellsstyle} {
-    if (logger.isTraceEnabled()) logger.trace("tablecellsstyle: " + yytext() + " (" + yystate() + ")");
-    if (!this.peekTag().getTagType().equals("td")) {
+    ^{tablecell} {
+        if (logger.isTraceEnabled()) logger.trace("tablecell: " + yytext() + " (" + yystate() + ")");
+        // if a column was already open, close it
+        processTableStack();
+        // FIXME - hack!  make sure that a table row is open
+        if (!this.peekTag().getTagType().equals("tr")) {
+            this.pushTag("tr", null);
+        }
+        // extra character matched by both regular expressions so push it back
+        yypushback(1);
+        parseTableCell(yytext(), "td", "|");
+        return "";
+    }
+    {tablecells} {
+        if (logger.isTraceEnabled()) logger.trace("tablecells: " + yytext() + " (" + yystate() + ")");
+        if (this.peekTag().getTagType().equals("td") && yytext().equals("||")) {
+            this.popTag("td");
+            this.pushTag("td", null);
+            return "";
+        }
+        if (this.peekTag().getTagType().equals("th")) {
+            this.popTag("th");
+            this.pushTag("th", null);
+            return "";
+        }
         return yytext();
     }
-    // one extra character matched by the pattern, so roll it back
-    yypushback(1);
-    this.popTag("td");
-    parseTableCell(yytext(), "td", "|");
-    return "";
-}
-
-<TABLE>^{tablerow} {
-    if (logger.isTraceEnabled()) logger.trace("tablerow: " + yytext() + " (" + yystate() + ")");
-    // if a column was already open, close it
-    processTableStack();
-    if (!this.peekTag().getTagType().equals("table") && !this.peekTag().getTagType().equals("caption")) {
+    {tablecellsstyle} {
+        if (logger.isTraceEnabled()) logger.trace("tablecellsstyle: " + yytext() + " (" + yystate() + ")");
+        if (!this.peekTag().getTagType().equals("td")) {
+            return yytext();
+        }
+        // one extra character matched by the pattern, so roll it back
+        yypushback(1);
+        this.popTag("td");
+        parseTableCell(yytext(), "td", "|");
+        return "";
+    }
+    ^{tablerow} {
+        if (logger.isTraceEnabled()) logger.trace("tablerow: " + yytext() + " (" + yystate() + ")");
+        // if a column was already open, close it
+        processTableStack();
+        if (!this.peekTag().getTagType().equals("table") && !this.peekTag().getTagType().equals("caption")) {
+            this.popTag("tr");
+        }
+        String openTagRaw = null;
+        if (yytext().trim().length() > 2) {
+            openTagRaw = "<tr " + yytext().substring(2).trim() + ">";
+        }
+        this.pushTag("tr", openTagRaw);
+        return "";
+    }
+    ^{tableend} {
+        if (logger.isTraceEnabled()) logger.trace("tableend: " + yytext() + " (" + yystate() + ")");
+        // if a column was already open, close it
+        processTableStack();
+        // end TABLE state
+        endState();
         this.popTag("tr");
+        this.popTag("table");
+        return "";
     }
-    String openTagRaw = null;
-    if (yytext().trim().length() > 2) {
-        openTagRaw = "<tr " + yytext().substring(2).trim() + ">";
-    }
-    this.pushTag("tr", openTagRaw);
-    return "";
-}
-
-<TABLE>^{tableend} {
-    if (logger.isTraceEnabled()) logger.trace("tableend: " + yytext() + " (" + yystate() + ")");
-    // if a column was already open, close it
-    processTableStack();
-    // end TABLE state
-    endState();
-    this.popTag("tr");
-    this.popTag("table");
-    return "";
 }
 
 /* ----- headings ----- */
@@ -377,47 +374,47 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     return "";
 }
 
-<LIST>^{listend} {
-    if (logger.isTraceEnabled()) logger.trace("listend: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    // roll back any matches to allow re-parsing
-    yypushback(raw.length());
-    endState();
-    this.popAllListTags();
-    return "";
-}
-
-<LIST>{listdt} {
-    if (logger.isTraceEnabled()) logger.trace("listdt: " + yytext() + " (" + yystate() + ")");
-    if (this.peekTag().getTagType().equals("dt")) {
-        // special case list of the form "; term : definition"
-        this.popTag("dt");
-        this.pushTag("dd", null);
+<LIST> {
+    ^{listend} {
+        if (logger.isTraceEnabled()) logger.trace("listend: " + yytext() + " (" + yystate() + ")");
+        String raw = yytext();
+        // roll back any matches to allow re-parsing
+        yypushback(raw.length());
+        endState();
+        this.popAllListTags();
         return "";
     }
-    return yytext();
+    {listdt} {
+        if (logger.isTraceEnabled()) logger.trace("listdt: " + yytext() + " (" + yystate() + ")");
+        if (this.peekTag().getTagType().equals("dt")) {
+            // special case list of the form "; term : definition"
+            this.popTag("dt");
+            this.pushTag("dd", null);
+            return "";
+        }
+        return yytext();
+    }
 }
 
 /* ----- wiki links ----- */
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{wikilink} {
-    if (logger.isTraceEnabled()) logger.trace("wikilink: " + yytext() + " (" + yystate() + ")");
-    return this.parse(TAG_TYPE_WIKI_LINK, yytext());
-}
-
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{nestedwikilink} {
-    if (logger.isTraceEnabled()) logger.trace("nestedwikilink: " + yytext() + " (" + yystate() + ")");
-    return this.parse(TAG_TYPE_WIKI_LINK, yytext(), "nested");
-}
-
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmllinkraw} {
-    return this.parse(TAG_TYPE_HTML_LINK, yytext(), false);
-}
-
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmllinkwiki} {
-    String raw = yytext();
-    // strip the opening and closing brackets
-    return this.parse(TAG_TYPE_HTML_LINK, raw.substring(1, raw.length() - 1), true);
+<YYINITIAL, LIST, TABLE, PARAGRAPH> {
+    {wikilink} {
+        if (logger.isTraceEnabled()) logger.trace("wikilink: " + yytext() + " (" + yystate() + ")");
+        return this.parse(TAG_TYPE_WIKI_LINK, yytext());
+    }
+    {nestedwikilink} {
+        if (logger.isTraceEnabled()) logger.trace("nestedwikilink: " + yytext() + " (" + yystate() + ")");
+        return this.parse(TAG_TYPE_WIKI_LINK, yytext(), "nested");
+    }
+    {htmllinkraw} {
+        return this.parse(TAG_TYPE_HTML_LINK, yytext(), false);
+    }
+    {htmllinkwiki} {
+        String raw = yytext();
+        // strip the opening and closing brackets
+        return this.parse(TAG_TYPE_HTML_LINK, raw.substring(1, raw.length() - 1), true);
+    }
 }
 
 /* ----- image gallery ----- */
@@ -429,106 +426,106 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 /* ----- bold / italic ----- */
 
-<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{bold} {
-    return this.parse(TAG_TYPE_WIKI_BOLD_ITALIC, yytext(), "b");
-}
-
-<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{bolditalic} {
-    return this.parse(TAG_TYPE_WIKI_BOLD_ITALIC, yytext(), (String)null);
-}
-
-<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{italic} {
-    return this.parse(TAG_TYPE_WIKI_BOLD_ITALIC, yytext(), "i");
+<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH> {
+    {bold} {
+        return this.parse(TAG_TYPE_WIKI_BOLD_ITALIC, yytext(), "b");
+    }
+    {bolditalic} {
+        return this.parse(TAG_TYPE_WIKI_BOLD_ITALIC, yytext(), (String)null);
+    }
+    {italic} {
+        return this.parse(TAG_TYPE_WIKI_BOLD_ITALIC, yytext(), "i");
+    }
 }
 
 /* ----- references ----- */
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{reference} {
-    return this.parse(TAG_TYPE_WIKI_REFERENCE, yytext());
-}
-
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{referencenocontent} {
-    return this.parse(TAG_TYPE_WIKI_REFERENCE, yytext());
-}
-
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{references} {
-    logger.trace("references: " + yytext() + " (" + yystate() + ")");
-    if (this.peekTag().getTagType().equals("p")) {
-        // if a paragraph is already opened, close it
-        this.popTag("p");
+<YYINITIAL, LIST, TABLE, PARAGRAPH> {
+    {reference} {
+        return this.parse(TAG_TYPE_WIKI_REFERENCE, yytext());
     }
-    return this.parse(TAG_TYPE_WIKI_REFERENCES, yytext());
+    {referencenocontent} {
+        return this.parse(TAG_TYPE_WIKI_REFERENCE, yytext());
+    }
+    {references} {
+        logger.trace("references: " + yytext() + " (" + yystate() + ")");
+        if (this.peekTag().getTagType().equals("p")) {
+            // if a paragraph is already opened, close it
+            this.popTag("p");
+        }
+        return this.parse(TAG_TYPE_WIKI_REFERENCES, yytext());
+    }
 }
 
 /* ----- html ----- */
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmlbr} {
-    if (logger.isTraceEnabled()) logger.trace("htmlbr: " + yytext() + " (" + yystate() + ")");
-    if (!allowHTML()) {
-        return StringEscapeUtils.escapeHtml(yytext());
+<YYINITIAL, LIST, TABLE, PARAGRAPH> {
+    {htmlbr} {
+        if (logger.isTraceEnabled()) logger.trace("htmlbr: " + yytext() + " (" + yystate() + ")");
+        if (!allowHTML()) {
+            return StringEscapeUtils.escapeHtml(yytext());
+        }
+        // <br> may have attributes, so check for them
+        HtmlTagItem htmlTagItem = JFlexParserUtil.sanitizeHtmlTag(yytext());
+        // Mediawiki standard is to include a newline after br tags
+        return (htmlTagItem == null) ? "" : htmlTagItem.toHtml() + '\n';
     }
-    // <br> may have attributes, so check for them
-    HtmlTagItem htmlTagItem = JFlexParserUtil.sanitizeHtmlTag(yytext());
-    // Mediawiki standard is to include a newline after br tags
-    return (htmlTagItem == null) ? "" : htmlTagItem.toHtml() + '\n';
+    {htmlparagraphopen} {
+        if (logger.isTraceEnabled()) logger.trace("htmlparagraphopen: " + yytext() + " (" + yystate() + ")");
+        if (!allowHTML()) {
+            return StringEscapeUtils.escapeHtml(yytext());
+        }
+        if (this.peekTag().getTagType().equals("p")) {
+            // if a paragraph is already opened, close it before opening a new paragraph
+            this.popTag("p");
+        }
+        this.pushTag("p", yytext());
+        if (yystate() != PARAGRAPH) {
+            beginState(PARAGRAPH);
+        }
+        return "";
+    }
+    {htmlparagraphclose} {
+        if (logger.isTraceEnabled()) logger.trace("htmlparagraphclose: " + yytext() + " (" + yystate() + ")");
+        if (!allowHTML()) {
+            return StringEscapeUtils.escapeHtml(yytext());
+        }
+        if (this.peekTag().getTagType().equals("p")) {
+            // only perform processing if a paragraph is open.  otherwise just suppress this tag.
+            this.popTag("p");
+        }
+        if (yystate() == PARAGRAPH) {
+            endState();
+        }
+        return "";
+    }
 }
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmlparagraphopen} {
-    if (logger.isTraceEnabled()) logger.trace("htmlparagraphopen: " + yytext() + " (" + yystate() + ")");
-    if (!allowHTML()) {
-        return StringEscapeUtils.escapeHtml(yytext());
+<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH> {
+    {htmltagnocontent} {
+        if (logger.isTraceEnabled()) logger.trace("htmltagnocontent: " + yytext() + " (" + yystate() + ")");
+        if (!allowHTML()) {
+            return StringEscapeUtils.escapeHtml(yytext());
+        }
+        HtmlTagItem tagItem = JFlexParserUtil.sanitizeHtmlTag(yytext());
+        return (tagItem == null) ? "" : tagItem.toHtml();
     }
-    if (this.peekTag().getTagType().equals("p")) {
-        // if a paragraph is already opened, close it before opening a new paragraph
-        this.popTag("p");
+    {htmltagopen} {
+        if (logger.isTraceEnabled()) logger.trace("htmltagopen: " + yytext() + " (" + yystate() + ")");
+        if (!allowHTML()) {
+            return StringEscapeUtils.escapeHtml(yytext());
+        }
+        this.pushTag(null, yytext());
+        return "";
     }
-    this.pushTag("p", yytext());
-    if (yystate() != PARAGRAPH) {
-        beginState(PARAGRAPH);
+    {htmltagclose} {
+        if (logger.isTraceEnabled()) logger.trace("htmltagclose: " + yytext() + " (" + yystate() + ")");
+        if (!allowHTML()) {
+            return StringEscapeUtils.escapeHtml(yytext());
+        }
+        this.popTag(null, yytext());
+        return "";
     }
-    return "";
-}
-
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmlparagraphclose} {
-    if (logger.isTraceEnabled()) logger.trace("htmlparagraphclose: " + yytext() + " (" + yystate() + ")");
-    if (!allowHTML()) {
-        return StringEscapeUtils.escapeHtml(yytext());
-    }
-    if (this.peekTag().getTagType().equals("p")) {
-        // only perform processing if a paragraph is open.  otherwise just suppress this tag.
-        this.popTag("p");
-    }
-    if (yystate() == PARAGRAPH) {
-        endState();
-    }
-    return "";
-}
-
-<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{htmltagnocontent} {
-    if (logger.isTraceEnabled()) logger.trace("htmltagnocontent: " + yytext() + " (" + yystate() + ")");
-    if (!allowHTML()) {
-        return StringEscapeUtils.escapeHtml(yytext());
-    }
-    HtmlTagItem tagItem = JFlexParserUtil.sanitizeHtmlTag(yytext());
-    return (tagItem == null) ? "" : tagItem.toHtml();
-}
-
-<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{htmltagopen} {
-    if (logger.isTraceEnabled()) logger.trace("htmltagopen: " + yytext() + " (" + yystate() + ")");
-    if (!allowHTML()) {
-        return StringEscapeUtils.escapeHtml(yytext());
-    }
-    this.pushTag(null, yytext());
-    return "";
-}
-
-<YYINITIAL, WIKIPRE, LIST, TABLE, PARAGRAPH>{htmltagclose} {
-    if (logger.isTraceEnabled()) logger.trace("htmltagclose: " + yytext() + " (" + yystate() + ")");
-    if (!allowHTML()) {
-        return StringEscapeUtils.escapeHtml(yytext());
-    }
-    this.popTag(null, yytext());
-    return "";
 }
 
 /* ----- javascript ----- */
@@ -538,12 +535,6 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 }
 
 /* ----- other ----- */
-
-<YYINITIAL, WIKIPRE, PRE, LIST, TABLE, PARAGRAPH>{entity} {
-    if (logger.isTraceEnabled()) logger.trace("entity: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    return (Utilities.isHtmlEntity(raw)) ? raw : StringEscapeUtils.escapeHtml(raw);
-}
 
 <YYINITIAL>^{emptyline} {
     // suppress superfluous empty lines
@@ -555,12 +546,18 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     return " ";
 }
 
-<YYINITIAL, WIKIPRE, PRE, LIST, TABLE, PARAGRAPH>{whitespace} {
-    // no need to log this
-    return yytext();
-}
-
-<YYINITIAL, WIKIPRE, PRE, LIST, TABLE, PARAGRAPH>. {
-    // no need to log this
-    return StringEscapeUtils.escapeHtml(yytext());
+<YYINITIAL, WIKIPRE, PRE, LIST, TABLE, PARAGRAPH> {
+    {entity} {
+        if (logger.isTraceEnabled()) logger.trace("entity: " + yytext() + " (" + yystate() + ")");
+        String raw = yytext();
+        return (Utilities.isHtmlEntity(raw)) ? raw : StringEscapeUtils.escapeHtml(raw);
+    }
+    {whitespace} {
+        // no need to log this
+        return yytext();
+    }
+    . {
+        // no need to log this
+        return StringEscapeUtils.escapeHtml(yytext());
+    }
 }

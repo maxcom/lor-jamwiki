@@ -58,80 +58,99 @@ gallery            = (<[ ]*gallery[^>]*>) ~(<[ ]*\/[ ]*gallery[ ]*>)
 
 %%
 
-/* ----- nowiki ----- */
+<YYINITIAL, WIKIPRE> {
 
-<YYINITIAL, WIKIPRE>{nowiki} {
-    if (logger.isTraceEnabled()) logger.trace("nowiki: " + yytext() + " (" + yystate() + ")");
-    return yytext();
-}
+    /* ----- nowiki ----- */
 
-/* ----- redirect ----- */
-
-<YYINITIAL>^{redirect} {
-    if (logger.isTraceEnabled()) logger.trace("redirect: " + yytext() + " (" + yystate() + ")");
-    return this.parse(TAG_TYPE_REDIRECT, yytext());
-}
-
-/* ----- pre ----- */
-
-<YYINITIAL>{htmlpre} {
-    if (logger.isTraceEnabled()) logger.trace("htmlpre: " + yytext() + " (" + yystate() + ")");
-    return yytext();
-}
-
-<YYINITIAL, WIKIPRE>^{wikipre} {
-    if (logger.isTraceEnabled()) logger.trace("wikipre: " + yytext() + " (" + yystate() + ")");
-    // rollback all but the first (space) character for further processing
-    yypushback(yytext().length() - 1);
-    if (yystate() != WIKIPRE) {
-        beginState(WIKIPRE);
+    {nowiki} {
+        if (logger.isTraceEnabled()) logger.trace("nowiki: " + yytext() + " (" + yystate() + ")");
+        return yytext();
     }
-    return yytext();
+
+    /* ----- wikipre ----- */
+
+    ^{wikipre} {
+        if (logger.isTraceEnabled()) logger.trace("wikipre: " + yytext() + " (" + yystate() + ")");
+        // rollback all but the first (space) character for further processing
+        yypushback(yytext().length() - 1);
+        if (yystate() != WIKIPRE) {
+            beginState(WIKIPRE);
+        }
+        return yytext();
+    }
 }
 
-<WIKIPRE>^{wikipreend} {
-    if (logger.isTraceEnabled()) logger.trace("wikipreend: " + yytext() + " (" + yystate() + ")");
-    endState();
-    // rollback everything to allow processing as non-pre text
-    yypushback(yytext().length());
-    return "";
+<WIKIPRE> {
+
+    /* ----- wikipre ----- */
+
+    ^{wikipreend} {
+        if (logger.isTraceEnabled()) logger.trace("wikipreend: " + yytext() + " (" + yystate() + ")");
+        endState();
+        // rollback everything to allow processing as non-pre text
+        yypushback(yytext().length());
+        return "";
+    }
+    {whitespace} {
+        // no need to log this
+        return yytext();
+    }
+    . {
+        // no need to log this
+        return yytext();
+    }
 }
 
-/* ----- processing commands ----- */
+<YYINITIAL> {
 
-<YYINITIAL>{noeditsection} {
-    if (logger.isTraceEnabled()) logger.trace("noeditsection: " + yytext() + " (" + yystate() + ")");
-    this.parserInput.setAllowSectionEdit(false);
-    return (this.mode < JFlexParser.MODE_PREPROCESS) ? yytext() : "";
-}
+    /* ----- redirect ----- */
 
-/* ----- wiki links ----- */
+    ^{redirect} {
+        if (logger.isTraceEnabled()) logger.trace("redirect: " + yytext() + " (" + yystate() + ")");
+        return this.parse(TAG_TYPE_REDIRECT, yytext());
+    }
 
-<YYINITIAL>{wikilink} {
-    if (logger.isTraceEnabled()) logger.trace("wikilink: " + yytext() + " (" + yystate() + ")");
-    return this.parse(TAG_TYPE_WIKI_LINK, yytext());
-}
+    /* ----- pre ----- */
 
-<YYINITIAL>{nestedwikilink} {
-    if (logger.isTraceEnabled()) logger.trace("nestedwikilink: " + yytext() + " (" + yystate() + ")");
-    return this.parse(TAG_TYPE_WIKI_LINK, yytext(), "nested");
-}
+    {htmlpre} {
+        if (logger.isTraceEnabled()) logger.trace("htmlpre: " + yytext() + " (" + yystate() + ")");
+        return yytext();
+    }
 
-/* ----- image gallery ----- */
+    /* ----- processing commands ----- */
 
-<YYINITIAL>{gallery} {
-    if (logger.isTraceEnabled()) logger.trace("gallery: " + yytext() + " (" + yystate() + ")");
-    return this.parse(TAG_TYPE_GALLERY, yytext());
-}
+    {noeditsection} {
+        if (logger.isTraceEnabled()) logger.trace("noeditsection: " + yytext() + " (" + yystate() + ")");
+        this.parserInput.setAllowSectionEdit(false);
+        return (this.mode < JFlexParser.MODE_PREPROCESS) ? yytext() : "";
+    }
 
-/* ----- other ----- */
+    /* ----- wiki links ----- */
 
-<YYINITIAL, WIKIPRE>{whitespace} {
-    // no need to log this
-    return yytext();
-}
+    {wikilink} {
+        if (logger.isTraceEnabled()) logger.trace("wikilink: " + yytext() + " (" + yystate() + ")");
+        return this.parse(TAG_TYPE_WIKI_LINK, yytext());
+    }
+    {nestedwikilink} {
+        if (logger.isTraceEnabled()) logger.trace("nestedwikilink: " + yytext() + " (" + yystate() + ")");
+        return this.parse(TAG_TYPE_WIKI_LINK, yytext(), "nested");
+    }
 
-<YYINITIAL, WIKIPRE>. {
-    // no need to log this
-    return yytext();
+    /* ----- image gallery ----- */
+
+    {gallery} {
+        if (logger.isTraceEnabled()) logger.trace("gallery: " + yytext() + " (" + yystate() + ")");
+        return this.parse(TAG_TYPE_GALLERY, yytext());
+    }
+
+    /* ----- other ----- */
+
+    {whitespace} {
+        // no need to log this
+        return yytext();
+    }
+    . {
+        // no need to log this
+        return yytext();
+    }
 }
