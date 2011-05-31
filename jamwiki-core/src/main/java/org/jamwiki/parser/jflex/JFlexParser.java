@@ -48,14 +48,16 @@ public class JFlexParser extends AbstractParser {
 	public static final int MODE_TEMPLATE_BODY = 4;
 	/** Template mode indicates that template processing is occurring. */
 	public static final int MODE_TEMPLATE = 5;
+	/** Template mode indicates that custom tag processing is occurring. */
+	public static final int MODE_CUSTOM = 6;
 	/** Pre-process mode indicates that that the JFlex pre-processor parser should be run in full. */
-	public static final int MODE_PREPROCESS = 6;
+	public static final int MODE_PREPROCESS = 7;
 	/** Processing mode indicates that the pre-processor and processor should be run, parsing all Wiki syntax into formatted output but NOT parsing paragraph tags. */
-	public static final int MODE_PROCESS = 7;
+	public static final int MODE_PROCESS = 8;
 	/** Layout mode indicates that the pre-processor and processor should be run in full, parsing all Wiki syntax into formatted output and adding layout tags such as paragraphs. */
-	public static final int MODE_LAYOUT = 8;
+	public static final int MODE_LAYOUT = 9;
 	/** Post-process mode indicates that the pre-processor, processor and post-processor should be run in full, parsing all Wiki syntax into formatted output and adding layout tags such as paragraphs and TOC. */
-	public static final int MODE_POSTPROCESS = 9;
+	public static final int MODE_POSTPROCESS = 10;
 
 	/**
 	 * The constructor creates a parser instance, initialized with the
@@ -114,6 +116,22 @@ public class JFlexParser extends AbstractParser {
 	}
 
 	/**
+	 * After templates are parsed, look for any custom tags.
+	 *
+	 * @param parserOutput A ParserOutput object containing parser
+	 *  metadata output.
+	 * @param raw The raw wiki syntax to be parsed.
+	 * @return The parsed content.
+	 * @throws ParserException Thrown if any error occurs during parsing.
+	 */
+	private String parseCustom(ParserOutput parserOutput, String raw, int mode) throws ParserException {
+		StringReader reader = toStringReader(raw);
+		JAMWikiCustomTagProcessor lexer = new JAMWikiCustomTagProcessor(reader);
+		int preMode = (mode > JFlexParser.MODE_CUSTOM) ? JFlexParser.MODE_CUSTOM : mode;
+		return this.lex(lexer, raw, parserOutput, preMode);
+	}
+
+	/**
 	 * This method parses content, performing all transformations except for
 	 * layout changes such as adding paragraph tags.  It is suitable to be used
 	 * when parsing the contents of a link or performing similar internal
@@ -132,6 +150,8 @@ public class JFlexParser extends AbstractParser {
 		// maintain the original output, which has all of the category and link info
 		int preMode = (mode > JFlexParser.MODE_TEMPLATE) ? JFlexParser.MODE_TEMPLATE : mode;
 		output = this.parseTemplate(parserOutput, output, preMode);
+		preMode = (mode > JFlexParser.MODE_CUSTOM) ? JFlexParser.MODE_CUSTOM : mode;
+		output = this.parseCustom(parserOutput, output, preMode);
 		preMode = (mode > JFlexParser.MODE_PREPROCESS) ? JFlexParser.MODE_PREPROCESS : mode;
 		output = this.parsePreProcess(parserOutput, output, preMode);
 		// layout should not be done while parsing fragments
@@ -155,6 +175,7 @@ public class JFlexParser extends AbstractParser {
 		// to the end of the content for good measure
 		String output = raw + '\n';
 		output = this.parseTemplate(parserOutput, output, JFlexParser.MODE_TEMPLATE);
+		output = this.parseCustom(parserOutput, output, JFlexParser.MODE_CUSTOM);
 		output = this.parsePreProcess(parserOutput, output, JFlexParser.MODE_PREPROCESS);
 		output = this.parseProcess(parserOutput, output, JFlexParser.MODE_LAYOUT);
 		output = this.parsePostProcess(parserOutput, output, JFlexParser.MODE_POSTPROCESS);
@@ -184,6 +205,7 @@ public class JFlexParser extends AbstractParser {
 		// to the end of the content for good measure
 		String output = raw + '\n';
 		output = this.parseTemplate(parserOutput, output, JFlexParser.MODE_TEMPLATE);
+		output = this.parseCustom(parserOutput, output, JFlexParser.MODE_CUSTOM);
 		output = this.parsePreProcess(parserOutput, output, JFlexParser.MODE_PREPROCESS);
 		if (logger.isInfoEnabled()) {
 			String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;

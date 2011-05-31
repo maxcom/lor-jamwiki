@@ -51,9 +51,6 @@ nestedwikilink     = "[[" ({wikilinkcontent})+ "|" ({wikilinkcontent} | {wikilin
 /* redirect */
 redirect           = "#REDIRECT" [ ]* {wikilink}
 
-/* image gallery */
-gallery            = (<[ ]*gallery[^>]*>) ~(<[ ]*\/[ ]*gallery[ ]*>)
-
 %state WIKIPRE
 
 %%
@@ -127,13 +124,6 @@ gallery            = (<[ ]*gallery[^>]*>) ~(<[ ]*\/[ ]*gallery[ ]*>)
     {nestedwikilink} {
         if (logger.isTraceEnabled()) logger.trace("nestedwikilink: " + yytext() + " (" + yystate() + ")");
         return this.parse(TAG_TYPE_WIKI_LINK, yytext(), "nested");
-    }
-
-    /* ----- image gallery ----- */
-
-    {gallery} {
-        if (logger.isTraceEnabled()) logger.trace("gallery: " + yytext() + " (" + yystate() + ")");
-        return this.parse(TAG_TYPE_GALLERY, yytext());
     }
 
     /* ----- other ----- */

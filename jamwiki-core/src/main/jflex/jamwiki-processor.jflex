@@ -105,9 +105,6 @@ wikilinkcontent    = [^\n\]] | "]" [^\n\]] | {htmllink}
 wikilink           = "[[" ({wikilinkcontent})+ "]]" [a-z]*
 nestedwikilink     = "[[" ({wikilinkcontent})+ "|" ({wikilinkcontent} | {wikilink})+ "]]"
 
-/* image gallery */
-gallery            = (<[ ]*gallery[^>]*>) ~(<[ ]*\/[ ]*gallery[ ]*>)
-
 /* references */
 reference          = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\/\n]+[ ]*)? ([ ]*>) ~(<[ ]*\/[ ]*ref[ ]*>)
 referencenocontent = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\/\n]+[ ]*) ([ ]*\/[ ]*>)
@@ -425,15 +422,6 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
         String raw = yytext();
         // strip the opening and closing brackets
         return this.parse(TAG_TYPE_HTML_LINK, raw.substring(1, raw.length() - 1), true);
-    }
-}
-
-/* ----- image gallery ----- */
-
-<YYINITIAL, LIST, TABLE, PARAGRAPH> {
-    {gallery} {
-        if (logger.isTraceEnabled()) logger.trace("gallery: " + yytext() + " (" + yystate() + ")");
-        return this.parse(TAG_TYPE_GALLERY, yytext());
     }
 }
 

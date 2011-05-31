@@ -189,8 +189,8 @@ public class ImageUtil {
 		if (!StringUtils.isWhitespace(imageMetadata.getLink())) {
 			html.append("</a>");
 		}
-		if (!StringUtils.isBlank(caption)) {
-			// captions are only displayed for thumbnails and framed images
+		if (!StringUtils.isBlank(caption) && imageMetadata.getBorder() != ImageBorderEnum._GALLERY) {
+			// captions are only displayed for thumbnails and framed images.  galleries are handled separately.
 			html.append("\n<div class=\"thumbcaption\">");
 			if (escapeHtml) {
 				html.append(StringEscapeUtils.escapeHtml(caption));
@@ -226,10 +226,19 @@ public class ImageUtil {
 	 */
 	private static String buildImageWrapperDivs(ImageMetadata imageMetadata, int width, int height) {
 		// CSS and wrappers are processed differently for thumb/frame vs. non-thumb/non-frame
-		if (imageMetadata.getBorder() == ImageBorderEnum.GALLERY) {
+		if (imageMetadata.getBorder() == ImageBorderEnum._GALLERY) {
 			// vertical padding centers the image in the box.  the extra 4 pixels are padding.
 			int verticalPadding = ((imageMetadata.getGalleryHeight() - height) > 0) ? (int)Math.floor((imageMetadata.getGalleryHeight() - height) / 2) : 0;
-			return "<div class=\"thumb\" style=\"padding:" + verticalPadding + "px 0;\">\n<div class=\"thumbinner\" style=\"width:" + (width + 2) + "px; margin:0 auto;\">{0}</div>\n</div>";
+			StringBuilder html = new StringBuilder();
+			html.append("<div style=\"width:").append(width + 35).append("px;\" class=\"gallerybox\">\n");
+			html.append("<div class=\"thumb\" style=\"padding:").append(verticalPadding).append("px 0;\">\n");
+			html.append("<div class=\"thumbinner\" style=\"width:").append(width + 2).append("px; margin:0 auto;\">{0}</div>\n");
+			html.append("</div>\n");
+			if (!StringUtils.isBlank(imageMetadata.getCaption())) {
+				html.append("<div class=\"gallerytext\">\n<p>").append(imageMetadata.getCaption()).append("</p>\n</div>\n");
+			}
+			html.append("</div>");
+			return html.toString();
 		} else if (imageMetadata.getBorder() != ImageBorderEnum.THUMB && imageMetadata.getBorder() != ImageBorderEnum.FRAME) {
 			if (imageMetadata.getHorizontalAlignment() == ImageHorizontalAlignmentEnum.LEFT) {
 				return "<div class=\"floatleft\">{0}</div>";

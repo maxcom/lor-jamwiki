@@ -134,10 +134,6 @@ public class ImageLinkTag implements JFlexParserTag {
 			}
 			token = token.trim();
 			for (ImageBorderEnum border : EnumSet.allOf(ImageBorderEnum.class)) {
-				if (border == ImageBorderEnum.GALLERY) {
-					// internal use only
-					continue;
-				}
 				if (border.toString().equalsIgnoreCase(token)) {
 					if (border == ImageBorderEnum.BORDER) {
 						// border can be combined with frameless, so set a second attribute to track it
@@ -207,8 +203,8 @@ public class ImageLinkTag implements JFlexParserTag {
 			// per spec, link can only be set for non-thumb and non-frame
 			imageMetadata.setLink(null);
 		}
-		if (imageMetadata.getBorder() != ImageBorderEnum.THUMB && imageMetadata.getBorder() != ImageBorderEnum.FRAME) {
-			// per spec, captions are only displayed for thumbnails and framed images
+		if (imageMetadata.getBorder() != ImageBorderEnum.THUMB && imageMetadata.getBorder() != ImageBorderEnum.FRAME && imageMetadata.getBorder() != ImageBorderEnum._GALLERY) {
+			// per spec, captions are only displayed for thumbnails, framed images and galleries
 			imageMetadata.setCaption(null);
 		}
 		if (imageMetadata.getBorder() == ImageBorderEnum.FRAME) {
@@ -222,6 +218,16 @@ public class ImageLinkTag implements JFlexParserTag {
 		if (imageMetadata.getBordered() && (imageMetadata.getBorder() != ImageBorderEnum.BORDER && imageMetadata.getBorder() != ImageBorderEnum.FRAMELESS)) {
 			// thumb, frame, etc handle borders differently
 			imageMetadata.setBordered(false);
+		}
+		if (imageMetadata.getBorder() == ImageBorderEnum._GALLERY) {
+			// internal use only
+			imageMetadata.setHorizontalAlignment(ImageHorizontalAlignmentEnum.CENTER);
+			// 10 pixels is for padding
+			imageMetadata.setGalleryHeight(imageMetadata.getMaxHeight() + 10);
+			// galleries use either the file name or nothing as the alt tag
+			if (!StringUtils.isBlank(imageMetadata.getCaption())) {
+				imageMetadata.setAlt("");
+			}
 		}
 		return imageMetadata;
 	}

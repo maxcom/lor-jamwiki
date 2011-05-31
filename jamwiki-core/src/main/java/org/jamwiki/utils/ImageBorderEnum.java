@@ -20,5 +20,5 @@ package org.jamwiki.utils;
  *
  */
 public enum ImageBorderEnum {
-	BORDER, FRAME, THUMB, FRAMELESS, GALLERY, NOT_SPECIFIED
+	_GALLERY, BORDER, FRAME, THUMB, FRAMELESS, NOT_SPECIFIED
 }
