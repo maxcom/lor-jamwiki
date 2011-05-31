@@ -1,5 +1,6 @@
 /*
- * This class adds paragraph tags as appropriate.
+ * This class handles references, TOC insertion, and other elements that require
+ * pre-processing before they can be fully parsed.
  */
 package org.jamwiki.parser.jflex;
 
@@ -45,41 +46,31 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 %%
 
+/* ----- nowiki ----- */
+
 <YYINITIAL, PRE> {
-
-    /* ----- nowiki ----- */
-
     {nowiki} {
         if (logger.isTraceEnabled()) logger.trace("nowiki: " + yytext() + " (" + yystate() + ")");
         return JFlexParserUtil.tagContent(yytext());
     }
 }
 
+/* ----- pre ----- */
+
 <YYINITIAL> {
-
-    /* ----- pre ----- */
-
     {htmlprestart} {
         if (logger.isTraceEnabled()) logger.trace("htmlprestart: " + yytext() + " (" + yystate() + ")");
         beginState(PRE);
         return yytext();
     }
 }
-
 <PRE> {
-
-    /* ----- pre ----- */
-
     {htmlpreend} {
         if (logger.isTraceEnabled()) logger.trace("htmlpreend: " + yytext() + " (" + yystate() + ")");
         endState();
         return yytext();
     }
-    {whitespace} {
-        // no need to log this
-        return yytext();
-    }
-    . {
+    {whitespace} | . {
         // no need to log this
         return yytext();
     }
@@ -112,11 +103,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
     /* ----- other ----- */
 
-    {whitespace} {
-        // no need to log this
-        return yytext();
-    }
-    . {
+    {whitespace} | . {
         // no need to log this
         return yytext();
     }

@@ -58,17 +58,18 @@ gallery            = (<[ ]*gallery[^>]*>) ~(<[ ]*\/[ ]*gallery[ ]*>)
 
 %%
 
+/* ----- nowiki ----- */
+
 <YYINITIAL, WIKIPRE> {
-
-    /* ----- nowiki ----- */
-
     {nowiki} {
         if (logger.isTraceEnabled()) logger.trace("nowiki: " + yytext() + " (" + yystate() + ")");
         return yytext();
     }
+}
 
-    /* ----- wikipre ----- */
+/* ----- wikipre ----- */
 
+<YYINITIAL, WIKIPRE> {
     ^{wikipre} {
         if (logger.isTraceEnabled()) logger.trace("wikipre: " + yytext() + " (" + yystate() + ")");
         // rollback all but the first (space) character for further processing
@@ -79,11 +80,7 @@ gallery            = (<[ ]*gallery[^>]*>) ~(<[ ]*\/[ ]*gallery[ ]*>)
         return yytext();
     }
 }
-
 <WIKIPRE> {
-
-    /* ----- wikipre ----- */
-
     ^{wikipreend} {
         if (logger.isTraceEnabled()) logger.trace("wikipreend: " + yytext() + " (" + yystate() + ")");
         endState();
@@ -91,11 +88,7 @@ gallery            = (<[ ]*gallery[^>]*>) ~(<[ ]*\/[ ]*gallery[ ]*>)
         yypushback(yytext().length());
         return "";
     }
-    {whitespace} {
-        // no need to log this
-        return yytext();
-    }
-    . {
+    {whitespace} | . {
         // no need to log this
         return yytext();
     }
@@ -145,11 +138,7 @@ gallery            = (<[ ]*gallery[^>]*>) ~(<[ ]*\/[ ]*gallery[ ]*>)
 
     /* ----- other ----- */
 
-    {whitespace} {
-        // no need to log this
-        return yytext();
-    }
-    . {
+    {whitespace} | . {
         // no need to log this
         return yytext();
     }

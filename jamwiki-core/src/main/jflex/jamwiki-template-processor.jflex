@@ -132,12 +132,12 @@ wikisignature      = ([~]{3,5})
         return this.parse(TAG_TYPE_ONLY_INCLUDE, yytext());
     }
 }
-
-<YYINITIAL>{templateparam} {
-    if (logger.isTraceEnabled()) logger.trace("templateparam: " + yytext() + " (" + yystate() + ")");
-    return yytext();
+<YYINITIAL> {
+    {templateparam} {
+        if (logger.isTraceEnabled()) logger.trace("templateparam: " + yytext() + " (" + yystate() + ")");
+        return yytext();
+    }
 }
-
 <TEMPLATE> {
     {templateendchar} {
         if (logger.isTraceEnabled()) logger.trace("templateendchar: " + yytext() + " (" + yystate() + ")");
@@ -151,12 +151,7 @@ wikisignature      = ([~]{3,5})
         }
         return "";
     }
-    {whitespace} {
-        // no need to log this
-        this.templateString += yytext();
-        return "";
-    }
-    . {
+    {whitespace} | . {
         // no need to log this
         this.templateString += yytext();
         return "";
@@ -185,11 +180,7 @@ wikisignature      = ([~]{3,5})
 
     /* ----- other ----- */
 
-    {whitespace} {
-        // no need to log this
-        return yytext();
-    }
-    . {
+    {whitespace} | . {
         // no need to log this
         return yytext();
     }
