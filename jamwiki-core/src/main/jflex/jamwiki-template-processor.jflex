@@ -18,17 +18,6 @@ import org.jamwiki.utils.WikiLogger;
 %unicode
 %ignorecase
 
-/* code called after parsing is completed */
-%eofval{
-    StringBuilder output = new StringBuilder();
-    if (!StringUtils.isBlank(this.templateString)) {
-        // FIXME - this leaves unparsed text
-        output.append(this.templateString);
-        this.templateString = "";
-    }
-    return (output.length() == 0) ? null : output.toString();
-%eofval}
-
 /* code copied verbatim into the generated .java file */
 %{
     private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiTemplateProcessor.class.getName());
@@ -184,4 +173,15 @@ wikisignature      = ([~]{3,5})
         // no need to log this
         return yytext();
     }
+}
+
+<<EOF>> {
+    if (logger.isTraceEnabled()) logger.trace("EOF (" + yystate() + ")");
+    StringBuilder output = new StringBuilder();
+    if (!StringUtils.isBlank(this.templateString)) {
+        // FIXME - this leaves unparsed text
+        output.append(this.templateString);
+        this.templateString = "";
+    }
+    return (output.length() == 0) ? null : output.toString();
 }
