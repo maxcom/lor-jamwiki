@@ -43,7 +43,6 @@ public abstract class JFlexLexer {
 	/** Stack of currently parsed tag content. */
 	private Stack<JFlexTagItem> tagStack = new Stack<JFlexTagItem>();
 
-	protected static final int TAG_TYPE_GALLERY = 3;
 	protected static final int TAG_TYPE_HTML_HEADING = 5;
 	protected static final int TAG_TYPE_HTML_LINK = 10;
 	protected static final int TAG_TYPE_IMAGE_LINK = 15;
@@ -59,7 +58,6 @@ public abstract class JFlexLexer {
 	protected static final int TAG_TYPE_WIKI_REFERENCE = 55;
 	protected static final int TAG_TYPE_WIKI_REFERENCES = 60;
 	protected static final int TAG_TYPE_WIKI_SIGNATURE = 65;
-	private static final GalleryTag TAG_GALLERY = new GalleryTag();
 	private static final HtmlHeadingTag TAG_HTML_HEADING = new HtmlHeadingTag();
 	private static final HtmlLinkTag TAG_HTML_LINK = new HtmlLinkTag();
 	private static final ImageLinkTag TAG_IMAGE_LINK = new ImageLinkTag();
@@ -213,9 +211,6 @@ public abstract class JFlexLexer {
 		}
 		JFlexParserTag jflexParserTag = null;
 		switch (type) {
-			case TAG_TYPE_GALLERY:
-				jflexParserTag = TAG_GALLERY;
-				break;
 			case TAG_TYPE_HTML_HEADING:
 				jflexParserTag = TAG_HTML_HEADING;
 				break;

@@ -8,15 +8,13 @@
  */
 package org.jamwiki.parser.jflex;
 
-import org.apache.commons.lang.StringUtils;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 %%
 
 %public
 %class JAMWikiCustomTagProcessor
-%extends JFlexLexer
+%extends JFlexCustomTagLexer
 %type String
 %unicode
 %ignorecase
@@ -27,8 +25,7 @@ import org.jamwiki.utils.WikiLogger;
 %}
 
 /* character expressions */
-newline            = "\n"
-whitespace         = {newline} | [ \t\f]
+whitespace         = [ \t\f\n]
 
 /* nowiki */
 nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
@@ -40,52 +37,45 @@ htmlprestart       = (<[ ]*pre ({htmlpreattribute})* [ ]* (\/)? [ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
 htmlpre            = ({htmlprestart}) ~({htmlpreend})
 
-/* comments */
-htmlcomment        = "<!--" ~"-->"
-
-/* image gallery */
-gallery            = (<[ ]*gallery[^>]*>) ~(<[ ]*\/[ ]*gallery[ ]*>)
+/* tags */
+tagopen            = "<" [ ]* [^>\/] [^>]* ">"
+tagnocontent       = "<" [ ]* [^>]+ "/" [ ]* ">"
+tagclose           = "<" [ ]* "/" [ ]* [^>]+ [ ]* ">"
 
 %%
 
-<YYINITIAL> {
+/* ----- nowikiki/pre tags do not allow custom tags ----- */
 
-    /* ----- nowiki ----- */
+{nowiki} | {htmlpre} {
+    if (logger.isTraceEnabled()) logger.trace("nowiki / htmlpre: " + yytext() + " (" + yystate() + ")");
+    return this.processText(yytext());
+}
 
-    {nowiki} {
-        if (logger.isTraceEnabled()) logger.trace("nowiki: " + yytext() + " (" + yystate() + ")");
-        return yytext();
-    }
+/* ----- custom tags ----- */
 
-    /* ----- pre ----- */
+{tagnocontent} {
+    if (logger.isTraceEnabled()) logger.trace("tagnocontent: " + yytext() + " (" + yystate() + ")");
+    return this.parsePossibleCustomTagOpen(yytext());
+}
 
-    {htmlpre} {
-        if (logger.isTraceEnabled()) logger.trace("htmlpre: " + yytext() + " (" + yystate() + ")");
-        return yytext();
-    }
+{tagopen} {
+    if (logger.isTraceEnabled()) logger.trace("tagopen: " + yytext() + " (" + yystate() + ")");
+    return this.parsePossibleCustomTagOpen(yytext());
+}
 
-    /* ----- comments ----- */
+{tagclose} {
+    if (logger.isTraceEnabled()) logger.trace("tagclose: " + yytext() + " (" + yystate() + ")");
+    return this.parsePossibleCustomTagClose(yytext());
+}
 
-    {htmlcomment} {
-        if (logger.isTraceEnabled()) logger.trace("htmlcomment: " + yytext() + " (" + yystate() + ")");
-        if (this.mode < JFlexParser.MODE_TEMPLATE) {
-            return yytext();
-        }
-        // strip out the comment
-        return "";
-    }
+/* ----- other ----- */
 
-    /* ----- image gallery ----- */
+{whitespace} | . {
+    // no need to log this
+    return this.processText(yytext());
+}
 
-    {gallery} {
-        if (logger.isTraceEnabled()) logger.trace("gallery: " + yytext() + " (" + yystate() + ")");
-        return this.parse(TAG_TYPE_GALLERY, yytext());
-    }
-
-    /* ----- other ----- */
-
-    {whitespace} | . {
-        // no need to log this
-        return yytext();
-    }
+<<EOF>> {
+    if (logger.isTraceEnabled()) logger.trace("EOF (" + yystate() + ")");
+    return this.flushCustomTagStack();
 }

@@ -24,7 +24,6 @@ import org.jamwiki.utils.WikiLogger;
     private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiHtmlProcessor.class.getName());
     private String currentAttributeKey;
     private String html;
-    private HtmlTagItem htmlTagItem;
     private int tagPattern;
     private String tagType;
     private LinkedHashMap<String, String> attributes = new LinkedHashMap<String, String>();
@@ -33,8 +32,8 @@ import org.jamwiki.utils.WikiLogger;
      *
      */
     private String closeTag(int tagPattern) {
-        this.htmlTagItem = new HtmlTagItem(this.tagType, this.tagPattern, this.attributes);
-        return this.htmlTagItem.toHtml();
+        HtmlTagItem htmlTagItem = new HtmlTagItem(this.tagType, this.tagPattern, this.attributes);
+        return htmlTagItem.toHtml();
     }
 
     /**
@@ -43,7 +42,7 @@ import org.jamwiki.utils.WikiLogger;
      * close tag, so this method can only be called after a parser pass completes.
      */
     protected HtmlTagItem getHtmlTagItem() {
-        return this.htmlTagItem;
+        return new HtmlTagItem(this.tagType, this.tagPattern, this.attributes);
     }
 
     /**
@@ -54,7 +53,6 @@ import org.jamwiki.utils.WikiLogger;
         this.currentAttributeKey = null;
         this.tagPattern = tagPattern;
         this.html = yytext();
-        this.htmlTagItem = null;
         this.tagType = null;
     }
 
@@ -252,7 +250,7 @@ tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespa
         // ignore whitespace
         return "";
     }
-    {htmlTag} {
+    {htmlTag} | {genericTag} {
         this.tagType = yytext().toLowerCase();
         if (this.tagType.equals("br") || this.tagType.equals("hr")) {
             // handle invalid tags of the form </br> or </hr>
@@ -391,6 +389,7 @@ tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespa
         }
         // tag close, done
         endState();
+        this.tagPattern = HtmlTagItem.TAG_PATTERN_EMPTY_BODY;
         return this.closeTag(HtmlTagItem.TAG_PATTERN_EMPTY_BODY);
     }
     {tagCloseContent} {

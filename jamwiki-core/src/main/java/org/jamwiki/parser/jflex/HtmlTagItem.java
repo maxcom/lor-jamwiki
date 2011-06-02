@@ -55,6 +55,14 @@ public class HtmlTagItem {
 	}
 
 	/**
+	 * Return <code>true</code> if this tag's type is TAG_PATTERN_EMPTY_BODY,
+	 * otherwise return <code>false</code>.
+	 */
+	protected boolean isTagEmptyBody() {
+		return (this.tagPattern == TAG_PATTERN_EMPTY_BODY);
+	}
+
+	/**
 	 * Return the tag pattern (open tag, close tag, empty body tag).
 	 */
 	protected int getTagPattern() {
@@ -85,7 +93,7 @@ public class HtmlTagItem {
 				result.append('=').append("\"").append(value.trim()).append("\"");
 			}
 		}
-		if (this.tagPattern == TAG_PATTERN_EMPTY_BODY) {
+		if (this.isTagEmptyBody()) {
 			result.append(" /");
 		}
 		result.append(">");

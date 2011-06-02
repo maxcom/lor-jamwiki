@@ -18,6 +18,7 @@ package org.jamwiki.parser.jflex;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
@@ -34,7 +35,7 @@ import org.jamwiki.utils.WikiLogger;
 /**
  * Handle image galleries of the form <gallery>...</gallery>.
  */
-public class GalleryTag implements JFlexParserTag {
+public class GalleryTag implements JFlexCustomTagItem {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(GalleryTag.class.getName());
 	private static Pattern IMAGE_DIMENSION_PATTERN = Pattern.compile("([0-9]+)[ ]*(px)?", Pattern.CASE_INSENSITIVE);
@@ -45,20 +46,17 @@ public class GalleryTag implements JFlexParserTag {
 	 * Given a list of image links to display in the gallery, generate the
 	 * gallery HTML.
 	 */
-	private String generateGalleryHtml(ParserInput parserInput, String raw, List<String> imageLinks) throws ParserException {
+	private String generateGalleryHtml(ParserInput parserInput, Map<String, String> attributes, List<String> imageLinks) throws ParserException {
 		if (imageLinks.isEmpty()) {
 			// empty gallery tag
 			return "";
 		}
-		// process the open tag to generate a list of attributes
-		String openTag = raw.substring(0, raw.indexOf(">") + 1);
-		HtmlTagItem htmlTagItem = JFlexParserUtil.sanitizeHtmlTag(openTag);
-		int width = this.retrieveDimension(htmlTagItem, "widths", DEFAULT_THUMBNAIL_MAX_DIMENSION);
-		int height = this.retrieveDimension(htmlTagItem, "heights", DEFAULT_THUMBNAIL_MAX_DIMENSION);
-		int perRow = NumberUtils.toInt(Utilities.getMapValueCaseInsensitive(htmlTagItem.getAttributes(), "perrow"), DEFAULT_IMAGES_PER_ROW);
+		int width = this.retrieveDimension(attributes, "widths", DEFAULT_THUMBNAIL_MAX_DIMENSION);
+		int height = this.retrieveDimension(attributes, "heights", DEFAULT_THUMBNAIL_MAX_DIMENSION);
+		int perRow = NumberUtils.toInt(Utilities.getMapValueCaseInsensitive(attributes, "perrow"), DEFAULT_IMAGES_PER_ROW);
 		int count = 0;
 		StringBuilder result = new StringBuilder("{| class=\"gallery\" cellspacing=\"0\" cellpadding=\"0\"\n");
-		String caption = Utilities.getMapValueCaseInsensitive(htmlTagItem.getAttributes(), "caption");
+		String caption = Utilities.getMapValueCaseInsensitive(attributes, "caption");
 		if (!StringUtils.isBlank(caption)) {
 			result.append("|+ ").append(caption.trim()).append("\n");
 		}
@@ -87,12 +85,9 @@ public class GalleryTag implements JFlexParserTag {
 
 	/**
 	 * Process the contents of the gallery tag into a list of wiki link objects
-	 * for the images in the gallery.  This method also updates the topic metadata,
-	 * including any "link to" records, in the ParserOutput object.
+	 * for the images in the gallery.
 	 */
-	private List<String> generateImageLinks(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws ParserException {
-		// get the tag contents as a list of wiki syntax for image thumbnails
-		String content = JFlexParserUtil.tagContent(raw);
+	private List<String> generateImageLinks(ParserInput parserInput, String content) throws ParserException {
 		List<String> imageLinks = new ArrayList<String>();
 		if (!StringUtils.isBlank(content)) {
 			String[] lines = content.split("\n");
@@ -121,21 +116,18 @@ public class GalleryTag implements JFlexParserTag {
 	 * Parse a gallery tag of the form <gallery>...</gallery> and return the
 	 * resulting HTML output.
 	 */
-	public String parse(JFlexLexer lexer, String raw, Object... args) throws ParserException {
-		if (lexer.getMode() < JFlexParser.MODE_CUSTOM) {
-			return raw;
-		}
+	public String parse(JFlexLexer lexer, Map<String, String> attributes, String content) throws ParserException {
 		// get the tag contents as a list of wiki syntax for image thumbnails.
-		List<String> imageLinks = this.generateImageLinks(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), raw);
+		List<String> imageLinks = this.generateImageLinks(lexer.getParserInput(), content);
 		// generate the gallery wiki text
-		return this.generateGalleryHtml(lexer.getParserInput(), raw, imageLinks);
+		return this.generateGalleryHtml(lexer.getParserInput(), attributes, imageLinks);
 	}
 
 	/**
 	 * Utility method for converting a dimension of the form "50px" to an integer.
 	 */
-	private int retrieveDimension(HtmlTagItem htmlTagItem, String key, int defaultValue) {
-		String value = Utilities.getMapValueCaseInsensitive(htmlTagItem.getAttributes(), key);
+	private int retrieveDimension(Map<String, String> attributes, String key, int defaultValue) {
+		String value = Utilities.getMapValueCaseInsensitive(attributes, key);
 		if (StringUtils.isBlank(value)) {
 			return defaultValue;
 		}
