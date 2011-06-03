@@ -55,7 +55,7 @@ public class WikiBoldItalicTag implements JFlexParserTag {
 	private void processBoldItalic(JFlexLexer lexer, String tagType) throws ParserException {
 		if (tagType == null) {
 			// bold-italic
-			if (lexer.peekTag().getTagType().equals("i")) {
+			if (((JAMWikiLexer)lexer).peekTag().getTagType().equals("i")) {
 				// italic tag already opened
 				this.processBoldItalic(lexer, "i");
 				this.processBoldItalic(lexer, "b");
@@ -67,30 +67,30 @@ public class WikiBoldItalicTag implements JFlexParserTag {
 			return;
 		}
 		// bold or italic
-		if (lexer.peekTag().getTagType().equals(tagType)) {
+		if (((JAMWikiLexer)lexer).peekTag().getTagType().equals(tagType)) {
 			// tag was open, close it
-			lexer.popTag(tagType);
+			((JAMWikiLexer)lexer).popTag(tagType);
 			return;
 		}
 		// TODO - make this more generic and implement it globally
-		if (tagType.equals("b") && lexer.peekTag().getTagType().equals("i")) {
+		if (tagType.equals("b") && ((JAMWikiLexer)lexer).peekTag().getTagType().equals("i")) {
 			// since Mediawiki syntax unfortunately chose to use the same character
 			// for bold and italic ('' and '''), see if the syntax is of the form
 			// '''''bold''' then italic'', in which case the current stack contains
 			// "b" followed by "i" when it should be the reverse.
-			int stackLength = lexer.getTagStack().size();
+			int stackLength = ((JAMWikiLexer)lexer).getTagStack().size();
 			if (stackLength > 2) {
-				JFlexTagItem grandparent = lexer.getTagStack().get(stackLength - 2);
+				JFlexTagItem grandparent = ((JAMWikiLexer)lexer).getTagStack().get(stackLength - 2);
 				if (grandparent.getTagType().equals("b")) {
 					// swap the tag types and close the current tag
 					grandparent.changeTagType("i");
-					lexer.peekTag().changeTagType("b");
-					lexer.popTag(tagType);
+					((JAMWikiLexer)lexer).peekTag().changeTagType("b");
+					((JAMWikiLexer)lexer).popTag(tagType);
 					return;
 				}
 			}
 		}
 		// push the new tag onto the stack
-		lexer.pushTag(tagType, null);
+		((JAMWikiLexer)lexer).pushTag(tagType, null);
 	}
 }

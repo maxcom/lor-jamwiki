@@ -124,8 +124,8 @@ public abstract class AbstractHeadingTag implements JFlexParserTag {
 		}
 		int level = this.generateTagLevel(raw, args);
 		String tagText = this.generateTagText(raw, args);
-		if (lexer.peekTag().getTagType().equals("p")) {
-			lexer.popTag("p");
+		if (((JAMWikiLexer)lexer).peekTag().getTagType().equals("p")) {
+			((JAMWikiLexer)lexer).popTag("p");
 		}
 		if (lexer instanceof JAMWikiLexer && lexer.yystate() == JAMWikiLexer.PARAGRAPH) {
 			lexer.endState();

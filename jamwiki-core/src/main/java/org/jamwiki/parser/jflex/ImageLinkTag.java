@@ -71,16 +71,16 @@ public class ImageLinkTag implements JFlexParserTag {
 			String result = this.parseImageLink(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), wikiLink);
 			// depending on image alignment/border the image may be contained within a div.  If that's the
 			// case, close any open paragraph tags prior to pushing the image onto the stack
-			if (result.startsWith("<div") && lexer.peekTag().getTagType().equals("p")) {
-				lexer.popTag("p");
-				StringBuilder tagContent = lexer.peekTag().getTagContent();
+			if (result.startsWith("<div") && ((JAMWikiLexer)lexer).peekTag().getTagType().equals("p")) {
+				((JAMWikiLexer)lexer).popTag("p");
+				StringBuilder tagContent = ((JAMWikiLexer)lexer).peekTag().getTagContent();
 				String trimmedTagContent = tagContent.toString().trim();
 				if (tagContent.length() != trimmedTagContent.length()) {
 					// trim trailing whitespace
 					tagContent.replace(0, tagContent.length() - 1, trimmedTagContent);
 				}
 				tagContent.append(result);
-				lexer.pushTag("p", null);
+				((JAMWikiLexer)lexer).pushTag("p", null);
 				return "";
 			} else {
 				// otherwise just return the image HTML

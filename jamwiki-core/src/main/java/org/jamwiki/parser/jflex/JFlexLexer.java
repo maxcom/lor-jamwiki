@@ -17,9 +17,7 @@
 package org.jamwiki.parser.jflex;
 
 import java.util.Stack;
-import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
-import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.WikiLogger;
@@ -40,8 +38,6 @@ public abstract class JFlexLexer {
 	protected ParserOutput parserOutput = null;
 	/** Parser mode, which provides input to the parser about what steps to take. */
 	protected int mode = JFlexParser.MODE_POSTPROCESS;
-	/** Stack of currently parsed tag content. */
-	protected Stack<JFlexTagItem> tagStack = new Stack<JFlexTagItem>();
 
 	protected static final int TAG_TYPE_HTML_HEADING = 5;
 	protected static final int TAG_TYPE_HTML_LINK = 10;
@@ -89,13 +85,6 @@ public abstract class JFlexLexer {
 	 */
 	protected boolean allowJavascript() {
 		return Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT);
-	}
-
-	/**
-	 * Append content to the current tag in the tag stack.
-	 */
-	protected void append(String content) {
-		this.tagStack.peek().getTagContent().append(content);
 	}
 
 	/**
@@ -150,13 +139,6 @@ public abstract class JFlexLexer {
 	}
 
 	/**
-	 *
-	 */
-	protected Stack<JFlexTagItem> getTagStack() {
-		return this.tagStack;
-	}
-
-	/**
 	 * Initialize the parser settings.  This functionality should be done
 	 * from the constructor, but since JFlex generates code it is not possible
 	 * to modify the constructor parameters.
@@ -168,29 +150,22 @@ public abstract class JFlexLexer {
 	 * @param mode The parser mode to use when parsing.  Mode affects what
 	 *  type of parsing actions are taken when processing raw text.
 	 */
-	public final void init(ParserInput parserInput, ParserOutput parserOutput, int mode) throws ParserException {
+	protected void init(ParserInput parserInput, ParserOutput parserOutput, int mode) {
 		this.parserInput = parserInput;
 		this.parserOutput = parserOutput;
 		this.mode = mode;
-		this.tagStack.push(new JFlexTagItem(JFlexTagItem.ROOT_TAG, null));
 	}
 
 	/**
-	 * Utility method to walk the current tag stack to determine if the top of the stack
-	 * contains list tags followed by a tag of a specific type.
+	 * Execute the lexer, returning the parsed content.
 	 */
-	private boolean isNextAfterListTags(String tagType) {
-		JFlexTagItem nextTag;
-		for (int i = (this.tagStack.size() - 1); i > 0; i--) {
-			nextTag = this.tagStack.get(i);
-			if (nextTag.getTagType().equals(tagType)) {
-				return true;
-			}
-			if (!nextTag.isListTag()) {
-				return false;
-			}
+	protected String lex() throws Exception {
+		String line;
+		StringBuilder result = new StringBuilder();
+		while ((line = this.yylex()) != null) {
+			result.append(line);
 		}
-		return false;
+		return result.toString();
 	}
 
 	/**
@@ -256,163 +231,6 @@ public abstract class JFlexLexer {
 		} catch (Throwable t) {
 			logger.info("Unable to parse " + raw, t);
 			return raw;
-		}
-	}
-
-	/**
-	 * Peek at the current tag from the lexer stack and see if it matches
-	 * the given tag type.
-	 */
-	protected JFlexTagItem peekTag() {
-		return this.tagStack.peek();
-	}
-
-	/**
-	 * Pop the most recent HTML tag from the lexer stack.
-	 */
-	protected JFlexTagItem popTag(String tagType) {
-		if (this.tagStack.size() <= 1) {
-			logger.warn("popTag called on an empty tag stack or on the root stack element.  Please report this error on jamwiki.org, and provide the wiki syntax for the topic being parsed.");
-		}
-		// verify that the tag being closed is the tag that is currently open.  if not
-		// there are two options - first is that the user entered unbalanced HTML such
-		// as "<u><strong>text</u></strong>" and it should be re-balanced, and second
-		// is that this is just a random close tag such as "<div>text</div></div>" and
-		// it should be escaped without modifying the tag stack.
-		if (!this.peekTag().getTagType().equals(tagType)) {
-			// check to see if a close tag override was previously set, which happens
-			// from the inner tag of unbalanced HTML.  Example: "<u><strong>text</u></strong>"
-			// would set a close tag override when the "</u>" is parsed to indicate that
-			// the "</strong>" should actually be parsed as a "</u>".
-			if (StringUtils.equals(this.peekTag().getTagType(), this.peekTag().getCloseTagOverride())) {
-				return this.popTag(this.peekTag().getCloseTagOverride());
-			}
-			// check to see if the parent tag is a list and the current tag is in the tag
-			// stack.  if so close the list and pop the current tag.
-			if (!JFlexTagItem.isListTag(tagType) && this.peekTag().isListItemTag() && this.isNextAfterListTags(tagType)) {
-				this.popAllListTags();
-				return this.popTag(tagType);
-			}
-			// check to see if the parent tag matches the current close tag.  if so then
-			// this is unbalanced HTML of the form "<u><strong>text</u></strong>" and
-			// it should be parsed as "<u><strong>text</strong></u>".
-			JFlexTagItem parent = null;
-			if (this.tagStack.size() > 2) {
-				parent = this.tagStack.get(this.tagStack.size() - 2);
-			}
-			if (parent != null && parent.getTagType().equals(tagType)) {
-				parent.setCloseTagOverride(tagType);
-				return this.popTag(this.peekTag().getTagType());
-			}
-			// if the above checks fail then this is an attempt to pop a tag that is not
-			// currently open, so append the escaped close tag to the current tag
-			// content without modifying the tag stack.
-			JFlexTagItem currentTag = this.tagStack.peek();
-			currentTag.getTagContent().append("&lt;/" + tagType + "&gt;");
-			return null;
-		}
-		JFlexTagItem currentTag = this.tagStack.peek();
-		if (this.tagStack.size() > 1) {
-			// only pop if not the root tag
-			currentTag = this.tagStack.pop();
-		}
-		JFlexTagItem previousTag = this.tagStack.peek();
-		if (!currentTag.isInlineTag() || currentTag.getTagType().equals("pre")) {
-			// if the current tag is not an inline tag, make sure it is on its own lines
-			String trimmedContent = StringUtils.stripEnd(previousTag.getTagContent().toString(), null);
-			previousTag.getTagContent().replace(0, previousTag.getTagContent().length(), trimmedContent);
-			previousTag.getTagContent().append('\n');
-			previousTag.getTagContent().append(currentTag.toHtml());
-			previousTag.getTagContent().append('\n');
-		} else {
-			previousTag.getTagContent().append(currentTag.toHtml());
-		}
-		return currentTag;
-	}
-
-	/**
-	 * Pop the most recent HTML tag from the lexer stack.
-	 */
-	protected JFlexTagItem popTag(String tagType, String closeTagRaw) throws ParserException {
-		if (tagType != null) {
-			return this.popTag(tagType);
-		}
-		HtmlTagItem htmlTagItem = JFlexParserUtil.sanitizeHtmlTag(closeTagRaw);
-		return this.popTag(htmlTagItem.getTagType());
-	}
-
-	/**
-	 * Pop all tags off of the stack and return a string representation.
-	 */
-	protected String popAllTags() {
-		// pop the stack down to (but not including) the root tag
-		while (this.tagStack.size() > 1) {
-			JFlexTagItem currentTag = this.tagStack.peek();
-			this.popTag(currentTag.getTagType());
-		}
-		// now pop the root tag
-		JFlexTagItem currentTag = this.tagStack.pop();
-		return (this.mode >= JFlexParser.MODE_LAYOUT) ? currentTag.toHtml().trim() : currentTag.toHtml();
-	}
-
-	/**
-	 * Push a new HTML tag onto the lexer stack.
-	 */
-	protected void pushTag(String tagType, String openTagRaw) throws ParserException {
-		JFlexTagItem tag = new JFlexTagItem(tagType, openTagRaw);
-		// many HTML tags cannot nest (ie "<li><li></li></li>" is invalid), so if a non-nesting
-		// tag is being added and the previous tag is of the same type, close the previous tag
-		if (tag.isNonNestingTag() && this.peekTag().getTagType().equals(tag.getTagType())) {
-			this.popTag(tag.getTagType());
-		}
-		this.tagStack.push(tag);
-	}
-
-	/**
-	 * Utility method used when parsing list tags to determine the current
-	 * list nesting level.
-	 */
-	protected int currentListDepth() {
-		int depth = 0;
-		int currentPos = this.tagStack.size() - 1;
-		while (currentPos >= 0) {
-			JFlexTagItem tag = this.tagStack.get(currentPos);
-			if (!StringUtils.equals(tag.getTagType(), "li") && !StringUtils.equals(tag.getTagType(), "dd") && !StringUtils.equals(tag.getTagType(), "dt")) {
-				break;
-			}
-			// move back in the stack two since each list item has a parent list type
-			currentPos -= 2;
-			depth++;
-		}
-		return depth;
-	}
-
-	/**
-	 *
-	 */
-	protected void popAllListTags() {
-		// before clearing a list, first make sure that any open inline tags or paragraph tags
-		// have been closed (example: "<i><ul>" is invalid.  close the <i> first).
-		while (!this.peekTag().isRootTag() && (this.peekTag().getTagType().equals("p") || this.peekTag().isInlineTag())) {
-			this.popTag(this.peekTag().getTagType());
-		}
-		this.popListTags(this.currentListDepth());
-	}
-
-	/**
-	 *
-	 */
-	protected void popListTags(int depth) {
-		if (depth < 0) {
-			throw new IllegalArgumentException("Cannot pop a negative number: " + depth);
-		}
-		String tagType;
-		for (int i=0; i < depth; i++) {
-			// pop twice since lists have a list tag and a list item tag ("<ul><li></li></ul>")
-			tagType = (this.tagStack.peek()).getTagType();
-			popTag(tagType);
-			tagType = (this.tagStack.peek()).getTagType();
-			popTag(tagType);
 		}
 	}
 

@@ -90,29 +90,15 @@ public class JFlexParser extends AbstractParser {
 		lexer.init(this.parserInput, parserOutput, mode);
 		validate(lexer);
 		this.parserInput.incrementDepth();
-		long previous, current = 0;
-		String line;
+		String result = null;
 		try {
-			previous = System.currentTimeMillis();
-			while ((line = lexer.yylex()) != null) {
-				lexer.append(line);
-				current = System.currentTimeMillis();
-				if (logger.isDebugEnabled() && (current - previous) > TIME_LIMIT_PARSE) {
-					// took too long, log a message
-					String message = "Slow parsing (" + ((current - previous) / 1000.000) + " s) for topic: " + this.parserInput.getTopicName() + " / state: " + lexer.yystate();
-					if (raw != null && raw.length() < 300) {
-						message += " / content: " + raw;
-					}
-					logger.debug(message);
-				}
-				previous = current;
-			}
+			result = lexer.lex();
 		} catch (Exception e) {
 			this.parserInput.decrementDepth();
 			throw new ParserException("Failure while parsing topic " + this.parserInput.getTopicName(), e);
 		}
 		this.parserInput.decrementDepth();
-		return lexer.popAllTags();
+		return result;
 	}
 
 	/**
