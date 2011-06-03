@@ -8,21 +8,15 @@ package org.jamwiki.parser.jflex;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.Utilities;
-import org.jamwiki.utils.WikiLogger;
 
 %%
 
 %public
-%class JAMWikiProcessor
-%extends JFlexLexer
+%class JAMWikiLexer
+%extends AbstractJAMWikiLexer
 %type String
 %unicode
 %ignorecase
-
-/* code copied verbatim into the generated .java file */
-%{
-    private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiProcessor.class.getName());
-%}
 
 /* character expressions */
 newline            = "\n"

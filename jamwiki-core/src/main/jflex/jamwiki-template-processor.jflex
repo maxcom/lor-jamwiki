@@ -7,22 +7,15 @@ package org.jamwiki.parser.jflex;
 
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.Utilities;
-import org.jamwiki.utils.WikiLogger;
 
 %%
 
 %public
-%class JAMWikiTemplateProcessor
-%extends JFlexLexer
+%class JAMWikiTemplateLexer
+%extends AbstractJAMTemplateLexer
 %type String
 %unicode
 %ignorecase
-
-/* code copied verbatim into the generated .java file */
-%{
-    private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiTemplateProcessor.class.getName());
-    protected String templateString = "";
-%}
 
 /* character expressions */
 newline            = "\n"

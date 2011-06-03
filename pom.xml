@@ -476,11 +476,13 @@
 					<aggregate>true</aggregate>
 					<excludes>
 						<exclude>**/org/incava/**/*.java</exclude>
-						<exclude>**/org/jamwiki/parser/jflex/JAMWikiPostProcessor.java</exclude>
-						<exclude>**/org/jamwiki/parser/jflex/JAMWikiPreProcessor.java</exclude>
-						<exclude>**/org/jamwiki/parser/jflex/JAMWikiProcessor.java</exclude>
-						<exclude>**/org/jamwiki/parser/jflex/JAMWikiSliceProcessor.java</exclude>
-						<exclude>**/org/jamwiki/parser/jflex/JAMWikiSpliceProcessor.java</exclude>
+						<exclude>**/org/jamwiki/parser/jflex/JAMWikiCustomTagLexer.java</exclude>
+						<exclude>**/org/jamwiki/parser/jflex/JAMWikiHtmlTagLexer.java</exclude>
+						<exclude>**/org/jamwiki/parser/jflex/JAMWikiPostLexer.java</exclude>
+						<exclude>**/org/jamwiki/parser/jflex/JAMWikiPreLexer.java</exclude>
+						<exclude>**/org/jamwiki/parser/jflex/JAMWikiLexer.java</exclude>
+						<exclude>**/org/jamwiki/parser/jflex/JAMWikiSpliceLexer.java</exclude>
+						<exclude>**/org/jamwiki/parser/jflex/JAMWikiTemplateLexer.java</exclude>
 					</excludes>
 					<format>xml</format>
 					<includeTests>true</includeTests>

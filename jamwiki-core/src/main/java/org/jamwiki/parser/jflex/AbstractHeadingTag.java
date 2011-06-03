@@ -127,7 +127,7 @@ public abstract class AbstractHeadingTag implements JFlexParserTag {
 		if (lexer.peekTag().getTagType().equals("p")) {
 			lexer.popTag("p");
 		}
-		if (lexer instanceof JAMWikiProcessor && lexer.yystate() == JAMWikiProcessor.PARAGRAPH) {
+		if (lexer instanceof JAMWikiLexer && lexer.yystate() == JAMWikiLexer.PARAGRAPH) {
 			lexer.endState();
 		}
 		String tocText = this.buildTocText(lexer, tagText);

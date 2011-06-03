@@ -8,21 +8,14 @@
  */
 package org.jamwiki.parser.jflex;
 
-import org.jamwiki.utils.WikiLogger;
-
 %%
 
 %public
-%class JAMWikiCustomTagProcessor
-%extends JFlexCustomTagLexer
+%class JAMWikiCustomTagLexer
+%extends AbstractJAMWikiCustomTagLexer
 %type String
 %unicode
 %ignorecase
-
-/* code copied verbatim into the generated .java file */
-%{
-    private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiCustomTagProcessor.class.getName());
-%}
 
 /* character expressions */
 whitespace         = [ \t\f\n]

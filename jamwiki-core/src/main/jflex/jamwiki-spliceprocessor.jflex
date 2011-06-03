@@ -6,68 +6,14 @@
  */
 package org.jamwiki.parser.jflex;
 
-import org.jamwiki.utils.WikiLogger;
-
 %%
 
 %public
-%class JAMWikiSpliceProcessor
-%extends JFlexLexer
+%class JAMWikiSpliceLexer
+%extends AbstractJAMWikiSpliceLexer
 %type String
 %unicode
 %ignorecase
-
-/* code copied verbatim into the generated .java file */
-%{
-    private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiSpliceProcessor.class.getName());
-    protected int section = 0;
-    protected int sectionDepth = 0;
-    protected int targetSection = 0;
-    protected String replacementText = null;
-    protected boolean inTargetSection = false;
-    
-    /**
-     *
-     */
-    protected String processHeading(int level, String headingText, int tagType) {
-        this.section++;
-        if (inTargetSection && this.sectionDepth >= level) {
-            inTargetSection = false;
-        } else if (this.targetSection == this.section) {
-            this.parse(tagType, headingText, level);
-            inTargetSection = true;
-            this.sectionDepth = level;
-            if (this.mode == JFlexParser.MODE_SPLICE) return this.replacementText;
-        }
-        return returnText(headingText);
-    }
-    
-    /**
-     *
-     */
-    private String returnText(String text) {
-        return ((inTargetSection && this.mode == JFlexParser.MODE_SPLICE) || (!inTargetSection && this.mode == JFlexParser.MODE_SLICE)) ? "" : text;
-    }
-    
-    /**
-     *
-     */
-    public void setReplacementText(String replacementText) {
-        // replacementText must end with a newline, otherwise sections get spliced together
-        if (replacementText == null) return;
-        if (!replacementText.endsWith("\n")) {
-            replacementText += "\n";
-        }
-        this.replacementText = replacementText;
-    }
-    
-    /**
-     *
-     */
-    public void setTargetSection(int targetSection) {
-        this.targetSection = targetSection;
-    }
-%}
 
 /* character expressions */
 newline            = "\n"
@@ -110,37 +56,45 @@ htmlcomment        = "<!--" ~"-->"
 
 %%
 
-/* ----- parsing tags ----- */
+<YYINITIAL, PRE> {
 
-<YYINITIAL, PRE>{nowiki} {
-    if (logger.isTraceEnabled()) logger.trace("nowiki: " + yytext() + " (" + yystate() + ")");
-    return returnText(yytext());
-}
+    /* ----- nowiki ----- */
 
-/* ----- nowiki ----- */
-
-<YYINITIAL>{htmlprestart} {
-    if (allowHTML()) {
-        beginState(PRE);
+    {nowiki} {
+        if (logger.isTraceEnabled()) logger.trace("nowiki: " + yytext() + " (" + yystate() + ")");
+        return returnText(yytext());
     }
-    return returnText(yytext());
 }
 
-<PRE>{htmlpreend} {
-    // state only changes to pre if allowHTML() is true, so no need to check here
-    endState();
-    return returnText(yytext());
-}
-
-/* ----- comments ----- */
-
-<YYINITIAL>{htmlcomment} {
-    return returnText(yytext());
-}
-
-/* ----- headings ----- */
+/* ----- preformatted text ----- */
 
 <YYINITIAL> {
+    {htmlprestart} {
+        if (allowHTML()) {
+            beginState(PRE);
+        }
+        return returnText(yytext());
+    }
+}
+
+<PRE> {
+    {htmlpreend} {
+        // state only changes to pre if allowHTML() is true, so no need to check here
+        endState();
+        return returnText(yytext());
+    }
+}
+
+<YYINITIAL> {
+
+    /* ----- comments ----- */
+
+    {htmlcomment} {
+        return returnText(yytext());
+    }
+
+    /* ----- headings ----- */
+
     ^{wikiheading1} {
         return processHeading(1, yytext(), TAG_TYPE_WIKI_HEADING);
     }
@@ -179,12 +133,11 @@ htmlcomment        = "<!--" ~"-->"
     }
 }
 
-/* ----- default ----- */
+<YYINITIAL, PRE> {
 
-<YYINITIAL, PRE>{whitespace} {
-    return returnText(yytext());
-}
+    /* ----- default ----- */
 
-<YYINITIAL, PRE>. {
-    return returnText(yytext());
+    {whitespace} | . {
+        return returnText(yytext());
+    }
 }

@@ -27,9 +27,9 @@ import org.jamwiki.utils.WikiLogger;
  * Abstract class that is extended by the JFlex custom tag lexer.  Used in parsing
  * custom tags of the form <custom attribute="value">content</custom>.
  */
-public abstract class JFlexCustomTagLexer extends JFlexLexer {
+public abstract class AbstractJAMWikiCustomTagLexer extends JFlexLexer {
 
-	private static final WikiLogger logger = WikiLogger.getLogger(JFlexCustomTagLexer.class.getName());
+	protected static final WikiLogger logger = WikiLogger.getLogger(AbstractJAMWikiCustomTagLexer.class.getName());
 	// TODO - make this configurable
 	private static final Map<String, JFlexCustomTagItem> CUSTOM_TAG_REGISTRY = new HashMap<String, JFlexCustomTagItem>();
 	static {

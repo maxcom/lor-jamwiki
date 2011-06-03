@@ -6,71 +6,15 @@
  */
 package org.jamwiki.parser.jflex;
 
-import java.util.LinkedHashMap;
-import org.jamwiki.utils.WikiLogger;
-
 %%
 
 %public
-%class JAMWikiHtmlProcessor
-%extends JFlexLexer
+%class JAMWikiHtmlTagLexer
+%extends AbstractJAMWikiHtmlTagLexer
 %char
 %type String
 %unicode
 %ignorecase
-
-/* code copied verbatim into the generated .java file */
-%{
-    private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiHtmlProcessor.class.getName());
-    private String currentAttributeKey;
-    private String html;
-    private int tagPattern;
-    private String tagType;
-    private LinkedHashMap<String, String> attributes = new LinkedHashMap<String, String>();
-
-    /**
-     *
-     */
-    private String closeTag(int tagPattern) {
-        HtmlTagItem htmlTagItem = new HtmlTagItem(this.tagType, this.tagPattern, this.attributes);
-        return htmlTagItem.toHtml();
-    }
-
-    /**
-     * Return the HTML tag item that this processor generates.  Note that the tag
-     * item is only created when the tag parser processes the last character of the
-     * close tag, so this method can only be called after a parser pass completes.
-     */
-    protected HtmlTagItem getHtmlTagItem() {
-        return new HtmlTagItem(this.tagType, this.tagPattern, this.attributes);
-    }
-
-    /**
-     *
-     */
-    private void initialize(int tagPattern) {
-        this.attributes.clear();
-        this.currentAttributeKey = null;
-        this.tagPattern = tagPattern;
-        this.html = yytext();
-        this.tagType = null;
-    }
-
-    /**
-     *
-     */
-    private void initializeCurrentAttribute(String key) {
-        this.currentAttributeKey = key.toLowerCase();
-        this.attributes.put(this.currentAttributeKey, null);
-    }
-
-    /**
-     *
-     */
-    private boolean isFinished() {
-        return ((yychar + this.yytext().length()) == this.html.length());
-    }
-%}
 
 whitespace         = [ \t\f]
 
@@ -384,7 +328,8 @@ tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespa
 }
 <ATTRS_ATTRIBUTE_KEY, ATTRS_TEXTALIGN_ATTRIBUTE_KEY, BLOCKQUOTE_ATTRIBUTE_KEY, BR_ATTRIBUTE_KEY, DL_ATTRIBUTE_KEY, FONT_ATTRIBUTE_KEY, HR_ATTRIBUTE_KEY, HTML_ATTRIBUTE_VALUE, INS_DEL_ATTRIBUTE_KEY, LI_ATTRIBUTE_KEY, NON_HTML_ATTRIBUTE_KEY, OL_ATTRIBUTE_KEY, PRE_ATTRIBUTE_KEY, SCRIPT_ATTRIBUTE_KEY, TABLE_ATTRIBUTE_KEY, TABLE_CAPTION_ATTRIBUTE_KEY, TABLE_CELL_ATTRIBUTE_KEY, TABLE_COL_ATTRIBUTE_KEY, TABLE_ROW_ATTRIBUTE_KEY, TABLE_SECTION_ATTRIBUTE_KEY, UL_ATTRIBUTE_KEY> {
     {tagCloseNoContent} {
-        if (!this.isFinished()) {
+        boolean isFinished = ((yychar + this.yytext().length()) == this.html.length());
+        if (!isFinished) {
             return "";
         }
         // tag close, done
@@ -393,7 +338,8 @@ tagScriptClose     = "<" ({whitespace})* "/" ({whitespace})* "script" ({whitespa
         return this.closeTag(HtmlTagItem.TAG_PATTERN_EMPTY_BODY);
     }
     {tagCloseContent} {
-        if (!this.isFinished()) {
+        boolean isFinished = ((yychar + this.yytext().length()) == this.html.length());
+        if (!isFinished) {
             return "";
         }
         // tag close, done

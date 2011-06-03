@@ -126,7 +126,7 @@ public class JFlexParser extends AbstractParser {
 	 */
 	private String parseCustom(ParserOutput parserOutput, String raw, int mode) throws ParserException {
 		StringReader reader = toStringReader(raw);
-		JAMWikiCustomTagProcessor lexer = new JAMWikiCustomTagProcessor(reader);
+		JFlexLexer lexer = new JAMWikiCustomTagLexer(reader);
 		int preMode = (mode > JFlexParser.MODE_CUSTOM) ? JFlexParser.MODE_CUSTOM : mode;
 		return this.lex(lexer, raw, parserOutput, preMode);
 	}
@@ -243,7 +243,7 @@ public class JFlexParser extends AbstractParser {
 	 */
 	private String parseTemplate(ParserOutput parserOutput, String raw, int mode) throws ParserException {
 		StringReader reader = toStringReader(raw);
-		JAMWikiTemplateProcessor lexer = new JAMWikiTemplateProcessor(reader);
+		JFlexLexer lexer = new JAMWikiTemplateLexer(reader);
 		int preMode = (mode > JFlexParser.MODE_TEMPLATE) ? JFlexParser.MODE_TEMPLATE : mode;
 		return this.lex(lexer, raw, parserOutput, preMode);
 	}
@@ -262,7 +262,7 @@ public class JFlexParser extends AbstractParser {
 			return raw;
 		}
 		StringReader reader = toStringReader(raw);
-		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(reader);
+		JFlexLexer lexer = new JAMWikiPreLexer(reader);
 		int preMode = (mode > JFlexParser.MODE_PREPROCESS) ? JFlexParser.MODE_PREPROCESS : mode;
 		return this.lex(lexer, raw, parserOutput, preMode);
 	}
@@ -282,7 +282,7 @@ public class JFlexParser extends AbstractParser {
 			return raw;
 		}
 		StringReader reader = toStringReader(raw);
-		JAMWikiProcessor lexer = new JAMWikiProcessor(reader);
+		JFlexLexer lexer = new JAMWikiLexer(reader);
 		return this.lex(lexer, raw, parserOutput, mode);
 	}
 
@@ -302,7 +302,7 @@ public class JFlexParser extends AbstractParser {
 			return raw;
 		}
 		StringReader reader = toStringReader(raw);
-		JAMWikiPostProcessor lexer = new JAMWikiPostProcessor(reader);
+		JFlexLexer lexer = new JAMWikiPostLexer(reader);
 		return this.lex(lexer, raw, parserOutput, mode);
 	}
 
@@ -359,7 +359,7 @@ public class JFlexParser extends AbstractParser {
 	public String parseSlice(ParserOutput parserOutput, String raw, int targetSection) throws ParserException {
 		long start = System.currentTimeMillis();
 		StringReader reader = toStringReader(raw);
-		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(reader);
+		JAMWikiSpliceLexer lexer = new JAMWikiSpliceLexer(reader);
 		lexer.setTargetSection(targetSection);
 		String output = this.lex(lexer, raw, parserOutput, JFlexParser.MODE_SLICE);
 		String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
@@ -387,7 +387,7 @@ public class JFlexParser extends AbstractParser {
 	public String parseSplice(ParserOutput parserOutput, String raw, int targetSection, String replacementText) throws ParserException {
 		long start = System.currentTimeMillis();
 		StringReader reader = toStringReader(raw);
-		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(reader);
+		JAMWikiSpliceLexer lexer = new JAMWikiSpliceLexer(reader);
 		lexer.setReplacementText(replacementText);
 		lexer.setTargetSection(targetSection);
 		String output = this.lex(lexer, raw, parserOutput, JFlexParser.MODE_SPLICE);

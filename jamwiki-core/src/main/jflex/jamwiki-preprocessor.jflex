@@ -4,21 +4,14 @@
  */
 package org.jamwiki.parser.jflex;
 
-import org.jamwiki.utils.WikiLogger;
-
 %%
 
 %public
-%class JAMWikiPreProcessor
+%class JAMWikiPreLexer
 %extends JFlexLexer
 %type String
 %unicode
 %ignorecase
-
-/* code copied verbatim into the generated .java file */
-%{
-    private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiPreProcessor.class.getName());
-%}
 
 /* character expressions */
 newline            = "\n"

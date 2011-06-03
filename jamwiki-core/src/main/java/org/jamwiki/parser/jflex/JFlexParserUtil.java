@@ -36,7 +36,7 @@ import org.jamwiki.utils.WikiLogger;
 public class JFlexParserUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexParserUtil.class.getName());
-	private static JAMWikiHtmlProcessor JFLEX_HTML_PROCESSOR = null;
+	private static JAMWikiHtmlTagLexer JFLEX_HTML_PROCESSOR = null;
 
 	/**
 	 *
@@ -169,7 +169,7 @@ public class JFlexParserUtil {
 		// strip any newlines from the tag
 		tag = tag.replace('\n', ' ');
 		if (JFLEX_HTML_PROCESSOR == null) {
-			JFLEX_HTML_PROCESSOR = new JAMWikiHtmlProcessor(new StringReader(tag));
+			JFLEX_HTML_PROCESSOR = new JAMWikiHtmlTagLexer(new StringReader(tag));
 		} else {
 			JFLEX_HTML_PROCESSOR.yyreset(new StringReader(tag));
 		}
