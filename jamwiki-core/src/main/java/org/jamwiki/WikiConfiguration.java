@@ -49,6 +49,7 @@ public class WikiConfiguration {
 	private List<WikiConfigurationObject> dataHandlers = null;
 	private Map<String, String> editors = null;
 	private List<WikiConfigurationObject> parsers = null;
+	private List<String> parserCustomTags = null;
 	private List<WikiConfigurationObject> searchEngines = null;
 	private Map<String, String> translations = null;
 
@@ -66,6 +67,8 @@ public class WikiConfiguration {
 	private static final String XML_PARAM_STATE = "state";
 	private static final String XML_PARSER = "parser";
 	private static final String XML_PARSER_ROOT = "parsers";
+	private static final String XML_PARSER_CUSTOM_TAG = "parser-custom-tag";
+	private static final String XML_PARSER_CUSTOM_TAG_ROOT = "parser-custom-tags";
 	private static final String XML_SEARCH_ENGINE = "search-engine";
 	private static final String XML_SEARCH_ENGINE_ROOT = "search-engines";
 	private static final String XML_TRANSLATION = "translation";
@@ -112,6 +115,13 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
+	public List<String> getParserCustomTags() {
+		return this.parserCustomTags;
+	}
+
+	/**
+	 *
+	 */
 	public List<WikiConfigurationObject> getSearchEngines() {
 		return this.searchEngines;
 	}
@@ -151,6 +161,8 @@ public class WikiConfiguration {
 			child = children.item(i);
 			if (child.getNodeName().equals(XML_PARSER_ROOT)) {
 				this.parsers = this.parseConfigurationObjects(child, XML_PARSER);
+			} else if (child.getNodeName().equals(XML_PARSER_CUSTOM_TAG_ROOT)) {
+				this.parserCustomTags = this.parseListNodes(child, XML_PARSER_CUSTOM_TAG);
 			} else if (child.getNodeName().equals(XML_DATA_HANDLER_ROOT)) {
 				this.dataHandlers = this.parseConfigurationObjects(child, XML_DATA_HANDLER);
 			} else if (child.getNodeName().equals(XML_EDITOR_ROOT)) {
@@ -201,6 +213,23 @@ public class WikiConfiguration {
 			Node child = children.item(j);
 			if (child.getNodeName().equals(name)) {
 				results.add(this.parseConfigurationObject(child));
+			} else {
+				logUnknownChild(node, child);
+			}
+		}
+		return results;
+	}
+
+	/**
+	 * Utility method for parsing nodes that are single value items.
+	 */
+	private List<String> parseListNodes(Node node, String name) {
+		List<String> results = new ArrayList<String>();
+		NodeList children = node.getChildNodes();
+		for (int j = 0; j < children.getLength(); j++) {
+			Node child = children.item(j);
+			if (child.getNodeName().equals(name)) {
+				results.add(XMLUtil.getTextContent(child));
 			} else {
 				logUnknownChild(node, child);
 			}

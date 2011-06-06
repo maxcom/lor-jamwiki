@@ -113,6 +113,13 @@ public class GalleryTag implements JFlexCustomTagItem {
 	}
 
 	/**
+	 * Return the tag name.  If the tag is "<custom>" then the tag name is "custom".
+	 */
+	public String getTagName() {
+		return "gallery";
+	}
+
+	/**
 	 * Parse a gallery tag of the form <gallery>...</gallery> and return the
 	 * resulting HTML output.
 	 */

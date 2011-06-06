@@ -1,8 +1,11 @@
 
-<!ELEMENT configuration (parsers?, data-handlers?, search-engines?, translations*)>
+<!ELEMENT configuration (parsers?, parser-custom-tags?, data-handlers?, search-engines?, translations*)>
 
 <!ELEMENT parsers (parser*)>
 <!ELEMENT parser (name, class, key?, state?)>
+
+<!ELEMENT parser-custom-tags (parser-custom-tag*)>
+<!ELEMENT parser-custom-tag (#PCDATA)>
 
 <!ELEMENT data-handlers (data-handler*)>
 <!ELEMENT data-handler (name, class, key?, state?)>

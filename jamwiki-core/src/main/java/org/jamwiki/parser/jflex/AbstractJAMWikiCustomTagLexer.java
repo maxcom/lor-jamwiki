@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.jamwiki.WikiConfiguration;
 import org.jamwiki.parser.ParserException;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -30,10 +32,10 @@ import org.jamwiki.utils.WikiLogger;
 public abstract class AbstractJAMWikiCustomTagLexer extends JFlexLexer {
 
 	protected static final WikiLogger logger = WikiLogger.getLogger(AbstractJAMWikiCustomTagLexer.class.getName());
-	// TODO - make this configurable
+	/** Registry of all active custom tags where the key is the tag name and the value is an instance of the tag class. */
 	private static final Map<String, JFlexCustomTagItem> CUSTOM_TAG_REGISTRY = new HashMap<String, JFlexCustomTagItem>();
 	static {
-		CUSTOM_TAG_REGISTRY.put("gallery", new GalleryTag());
+		initializeCustomTagRegistry();
 	}
 
 	/** Stack of currently parsed tag content. */
@@ -57,6 +59,28 @@ public abstract class AbstractJAMWikiCustomTagLexer extends JFlexLexer {
 			result.append(this.processText(customTagItem.getRawContent()));
 		}
 		return result.toString();
+	}
+
+	/**
+	 * Initialize the mapping of custom tag name to tag instance.
+	 */
+	private static void initializeCustomTagRegistry() {
+		List<String> parserCustomTags = WikiConfiguration.getInstance().getParserCustomTags();
+		for (String parserCustomTag : parserCustomTags) {
+			Object object = null;
+			try {
+				object = Utilities.instantiateClass(parserCustomTag);
+			} catch (IllegalStateException e) {
+				logger.warn("Could not instantiate configured custom parser tag: " + parserCustomTag);
+				continue;
+			}
+			if (!(object instanceof JFlexCustomTagItem)) {
+				logger.warn("Custom tag does not implement interface JFlexCustomTagItem: " + parserCustomTag);
+				continue;
+			}
+			logger.info("Initializing custom parser tag: " + parserCustomTag);
+			CUSTOM_TAG_REGISTRY.put(((JFlexCustomTagItem)object).getTagName(), ((JFlexCustomTagItem)object));
+		}
 	}
 
 	/**

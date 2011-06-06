@@ -23,12 +23,25 @@
 		<class>org.jamwiki.parser.jflex.JFlexParser</class>
 		<key>admin.parsertype.default</key>
 	</parser>
-    <parser>
+	<parser>
 		<name>Bliki hand-written Parser</name>
 		<class>org.jamwiki.parser.bliki.BlikiParser</class>
 		<key>admin.parsertype.bliki</key>
 	</parser>
 </parsers>
+
+<!--
+   ====================================================================
+
+   EXPERIMENTAL: Custom tags that can be used with the JFlex parser:
+
+   class - The fully qualified class name for the custom tag class.
+
+   ======================================================================
+-->
+<parser-custom-tags>
+	<parser-custom-tag>org.jamwiki.parser.jflex.GalleryTag</parser-custom-tag>
+</parser-custom-tags>
 
 <!--
    ====================================================================
