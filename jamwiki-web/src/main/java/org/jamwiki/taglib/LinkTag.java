@@ -22,6 +22,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -55,6 +56,9 @@ public class LinkTag extends BodyTagSupport {
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		String url = null;
 		String tagVirtualWiki = (StringUtils.isBlank(this.virtualWiki)) ? WikiUtil.getVirtualWikiFromRequest(request) : this.virtualWiki;
+		if (StringUtils.isBlank(tagVirtualWiki)) {
+			tagVirtualWiki = VirtualWiki.defaultVirtualWiki().getName();
+		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(tagVirtualWiki, this.value);
 		if (!StringUtils.isBlank(this.queryParams)) {
 			wikiLink.setQuery(this.queryParams);
