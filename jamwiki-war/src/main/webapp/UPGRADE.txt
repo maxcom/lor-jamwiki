@@ -113,8 +113,8 @@ followed by 0.6.3.
               alter table jam_log add log_sub_type INTEGER;
               alter table jam_recent_change add log_sub_type INTEGER;
             Other Databases:
-              alter table jam_log add column logo_sub_type INTEGER;
-              alter table jam_recent_change add column logo_sub_type INTEGER;
+              alter table jam_log add column log_sub_type INTEGER;
+              alter table jam_recent_change add column log_sub_type INTEGER;
        b) Populate the log_sub_type column in the jam_log and jam_recent_change
           tables.
               update jam_log set log_sub_type = 11 where log_type = 1 and log_params like '%|7';
