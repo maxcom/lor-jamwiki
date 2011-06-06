@@ -23,7 +23,7 @@ New Features:
   * Add RankingAlgorithm search engine support (nnagarajayya).
   * Limit the number of recent changes loaded by the "Reload Recent Changes"
     task on the Special:Maintenance page to improve performance.
-  * Upgrade to Lucene Search 3.1.
+  * Upgrade to Lucene Search 3.2.
   * Upgrade to Ehcache 2.4.2.
   * Upgrade to commons-codec 1.5.
   * Upgrade to commons-pool 1.5.6.
