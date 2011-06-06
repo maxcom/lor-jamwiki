@@ -216,7 +216,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 							messages.add(new WikiMessage("upgrade.message.search.refresh"));
 						} else {
 							// print a message telling the user to do this step manually
-							messages.add(new WikiMessage("upgrade.error.search.refresh"));
+							WikiMessage searchWikiMessage = new WikiMessage("upgrade.error.search.refresh");
+							searchWikiMessage.addWikiLinkParam("Special:Maintenance");
+							messages.add(searchWikiMessage);
 						}
 					}
 				} catch (Exception e) {
@@ -278,7 +280,10 @@ public class UpgradeServlet extends JAMWikiServlet {
 			// never thrown when the first parameter is false
 		}
 		if (this.upgradeSearchIndex(false, null)) {
-			upgradeDetails.add(new WikiMessage("upgrade.caption.search", Integer.toString(MAX_TOPICS_FOR_AUTOMATIC_SEARCH_REBUILD)));
+			WikiMessage searchWikiMessage = new WikiMessage("upgrade.caption.search");
+			searchWikiMessage.addParam(Integer.toString(MAX_TOPICS_FOR_AUTOMATIC_SEARCH_REBUILD));
+			searchWikiMessage.addWikiLinkParam("Special:Maintenance");
+			upgradeDetails.add(searchWikiMessage);
 		}
 		if (oldVersion.before(1, 0, 0)) {
 			upgradeDetails.add(new WikiMessage("upgrade.message.100.reparse"));
