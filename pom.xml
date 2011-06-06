@@ -4,7 +4,7 @@
 	<groupId>org.jamwiki</groupId>
 	<artifactId>jamwiki</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.4</version>
+	<version>1.0.5-SNAPSHOT</version>
 	<name>JAMWiki Super POM</name>
 	<description>
 		JAMWiki is a Java-based Wiki engine which offers many of the
@@ -18,9 +18,9 @@
 		<module>jamwiki-war</module>
 	</modules>
 	<scm>
-		<connection>scm:svn:http://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/tags/1.0.4</connection>
-		<developerConnection>scm:svn:https://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/tags/1.0.4</developerConnection>
-		<url>http://jamwiki.svn.sourceforge.net/viewvc/jamwiki/wiki/tags/1.0.4</url>
+		<connection>scm:svn:http://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/branches/1.0.x</connection>
+		<developerConnection>scm:svn:https://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/branches/1.0.x</developerConnection>
+		<url>http://jamwiki.svn.sourceforge.net/viewvc/jamwiki/wiki/branches/1.0.x</url>
 	</scm>
 	<issueManagement>
 		<system>JIRA</system>
