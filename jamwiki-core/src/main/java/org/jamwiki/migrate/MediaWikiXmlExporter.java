@@ -138,7 +138,7 @@ public class MediaWikiXmlExporter implements TopicExporter {
 				topicVersionIds.add(topic.getCurrentVersionId());
 			} else {
 				// FIXME - changes sorted newest-to-oldest, should be reverse
-				List<RecentChange> changes = WikiBase.getDataHandler().getTopicHistory(virtualWiki, topicName, pagination, true);
+				List<RecentChange> changes = WikiBase.getDataHandler().getTopicHistory(virtualWiki, topicName, pagination, true, false);
 				for (int i = (changes.size() - 1); i >= 0; i--) {
 					topicVersionIds.add(changes.get(i).getTopicVersionId());
 				}

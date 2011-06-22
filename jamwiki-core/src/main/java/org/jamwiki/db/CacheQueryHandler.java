@@ -181,13 +181,13 @@ public class CacheQueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public List<RecentChange> getTopicHistory(int topicId, Pagination pagination, boolean descending) throws SQLException {
+	public List<RecentChange> getTopicHistory(int topicId, Pagination pagination, boolean descending, boolean selectDeleted) throws SQLException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			stmt = getTopicHistoryStatement(conn, topicId, pagination, descending);
+			stmt = getTopicHistoryStatement(conn, topicId, pagination, descending, selectDeleted);
 			// FIXME - sort order ignored
 			rs = stmt.executeQuery();
 			List<RecentChange> recentChanges = new ArrayList<RecentChange>();
@@ -203,8 +203,14 @@ public class CacheQueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	protected PreparedStatement getTopicHistoryStatement(Connection conn, int topicId, Pagination pagination, boolean descending) throws SQLException {
-		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_HISTORY);
+	protected PreparedStatement getTopicHistoryStatement(Connection conn, int topicId, Pagination pagination, boolean descending, boolean selectDeleted) throws SQLException {
+		// the SQL contains the syntax "is {0} null", which needs to be formatted as a message.
+		Object[] params = {""};
+		if (selectDeleted) {
+			params[0] = "not";
+		}
+		String sql = this.formatStatement(STATEMENT_SELECT_TOPIC_HISTORY, params);
+		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setInt(1, pagination.getNumResults());
 		stmt.setInt(2, topicId);
 		stmt.setInt(3, pagination.getOffset());

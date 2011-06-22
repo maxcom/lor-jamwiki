@@ -222,7 +222,7 @@ public class ManageServlet extends JAMWikiServlet {
 		next.addObject("adminOnly", topic.getAdminOnly());
 		next.addObject("deleted", (topic.getDeleteDate() != null));
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		List<RecentChange> versions = WikiBase.getDataHandler().getTopicHistory(virtualWiki, topicName, pagination, true);
+		List<RecentChange> versions = WikiBase.getDataHandler().getTopicHistory(virtualWiki, topicName, pagination, true, false);
 		next.addObject("numChanges", versions.size());
 		next.addObject("versions", versions);
 		pageInfo.setTopicName(topicName);

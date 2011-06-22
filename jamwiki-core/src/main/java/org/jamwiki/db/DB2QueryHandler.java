@@ -87,8 +87,14 @@ public class DB2QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	protected PreparedStatement getTopicHistoryStatement(Connection conn, int topicId, Pagination pagination, boolean descending) throws SQLException {
-		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_HISTORY);
+	protected PreparedStatement getTopicHistoryStatement(Connection conn, int topicId, Pagination pagination, boolean descending, boolean selectDeleted) throws SQLException {
+		// the SQL contains the syntax "is {0} null", which needs to be formatted as a message.
+		Object[] params = {""};
+		if (selectDeleted) {
+			params[0] = "not";
+		}
+		String sql = this.formatStatement(STATEMENT_SELECT_TOPIC_HISTORY, params);
+		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setInt(1, topicId);
 		stmt.setInt(2, pagination.getStart());
 		stmt.setInt(3, pagination.getEnd());

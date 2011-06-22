@@ -363,11 +363,14 @@ public interface QueryHandler {
 	 *  and starting result offset for the result set to be retrieved.
 	 * @param descending If <code>true</code> then results are sorted newest to
 	 *  oldest.
+	 * @param selectDeleted Set to <code>true</code> if revisions for deleted
+	 *  versions of the topic should be returned, <code>false</code> for active
+	 *  versions of the topic.
 	 * @return A list of recent change objects, or an empty list if not topic
 	 *  history exists.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	List<RecentChange> getTopicHistory(int topicId, Pagination pagination, boolean descending) throws SQLException;
+	List<RecentChange> getTopicHistory(int topicId, Pagination pagination, boolean descending, boolean selectDeleted) throws SQLException;
 
 	/**
 	 * Retrieve a list containing the topic names of all admin-only topics for

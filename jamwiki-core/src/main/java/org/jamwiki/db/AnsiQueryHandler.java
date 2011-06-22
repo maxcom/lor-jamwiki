@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -565,6 +566,33 @@ public class AnsiQueryHandler implements QueryHandler {
 	}
 
 	/**
+	 * In rare cases a single statement cannot easily be used across databases, such
+	 * as "date is null" and "date is not null".  Rather than having two separate
+	 * SQL statements the statement is instead "date is {0} null", and a Java
+	 * MessageFormat object is then used to modify the SQL.
+	 *
+	 * @param sql The SQL statement in MessageFormat format ("date is {0} null").
+	 * @param params An array of objects (which should be strings) to use when
+	 *  formatting the message.
+	 * @return A formatted SQL string.
+	 */
+	protected String formatStatement(String sql, Object[] params) {
+		if (params == null || params.length == 0) {
+			return sql;
+		}
+		try {
+			return MessageFormat.format(sql, params);
+		} catch (IllegalArgumentException e) {
+			String msg = "Unable to format " + sql + " with values: ";
+			for (int i = 0; i < params.length; i++) {
+				msg += (i > 0) ? " | " + params[i] : params[i];
+			}
+			logger.warn(msg);
+			return null;
+		}
+	}
+
+	/**
 	 *
 	 */
 	public List<WikiFileVersion> getAllWikiFileVersions(WikiFile wikiFile, boolean descending) throws SQLException {
@@ -871,13 +899,13 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public List<RecentChange> getTopicHistory(int topicId, Pagination pagination, boolean descending) throws SQLException {
+	public List<RecentChange> getTopicHistory(int topicId, Pagination pagination, boolean descending, boolean selectDeleted) throws SQLException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			stmt = getTopicHistoryStatement(conn, topicId, pagination, descending);
+			stmt = getTopicHistoryStatement(conn, topicId, pagination, descending, selectDeleted);
 			// FIXME - sort order ignored
 			rs = stmt.executeQuery();
 			List<RecentChange> recentChanges = new ArrayList<RecentChange>();
@@ -893,8 +921,14 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	protected PreparedStatement getTopicHistoryStatement(Connection conn, int topicId, Pagination pagination, boolean descending) throws SQLException {
-		PreparedStatement stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_HISTORY);
+	protected PreparedStatement getTopicHistoryStatement(Connection conn, int topicId, Pagination pagination, boolean descending, boolean selectDeleted) throws SQLException {
+		// the SQL contains the syntax "is {0} null", which needs to be formatted as a message.
+		Object[] params = {""};
+		if (selectDeleted) {
+			params[0] = "not";
+		}
+		String sql = this.formatStatement(STATEMENT_SELECT_TOPIC_HISTORY, params);
+		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setInt(1, topicId);
 		stmt.setInt(2, pagination.getNumResults());
 		stmt.setInt(3, pagination.getOffset());

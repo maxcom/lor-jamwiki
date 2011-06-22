@@ -300,11 +300,14 @@ public interface DataHandler {
 	 * @param descending Set to <code>true</code> if the results should be
 	 *  sorted with the most recent changes first, <code>false</code> if the
 	 *  results should be sorted with the oldest changes first.
+	 * @param selectDeleted Set to <code>true</code> if revisions for deleted
+	 *  versions of the topic should be returned, <code>false</code> for active
+	 *  versions of the topic.
 	 * @return A List of all RecentChange objects representing a topic's history,
 	 *  sorted chronologically.
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
-	List<RecentChange> getTopicHistory(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws DataAccessException;
+	List<RecentChange> getTopicHistory(String virtualWiki, String topicName, Pagination pagination, boolean descending, boolean selectDeleted) throws DataAccessException;
 
 	/**
 	 * Retrieve a List of topic names for all admin-only topics, sorted

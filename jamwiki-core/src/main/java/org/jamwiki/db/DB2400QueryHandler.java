@@ -19,7 +19,6 @@ package org.jamwiki.db;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.text.MessageFormat;
 import java.util.Properties;
 import org.jamwiki.Environment;
 import org.jamwiki.model.TopicType;
@@ -56,14 +55,9 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	 *  and starting result offset for the result set to be retrieved.
 	 * @return A formatted SQL string.
 	 */
-	private static String formatStatement(String sql, Pagination pagination) {
-		try {
-			Object[] objects = {pagination.getEnd(), pagination.getNumResults()};
-			return MessageFormat.format(sql, objects);
-		} catch (Exception e) {
-			logger.warn("Unable to format " + sql + " with values " + pagination.getEnd() + " / " + pagination.getNumResults(), e);
-			return null;
-		}
+	private String formatStatement(String sql, Pagination pagination) {
+		Object[] objects = {pagination.getEnd(), pagination.getNumResults()};
+		return this.formatStatement(sql, objects);
 	}
 
 	/**
@@ -77,21 +71,16 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	 *  and starting result offset for the result set to be retrieved.
 	 * @return A formatted SQL string.
 	 */
-	private static String formatStatement(String sql, int limit) {
-		try {
-			Object[] objects = {limit};
-			return MessageFormat.format(sql, objects);
-		} catch (Exception e) {
-			logger.warn("Unable to format " + sql + " with value " + limit, e);
-			return null;
-		}
+	private String formatStatement(String sql, int limit) {
+		Object[] objects = {limit};
+		return this.formatStatement(sql, objects);
 	}
 
 	/**
 	 *
 	 */
 	protected PreparedStatement getCategoriesStatement(Connection conn, int virtualWikiId, String virtualWikiName, Pagination pagination) throws SQLException {
-		String sql = formatStatement(STATEMENT_SELECT_CATEGORIES, pagination);
+		String sql = this.formatStatement(STATEMENT_SELECT_CATEGORIES, pagination);
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setInt(1, virtualWikiId);
 		return stmt;
@@ -105,10 +94,10 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 		PreparedStatement stmt = null;
 		String sql = null;
 		if (logType == -1) {
-			sql = formatStatement(STATEMENT_SELECT_LOG_ITEMS, pagination);
+			sql = this.formatStatement(STATEMENT_SELECT_LOG_ITEMS, pagination);
 			stmt = conn.prepareStatement(sql);
 		} else {
-			sql = formatStatement(STATEMENT_SELECT_LOG_ITEMS_BY_TYPE, pagination);
+			sql = this.formatStatement(STATEMENT_SELECT_LOG_ITEMS_BY_TYPE, pagination);
 			stmt = conn.prepareStatement(sql);
 			stmt.setInt(index++, logType);
 		}
@@ -120,7 +109,7 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	 *
 	 */
 	protected PreparedStatement getRecentChangesStatement(Connection conn, String virtualWiki, Pagination pagination, boolean descending) throws SQLException {
-		String sql = formatStatement(STATEMENT_SELECT_RECENT_CHANGES, pagination);
+		String sql = this.formatStatement(STATEMENT_SELECT_RECENT_CHANGES, pagination);
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setString(1, virtualWiki);
 		return stmt;
@@ -129,8 +118,12 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	protected PreparedStatement getTopicHistoryStatement(Connection conn, int topicId, Pagination pagination, boolean descending) throws SQLException {
-		String sql = formatStatement(STATEMENT_SELECT_TOPIC_HISTORY, pagination);
+	protected PreparedStatement getTopicHistoryStatement(Connection conn, int topicId, Pagination pagination, boolean descending, boolean selectDeleted) throws SQLException {
+		Object[] params = {pagination.getEnd(), pagination.getNumResults(), ""};
+		if (selectDeleted) {
+			params[2] = "not";
+		}
+		String sql = this.formatStatement(STATEMENT_SELECT_TOPIC_HISTORY, params);
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setInt(1, topicId);
 		return stmt;
@@ -140,7 +133,7 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	 *
 	 */
 	protected PreparedStatement getTopicsAdminStatement(Connection conn, int virtualWikiId, Pagination pagination) throws SQLException {
-		String sql = formatStatement(STATEMENT_SELECT_TOPICS_ADMIN, pagination);
+		String sql = this.formatStatement(STATEMENT_SELECT_TOPICS_ADMIN, pagination);
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setInt(1, virtualWikiId);
 		return stmt;
@@ -150,7 +143,7 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	 *
 	 */
 	protected PreparedStatement getUserContributionsByLoginStatement(Connection conn, String virtualWiki, String login, Pagination pagination, boolean descending) throws SQLException {
-		String sql = formatStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN, pagination);
+		String sql = this.formatStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN, pagination);
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setString(1, virtualWiki);
 		stmt.setString(2, login);
@@ -161,7 +154,7 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	 *
 	 */
 	protected PreparedStatement getUserContributionsByUserDisplayStatement(Connection conn, String virtualWiki, String userDisplay, Pagination pagination, boolean descending) throws SQLException {
-		String sql = formatStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS, pagination);
+		String sql = this.formatStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS, pagination);
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setString(1, virtualWiki);
 		stmt.setString(2, userDisplay);
@@ -172,7 +165,7 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	 *
 	 */
 	protected PreparedStatement getWatchlistStatement(Connection conn, int virtualWikiId, int userId, Pagination pagination) throws SQLException {
-		String sql = formatStatement(STATEMENT_SELECT_WATCHLIST_CHANGES, pagination);
+		String sql = this.formatStatement(STATEMENT_SELECT_WATCHLIST_CHANGES, pagination);
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, userId);
@@ -183,7 +176,7 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	 *
 	 */
 	protected PreparedStatement lookupTopicByTypeStatement(Connection conn, int virtualWikiId, TopicType topicType1, TopicType topicType2, int namespaceStart, int namespaceEnd, Pagination pagination) throws SQLException {
-		String sql = formatStatement(STATEMENT_SELECT_TOPIC_BY_TYPE, pagination);
+		String sql = this.formatStatement(STATEMENT_SELECT_TOPIC_BY_TYPE, pagination);
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, topicType1.id());
@@ -197,7 +190,7 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	 *
 	 */
 	protected PreparedStatement lookupWikiUsersStatement(Connection conn, Pagination pagination) throws SQLException {
-		String sql = formatStatement(STATEMENT_SELECT_WIKI_USERS, pagination);
+		String sql = this.formatStatement(STATEMENT_SELECT_WIKI_USERS, pagination);
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		return stmt;
 	}
@@ -207,7 +200,7 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	 */
 	public void reloadRecentChanges(Connection conn, int limit) throws SQLException {
 		PreparedStatement stmt = null;
-		String sql = formatStatement(STATEMENT_INSERT_RECENT_CHANGES_VERSIONS, limit);
+		String sql = this.formatStatement(STATEMENT_INSERT_RECENT_CHANGES_VERSIONS, limit);
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DELETE_RECENT_CHANGES, conn);
 			stmt = conn.prepareStatement(sql);
