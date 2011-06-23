@@ -721,6 +721,29 @@ div.callout {
 div.callout input {
 	margin-right: 20px;
 }
+.expander {
+	padding: 5px;
+}
+.expander-open {
+	height: auto !important;
+}
+.expander > label {
+	cursor: pointer;
+	font-weight: bold;
+}
+.expander > label:before {
+	content:url("../images/arrow-right.png");
+}
+.expander-open > label:before {
+	content:url("../images/arrow-down.png");
+}
+.expander > ul {
+	display: none;
+	margin-top: 10px;
+}
+.expander-open > ul {
+	display: block !important;
+}
 #manage div.row label, #move div.row label, #register div.row label {
 	width: 180px;
 }

@@ -13,6 +13,7 @@ New Features:
   * Add the ability for sysadmins to permanently delete topic versions from the
     Special:Manage page.
   * Enable DBCP prepared statement pooling to improve performance.
+  * Allow viewing of deleted topic versions from the Special:Manage page.
   * Remove ability to automatically upgrade from versions prior to 0.9.0.
   * Improve search performance, exclude redirects from search indexing, and
     weight topic names more heavily than topic content to improve accuracy.

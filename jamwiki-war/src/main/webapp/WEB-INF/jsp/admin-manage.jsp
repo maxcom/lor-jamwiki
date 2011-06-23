@@ -48,11 +48,36 @@
 			<span><input type="checkbox" name="manageCommentsPage" value="<c:out value="${manageCommentsPage}" />" id="manageCommentsPage" /></span>
 		</div>
 		</c:if>
+		<%-- revisions div should be open by default for non-Javascript browsers --%>
+		<div class="expander expander-open" id="undelete_revisions">
+			<label id="undelete_revisions_toggle"><fmt:message key="manage.caption.undeleterevisions" /></label>
+			<ul>
+			<c:forEach items="${versions}" var="version" varStatus="status">
+			<li>
+				<jamwiki:link value="Special:History"><jamwiki:linkParam key="topicVersionId" value="${version.topicVersionId}" /><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><fmt:formatDate value="${version.changeDate}" type="both" pattern="${pageInfo.datePatternDateAndTime}" /></jamwiki:link>
+				&#160;.&#160;.&#160;
+				<%-- the "+" symbol could be added using a pattern attribute, but there does not seem to be a way to avoid having "+0" show up when that approach is used. --%>
+				(<c:if test="${version.charactersChanged > 0}">+</c:if><fmt:formatNumber value="${version.charactersChanged}" />)
+				&#160;.&#160;.&#160;
+				<jamwiki_t:userLinks pageInfo="${pageInfo}" userDisplay="${version.authorName}" />
+				<c:if test="${!empty version.changeTypeNotification}">&#160;<b><c:out value="${version.changeTypeNotification}" /></b></c:if>
+				<c:if test="${!empty version.changeWikiMessage}">
+					&#160;
+					<jamwiki_t:wikiMessage message="${version.changeWikiMessage}" />
+				</c:if>
+				<c:if test="${!empty version.changeComment}"><label for="<c:out value="diff:${version.topicVersionId}" />">&#160;(<span class="edit-comment"><jamwiki:editComment comment="${version.changeComment}" topic="${version.topicName}" /></span>)</label></c:if>
+			</li>
+			</c:forEach>
+			</ul>
+		</div>
 		<div class="row">
 			<span class="form-button"><input type="submit" name="undelete" value="<fmt:message key="common.undelete" />" /></span>
 		</div>
 		</fieldset>
 		</form>
+		<script type="text/javascript">
+		JAMWiki.UI.initializeToggle(document.getElementById('undelete_revisions'), document.getElementById('undelete_revisions_toggle'), 'expander-open');
+		</script>
 	</c:when>
 	<c:otherwise>
 		<a name="delete"></a>

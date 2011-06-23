@@ -56,7 +56,7 @@ public class DiffServlet extends JAMWikiServlet {
 	private void diff(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		String topicName = WikiUtil.getTopicFromRequest(request);
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true);
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic", topicName));
 		}

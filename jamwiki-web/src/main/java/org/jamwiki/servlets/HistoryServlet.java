@@ -66,7 +66,8 @@ public class HistoryServlet extends JAMWikiServlet {
 		pageInfo.setTopicName(topicName);
 		pageInfo.setPageTitle(new WikiMessage("history.title", topicName));
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		List<RecentChange> changes = WikiBase.getDataHandler().getTopicHistory(virtualWiki, topicName, pagination, true, false);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true);
+		List<RecentChange> changes = WikiBase.getDataHandler().getTopicHistory(topic, pagination, true);
 		next.addObject("changes", changes);
 		next.addObject("numChanges", changes.size());
 	}
@@ -83,9 +84,8 @@ public class HistoryServlet extends JAMWikiServlet {
 		if (topicVersion == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true);
 		if (topic == null) {
-			// the topic may have been deleted
 			throw new WikiException(new WikiMessage("history.message.notopic", topicName));
 		}
 		topic.setTopicContent(topicVersion.getVersionContent());

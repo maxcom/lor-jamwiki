@@ -75,7 +75,7 @@ public class AnsiDataHandlerTest extends JAMWikiUnitTest {
 		}
 		// delete the first two versions
 		Pagination pagination = new Pagination(1000, 0);
-		List<RecentChange> versions = WikiBase.getDataHandler().getTopicHistory(virtualWiki, topicName, pagination, true, false);
+		List<RecentChange> versions = WikiBase.getDataHandler().getTopicHistory(topic, pagination, true);
 		assertEquals("Incorrect number of test versions present", 3, versions.size());
 		WikiBase.getDataHandler().purgeTopicVersion(virtualWiki, versions.get(0).getTopicVersionId(), null, "127.0.0.1");
 		WikiBase.getDataHandler().purgeTopicVersion(virtualWiki, versions.get(1).getTopicVersionId(), null, "127.0.0.1");
@@ -87,16 +87,12 @@ public class AnsiDataHandlerTest extends JAMWikiUnitTest {
 			exceptionThrown = true;
 		}
 		assertTrue("Deleting a topic version should fail when only one topic version exists", exceptionThrown);
-		versions = WikiBase.getDataHandler().getTopicHistory(virtualWiki, topicName, pagination, true, false);
+		versions = WikiBase.getDataHandler().getTopicHistory(topic, pagination, true);
 		assertEquals("Incorrect number of test versions present", 1, versions.size());
 		// test retrieval of deleted revisions
-		versions = WikiBase.getDataHandler().getTopicHistory(virtualWiki, topicName, pagination, true, true);
-		assertEquals("Incorrect number of deleted test versions present", 0, versions.size());
 		WikiBase.getDataHandler().deleteTopic(topic, null);
-		versions = WikiBase.getDataHandler().getTopicHistory(virtualWiki, topicName, pagination, true, true);
+		versions = WikiBase.getDataHandler().getTopicHistory(topic, pagination, true);
 		assertEquals("Incorrect number of deleted test versions present", 1, versions.size());
-		versions = WikiBase.getDataHandler().getTopicHistory(virtualWiki, topicName, pagination, true, false);
-		assertEquals("Incorrect number of non-deleted test versions present", 0, versions.size());
 	}
 
 	/**

@@ -624,13 +624,12 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List<RecentChange> getTopicHistory(String virtualWiki, String topicName, Pagination pagination, boolean descending, boolean selectDeleted) throws DataAccessException {
-		Topic topic = this.lookupTopic(virtualWiki, topicName, true);
+	public List<RecentChange> getTopicHistory(Topic topic, Pagination pagination, boolean descending) throws DataAccessException {
 		if (topic == null) {
 			return new ArrayList<RecentChange>();
 		}
 		try {
-			return this.queryHandler().getTopicHistory(topic.getTopicId(), pagination, descending, selectDeleted);
+			return this.queryHandler().getTopicHistory(topic.getTopicId(), pagination, descending, topic.getDeleted());
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
