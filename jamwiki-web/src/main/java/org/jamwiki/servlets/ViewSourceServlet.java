@@ -31,8 +31,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class ViewSourceServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(ViewSourceServlet.class.getName());
-	/** The name of the JSP file used to render the servlet output. */
-	protected static final String JSP_VIEW_SOURCE = "view-source.jsp";
 
 	/**
 	 *
@@ -51,9 +49,6 @@ public class ViewSourceServlet extends JAMWikiServlet {
 		Topic topic = ServletUtil.initializeTopic(virtualWiki, topicName);
 		topicName = topic.getName();
 		String contents = (topic == null) ? "" : topic.getTopicContent();
-		next.addObject("contents", contents);
-		pageInfo.setPageTitle(new WikiMessage("viewsource.title", topicName));
-		pageInfo.setTopicName(topicName);
-		pageInfo.setContentJsp(JSP_VIEW_SOURCE);
+		ServletUtil.viewTopicSource(next, pageInfo, topic);
 	}
 }

@@ -873,4 +873,24 @@ public class ServletUtil {
 			pageInfo.setPageTitle(pageTitle);
 		}
 	}
+
+	/**
+	 * Utility method used when viewing a topic's source.  This functionality is
+	 * primarily used when a user does not have permission to edit a topic or if
+	 * a deleted topic version is being viewed.
+	 *
+	 * @param next The current Spring ModelAndView object.
+	 * @param pageInfo The current WikiPageInfo object, which contains
+	 *  information needed for rendering the final JSP page.
+	 * @param topic The topic being viewed.
+	 */
+	protected static void viewTopicSource(ModelAndView next, WikiPageInfo pageInfo, Topic topic) {
+		next.addObject("contents", topic.getTopicContent());
+		pageInfo.setPageTitle(new WikiMessage("viewsource.title", topic.getName()));
+		pageInfo.setTopicName(topic.getName());
+		pageInfo.setContentJsp(JAMWikiServlet.JSP_VIEW_SOURCE);
+		if (topic.getDeleted()) {
+			pageInfo.setSpecial(true);
+		}
+	}
 }

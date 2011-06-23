@@ -92,9 +92,13 @@ public class HistoryServlet extends JAMWikiServlet {
 		WikiUser user = (topicVersion.getAuthorId() != null) ? WikiBase.getDataHandler().lookupWikiUser(topicVersion.getAuthorId()) : null;
 		String author = ((user != null) ? user.getUsername() : topicVersion.getAuthorDisplay());
 		next.addObject("version", RecentChange.initRecentChange(topic, topicVersion, author));
-		Integer nextTopicVersionId = WikiBase.getDataHandler().lookupTopicVersionNextId(topicVersion.getTopicVersionId());
-		next.addObject("nextTopicVersionId", nextTopicVersionId);
-		WikiMessage pageTitle = new WikiMessage("topic.title", topicName);
-		ServletUtil.viewTopic(request, next, pageInfo, pageTitle, topic, false, false);
+		if (topic.getDeleted()) {
+			ServletUtil.viewTopicSource(next, pageInfo, topic);
+		} else {
+			Integer nextTopicVersionId = WikiBase.getDataHandler().lookupTopicVersionNextId(topicVersion.getTopicVersionId());
+			next.addObject("nextTopicVersionId", nextTopicVersionId);
+			WikiMessage pageTitle = new WikiMessage("topic.title", topicName);
+			ServletUtil.viewTopic(request, next, pageInfo, pageTitle, topic, false, false);
+		}
 	}
 }

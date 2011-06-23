@@ -58,7 +58,7 @@ public class PrintableServlet extends JAMWikiServlet {
 		if (StringUtils.isBlank(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false);
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
