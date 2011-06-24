@@ -661,7 +661,7 @@ public class WikiDatabase {
 	// FIXME - make this private once the ability to upgrade to 1.0.0 is removed
 	protected static void setupDefaultInterwikis() throws DataAccessException, WikiException {
 		logger.info("Creating default interwiki records");
-		Interwiki jamwiki = new Interwiki("jamwiki", "http://jamwiki.org/wiki/en/{0}", "JAMWiki");
+		Interwiki jamwiki = new Interwiki("jamwikiorg", "http://jamwiki.org/wiki/en/{0}", "JAMWiki");
 		WikiBase.getDataHandler().writeInterwiki(jamwiki);
 		Interwiki mediawiki = new Interwiki("mediawiki", "http://www.mediawiki.org/wiki/{0}", "MediaWiki");
 		WikiBase.getDataHandler().writeInterwiki(mediawiki);
