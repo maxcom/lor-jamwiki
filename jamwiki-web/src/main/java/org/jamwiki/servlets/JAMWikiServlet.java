@@ -53,6 +53,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 	protected String displayJSP = "wiki";
 	/** The name of the JSP file used to render the servlet output in case of errors. */
 	private static final String JSP_ERROR = "error-display.jsp";
+	/** The name of the JSP file used to render the servlet output for logins. */
+	protected static final String JSP_LOGIN = "login.jsp";
 	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_VIEW_SOURCE = "view-source.jsp";
 	/** Any page that take longer than this value (specified in milliseconds) will print a warning to the log. */

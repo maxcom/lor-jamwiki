@@ -47,7 +47,11 @@ public class LoginServlet extends JAMWikiServlet {
 		}
 		// retrieve the URL to redirect to after successful login (if one is defined)
 		String loginSuccessTarget = request.getParameter(PARAM_LOGIN_SUCCESS_TARGET);
-		return ServletUtil.viewLogin(request, pageInfo, loginSuccessTarget, null);
+		next = ServletUtil.viewLogin(request, pageInfo, loginSuccessTarget, null);
+		// use a minimal page during upgrades since underlying data structures may
+		// not yet be in sync with the database
+		this.layout = !WikiUtil.isUpgrade();
+		return next;
 	}
 
 	/**

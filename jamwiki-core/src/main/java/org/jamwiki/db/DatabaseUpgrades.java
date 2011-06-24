@@ -55,19 +55,6 @@ public class DatabaseUpgrades {
 	}
 
 	/**
-	 * Special login method - it cannot be assumed that the database schema
-	 * is unchanged, so do not use standard methods.
-	 */
-	public static boolean login(String username, String password) throws WikiException {
-		try {
-			return WikiBase.getDataHandler().authenticate(username, password);
-		} catch (DataAccessException e) {
-			logger.error("Unable to authenticate user during upgrade", e);
-			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
-		}
-	}
-
-	/**
 	 *
 	 */
 	public static List<WikiMessage> upgrade100(List<WikiMessage> messages) throws WikiException {

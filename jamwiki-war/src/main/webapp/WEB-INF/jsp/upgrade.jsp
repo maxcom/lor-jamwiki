@@ -98,16 +98,7 @@ body, input, select {
 			</td>
 		</tr>
 	</c:if>
-	<tr><td colspan="2"><fmt:message key="upgrade.caption.login" /></td></tr>
-	<tr>
-		<td><label for="loginUsername"><fmt:message key="login.username"/></label></td>
-		<td><input type="text" name="username" value="<c:out value="${param.username}" />" id="loginUsername" /></td>
-	</tr>
-	<tr>
-		<td><label for="loginPassword"><fmt:message key="login.password"/></label></td>
-		<td><input type="password" name="password" id="loginPassword" /></td>
-	</tr>
-	<tr><td colspan="2" align="center"><input type="submit" name="button" value="Submit" /></td></tr>
+	<tr><td colspan="2" align="center"><input type="submit" name="button" /></td></tr>
 </c:if>
 </table>
 </form>

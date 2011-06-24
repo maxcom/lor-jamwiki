@@ -35,7 +35,7 @@
 		<intercept-url pattern="/**/Special:Setup" filters="none" />
 		<intercept-url pattern="/**/Special:Translation" access="ROLE_TRANSLATE" />
 		<intercept-url pattern="/**/Special:Upload" access="ROLE_UPLOAD" />
-		<intercept-url pattern="/**/Special:Upgrade" filters="none" />
+		<intercept-url pattern="/**/Special:Upgrade" access="ROLE_SYSADMIN" />
 		<intercept-url pattern="/**/Special:VirtualWiki" access="ROLE_SYSADMIN" />
 		<intercept-url pattern="/**/*.jsp" filters="none" />
 		<intercept-url pattern="/**/*.css" filters="none" />
@@ -140,6 +140,7 @@
 				<b:entry key="/**/Special:Move" value="login.message.move" />
 				<b:entry key="/**/Special:Roles" value="login.message.admin" />
 				<b:entry key="/**/Special:Translation" value="login.message.admin" />
+				<b:entry key="/**/Special:Upgrade" value="login.message.upgrade" />
 				<b:entry key="/**/Special:VirtualWiki" value="login.message.admin" />
 				<b:entry key="/**/*" value="login.message.default" />
 			</b:map>

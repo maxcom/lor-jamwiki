@@ -35,6 +35,8 @@ Bugfixes:
     and if no link text is specified the default text should display the
     interwiki prefix.  Reported by floatingworld.
   * Fix category redirects of the form "#REDIRECT [[Category:Example]]".
+  * Custom authentication providers did not work during upgrades.  Reported by
+    Torsten Krah.
 
 Translation Updates:
 

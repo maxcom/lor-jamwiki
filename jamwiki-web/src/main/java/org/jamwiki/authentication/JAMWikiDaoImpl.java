@@ -65,7 +65,7 @@ public class JAMWikiDaoImpl implements UserDetailsService {
 	 *
 	 */
 	private Collection<GrantedAuthority> retrieveUserAuthorities(String username) throws DataAccessException {
-		if (WikiUtil.isFirstUse() || WikiUtil.isUpgrade()) {
+		if (WikiUtil.isFirstUse()) {
 			return new ArrayList<GrantedAuthority>();
 		}
 		// add authorities given to all users

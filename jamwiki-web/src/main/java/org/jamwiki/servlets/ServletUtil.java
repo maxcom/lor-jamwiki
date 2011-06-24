@@ -78,8 +78,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class ServletUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(ServletUtil.class.getName());
-	/** The name of the JSP file used to render the servlet output for logins. */
-	protected static final String JSP_LOGIN = "login.jsp";
 	/** The name of the output parameter used to store page information. */
 	public static final String PARAMETER_PAGE_INFO = "pageInfo";
 	/** The name of the output parameter used to store topic information. */
@@ -404,7 +402,7 @@ public class ServletUtil {
 		if (StringUtils.isBlank(topic)) {
 			return false;
 		}
-		if (value != null &&  topic.equals(value)) {
+		if (value != null && topic.equals(value)) {
 			return true;
 		}
 		return false;
@@ -727,7 +725,7 @@ public class ServletUtil {
 		next.addObject("springSecurityPasswordField", JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_PASSWORD_FIELD_NAME);
 		next.addObject("springSecurityRememberMeField", JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_REMEMBER_ME_FIELD_NAME);
 		pageInfo.setPageTitle(new WikiMessage("login.title"));
-		pageInfo.setContentJsp(JSP_LOGIN);
+		pageInfo.setContentJsp(JAMWikiServlet.JSP_LOGIN);
 		pageInfo.setSpecial(true);
 		if (messageObject != null) {
 			next.addObject("messageObject", messageObject);

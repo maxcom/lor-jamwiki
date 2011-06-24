@@ -80,25 +80,12 @@ public class UpgradeServlet extends JAMWikiServlet {
 	}
 
 	/**
-	 * Special login method - it cannot be assumed that the database schema
-	 * is unchanged, so do not use standard methods.
-	 */
-	private boolean login(HttpServletRequest request) throws WikiException {
-		String password = request.getParameter("password");
-		String username = request.getParameter("username");
-		return DatabaseUpgrades.login(username, password);
-	}
-
-	/**
 	 *
 	 */
 	private void upgrade(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
 		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		List<WikiMessage> messages = new ArrayList<WikiMessage>();
 		try {
-			if (!this.login(request)) {
-				throw new WikiException(new WikiMessage("error.login"));
-			}
 			WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 			if (oldVersion.before(0, 9, 0)) {
 				throw new WikiException(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.9.0"));

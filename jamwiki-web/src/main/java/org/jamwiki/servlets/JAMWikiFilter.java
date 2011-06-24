@@ -25,6 +25,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jamwiki.authentication.JAMWikiAuthenticationConstants;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -71,6 +72,20 @@ public class JAMWikiFilter implements Filter {
 	}
 
 	/**
+	 * Utility method for determining if a request is for an ignorable file such as
+	 * a CSS file.
+	 */
+	private boolean isIgnoreableFile(HttpServletRequest request) {
+		if (request.getRequestURI().endsWith("jamwiki.css")) {
+			return true;
+		}
+		if (request.getRequestURI().endsWith("jamwiki.js")) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 *
 	 */
 	private void redirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException, ServletException {
@@ -108,7 +123,7 @@ public class JAMWikiFilter implements Filter {
 		if (!WikiUtil.isFirstUse()) {
 			return false;
 		}
-		if (request.getRequestURI().toLowerCase().endsWith(".css")) {
+		if (this.isIgnoreableFile(request)) {
 			return false;
 		}
 		if (ServletUtil.isTopic(request, "Special:Setup")) {
@@ -127,13 +142,16 @@ public class JAMWikiFilter implements Filter {
 		if (!WikiUtil.isUpgrade()) {
 			return false;
 		}
-		if (request.getRequestURI().toLowerCase().endsWith(".css")) {
+		if (this.isIgnoreableFile(request)) {
 			return false;
 		}
 		if (ServletUtil.isTopic(request, "Special:Upgrade")) {
 			return false;
 		}
 		if (ServletUtil.isTopic(request, "Special:Login")) {
+			return false;
+		}
+		if (request.getRequestURI().endsWith(JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_URL)) {
 			return false;
 		}
 		if (ServletUtil.isTopic(request, "jsp/upgrade.jsp")) {
