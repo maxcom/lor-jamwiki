@@ -33,7 +33,11 @@
 <!--
    ====================================================================
 
-   EXPERIMENTAL: Custom tags that can be used with the JFlex parser:
+   EXPERIMENTAL: Custom tags that can be used with the JFlex parser.
+   See org.jamwiki.parser.jflex.JFlexCustomTagItem for the interface
+   but be aware that this capability may change in future releases
+   so any implementation will likely need to be re-compiled until the
+   API stabilizes.
 
    class - The fully qualified class name for the custom tag class.
 

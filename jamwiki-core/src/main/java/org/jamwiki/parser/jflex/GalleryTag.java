@@ -121,7 +121,7 @@ public class GalleryTag implements JFlexCustomTagItem {
 
 	/**
 	 * Parse a gallery tag of the form <gallery>...</gallery> and return the
-	 * resulting HTML output.
+	 * resulting wiki text output.
 	 */
 	public String parse(JFlexLexer lexer, Map<String, String> attributes, String content) throws ParserException {
 		// get the tag contents as a list of wiki syntax for image thumbnails.
