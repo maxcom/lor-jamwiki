@@ -175,11 +175,10 @@ div.submenu {
 	vertical-align: top;
 }
 #wiki-footer {
-	clear: both;
-	font-size: 80%;
 	color: gray;
-	padding: 15px 0 5px 0;
-	text-align: right;
+	font-size: 80%;
+	margin-left: 185px;
+	padding: 15px 10px 5px;
 }
 
 /* main content area */
@@ -421,8 +420,13 @@ ul#tab_submenu li.active {
 
 /* footer */
 
-#wiki-footer hr, #wiki-footer br {
-	display: none;
+#footer-logo {
+	font-size: 0.9em;
+	padding-top: 10px;
+	text-align: right;
+}
+#footer-custom {
+	font-size: 0.9em;
 }
 
 /* recent changes, user contributions, history */

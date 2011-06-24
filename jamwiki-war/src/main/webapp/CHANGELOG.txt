@@ -37,6 +37,8 @@ Bugfixes:
   * Fix category redirects of the form "#REDIRECT [[Category:Example]]".
   * Custom authentication providers did not work during upgrades.  Reported by
     Torsten Krah.
+  * Fix a CSS problem which allow the footer to overlap the left nav on short
+    pages.
 
 Translation Updates:
 
