@@ -21,6 +21,8 @@ New Features:
     tools on the Special:Maintenance page.
   * Add support for the universal edit button plugin.  See 
     http://universaleditbutton.org for further details.
+  * Automatically display interwiki links in the left nav for the
+    Special:RecentChanges page.
   * Add RankingAlgorithm search engine support (nnagarajayya).
   * Limit the number of recent changes loaded by the "Reload Recent Changes"
     task on the Special:Maintenance page to improve performance.
@@ -37,7 +39,7 @@ Bugfixes:
   * Fix category redirects of the form "#REDIRECT [[Category:Example]]".
   * Custom authentication providers did not work during upgrades.  Reported by
     Torsten Krah.
-  * Fix a CSS problem which allow the footer to overlap the left nav on short
+  * Fix a CSS problem which caused the footer to overlap the left nav on short
     pages.
 
 Translation Updates:

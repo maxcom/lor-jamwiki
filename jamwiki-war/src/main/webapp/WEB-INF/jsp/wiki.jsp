@@ -44,21 +44,21 @@
 	<input type="submit" name="jumpto" value='<fmt:message key="generalmenu.jumpto"/>'/>
 	</form>
 	</div>
-	<c:if test="${!empty virtualWikiLinks}">
+	<c:if test="${!empty pageInfo.virtualWikiLinks}">
 	<div id="p-lang" class="portlet">
 	<h5><fmt:message key="generalmenu.title.virtualwiki" /></h5>
 	<ul>
-	<c:forEach items="${virtualWikiLinks}" var="virtualWikiLink">
+	<c:forEach items="${pageInfo.virtualWikiLinks}" var="virtualWikiLink">
 	<li>${virtualWikiLink}</li>
 	</c:forEach>
 	</ul>
 	</div>
 	</c:if>
-	<c:if test="${!empty interwikiLinks}">
+	<c:if test="${!empty pageInfo.interwikiLinks}">
 	<div id="p-sites" class="portlet">
 	<h5><fmt:message key="generalmenu.title.interwiki" /></h5>
 	<ul>
-	<c:forEach items="${interwikiLinks}" var="interwikiLink">
+	<c:forEach items="${pageInfo.interwikiLinks}" var="interwikiLink">
 	<li>${interwikiLink}</li>
 	</c:forEach>
 	</ul>

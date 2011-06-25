@@ -92,6 +92,32 @@ public class ServletUtil {
 	}
 
 	/**
+	 * Populate the virtualWikiLinks field of the pageInfo object for Special:
+	 * pages.
+	 */
+	protected static void buildVirtualWikiLinks(HttpServletRequest request, WikiPageInfo pageInfo) throws DataAccessException {
+		if (Environment.getBooleanValue(Environment.PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE)) {
+			// interwiki links displayed inline, do not add to the left nav
+			return;
+		}
+		String topicName = WikiUtil.getTopicFromURI(request);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(pageInfo.getVirtualWikiName(), topicName);
+		List<String> virtualWikiLinks = new ArrayList<String>();
+		List<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
+		for (VirtualWiki virtualWiki : virtualWikis) {
+			if (StringUtils.equalsIgnoreCase(virtualWiki.getName(), pageInfo.getVirtualWikiName())) {
+				continue;
+			}
+			String virtualWikiLink = virtualWiki.getName() + Namespace.SEPARATOR + wikiLink.getNamespace().getLabel(virtualWiki.getName()) + Namespace.SEPARATOR + wikiLink.getArticle();
+			wikiLink = LinkUtil.parseWikiLink(virtualWiki.getName(), virtualWikiLink);
+			String text = virtualWiki.getName() + Namespace.SEPARATOR + wikiLink.getArticle();
+			String url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki.getName(), wikiLink, text, null, null, false);
+			virtualWikiLinks.add(url);
+		}
+		pageInfo.setVirtualWikiLinks(virtualWikiLinks);
+	}
+
+	/**
 	 * Retrieve the content of a topic from the cache, or if it is not yet in
 	 * the cache then add it to the cache.
 	 *
@@ -817,8 +843,8 @@ public class ServletUtil {
 		if (topic.getTopicType() == TopicType.CATEGORY) {
 			loadCategoryContent(request, next, virtualWiki, topic.getName());
 		}
-		next.addObject("interwikiLinks", parserOutput.getInterwikiLinks());
-		next.addObject("virtualWikiLinks", parserOutput.getVirtualWikiLinks());
+		pageInfo.setInterwikiLinks(parserOutput.getInterwikiLinks());
+		pageInfo.setVirtualWikiLinks(parserOutput.getVirtualWikiLinks());
 		if (topic.getTopicType() == TopicType.IMAGE || topic.getTopicType() == TopicType.FILE) {
 			List<WikiFileVersion> fileVersions = null;
 			try {

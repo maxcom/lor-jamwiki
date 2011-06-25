@@ -17,6 +17,7 @@
 package org.jamwiki.servlets;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -47,8 +48,9 @@ public class WikiPageInfo {
 	private boolean admin = false;
 	private String canonicalUrl = null;
 	private String contentJsp = JSP_TOPIC;
-	private WikiMessage pageTitle = null;
 	private WikiMessage exception = null;
+	private List<String> interwikiLinks = new ArrayList<String>();
+	private WikiMessage pageTitle = null;
 	private String redirectName = null;
 	private String redirectUrl = null;
 	private String selectedTab = null;
@@ -56,6 +58,7 @@ public class WikiPageInfo {
 	private LinkedHashMap<String, WikiMessage> tabMenu = new LinkedHashMap<String, WikiMessage>();
 	private String topicName = "";
 	private LinkedHashMap<String, WikiMessage> userMenu = new LinkedHashMap<String, WikiMessage>();
+	private List<String> virtualWikiLinks = new ArrayList<String>();
 	private String virtualWikiName = null;
 
 	/**
@@ -77,6 +80,7 @@ public class WikiPageInfo {
 		this.admin = false;
 		this.contentJsp = JSP_TOPIC;
 		this.exception = null;
+		this.interwikiLinks = new ArrayList<String>();
 		this.pageTitle = null;
 		this.redirectName = null;
 		this.selectedTab = null;
@@ -84,6 +88,7 @@ public class WikiPageInfo {
 		this.tabMenu = new LinkedHashMap<String, WikiMessage>();
 		this.topicName = "";
 		this.userMenu = new LinkedHashMap<String, WikiMessage>();
+		this.virtualWikiLinks = new ArrayList<String>();
 	}
 
 	/**
@@ -206,6 +211,24 @@ public class WikiPageInfo {
 	 */
 	public void setException(WikiMessage exception) {
 		this.exception = exception;
+	}
+
+	/**
+	 * Return a list of interwiki links that have been set for the current page.
+	 *
+	 * @return A list of all interwiki links for the current page.
+	 */
+	public List<String> getInterwikiLinks() {
+		return this.interwikiLinks;
+	}
+
+	/**
+	 * Set a list of interwiki links that have been set for the current page.
+	 *
+	 * @param interwikiLinks A list of all interwiki links for the current page.
+	 */
+	public void setInterwikiLinks(List<String> interwikiLinks) {
+		this.interwikiLinks = interwikiLinks;
 	}
 
 	/**
@@ -464,6 +487,24 @@ public class WikiPageInfo {
 			logger.error("Failure while retrieving virtual wiki: " + this.getVirtualWikiName(), e);
 		}
 		return virtualWiki;
+	}
+
+	/**
+	 * Return a list of virtual wiki links that have been set for the current page.
+	 *
+	 * @return A list of all virtual wiki links for the current page.
+	 */
+	public List<String> getVirtualWikiLinks() {
+		return this.virtualWikiLinks;
+	}
+
+	/**
+	 * Set a list of virtual wiki links that have been set for the current page.
+	 *
+	 * @param virtualWikiLinks A list of all virtual wiki links for the current page.
+	 */
+	public void setVirtualWikiLinks(List<String> virtualWikiLinks) {
+		this.virtualWikiLinks = virtualWikiLinks;
 	}
 
 	/**

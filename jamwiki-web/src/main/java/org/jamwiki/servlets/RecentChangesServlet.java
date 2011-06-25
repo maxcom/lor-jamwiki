@@ -55,5 +55,7 @@ public class RecentChangesServlet extends JAMWikiServlet {
 		pageInfo.setPageTitle(new WikiMessage("recentchanges.title"));
 		pageInfo.setContentJsp(JSP_RECENT_CHANGES);
 		pageInfo.setSpecial(true);
+		// add interwiki links to the left nav
+		ServletUtil.buildVirtualWikiLinks(request, pageInfo);
 	}
 }
