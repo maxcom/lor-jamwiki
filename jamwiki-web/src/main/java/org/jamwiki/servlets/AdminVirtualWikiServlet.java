@@ -67,8 +67,10 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			search(request, next, pageInfo);
 		} else if (function.equals("virtualwiki")) {
 			virtualWiki(request, next, pageInfo);
-		} else if (function.equals("defaultvwiki")) {
-			defaultVirtualWiki(request, next, pageInfo);
+		} else if (function.equals("commonvwiki")) {
+			commonVirtualWiki(request, next, pageInfo);
+		} else if (function.equals("commoniwiki")) {
+			commonInterwiki(request, next, pageInfo);
 		}
 		return next;
 	}
@@ -143,17 +145,35 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void defaultVirtualWiki(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
+	private void commonInterwiki(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
+		List<WikiMessage> errors = new ArrayList<WikiMessage>();
+		Environment.setBooleanValue(Environment.PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE, !StringUtils.isBlank(request.getParameter(Environment.PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE)));
+		try {
+			Environment.saveConfiguration();
+			next.addObject("message", new WikiMessage("admin.vwiki.message.interwiki.common"));
+		} catch (WikiException e) {
+			errors.add(e.getWikiMessage());
+		}
+		next.addObject("errors", errors);
+		view(request, next, pageInfo);
+	}
+
+	/**
+	 *
+	 */
+	private void commonVirtualWiki(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
 		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		String defaultVirtualWiki = request.getParameter("defaultVirtualWiki");
 		if (!StringUtils.isBlank(defaultVirtualWiki)) {
 			Environment.setValue(Environment.PROP_VIRTUAL_WIKI_DEFAULT, defaultVirtualWiki);
-			try {
-				Environment.saveConfiguration();
-				next.addObject("message", new WikiMessage("admin.message.vwiki.defaultupdated", defaultVirtualWiki));
-			} catch (WikiException e) {
-				errors.add(e.getWikiMessage());
-			}
+		}
+		Environment.setBooleanValue(Environment.PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS, !StringUtils.isBlank(request.getParameter(Environment.PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS)));
+		Environment.setBooleanValue(Environment.PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE, !StringUtils.isBlank(request.getParameter(Environment.PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE)));
+		try {
+			Environment.saveConfiguration();
+			next.addObject("message", new WikiMessage("admin.vwiki.message.commonupdated"));
+		} catch (WikiException e) {
+			errors.add(e.getWikiMessage());
 		}
 		next.addObject("errors", errors);
 		view(request, next, pageInfo);
@@ -252,6 +272,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			}
 		}
 		next.addObject("defaultVirtualWiki", VirtualWiki.defaultVirtualWiki());
+		next.addObject("props", Environment.getInstance());
 		// initialize page defaults
 		pageInfo.setAdmin(true);
 		try {

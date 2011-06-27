@@ -16,7 +16,8 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
-<%@ page errorPage="/WEB-INF/jsp/error.jsp"
+<%@ page import="org.jamwiki.Environment"
+    errorPage="/WEB-INF/jsp/error.jsp"
     contentType="text/html; charset=utf-8"
 %>
 
@@ -42,10 +43,11 @@
 <c:if test="${!empty errors}">
 <div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
-<form action="<jamwiki:link value="Special:VirtualWiki" />#defaultvwiki" method="post">
+<%-- Common Virtual Wiki Settings --%>
+<form action="<jamwiki:link value="Special:VirtualWiki" />#commonvwiki" method="post">
 <fieldset>
-<legend><fmt:message key="admin.vwiki.title.defaultvirtualwiki" /></legend>
-<input type="hidden" name="function" value="defaultvwiki" />
+<legend><fmt:message key="admin.vwiki.title.common" /></legend>
+<input type="hidden" name="function" value="commonvwiki" />
 <c:if test="${!empty selected && selected.virtualWikiId != -1}">
 	<input type="hidden" name="selected" value="${selected.virtualWikiId}" />
 </c:if>
@@ -59,11 +61,23 @@
 	<div class="formhelp"><fmt:message key="admin.vwiki.help.makedefault" /></div>
 </div>
 <div class="row">
+	<label for="<%= Environment.PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS %>"><fmt:message key="admin.parser.caption.specialvirtualwiki" /></label>
+	<c:set var="PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS"><%= Environment.PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS %></c:set>
+	<span><jamwiki:checkbox name="${PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS}" value="true" checked="${props[PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS]}" id="${PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS}" /></span>
+	<div class="formhelp"><fmt:message key="admin.parser.help.specialvirtualwiki" /></div>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE %>"><fmt:message key="admin.parser.caption.virtualwikiinline" /></label>
+	<c:set var="PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE"><%= Environment.PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE %></c:set>
+	<span><jamwiki:checkbox name="${PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE}" value="true" checked="${props[PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE]}" id="${PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE}" /></span>
+	<div class="formhelp"><fmt:message key="admin.parser.help.virtualwikiinline" /></div>
+</div>
+<div class="row">
 	<span class="form-button"><input type="submit" value="<fmt:message key="common.update" />" /></span>
 </div>
 </fieldset>
 </form>
-<!-- Add/Update Virtual Wiki -->
+<%-- Add/Update Virtual Wiki --%>
 <fieldset>
 <legend><fmt:message key="admin.vwiki.title.virtualwiki" /></legend>
 <form action="<jamwiki:link value="Special:VirtualWiki" />#vwiki" method="get" name="selectvwiki">
@@ -140,7 +154,7 @@
 </fieldset>
 </div>
 
-<!-- Add Namesapce -->
+<%-- Add Namesapce --%>
 <div id="addnamespace" class="submenu-tab-item">
 <a name="addnamespace"></a>
 <c:if test="${!empty message && function == 'addnamespace'}">
@@ -178,7 +192,7 @@
 </form>
 </div>
 
-<!-- Add/Update Namesapce Translations -->
+<%-- Add/Update Namespace Translations --%>
 <div id="namespaces" class="submenu-tab-item">
 <a name="namespaces"></a>
 <c:if test="${!empty message && function == 'namespaces'}">
@@ -187,7 +201,7 @@
 <c:if test="${!empty errors && function == 'namespaces'}">
 <div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
-<!-- Select Virtual Wiki -->
+<%-- Select Virtual Wiki --%>
 <form action="<jamwiki:link value="Special:VirtualWiki" />#namespaces" method="get" name="selectnamespaces">
 <input type="hidden" name="function" value="search" />
 <fieldset>
@@ -239,7 +253,7 @@
 </c:if>
 </div>
 
-<!-- Interwiki Links -->
+<%-- Interwiki Links --%>
 <div id="interwiki" class="submenu-tab-item">
 <a name="interwiki"></a>
 <c:if test="${!empty message && (function == 'addInterwiki' || function == 'updateInterwiki')}">
@@ -248,6 +262,22 @@
 <c:if test="${!empty errors && (function == 'addInterwiki' || function == 'updateInterwiki')}">
 <div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
+<%-- Common Interwiki Settings --%>
+<form action="<jamwiki:link value="Special:VirtualWiki" />#commoniwiki" method="post">
+<fieldset>
+<legend><fmt:message key="admin.vwiki.title.interwiki.common" /></legend>
+<input type="hidden" name="function" value="commoniwiki" />
+<div class="row">
+	<label for="<%= Environment.PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE %>"><fmt:message key="admin.parser.caption.interwikiinline" /></label>
+	<c:set var="PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE"><%= Environment.PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE %></c:set>
+	<span><jamwiki:checkbox name="${PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE}" value="true" checked="${props[PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE]}" id="${PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE}" /></span>
+	<div class="formhelp"><fmt:message key="admin.parser.help.interwikiinline" /></div>
+</div>
+<div class="row">
+	<span class="form-button"><input type="submit" value="<fmt:message key="common.update" />" /></span>
+</div>
+</fieldset>
+</form>
 <%-- Add Interwiki --%>
 <form action="<jamwiki:link value="Special:VirtualWiki" />#interwiki" method="post">
 <input type="hidden" name="function" value="addInterwiki" />
