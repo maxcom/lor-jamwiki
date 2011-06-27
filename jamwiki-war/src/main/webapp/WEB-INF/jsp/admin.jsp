@@ -270,6 +270,12 @@ function onRSS() {
 	<div class="formhelp"><fmt:message key="admin.parser.help.interwikiinline" /></div>
 </div>
 <div class="row">
+	<label for="<%= Environment.PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS %>"><fmt:message key="admin.parser.caption.specialvirtualwiki" /></label>
+	<c:set var="PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS"><%= Environment.PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS %></c:set>
+	<span><jamwiki:checkbox name="${PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS}" value="true" checked="${props[PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS]}" id="${PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS}" /></span>
+	<div class="formhelp"><fmt:message key="admin.parser.help.specialvirtualwiki" /></div>
+</div>
+<div class="row">
 	<label for="<%= Environment.PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE %>"><fmt:message key="admin.parser.caption.virtualwikiinline" /></label>
 	<c:set var="PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE"><%= Environment.PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE %></c:set>
 	<span><jamwiki:checkbox name="${PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE}" value="true" checked="${props[PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE]}" id="${PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE}" /></span>

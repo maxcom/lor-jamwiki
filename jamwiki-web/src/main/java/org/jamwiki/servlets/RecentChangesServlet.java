@@ -19,6 +19,7 @@ package org.jamwiki.servlets;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.RecentChange;
@@ -55,7 +56,9 @@ public class RecentChangesServlet extends JAMWikiServlet {
 		pageInfo.setPageTitle(new WikiMessage("recentchanges.title"));
 		pageInfo.setContentJsp(JSP_RECENT_CHANGES);
 		pageInfo.setSpecial(true);
-		// add interwiki links to the left nav
-		ServletUtil.buildVirtualWikiLinks(request, pageInfo);
+		if (Environment.getBooleanValue(Environment.PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS)) {
+			// add interwiki links to the left nav
+			ServletUtil.buildVirtualWikiLinks(request, pageInfo);
+		}
 	}
 }

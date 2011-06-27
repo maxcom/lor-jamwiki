@@ -96,10 +96,6 @@ public class ServletUtil {
 	 * pages.
 	 */
 	protected static void buildVirtualWikiLinks(HttpServletRequest request, WikiPageInfo pageInfo) throws DataAccessException {
-		if (Environment.getBooleanValue(Environment.PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE)) {
-			// interwiki links displayed inline, do not add to the left nav
-			return;
-		}
 		String topicName = WikiUtil.getTopicFromURI(request);
 		WikiLink wikiLink = LinkUtil.parseWikiLink(pageInfo.getVirtualWikiName(), topicName);
 		List<String> virtualWikiLinks = new ArrayList<String>();

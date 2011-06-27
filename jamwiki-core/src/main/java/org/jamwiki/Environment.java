@@ -96,6 +96,7 @@ public class Environment {
 	public static final String PROP_PARSER_ALLOW_TEMPLATES = "allow-templates";
 	public static final String PROP_PARSER_CLASS = "parser";
 	public static final String PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE = "parser-interwiki-links-inline";
+	public static final String PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS = "display-special-virtual-wiki";
 	public static final String PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE = "parser-virtualwiki-links-inline";
 	/** Maximum number of template inclusions allowed on a page. */
 	public static final String PROP_PARSER_MAX_INCLUSIONS = "parser-max-inclusions";
@@ -244,6 +245,7 @@ public class Environment {
 		this.defaults.setProperty(PROP_PARSER_ALLOW_TEMPLATES, Boolean.TRUE.toString());
 		this.defaults.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.jflex.JFlexParser");
 		this.defaults.setProperty(PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE, Boolean.FALSE.toString());
+		this.defaults.setProperty(PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS, Boolean.TRUE.toString());
 		this.defaults.setProperty(PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE, Boolean.FALSE.toString());
 		this.defaults.setProperty(PROP_PARSER_MAX_INCLUSIONS, "250");
 		this.defaults.setProperty(PROP_PARSER_MAXIMUM_INFINITE_LOOP_LIMIT, "5");

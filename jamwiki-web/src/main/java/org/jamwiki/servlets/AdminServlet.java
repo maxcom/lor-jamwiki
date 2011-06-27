@@ -302,6 +302,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setBooleanProperty(props, request, Environment.PROP_PARSER_TOC);
 			setNumericProperty(props, request, Environment.PROP_PARSER_TOC_DEPTH, errors);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE);
+			setBooleanProperty(props, request, Environment.PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_CAPITALIZATION);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_HTML);

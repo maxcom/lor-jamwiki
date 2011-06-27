@@ -21,8 +21,8 @@ New Features:
     tools on the Special:Maintenance page.
   * Add support for the universal edit button plugin.  See 
     http://universaleditbutton.org for further details.
-  * Automatically display interwiki links in the left nav for the
-    Special:RecentChanges page.
+  * Automatically display virtual wiki links in the left nav for the
+    Special:RecentChanges page.  This feature may be disabled from admin pages.
   * Add RankingAlgorithm search engine support (nnagarajayya).
   * Limit the number of recent changes loaded by the "Reload Recent Changes"
     task on the Special:Maintenance page to improve performance.
