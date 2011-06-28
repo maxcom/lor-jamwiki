@@ -6,8 +6,8 @@
 <li><a href="#test_2"><span class="tocnumber">2</span> <span class="toctext">test_2</span></a></li>
 <li><a href="#test_1"><span class="tocnumber">3</span> <span class="toctext">test</span></a></li>
 <li><a href="#test_3"><span class="tocnumber">4</span> <span class="toctext">test</span></a></li>
-<li><a href="#A%EF%BF%BD%EF%BF%BDo"><span class="tocnumber">5</span> <span class="toctext">A&#65533;&#65533;o</span></a></li>
-<li><a href="#A%EF%BF%BD%EF%BF%BDo_1"><span class="tocnumber">6</span> <span class="toctext">A&#65533;&#65533;o</span></a></li>
+<li><a href="#A.EF.BF.BD.EF.BF.BDo"><span class="tocnumber">5</span> <span class="toctext">A&#65533;&#65533;o</span></a></li>
+<li><a href="#A.EF.BF.BD.EF.BF.BDo_1"><span class="tocnumber">6</span> <span class="toctext">A&#65533;&#65533;o</span></a></li>
 </ul>
 </td>
 </tr>
@@ -16,5 +16,5 @@
 <a name="test_2"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents2&amp;section=2">Edit</a>]</span><span>test_2</span></h2>
 <a name="test_1"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents2&amp;section=3">Edit</a>]</span><span>test</span></h2>
 <a name="test_3"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents2&amp;section=4">Edit</a>]</span><span>test</span></h2>
-<a name="A%EF%BF%BD%EF%BF%BDo"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents2&amp;section=5">Edit</a>]</span><span>A&#65533;&#65533;o</span></h2>
-<a name="A%EF%BF%BD%EF%BF%BDo_1"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents2&amp;section=6">Edit</a>]</span><span>A&#65533;&#65533;o</span></h2>
+<a name="A.EF.BF.BD.EF.BF.BDo"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents2&amp;section=5">Edit</a>]</span><span>A&#65533;&#65533;o</span></h2>
+<a name="A.EF.BF.BD.EF.BF.BDo_1"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents2&amp;section=6">Edit</a>]</span><span>A&#65533;&#65533;o</span></h2>
