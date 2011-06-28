@@ -7,7 +7,8 @@ New Features:
 
 Bugfixes:
 
-  * None.
+  * Fix an issue that broke the TOC for some browsers when using non-Latin
+    characters.  Reported by by Felipe Avilis.
 
 Translation Updates:
 

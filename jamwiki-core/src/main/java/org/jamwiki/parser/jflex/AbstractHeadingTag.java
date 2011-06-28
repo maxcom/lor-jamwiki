@@ -67,9 +67,9 @@ public abstract class AbstractHeadingTag implements JFlexParserTag {
 	 *
 	 */
 	private String buildTagName(JFlexLexer lexer, String tocText) {
-		String tagName = lexer.getParserInput().getTableOfContents().checkForUniqueName(tocText);
 		// re-convert any &uuml; or other (converted by the parser) entities back
-		return StringEscapeUtils.unescapeHtml(tagName);
+		String tagName = StringEscapeUtils.unescapeHtml(tocText);
+		return lexer.getParserInput().getTableOfContents().checkForUniqueName(tagName);
 	}
 
 	/**

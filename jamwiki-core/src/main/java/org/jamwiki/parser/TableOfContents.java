@@ -132,12 +132,11 @@ public class TableOfContents {
 		String candidate = name;
 		while (count < 1000) {
 			if (this.entries.get(candidate) == null) {
-				return candidate;
+				break;
 			}
 			count++;
 			candidate = name + "_" + count;
 		}
-		logger.warn("Unable to find appropriate TOC name after " + count + " iterations for value " + name);
 		return candidate;
 	}
 
