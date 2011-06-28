@@ -10,7 +10,7 @@
 </td>
 </tr>
 </table>
-<a name="test"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents1&amp;section=1">Edit</a>]</span><span>test</span></h2>
-<a name="test_1"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents1&amp;section=2">Edit</a>]</span><span>test</span></h2>
-<a name="test_2"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents1&amp;section=3">Edit</a>]</span><span>test</span></h2>
-<a name="test_3"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents1&amp;section=4">Edit</a>]</span><span>test</span></h2>
+<h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents1&amp;section=1">Edit</a>]</span><span id="test">test</span></h2>
+<h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents1&amp;section=2">Edit</a>]</span><span id="test_1">test</span></h2>
+<h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents1&amp;section=3">Edit</a>]</span><span id="test_2">test</span></h2>
+<h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents1&amp;section=4">Edit</a>]</span><span id="test_3">test</span></h2>

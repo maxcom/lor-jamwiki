@@ -62,7 +62,7 @@ function onRSS() {
 </div>
 </c:if>
 
-<!-- sub-menu tabs -->
+<%-- sub-menu tabs --%>
 <ul class="tab-menu" id="tab_submenu">
 <li><a href="#general"><fmt:message key="admin.header.general" /></a></li>
 <li><a href="#parser"><fmt:message key="admin.header.parser" /></a></li>
@@ -84,9 +84,8 @@ function onRSS() {
 	</table>
 </div>
 
-<!-- BEGIN GENERAL SETTINGS -->
+<%-- BEGIN GENERAL SETTINGS --%>
 <div id="general" class="submenu-tab-item">
-<a name="general"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.general" /></legend>
 <div class="row">
@@ -197,11 +196,9 @@ function onRSS() {
 </div>
 </fieldset>
 </div>
-<!-- END GENERAL SETTINGS -->
 
-<!-- BEGIN PARSER -->
+<%-- BEGIN PARSER --%>
 <div id="parser" class="submenu-tab-item">
-<a name="parser"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.parser" /></legend>
 <div class="row">
@@ -301,14 +298,11 @@ function onRSS() {
 </div>
 </fieldset>
 </div>
-<!-- END PARSER -->
 
-<%--
+<%-- BEGIN EMAIL
 FIXME - Email not supported right now, comment this out
 
-<!-- BEGIN EMAIL -->
 <div id="email" class="submenu-tab-item">
-<a name="email"></a>
 <fieldset>
 <legend><fmt:message key="admin.smtp.caption" /></legend>
 <div class="row">
@@ -332,13 +326,11 @@ FIXME - Email not supported right now, comment this out
 </div>
 </fieldset>
 </div>
-<!-- END EMAIL -->
 
 --%>
 
-<!-- BEGIN DATABASE PERSISTENCE -->
+<%-- BEGIN DATABASE PERSISTENCE --%>
 <div id="database" class="submenu-tab-item">
-<a name="database"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.persistence" /></legend>
 <div class="row">
@@ -449,11 +441,9 @@ FIXME - Email not supported right now, comment this out
 </div>
 </fieldset>
 </div>
-<!-- END DATABASE PERSISTENCE -->
 
-<!-- BEGIN FILE UPLOAD -->
+<%-- BEGIN FILE UPLOAD --%>
 <div id="upload" class="submenu-tab-item">
-<a name="upload"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.upload" /></legend>
 <div class="row">
@@ -516,11 +506,9 @@ FIXME - Email not supported right now, comment this out
 </div>
 </fieldset>
 </div>
-<!-- END FILE UPLOAD -->
 
-<!-- BEGIN CACHE -->
+<%-- BEGIN CACHE --%>
 <div id="cache" class="submenu-tab-item">
-<a name="cache"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.cache" /></legend>
 <div class="rowhelp">
@@ -550,11 +538,9 @@ FIXME - Email not supported right now, comment this out
 </div>
 </fieldset>
 </div>
-<!-- END CACHE -->
 
-<!-- BEGIN RSS -->
+<%-- BEGIN RSS --%>
 <div id="rss" class="submenu-tab-item">
-<a name="rss"></a>
 <fieldset>
 <legend><fmt:message key="admin.header.rss" /></legend>
 <div class="row">
@@ -569,7 +555,6 @@ FIXME - Email not supported right now, comment this out
 </div>
 </fieldset>
 </div>
-<!-- END RSS -->
 
 <input type="hidden" name="function" value="properties" />
 

@@ -33,8 +33,7 @@
 
 <c:choose>
 	<c:when test="${deleted}">
-		<a name="undelete"></a>
-		<form name="undelete" method="get" action="<jamwiki:link value="Special:Manage" />">
+		<form id="undelete" name="undelete" method="get" action="<jamwiki:link value="Special:Manage" />">
 		<input type="hidden" name="<%= WikiUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 		<fieldset>
 		<legend><fmt:message key="manage.caption.undelete"><fmt:param value="${pageInfo.topicName}" /></fmt:message></legend>
@@ -80,8 +79,7 @@
 		</script>
 	</c:when>
 	<c:otherwise>
-		<a name="delete"></a>
-		<form name="delete" method="get" action="<jamwiki:link value="Special:Manage" />">
+		<form id="delete" name="delete" method="get" action="<jamwiki:link value="Special:Manage" />">
 		<input type="hidden" name="<%= WikiUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 		<fieldset>
 		<legend><fmt:message key="manage.caption.delete"><fmt:param value="${pageInfo.topicName}" /></fmt:message></legend>
@@ -101,8 +99,7 @@
 		</div>
 		</fieldset>
 		</form>
-		<a name="permissions"></a>
-		<form name="permissions" method="get" action="<jamwiki:link value="Special:Manage" />">
+		<form id="permissions" name="permissions" method="get" action="<jamwiki:link value="Special:Manage" />">
 		<input type="hidden" name="<%= WikiUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 		<fieldset>
 		<legend><fmt:message key="manage.caption.permissions" /></legend>
@@ -121,8 +118,7 @@
 		</form>
 		<%-- TODO - should this have its own permission? --%>
 		<security:authorize url="/Special:Admin">
-		<a name="purge"></a>
-		<form name="purge" method="post" action="<jamwiki:link value="Special:Manage" />">
+		<form id="purge" name="purge" method="post" action="<jamwiki:link value="Special:Manage" />">
 		<input type="hidden" name="<%= WikiUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 		<fieldset>
 		<legend><fmt:message key="manage.caption.purge" /></legend>

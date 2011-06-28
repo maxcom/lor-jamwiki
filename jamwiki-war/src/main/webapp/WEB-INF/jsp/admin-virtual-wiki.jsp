@@ -25,7 +25,7 @@
 
 <div id="virtualwiki" class="admin">
 
-<!-- sub-menu tabs -->
+<%-- sub-menu tabs --%>
 <ul class="tab-menu" id="tab_submenu">
 <li><a href="#vwiki"><fmt:message key="admin.vwiki.title.virtualwiki" /></a></li>
 <li><a href="#addnamespace"><fmt:message key="admin.vwiki.title.namespace.add" /></a></li>
@@ -34,9 +34,8 @@
 </ul>
 <div class="submenu-tab-content">
 
-<!-- Update Default Virtual Wiki -->
+<%-- Update Default Virtual Wiki --%>
 <div id="vwiki" class="submenu-tab-item">
-<a name="vwiki"></a>
 <c:if test="${!empty message}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
@@ -156,7 +155,6 @@
 
 <%-- Add Namesapce --%>
 <div id="addnamespace" class="submenu-tab-item">
-<a name="addnamespace"></a>
 <c:if test="${!empty message && function == 'addnamespace'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
@@ -194,7 +192,6 @@
 
 <%-- Add/Update Namespace Translations --%>
 <div id="namespaces" class="submenu-tab-item">
-<a name="namespaces"></a>
 <c:if test="${!empty message && function == 'namespaces'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
@@ -255,7 +252,6 @@
 
 <%-- Interwiki Links --%>
 <div id="interwiki" class="submenu-tab-item">
-<a name="interwiki"></a>
 <c:if test="${!empty message && (function == 'addInterwiki' || function == 'updateInterwiki')}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>

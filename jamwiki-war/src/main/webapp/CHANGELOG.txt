@@ -43,6 +43,7 @@ Bugfixes:
     Torsten Krah.
   * Fix a CSS problem which caused the footer to overlap the left nav on short
     pages.
+  * The "name" attribute for anchors has been deprecated in HTML 5 / XHTML.
 
 Translation Updates:
 

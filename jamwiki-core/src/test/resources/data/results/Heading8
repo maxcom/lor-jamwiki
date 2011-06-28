@@ -13,18 +13,18 @@
 </td>
 </tr>
 </table>
-<a name="first"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=Heading8&amp;section=1">Edit</a>]</span><span>first</span></h2>
+<h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=Heading8&amp;section=1">Edit</a>]</span><span id="first">first</span></h2>
 <p>first</p>
 
-<a name="second"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=Heading8&amp;section=2">Edit</a>]</span><span>second</span></h2>
+<h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=Heading8&amp;section=2">Edit</a>]</span><span id="second">second</span></h2>
 <p>second</p>
-<a name="third"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=Heading8&amp;section=3">Edit</a>]</span><span>third</span></h2>
+<h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=Heading8&amp;section=3">Edit</a>]</span><span id="third">third</span></h2>
 <p>third</p>
-<a name="fourth"></a><h2 style="color: red"><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=Heading8&amp;section=4">Edit</a>]</span><span>fourth</span></h2>
+<h2 style="color: red"><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=Heading8&amp;section=4">Edit</a>]</span><span id="fourth">fourth</span></h2>
 <p>fourth</p>
-<a name="fifth"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=Heading8&amp;section=5">Edit</a>]</span><span>fifth</span></h2>
+<h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=Heading8&amp;section=5">Edit</a>]</span><span id="fifth">fifth</span></h2>
 <p>fifth</p>
-<a name="sixth"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=Heading8&amp;section=6">Edit</a>]</span><span>sixth</span></h2>
+<h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=Heading8&amp;section=6">Edit</a>]</span><span id="sixth">sixth</span></h2>
 <p>sixth</p>
-<a name="seventh"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=Heading8&amp;section=7">Edit</a>]</span><span>seventh</span></h2>
+<h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=Heading8&amp;section=7">Edit</a>]</span><span id="seventh">seventh</span></h2>
 <p>seventh</p>

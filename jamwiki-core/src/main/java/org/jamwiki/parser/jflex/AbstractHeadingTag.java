@@ -90,11 +90,10 @@ public abstract class AbstractHeadingTag implements JFlexParserTag {
 	private String generateOutput(JFlexLexer lexer, String tagName, String tocText, String tagText, int level, String raw, Object... args) throws ParserException {
 		StringBuilder output = new StringBuilder(this.updateToc(lexer.getParserInput(), tagName, tocText, level));
 		int nextSection = lexer.getParserInput().getTableOfContents().size();
-		output.append("<a name=\"").append(tagName).append("\"></a>");
 		output.append(generateTagOpen(raw, args));
 		output.append(this.buildSectionEditLink(lexer.getParserInput(), nextSection));
 		String parsedTocText = this.processTocText(lexer.getParserInput(), lexer.getParserOutput(), tagText, lexer.getMode());
-		output.append("<span>").append(parsedTocText).append("</span>");
+		output.append("<span id=\"").append(tagName).append("\">").append(parsedTocText).append("</span>");
 		output.append("</h").append(level).append('>');
 		return output.toString();
 	}

@@ -27,7 +27,7 @@
 
 <div id="maintenance" class="admin">
 
-<!-- sub-menu tabs -->
+<%-- sub-menu tabs --%>
 <ul class="tab-menu" id="tab_submenu">
 <li><a href="#system"><fmt:message key="admin.maintenance.title.system" /></a></li>
 <li><a href="#data"><fmt:message key="admin.maintenance.title.data" /></a></li>
@@ -37,11 +37,10 @@
 </ul>
 <div class="submenu-tab-content">
 
-<!-- System Tools -->
+<%-- System Tools --%>
 <div id="system" class="submenu-tab-item">
-<a name="system"></a>
 
-<!-- Refresh Search Index -->
+<%-- Refresh Search Index --%>
 <c:if test="${!empty message && function == 'search'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
@@ -60,7 +59,7 @@
 </form>
 </fieldset>
 
-<!-- Cache -->
+<%-- Cache --%>
 <c:if test="${!empty message && function == 'cache'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
@@ -81,9 +80,7 @@
 
 <jamwiki:enabled property="PROP_TOPIC_SPAM_FILTER">
 
-<!-- Spam Filter -->
-<a name="spam"></a>
-
+<%-- Spam Filter --%>
 <c:if test="${!empty message && function == 'spam'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
@@ -106,11 +103,10 @@
 
 </div>
 
-<!-- Data Tools -->
+<%-- Data Tools --%>
 <div id="data" class="submenu-tab-item">
-<a name="data"></a>
 
-<!-- Recent Changes -->
+<%-- Recent Changes --%>
 <c:if test="${!empty message && function == 'recentchanges'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
@@ -129,7 +125,7 @@
 </form>
 </fieldset>
 
-<!-- Log Items -->
+<%-- Log Items --%>
 <c:if test="${!empty message && function == 'logitems'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
@@ -148,7 +144,7 @@
 </form>
 </fieldset>
 
-<!-- Namespaces -->
+<%-- Namespaces --%>
 <c:if test="${!empty message && function == 'namespaces'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
@@ -167,7 +163,7 @@
 </form>
 </fieldset>
 
-<!-- Topic Links -->
+<%-- Topic Links --%>
 <c:if test="${!empty message && function == 'links'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
@@ -188,9 +184,8 @@
 
 </div>
 
-<!-- Password Reset -->
+<%-- Password Reset --%>
 <div id="password" class="submenu-tab-item">
-<a name="password"></a>
 <c:if test="${!empty message && function == 'password'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
@@ -222,9 +217,8 @@
 </fieldset>
 </div>
 
-<!-- Add User  -->
+<%-- Add User  --%>
 <div id="adduser" class="submenu-tab-item">
-<a name="adduser"></a>
 <c:if test="${!empty message && function == 'adduser'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
@@ -264,9 +258,8 @@
 </fieldset>
 </div>
 
-<!-- Migrate Database -->
+<%-- Migrate Database --%>
 <div id="migrate" class="submenu-tab-item">
-<a name="migrate"></a>
 <c:if test="${!empty message && function == 'migrate'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>

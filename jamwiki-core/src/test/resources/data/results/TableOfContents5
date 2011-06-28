@@ -15,7 +15,7 @@
 </td>
 </tr>
 </table>
-<a name="a_1"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents5&amp;section=1">Edit</a>]</span><span>1</span></h2>
-<a name="a_2"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents5&amp;section=2">Edit</a>]</span><span>2</span></h2>
-<a name="a_3"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents5&amp;section=3">Edit</a>]</span><span>3</span></h2>
-<a name="a_4"></a><h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents5&amp;section=4">Edit</a>]</span><span>4</span></h2>
+<h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents5&amp;section=1">Edit</a>]</span><span id="a_1">1</span></h2>
+<h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents5&amp;section=2">Edit</a>]</span><span id="a_2">2</span></h2>
+<h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents5&amp;section=3">Edit</a>]</span><span id="a_3">3</span></h2>
+<h2><span class="editsection">[<a href="/wiki/en/Special:Edit?topic=TableOfContents5&amp;section=4">Edit</a>]</span><span id="a_4">4</span></h2>
