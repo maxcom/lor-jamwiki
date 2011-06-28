@@ -123,6 +123,20 @@ followed by 0.6.3.
               update jam_recent_change set log_sub_type = 10 where log_type = 1 and log_params not like '%|7';
 
 
+  JAMWiki 1.0.5
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "1.0.5".
+
+
+  JAMWiki 1.0.4
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "1.0.4".
+
+
   JAMWiki 1.0.3
   =============
 

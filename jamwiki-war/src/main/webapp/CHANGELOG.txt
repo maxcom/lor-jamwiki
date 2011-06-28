@@ -50,6 +50,23 @@ Translation Updates:
   * Updated Russian translations (shar).
 
 
+1.0.5
+=====
+
+New Features:
+
+  * Updated spam filter patterns.
+
+Bugfixes:
+
+  * Fix an issue that broke the TOC for some browsers when using non-Latin
+    characters.  Reported by by Felipe Avilis.
+
+Translation Updates:
+
+  * None.
+
+
 1.0.4
 =====
 
