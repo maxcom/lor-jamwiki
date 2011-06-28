@@ -76,6 +76,22 @@ public class LinkUtil {
 	}
 
 	/**
+	 * Convert plain text into a value suitable for an anchor name.  The HTML rules
+	 * for such a value is that it must begin with a letter ([A-Za-z]) and may be
+	 * followed by any number of letters, digits ([0-9]), hyphens ("-"), underscores
+	 * ("_"), colons (":"), and periods (".").
+	 */
+	public static String buildAnchorText(String text) {
+		// ensure that all characters in the name are valid for use in an anchor name
+		String anchorText = Utilities.encodeAndEscapeTopicName(text);
+		anchorText = anchorText.replace('%', '.');
+		if (!anchorText.matches("[A-Za-z].*")) {
+			anchorText = "a_" + anchorText;
+		}
+		return anchorText;
+	}
+
+	/**
 	 * Utility method for building a URL link to a wiki edit page for a
 	 * specified topic.
 	 *
@@ -293,7 +309,7 @@ public class LinkUtil {
 	 */
 	private static String buildTopicUrlNoEdit(String context, String virtualWiki, String topicName, String section, String queryString) {
 		if (StringUtils.isBlank(topicName) && !StringUtils.isBlank(section)) {
-			return "#" + Utilities.encodeAndEscapeTopicName(section);
+			return "#" + LinkUtil.buildAnchorText(section);
 		}
 		StringBuilder url = new StringBuilder();
 		if (context != null) {
@@ -315,7 +331,7 @@ public class LinkUtil {
 			if (section.charAt(0) != '#') {
 				url.append('#');
 			}
-			url.append(Utilities.encodeAndEscapeTopicName(section));
+			url.append(LinkUtil.buildAnchorText(section));
 		}
 		return url.toString();
 	}
