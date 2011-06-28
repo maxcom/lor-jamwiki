@@ -312,4 +312,17 @@ public class UtilitiesTest extends JAMWikiUnitTest {
 	public void testReadFileThrowsNullPointerException() throws Throwable {
 		Utilities.readFile(null);
 	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testStripMarkup() throws Throwable {
+		assertEquals("Markup not stripped", Utilities.stripMarkup("test"), "test");
+		assertEquals("Markup not stripped", Utilities.stripMarkup("<b>test</b>"), "test");
+		assertEquals("Markup not stripped", Utilities.stripMarkup("Ação"), "Ação");
+		assertEquals("Markup not stripped", Utilities.stripMarkup("<b>Ação</b>"), "Ação");
+		assertEquals("Markup not stripped", Utilities.stripMarkup("A&#65533;&#65533;o"), "A&#65533;&#65533;o");
+		assertEquals("Markup not stripped", Utilities.stripMarkup("<b>A&#65533;&#65533;o</b>"), "A&#65533;&#65533;o");
+	}
 }
