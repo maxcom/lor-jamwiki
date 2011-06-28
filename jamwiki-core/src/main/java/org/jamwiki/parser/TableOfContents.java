@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.LinkUtil;
 
 /**
  * This class is used to generate a table of contents based on values passed in
@@ -130,8 +130,7 @@ public class TableOfContents {
 		}
 		int count = 0;
 		// ensure that all characters in the name are valid for use in an anchor name
-		String escapedName = Utilities.encodeAndEscapeTopicName(name);
-		escapedName = escapedName.replace('%', '.');
+		String escapedName = LinkUtil.buildAnchorText(name);
 		String candidate = escapedName;
 		while (count < 1000) {
 			if (this.entries.get(candidate) == null) {
