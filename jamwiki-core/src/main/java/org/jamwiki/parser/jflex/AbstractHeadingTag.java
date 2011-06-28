@@ -69,7 +69,7 @@ public abstract class AbstractHeadingTag implements JFlexParserTag {
 	private String buildTagName(JFlexLexer lexer, String tocText) {
 		// re-convert any &uuml; or other (converted by the parser) entities back
 		String tagName = StringEscapeUtils.unescapeHtml(tocText);
-		return lexer.getParserInput().getTableOfContents().checkForUniqueName(tagName);
+		return lexer.getParserInput().getTableOfContents().buildUniqueName(tagName);
 	}
 
 	/**
@@ -90,7 +90,7 @@ public abstract class AbstractHeadingTag implements JFlexParserTag {
 	private String generateOutput(JFlexLexer lexer, String tagName, String tocText, String tagText, int level, String raw, Object... args) throws ParserException {
 		StringBuilder output = new StringBuilder(this.updateToc(lexer.getParserInput(), tagName, tocText, level));
 		int nextSection = lexer.getParserInput().getTableOfContents().size();
-		output.append("<a name=\"").append(Utilities.encodeAndEscapeTopicName(tagName)).append("\"></a>");
+		output.append("<a name=\"").append(tagName).append("\"></a>");
 		output.append(generateTagOpen(raw, args));
 		output.append(this.buildSectionEditLink(lexer.getParserInput(), nextSection));
 		String parsedTocText = this.processTocText(lexer.getParserInput(), lexer.getParserOutput(), tagText, lexer.getMode());
