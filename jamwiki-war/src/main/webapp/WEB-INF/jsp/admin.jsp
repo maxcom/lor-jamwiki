@@ -68,8 +68,7 @@ function onRSS() {
 <li><a href="#parser"><fmt:message key="admin.header.parser" /></a></li>
 <li><a href="#database"><fmt:message key="admin.header.persistence" /></a></li>
 <li><a href="#upload"><fmt:message key="admin.header.upload" /></a></li>
-<li><a href="#cache"><fmt:message key="admin.header.cache" /></a></li>
-<li><a href="#rss"><fmt:message key="admin.header.rss" /></a></li>
+<li><a href="#other"><fmt:message key="admin.header.other" /></a></li>
 </ul>
 <div class="submenu-tab-content">
 
@@ -507,8 +506,8 @@ FIXME - Email not supported right now, comment this out
 </fieldset>
 </div>
 
+<div id="other" class="submenu-tab-item">
 <%-- BEGIN CACHE --%>
-<div id="cache" class="submenu-tab-item">
 <fieldset>
 <legend><fmt:message key="admin.header.cache" /></legend>
 <div class="rowhelp">
@@ -537,10 +536,7 @@ FIXME - Email not supported right now, comment this out
 	<span><jamwiki:text name="${PROP_CACHE_MAX_IDLE_AGE}" id="${PROP_CACHE_MAX_IDLE_AGE}" value="${props[PROP_CACHE_MAX_IDLE_AGE]}" size="10" /></span>
 </div>
 </fieldset>
-</div>
-
 <%-- BEGIN RSS --%>
-<div id="rss" class="submenu-tab-item">
 <fieldset>
 <legend><fmt:message key="admin.header.rss" /></legend>
 <div class="row">
