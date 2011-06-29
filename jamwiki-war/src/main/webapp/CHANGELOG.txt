@@ -5,24 +5,25 @@ New Features:
 
   * Add support for the Mediawiki <gallery> tag for generating image galleries.
   * Display HTML links of the form "[http://example.com]" using numbered links
-    to match Mediawiki behavior.  The legacy behavior can be restored with a
-    configuration options.
+    instead of the URL, which matches Mediawiki behavior.  The legacy behavior
+    can be restored from the "Parser" tab of the Special:Admin page.
   * Add a "View Source" tab to allow users who do not have permission to edit
     a topic to view its wiki markup.
   * Add a "Filter search results by namespace" option to the search page.
-  * Add the ability for sysadmins to permanently delete topic versions from the
-    Special:Manage page.
-  * Enable DBCP prepared statement pooling to improve performance.
-  * Allow viewing of deleted topic versions from the Special:Manage page.
-  * Remove ability to automatically upgrade from versions prior to 0.9.0.
   * Improve search performance, exclude redirects from search indexing, and
     weight topic names more heavily than topic content to improve accuracy.
     Existing JAMWiki installs should rebuild their search index using the
     tools on the Special:Maintenance page.
+  * Add the ability for sysadmins to permanently delete topic versions from the
+    Special:Manage page.  Requested by Tan-Vinh Nguyen.
+  * Allow viewing of deleted topic versions from the Special:Manage page.
+  * Enable DBCP prepared statement pooling to improve performance.
   * Add support for the universal edit button plugin.  See 
     http://universaleditbutton.org for further details.
   * Automatically display virtual wiki links in the left nav for the
     Special:RecentChanges page.  This feature may be disabled from admin pages.
+  * Add experimental support for custom parser tags for the JFlex parser.
+  * Remove ability to automatically upgrade from versions prior to 0.9.0.
   * Add RankingAlgorithm search engine support (nnagarajayya).
   * Limit the number of recent changes loaded by the "Reload Recent Changes"
     task on the Special:Maintenance page to improve performance.
