@@ -27,6 +27,8 @@ New Features:
   * Add RankingAlgorithm search engine support (nnagarajayya).
   * Limit the number of recent changes loaded by the "Reload Recent Changes"
     task on the Special:Maintenance page to improve performance.
+  * Reduce the number of fields presented to users on the Special:Register page
+    when creating an account.
   * Include common virtual wiki and interwiki options on both the Special:Admin
     and Special:VirtualWiki pages.  Requested by floatingworld.
   * Upgrade to Lucene Search 3.2.

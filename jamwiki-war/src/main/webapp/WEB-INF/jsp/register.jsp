@@ -33,12 +33,12 @@
 <c:if test="${!empty updateMessage}">
 <div class="message green"><jamwiki_t:wikiMessage message="${updateMessage}" /></div>
 </c:if>
+
+<c:choose>
+	<c:when test="${newuser.userId < 1}">
+		<%-- new user --%>
 <fieldset>
 <legend><fmt:message key="register.caption.accountdetails" /></legend>
-
-<%-- new user --%>
-
-<c:if test="${newuser.userId < 1}">
 <div class="row">
 	<label for="registerLogin"><fmt:message key="login.username" /></label>
 	<span><input type="text" name="login" value="<c:out value="${newuser.username}" />" id="registerLogin" size="50" /></span>
@@ -51,20 +51,33 @@
 	<label for="registerConfirmPassword"><fmt:message key="register.caption.confirmpassword" /></label>
 	<span><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="registerConfirmPassword" size="50" /></span>
 </div>
-</c:if>
-
-<%-- existing user --%>
-
-<c:if test="${newuser.userId > 0}">
+<div class="row">
+	<label for="registerEmail"><fmt:message key="register.caption.email" /></label>
+	<span><input type="text" name="email" value="<c:out value="${newuser.email}" />" id="registerEmail" size="50" /></span>
+	<div class="formhelp"><fmt:message key="register.help.email" /></div>
+</div>
+<div class="row">
+	<label for="registerDefaultLocale"><fmt:message key="register.caption.locale" /></label>
+	<span>
+		<select name="defaultLocale" id="registerDefaultLocale">
+		<c:forEach items="${locales}" var="defaultLocale">
+		<option value="<c:out value="${defaultLocale.value}" />"<c:if test="${newuser.defaultLocale == defaultLocale.value}"> selected="selected"</c:if>><c:out value="${defaultLocale.key}" /></option>
+		</c:forEach>
+		</select>
+	</span>
+	<div class="formhelp"><fmt:message key="register.help.locale" /></div>
+</div>
+</fieldset>
+	</c:when>
+	<c:otherwise>
+		<%-- existing user --%>
+<fieldset>
+<legend><fmt:message key="register.caption.accountdetails" /></legend>
 <div class="row">
 	<input type="hidden" name="login" value="<c:out value="${newuser.username}" />" />
 	<label><fmt:message key="login.username" /></label>
 	<span><c:out value="${newuser.username}" /></span>
 </div>
-</c:if>
-
-<%-- new or existing user --%>
-
 <div class="row">
 	<label for="registerEmail"><fmt:message key="register.caption.email" /></label>
 	<span><input type="text" name="email" value="<c:out value="${newuser.email}" />" id="registerEmail" size="50" /></span>
@@ -106,10 +119,6 @@
 	<div class="formhelp"><fmt:message key="register.help.signature" /></div>
 </div>
 </fieldset>
-
-<%-- existing user --%>
-
-<c:if test="${newuser.userId > 0}">
 <fieldset>
 <legend><fmt:message key="register.caption.changepassword" /></legend>
 <div class="row">
@@ -125,7 +134,9 @@
 	<span><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="registerConfirmPassword" size="50" /></span>
 </div>
 </fieldset>
-</c:if>
+	</c:otherwise>
+</c:choose>
+
 <div class="row">
 	<span class="form-button"><input type="submit" name="function" value="<fmt:message key="common.save" />" /></span>
 </div>
