@@ -1,10 +1,10 @@
 <!-- validate table of contents with duplicate heading names -->
 ==test==
 ==test_2==
-[[#Ação]]
+[[#AÃ§Ã£o]]
 ==test==
 ==test==
-==Ação==
-==Ação==
-==<b>Ação</b>==
-=='''Ação'''==
+==AÃ§Ã£o==
+==AÃ§Ã£o==
+==<b>AÃ§Ã£o</b>==
+=='''AÃ§Ã£o'''==

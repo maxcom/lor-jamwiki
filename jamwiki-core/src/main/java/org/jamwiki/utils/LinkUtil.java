@@ -82,8 +82,12 @@ public class LinkUtil {
 	 * ("_"), colons (":"), and periods (".").
 	 */
 	public static String buildAnchorText(String text) {
+		if (StringUtils.isBlank(text)) {
+			logger.warn("LinkUtil.buildAnchorText called with empty string as argument");
+			return text;
+		}
 		// ensure that all characters in the name are valid for use in an anchor name
-		String anchorText = Utilities.encodeAndEscapeTopicName(text);
+		String anchorText = Utilities.encodeAndEscapeTopicName(StringUtils.trim(text));
 		anchorText = anchorText.replace('%', '.');
 		if (!anchorText.matches("[A-Za-z].*")) {
 			anchorText = "a_" + anchorText;

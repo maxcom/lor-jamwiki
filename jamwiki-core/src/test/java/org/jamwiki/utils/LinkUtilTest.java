@@ -104,6 +104,20 @@ public class LinkUtilTest extends JAMWikiUnitTest {
 	 *
 	 */
 	@Test
+	public void testBuildAnchorText() throws Throwable {
+		assertEquals("Anchor text not created correctly (test #1)", "test", LinkUtil.buildAnchorText("test"));
+		assertEquals("Anchor text not created correctly (test #2)", "test", LinkUtil.buildAnchorText(" test"));
+		assertEquals("Anchor text not created correctly (test #3)", "a__test", LinkUtil.buildAnchorText("_test"));
+		assertEquals("Anchor text not created correctly (test #3)", "a_.26_b", LinkUtil.buildAnchorText("a & b"));
+		assertEquals("Anchor text not created correctly (test #4)", "a_.test", LinkUtil.buildAnchorText(".test"));
+		assertEquals("Anchor text not created correctly (test #5)", "my_test", LinkUtil.buildAnchorText("my test"));
+		assertEquals("Anchor text not created correctly (test #6)", "A.C3.A7.C3.A3o", LinkUtil.buildAnchorText("Ação"));
+	}
+
+	/**
+	 *
+	 */
+	@Test
 	public void testbuildTopicUrl() throws Throwable {
 		String result = LinkUtil.buildTopicUrl("testLinkUtilContext", "testLinkUtilVirtualWiki", "", true);
 		assertNull("result", result);
@@ -165,4 +179,3 @@ public class LinkUtilTest extends JAMWikiUnitTest {
 		assertEquals("LinkUtil.retrieveTopicPageName", "Main Page", result);
 	}
 }
-
