@@ -26,29 +26,6 @@
 
 <%@ include file="page-init.jsp" %>
 
-<%@ include file="shared-db-javascript.jsp" %>
-
-<script type="text/javascript">
-function onUploadType() {
-	var whitelistDisabled = true;
-	var blacklistDisabled = true;
-	if (document.getElementById("<%= Environment.PROP_FILE_BLACKLIST_TYPE %>").options[document.getElementById("<%= Environment.PROP_FILE_BLACKLIST_TYPE %>").selectedIndex].value == "<%= WikiBase.UPLOAD_BLACKLIST %>") {
-		blacklistDisabled = false;
-	} else if (document.getElementById("<%= Environment.PROP_FILE_BLACKLIST_TYPE %>").options[document.getElementById("<%= Environment.PROP_FILE_BLACKLIST_TYPE %>").selectedIndex].value == "<%= WikiBase.UPLOAD_WHITELIST %>") {
-		whitelistDisabled = false;
-	}
-	document.getElementById("<%= Environment.PROP_FILE_BLACKLIST %>").disabled = blacklistDisabled;
-	document.getElementById("<%= Environment.PROP_FILE_WHITELIST %>").disabled = whitelistDisabled;
-}
-function onRSS() {
-	var disabled = true;
-	if (document.getElementById("<%= Environment.PROP_RSS_ALLOWED %>").checked) {
-		disabled = false;
-	}
-	document.getElementById("<%= Environment.PROP_RSS_TITLE %>").disabled = disabled;
-}
-</script>
-
 <div id="configuration" class="admin">
 
 <c:if test="${!empty message}">
@@ -567,3 +544,32 @@ FIXME - Email not supported right now, comment this out
 </div>
 
 </div>
+
+<%@ include file="shared-db-javascript.jsp" %>
+
+<script type="text/javascript">
+// <![CDATA[
+function onUploadType() {
+	var whitelistDisabled = true;
+	var blacklistDisabled = true;
+	if (document.getElementById("<%= Environment.PROP_FILE_BLACKLIST_TYPE %>").options[document.getElementById("<%= Environment.PROP_FILE_BLACKLIST_TYPE %>").selectedIndex].value == "<%= WikiBase.UPLOAD_BLACKLIST %>") {
+		blacklistDisabled = false;
+	} else if (document.getElementById("<%= Environment.PROP_FILE_BLACKLIST_TYPE %>").options[document.getElementById("<%= Environment.PROP_FILE_BLACKLIST_TYPE %>").selectedIndex].value == "<%= WikiBase.UPLOAD_WHITELIST %>") {
+		whitelistDisabled = false;
+	}
+	document.getElementById("<%= Environment.PROP_FILE_BLACKLIST %>").disabled = blacklistDisabled;
+	document.getElementById("<%= Environment.PROP_FILE_WHITELIST %>").disabled = whitelistDisabled;
+}
+function onRSS() {
+	var disabled = true;
+	if (document.getElementById("<%= Environment.PROP_RSS_ALLOWED %>").checked) {
+		disabled = false;
+	}
+	document.getElementById("<%= Environment.PROP_RSS_TITLE %>").disabled = disabled;
+}
+// initialize
+onUploadType();
+onRSS();
+onPersistenceType();
+// ]]>
+</script>

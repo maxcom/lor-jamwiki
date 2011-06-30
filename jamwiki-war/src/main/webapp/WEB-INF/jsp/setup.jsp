@@ -59,8 +59,6 @@ td.formhelp {
 }
 </style>
 
-<%@ include file="shared-db-javascript.jsp" %>
-
 </head>
 <body>
 <div id="setup-container">
@@ -170,7 +168,9 @@ td.formhelp {
 </table>
 </c:if>
 
-<script>
+<%@ include file="shared-db-javascript.jsp" %>
+
+<script type="text/javascript">
 onPersistenceType();
 </script>
 
