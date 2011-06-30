@@ -119,10 +119,9 @@ public class SetupServlet extends JAMWikiServlet {
 	private boolean initialize(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		setProperties(request, next);
 		WikiUser user = setAdminUser(request);
-		List<WikiMessage> errors = validate(request, user);
-		if (!errors.isEmpty()) {
+		this.validate(request, pageInfo, user);
+		if (!pageInfo.getErrors().isEmpty()) {
 			this.view(request, next, pageInfo);
-			next.addObject("errors", errors);
 			next.addObject("username", user.getUsername());
 			next.addObject("newPassword", request.getParameter("newPassword"));
 			next.addObject("confirmPassword", request.getParameter("confirmPassword"));
@@ -204,23 +203,22 @@ public class SetupServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private List<WikiMessage> validate(HttpServletRequest request, WikiUser user) throws Exception {
-		List<WikiMessage> errors = ServletUtil.validateSystemSettings(Environment.getInstance());
+	private void validate(HttpServletRequest request, WikiPageInfo pageInfo, WikiUser user) throws Exception {
+		pageInfo.getErrors().addAll(ServletUtil.validateSystemSettings(Environment.getInstance()));
 		if (StringUtils.isBlank(user.getUsername())) {
-			errors.add(new WikiMessage("error.loginempty"));
+			pageInfo.addError(new WikiMessage("error.loginempty"));
 		}
 		String newPassword = request.getParameter("newPassword");
 		String confirmPassword = request.getParameter("confirmPassword");
 		if (newPassword != null || confirmPassword != null) {
 			if (newPassword == null) {
-				errors.add(new WikiMessage("error.newpasswordempty"));
+				pageInfo.addError(new WikiMessage("error.newpasswordempty"));
 			} else if (confirmPassword == null) {
-				errors.add(new WikiMessage("error.passwordconfirm"));
+				pageInfo.addError(new WikiMessage("error.passwordconfirm"));
 			} else if (!newPassword.equals(confirmPassword)) {
-				errors.add(new WikiMessage("admin.message.passwordsnomatch"));
+				pageInfo.addError(new WikiMessage("admin.message.passwordsnomatch"));
 			}
 		}
-		return errors;
 	}
 
 	/**

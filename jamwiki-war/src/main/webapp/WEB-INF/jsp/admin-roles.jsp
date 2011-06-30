@@ -37,8 +37,8 @@
 <c:if test="${!empty message}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
-<c:if test="${!empty errors}">
-<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
+<c:if test="${!empty pageInfo.errors}">
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 
 <%-- Assign Group Roles --%>

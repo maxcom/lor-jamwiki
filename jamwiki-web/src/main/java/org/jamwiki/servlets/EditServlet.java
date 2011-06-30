@@ -16,7 +16,6 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -74,7 +73,6 @@ public class EditServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void edit(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		String topicName = WikiUtil.getTopicFromRequest(request);
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Topic topic = loadTopic(virtualWiki, topicName);
@@ -84,7 +82,7 @@ public class EditServlet extends JAMWikiServlet {
 		next.addObject("lastTopicVersionId", lastTopicVersionId);
 		String contents = (String)request.getParameter("contents");
 		if (isPreview(request)) {
-			errors.add(new WikiMessage("edit.warning.preview"));
+			pageInfo.addError(new WikiMessage("edit.warning.preview"));
 			preview(request, next, pageInfo);
 		} else if (isShowChanges(request)) {
 			showChanges(request, next, pageInfo, virtualWiki, topicName, lastTopicVersionId);
@@ -98,7 +96,7 @@ public class EditServlet extends JAMWikiServlet {
 			contents = topicVersion.getVersionContent();
 			if (!lastTopicVersionId.equals(topicVersionId)) {
 				next.addObject("topicVersionId", topicVersionId);
-				errors.add(new WikiMessage("edit.warning.oldversion"));
+				pageInfo.addError(new WikiMessage("edit.warning.oldversion"));
 			}
 		} else if (!StringUtils.isBlank(request.getParameter("section"))) {
 			// editing a section of a topic
@@ -112,7 +110,7 @@ public class EditServlet extends JAMWikiServlet {
 			// editing a full new or existing topic
 			contents = (topic == null) ? "" : topic.getTopicContent();
 		}
-		this.loadEdit(request, next, pageInfo, contents, virtualWiki, topicName, true, errors);
+		this.loadEdit(request, next, pageInfo, contents, virtualWiki, topicName, true);
 	}
 
 	/**
@@ -147,7 +145,7 @@ public class EditServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void loadEdit(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String contents, String virtualWiki, String topicName, boolean useSection, List<WikiMessage> errors) throws Exception {
+	private void loadEdit(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String contents, String virtualWiki, String topicName, boolean useSection) throws Exception {
 		WikiUser user = ServletUtil.currentWikiUser();
 		ParserInput parserInput = this.parserInput(request, user, virtualWiki, topicName);
 		ParserOutput parserOutput = ParserUtil.parseMetadata(parserInput, contents);
@@ -172,7 +170,6 @@ public class EditServlet extends JAMWikiServlet {
 		String editor = user.getEditor();
 		next.addObject("editor", editor);
 		next.addObject("contents", contents);
-		next.addObject("errors", errors);
 		next.addObject("recaptchaEnabled", ReCaptchaUtil.isEditEnabled(user));
 	}
 
@@ -259,10 +256,9 @@ public class EditServlet extends JAMWikiServlet {
 		String contents2 = request.getParameter("contents");
 		next.addObject("lastTopicVersionId", lastTopic.getCurrentVersionId());
 		next.addObject("contentsResolve", contents2);
-		List<WikiMessage> errors = new ArrayList<WikiMessage>();
-		errors.add(new WikiMessage("edit.exception.conflict"));
+		pageInfo.addError(new WikiMessage("edit.exception.conflict"));
 		this.loadDiff(request, next, pageInfo, contents1, contents2);
-		this.loadEdit(request, next, pageInfo, contents1, virtualWiki, topicName, false, errors);
+		this.loadEdit(request, next, pageInfo, contents1, virtualWiki, topicName, false);
 	}
 
 	/**
@@ -276,7 +272,6 @@ public class EditServlet extends JAMWikiServlet {
 	 * Functionality to handle the "Save" button being clicked.
 	 */
 	private void save(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		String topicName = WikiUtil.getTopicFromRequest(request);
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Topic topic = loadTopic(virtualWiki, topicName);
@@ -309,14 +304,14 @@ public class EditServlet extends JAMWikiServlet {
 			return;
 		}
 		String editComment = request.getParameter("editComment");
-		if (handleSpam(request, topicName, contents, editComment, errors)) {
-			this.loadEdit(request, next, pageInfo, contents, virtualWiki, topicName, false, errors);
+		if (handleSpam(request, pageInfo, topicName, contents, editComment)) {
+			this.loadEdit(request, next, pageInfo, contents, virtualWiki, topicName, false);
 			return;
 		}
 		WikiUser user = ServletUtil.currentWikiUser();
 		if (!ReCaptchaUtil.isValidForEdit(request, user)) {
-			errors.add(new WikiMessage("common.exception.recaptcha"));
-			this.loadEdit(request, next, pageInfo, contents, virtualWiki, topicName, false, errors);
+			pageInfo.addError(new WikiMessage("common.exception.recaptcha"));
+			this.loadEdit(request, next, pageInfo, contents, virtualWiki, topicName, false);
 			return;
 		}
 		ParserInput parserInput = this.parserInput(request, user, virtualWiki, topicName);

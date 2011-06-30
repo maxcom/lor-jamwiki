@@ -27,8 +27,8 @@
 <div class="message"><fmt:message key="register.form.info" /></div>
 <form name="form1" method="post" action="<jamwiki:link value="Special:Account" />">
 <input type="hidden" name="userId" value="<c:out value="${newuser.userId}" />" />
-<c:if test="${!empty errors}">
-<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
+<c:if test="${!empty pageInfo.errors}">
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <c:if test="${!empty updateMessage}">
 <div class="message green"><jamwiki_t:wikiMessage message="${updateMessage}" /></div>

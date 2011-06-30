@@ -83,7 +83,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void upgrade(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
-		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		List<WikiMessage> messages = new ArrayList<WikiMessage>();
 		try {
 			WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
@@ -115,7 +114,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 			if (this.upgradeStyleSheetRequired()) {
 				this.upgradeStyleSheet(request, messages);
 			}
-			errors = ServletUtil.validateSystemSettings(Environment.getInstance());
+			pageInfo.getErrors().addAll(ServletUtil.validateSystemSettings(Environment.getInstance()));
 			try {
 				Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
 				Environment.saveConfiguration();
@@ -128,11 +127,10 @@ public class UpgradeServlet extends JAMWikiServlet {
 				throw new WikiException(new WikiMessage("upgrade.error.nonfatal", e.toString()));
 			}
 		} catch (WikiException e) {
-			errors.add(e.getWikiMessage());
+			pageInfo.addError(e.getWikiMessage());
 		}
-		if (!errors.isEmpty()) {
-			errors.add(new WikiMessage("upgrade.caption.upgradefailed"));
-			next.addObject("errors", errors);
+		if (!pageInfo.getErrors().isEmpty()) {
+			pageInfo.addError(new WikiMessage("upgrade.caption.upgradefailed"));
 			next.addObject("failure", "true");
 		} else {
 			handleUpgradeSuccess(request, next, pageInfo);
@@ -254,9 +252,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 		if (oldVersion.before(0, 9, 0)) {
-			List<WikiMessage> errors = new ArrayList<WikiMessage>();
-			errors.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.9.0"));
-			next.addObject("errors", errors);
+			pageInfo.addError(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.9.0"));
 		}
 		List<WikiMessage> upgradeDetails = new ArrayList<WikiMessage>();
 		try {

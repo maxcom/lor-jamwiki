@@ -17,9 +17,7 @@
 package org.jamwiki.servlets;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
@@ -78,7 +76,6 @@ public class UploadServlet extends JAMWikiServlet {
 	 */
 	private void upload(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		// FIXME - this method is a mess and needs to be split up.
-		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		File file = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH));
 		if (!file.exists()) {
 			throw new WikiException(new WikiMessage("upload.error.nodirectory"));
@@ -127,12 +124,11 @@ public class UploadServlet extends JAMWikiServlet {
 		}
 		destinationFilename = processDestinationFilename(virtualWiki, destinationFilename, filename);
 		String topicName = ImageUtil.generateFileTopicName(virtualWiki, (!StringUtils.isEmpty(destinationFilename) ? destinationFilename : filename));
-		if (this.handleSpam(request, topicName, contents, null, errors)) {
+		if (this.handleSpam(request, pageInfo, topicName, contents, null)) {
 			// delete the spam file
 			uploadedFile.delete();
 			this.view(request, next, pageInfo);
 			next.addObject("contents", contents);
-			next.addObject("errors", errors);
 			return;
 		}
 		if (!StringUtils.isEmpty(destinationFilename)) {

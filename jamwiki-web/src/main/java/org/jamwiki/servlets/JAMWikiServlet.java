@@ -17,7 +17,6 @@
 package org.jamwiki.servlets;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
@@ -329,20 +328,20 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * including a "hasSpam" flag in the ModelAndView object.
 	 *
 	 * @param request The servlet request object.
+	 * @param pageInfo The current WikiPageInfo object, containing basic page
+	 *  rendering information.
 	 * @param topicName The name of the topic being examined for spam.
 	 * @param contents The contents of the topic being examined for spam.
 	 * @param editComment (Optional) The topic edit comment, which has also been a
 	 *  target for spambots.
-	 * @param errors A list of WikiMessage objects associated with the current request.
-	 *  This value cannot be <code>null</code>.
 	 * @return <code>true</code> if the topic in question matches any spam pattern.
 	 */
-	protected boolean handleSpam(HttpServletRequest request, String topicName, String contents, String editComment, List<WikiMessage> errors) throws DataAccessException {
+	protected boolean handleSpam(HttpServletRequest request, WikiPageInfo pageInfo, String topicName, String contents, String editComment) throws DataAccessException {
 		String result = ServletUtil.checkForSpam(request, topicName, contents, editComment);
 		if (result == null) {
 			return false;
 		}
-		errors.add(new WikiMessage("edit.exception.spam", result));
+		pageInfo.addError(new WikiMessage("edit.exception.spam", result));
 		return true;
 	}
 

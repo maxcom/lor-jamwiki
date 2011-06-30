@@ -17,7 +17,6 @@
 package org.jamwiki.servlets;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -103,7 +102,6 @@ public class AdminServlet extends JAMWikiServlet {
 	 * add new user account
 	 */
 	private void adduser(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		String userLogin = request.getParameter("adduserLogin");
 		String password = request.getParameter("adduserPassword");
 		String confirmPassword = request.getParameter("adduserPasswordConfirm");
@@ -123,13 +121,12 @@ public class AdminServlet extends JAMWikiServlet {
 			user.setLastLoginIpAddress(ServletUtil.getIpAddress(request));
 			WikiBase.getDataHandler().writeWikiUser(user, userLogin, encryptedPassword);
 		} catch (WikiException e) {
-			errors.add(e.getWikiMessage());
+			pageInfo.addError(e.getWikiMessage());
 		} catch (Exception e) {
 			logger.error("Failure while create new user account", e);
-			errors.add(new WikiMessage("admin.message.adduserfail", e.getMessage()));
+			pageInfo.addError(new WikiMessage("admin.message.adduserfail", e.getMessage()));
 		}
-		if (!errors.isEmpty()) {
-			next.addObject("errors", errors);
+		if (!pageInfo.getErrors().isEmpty()) {
 			next.addObject("adduserLogin", userLogin);
 			next.addObject("adduserPassword", password);
 			next.addObject("adduserPasswordConfirm", confirmPassword);
@@ -150,9 +147,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.message.cache"));
 		} catch (Exception e) {
 			logger.error("Failure while clearing cache", e);
-			List<WikiMessage> errors = new ArrayList<WikiMessage>();
-			errors.add(new WikiMessage("admin.cache.message.clearfailed", e.getMessage()));
-			next.addObject("errors", errors);
+			pageInfo.addError(new WikiMessage("admin.cache.message.clearfailed", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo);
 	}
@@ -161,18 +156,14 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void links(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
-		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		try {
 			int numUpdated = WikiDatabase.rebuildTopicMetadata();
 			next.addObject("message", new WikiMessage("admin.maintenance.message.topicsUpdated", Integer.toString(numUpdated)));
 		} catch (WikiException e) {
-			errors.add(e.getWikiMessage());
+			pageInfo.addError(e.getWikiMessage());
 		} catch (DataAccessException e) {
 			logger.error("Failure while regenerating topic metadata", e);
-			errors.add(new WikiMessage("admin.maintenance.error.linksfail", e.getMessage()));
-		}
-		if (!errors.isEmpty()) {
-			next.addObject("errors", errors);
+			pageInfo.addError(new WikiMessage("admin.maintenance.error.linksfail", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo);
 	}
@@ -186,9 +177,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.message.logitems"));
 		} catch (Exception e) {
 			logger.error("Failure while loading log items", e);
-			List<WikiMessage> errors = new ArrayList<WikiMessage>();
-			errors.add(new WikiMessage("admin.message.logitemsfail", e.getMessage()));
-			next.addObject("errors", errors);
+			pageInfo.addError(new WikiMessage("admin.message.logitemsfail", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo);
 	}
@@ -197,7 +186,6 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void migrateDatabase(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		Properties props = new Properties();
 		try {
 			setProperty(props, request, Environment.PROP_BASE_PERSISTENCE_TYPE);
@@ -216,15 +204,14 @@ public class AdminServlet extends JAMWikiServlet {
 			// identified by the properties
 			// Will return errors if the new database cannot be connected to,
 			// if it is already populated, or an error occurs copying the contents
-			WikiDatabase.migrateDatabase(props, errors);
-			if (this.saveProperties(request, next, pageInfo, props, errors)) {
+			WikiDatabase.migrateDatabase(props, pageInfo.getErrors());
+			if (this.saveProperties(request, next, pageInfo, props)) {
 				next.addObject("message", new WikiMessage("admin.message.migratedatabase", Environment.getValue(Environment.PROP_DB_URL)));
 			}
 		} catch (Exception e) {
 			logger.error("Failure while migrating to a new database", e);
-			errors.add(new WikiMessage("admin.message.migrationfailure", e.getMessage()));
+			pageInfo.addError(new WikiMessage("admin.message.migrationfailure", e.getMessage()));
 		}
-		next.addObject("errors", errors);
 		viewAdminSystem(request, next, pageInfo);
 	}
 
@@ -237,9 +224,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.maintenance.message.topicsUpdated", Integer.toString(numUpdated)));
 		} catch (DataAccessException e) {
 			logger.error("Failure while fixing incorrect topic namespaces", e);
-			List<WikiMessage> errors = new ArrayList<WikiMessage>();
-			errors.add(new WikiMessage("admin.maintenance.error.namespacefail", e.getMessage()));
-			next.addObject("errors", errors);
+			pageInfo.addError(new WikiMessage("admin.maintenance.error.namespacefail", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo);
 	}
@@ -248,7 +233,6 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void password(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		String userLogin = request.getParameter("passwordLogin");
 		String newPassword = request.getParameter("passwordPassword");
 		String confirmPassword = request.getParameter("passwordPasswordConfirm");
@@ -261,13 +245,12 @@ public class AdminServlet extends JAMWikiServlet {
 			String encryptedPassword = Encryption.encrypt(newPassword);
 			WikiBase.getDataHandler().writeWikiUser(user, userLogin, encryptedPassword);
 		} catch (WikiException e) {
-			errors.add(e.getWikiMessage());
+			pageInfo.addError(e.getWikiMessage());
 		} catch (Exception e) {
 			logger.error("Failure while updating user password", e);
-			errors.add(new WikiMessage("error.unknown", e.getMessage()));
+			pageInfo.addError(new WikiMessage("error.unknown", e.getMessage()));
 		}
-		if (!errors.isEmpty()) {
-			next.addObject("errors", errors);
+		if (!pageInfo.getErrors().isEmpty()) {
 			next.addObject("passwordLogin", userLogin);
 			next.addObject("passwordPassword", newPassword);
 			next.addObject("passwordPasswordConfirm", confirmPassword);
@@ -279,7 +262,6 @@ public class AdminServlet extends JAMWikiServlet {
 
 	private void properties(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		Properties props = new Properties();
-		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		try {
 			setProperty(props, request, Environment.PROP_SERVER_URL);
 			setProperty(props, request, Environment.PROP_SITE_NAME);
@@ -287,12 +269,12 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_BASE_LOGO_IMAGE);
 			setProperty(props, request, Environment.PROP_BASE_META_DESCRIPTION);
 			setProperty(props, request, Environment.PROP_TOPIC_EDITOR);
-			setNumericProperty(props, request, Environment.PROP_IMAGE_RESIZE_INCREMENT, errors);
-			setNumericProperty(props, request, Environment.PROP_MAX_TOPIC_VERSION_EXPORT, errors);
-			setDatePatternProperty(props, request, Environment.PROP_DATE_PATTERN_DATE_AND_TIME, errors);
-			setDatePatternProperty(props, request, Environment.PROP_DATE_PATTERN_DATE_ONLY, errors);
-			setDatePatternProperty(props, request, Environment.PROP_DATE_PATTERN_TIME_ONLY, errors);
-			setNumericProperty(props, request, Environment.PROP_RECENT_CHANGES_NUM, errors);
+			setNumericProperty(props, request, Environment.PROP_IMAGE_RESIZE_INCREMENT, pageInfo.getErrors());
+			setNumericProperty(props, request, Environment.PROP_MAX_TOPIC_VERSION_EXPORT, pageInfo.getErrors());
+			setDatePatternProperty(props, request, Environment.PROP_DATE_PATTERN_DATE_AND_TIME, pageInfo.getErrors());
+			setDatePatternProperty(props, request, Environment.PROP_DATE_PATTERN_DATE_ONLY, pageInfo.getErrors());
+			setDatePatternProperty(props, request, Environment.PROP_DATE_PATTERN_TIME_ONLY, pageInfo.getErrors());
+			setNumericProperty(props, request, Environment.PROP_RECENT_CHANGES_NUM, pageInfo.getErrors());
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_USE_PREVIEW);
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_USE_SHOW_CHANGES);
 			setBooleanProperty(props, request, Environment.PROP_PRINT_NEW_WINDOW);
@@ -300,7 +282,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_BASE_SEARCH_ENGINE);
 			setProperty(props, request, Environment.PROP_PARSER_CLASS);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_TOC);
-			setNumericProperty(props, request, Environment.PROP_PARSER_TOC_DEPTH, errors);
+			setNumericProperty(props, request, Environment.PROP_PARSER_TOC_DEPTH, pageInfo.getErrors());
 			setBooleanProperty(props, request, Environment.PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_DISPLAY_SPECIAL_PAGE_VIRTUAL_WIKI_LINKS);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE);
@@ -309,7 +291,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_JAVASCRIPT);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_TEMPLATES);
 			setProperty(props, request, Environment.PROP_PARSER_SIGNATURE_USER_PATTERN);
-			setDatePatternProperty(props, request, Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN, errors);
+			setDatePatternProperty(props, request, Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN, pageInfo.getErrors());
 			setBooleanProperty(props, request, Environment.PROP_PARSER_USE_NUMBERED_HTML_LINKS);
 			setProperty(props, request, Environment.PROP_BASE_FILE_DIR);
 			setProperty(props, request, Environment.PROP_BASE_PERSISTENCE_TYPE);
@@ -322,20 +304,20 @@ public class AdminServlet extends JAMWikiServlet {
 			} else {
 				WikiDatabase.setupDefaultDatabase(props);
 			}
-			setNumericProperty(props, request, Environment.PROP_DBCP_MAX_ACTIVE, errors);
-			setNumericProperty(props, request, Environment.PROP_DBCP_MAX_IDLE, errors);
-			setNumericProperty(props, request, Environment.PROP_DBCP_MAX_OPEN_PREPARED_STATEMENTS, errors);
+			setNumericProperty(props, request, Environment.PROP_DBCP_MAX_ACTIVE, pageInfo.getErrors());
+			setNumericProperty(props, request, Environment.PROP_DBCP_MAX_IDLE, pageInfo.getErrors());
+			setNumericProperty(props, request, Environment.PROP_DBCP_MAX_OPEN_PREPARED_STATEMENTS, pageInfo.getErrors());
 			setBooleanProperty(props, request, Environment.PROP_DBCP_POOL_PREPARED_STATEMENTS);
 			setBooleanProperty(props, request, Environment.PROP_DBCP_TEST_ON_BORROW);
 			setBooleanProperty(props, request, Environment.PROP_DBCP_TEST_ON_RETURN);
 			setBooleanProperty(props, request, Environment.PROP_DBCP_TEST_WHILE_IDLE);
-			setNumericProperty(props, request, Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME, errors);
-			setNumericProperty(props, request, Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS, errors);
-			setNumericProperty(props, request, Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN, errors);
+			setNumericProperty(props, request, Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME, pageInfo.getErrors());
+			setNumericProperty(props, request, Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS, pageInfo.getErrors());
+			setNumericProperty(props, request, Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN, pageInfo.getErrors());
 			setProperty(props, request, Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION);
 			String maxFileSizeString = request.getParameter(Environment.PROP_FILE_MAX_FILE_SIZE);
 			if (StringUtils.isBlank(maxFileSizeString) || !StringUtils.isNumeric(maxFileSizeString)) {
-				errors.add(new WikiMessage("admin.message.nonnumeric", Environment.PROP_FILE_MAX_FILE_SIZE, maxFileSizeString));
+				pageInfo.addError(new WikiMessage("admin.message.nonnumeric", Environment.PROP_FILE_MAX_FILE_SIZE, maxFileSizeString));
 			} else {
 				long maxFileSizeInKB = Long.parseLong(maxFileSizeString);
 				props.setProperty(Environment.PROP_FILE_MAX_FILE_SIZE, Long.toString(maxFileSizeInKB * 1000));
@@ -354,30 +336,29 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_EMAIL_REPLY_ADDRESS);
 			*/
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_SPAM_FILTER);
-			setNumericProperty(props, request, Environment.PROP_RECAPTCHA_EDIT, errors);
-			setNumericProperty(props, request, Environment.PROP_RECAPTCHA_REGISTER, errors);
+			setNumericProperty(props, request, Environment.PROP_RECAPTCHA_EDIT, pageInfo.getErrors());
+			setNumericProperty(props, request, Environment.PROP_RECAPTCHA_REGISTER, pageInfo.getErrors());
 			setProperty(props, request, Environment.PROP_RECAPTCHA_PUBLIC_KEY);
 			setProperty(props, request, Environment.PROP_RECAPTCHA_PRIVATE_KEY);
 			if (StringUtils.isBlank(props.getProperty(Environment.PROP_RECAPTCHA_PUBLIC_KEY)) || StringUtils.isBlank(props.getProperty(Environment.PROP_RECAPTCHA_PRIVATE_KEY))) {
 				if (NumberUtils.toInt(props.getProperty(Environment.PROP_RECAPTCHA_EDIT)) > 0 || NumberUtils.toInt(props.getProperty(Environment.PROP_RECAPTCHA_REGISTER)) > 0) {
-					errors.add(new WikiMessage("admin.spam.message.invalidkeys"));
+					pageInfo.addError(new WikiMessage("admin.spam.message.invalidkeys"));
 				}
 			}
-			setNumericProperty(props, request, Environment.PROP_CACHE_INDIVIDUAL_SIZE, errors);
-			setNumericProperty(props, request, Environment.PROP_CACHE_MAX_AGE, errors);
-			setNumericProperty(props, request, Environment.PROP_CACHE_MAX_IDLE_AGE, errors);
-			setNumericProperty(props, request, Environment.PROP_CACHE_TOTAL_SIZE, errors);
+			setNumericProperty(props, request, Environment.PROP_CACHE_INDIVIDUAL_SIZE, pageInfo.getErrors());
+			setNumericProperty(props, request, Environment.PROP_CACHE_MAX_AGE, pageInfo.getErrors());
+			setNumericProperty(props, request, Environment.PROP_CACHE_MAX_IDLE_AGE, pageInfo.getErrors());
+			setNumericProperty(props, request, Environment.PROP_CACHE_TOTAL_SIZE, pageInfo.getErrors());
 			setBooleanProperty(props, request, Environment.PROP_RSS_ALLOWED);
 			setProperty(props, request, Environment.PROP_RSS_TITLE);
-			errors.addAll(ServletUtil.validateSystemSettings(props));
-			if (this.saveProperties(request, next, pageInfo, props, errors)) {
+			pageInfo.getErrors().addAll(ServletUtil.validateSystemSettings(props));
+			if (this.saveProperties(request, next, pageInfo, props)) {
 				next.addObject("message", new WikiMessage("admin.message.changessaved"));
 			}
 		} catch (Exception e) {
 			logger.error("Failure while processing property values", e);
-			errors.add(new WikiMessage("admin.message.propertyfailure", e.getMessage()));
+			pageInfo.addError(new WikiMessage("admin.message.propertyfailure", e.getMessage()));
 		}
-		next.addObject("errors", errors);
 		viewAdmin(request, next, pageInfo, props);
 	}
 
@@ -390,9 +371,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.message.recentchanges"));
 		} catch (Exception e) {
 			logger.error("Failure while loading recent changes", e);
-			List<WikiMessage> errors = new ArrayList<WikiMessage>();
-			errors.add(new WikiMessage("admin.message.recentchangesfail", e.getMessage()));
-			next.addObject("errors", errors);
+			pageInfo.addError(new WikiMessage("admin.message.recentchangesfail", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo);
 	}
@@ -406,9 +385,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.message.indexrefreshed"));
 		} catch (Exception e) {
 			logger.error("Failure while refreshing search index", e);
-			List<WikiMessage> errors = new ArrayList<WikiMessage>();
-			errors.add(new WikiMessage("admin.message.searchrefresh", e.getMessage()));
-			next.addObject("errors", errors);
+			pageInfo.addError(new WikiMessage("admin.message.searchrefresh", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo);
 	}
@@ -416,8 +393,8 @@ public class AdminServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private boolean saveProperties(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, Properties props, List<WikiMessage> errors) throws Exception {
-		if (!errors.isEmpty()) {
+	private boolean saveProperties(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, Properties props) throws Exception {
+		if (!pageInfo.getErrors().isEmpty()) {
 			next.addObject("message", new WikiMessage("admin.message.changesnotsaved"));
 			return false;
 		}
@@ -507,9 +484,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.message.spamfilter"));
 		} catch (Exception e) {
 			logger.error("Failure while reloading spam filter patterns", e);
-			List<WikiMessage> errors = new ArrayList<WikiMessage>();
-			errors.add(new WikiMessage("admin.message.spamfilterfail", e.getMessage()));
-			next.addObject("errors", errors);
+			pageInfo.addError(new WikiMessage("admin.message.spamfilterfail", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo);
 	}
@@ -518,10 +493,6 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void viewAdmin(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, Properties props) {
-		List<WikiMessage> errors = (List<WikiMessage>)next.getModelMap().get("errors");
-		if (errors == null) {
-			errors = new ArrayList<WikiMessage>();
-		}
 		pageInfo.setContentJsp(JSP_ADMIN);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("admin.title"));
@@ -555,9 +526,8 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("virtualwikis", virtualWikiList);
 		} catch (DataAccessException e) {
 			logger.error("Failure while retrieving database records", e);
-			errors.add(new WikiMessage("error.unknown", e.getMessage()));
+			pageInfo.addError(new WikiMessage("error.unknown", e.getMessage()));
 		}
-		next.addObject("errors", errors);
 	}
 
 	/**

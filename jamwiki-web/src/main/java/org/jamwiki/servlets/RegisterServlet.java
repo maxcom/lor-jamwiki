@@ -16,8 +16,6 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
@@ -112,9 +110,8 @@ public class RegisterServlet extends JAMWikiServlet {
 		WikiUser user = this.setWikiUser(request);
 		boolean isUpdate = (user.getUserId() != -1);
 		next.addObject("newuser", user);
-		List<WikiMessage> errors = validate(request, user);
-		if (!errors.isEmpty()) {
-			next.addObject("errors", errors);
+		this.validate(request, pageInfo, user);
+		if (!pageInfo.getErrors().isEmpty()) {
 			String oldPassword = request.getParameter("oldPassword");
 			String newPassword = request.getParameter("newPassword");
 			String confirmPassword = request.getParameter("confirmPassword");
@@ -183,39 +180,37 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private List<WikiMessage> validate(HttpServletRequest request, WikiUser user) throws Exception {
-		List<WikiMessage> errors = new ArrayList<WikiMessage>();
+	private void validate(HttpServletRequest request, WikiPageInfo pageInfo, WikiUser user) throws Exception {
 		try {
 			WikiUtil.validateUserName(user.getUsername());
 		} catch (WikiException e) {
-			errors.add(e.getWikiMessage());
+			pageInfo.addError(e.getWikiMessage());
 		}
 		String oldPassword = request.getParameter("oldPassword");
 		if (user.getUserId() > 0 && !StringUtils.isBlank(oldPassword) && !WikiBase.getDataHandler().authenticate(user.getUsername(), oldPassword)) {
-			errors.add(new WikiMessage("register.error.oldpasswordinvalid"));
+			pageInfo.addError(new WikiMessage("register.error.oldpasswordinvalid"));
 		}
 		String newPassword = request.getParameter("newPassword");
 		String confirmPassword = request.getParameter("confirmPassword");
 		if (user.getUserId() < 1 && StringUtils.isBlank(newPassword)) {
-			errors.add(new WikiMessage("register.error.passwordempty"));
+			pageInfo.addError(new WikiMessage("register.error.passwordempty"));
 		}
 		if (!StringUtils.isBlank(newPassword) || !StringUtils.isBlank(confirmPassword)) {
 			if (user.getUserId() > 0 && StringUtils.isBlank(oldPassword)) {
-				errors.add(new WikiMessage("register.error.oldpasswordinvalid"));
+				pageInfo.addError(new WikiMessage("register.error.oldpasswordinvalid"));
 			}
 			try {
 				WikiUtil.validatePassword(newPassword, confirmPassword);
 			} catch (WikiException e) {
-				errors.add(e.getWikiMessage());
+				pageInfo.addError(e.getWikiMessage());
 			}
 		}
 		if (user.getUserId() < 1 && WikiBase.getDataHandler().lookupWikiUser(user.getUsername()) != null) {
-			errors.add(new WikiMessage("register.error.logininvalid", user.getUsername()));
+			pageInfo.addError(new WikiMessage("register.error.logininvalid", user.getUsername()));
 		}
 		if (user.getUserId() < 1 && !ReCaptchaUtil.isValidForRegistration(request)) {
-			errors.add(new WikiMessage("common.exception.recaptcha"));
+			pageInfo.addError(new WikiMessage("common.exception.recaptcha"));
 		}
-		return errors;
 	}
 
 	/**

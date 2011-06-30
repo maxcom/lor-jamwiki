@@ -48,6 +48,8 @@ public class WikiPageInfo {
 	private boolean admin = false;
 	private String canonicalUrl = null;
 	private String contentJsp = JSP_TOPIC;
+	/** A list of error messages generated during servlet processing to display on the front end. */
+	private List<WikiMessage> errors = new ArrayList<WikiMessage>();
 	private WikiMessage exception = null;
 	private List<String> interwikiLinks = new ArrayList<String>();
 	private WikiMessage pageTitle = null;
@@ -191,6 +193,39 @@ public class WikiPageInfo {
 	 */
 	public String getDatePatternTimeOnly() {
 		return Environment.getDatePatternValue(Environment.PROP_DATE_PATTERN_TIME_ONLY, false, true);
+	}
+
+	/**
+	 * Add a new error message to the list of error messages generated during
+	 * servlet processing for display on the front-end.
+	 *
+	 * @param error The error message to add to the list of error messages
+	 *  generated during servlet processing for display on the front-end.
+	 */
+	public void addError(WikiMessage error) {
+		this.errors.add(error);
+	}
+
+	/**
+	 * Return a list of error messages generated during servlet processing for
+	 * display on the front-end.
+	 *
+	 * @return A list of error messages generated during servlet processing for
+	 * display on the front-end.
+	 */
+	public List<WikiMessage> getErrors() {
+		return this.errors;
+	}
+
+	/**
+	 * Set a list of error messages generated during servlet processing for
+	 * display on the front-end.
+	 *
+	 * @param errors A list of error messages generated during servlet processing
+	 * for display on the front-end.
+	 */
+	public void setErrors(List<WikiMessage> errors) {
+		this.errors = errors;
 	}
 
 	/**

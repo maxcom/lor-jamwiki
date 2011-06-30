@@ -31,9 +31,9 @@
 <c:if test="${!empty message}">
 <div class="message red"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
-<c:if test="${!empty errors}">
+<c:if test="${!empty pageInfo.errors}">
 <div class="message red">
-	<c:forEach items="${errors}" var="message">
+	<c:forEach items="${pageInfo.errors}" var="message">
 		<jamwiki_t:wikiMessage message="${message}" />
 	</c:forEach>
 </div>

@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -63,7 +62,6 @@ public class ExportServlet extends JAMWikiServlet {
 	 *
 	 */
 	private boolean exportFile(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) {
-		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		String topicNames = request.getParameter("topics");
 		boolean download = (!StringUtils.isBlank(request.getParameter("download")));
 		boolean excludeHistory = (!StringUtils.isBlank(request.getParameter("history")));
@@ -88,18 +86,17 @@ public class ExportServlet extends JAMWikiServlet {
 			file.delete();
 		} catch (IOException e) {
 			logger.error("Failure while exporting to file", e);
-			errors.add(new WikiMessage("export.error.migration", e.getMessage()));
+			pageInfo.addError(new WikiMessage("export.error.migration", e.getMessage()));
 		} catch (MigrationException e) {
 			logger.error("Failure while exporting from file", e);
-			errors.add(new WikiMessage("export.error.migration", e.getMessage()));
+			pageInfo.addError(new WikiMessage("export.error.migration", e.getMessage()));
 		} catch (WikiException e) {
-			errors.add(e.getWikiMessage());
+			pageInfo.addError(e.getWikiMessage());
 		}
 		if (!success) {
 			next.addObject("topicNames", topicNames);
 			next.addObject("download", download);
 			next.addObject("excludeHistory", excludeHistory);
-			next.addObject("errors", errors);
 		}
 		return success;
 	}

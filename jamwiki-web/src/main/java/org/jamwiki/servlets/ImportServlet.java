@@ -17,7 +17,6 @@
 package org.jamwiki.servlets;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -64,7 +63,6 @@ public class ImportServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void importFile(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
-		List<WikiMessage> errors = new ArrayList<WikiMessage>();
 		try {
 			Iterator iterator = ServletUtil.processMultipartRequest(request, Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
 			while (iterator.hasNext()) {
@@ -84,12 +82,11 @@ public class ImportServlet extends JAMWikiServlet {
 			}
 		} catch (MigrationException e) {
 			logger.error("Failure while importing from file", e);
-			errors.add(new WikiMessage("import.error.migration", e.getMessage()));
+			pageInfo.addError(new WikiMessage("import.error.migration", e.getMessage()));
 		} catch (WikiException e) {
 			logger.error("Failure while importing from file", e);
-			errors.add(e.getWikiMessage());
+			pageInfo.addError(e.getWikiMessage());
 		}
-		next.addObject("errors", errors);
 		view(request, next, pageInfo);
 	}
 

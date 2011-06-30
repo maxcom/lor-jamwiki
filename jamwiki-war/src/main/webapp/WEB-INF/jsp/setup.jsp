@@ -72,8 +72,8 @@ td.formhelp {
 <form name="setup" method="post">
 <input type="hidden" value="<c:out value="${upgrade}" />" />
 <table style="border:2px solid #333333;padding=1em;">
-<c:if test="${!empty errors}">
-<tr><td class="red" colspan="2"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></td></tr>
+<c:if test="${!empty pageInfo.errors}">
+<tr><td class="red" colspan="2"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></td></tr>
 </c:if>
 <c:if test="${!empty upgrade}">
 <tr><td colspan="2">&#160;</td></tr>

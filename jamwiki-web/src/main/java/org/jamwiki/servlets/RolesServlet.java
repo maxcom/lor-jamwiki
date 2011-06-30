@@ -102,7 +102,6 @@ public class RolesServlet extends JAMWikiServlet {
 		// "userid|groupid|role".  process both, deleting all old roles for the
 		// candidate group array and adding the new roles in the groupRole
 		// array.
-		ArrayList<WikiMessage> errors = new ArrayList<WikiMessage>();
 		try {
 			String[] candidateGroups = request.getParameterValues("candidateGroup");
 			String[] groupRoles = request.getParameterValues("groupRole");
@@ -124,7 +123,7 @@ public class RolesServlet extends JAMWikiServlet {
 					String username = candidateUsernames[i];
 					List<String> roles = buildRoleArray(userId, -1, userRoles);
 					if (userId == ServletUtil.currentWikiUser().getUserId() && !roles.contains(Role.ROLE_SYSADMIN.getAuthority())) {
-						errors.add(new WikiMessage("roles.message.sysadminremove"));
+						pageInfo.addError(new WikiMessage("roles.message.sysadminremove"));
 						roles.add(Role.ROLE_SYSADMIN.getAuthority());
 					}
 					WikiBase.getDataHandler().writeRoleMapUser(username, roles);
@@ -132,13 +131,10 @@ public class RolesServlet extends JAMWikiServlet {
 				next.addObject("message", new WikiMessage("roles.message.userroleupdate"));
 			}
 		} catch (WikiException e) {
-			errors.add(e.getWikiMessage());
+			pageInfo.addError(e.getWikiMessage());
 		} catch (Exception e) {
 			logger.error("Failure while adding role", e);
-			errors.add(new WikiMessage("roles.message.rolefail", e.getMessage()));
-		}
-		if (!errors.isEmpty()) {
-			next.addObject("errors", errors);
+			pageInfo.addError(new WikiMessage("roles.message.rolefail", e.getMessage()));
 		}
 		this.view(request, next, pageInfo);
 	}
@@ -165,10 +161,10 @@ public class RolesServlet extends JAMWikiServlet {
 					next.addObject("message", new WikiMessage("roles.message.roleadded", role.getAuthority()));
 				}
 			} catch (WikiException e) {
-				next.addObject("message", e.getWikiMessage());
+				pageInfo.addError(e.getWikiMessage());
 			} catch (Exception e) {
 				logger.error("Failure while adding role", e);
-				next.addObject("message", new WikiMessage("roles.message.rolefail", e.getMessage()));
+				pageInfo.addError(new WikiMessage("roles.message.rolefail", e.getMessage()));
 			}
 		} else if (!StringUtils.isBlank(updateRole)) {
 			// FIXME - use a cached list of roles instead of iterating

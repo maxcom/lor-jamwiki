@@ -24,9 +24,9 @@
 
 <p><fmt:message key="export.caption.overview" /></p>
 
-<c:if test="${!empty errors}">
+<c:if test="${!empty pageInfo.errors}">
 <div class="message red">
-	<c:forEach items="${errors}" var="error"><jamwiki_t:wikiMessage message="${error}" /><br /></c:forEach>
+	<c:forEach items="${pageInfo.errors}" var="error"><jamwiki_t:wikiMessage message="${error}" /><br /></c:forEach>
 </div>
 </c:if>
 

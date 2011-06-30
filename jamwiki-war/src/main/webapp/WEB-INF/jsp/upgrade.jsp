@@ -66,13 +66,13 @@ body, input, select {
 <form name="adminUpgrade" method="post">
 <input type="hidden" name="function" value="upgrade" />
 <table id="upgrade-table">
-<c:if test="${!empty successMessage || !empty errors || !empty messages}">
+<c:if test="${!empty successMessage || !empty pageInfo.errors || !empty messages}">
 	<tr>
 		<td colspan="2">
 			<div id="upgrade-messages">
 				<c:if test="${!empty successMessage}"><h4><jamwiki_t:wikiMessage message="${successMessage}" /></h4></c:if>
-				<c:if test="${!empty errors}">
-				<c:forEach items="${errors}" var="message">
+				<c:if test="${!empty pageInfo.errors}">
+				<c:forEach items="${pageInfo.errors}" var="message">
 					<div class="red"><jamwiki_t:wikiMessage message="${message}" /></div>
 				</c:forEach>
 				</c:if>

@@ -39,8 +39,8 @@
 <c:if test="${!empty message}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
-<c:if test="${!empty errors}">
-<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
+<c:if test="${!empty pageInfo.errors}">
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <%-- Common Virtual Wiki Settings --%>
 <form action="<jamwiki:link value="Special:VirtualWiki" />#commonvwiki" method="post">
@@ -158,8 +158,8 @@
 <c:if test="${!empty message && function == 'addnamespace'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
-<c:if test="${!empty errors && function == 'addnamespace'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
+<c:if test="${!empty pageInfo.errors && function == 'addnamespace'}">
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <form action="<jamwiki:link value="Special:VirtualWiki" />#addnamespace" method="post">
 <fieldset>
@@ -195,8 +195,8 @@
 <c:if test="${!empty message && function == 'namespaces'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
-<c:if test="${!empty errors && function == 'namespaces'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
+<c:if test="${!empty pageInfo.errors && function == 'namespaces'}">
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <%-- Select Virtual Wiki --%>
 <form action="<jamwiki:link value="Special:VirtualWiki" />#namespaces" method="get" name="selectnamespaces">
@@ -255,8 +255,8 @@
 <c:if test="${!empty message && (function == 'addInterwiki' || function == 'updateInterwiki')}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
-<c:if test="${!empty errors && (function == 'addInterwiki' || function == 'updateInterwiki')}">
-<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
+<c:if test="${!empty pageInfo.errors && (function == 'addInterwiki' || function == 'updateInterwiki')}">
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <%-- Common Interwiki Settings --%>
 <form action="<jamwiki:link value="Special:VirtualWiki" />#commoniwiki" method="post">

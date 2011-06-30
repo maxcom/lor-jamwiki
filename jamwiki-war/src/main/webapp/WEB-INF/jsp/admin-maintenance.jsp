@@ -44,8 +44,8 @@
 <c:if test="${!empty message && function == 'search'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
-<c:if test="${!empty errors && function == 'search'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
+<c:if test="${!empty pageInfo.errors && function == 'search'}">
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.title.refresh" /></legend>
@@ -63,8 +63,8 @@
 <c:if test="${!empty message && function == 'cache'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
-<c:if test="${!empty errors && function == 'cache'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
+<c:if test="${!empty pageInfo.errors && function == 'cache'}">
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.title.cache" /></legend>
@@ -84,8 +84,8 @@
 <c:if test="${!empty message && function == 'spam'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
-<c:if test="${!empty errors && function == 'spam'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
+<c:if test="${!empty pageInfo.errors && function == 'spam'}">
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.title.spamfilter" /></legend>
@@ -110,8 +110,8 @@
 <c:if test="${!empty message && function == 'recentchanges'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
-<c:if test="${!empty errors && function == 'recentchanges'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
+<c:if test="${!empty pageInfo.errors && function == 'recentchanges'}">
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.title.recentchanges" /></legend>
@@ -129,8 +129,8 @@
 <c:if test="${!empty message && function == 'logitems'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
-<c:if test="${!empty errors && function == 'logitems'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
+<c:if test="${!empty pageInfo.errors && function == 'logitems'}">
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.title.logitems" /></legend>
@@ -148,8 +148,8 @@
 <c:if test="${!empty message && function == 'namespaces'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
-<c:if test="${!empty errors && function == 'namespaces'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
+<c:if test="${!empty pageInfo.errors && function == 'namespaces'}">
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.maintenance.title.namespaces" /></legend>
@@ -167,8 +167,8 @@
 <c:if test="${!empty message && function == 'links'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
-<c:if test="${!empty errors && function == 'links'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
+<c:if test="${!empty pageInfo.errors && function == 'links'}">
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.maintenance.title.links" /></legend>
@@ -189,8 +189,8 @@
 <c:if test="${!empty message && function == 'password'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
-<c:if test="${!empty errors && function == 'password'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
+<c:if test="${!empty pageInfo.errors && function == 'password'}">
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.title.password" /></legend>
@@ -222,8 +222,8 @@
 <c:if test="${!empty message && function == 'adduser'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
-<c:if test="${!empty errors && function == 'adduser'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
+<c:if test="${!empty pageInfo.errors && function == 'adduser'}">
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.title.adduser" /></legend>
@@ -263,8 +263,8 @@
 <c:if test="${!empty message && function == 'migrate'}">
 <div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
 </c:if>
-<c:if test="${!empty errors && function == 'migrate'}">
-<div class="message red"><c:forEach items="${errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
+<c:if test="${!empty pageInfo.errors && function == 'migrate'}">
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <fieldset>
 <legend><fmt:message key="admin.title.migratedatabase" /> (<fmt:message key="common.caption.experimental" />)</legend>
