@@ -41,8 +41,8 @@
 <div id="system" class="submenu-tab-item">
 
 <%-- Refresh Search Index --%>
-<c:if test="${!empty message && function == 'search'}">
-<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
+<c:if test="${!empty pageInfo.messages && function == 'search'}">
+<div class="message green"><c:forEach items="${pageInfo.messages}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <c:if test="${!empty pageInfo.errors && function == 'search'}">
 <div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
@@ -60,8 +60,8 @@
 </fieldset>
 
 <%-- Cache --%>
-<c:if test="${!empty message && function == 'cache'}">
-<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
+<c:if test="${!empty pageInfo.messages && function == 'cache'}">
+<div class="message green"><c:forEach items="${pageInfo.messages}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <c:if test="${!empty pageInfo.errors && function == 'cache'}">
 <div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
@@ -81,8 +81,8 @@
 <jamwiki:enabled property="PROP_TOPIC_SPAM_FILTER">
 
 <%-- Spam Filter --%>
-<c:if test="${!empty message && function == 'spam'}">
-<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
+<c:if test="${!empty pageInfo.messages && function == 'spam'}">
+<div class="message green"><c:forEach items="${pageInfo.messages}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <c:if test="${!empty pageInfo.errors && function == 'spam'}">
 <div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
@@ -107,8 +107,8 @@
 <div id="data" class="submenu-tab-item">
 
 <%-- Recent Changes --%>
-<c:if test="${!empty message && function == 'recentchanges'}">
-<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
+<c:if test="${!empty pageInfo.messages && function == 'recentchanges'}">
+<div class="message green"><c:forEach items="${pageInfo.messages}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <c:if test="${!empty pageInfo.errors && function == 'recentchanges'}">
 <div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
@@ -126,8 +126,8 @@
 </fieldset>
 
 <%-- Log Items --%>
-<c:if test="${!empty message && function == 'logitems'}">
-<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
+<c:if test="${!empty pageInfo.messages && function == 'logitems'}">
+<div class="message green"><c:forEach items="${pageInfo.messages}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <c:if test="${!empty pageInfo.errors && function == 'logitems'}">
 <div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
@@ -145,8 +145,8 @@
 </fieldset>
 
 <%-- Namespaces --%>
-<c:if test="${!empty message && function == 'namespaces'}">
-<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
+<c:if test="${!empty pageInfo.messages && function == 'namespaces'}">
+<div class="message green"><c:forEach items="${pageInfo.messages}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <c:if test="${!empty pageInfo.errors && function == 'namespaces'}">
 <div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
@@ -164,8 +164,8 @@
 </fieldset>
 
 <%-- Topic Links --%>
-<c:if test="${!empty message && function == 'links'}">
-<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
+<c:if test="${!empty pageInfo.messages && function == 'links'}">
+<div class="message green"><c:forEach items="${pageInfo.messages}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <c:if test="${!empty pageInfo.errors && function == 'links'}">
 <div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
@@ -186,8 +186,8 @@
 
 <%-- Password Reset --%>
 <div id="password" class="submenu-tab-item">
-<c:if test="${!empty message && function == 'password'}">
-<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
+<c:if test="${!empty pageInfo.messages && function == 'password'}">
+<div class="message green"><c:forEach items="${pageInfo.messages}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <c:if test="${!empty pageInfo.errors && function == 'password'}">
 <div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
@@ -219,8 +219,8 @@
 
 <%-- Add User  --%>
 <div id="adduser" class="submenu-tab-item">
-<c:if test="${!empty message && function == 'adduser'}">
-<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
+<c:if test="${!empty pageInfo.messages && function == 'adduser'}">
+<div class="message green"><c:forEach items="${pageInfo.messages}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <c:if test="${!empty pageInfo.errors && function == 'adduser'}">
 <div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
@@ -260,8 +260,8 @@
 
 <%-- Migrate Database --%>
 <div id="migrate" class="submenu-tab-item">
-<c:if test="${!empty message && function == 'migrate'}">
-<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
+<c:if test="${!empty pageInfo.messages && function == 'migrate'}">
+<div class="message green"><c:forEach items="${pageInfo.messages}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <c:if test="${!empty pageInfo.errors && function == 'migrate'}">
 <div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>

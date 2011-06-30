@@ -28,15 +28,11 @@
 
 <div id="configuration" class="admin">
 
-<c:if test="${!empty message}">
-<div class="message red"><jamwiki_t:wikiMessage message="${message}" /></div>
+<c:if test="${!empty pageInfo.messages}">
+<div class="message green"><c:forEach items="${pageInfo.messages}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <c:if test="${!empty pageInfo.errors}">
-<div class="message red">
-	<c:forEach items="${pageInfo.errors}" var="message">
-		<jamwiki_t:wikiMessage message="${message}" />
-	</c:forEach>
-</div>
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 
 <%-- sub-menu tabs --%>

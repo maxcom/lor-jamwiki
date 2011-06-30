@@ -36,8 +36,8 @@
 
 <%-- Update Default Virtual Wiki --%>
 <div id="vwiki" class="submenu-tab-item">
-<c:if test="${!empty message}">
-<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
+<c:if test="${!empty pageInfo.messages}">
+<div class="message green"><c:forEach items="${pageInfo.messages}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <c:if test="${!empty pageInfo.errors}">
 <div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
@@ -155,8 +155,8 @@
 
 <%-- Add Namesapce --%>
 <div id="addnamespace" class="submenu-tab-item">
-<c:if test="${!empty message && function == 'addnamespace'}">
-<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
+<c:if test="${!empty pageInfo.messages && function == 'addnamespace'}">
+<div class="message green"><c:forEach items="${pageInfo.messages}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <c:if test="${!empty pageInfo.errors && function == 'addnamespace'}">
 <div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
@@ -192,8 +192,8 @@
 
 <%-- Add/Update Namespace Translations --%>
 <div id="namespaces" class="submenu-tab-item">
-<c:if test="${!empty message && function == 'namespaces'}">
-<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
+<c:if test="${!empty pageInfo.messages && function == 'namespaces'}">
+<div class="message green"><c:forEach items="${pageInfo.messages}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <c:if test="${!empty pageInfo.errors && function == 'namespaces'}">
 <div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
@@ -252,8 +252,8 @@
 
 <%-- Interwiki Links --%>
 <div id="interwiki" class="submenu-tab-item">
-<c:if test="${!empty message && (function == 'addInterwiki' || function == 'updateInterwiki')}">
-<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
+<c:if test="${!empty pageInfo.messages && (function == 'addInterwiki' || function == 'updateInterwiki')}">
+<div class="message green"><c:forEach items="${pageInfo.messages}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <c:if test="${!empty pageInfo.errors && (function == 'addInterwiki' || function == 'updateInterwiki')}">
 <div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>

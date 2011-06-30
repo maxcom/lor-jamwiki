@@ -27,8 +27,8 @@
 
 <div id="manage">
 
-<c:if test="${!empty message}">
-	<div class="message green"><jamwiki_t:wikiMessage message="${message}" /></div>
+<c:if test="${!empty pageInfo.messages}">
+<div class="message green"><c:forEach items="${pageInfo.messages}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 
 <c:choose>

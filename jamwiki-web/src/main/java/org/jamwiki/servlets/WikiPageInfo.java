@@ -52,6 +52,8 @@ public class WikiPageInfo {
 	private List<WikiMessage> errors = new ArrayList<WikiMessage>();
 	private WikiMessage exception = null;
 	private List<String> interwikiLinks = new ArrayList<String>();
+	/** A list of non-error messages generated during servlet processing to display on the front end. */
+	private List<WikiMessage> messages = new ArrayList<WikiMessage>();
 	private WikiMessage pageTitle = null;
 	private String redirectName = null;
 	private String redirectUrl = null;
@@ -264,6 +266,39 @@ public class WikiPageInfo {
 	 */
 	public void setInterwikiLinks(List<String> interwikiLinks) {
 		this.interwikiLinks = interwikiLinks;
+	}
+
+	/**
+	 * Add a new message to the list of non-error messages generated during
+	 * servlet processing for display on the front-end.
+	 *
+	 * @param message The message to add to the list of non-error messages
+	 *  generated during servlet processing for display on the front-end.
+	 */
+	public void addMessage(WikiMessage message) {
+		this.messages.add(message);
+	}
+
+	/**
+	 * Return a list of non-error messages generated during servlet processing
+	 * for display on the front-end.
+	 *
+	 * @return A list of non-error messages generated during servlet processing
+	 *  for display on the front-end.
+	 */
+	public List<WikiMessage> getMessages() {
+		return this.messages;
+	}
+
+	/**
+	 * Set a list of non-error messages generated during servlet processing
+	 * for display on the front-end.
+	 *
+	 * @param messages A list of non-error messages generated during servlet
+	 *  processing for display on the front-end.
+	 */
+	public void setMessages(List<WikiMessage> messages) {
+		this.messages = messages;
 	}
 
 	/**

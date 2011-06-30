@@ -16,7 +16,6 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -84,7 +83,7 @@ public class ManageServlet extends JAMWikiServlet {
 				deletePage(request, next, pageInfo, manageCommentsPage);
 			}
 		}
-		next.addObject("message", new WikiMessage("manage.message.updated", topicName));
+		pageInfo.addMessage(new WikiMessage("manage.message.updated", topicName));
 		view(request, next, pageInfo);
 	}
 
@@ -126,7 +125,7 @@ public class ManageServlet extends JAMWikiServlet {
 		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), null, topic.getTopicContent(), 0);
 		topicVersion.setEditType(TopicVersion.EDIT_PERMISSION);
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
-		next.addObject("message", new WikiMessage("manage.message.updated", topicName));
+		pageInfo.addMessage(new WikiMessage("manage.message.updated", topicName));
 		view(request, next, pageInfo);
 	}
 
@@ -152,7 +151,7 @@ public class ManageServlet extends JAMWikiServlet {
 			WikiBase.getDataHandler().purgeTopicVersion(virtualWiki, topicVersionId, ServletUtil.currentWikiUser(), ServletUtil.getIpAddress(request));
 			purgeCount++;
 		}
-		next.addObject("message", new WikiMessage("manage.message.purge", Integer.toString(purgeCount), topicName));
+		pageInfo.addMessage(new WikiMessage("manage.message.purge", Integer.toString(purgeCount), topicName));
 		view(request, next, pageInfo);
 	}
 
@@ -172,7 +171,7 @@ public class ManageServlet extends JAMWikiServlet {
 				undeletePage(request, next, pageInfo, manageCommentsPage);
 			}
 		}
-		next.addObject("message", new WikiMessage("manage.message.updated", topicName));
+		pageInfo.addMessage(new WikiMessage("manage.message.updated", topicName));
 		view(request, next, pageInfo);
 	}
 

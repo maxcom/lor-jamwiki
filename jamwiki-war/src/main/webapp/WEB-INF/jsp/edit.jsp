@@ -23,11 +23,7 @@
 <%@ include file="page-init.jsp" %>
 
 <c:if test="${!empty pageInfo.errors}">
-<div class="message red">
-	<c:forEach items="${pageInfo.errors}" var="message">
-		<jamwiki_t:wikiMessage message="${message}" />
-	</c:forEach>
-</div>
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 
 <jamwiki:enabled property="PROP_TOPIC_USE_PREVIEW">

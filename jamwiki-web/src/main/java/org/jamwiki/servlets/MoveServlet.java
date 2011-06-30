@@ -98,7 +98,7 @@ public class MoveServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		if (StringUtils.isBlank(moveDestination)) {
-			next.addObject("messageObject", new WikiMessage("move.exception.nodestination"));
+			pageInfo.addError(new WikiMessage("move.exception.nodestination"));
 			this.view(request, next, pageInfo);
 			return false;
 		}
@@ -111,7 +111,7 @@ public class MoveServlet extends JAMWikiServlet {
 					|| destinationWikiLink.getNamespace().getId().equals(Namespace.CATEGORY_ID)
 					|| destinationWikiLink.getNamespace().getId().equals(Namespace.CATEGORY_COMMENTS_ID)
 				) {
-				next.addObject("messageObject", new WikiMessage("move.exception.namespacecategory"));
+				pageInfo.addError(new WikiMessage("move.exception.namespacecategory"));
 				this.view(request, next, pageInfo);
 				return false;
 			} else if (fromWikiLink.getNamespace().getId().equals(Namespace.FILE_ID)
@@ -119,7 +119,7 @@ public class MoveServlet extends JAMWikiServlet {
 					|| destinationWikiLink.getNamespace().getId().equals(Namespace.FILE_ID)
 					|| destinationWikiLink.getNamespace().getId().equals(Namespace.FILE_COMMENTS_ID)
 				) {
-				next.addObject("messageObject", new WikiMessage("move.exception.namespaceimage"));
+				pageInfo.addError(new WikiMessage("move.exception.namespaceimage"));
 				this.view(request, next, pageInfo);
 				return false;
 			}
@@ -127,12 +127,12 @@ public class MoveServlet extends JAMWikiServlet {
 		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		if (!ServletUtil.isMoveable(virtualWiki, moveFrom, userDetails)) {
 			this.view(request, next, pageInfo);
-			next.addObject("messageObject", new WikiMessage("move.exception.permission", moveFrom));
+			pageInfo.addError(new WikiMessage("move.exception.permission", moveFrom));
 			return false;
 		}
 		if (!WikiBase.getDataHandler().canMoveTopic(fromTopic, moveDestination)) {
 			this.view(request, next, pageInfo);
-			next.addObject("messageObject", new WikiMessage("move.exception.destinationexists", moveDestination));
+			pageInfo.addError(new WikiMessage("move.exception.destinationexists", moveDestination));
 			return false;
 		}
 		WikiBase.getDataHandler().moveTopic(fromTopic, moveDestination, ServletUtil.currentWikiUser(), ServletUtil.getIpAddress(request), request.getParameter("moveComment"));

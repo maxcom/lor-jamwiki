@@ -97,7 +97,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			next.addObject("interwikiPattern", interwikiPattern);
 			next.addObject("interwikiDisplay", interwikiDisplay);
 		} else {
-			next.addObject("message", new WikiMessage("admin.vwiki.message.interwiki.addsuccess", interwikiPrefix));
+			pageInfo.addMessage(new WikiMessage("admin.vwiki.message.interwiki.addsuccess", interwikiPrefix));
 		}
 		this.view(request, next, pageInfo);
 	}
@@ -133,7 +133,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			next.addObject("mainNamespace", mainNamespace);
 			next.addObject("commentsNamespace", commentsNamespace);
 		} else {
-			next.addObject("message", new WikiMessage("admin.vwiki.message.addnamespacesuccess", mainNamespace));
+			pageInfo.addMessage(new WikiMessage("admin.vwiki.message.addnamespacesuccess", mainNamespace));
 		}
 		this.view(request, next, pageInfo);
 	}
@@ -145,7 +145,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 		Environment.setBooleanValue(Environment.PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE, !StringUtils.isBlank(request.getParameter(Environment.PROP_PARSER_DISPLAY_INTERWIKI_LINKS_INLINE)));
 		try {
 			Environment.saveConfiguration();
-			next.addObject("message", new WikiMessage("admin.vwiki.message.interwiki.common"));
+			pageInfo.addMessage(new WikiMessage("admin.vwiki.message.interwiki.common"));
 		} catch (WikiException e) {
 			pageInfo.addError(e.getWikiMessage());
 		}
@@ -164,7 +164,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 		Environment.setBooleanValue(Environment.PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE, !StringUtils.isBlank(request.getParameter(Environment.PROP_PARSER_DISPLAY_VIRTUALWIKI_LINKS_INLINE)));
 		try {
 			Environment.saveConfiguration();
-			next.addObject("message", new WikiMessage("admin.vwiki.message.commonupdated"));
+			pageInfo.addMessage(new WikiMessage("admin.vwiki.message.commonupdated"));
 		} catch (WikiException e) {
 			pageInfo.addError(e.getWikiMessage());
 		}
@@ -193,7 +193,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 				namespaces.add(namespace);
 			}
 			WikiBase.getDataHandler().writeNamespaceTranslations(namespaces, virtualWiki);
-			next.addObject("message", new WikiMessage("admin.vwiki.message.namespacesuccess", virtualWiki));
+			pageInfo.addMessage(new WikiMessage("admin.vwiki.message.namespacesuccess", virtualWiki));
 		} catch (DataAccessException e) {
 			logger.error("Failure while retrieving adding/updating namespace translations", e);
 			pageInfo.addError(new WikiMessage("admin.vwiki.error.addnamespacefail", e.getMessage()));
@@ -234,7 +234,7 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			}
 		}
 		if (pageInfo.getErrors().isEmpty()) {
-			next.addObject("message", new WikiMessage("admin.vwiki.message.interwiki.updatesuccess"));
+			pageInfo.addMessage(new WikiMessage("admin.vwiki.message.interwiki.updatesuccess"));
 		}
 		this.view(request, next, pageInfo);
 	}
@@ -302,10 +302,10 @@ public class AdminVirtualWikiServlet extends JAMWikiServlet {
 			if (StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
 				// add
 				WikiBase.getDataHandler().setupSpecialPages(request.getLocale(), user, virtualWiki);
-				next.addObject("message", new WikiMessage("admin.message.virtualwikiadded", virtualWiki.getName()));
+				pageInfo.addMessage(new WikiMessage("admin.message.virtualwikiadded", virtualWiki.getName()));
 			} else {
 				// update
-				next.addObject("message", new WikiMessage("admin.message.virtualwikiupdated", virtualWiki.getName()));
+				pageInfo.addMessage(new WikiMessage("admin.message.virtualwikiupdated", virtualWiki.getName()));
 			}
 		} catch (DataAccessException e) {
 			logger.error("Failure while adding virtual wiki", e);

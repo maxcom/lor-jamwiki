@@ -25,9 +25,7 @@
 <p><fmt:message key="import.caption.overview" /></p>
 
 <c:if test="${!empty pageInfo.errors}">
-<div class="message red">
-	<c:forEach items="${pageInfo.errors}" var="error"><jamwiki_t:wikiMessage message="${error}" /><br /></c:forEach>
-</div>
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 <c:if test="${!empty successfulImports}">
 <div class="message">

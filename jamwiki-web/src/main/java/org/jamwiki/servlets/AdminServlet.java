@@ -133,7 +133,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("adduserEmail", email);
 			next.addObject("adduserdisplayName", displayName);
 		} else {
-			next.addObject("message", new WikiMessage("admin.adduser.message.success", userLogin));
+			pageInfo.addMessage(new WikiMessage("admin.adduser.message.success", userLogin));
 		}
 		viewAdminSystem(request, next, pageInfo);
 	}
@@ -144,7 +144,7 @@ public class AdminServlet extends JAMWikiServlet {
 	private void cache(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		try {
 			WikiCache.initialize();
-			next.addObject("message", new WikiMessage("admin.message.cache"));
+			pageInfo.addMessage(new WikiMessage("admin.message.cache"));
 		} catch (Exception e) {
 			logger.error("Failure while clearing cache", e);
 			pageInfo.addError(new WikiMessage("admin.cache.message.clearfailed", e.getMessage()));
@@ -158,7 +158,7 @@ public class AdminServlet extends JAMWikiServlet {
 	private void links(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
 		try {
 			int numUpdated = WikiDatabase.rebuildTopicMetadata();
-			next.addObject("message", new WikiMessage("admin.maintenance.message.topicsUpdated", Integer.toString(numUpdated)));
+			pageInfo.addMessage(new WikiMessage("admin.maintenance.message.topicsUpdated", Integer.toString(numUpdated)));
 		} catch (WikiException e) {
 			pageInfo.addError(e.getWikiMessage());
 		} catch (DataAccessException e) {
@@ -174,7 +174,7 @@ public class AdminServlet extends JAMWikiServlet {
 	private void logItems(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		try {
 			WikiBase.getDataHandler().reloadLogItems();
-			next.addObject("message", new WikiMessage("admin.message.logitems"));
+			pageInfo.addMessage(new WikiMessage("admin.message.logitems"));
 		} catch (Exception e) {
 			logger.error("Failure while loading log items", e);
 			pageInfo.addError(new WikiMessage("admin.message.logitemsfail", e.getMessage()));
@@ -206,7 +206,7 @@ public class AdminServlet extends JAMWikiServlet {
 			// if it is already populated, or an error occurs copying the contents
 			WikiDatabase.migrateDatabase(props, pageInfo.getErrors());
 			if (this.saveProperties(request, next, pageInfo, props)) {
-				next.addObject("message", new WikiMessage("admin.message.migratedatabase", Environment.getValue(Environment.PROP_DB_URL)));
+				pageInfo.addMessage(new WikiMessage("admin.message.migratedatabase", Environment.getValue(Environment.PROP_DB_URL)));
 			}
 		} catch (Exception e) {
 			logger.error("Failure while migrating to a new database", e);
@@ -221,7 +221,7 @@ public class AdminServlet extends JAMWikiServlet {
 	private void namespaces(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
 		try {
 			int numUpdated = WikiDatabase.fixIncorrectTopicNamespaces();
-			next.addObject("message", new WikiMessage("admin.maintenance.message.topicsUpdated", Integer.toString(numUpdated)));
+			pageInfo.addMessage(new WikiMessage("admin.maintenance.message.topicsUpdated", Integer.toString(numUpdated)));
 		} catch (DataAccessException e) {
 			logger.error("Failure while fixing incorrect topic namespaces", e);
 			pageInfo.addError(new WikiMessage("admin.maintenance.error.namespacefail", e.getMessage()));
@@ -255,7 +255,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("passwordPassword", newPassword);
 			next.addObject("passwordPasswordConfirm", confirmPassword);
 		} else {
-			next.addObject("message", new WikiMessage("admin.password.message.success", userLogin));
+			pageInfo.addMessage(new WikiMessage("admin.password.message.success", userLogin));
 		}
 		viewAdminSystem(request, next, pageInfo);
 	}
@@ -353,7 +353,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_RSS_TITLE);
 			pageInfo.getErrors().addAll(ServletUtil.validateSystemSettings(props));
 			if (this.saveProperties(request, next, pageInfo, props)) {
-				next.addObject("message", new WikiMessage("admin.message.changessaved"));
+				pageInfo.addMessage(new WikiMessage("admin.message.changessaved"));
 			}
 		} catch (Exception e) {
 			logger.error("Failure while processing property values", e);
@@ -368,7 +368,7 @@ public class AdminServlet extends JAMWikiServlet {
 	private void recentChanges(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		try {
 			WikiBase.getDataHandler().reloadRecentChanges();
-			next.addObject("message", new WikiMessage("admin.message.recentchanges"));
+			pageInfo.addMessage(new WikiMessage("admin.message.recentchanges"));
 		} catch (Exception e) {
 			logger.error("Failure while loading recent changes", e);
 			pageInfo.addError(new WikiMessage("admin.message.recentchangesfail", e.getMessage()));
@@ -382,7 +382,7 @@ public class AdminServlet extends JAMWikiServlet {
 	private void refreshIndex(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		try {
 			WikiBase.getSearchEngine().refreshIndex();
-			next.addObject("message", new WikiMessage("admin.message.indexrefreshed"));
+			pageInfo.addMessage(new WikiMessage("admin.message.indexrefreshed"));
 		} catch (Exception e) {
 			logger.error("Failure while refreshing search index", e);
 			pageInfo.addError(new WikiMessage("admin.message.searchrefresh", e.getMessage()));
@@ -395,7 +395,8 @@ public class AdminServlet extends JAMWikiServlet {
 	 */
 	private boolean saveProperties(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, Properties props) throws Exception {
 		if (!pageInfo.getErrors().isEmpty()) {
-			next.addObject("message", new WikiMessage("admin.message.changesnotsaved"));
+			// insert a general warning about changes not being saved as the first error
+			pageInfo.getErrors().add(0, new WikiMessage("admin.message.changesnotsaved"));
 			return false;
 		}
 		// all is well, save the properties
@@ -481,7 +482,7 @@ public class AdminServlet extends JAMWikiServlet {
 	private void spam(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		try {
 			SpamFilter.reload();
-			next.addObject("message", new WikiMessage("admin.message.spamfilter"));
+			pageInfo.addMessage(new WikiMessage("admin.message.spamfilter"));
 		} catch (Exception e) {
 			logger.error("Failure while reloading spam filter patterns", e);
 			pageInfo.addError(new WikiMessage("admin.message.spamfilterfail", e.getMessage()));

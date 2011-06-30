@@ -72,10 +72,10 @@ public class WatchlistServlet extends JAMWikiServlet {
 		String article = WikiUtil.extractTopicLink(virtualWiki, topicName);
 		if (watchlist.containsTopic(topicName)) {
 			// added to watchlist
-			next.addObject("message", new WikiMessage("watchlist.caption.added", article));
+			pageInfo.addMessage(new WikiMessage("watchlist.caption.added", article));
 		} else {
 			// removed from watchlist
-			next.addObject("message", new WikiMessage("watchlist.caption.removed", article));
+			pageInfo.addMessage(new WikiMessage("watchlist.caption.removed", article));
 		}
 		this.view(request, next, pageInfo);
 	}

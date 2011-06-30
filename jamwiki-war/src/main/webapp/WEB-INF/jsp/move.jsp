@@ -27,7 +27,9 @@
 
 <div id="move">
 
-<c:if test="${!empty messageObject}"><div class="message red"><jamwiki_t:wikiMessage message="${messageObject}" /></div></c:if>
+<c:if test="${!empty pageInfo.errors}">
+<div class="message red"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
+</c:if>
 
 <div class="message"><fmt:message key="move.overview" /></div>
 

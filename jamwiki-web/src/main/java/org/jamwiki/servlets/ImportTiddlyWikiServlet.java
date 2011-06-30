@@ -92,7 +92,7 @@ public class ImportTiddlyWikiServlet extends JAMWikiServlet {
 		if (!StringUtils.isBlank(topicName)) {
 			ServletUtil.redirect(next, virtualWiki, topicName);
 		} else {
-			next.addObject("error", new WikiMessage("import.caption.failure"));
+			pageInfo.addError(new WikiMessage("import.caption.failure"));
 			view(request, next, pageInfo);
 		}
 	}

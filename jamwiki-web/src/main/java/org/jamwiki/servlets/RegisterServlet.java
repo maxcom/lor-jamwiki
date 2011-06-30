@@ -143,7 +143,7 @@ public class RegisterServlet extends JAMWikiServlet {
 				request.getSession().setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, locale);
 			}
 			if (isUpdate) {
-				next.addObject("updateMessage", new WikiMessage("register.caption.updatesuccess"));
+				pageInfo.addMessage(new WikiMessage("register.caption.updatesuccess"));
 				this.view(request, next, pageInfo);
 			} else {
 				VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);

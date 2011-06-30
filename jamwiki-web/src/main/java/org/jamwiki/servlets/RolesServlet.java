@@ -111,7 +111,7 @@ public class RolesServlet extends JAMWikiServlet {
 					List<String> roles = buildRoleArray(-1, groupId, groupRoles);
 					WikiBase.getDataHandler().writeRoleMapGroup(groupId, roles);
 				}
-				next.addObject("message", new WikiMessage("roles.message.grouproleupdate"));
+				pageInfo.addMessage(new WikiMessage("roles.message.grouproleupdate"));
 			}
 			// now do the same for user roles.
 			String[] candidateUsers = request.getParameterValues("candidateUser");
@@ -128,7 +128,7 @@ public class RolesServlet extends JAMWikiServlet {
 					}
 					WikiBase.getDataHandler().writeRoleMapUser(username, roles);
 				}
-				next.addObject("message", new WikiMessage("roles.message.userroleupdate"));
+				pageInfo.addMessage(new WikiMessage("roles.message.userroleupdate"));
 			}
 		} catch (WikiException e) {
 			pageInfo.addError(e.getWikiMessage());
@@ -156,9 +156,9 @@ public class RolesServlet extends JAMWikiServlet {
 				WikiUtil.validateRole(role);
 				WikiBase.getDataHandler().writeRole(role, update);
 				if (!StringUtils.isBlank(updateRole) && updateRole.equals(role.getAuthority())) {
-					next.addObject("message", new WikiMessage("roles.message.roleupdated", role.getAuthority()));
+					pageInfo.addMessage(new WikiMessage("roles.message.roleupdated", role.getAuthority()));
 				} else {
-					next.addObject("message", new WikiMessage("roles.message.roleadded", role.getAuthority()));
+					pageInfo.addMessage(new WikiMessage("roles.message.roleadded", role.getAuthority()));
 				}
 			} catch (WikiException e) {
 				pageInfo.addError(e.getWikiMessage());
@@ -201,7 +201,7 @@ public class RolesServlet extends JAMWikiServlet {
 			next.addObject("roleMapUsers", roleMapUsers);
 		} catch (Exception e) {
 			logger.error("Failure while retrieving role", e);
-			next.addObject("message", new WikiMessage("roles.message.rolesearchfail", e.getMessage()));
+			pageInfo.addMessage(new WikiMessage("roles.message.rolesearchfail", e.getMessage()));
 		}
 		this.view(request, next, pageInfo);
 	}
