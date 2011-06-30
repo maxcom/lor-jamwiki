@@ -716,12 +716,7 @@ public class ServletUtil {
 		String target = request.getParameter(JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_TARGET_URL_FIELD_NAME);
 		if (StringUtils.isBlank(target)) {
 			if (StringUtils.isBlank(topic)) {
-				VirtualWiki virtualWiki = null;
-				try {
-					virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
-				} catch (DataAccessException e) {
-					throw new WikiException(new WikiMessage("error.unknown", e.getMessage()), e);
-				}
+				VirtualWiki virtualWiki = ServletUtil.retrieveVirtualWiki(virtualWikiName);
 				topic = virtualWiki.getRootTopicName();
 			}
 			target = "/" + virtualWikiName + "/" + topic;

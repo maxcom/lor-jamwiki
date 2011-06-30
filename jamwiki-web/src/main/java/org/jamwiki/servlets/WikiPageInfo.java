@@ -531,13 +531,13 @@ public class WikiPageInfo {
 	 * name.
 	 */
 	public VirtualWiki getVirtualWiki() {
-		VirtualWiki virtualWiki = VirtualWiki.defaultVirtualWiki();
+		VirtualWiki virtualWiki = null;
 		try {
 			virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(this.getVirtualWikiName());
 		} catch (DataAccessException e) {
 			logger.error("Failure while retrieving virtual wiki: " + this.getVirtualWikiName(), e);
 		}
-		return virtualWiki;
+		return (virtualWiki == null) ? VirtualWiki.defaultVirtualWiki() : virtualWiki;
 	}
 
 	/**
