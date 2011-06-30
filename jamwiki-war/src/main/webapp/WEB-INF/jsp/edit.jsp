@@ -22,18 +22,16 @@
 
 <%@ include file="page-init.jsp" %>
 
-<c:if test="${!empty editResolve}">
-<div class="message red"><fmt:message key="edit.exception.conflict" /></div>
+<c:if test="${!empty errors}">
+<div class="message red">
+	<c:forEach items="${errors}" var="message">
+		<jamwiki_t:wikiMessage message="${message}" />
+	</c:forEach>
+</div>
 </c:if>
 
-<c:if test="${!empty topicVersionId}"><div class="message red"><fmt:message key="edit.warning.oldversion" /></div></c:if>
-
-<c:if test="${!empty hasSpam}">
-<div class="message red"><jamwiki_t:wikiMessage message="${spam}" /></div>
-</c:if>
 <jamwiki:enabled property="PROP_TOPIC_USE_PREVIEW">
 <c:if test="${!empty editPreview}">
-<div class="message red"><fmt:message key="edit.warning.preview" /></div>
 <%@ include file="view-topic-include.jsp" %>
 </c:if>
 </jamwiki:enabled>
@@ -80,7 +78,7 @@
 </security:authorize>
 </p>
 
-<c:if test="${!empty editResolve}">
+<c:if test="${!empty contentsResolve}">
 <%@ include file="diff-include.jsp" %>
 <p>
 <textarea name="contentsResolve" rows="25" cols="80"><c:out value="${contentsResolve}" escapeXml="true" /></textarea>
