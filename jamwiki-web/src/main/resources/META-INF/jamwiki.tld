@@ -249,6 +249,21 @@
 		</attribute>
 	</tag>
 	<tag>
+		<name>recaptcha</name>
+		<tag-class>org.jamwiki.taglib.ReCaptchaTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>tabIndex</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>theme</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
 		<name>text</name>
 		<tag-class>org.jamwiki.taglib.TextTag</tag-class>
 		<body-content>empty</body-content>

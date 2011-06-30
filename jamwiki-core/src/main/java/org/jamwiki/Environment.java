@@ -117,6 +117,10 @@ public class Environment {
 	public static final String PROP_PATTERN_VALID_USER_LOGIN = "pattern-login-valid";
 	public static final String PROP_PATTERN_VALID_VIRTUAL_WIKI = "pattern-virtualwiki-valid";
 	public static final String PROP_PRINT_NEW_WINDOW = "print-new-window";
+	public static final String PROP_RECAPTCHA_EDIT = "recaptcha-edit";
+	public static final String PROP_RECAPTCHA_PRIVATE_KEY = "recaptcha-private-key";
+	public static final String PROP_RECAPTCHA_PUBLIC_KEY = "recaptcha-public-key";
+	public static final String PROP_RECAPTCHA_REGISTER = "recaptcha-register";
 	public static final String PROP_RECENT_CHANGES_NUM = "recent-changes-days";
 	public static final String PROP_RSS_ALLOWED = "rss-allowed";
 	public static final String PROP_RSS_TITLE = "rss-title";
@@ -262,6 +266,10 @@ public class Environment {
 		this.defaults.setProperty(PROP_PATTERN_VALID_USER_LOGIN, "([A-Za-z0-9_]+)");
 		this.defaults.setProperty(PROP_PATTERN_VALID_VIRTUAL_WIKI, "([A-Za-z0-9_]+)");
 		this.defaults.setProperty(PROP_PRINT_NEW_WINDOW, Boolean.FALSE.toString());
+		this.defaults.setProperty(PROP_RECAPTCHA_EDIT, "0");
+		this.defaults.setProperty(PROP_RECAPTCHA_PRIVATE_KEY, "");
+		this.defaults.setProperty(PROP_RECAPTCHA_PUBLIC_KEY, "");
+		this.defaults.setProperty(PROP_RECAPTCHA_REGISTER, "0");
 		this.defaults.setProperty(PROP_RECENT_CHANGES_NUM, "100");
 		this.defaults.setProperty(PROP_RSS_ALLOWED, Boolean.TRUE.toString());
 		this.defaults.setProperty(PROP_RSS_TITLE, "Wiki Recent Changes");

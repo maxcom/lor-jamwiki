@@ -10,6 +10,8 @@ New Features:
   * Add a "View Source" tab to allow users who do not have permission to edit
     a topic to view its wiki markup.
   * Add a "Filter search results by namespace" option to the search page.
+  * Add optional reCAPTCHA support for combatting spam on the Special:Register
+    and Special:Edit pages using captcha challenge-response.
   * Improve search performance, exclude redirects from search indexing, and
     weight topic names more heavily than topic content to improve accuracy.
     Existing JAMWiki installs should rebuild their search index using the

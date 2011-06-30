@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.authentication.ReCaptchaUtil;
 import org.jamwiki.authentication.WikiUserDetailsImpl;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Role;
@@ -172,6 +173,7 @@ public class EditServlet extends JAMWikiServlet {
 		next.addObject("editor", editor);
 		next.addObject("contents", contents);
 		next.addObject("errors", errors);
+		next.addObject("recaptchaEnabled", ReCaptchaUtil.isEditEnabled(user));
 	}
 
 	/**
@@ -312,6 +314,11 @@ public class EditServlet extends JAMWikiServlet {
 			return;
 		}
 		WikiUser user = ServletUtil.currentWikiUser();
+		if (!ReCaptchaUtil.isValidForEdit(request, user)) {
+			errors.add(new WikiMessage("common.exception.recaptcha"));
+			this.loadEdit(request, next, pageInfo, contents, virtualWiki, topicName, false, errors);
+			return;
+		}
 		ParserInput parserInput = this.parserInput(request, user, virtualWiki, topicName);
 		ParserOutput parserOutput = ParserUtil.parseMetadata(parserInput, contents);
 		// parse signatures and other values that need to be updated prior to saving

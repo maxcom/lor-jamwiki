@@ -626,7 +626,7 @@ table.categories td {
 /* form styles */
 
 .formhelp {
-	font-size: 85%;
+	font-size: 90%;
 	color: #5f5f5f;
 	clear: both;
 }
@@ -748,6 +748,12 @@ div.callout input {
 }
 .expander-open > ul {
 	display: block !important;
+}
+.captcha {
+	padding: 5px 0;
+}
+.captcha-label {
+	padding: 5px 0;
 }
 #manage div.row label, #move div.row label, #register div.row label {
 	width: 180px;

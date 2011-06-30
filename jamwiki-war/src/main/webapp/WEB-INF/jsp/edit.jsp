@@ -62,6 +62,9 @@
 <textarea id="topicContents" name="contents" rows="25" cols="80" accesskey=","><c:out value="${contents}" escapeXml="true" /></textarea>
 </p>
 <p><label for="editComment"><fmt:message key="edit.caption.comment" /></label>: <input type="text" name="editComment" value="<c:out value="${editComment}" />" size="60" id="editComment" /></p>
+<c:if test="${recaptchaEnabled}">
+<div class="captcha"><div class="captcha-label"><fmt:message key="common.caption.captcha" /></div><jamwiki:recaptcha /></div>
+</c:if>
 <p>
 <input type="submit" name="save" value="<fmt:message key="common.save" />"  accesskey="s" />
 

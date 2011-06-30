@@ -33,6 +33,7 @@ import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
+import org.jamwiki.authentication.ReCaptchaUtil;
 import org.jamwiki.authentication.WikiUserDetailsImpl;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
@@ -87,6 +88,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		Map editors = WikiConfiguration.getInstance().getEditors();
 		next.addObject("editors", editors);
 		next.addObject("newuser", user);
+		next.addObject("recaptchaEnabled", ReCaptchaUtil.isRegistrationEnabled());
 		pageInfo.setSpecial(true);
 		pageInfo.setContentJsp(JSP_REGISTER);
 		pageInfo.setPageTitle(new WikiMessage("register.title"));
@@ -209,6 +211,9 @@ public class RegisterServlet extends JAMWikiServlet {
 		}
 		if (user.getUserId() < 1 && WikiBase.getDataHandler().lookupWikiUser(user.getUsername()) != null) {
 			errors.add(new WikiMessage("register.error.logininvalid", user.getUsername()));
+		}
+		if (user.getUserId() < 1 && !ReCaptchaUtil.isValidForRegistration(request)) {
+			errors.add(new WikiMessage("common.exception.recaptcha"));
 		}
 		return errors;
 	}

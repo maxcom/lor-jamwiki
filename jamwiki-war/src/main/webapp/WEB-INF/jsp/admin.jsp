@@ -45,6 +45,7 @@
 <li><a href="#parser"><fmt:message key="admin.header.parser" /></a></li>
 <li><a href="#database"><fmt:message key="admin.header.persistence" /></a></li>
 <li><a href="#upload"><fmt:message key="admin.header.upload" /></a></li>
+<li><a href="#spam"><fmt:message key="admin.header.spam" /></a></li>
 <li><a href="#other"><fmt:message key="admin.header.other" /></a></li>
 </ul>
 <div class="submenu-tab-content">
@@ -92,12 +93,6 @@
 	<label for="<%= Environment.PROP_RECENT_CHANGES_NUM %>"><fmt:message key="admin.caption.recentchangesdefault" /></label>
 	<c:set var="PROP_RECENT_CHANGES_NUM"><%= Environment.PROP_RECENT_CHANGES_NUM %></c:set>
 	<span><jamwiki:text name="${PROP_RECENT_CHANGES_NUM}" size="5" maxlength="4" value="${props[PROP_RECENT_CHANGES_NUM]}" id="${PROP_RECENT_CHANGES_NUM}" /></span>
-</div>
-<div class="row">
-	<label for="<%= Environment.PROP_TOPIC_SPAM_FILTER %>"><fmt:message key="admin.caption.usespamfilter" /></label>
-	<c:set var="PROP_TOPIC_SPAM_FILTER"><%= Environment.PROP_TOPIC_SPAM_FILTER %></c:set>
-	<span><jamwiki:checkbox name="${PROP_TOPIC_SPAM_FILTER}" value="true" checked="${props[PROP_TOPIC_SPAM_FILTER]}" id="${PROP_TOPIC_SPAM_FILTER}" /></span>
-	<div class="formhelp"><fmt:message key="admin.help.usespamfilter" /></div>
 </div>
 <div class="row">
 	<label for="<%= Environment.PROP_TOPIC_USE_PREVIEW %>"><fmt:message key="admin.caption.usepreview" /></label>
@@ -479,6 +474,56 @@ FIXME - Email not supported right now, comment this out
 	<c:set var="PROP_FILE_WHITELIST"><%= Environment.PROP_FILE_WHITELIST %></c:set>
 	<span><textarea class="medium" name="<%= Environment.PROP_FILE_WHITELIST %>" id="<%= Environment.PROP_FILE_WHITELIST %>"><c:out value="${props[PROP_FILE_WHITELIST]}" /></textarea></span>
 	<div class="formhelp"><fmt:message key="admin.upload.help.whitelist" /></div>
+</div>
+</fieldset>
+</div>
+
+<%-- BEGIN SPAM --%>
+<div id="spam" class="submenu-tab-item">
+<fieldset>
+<legend><fmt:message key="admin.header.spam" /></legend>
+<div class="row">
+	<label for="<%= Environment.PROP_TOPIC_SPAM_FILTER %>"><fmt:message key="admin.spam.caption.usespamfilter" /></label>
+	<c:set var="PROP_TOPIC_SPAM_FILTER"><%= Environment.PROP_TOPIC_SPAM_FILTER %></c:set>
+	<span><jamwiki:checkbox name="${PROP_TOPIC_SPAM_FILTER}" value="true" checked="${props[PROP_TOPIC_SPAM_FILTER]}" id="${PROP_TOPIC_SPAM_FILTER}" /></span>
+	<div class="formhelp"><fmt:message key="admin.spam.help.usespamfilter" /></div>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_RECAPTCHA_EDIT %>"><fmt:message key="admin.spam.caption.recaptchaedit" /></label>
+	<c:set var="PROP_RECAPTCHA_EDIT"><%= Environment.PROP_RECAPTCHA_EDIT %></c:set>
+	<span>
+		<select name="<%= Environment.PROP_RECAPTCHA_EDIT %>" id="<%= Environment.PROP_RECAPTCHA_EDIT %>">
+		<c:set var="PROP_RECAPTCHA_EDIT"><%= Environment.PROP_RECAPTCHA_EDIT %></c:set>
+		<option value="0"<c:if test="${props[PROP_RECAPTCHA_EDIT] == 0}"> selected="selected"</c:if>><fmt:message key="admin.spam.option.never" /></option>
+		<option value="1"<c:if test="${props[PROP_RECAPTCHA_EDIT] == 1}"> selected="selected"</c:if>><fmt:message key="admin.spam.option.unregistered" /></option>
+		<option value="2"<c:if test="${props[PROP_RECAPTCHA_EDIT] == 2}"> selected="selected"</c:if>><fmt:message key="admin.spam.option.always" /></option>
+		</select>
+	</span>
+	<div class="formhelp"><fmt:message key="admin.spam.help.recaptcha" /></div>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_RECAPTCHA_REGISTER %>"><fmt:message key="admin.spam.caption.recaptcharegister" /></label>
+	<c:set var="PROP_RECAPTCHA_REGISTER"><%= Environment.PROP_RECAPTCHA_REGISTER %></c:set>
+	<span>
+		<select name="<%= Environment.PROP_RECAPTCHA_REGISTER %>" id="<%= Environment.PROP_RECAPTCHA_REGISTER %>">
+		<c:set var="PROP_RECAPTCHA_REGISTER"><%= Environment.PROP_RECAPTCHA_REGISTER %></c:set>
+		<option value="0"<c:if test="${props[PROP_RECAPTCHA_REGISTER] == 0}"> selected="selected"</c:if>><fmt:message key="admin.spam.option.never" /></option>
+		<option value="2"<c:if test="${props[PROP_RECAPTCHA_REGISTER] == 2}"> selected="selected"</c:if>><fmt:message key="admin.spam.option.always" /></option>
+		</select>
+	</span>
+	<div class="formhelp"><fmt:message key="admin.spam.help.recaptcha" /></div>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_RECAPTCHA_PUBLIC_KEY %>"><fmt:message key="admin.spam.caption.recaptchapublic" /></label>
+	<c:set var="PROP_RECAPTCHA_PUBLIC_KEY"><%= Environment.PROP_RECAPTCHA_PUBLIC_KEY %></c:set>
+	<span><jamwiki:text name="${PROP_RECAPTCHA_PUBLIC_KEY}" value="${props[PROP_RECAPTCHA_PUBLIC_KEY]}" size="60" id="${PROP_RECAPTCHA_PUBLIC_KEY}" /></span>
+	<div class="formhelp"><fmt:message key="admin.spam.help.recaptchakey" /></div>
+</div>
+<div class="row">
+	<label for="<%= Environment.PROP_RECAPTCHA_PRIVATE_KEY %>"><fmt:message key="admin.spam.caption.recaptchaprivate" /></label>
+	<c:set var="PROP_RECAPTCHA_PRIVATE_KEY"><%= Environment.PROP_RECAPTCHA_PRIVATE_KEY %></c:set>
+	<span><jamwiki:text name="${PROP_RECAPTCHA_PRIVATE_KEY}" value="${props[PROP_RECAPTCHA_PRIVATE_KEY]}" size="60" id="${PROP_RECAPTCHA_PRIVATE_KEY}" /></span>
+	<div class="formhelp"><fmt:message key="admin.spam.help.recaptchakey" /></div>
 </div>
 </fieldset>
 </div>

@@ -26,6 +26,7 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
@@ -292,7 +293,6 @@ public class AdminServlet extends JAMWikiServlet {
 			setDatePatternProperty(props, request, Environment.PROP_DATE_PATTERN_DATE_ONLY, errors);
 			setDatePatternProperty(props, request, Environment.PROP_DATE_PATTERN_TIME_ONLY, errors);
 			setNumericProperty(props, request, Environment.PROP_RECENT_CHANGES_NUM, errors);
-			setBooleanProperty(props, request, Environment.PROP_TOPIC_SPAM_FILTER);
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_USE_PREVIEW);
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_USE_SHOW_CHANGES);
 			setBooleanProperty(props, request, Environment.PROP_PRINT_NEW_WINDOW);
@@ -353,6 +353,16 @@ public class AdminServlet extends JAMWikiServlet {
 			setPassword(props, request, next, Environment.PROP_EMAIL_SMTP_PASSWORD, "smtpPassword");
 			setProperty(props, request, Environment.PROP_EMAIL_REPLY_ADDRESS);
 			*/
+			setBooleanProperty(props, request, Environment.PROP_TOPIC_SPAM_FILTER);
+			setNumericProperty(props, request, Environment.PROP_RECAPTCHA_EDIT, errors);
+			setNumericProperty(props, request, Environment.PROP_RECAPTCHA_REGISTER, errors);
+			setProperty(props, request, Environment.PROP_RECAPTCHA_PUBLIC_KEY);
+			setProperty(props, request, Environment.PROP_RECAPTCHA_PRIVATE_KEY);
+			if (StringUtils.isBlank(props.getProperty(Environment.PROP_RECAPTCHA_PUBLIC_KEY)) || StringUtils.isBlank(props.getProperty(Environment.PROP_RECAPTCHA_PRIVATE_KEY))) {
+				if (NumberUtils.toInt(props.getProperty(Environment.PROP_RECAPTCHA_EDIT)) > 0 || NumberUtils.toInt(props.getProperty(Environment.PROP_RECAPTCHA_REGISTER)) > 0) {
+					errors.add(new WikiMessage("admin.spam.message.invalidkeys"));
+				}
+			}
 			setNumericProperty(props, request, Environment.PROP_CACHE_INDIVIDUAL_SIZE, errors);
 			setNumericProperty(props, request, Environment.PROP_CACHE_MAX_AGE, errors);
 			setNumericProperty(props, request, Environment.PROP_CACHE_MAX_IDLE_AGE, errors);
