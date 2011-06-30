@@ -57,7 +57,7 @@ public class DatabaseUpgrades {
 	/**
 	 *
 	 */
-	public static List<WikiMessage> upgrade100(List<WikiMessage> messages) throws WikiException {
+	public static void upgrade100(List<WikiMessage> messages) throws WikiException {
 		TransactionStatus status = null;
 		try {
 			status = DatabaseConnection.startTransaction(getTransactionDefinition());
@@ -129,13 +129,12 @@ public class DatabaseUpgrades {
 		if (status != null) {
 			DatabaseConnection.commit(status);
 		}
-		return messages;
 	}
 
 	/**
 	 *
 	 */
-	public static List<WikiMessage> upgrade110(List<WikiMessage> messages) throws WikiException {
+	public static void upgrade110(List<WikiMessage> messages) throws WikiException {
 		TransactionStatus status = null;
 		try {
 			status = DatabaseConnection.startTransaction(getTransactionDefinition());
@@ -179,6 +178,5 @@ public class DatabaseUpgrades {
 		if (status != null) {
 			DatabaseConnection.commit(status);
 		}
-		return messages;
 	}
 }

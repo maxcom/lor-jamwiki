@@ -400,7 +400,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		pageInfo.setSpecial(true);
 		if (t instanceof WikiException) {
 			WikiException we = (WikiException)t;
-			pageInfo.setException(we.getWikiMessage());
+			pageInfo.addError(we.getWikiMessage());
 			next.addObject("messageObject", we.getWikiMessage());
 		} else {
 			String errorMessage = t.toString();
@@ -408,7 +408,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 				errorMessage += " / " + t.getCause().toString();
 			}
 			WikiMessage wm = new WikiMessage("error.unknown", errorMessage);
-			pageInfo.setException(wm);
+			pageInfo.addError(wm);
 			next.addObject("messageObject", wm);
 			logger.error("Failure while loading JSP: " + request.getServletPath(), t);
 		}

@@ -83,16 +83,15 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void upgrade(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
-		List<WikiMessage> messages = new ArrayList<WikiMessage>();
 		try {
 			WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 			if (oldVersion.before(0, 9, 0)) {
 				throw new WikiException(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.9.0"));
 			}
 			// first perform database upgrades
-			this.upgradeDatabase(true, messages);
+			this.upgradeDatabase(true, pageInfo.getMessages());
 			// upgrade the search index if required & possible
-			this.upgradeSearchIndex(true, messages);
+			this.upgradeSearchIndex(true, pageInfo.getMessages());
 			// perform any additional upgrades required
 			try {
 				int topicCount = WikiBase.getDataHandler().lookupTopicCount(VirtualWiki.defaultVirtualWiki().getName(), null);
@@ -100,19 +99,19 @@ public class UpgradeServlet extends JAMWikiServlet {
 					if (topicCount < 1000) {
 						// populate the jam_topic_links table
 						WikiDatabase.rebuildTopicMetadata();
-						messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_topic_links"));
+						pageInfo.addMessage(new WikiMessage("upgrade.message.db.data.added", "jam_topic_links"));
 					} else {
 						// print a message telling the user to do this step manually
-						messages.add(new WikiMessage("upgrade.message.100.topic.links"));
+						pageInfo.addMessage(new WikiMessage("upgrade.message.100.topic.links"));
 					}
 				}
 			} catch (DataAccessException e) {
 				logger.warn("Failure during upgrade while generating topic link records.  Please use the tools on the Special:Maintenance page to complete this step.", e);
-				messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
+				pageInfo.addMessage(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 			}
 			// upgrade stylesheet
 			if (this.upgradeStyleSheetRequired()) {
-				this.upgradeStyleSheet(request, messages);
+				this.upgradeStyleSheet(request, pageInfo.getMessages());
 			}
 			pageInfo.getErrors().addAll(ServletUtil.validateSystemSettings(Environment.getInstance()));
 			try {
@@ -135,7 +134,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 		} else {
 			handleUpgradeSuccess(request, next, pageInfo);
 		}
-		next.addObject("messages", messages);
 		this.view(request, next, pageInfo);
 	}
 		
@@ -171,13 +169,13 @@ public class UpgradeServlet extends JAMWikiServlet {
 		if (oldVersion.before(1, 0, 0)) {
 			upgradeRequired = true;
 			if (performUpgrade) {
-				messages = DatabaseUpgrades.upgrade100(messages);
+				DatabaseUpgrades.upgrade100(messages);
 			}
 		}
 		if (oldVersion.before(1, 1, 0)) {
 			upgradeRequired = true;
 			if (performUpgrade) {
-				messages = DatabaseUpgrades.upgrade110(messages);
+				DatabaseUpgrades.upgrade110(messages);
 			}
 		}
 		return upgradeRequired;

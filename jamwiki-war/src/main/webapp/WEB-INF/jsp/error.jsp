@@ -58,8 +58,8 @@ if (exception != null) {
 
 <p><fmt:message key="error.heading" /></p>
 <c:choose>
-	<c:when test="${!empty pageInfo.exception}">
-		<p><font style="color: red;font-weight:bold"><jamwiki_t:wikiMessage message="${pageInfo.exception}" /></font></p>
+	<c:when test="${!empty pageInfo.errors}">
+		<p><font style="color: red;font-weight:bold"><c:forEach items="${pageInfo.errors}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></font></p>
 	</c:when>
 	<c:otherwise>
 		<p><font style="color: red;font-weight:bold"><%= errorMessage %></font></p>

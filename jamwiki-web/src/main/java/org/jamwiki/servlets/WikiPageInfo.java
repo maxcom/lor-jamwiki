@@ -50,7 +50,6 @@ public class WikiPageInfo {
 	private String contentJsp = JSP_TOPIC;
 	/** A list of error messages generated during servlet processing to display on the front end. */
 	private List<WikiMessage> errors = new ArrayList<WikiMessage>();
-	private WikiMessage exception = null;
 	private List<String> interwikiLinks = new ArrayList<String>();
 	/** A list of non-error messages generated during servlet processing to display on the front end. */
 	private List<WikiMessage> messages = new ArrayList<WikiMessage>();
@@ -82,9 +81,11 @@ public class WikiPageInfo {
 	 */
 	protected void reset() {
 		this.admin = false;
+		this.canonicalUrl = null;
 		this.contentJsp = JSP_TOPIC;
-		this.exception = null;
+		this.errors = new ArrayList<WikiMessage>();
 		this.interwikiLinks = new ArrayList<String>();
+		this.messages = new ArrayList<WikiMessage>();
 		this.pageTitle = null;
 		this.redirectName = null;
 		this.selectedTab = null;
@@ -228,26 +229,6 @@ public class WikiPageInfo {
 	 */
 	public void setErrors(List<WikiMessage> errors) {
 		this.errors = errors;
-	}
-
-	/**
-	 * If a fatal error occurs it will be stored for display on the front
-	 * end.
-	 *
-	 * @return The WikiMessage object representing the error.
-	 */
-	public WikiMessage getException() {
-		return this.exception;
-	}
-
-	/**
-	 * If a fatal error occurs it will be stored for display on the front
-	 * end.
-	 *
-	 * @param exception The WikiMessage object representing the error.
-	 */
-	public void setException(WikiMessage exception) {
-		this.exception = exception;
 	}
 
 	/**
