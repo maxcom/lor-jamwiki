@@ -18,6 +18,8 @@ package org.jamwiki.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import org.jamwiki.DataAccessException;
+import org.jamwiki.WikiBase;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
@@ -98,6 +100,36 @@ public class UserBlock implements Serializable {
 	 */
 	public int getBlockedByUserId() {
 		return this.blockedByUserId;
+	}
+
+	/**
+	 * Utility method for retrieving the username of the user who applied the
+	 * block.
+	 */
+	public String getBlockedByUsername() {
+		String result = null;
+		try {
+			result = WikiBase.getDataHandler().lookupWikiUser(this.getBlockedByUserId()).getUsername();
+		} catch (DataAccessException e) {
+			logger.error("Failure while trying to retrieve username for user with ID " + this.getBlockedByUserId(), e);
+		}
+		return result;
+	}
+
+	/**
+	 * Utility method for retrieving the username of the blocked user or the IP
+	 * address if the wiki user ID is null.
+	 */
+	public String getBlockedUsernameOrIpAddress() {
+		String result = this.getIpAddress();
+		if (this.getWikiUserId() != null) {
+			try {
+				result = WikiBase.getDataHandler().lookupWikiUser(this.getWikiUserId()).getUsername();
+			} catch (DataAccessException e) {
+				logger.error("Failure while trying to retrieve username for user with ID " + this.getWikiUserId(), e);
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -195,6 +227,22 @@ public class UserBlock implements Serializable {
 	 */
 	public void setUnblockedByUserId(Integer unblockedByUserId) {
 		this.unblockedByUserId = unblockedByUserId;
+	}
+
+	/**
+	 * Utility method for retrieving the username of the user who lifted the
+	 * block or <code>null</code> if the block was never lifted.
+	 */
+	public String getUnblockedByUsername() {
+		String result = null;
+		if (this.getUnblockedByUserId() != null) {
+			try {
+				result = WikiBase.getDataHandler().lookupWikiUser(this.getUnblockedByUserId()).getUsername();
+			} catch (DataAccessException e) {
+				logger.error("Failure while trying to retrieve username for user with ID " + this.getUnblockedByUserId(), e);
+			}
+		}
+		return result;
 	}
 
 	/**

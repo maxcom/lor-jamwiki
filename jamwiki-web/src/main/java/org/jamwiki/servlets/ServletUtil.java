@@ -727,24 +727,11 @@ public class ServletUtil {
 	 * @return Returns a ModelAndView object corresponding to the blocked
 	 *  user page display if the user is blocked, <code>null</code>
 	 *  otherwise.
-	 * @throws WikiException Thrown if any error occurs during processing.
 	 */
-	protected static ModelAndView viewIfBlocked(HttpServletRequest request, WikiPageInfo pageInfo) throws WikiException {
+	protected static ModelAndView viewIfBlocked(HttpServletRequest request, WikiPageInfo pageInfo) {
 		UserBlock userBlock = ServletUtil.retrieveCurrentUserBlock(request);
 		if (userBlock == null) {
 			return null;
-		}
-		String blockedBy = null;
-		String blockedByUserPage = null;
-		String blockTarget = userBlock.getIpAddress();
-		try {
-			blockedBy = WikiBase.getDataHandler().lookupWikiUser(userBlock.getBlockedByUserId()).getUsername();
-			blockedByUserPage = Namespace.namespace(Namespace.USER_ID).getLabel(pageInfo.getVirtualWikiName()) + Namespace.SEPARATOR + blockedBy;
-			if (userBlock.getWikiUserId() != null) {
-				blockTarget = WikiBase.getDataHandler().lookupWikiUser(userBlock.getWikiUserId()).getUsername();
-			}
-		} catch (DataAccessException e) {
-			logger.error("Failure while retrieving user block details for block " + userBlock.getBlockId(), e);
 		}
 		ModelAndView next = new ModelAndView("wiki");
 		pageInfo.reset();
@@ -752,9 +739,6 @@ public class ServletUtil {
 		pageInfo.setContentJsp(JAMWikiServlet.JSP_BLOCKED);
 		pageInfo.setSpecial(true);
 		next.addObject("userBlock", userBlock);
-		next.addObject("blockedBy", blockedBy);
-		next.addObject("blockedByUserPage", blockedByUserPage);
-		next.addObject("blockTarget", blockTarget);
 		return next;
 	}
 

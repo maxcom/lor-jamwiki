@@ -27,7 +27,7 @@
 <div class="message"><fmt:message key="userblock.caption.overview" /></div>
 
 <p>
-	<c:if test="${!empty blockedBy}"><fmt:message key="userblock.caption.blockedby"><fmt:param><jamwiki:link value="${blockedByUserPage}">${blockedBy}</jamwiki:link></fmt:param></fmt:message></c:if>
+	<fmt:message key="userblock.caption.blockedby"><fmt:param><jamwiki:link value="${pageInfo.namespaces[pageInfo.virtualWikiName]['User']}:${userBlock.blockedByUsername}">${userBlock.blockedByUsername}</jamwiki:link></fmt:param></fmt:message>
 	<c:if test="${!empty userBlock.blockReason}"><fmt:message key="userblock.caption.reason"><fmt:param value="${userBlock.blockReason}" /></fmt:message></c:if>
 </p>
 <ul>
@@ -42,7 +42,7 @@
 		</c:otherwise>
 	</c:choose>
 </li>
-<li><fmt:message key="userblock.caption.target"><fmt:param value="${blockTarget}" /></fmt:message></li>
+<li><fmt:message key="userblock.caption.target"><fmt:param value="${userBlock.blockedUsernameOrIpAddress}" /></fmt:message></li>
 </ul>
 
 </div>
