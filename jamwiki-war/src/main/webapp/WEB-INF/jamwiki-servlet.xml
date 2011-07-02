@@ -15,6 +15,7 @@
 				<prop key="/**/Special:Admin">Admin</prop>
 				<prop key="/**/Special:AllPages">Items</prop>
 				<prop key="/**/Special:Block">Block</prop>
+				<prop key="/**/Special:BlockList">BlockList</prop>
 				<prop key="/**/Special:Categories">Category</prop>
 				<prop key="/**/Special:Contributions">Contributions</prop>
 				<prop key="/**/Special:Diff">Diff</prop>
@@ -59,6 +60,7 @@
 
 	<bean id="Admin" class="org.jamwiki.servlets.AdminServlet" />
 	<bean id="Block" class="org.jamwiki.servlets.BlockServlet" />
+	<bean id="BlockList" class="org.jamwiki.servlets.BlockListServlet" />
 	<bean id="Category" class="org.jamwiki.servlets.CategoryServlet" />
 	<bean id="Contributions" class="org.jamwiki.servlets.ContributionsServlet" />
 	<bean id="Diff" class="org.jamwiki.servlets.DiffServlet" />

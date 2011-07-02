@@ -51,6 +51,8 @@ public class PseudoTopicHandler {
 		PSEUDO_TOPICS.add("Special:AllPages");
 		PSEUDO_TOPICS.add("Special:Allpages");
 		PSEUDO_TOPICS.add("Special:Block");
+		PSEUDO_TOPICS.add("Special:BlockList");
+		PSEUDO_TOPICS.add("Special:Blocklist");
 		PSEUDO_TOPICS.add("Special:Categories");
 		PSEUDO_TOPICS.add("Special:Contributions");
 		PSEUDO_TOPICS.add("Special:Diff");

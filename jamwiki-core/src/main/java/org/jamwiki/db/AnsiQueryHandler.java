@@ -989,7 +989,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt = conn.prepareStatement(STATEMENT_SELECT_USER_BLOCKS);
 			stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
 			rs = stmt.executeQuery();
-			Map<Object, UserBlock> userBlocks = new HashMap<Object, UserBlock>();
+			Map<Object, UserBlock> userBlocks = new LinkedHashMap<Object, UserBlock>();
 			while (rs.next()) {
 				UserBlock userBlock = this.initUserBlock(rs);
 				if (userBlock.getWikiUserId() != null) {

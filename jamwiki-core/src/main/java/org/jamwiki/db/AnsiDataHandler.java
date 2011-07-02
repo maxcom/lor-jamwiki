@@ -677,7 +677,7 @@ public class AnsiDataHandler implements DataHandler {
 			// should be sure to check whether a result is still active or not
 			return (Map<Object, UserBlock>)cacheElement.getObjectValue();
 		}
-		Map<Object, UserBlock> userBlocks = new HashMap<Object, UserBlock>();
+		Map<Object, UserBlock> userBlocks = new LinkedHashMap<Object, UserBlock>();
 		try {
 			Connection conn = DatabaseConnection.getConnection();
 			userBlocks = this.queryHandler().getUserBlocks(conn);

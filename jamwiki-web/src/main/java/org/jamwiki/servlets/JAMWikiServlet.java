@@ -255,6 +255,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 		String target = null;
 		if (ServletUtil.isTopic(request, "Special:Allpages")) {
 			target = "Special:AllPages";
+		} else if (ServletUtil.isTopic(request, "Special:Blocklist")) {
+			target = "Special:BlockList";
 		} else if (ServletUtil.isTopic(request, "Special:Filelist")) {
 			target = "Special:FileList";
 		} else if (ServletUtil.isTopic(request, "Special:Imagelist")) {
