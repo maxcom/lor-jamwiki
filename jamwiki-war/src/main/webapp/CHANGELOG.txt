@@ -13,7 +13,7 @@ New Features:
   * Add optional reCAPTCHA support for combatting spam on the Special:Register
     and Special:Edit pages using captcha challenge-response.
   * Add support for blocking users from editing and uploading via the new
-    Special:Block interface.
+    Special:Block and Special:Unblock interfaces.
   * Improve search performance, exclude redirects from search indexing, and
     weight topic names more heavily than topic content to improve accuracy.
     Existing JAMWiki installs should rebuild their search index using the

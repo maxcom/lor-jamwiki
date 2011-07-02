@@ -271,6 +271,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 			target = "Special:SpecialPages";
 		} else if (ServletUtil.isTopic(request, "Special:Topicsadmin")) {
 			target = "Special:TopicsAdmin";
+		} else if (ServletUtil.isTopic(request, "Special:UnBlock")) {
+			target = "Special:Unblock";
 		} else if (ServletUtil.isTopic(request, "Special:Virtualwiki")) {
 			target = "Special:VirtualWiki";
 		} else if (ServletUtil.isTopic(request, "Special:WatchList")) {

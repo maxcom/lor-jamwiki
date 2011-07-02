@@ -89,6 +89,8 @@ public class PseudoTopicHandler {
 		PSEUDO_TOPICS.add("Special:TopicsAdmin");
 		PSEUDO_TOPICS.add("Special:Topicsadmin");
 		PSEUDO_TOPICS.add("Special:Translation");
+		PSEUDO_TOPICS.add("Special:UnBlock");
+		PSEUDO_TOPICS.add("Special:Unblock");
 		PSEUDO_TOPICS.add("Special:Upgrade");
 		PSEUDO_TOPICS.add("Special:Upload");
 		PSEUDO_TOPICS.add("Special:VirtualWiki");

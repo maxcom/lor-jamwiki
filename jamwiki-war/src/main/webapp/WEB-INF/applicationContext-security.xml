@@ -35,6 +35,7 @@
 		<intercept-url pattern="/**/Special:Roles" access="ROLE_SYSADMIN" />
 		<intercept-url pattern="/**/Special:Setup" filters="none" />
 		<intercept-url pattern="/**/Special:Translation" access="ROLE_TRANSLATE" />
+		<intercept-url pattern="/**/Special:Unblock" access="ROLE_ADMIN" />
 		<intercept-url pattern="/**/Special:Upload" access="ROLE_UPLOAD" />
 		<intercept-url pattern="/**/Special:Upgrade" access="ROLE_SYSADMIN" />
 		<intercept-url pattern="/**/Special:VirtualWiki" access="ROLE_SYSADMIN" />
