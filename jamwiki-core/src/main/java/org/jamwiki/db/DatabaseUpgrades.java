@@ -144,6 +144,9 @@ public class DatabaseUpgrades {
 			messages.add(new WikiMessage("upgrade.message.db.column.added", "log_sub_type", "jam_log"));
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_110_ADD_RECENT_CHANGE_LOG_SUB_TYPE", conn);
 			messages.add(new WikiMessage("upgrade.message.db.column.added", "log_sub_type", "jam_recent_change"));
+			// add the jam_user_block table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_USER_BLOCK_TABLE", conn);
+			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_user_block"));
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			logger.error("Database failure during upgrade", e);

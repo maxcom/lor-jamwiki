@@ -121,6 +121,109 @@ followed by 0.6.3.
               update jam_log set log_sub_type = 10 where log_type = 1 and log_params not like '%|7';
               update jam_recent_change set log_sub_type = 11 where log_type = 1 and log_params like '%|7';
               update jam_recent_change set log_sub_type = 10 where log_type = 1 and log_params not like '%|7';
+       c) Create the jam_user_blocks table.
+            Asa:
+              CREATE TABLE jam_user_block (
+                user_block_id INTEGER NOT NULL,
+                wiki_user_id INTEGER NULL,
+                ip_address VARCHAR(39) NULL,
+                block_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                block_end_date TIMESTAMP NULL,
+                block_reason VARCHAR(200) NULL,
+                blocked_by_user_id INTEGER NOT NULL,
+                unblock_date TIMESTAMP NULL,
+                unblock_reason VARCHAR(200) NULL,
+                unblocked_by_user_id INTEGER NULL,
+                CONSTRAINT jam_u_ublock PRIMARY KEY (user_block_id),
+                CONSTRAINT jam_f_ublock_userid FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_ublock_blkid FOREIGN KEY (blocked_by_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_ublock_unblkid FOREIGN KEY (unblocked_by_user_id) REFERENCES jam_wiki_user(wiki_user_id)
+              )
+            MS SQL:
+              CREATE TABLE jam_user_block (
+                user_block_id INTEGER NOT NULL,
+                wiki_user_id INTEGER,
+                ip_address VARCHAR(39),
+                block_date TIMESTAMP DEFAULT GETDATE() NOT NULL,
+                block_end_date TIMESTAMP,
+                block_reason VARCHAR(200),
+                blocked_by_user_id INTEGER NOT NULL,
+                unblock_date TIMESTAMP,
+                unblock_reason VARCHAR(200),
+                unblocked_by_user_id INTEGER,
+                CONSTRAINT jam_u_ublock PRIMARY KEY (user_block_id),
+                CONSTRAINT jam_f_ublock_userid FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_ublock_blkid FOREIGN KEY (blocked_by_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_ublock_unblkid FOREIGN KEY (unblocked_by_user_id) REFERENCES jam_wiki_user(wiki_user_id)
+              )
+            MySQL:
+              CREATE TABLE jam_user_block (
+                user_block_id INTEGER NOT NULL AUTO_INCREMENT,
+                wiki_user_id INTEGER,
+                ip_address VARCHAR(39),
+                block_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                block_end_date DATETIME,
+                block_reason VARCHAR(200),
+                blocked_by_user_id INTEGER NOT NULL,
+                unblock_date DATETIME,
+                unblock_reason VARCHAR(200),
+                unblocked_by_user_id INTEGER,
+                CONSTRAINT jam_u_ublock PRIMARY KEY (user_block_id),
+                CONSTRAINT jam_f_ublock_userid FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_ublock_blkid FOREIGN KEY (blocked_by_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_ublock_unblkid FOREIGN KEY (unblocked_by_user_id) REFERENCES jam_wiki_user(wiki_user_id)
+              )
+            Oracle:
+              CREATE TABLE jam_user_block (
+                user_block_id INTEGER NOT NULL,
+                wiki_user_id INTEGER,
+                ip_address VARCHAR(39),
+                block_date TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
+                block_end_date TIMESTAMP,
+                block_reason VARCHAR(200),
+                blocked_by_user_id INTEGER NOT NULL,
+                unblock_date TIMESTAMP,
+                unblock_reason VARCHAR(200),
+                unblocked_by_user_id INTEGER,
+                CONSTRAINT jam_u_ublock PRIMARY KEY (user_block_id),
+                CONSTRAINT jam_f_ublock_userid FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_ublock_blkid FOREIGN KEY (blocked_by_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_ublock_unblkid FOREIGN KEY (unblocked_by_user_id) REFERENCES jam_wiki_user(wiki_user_id)
+              )
+            Postgres:
+              CREATE TABLE jam_user_block (
+                user_block_id SERIAL NOT NULL,
+                wiki_user_id INTEGER,
+                ip_address VARCHAR(39),
+                block_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                block_end_date TIMESTAMP,
+                block_reason VARCHAR(200),
+                blocked_by_user_id INTEGER NOT NULL,
+                unblock_date TIMESTAMP,
+                unblock_reason VARCHAR(200),
+                unblocked_by_user_id INTEGER,
+                CONSTRAINT jam_u_ublock PRIMARY KEY (user_block_id),
+                CONSTRAINT jam_f_ublock_userid FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_ublock_blkid FOREIGN KEY (blocked_by_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_ublock_unblkid FOREIGN KEY (unblocked_by_user_id) REFERENCES jam_wiki_user(wiki_user_id)
+              )
+            Other Databases:
+              CREATE TABLE jam_user_block (
+                user_block_id INTEGER NOT NULL,
+                wiki_user_id INTEGER,
+                ip_address VARCHAR(39),
+                block_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                block_end_date TIMESTAMP,
+                block_reason VARCHAR(200),
+                blocked_by_user_id INTEGER NOT NULL,
+                unblock_date TIMESTAMP,
+                unblock_reason VARCHAR(200),
+                unblocked_by_user_id INTEGER,
+                CONSTRAINT jam_u_ublock PRIMARY KEY (user_block_id),
+                CONSTRAINT jam_f_ublock_userid FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_ublock_blkid FOREIGN KEY (blocked_by_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                CONSTRAINT jam_f_ublock_unblkid FOREIGN KEY (unblocked_by_user_id) REFERENCES jam_wiki_user(wiki_user_id)
+              )
 
 
   JAMWiki 1.0.5

@@ -32,6 +32,7 @@ import org.jamwiki.model.RoleMap;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.UserBlock;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiFile;
@@ -321,6 +322,16 @@ public interface DataHandler {
 	List<String> getTopicsAdmin(String virtualWiki, Pagination pagination) throws DataAccessException;
 
 	/**
+	 * Return a map of all active user blocks, where the key is the ip or user id
+	 * of the blocked user and the value is the UserBlock object.
+	 *
+	 * @return A map of all active user blocks, where the key is the ip or user id
+	 * of the blocked user and the value is the UserBlock object.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	Map<Object, UserBlock> getUserBlocks() throws DataAccessException;
+
+	/**
 	 * Retrieve a List of RecentChange objects corresponding to all
 	 * changes made by a particular user.
 	 *
@@ -572,6 +583,19 @@ public interface DataHandler {
 	 * @throws DataAccessException Thrown if any error occurs during method execution.
 	 */
 	List<String> lookupTopicLinkOrphans(String virtualWiki, int namespaceId) throws DataAccessException;
+
+	/**
+	 * Find any active user block for the given user or IP address.
+	 *
+	 * @param wikiUserId The wiki user ID, or <code>null</code> if the search is
+	 *  by IP address.
+	 * @param ipAddress The IP address, or <code>null</code> if the search is by
+	 *  user ID.
+	 * @return A currently-active user block for the ID or IP address, or
+	 *  <code>null</code> if no block is currently active.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 */
+	UserBlock lookupUserBlock(Integer wikiUserId, String ipAddress) throws DataAccessException;
 
 	/**
 	 * Given a virtual wiki name, return the corresponding VirtualWiki object.
@@ -934,6 +958,19 @@ public interface DataHandler {
 	 * @throws WikiException Thrown if the topic version information is invalid.
 	 */
 	public void writeTopicVersion(Topic topic, TopicVersion topicVersion) throws DataAccessException, WikiException;
+
+	/**
+	 * Add or update a user block.  This method will add a new record if the
+	 * UserBlock object does not have an ID, otherwise it will perform an
+	 * update.
+	 *
+	 * @param userBlock The UserBlock record to add or update.  If the
+	 *  UserBlock does not have an ID then a new record is created, otherwise
+	 *  an update is performed.
+	 * @throws DataAccessException Thrown if any error occurs during method execution.
+	 * @throws WikiException Thrown if the user block information is invalid.
+	 */
+	public void writeUserBlock(UserBlock userBlock) throws DataAccessException, WikiException;
 
 	/**
 	 * Add or update a VirtualWiki object.  This method will add a new record

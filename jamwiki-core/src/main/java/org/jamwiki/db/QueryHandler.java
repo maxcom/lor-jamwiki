@@ -30,6 +30,7 @@ import org.jamwiki.model.RoleMap;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.UserBlock;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
@@ -387,6 +388,18 @@ public interface QueryHandler {
 	List<String> getTopicsAdmin(int virtualWikiId, Pagination pagination) throws SQLException;
 
 	/**
+	 * Return a map of all active user blocks, where the key is the ip or user id
+	 * of the blocked user and the value is the UserBlock object.
+	 *
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @return A map of all active user blocks, where the key is the ip or user id
+	 * of the blocked user and the value is the UserBlock object.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	Map<Object, UserBlock> getUserBlocks(Connection conn) throws SQLException;
+
+	/**
 	 * Retrieve a list of all recent changes made to the wiki by a specific user.
 	 *
 	 * @param virtualWiki The name of the virtual wiki for which user contributions
@@ -576,17 +589,6 @@ public interface QueryHandler {
 	void insertTopicVersion(TopicVersion topicVersion, Connection conn) throws SQLException;
 
 	/**
-	 * Add a new user authentication credential to the database.  The user authentication
-	 * credential must not already exist in the database or else an error will be thrown.
-	 *
-	 * @param userDetails The user authentication credential that is to be added to the database.
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @throws SQLException Thrown if any error occurs during method execution.
-	 */
-	void insertUserDetails(WikiUserDetails userDetails, Connection conn) throws SQLException;
-
-	/**
 	 * Add a new authority for a specified user.  The user must not already have
 	 * this authority or else an error will be thrown.
 	 *
@@ -598,6 +600,28 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	void insertUserAuthority(String username, String authority, Connection conn) throws SQLException;
+
+	/**
+	 * Add a new user authentication credential to the database.  The user authentication
+	 * credential must not already exist in the database or else an error will be thrown.
+	 *
+	 * @param userDetails The user authentication credential that is to be added to the database.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	void insertUserDetails(WikiUserDetails userDetails, Connection conn) throws SQLException;
+
+	/**
+	 * Add a new user block record to the database.  The user block must
+	 * not already exist in the database or else an error will be thrown.
+	 *
+	 * @param userBlock The UserBlock record that is to be added to the database.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	void insertUserBlock(UserBlock userBlock, Connection conn) throws SQLException;
 
 	/**
 	 * Add a new virtual wiki record to the database.  The virtual wiki must
@@ -1079,6 +1103,16 @@ public interface QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	public void updateUserDetails(WikiUserDetails userDetails, Connection conn) throws SQLException;
+
+	/**
+	 * Update a user block record in the database.
+	 *
+	 * @param userBlock The UserBlock record that is to be updated in the database.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	void updateUserBlock(UserBlock userBlock, Connection conn) throws SQLException;
 
 	/**
 	 * Update a virtual wiki record in the database.

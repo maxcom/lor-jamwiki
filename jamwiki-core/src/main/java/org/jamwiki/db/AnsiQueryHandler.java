@@ -43,6 +43,7 @@ import org.jamwiki.model.RoleMap;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.UserBlock;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
@@ -90,6 +91,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_CREATE_TOPIC_VERSION_PREVIOUS_INDEX = null;
 	protected static String STATEMENT_CREATE_TOPIC_VERSION_USER_DISPLAY_INDEX = null;
 	protected static String STATEMENT_CREATE_TOPIC_VERSION_USER_ID_INDEX = null;
+	protected static String STATEMENT_CREATE_USER_BLOCK_TABLE = null;
 	protected static String STATEMENT_CREATE_USERS_TABLE = null;
 	protected static String STATEMENT_CREATE_VIRTUAL_WIKI_TABLE = null;
 	protected static String STATEMENT_CREATE_WATCHLIST_TABLE = null;
@@ -127,6 +129,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DROP_TOPIC_TABLE = null;
 	protected static String STATEMENT_DROP_TOPIC_LINKS_TABLE = null;
 	protected static String STATEMENT_DROP_TOPIC_VERSION_TABLE = null;
+	protected static String STATEMENT_DROP_USER_BLOCK_TABLE = null;
 	protected static String STATEMENT_DROP_USERS_TABLE = null;
 	protected static String STATEMENT_DROP_VIRTUAL_WIKI_TABLE = null;
 	protected static String STATEMENT_DROP_WATCHLIST_TABLE = null;
@@ -160,6 +163,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_INSERT_TOPIC_VERSION = null;
 	protected static String STATEMENT_INSERT_TOPIC_VERSION_AUTO_INCREMENT = null;
 	protected static String STATEMENT_INSERT_USER = null;
+	protected static String STATEMENT_INSERT_USER_BLOCK = null;
+	protected static String STATEMENT_INSERT_USER_BLOCK_AUTO_INCREMENT = null;
 	protected static String STATEMENT_INSERT_VIRTUAL_WIKI = null;
 	protected static String STATEMENT_INSERT_VIRTUAL_WIKI_AUTO_INCREMENT = null;
 	protected static String STATEMENT_INSERT_WATCHLIST_ENTRY = null;
@@ -203,6 +208,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_TOPIC_VERSION = null;
 	protected static String STATEMENT_SELECT_TOPIC_VERSION_NEXT_ID = null;
 	protected static String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE = null;
+	protected static String STATEMENT_SELECT_USER_BLOCKS = null;
+	protected static String STATEMENT_SELECT_USER_BLOCKS_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_USERS_AUTHENTICATION = null;
 	protected static String STATEMENT_SELECT_VIRTUAL_WIKIS = null;
 	protected static String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE = null;
@@ -230,6 +237,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_UPDATE_TOPIC_VERSION = null;
 	protected static String STATEMENT_UPDATE_TOPIC_VERSION_PREVIOUS_VERSION_ID = null;
 	protected static String STATEMENT_UPDATE_USER = null;
+	protected static String STATEMENT_UPDATE_USER_BLOCK = null;
 	protected static String STATEMENT_UPDATE_VIRTUAL_WIKI = null;
 	protected static String STATEMENT_UPDATE_WIKI_FILE = null;
 	protected static String STATEMENT_UPDATE_WIKI_USER = null;
@@ -310,6 +318,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WATCHLIST_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_INTERWIKI_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_CONFIGURATION_TABLE, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_USER_BLOCK_TABLE, conn);
 	}
 
 	/**
@@ -452,6 +461,9 @@ public class AnsiQueryHandler implements QueryHandler {
 		// catch errors that might result from a partial failure during install.  also
 		// note that the coding style violation here is intentional since it makes the
 		// actual work of the method more obvious.
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_USER_BLOCK_TABLE, conn);
+		} catch (SQLException e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_CONFIGURATION_TABLE, conn);
 		} catch (SQLException e) { logger.error(e.getMessage()); }
@@ -970,6 +982,33 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	public Map<Object, UserBlock> getUserBlocks(Connection conn) throws SQLException {
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_SELECT_USER_BLOCKS);
+			stmt.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
+			rs = stmt.executeQuery();
+			Map<Object, UserBlock> userBlocks = new HashMap<Object, UserBlock>();
+			while (rs.next()) {
+				UserBlock userBlock = this.initUserBlock(rs);
+				if (userBlock.getWikiUserId() != null) {
+					userBlocks.put(userBlock.getWikiUserId(), userBlock);
+				}
+				if (userBlock.getIpAddress() != null) {
+					userBlocks.put(userBlock.getIpAddress(), userBlock);
+				}
+			}
+			return userBlocks;
+		} finally {
+			// close only the statement and result set - leave the connection open for further use
+			DatabaseConnection.closeConnection(null, stmt, rs);
+		}
+	}
+
+	/**
+	 *
+	 */
 	public List<RecentChange> getUserContributionsByLogin(String virtualWiki, String login, Pagination pagination, boolean descending) throws SQLException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -1146,6 +1185,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_CREATE_TOPIC_VERSION_PREVIOUS_INDEX = props.getProperty("STATEMENT_CREATE_TOPIC_VERSION_PREVIOUS_INDEX");
 		STATEMENT_CREATE_TOPIC_VERSION_USER_DISPLAY_INDEX = props.getProperty("STATEMENT_CREATE_TOPIC_VERSION_USER_DISPLAY_INDEX");
 		STATEMENT_CREATE_TOPIC_VERSION_USER_ID_INDEX = props.getProperty("STATEMENT_CREATE_TOPIC_VERSION_USER_ID_INDEX");
+		STATEMENT_CREATE_USER_BLOCK_TABLE        = props.getProperty("STATEMENT_CREATE_USER_BLOCK_TABLE");
 		STATEMENT_CREATE_USERS_TABLE             = props.getProperty("STATEMENT_CREATE_USERS_TABLE");
 		STATEMENT_CREATE_WIKI_FILE_TABLE         = props.getProperty("STATEMENT_CREATE_WIKI_FILE_TABLE");
 		STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE = props.getProperty("STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE");
@@ -1187,6 +1227,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_DROP_TOPIC_TABLE               = props.getProperty("STATEMENT_DROP_TOPIC_TABLE");
 		STATEMENT_DROP_TOPIC_LINKS_TABLE         = props.getProperty("STATEMENT_DROP_TOPIC_LINKS_TABLE");
 		STATEMENT_DROP_TOPIC_VERSION_TABLE       = props.getProperty("STATEMENT_DROP_TOPIC_VERSION_TABLE");
+		STATEMENT_DROP_USER_BLOCK_TABLE          = props.getProperty("STATEMENT_DROP_USER_BLOCK_TABLE");
 		STATEMENT_DROP_USERS_TABLE               = props.getProperty("STATEMENT_DROP_USERS_TABLE");
 		STATEMENT_DROP_VIRTUAL_WIKI_TABLE        = props.getProperty("STATEMENT_DROP_VIRTUAL_WIKI_TABLE");
 		STATEMENT_DROP_WATCHLIST_TABLE           = props.getProperty("STATEMENT_DROP_WATCHLIST_TABLE");
@@ -1220,6 +1261,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_INSERT_TOPIC_VERSION           = props.getProperty("STATEMENT_INSERT_TOPIC_VERSION");
 		STATEMENT_INSERT_TOPIC_VERSION_AUTO_INCREMENT = props.getProperty("STATEMENT_INSERT_TOPIC_VERSION_AUTO_INCREMENT");
 		STATEMENT_INSERT_USER                    = props.getProperty("STATEMENT_INSERT_USER");
+		STATEMENT_INSERT_USER_BLOCK              = props.getProperty("STATEMENT_INSERT_USER_BLOCK");
+		STATEMENT_INSERT_USER_BLOCK_AUTO_INCREMENT = props.getProperty("STATEMENT_INSERT_USER_BLOCK_AUTO_INCREMENT");
 		STATEMENT_INSERT_VIRTUAL_WIKI            = props.getProperty("STATEMENT_INSERT_VIRTUAL_WIKI");
 		STATEMENT_INSERT_VIRTUAL_WIKI_AUTO_INCREMENT = props.getProperty("STATEMENT_INSERT_VIRTUAL_WIKI_AUTO_INCREMENT");
 		STATEMENT_INSERT_WATCHLIST_ENTRY         = props.getProperty("STATEMENT_INSERT_WATCHLIST_ENTRY");
@@ -1263,6 +1306,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_TOPIC_VERSION           = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION");
 		STATEMENT_SELECT_TOPIC_VERSION_NEXT_ID   = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION_NEXT_ID");
 		STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE  = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE");
+		STATEMENT_SELECT_USER_BLOCKS              = props.getProperty("STATEMENT_SELECT_USER_BLOCKS");
+		STATEMENT_SELECT_USER_BLOCKS_SEQUENCE     = props.getProperty("STATEMENT_SELECT_USER_BLOCKS_SEQUENCE");
 		STATEMENT_SELECT_USERS_AUTHENTICATION    = props.getProperty("STATEMENT_SELECT_USERS_AUTHENTICATION");
 		STATEMENT_SELECT_VIRTUAL_WIKIS           = props.getProperty("STATEMENT_SELECT_VIRTUAL_WIKIS");
 		STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE   = props.getProperty("STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE");
@@ -1290,6 +1335,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_UPDATE_TOPIC_VERSION           = props.getProperty("STATEMENT_UPDATE_TOPIC_VERSION");
 		STATEMENT_UPDATE_TOPIC_VERSION_PREVIOUS_VERSION_ID = props.getProperty("STATEMENT_UPDATE_TOPIC_VERSION_PREVIOUS_VERSION_ID");
 		STATEMENT_UPDATE_USER                    = props.getProperty("STATEMENT_UPDATE_USER");
+		STATEMENT_UPDATE_USER_BLOCK              = props.getProperty("STATEMENT_UPDATE_USER_BLOCK");
 		STATEMENT_UPDATE_VIRTUAL_WIKI            = props.getProperty("STATEMENT_UPDATE_VIRTUAL_WIKI");
 		STATEMENT_UPDATE_WIKI_FILE               = props.getProperty("STATEMENT_UPDATE_WIKI_FILE");
 		STATEMENT_UPDATE_WIKI_USER               = props.getProperty("STATEMENT_UPDATE_WIKI_USER");
@@ -1451,6 +1497,27 @@ public class AnsiQueryHandler implements QueryHandler {
 		topicVersion.setEditType(rs.getInt("edit_type"));
 		topicVersion.setAuthorDisplay(rs.getString("wiki_user_display"));
 		return topicVersion;
+	}
+
+	/**
+	 *
+	 */
+	private UserBlock initUserBlock(ResultSet rs) throws SQLException {
+		Integer wikiUserId = (rs.getInt("wiki_user_id") > 0) ? rs.getInt("wiki_user_id") : null;
+		String ipAddress = rs.getString("ip_address");
+		Timestamp blockEndDate = rs.getTimestamp("block_end_date");
+		int blockedByUserId = rs.getInt("blocked_by_user_id");
+		UserBlock userBlock = new UserBlock(wikiUserId, ipAddress, blockEndDate, blockedByUserId);
+		userBlock.setBlockId(rs.getInt("user_block_id"));
+		userBlock.setBlockDate(rs.getTimestamp("block_date"));
+		userBlock.setBlockReason(rs.getString("block_reason"));
+		userBlock.setUnblockDate(rs.getTimestamp("unblock_date"));
+		userBlock.setUnblockReason(rs.getString("unblock_reason"));
+		int unblockedByUserId = rs.getInt("unblocked_by_user_id");
+		if (unblockedByUserId > 0) {
+			userBlock.setUnblockedByUserId(unblockedByUserId);
+		}
+		return userBlock;
 	}
 
 	/**
@@ -1832,12 +1899,12 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertUserDetails(WikiUserDetails userDetails, Connection conn) throws SQLException {
+	public void insertUserAuthority(String username, String authority, Connection conn) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			stmt = conn.prepareStatement(STATEMENT_INSERT_USER);
-			stmt.setString(1, userDetails.getUsername());
-			stmt.setString(2, userDetails.getPassword());
+			stmt = conn.prepareStatement(STATEMENT_INSERT_AUTHORITY);
+			stmt.setString(1, username);
+			stmt.setString(2, authority);
 			stmt.executeUpdate();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
@@ -1847,12 +1914,59 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertUserAuthority(String username, String authority, Connection conn) throws SQLException {
+	public void insertUserBlock(UserBlock userBlock, Connection conn) throws SQLException {
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			int index = 1;
+			if (!this.autoIncrementPrimaryKeys()) {
+				stmt = conn.prepareStatement(STATEMENT_INSERT_USER_BLOCK);
+				int blockId = this.nextUserBlockId(conn);
+				userBlock.setBlockId(blockId);
+				stmt.setInt(index++, userBlock.getBlockId());
+			} else {
+				stmt = conn.prepareStatement(STATEMENT_INSERT_USER_BLOCK_AUTO_INCREMENT, Statement.RETURN_GENERATED_KEYS);
+			}
+			if (userBlock.getWikiUserId() == null) {
+				stmt.setNull(index++, Types.INTEGER);
+			} else {
+				stmt.setInt(index++, userBlock.getWikiUserId());
+			}
+			stmt.setString(index++, userBlock.getIpAddress());
+			stmt.setTimestamp(index++, userBlock.getBlockDate());
+			stmt.setTimestamp(index++, userBlock.getBlockEndDate());
+			stmt.setString(index++, userBlock.getBlockReason());
+			stmt.setInt(index++, userBlock.getBlockedByUserId());
+			stmt.setTimestamp(index++, userBlock.getUnblockDate());
+			stmt.setString(index++, userBlock.getUnblockReason());
+			if (userBlock.getUnblockedByUserId() == null) {
+				stmt.setNull(index++, Types.INTEGER);
+			} else {
+				stmt.setInt(index++, userBlock.getUnblockedByUserId());
+			}
+			stmt.executeUpdate();
+			if (this.autoIncrementPrimaryKeys()) {
+				rs = stmt.getGeneratedKeys();
+				if (!rs.next()) {
+					throw new SQLException("Unable to determine auto-generated ID for database record");
+				}
+				userBlock.setBlockId(rs.getInt(1));
+			}
+		} finally {
+			// close only the statement and result set - leave the connection open for further use
+			DatabaseConnection.closeConnection(null, stmt, rs);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void insertUserDetails(WikiUserDetails userDetails, Connection conn) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
-			stmt = conn.prepareStatement(STATEMENT_INSERT_AUTHORITY);
-			stmt.setString(1, username);
-			stmt.setString(2, authority);
+			stmt = conn.prepareStatement(STATEMENT_INSERT_USER);
+			stmt.setString(1, userDetails.getUsername());
+			stmt.setString(2, userDetails.getPassword());
 			stmt.executeUpdate();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);
@@ -2663,6 +2777,20 @@ public class AnsiQueryHandler implements QueryHandler {
 	}
 
 	/**
+	 * Retrieve the next available user block id from the user block table.
+	 *
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @return The next available user block id from the user block table.
+	 * @throws SQLException Thrown if any error occurs during method execution.
+	 */
+	private int nextUserBlockId(Connection conn) throws SQLException {
+		int nextId = DatabaseConnection.executeSequenceQuery(STATEMENT_SELECT_USER_BLOCKS_SEQUENCE, "user_block_id", conn);
+		// note - this returns the last id in the system, so add one
+		return nextId + 1;
+	}
+
+	/**
 	 * Retrieve the next available virtual wiki id from the virtual wiki table.
 	 *
 	 * @param conn A database connection to use when connecting to the database
@@ -3024,6 +3152,37 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(9, topicVersion.getCharactersChanged());
 			stmt.setString(10, topicVersion.getVersionParamString());
 			stmt.setInt(11, topicVersion.getTopicVersionId());
+			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void updateUserBlock(UserBlock userBlock, Connection conn) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(STATEMENT_UPDATE_USER_BLOCK);
+			if (userBlock.getWikiUserId() == null) {
+				stmt.setNull(1, Types.INTEGER);
+			} else {
+				stmt.setInt(1, userBlock.getWikiUserId());
+			}
+			stmt.setString(2, userBlock.getIpAddress());
+			stmt.setTimestamp(3, userBlock.getBlockDate());
+			stmt.setTimestamp(4, userBlock.getBlockEndDate());
+			stmt.setString(5, userBlock.getBlockReason());
+			stmt.setInt(6, userBlock.getBlockedByUserId());
+			stmt.setTimestamp(7, userBlock.getUnblockDate());
+			stmt.setString(8, userBlock.getUnblockReason());
+			if (userBlock.getUnblockedByUserId() == null) {
+				stmt.setNull(9, Types.INTEGER);
+			} else {
+				stmt.setInt(9, userBlock.getUnblockedByUserId());
+			}
+			stmt.setInt(10, userBlock.getBlockId());
 			stmt.executeUpdate();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);

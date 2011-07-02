@@ -45,6 +45,7 @@ import org.jamwiki.model.RoleMap;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicType;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.UserBlock;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiFile;
@@ -58,6 +59,7 @@ import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Pagination;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -78,6 +80,7 @@ public class AnsiDataHandler implements DataHandler {
 	private static final String CACHE_TOPICS_BY_ID = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS_BY_ID";
 	private static final String CACHE_TOPICS_BY_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS_BY_NAME";
 	private static final String CACHE_TOPIC_VERSIONS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPIC_VERSIONS";
+	private static final String CACHE_USER_BLOCKS_ACTIVE = "org.jamwiki.db.AnsiDataHandler.CACHE_USER_BLOCKS_ACTIVE";
 	private static final String CACHE_USER_BY_USER_ID = "org.jamwiki.db.AnsiDataHandler.CACHE_USER_BY_USER_ID";
 	private static final String CACHE_USER_BY_USER_NAME = "org.jamwiki.db.AnsiDataHandler.CACHE_USER_BY_USER_NAME";
 	private static final String CACHE_VIRTUAL_WIKI_LIST = "org.jamwiki.db.AnsiDataHandler.CACHE_VIRTUAL_WIKI_LIST";
@@ -186,6 +189,18 @@ public class AnsiDataHandler implements DataHandler {
 			throw new DataAccessException(e);
 		}
 		topic.setCurrentVersionId(topicVersion.getTopicVersionId());
+	}
+
+	/**
+	 *
+	 */
+	private void addUserBlock(UserBlock userBlock, Connection conn) throws DataAccessException, WikiException {
+		try {
+			this.validateUserBlock(userBlock);
+			this.queryHandler().insertUserBlock(userBlock, conn);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		}
 	}
 
 	/**
@@ -650,6 +665,32 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public Map<Object, UserBlock> getUserBlocks() throws DataAccessException {
+		// for performance reasons cache all active blocks.  in general there
+		// shouldn't be a huge number of active blocks at any given time, so
+		// rather than hit the database for every page request to verify whether
+		// or not the user is blocked it is far more efficient to cache the few
+		// active blocks and query against that cached list.
+		Element cacheElement = WikiCache.retrieveFromCache(CACHE_USER_BLOCKS_ACTIVE, CACHE_USER_BLOCKS_ACTIVE);
+		if (cacheElement != null) {
+			// note that due to caching some blocks may have expired, so the caller
+			// should be sure to check whether a result is still active or not
+			return (Map<Object, UserBlock>)cacheElement.getObjectValue();
+		}
+		Map<Object, UserBlock> userBlocks = new HashMap<Object, UserBlock>();
+		try {
+			Connection conn = DatabaseConnection.getConnection();
+			userBlocks = this.queryHandler().getUserBlocks(conn);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		}
+		WikiCache.addToCache(CACHE_USER_BLOCKS_ACTIVE, CACHE_USER_BLOCKS_ACTIVE, userBlocks);
+		return userBlocks;
+	}
+
+	/**
+	 *
+	 */
 	public List<RecentChange> getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws DataAccessException {
 		try {
 			if (this.lookupWikiUser(userString) != null) {
@@ -1060,6 +1101,22 @@ public class AnsiDataHandler implements DataHandler {
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
+	}
+
+	/**
+	 *
+	 */
+	public UserBlock lookupUserBlock(Integer wikiUserId, String ipAddress) throws DataAccessException {
+		Map<Object, UserBlock> userBlocks = this.getUserBlocks();
+		UserBlock userBlock = null;
+		if (wikiUserId != null) {
+			userBlock = userBlocks.get(wikiUserId);
+		}
+		if (userBlock == null && ipAddress != null) {
+			userBlock = userBlocks.get(ipAddress);
+		}
+		// verify that the block has not expired since being cached
+		return (userBlock != null && userBlock.isExpired()) ? null : userBlock;
 	}
 
 	/**
@@ -1505,6 +1562,18 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	private void updateUserBlock(UserBlock userBlock, Connection conn) throws DataAccessException, WikiException {
+		this.validateUserBlock(userBlock);
+		try {
+			this.queryHandler().updateUserBlock(userBlock, conn);
+		} catch (SQLException e) {
+			throw new DataAccessException(e);
+		}
+	}
+
+	/**
+	 *
+	 */
 	private void updateUserDetails(WikiUserDetails userDetails, Connection conn) throws DataAccessException, WikiException {
 		this.validateUserDetails(userDetails);
 		try {
@@ -1666,6 +1735,14 @@ public class AnsiDataHandler implements DataHandler {
 		checkLength(topicVersion.getAuthorDisplay(), 100);
 		checkLength(topicVersion.getVersionParamString(), 500);
 		topicVersion.setEditComment(StringUtils.substring(topicVersion.getEditComment(), 0, 200));
+	}
+
+	/**
+	 *
+	 */
+	protected void validateUserBlock(UserBlock userBlock) throws WikiException {
+		checkLength(userBlock.getBlockReason(), 200);
+		checkLength(userBlock.getUnblockReason(), 200);
 	}
 
 	/**
@@ -2021,6 +2098,34 @@ public class AnsiDataHandler implements DataHandler {
 		} finally {
 			DatabaseConnection.closeConnection(conn);
 		}
+	}
+
+	/**
+	 *
+	 */
+	public void writeUserBlock(UserBlock userBlock) throws DataAccessException, WikiException {
+		TransactionStatus status = null;
+		try {
+			status = DatabaseConnection.startTransaction();
+			Connection conn = DatabaseConnection.getConnection();
+			if (userBlock.getBlockId() <= 0) {
+				this.addUserBlock(userBlock, conn);
+			} else {
+				this.updateUserBlock(userBlock, conn);
+			}
+		} catch (DataAccessException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			throw e;
+		} catch (SQLException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			throw new DataAccessException(e);
+		} catch (WikiException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			throw e;
+		}
+		DatabaseConnection.commit(status);
+		// flush the cache
+		WikiCache.removeAllFromCache(CACHE_USER_BLOCKS_ACTIVE);
 	}
 
 	/**
