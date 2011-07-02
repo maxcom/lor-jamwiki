@@ -24,15 +24,12 @@
 
 <div id="blocks">
 
-<c:if test="${!empty items}">
-<div class="message"><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${itemCount}" rootUrl="Special:BlockList" /></div>
-</c:if>
-
 <c:choose>
 	<c:when test="${empty items}">
-		<fmt:message key="blocklist.caption.none" />
+		<div class="message"><fmt:message key="blocklist.caption.none" /></div>
 	</c:when>
 	<c:otherwise>
+		<div class="message"><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${itemCount}" rootUrl="Special:BlockList" /></div>
 		<ul>
 		<c:forEach items="${items}" var="userBlock">
 		<li>
