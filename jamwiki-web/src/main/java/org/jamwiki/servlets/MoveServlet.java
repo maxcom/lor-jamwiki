@@ -46,6 +46,11 @@ public class MoveServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		// verify that the user is not blocked from renaming pages
+		ModelAndView blockedUserModelAndView = ServletUtil.viewIfBlocked(request, pageInfo);
+		if (blockedUserModelAndView != null) {
+			return blockedUserModelAndView;
+		}
 		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		if (!userDetails.hasRole(Role.ROLE_MOVE)) {
 			WikiMessage messageObject = new WikiMessage("login.message.move");

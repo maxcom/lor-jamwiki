@@ -50,6 +50,7 @@ import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicType;
+import org.jamwiki.model.UserBlock;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiFileVersion;
@@ -580,6 +581,26 @@ public class ServletUtil {
 	}
 
 	/**
+	 * Utility method for determining if the current user is blocked or not.
+	 *
+	 * @param request The servlet request object.
+	 * @return The active user block record if the user is blocked, or
+	 *  <code>null</code> if the current user is not blocked.
+	 */
+	private static UserBlock retrieveCurrentUserBlock(HttpServletRequest request) {
+		WikiUser wikiUser = ServletUtil.currentWikiUser();
+		Integer wikiUserId = (wikiUser.getUserId() > 0) ? wikiUser.getUserId() : null;
+		String ipAddress = request.getRemoteAddr();
+		UserBlock userBlock = null;
+		try {
+			userBlock = WikiBase.getDataHandler().lookupUserBlock(wikiUserId, ipAddress);
+		} catch (DataAccessException e) {
+			logger.error("Data access exception while retrieving user block status, e");
+		}
+		return userBlock;
+	}
+
+	/**
 	 * Users can specify a default locale in their preferences, so determine
 	 * if the current user is logged-in and has chosen a locale.  If not, use
 	 * the default locale from the request object.
@@ -693,6 +714,48 @@ public class ServletUtil {
 			errors.add(new WikiMessage("error.parserclass", parserClass));
 		}
 		return errors;
+	}
+
+	/**
+	 * Utility method used when determining if a user is blocked.  If the
+	 * user is blocked this method will return a ModelAndView object
+	 * appropriate for the blocked user page.
+	 *
+	 * @param request The servlet request object.
+	 * @param pageInfo The current WikiPageInfo object, which contains
+	 *  information needed for rendering the final JSP page.
+	 * @return Returns a ModelAndView object corresponding to the blocked
+	 *  user page display if the user is blocked, <code>null</code>
+	 *  otherwise.
+	 * @throws WikiException Thrown if any error occurs during processing.
+	 */
+	protected static ModelAndView viewIfBlocked(HttpServletRequest request, WikiPageInfo pageInfo) throws WikiException {
+		UserBlock userBlock = ServletUtil.retrieveCurrentUserBlock(request);
+		if (userBlock == null) {
+			return null;
+		}
+		String blockedBy = null;
+		String blockedByUserPage = null;
+		String blockTarget = userBlock.getIpAddress();
+		try {
+			blockedBy = WikiBase.getDataHandler().lookupWikiUser(userBlock.getBlockedByUserId()).getUsername();
+			blockedByUserPage = Namespace.namespace(Namespace.USER_ID).getLabel(pageInfo.getVirtualWikiName()) + Namespace.SEPARATOR + blockedBy;
+			if (userBlock.getWikiUserId() != null) {
+				blockTarget = WikiBase.getDataHandler().lookupWikiUser(userBlock.getWikiUserId()).getUsername();
+			}
+		} catch (DataAccessException e) {
+			logger.error("Failure while retrieving user block details for block " + userBlock.getBlockId(), e);
+		}
+		ModelAndView next = new ModelAndView("wiki");
+		pageInfo.reset();
+		pageInfo.setPageTitle(new WikiMessage("userblock.title"));
+		pageInfo.setContentJsp(JAMWikiServlet.JSP_BLOCKED);
+		pageInfo.setSpecial(true);
+		next.addObject("userBlock", userBlock);
+		next.addObject("blockedBy", blockedBy);
+		next.addObject("blockedByUserPage", blockedByUserPage);
+		next.addObject("blockTarget", blockTarget);
+		return next;
 	}
 
 	/**

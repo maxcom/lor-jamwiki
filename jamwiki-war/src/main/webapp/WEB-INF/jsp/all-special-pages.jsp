@@ -65,6 +65,7 @@
 <li><jamwiki:link value="Special:VirtualWiki"><fmt:message key="specialpages.caption.vwiki" /></jamwiki:link></li>
 <li><jamwiki:link value="Special:Roles"><fmt:message key="specialpages.caption.roles" /></jamwiki:link></li>
 <li><jamwiki:link value="Special:Translation"><fmt:message key="specialpages.caption.translation" /></jamwiki:link></li>
+<li><jamwiki:link value="Special:Block"><fmt:message key="specialpages.caption.block" /></jamwiki:link></li>
 <li><jamwiki:link value="Special:Setup"><fmt:message key="specialpages.caption.setup" /></jamwiki:link></li>
 <li><jamwiki:link value="Special:Upgrade"><fmt:message key="specialpages.caption.upgrade" /></jamwiki:link></li>
 </ul>

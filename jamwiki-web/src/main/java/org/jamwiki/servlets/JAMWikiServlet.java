@@ -51,8 +51,10 @@ public abstract class JAMWikiServlet extends AbstractController {
 	protected boolean layout = true;
 	/** The prefix of the JSP file used to display the servlet output. */
 	protected String displayJSP = "wiki";
+	/** The name of the JSP file used to render the servlet output in case the user is blocked. */
+	protected static final String JSP_BLOCKED = "blocked.jsp";
 	/** The name of the JSP file used to render the servlet output in case of errors. */
-	private static final String JSP_ERROR = "error-display.jsp";
+	protected static final String JSP_ERROR = "error-display.jsp";
 	/** The name of the JSP file used to render the servlet output for logins. */
 	protected static final String JSP_LOGIN = "login.jsp";
 	/** The name of the JSP file used to render the servlet output. */

@@ -24,6 +24,7 @@
 		To remove all Spring Security processing from a page use the filters="none" attribute.
 		-->
 		<intercept-url pattern="/**/Special:Admin" access="ROLE_SYSADMIN" />
+		<intercept-url pattern="/**/Special:Block" access="ROLE_ADMIN" />
 		<intercept-url pattern="/**/Special:Edit" access="ROLE_EDIT_EXISTING,ROLE_EDIT_NEW" />
 		<intercept-url pattern="/**/Special:Import" access="ROLE_IMPORT" />
 		<intercept-url pattern="/**/Special:Login" access="IS_AUTHENTICATED_ANONYMOUSLY" />

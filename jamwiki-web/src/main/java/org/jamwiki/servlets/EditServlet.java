@@ -57,9 +57,17 @@ public class EditServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		ModelAndView loginRequired = loginRequired(request, pageInfo);
-		if (loginRequired != null) {
-			return loginRequired;
+		// verify that the user is not blocked from editing
+		ModelAndView blockedUserModelAndView = ServletUtil.viewIfBlocked(request, pageInfo);
+		if (blockedUserModelAndView != null) {
+			return blockedUserModelAndView;
+		}
+		// verify that the user is allowed to edit - since there are different permissions
+		// for editing new vs existing topics the Spring Security permissions are not
+		// sufficient for handling all checks.
+		ModelAndView loginRequiredModelAndView = loginRequired(request, pageInfo);
+		if (loginRequiredModelAndView != null) {
+			return loginRequiredModelAndView;
 		}
 		if (isSave(request)) {
 			save(request, next, pageInfo);
