@@ -33,6 +33,7 @@ public class LogItem {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(LogItem.class.getName());
 	public static final int LOG_TYPE_ALL = -1;
+	public static final int LOG_TYPE_BLOCK = 13;
 	public static final int LOG_TYPE_DELETE = 1;
 	public static final int LOG_TYPE_IMPORT = 2;
 	public static final int LOG_TYPE_MOVE = 3;
@@ -42,9 +43,12 @@ public class LogItem {
 	public static final int LOG_SUBTYPE_DELETE_DELETE = 10;
 	public static final int LOG_SUBTYPE_DELETE_UNDELETE = 11;
 	public static final int LOG_SUBTYPE_DELETE_PURGE = 12;
+	public static final int LOG_SUBTYPE_BLOCK_BLOCK = 130;
+	public static final int LOG_SUBTYPE_BLOCK_UNBLOCK = 131;
 	public static Map<Integer, String> LOG_TYPES = new LinkedHashMap<Integer, String>();
 	static {
 		LOG_TYPES.put(LOG_TYPE_ALL, "log.caption.log.all");
+		LOG_TYPES.put(LOG_TYPE_BLOCK, "log.caption.log.block");
 		LOG_TYPES.put(LOG_TYPE_DELETE, "log.caption.log.deletion");
 		LOG_TYPES.put(LOG_TYPE_IMPORT, "log.caption.log.import");
 		LOG_TYPES.put(LOG_TYPE_MOVE, "log.caption.log.move");
@@ -138,6 +142,36 @@ public class LogItem {
 	}
 
 	/**
+	 * Create a log item from a user block record.
+	 */
+	public static LogItem initLogItem(UserBlock userBlock, String virtualWiki) {
+		LogItem logItem = new LogItem();
+		logItem.setLogType(LOG_TYPE_BLOCK);
+		if (userBlock.getUnblockDate() == null) {
+			logItem.setLogSubType(LOG_SUBTYPE_BLOCK_BLOCK);
+			logItem.setLogDate(userBlock.getBlockDate());
+			logItem.setUserDisplayName(userBlock.getBlockedByUsername());
+			logItem.setUserId(userBlock.getBlockedByUserId());
+			logItem.setLogComment(userBlock.getBlockReason());
+			// format block log is "{0} blocked until {1}"
+			logItem.addLogParam(userBlock.getBlockedUsernameOrIpAddress());
+			if (userBlock.getBlockEndDate() != null) {
+				logItem.addLogParam(userBlock.getBlockEndDate().toString());
+			}
+		} else {
+			logItem.setLogSubType(LOG_SUBTYPE_BLOCK_UNBLOCK);
+			logItem.setLogDate(userBlock.getUnblockDate());
+			logItem.setUserDisplayName(userBlock.getUnblockedByUsername());
+			logItem.setUserId(userBlock.getUnblockedByUserId());
+			logItem.setLogComment(userBlock.getUnblockReason());
+			// format block log is "{0} unblocked"
+			logItem.addLogParam(userBlock.getBlockedUsernameOrIpAddress());
+		}
+		logItem.setVirtualWiki(virtualWiki);
+		return logItem;
+	}
+
+	/**
 	 * Create a log item from a topic, topic version and author name for the case of
 	 * a topic version deletion.
 	 */
@@ -168,7 +202,24 @@ public class LogItem {
 			logParams = logParamString.split("\\|");
 		}
 		WikiMessage logWikiMessage = null;
-		if (logType == LogItem.LOG_TYPE_DELETE) {
+		if (logType == LogItem.LOG_TYPE_BLOCK) {
+			if (logSubType.intValue() == LOG_SUBTYPE_BLOCK_BLOCK) {
+				if (logParams.length == 1) {
+					logWikiMessage = new WikiMessage("log.message.blockinfinite");
+				} else {
+					logWikiMessage = new WikiMessage("log.message.block");
+				}
+				// params are the blocked user and the block expiration.
+				logWikiMessage.addWikiLinkParam(logParams[0]);
+				if (logParams.length > 1) {
+					logWikiMessage.addParam(logParams[1]);
+				}
+			} else {
+				logWikiMessage = new WikiMessage("log.message.unblock");
+				// param is the unblocked user.
+				logWikiMessage.addWikiLinkParam(logParams[0]);
+			}
+		} else if (logType == LogItem.LOG_TYPE_DELETE) {
 			if (logSubType != null && logSubType.intValue() == LOG_SUBTYPE_DELETE_UNDELETE) {
 				logWikiMessage = new WikiMessage("log.message.undeletion");
 			} else if (logSubType != null && logSubType.intValue() == LOG_SUBTYPE_DELETE_PURGE) {
@@ -386,6 +437,13 @@ public class LogItem {
 	 */
 	public void setVirtualWiki(String virtualWiki) {
 		this.virtualWiki = virtualWiki;
+	}
+
+	/**
+	 *
+	 */
+	public boolean isBlock() {
+		return this.logType == LOG_TYPE_BLOCK;
 	}
 
 	/**

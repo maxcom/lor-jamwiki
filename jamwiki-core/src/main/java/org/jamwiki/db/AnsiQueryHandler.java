@@ -146,9 +146,11 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_INSERT_GROUP_MEMBER_AUTO_INCREMENT = null;
 	protected static String STATEMENT_INSERT_INTERWIKI = null;
 	protected static String STATEMENT_INSERT_LOG_ITEM = null;
+	protected static String STATEMENT_INSERT_LOG_ITEMS_BLOCK = null;
 	protected static String STATEMENT_INSERT_LOG_ITEMS_BY_TOPIC_VERSION_TYPE = null;
 	protected static String STATEMENT_INSERT_LOG_ITEMS_IMPORT = null;
 	protected static String STATEMENT_INSERT_LOG_ITEMS_MOVE = null;
+	protected static String STATEMENT_INSERT_LOG_ITEMS_UNBLOCK = null;
 	protected static String STATEMENT_INSERT_LOG_ITEMS_UPLOAD = null;
 	protected static String STATEMENT_INSERT_LOG_ITEMS_USER = null;
 	protected static String STATEMENT_INSERT_NAMESPACE = null;
@@ -1256,9 +1258,11 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_INSERT_GROUP_MEMBER_AUTO_INCREMENT = props.getProperty("STATEMENT_INSERT_GROUP_MEMBER_AUTO_INCREMENT");
 		STATEMENT_INSERT_INTERWIKI               = props.getProperty("STATEMENT_INSERT_INTERWIKI");
 		STATEMENT_INSERT_LOG_ITEM                = props.getProperty("STATEMENT_INSERT_LOG_ITEM");
+		STATEMENT_INSERT_LOG_ITEMS_BLOCK         = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_BLOCK");
 		STATEMENT_INSERT_LOG_ITEMS_BY_TOPIC_VERSION_TYPE = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_BY_TOPIC_VERSION_TYPE");
 		STATEMENT_INSERT_LOG_ITEMS_IMPORT        = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_IMPORT");
 		STATEMENT_INSERT_LOG_ITEMS_MOVE          = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_MOVE");
+		STATEMENT_INSERT_LOG_ITEMS_UNBLOCK       = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_UNBLOCK");
 		STATEMENT_INSERT_LOG_ITEMS_UPLOAD        = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_UPLOAD");
 		STATEMENT_INSERT_LOG_ITEMS_USER          = props.getProperty("STATEMENT_INSERT_LOG_ITEMS_USER");
 		STATEMENT_INSERT_NAMESPACE               = props.getProperty("STATEMENT_INSERT_NAMESPACE");
@@ -2958,6 +2962,24 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt = conn.prepareStatement(STATEMENT_INSERT_LOG_ITEMS_USER);
 			stmt.setInt(1, virtualWikiId);
 			stmt.setInt(2, LogItem.LOG_TYPE_USER_CREATION);
+			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+		try {
+			stmt = conn.prepareStatement(STATEMENT_INSERT_LOG_ITEMS_BLOCK);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setInt(2, LogItem.LOG_TYPE_BLOCK);
+			stmt.setInt(3, LogItem.LOG_SUBTYPE_BLOCK_BLOCK);
+			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+		try {
+			stmt = conn.prepareStatement(STATEMENT_INSERT_LOG_ITEMS_UNBLOCK);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setInt(2, LogItem.LOG_TYPE_BLOCK);
+			stmt.setInt(3, LogItem.LOG_SUBTYPE_BLOCK_UNBLOCK);
 			stmt.executeUpdate();
 		} finally {
 			DatabaseConnection.closeStatement(stmt);

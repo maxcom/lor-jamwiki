@@ -385,6 +385,13 @@ public class RecentChange {
 	/**
 	 *
 	 */
+	public boolean isBlock() {
+		return (this.logType != null && this.logType == LogItem.LOG_TYPE_BLOCK);
+	}
+
+	/**
+	 *
+	 */
 	public boolean isDelete() {
 		if (this.editType != null && this.editType == TopicVersion.EDIT_DELETE) {
 			return true;

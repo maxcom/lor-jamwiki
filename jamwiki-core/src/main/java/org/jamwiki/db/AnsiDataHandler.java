@@ -2113,6 +2113,14 @@ public class AnsiDataHandler implements DataHandler {
 			} else {
 				this.updateUserBlock(userBlock, conn);
 			}
+			// FIXME - reconsider this approach of separate entries for every virtual wiki
+			List<VirtualWiki> virtualWikis = this.getVirtualWikiList();
+			for (VirtualWiki virtualWiki : virtualWikis) {
+				LogItem logItem = LogItem.initLogItem(userBlock, virtualWiki.getName());
+				this.addLogItem(logItem, conn);
+				RecentChange change = RecentChange.initRecentChange(logItem);
+				this.addRecentChange(change, conn);
+			}
 		} catch (DataAccessException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
