@@ -401,10 +401,18 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt = conn.prepareStatement(STATEMENT_DELETE_LOG_ITEMS_BY_TOPIC_VERSION);
 			stmt.setInt(1, topicVersionId);
 			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+		try {
 			// delete references to the topic version from the recent changes table
 			stmt = conn.prepareStatement(STATEMENT_DELETE_RECENT_CHANGES_TOPIC_VERSION);
 			stmt.setInt(1, topicVersionId);
 			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+		try {
 			// update any recent changes that refer to this record as the previous record
 			stmt = conn.prepareStatement(STATEMENT_UPDATE_RECENT_CHANGES_PREVIOUS_VERSION_ID);
 			if (previousTopicVersionId != null) {
@@ -414,6 +422,10 @@ public class AnsiQueryHandler implements QueryHandler {
 			}
 			stmt.setInt(2, topicVersionId);
 			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+		try {
 			// delete the topic version record
 			stmt = conn.prepareStatement(STATEMENT_DELETE_TOPIC_VERSION);
 			stmt.setInt(1, topicVersionId);
@@ -2315,6 +2327,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		boolean closeConnection = (conn == null);
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
+		Topic topic = null;
 		try {
 			if (conn == null) {
 				conn = DatabaseConnection.getConnection();
@@ -2324,7 +2337,11 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(2, virtualWikiId);
 			stmt.setInt(3, namespace.getId());
 			rs = stmt.executeQuery();
-			Topic topic = (rs.next() ? this.initTopic(rs, virtualWikiName) : null);
+			topic = (rs.next() ? this.initTopic(rs, virtualWikiName) : null);
+		} finally {
+			DatabaseConnection.closeConnection(null, stmt, rs);
+		}
+		try {
 			if (topic == null && !namespace.isCaseSensitive() && !pageName.toLowerCase().equals(pageName)) {
 				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_LOWER);
 				stmt.setString(1, pageName.toLowerCase());
@@ -2431,6 +2448,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
+		String topicName = null;
 		try {
 			conn = DatabaseConnection.getConnection();
 			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_NAME);
@@ -2438,7 +2456,11 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setInt(2, virtualWikiId);
 			stmt.setInt(3, namespace.getId());
 			rs = stmt.executeQuery();
-			String topicName = (rs.next() ? rs.getString("topic_name") : null);
+			topicName = (rs.next() ? rs.getString("topic_name") : null);
+		} finally {
+			DatabaseConnection.closeConnection(null, stmt, rs);
+		}
+		try {
 			if (topicName == null && !namespace.isCaseSensitive() && !pageName.toLowerCase().equals(pageName)) {
 				stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_NAME_LOWER);
 				stmt.setString(1, pageName.toLowerCase());
@@ -2871,40 +2893,68 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt = conn.prepareStatement(STATEMENT_DELETE_LOG_ITEMS);
 			stmt.setInt(1, virtualWikiId);
 			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+		try {
 			stmt = conn.prepareStatement(STATEMENT_INSERT_LOG_ITEMS_BY_TOPIC_VERSION_TYPE);
 			stmt.setInt(1, LogItem.LOG_TYPE_DELETE);
 			stmt.setString(2, "");
 			stmt.setInt(3, virtualWikiId);
 			stmt.setInt(4, TopicVersion.EDIT_DELETE);
 			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+		try {
 			stmt = conn.prepareStatement(STATEMENT_INSERT_LOG_ITEMS_BY_TOPIC_VERSION_TYPE);
 			stmt.setInt(1, LogItem.LOG_TYPE_DELETE);
 			stmt.setString(2, "|" + TopicVersion.EDIT_UNDELETE);
 			stmt.setInt(3, virtualWikiId);
 			stmt.setInt(4, TopicVersion.EDIT_UNDELETE);
 			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+		try {
 			stmt = conn.prepareStatement(STATEMENT_INSERT_LOG_ITEMS_BY_TOPIC_VERSION_TYPE);
 			stmt.setInt(1, LogItem.LOG_TYPE_PERMISSION);
 			stmt.setString(2, "");
 			stmt.setInt(3, virtualWikiId);
 			stmt.setInt(4, TopicVersion.EDIT_PERMISSION);
 			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+		try {
 			stmt = conn.prepareStatement(STATEMENT_INSERT_LOG_ITEMS_IMPORT);
 			stmt.setInt(1, LogItem.LOG_TYPE_IMPORT);
 			stmt.setInt(2, TopicVersion.EDIT_IMPORT);
 			stmt.setInt(3, virtualWikiId);
 			stmt.setInt(4, TopicVersion.EDIT_IMPORT);
 			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+		try {
 			stmt = conn.prepareStatement(STATEMENT_INSERT_LOG_ITEMS_MOVE);
 			stmt.setInt(1, LogItem.LOG_TYPE_MOVE);
 			stmt.setInt(2, virtualWikiId);
 			stmt.setInt(3, TopicVersion.EDIT_MOVE);
 			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+		try {
 			stmt = conn.prepareStatement(STATEMENT_INSERT_LOG_ITEMS_UPLOAD);
 			stmt.setInt(1, LogItem.LOG_TYPE_UPLOAD);
 			stmt.setInt(2, virtualWikiId);
 			stmt.setInt(3, TopicVersion.EDIT_NORMAL);
 			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+		try {
 			stmt = conn.prepareStatement(STATEMENT_INSERT_LOG_ITEMS_USER);
 			stmt.setInt(1, virtualWikiId);
 			stmt.setInt(2, LogItem.LOG_TYPE_USER_CREATION);
@@ -3044,6 +3094,10 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt = conn.prepareStatement(STATEMENT_DELETE_NAMESPACE_TRANSLATIONS);
 			stmt.setInt(1, virtualWikiId);
 			stmt.executeUpdate();
+		} finally {
+			DatabaseConnection.closeStatement(stmt);
+		}
+		try {
 			stmt = conn.prepareStatement(STATEMENT_INSERT_NAMESPACE_TRANSLATION);
 			String translatedNamespace;
 			for (Namespace namespace : namespaces) {
