@@ -42,7 +42,7 @@
 		</c:forEach>
 		</select>
 		&#160;&#160;
-		<input type="submit" value="<fmt:message key="common.go" />" />
+		<input type="submit" value="<fmt:message key="common.button.go" />" />
 	</div>
 	</fieldset>
 	</form>

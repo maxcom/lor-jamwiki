@@ -311,7 +311,7 @@
 </div>
 <div class="row">
 	<label><fmt:message key="admin.caption.migratedatabase" /></label>
-	<span><input type="submit" value="<fmt:message key="common.migrate" />" /></span>
+	<span><input type="submit" value="<fmt:message key="admin.persistence.button.migrate" />" /></span>
 </div>
 <input type="hidden" name="function" value="migrate" />
 </form>

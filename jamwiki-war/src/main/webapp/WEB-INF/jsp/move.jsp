@@ -51,7 +51,7 @@
 </div>
 </c:if>
 <div class="row">
-	<span class="form-button"><input type="submit" name="move" value="<fmt:message key="common.move" />" /></span>
+	<span class="form-button"><input type="submit" name="move" value="<fmt:message key="move.button.move" />" /></span>
 </div>
 </form>
 

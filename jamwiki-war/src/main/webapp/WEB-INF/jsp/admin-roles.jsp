@@ -71,7 +71,7 @@
 </c:forEach>
 </table>
 </div>
-<div align="center" style="padding:10px"><input type="submit" name="Submit" value="<fmt:message key="common.save" />" /></div>
+<div align="center" style="padding:10px"><input type="submit" name="Submit" value="<fmt:message key="common.button.save" />" /></div>
 </fieldset>
 </form>
 </div>
@@ -128,7 +128,7 @@
 </table>
 </div>
 <div class="row">
-	<span class="form-button"><input type="submit" name="Submit" value="<fmt:message key="common.save" />" /></span>
+	<span class="form-button"><input type="submit" name="Submit" value="<fmt:message key="common.button.save" />" /></span>
 </div>
 </form>
 </c:if>
@@ -162,7 +162,7 @@
 	<div class="formhelp"><fmt:message key="roles.help.roledescription" /></div>
 </div>
 <div class="row">
-	<span class="form-button"><input type="submit" name="Submit" value="<fmt:message key="common.save" />" /></span>
+	<span class="form-button"><input type="submit" name="Submit" value="<fmt:message key="common.button.save" />" /></span>
 </div>
 </fieldset>
 </form>

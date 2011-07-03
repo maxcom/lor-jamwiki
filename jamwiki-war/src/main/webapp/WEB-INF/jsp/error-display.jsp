@@ -36,6 +36,6 @@ function cancel() {
 <div class="contents">
 	<div class="message"><fmt:message key="error.caption" /></div>
 	<div class="message red"><jamwiki_t:wikiMessage message="${messageObject}" /></div>
-	<form><input type="button" onClick="cancel();" value="<fmt:message key="common.back" />" /></form>
+	<form><input type="button" onClick="cancel();" value="<fmt:message key="common.button.back" />" /></form>
 </div>
 

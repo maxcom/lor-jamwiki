@@ -46,7 +46,7 @@
 <td>
 <form name="adminTranslationEnter" method="get" action="<jamwiki:link value="Special:Translation" />">
 <input type="hidden" name="hideTranslated" value="<c:out value="${hideTranslated}" />" />
-<input type="text" name="language" size="5" value="<c:out value="${language}" />" />&#160;&#160;<input type="submit" name="submit" value="<fmt:message key="common.change" />" />
+<input type="text" name="language" size="5" value="<c:out value="${language}" />" />&#160;&#160;<input type="submit" name="submit" value="<fmt:message key="common.button.change" />" />
 </form>
 </td>
 </tr>
@@ -82,7 +82,7 @@
 </div>
 </c:forEach>
 <div class="row">
-	<span class="form-button"><input type="submit" name="function" value="<fmt:message key="common.save" />" /></span>
+	<span class="form-button"><input type="submit" name="function" value="<fmt:message key="common.button.save" />" /></span>
 </div>
 </form>
 

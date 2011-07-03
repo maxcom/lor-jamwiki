@@ -143,7 +143,7 @@
 </c:choose>
 
 <div class="row">
-	<span class="form-button"><input type="submit" name="function" value="<fmt:message key="common.save" />" /></span>
+	<span class="form-button"><input type="submit" name="function" value="<fmt:message key="common.button.save" />" /></span>
 </div>
 </form>
 

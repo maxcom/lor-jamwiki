@@ -42,7 +42,7 @@
 	<td><textarea name="description" rows="6" cols="80" id="uploadDescription"><c:out value="${contents}" escapeXml="true" /></textarea></td>
 </tr>
 <tr>
-	<td colspan="2" align="center"><input type="submit" name="save" value="<fmt:message key="common.save" />" /></td>
+	<td colspan="2" align="center"><input type="submit" name="save" value="<fmt:message key="common.button.save" />" /></td>
 </tr>
 </table>
 </form>

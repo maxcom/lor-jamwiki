@@ -62,7 +62,7 @@
 <div class="captcha"><div class="captcha-label"><fmt:message key="common.caption.captcha" /></div><jamwiki:recaptcha /></div>
 </c:if>
 <p>
-<input type="submit" name="save" value="<fmt:message key="common.save" />"  accesskey="s" />
+<input type="submit" name="save" value="<fmt:message key="common.button.save" />"  accesskey="s" />
 
 <jamwiki:enabled property="PROP_TOPIC_USE_PREVIEW"><input type="submit" name="preview" value="<fmt:message key="edit.action.preview" />" accesskey="p" /></jamwiki:enabled>
 <jamwiki:enabled property="PROP_TOPIC_USE_SHOW_CHANGES"><input type="submit" name="showChanges" value="<fmt:message key="edit.action.showchanges" />" accesskey="v" /></jamwiki:enabled>

@@ -72,7 +72,7 @@ if (exception != null) {
 		%>
 	</c:otherwise>
 </c:choose>
-<form action=""><input type="button" onClick="cancel();" value="<fmt:message key="common.back" />" /></form>
+<form action=""><input type="button" onClick="cancel();" value="<fmt:message key="common.button.back" />" /></form>
 
 </body>
 </html>

@@ -142,7 +142,7 @@
 	<div class="formhelp"><fmt:message key="admin.help.metadescription" /></div>
 </div>
 
-<c:set var="buttonLabel"><fmt:message key="common.add" /></c:set>
+<c:set var="buttonLabel"><fmt:message key="common.button.add" /></c:set>
 <c:if test="${!empty selected}">
 	<c:set var="buttonLabel"><fmt:message key="common.update" /></c:set>
 </c:if>
@@ -184,7 +184,7 @@
 	</span>
 </div>
 <div class="row">
-	<span class="form-button"><input type="submit" value="<fmt:message key="common.add" />" /></span>
+	<span class="form-button"><input type="submit" value="<fmt:message key="common.button.add" />" /></span>
 </div>
 </fieldset>
 </form>
@@ -296,7 +296,7 @@
 	<div class="formhelp"><fmt:message key="admin.vwiki.help.interwiki.display" /></div>
 </div>
 <div class="row">
-	<span class="form-button"><input type="submit" value="<fmt:message key="common.add" />" /></span>
+	<span class="form-button"><input type="submit" value="<fmt:message key="common.button.add" />" /></span>
 </div>
 </fieldset>
 </form>

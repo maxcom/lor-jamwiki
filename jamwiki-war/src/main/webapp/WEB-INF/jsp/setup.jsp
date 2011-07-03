@@ -78,7 +78,7 @@ td.formhelp {
 <c:if test="${!empty upgrade}">
 <tr><td colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><font color="red"><fmt:message key="setup.error.upgrade" /></font></td></tr>
-<tr><td colspan="2" align="center"><input type="submit" name="override" value="<fmt:message key="common.continue" />" /></td></tr>
+<tr><td colspan="2" align="center"><input type="submit" name="override" value="<fmt:message key="common.button.continue" />" /></td></tr>
 </c:if>
 <tr><td colspan="2">&#160;</td></tr>
 <tr>
