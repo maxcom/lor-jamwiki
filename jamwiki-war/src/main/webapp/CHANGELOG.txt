@@ -3,36 +3,36 @@
 
 New Features:
 
-  * Add support for the Mediawiki <gallery> tag for generating image galleries.
-  * Display HTML links of the form "[http://example.com]" using numbered links
-    instead of the URL, which matches Mediawiki behavior.  The legacy behavior
-    can be restored from the "Parser" tab of the Special:Admin page.
-  * Add a "View Source" tab to allow users who do not have permission to edit
-    a topic to view its wiki markup.
-  * Add a "Filter search results by namespace" option to the search page.
+  * Support blocking specific users and IP addresses from editing and uploading
+    via the new Special:Block, Special:Unblock and Special:BlockList pages.
   * Add optional reCAPTCHA support for combatting spam on the Special:Register
     and Special:Edit pages using captcha challenge-response.
-  * Add support for blocking users from editing and uploading via the new
-    Special:Block, Special:Unblock and Special:BlockList interfaces.
+  * Add support for the Mediawiki <gallery> tag for generating image galleries.
+  * Add a "Filter search results by namespace" option to the search page.
   * Improve search performance, exclude redirects from search indexing, and
     weight topic names more heavily than topic content to improve accuracy.
     Existing JAMWiki installs should rebuild their search index using the
     tools on the Special:Maintenance page.
+  * Add a "View Source" tab to allow users who do not have permission to edit
+    a topic to view its wiki markup.
   * Add the ability for sysadmins to permanently delete topic versions from the
     Special:Manage page.  Requested by Tan-Vinh Nguyen.
   * Allow viewing of deleted topic versions from the Special:Manage page.
-  * Enable DBCP prepared statement pooling to improve performance.
-  * Add support for the universal edit button plugin.  See 
-    http://universaleditbutton.org for further details.
+  * Display HTML links of the form "[http://example.com]" using numbered links
+    instead of the URL, which matches Mediawiki behavior.  The legacy behavior
+    can be restored from the "Parser" tab of the Special:Admin page.
   * Automatically display virtual wiki links in the left nav for the
     Special:RecentChanges page.  This feature may be disabled from admin pages.
+  * Add support for the universal edit button plugin.  See 
+    http://universaleditbutton.org for further details.
   * Add experimental support for custom parser tags for the JFlex parser.
+  * Enable DBCP prepared statement pooling to improve performance.
+  * Reduce the number of fields presented to users on the Special:Register page
+    when creating an account.
   * Remove ability to automatically upgrade from versions prior to 0.9.0.
   * Add RankingAlgorithm search engine support (nnagarajayya).
   * Limit the number of recent changes loaded by the "Reload Recent Changes"
     task on the Special:Maintenance page to improve performance.
-  * Reduce the number of fields presented to users on the Special:Register page
-    when creating an account.
   * Include common virtual wiki and interwiki options on both the Special:Admin
     and Special:VirtualWiki pages.  Requested by floatingworld.
   * Upgrade to Lucene Search 3.2.
