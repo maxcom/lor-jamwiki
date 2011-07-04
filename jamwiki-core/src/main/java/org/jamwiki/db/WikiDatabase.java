@@ -67,7 +67,7 @@ public class WikiDatabase {
 	public static final String SPECIAL_PAGE_DIR = "pages";
 	// array used in database migration - elements are table name and, if elements within the
 	// table have dependencies (such as jam_namespace dependending on main_namespace_id), the
-	// column to sort results be in order to avoid foreign key constrain violations
+	// column to sort results in order to avoid foreign key constrain violations
 	private static final String[][] JAMWIKI_DB_TABLE_INFO = {
 		{"jam_virtual_wiki", "virtual_wiki_id"},
 		{"jam_users", null},
@@ -89,7 +89,8 @@ public class WikiDatabase {
 		{"jam_watchlist", null},
 		{"jam_topic_links", null},
 		{"jam_interwiki", null},
-		{"jam_configuration", null}
+		{"jam_configuration", null},
+		{"jam_user_block", "user_block_id"}
 	};
 
 	/**
