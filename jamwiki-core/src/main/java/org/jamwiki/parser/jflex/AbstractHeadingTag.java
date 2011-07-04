@@ -132,7 +132,8 @@ public abstract class AbstractHeadingTag implements JFlexParserTag {
 		String tocText = this.buildTocText(lexer, tagText);
 		String tagName = this.buildTagName(lexer, tocText);
 		if (lexer.getMode() <= JFlexParser.MODE_SLICE) {
-			lexer.getParserOutput().setSectionName(tagName);
+			String sectionName = StringEscapeUtils.unescapeHtml(tocText);
+			lexer.getParserOutput().setSectionName(sectionName);
 			return raw;
 		}
 		return this.generateOutput(lexer, tagName, tocText, tagText, level, raw, args);
