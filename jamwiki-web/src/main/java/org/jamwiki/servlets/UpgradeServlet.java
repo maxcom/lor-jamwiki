@@ -48,7 +48,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private static final WikiLogger logger = WikiLogger.getLogger(UpgradeServlet.class.getName());
 	/** The name of the JSP file used to render the servlet output. */
 	protected static final String JSP_UPGRADE = "upgrade.jsp";
-	private static final int MAX_TOPICS_FOR_AUTOMATIC_SEARCH_REBUILD = 1000;
+	private static final int MAX_TOPICS_FOR_AUTOMATIC_UPDATE = 1000;
 
 	/**
 	 * This method handles the request after its parent class receives control.
@@ -92,17 +92,16 @@ public class UpgradeServlet extends JAMWikiServlet {
 			this.upgradeDatabase(true, pageInfo.getMessages());
 			// upgrade the search index if required & possible
 			this.upgradeSearchIndex(true, pageInfo.getMessages());
-			// perform any additional upgrades required
+			// refresh topic metadata if needed
 			try {
 				int topicCount = WikiBase.getDataHandler().lookupTopicCount(VirtualWiki.defaultVirtualWiki().getName(), null);
-				if (oldVersion.before(1, 0, 0)) {
-					if (topicCount < 1000) {
-						// populate the jam_topic_links table
+				if (oldVersion.before(1, 1, 0)) {
+					if (topicCount < MAX_TOPICS_FOR_AUTOMATIC_UPDATE) {
 						WikiDatabase.rebuildTopicMetadata();
 						pageInfo.addMessage(new WikiMessage("upgrade.message.db.data.added", "jam_topic_links"));
 					} else {
 						// print a message telling the user to do this step manually
-						pageInfo.addMessage(new WikiMessage("upgrade.message.100.topic.links"));
+						pageInfo.addMessage(new WikiMessage("upgrade.message.110.topic.links"));
 					}
 				}
 			} catch (DataAccessException e) {
@@ -182,7 +181,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	}
 
 	/**
-	 *
+	 * Utility method for rebuilding the search index if necessary.
 	 */
 	private boolean upgradeSearchIndex(boolean performUpgrade, List<WikiMessage> messages) {
 		boolean upgradeRequired = false;
@@ -193,7 +192,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 				try {
 					int topicCount = WikiBase.getDataHandler().lookupTopicCount(VirtualWiki.defaultVirtualWiki().getName(), null);
 					if (oldVersion.before(1, 1, 0)) {
-						if (topicCount < MAX_TOPICS_FOR_AUTOMATIC_SEARCH_REBUILD) {
+						if (topicCount < MAX_TOPICS_FOR_AUTOMATIC_UPDATE) {
 							// refresh search engine
 							WikiBase.getSearchEngine().refreshIndex();
 							messages.add(new WikiMessage("upgrade.message.search.refresh"));
@@ -262,7 +261,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 		}
 		if (this.upgradeSearchIndex(false, null)) {
 			WikiMessage searchWikiMessage = new WikiMessage("upgrade.caption.search");
-			searchWikiMessage.addParam(Integer.toString(MAX_TOPICS_FOR_AUTOMATIC_SEARCH_REBUILD));
+			searchWikiMessage.addParam(Integer.toString(MAX_TOPICS_FOR_AUTOMATIC_UPDATE));
 			searchWikiMessage.addWikiLinkParam("Special:Maintenance");
 			upgradeDetails.add(searchWikiMessage);
 		}

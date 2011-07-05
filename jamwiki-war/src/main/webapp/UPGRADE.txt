@@ -224,6 +224,17 @@ followed by 0.6.3.
                 CONSTRAINT jam_f_ublock_blkid FOREIGN KEY (blocked_by_user_id) REFERENCES jam_wiki_user(wiki_user_id),
                 CONSTRAINT jam_f_ublock_unblkid FOREIGN KEY (unblocked_by_user_id) REFERENCES jam_wiki_user(wiki_user_id)
               )
+       d) Drop and re-create the jam_topic_links table.
+              DROP TABLE jam_topic_links;
+              CREATE TABLE jam_topic_links (
+                topic_id INTEGER NOT NULL,
+                link_topic_namespace_id INTEGER DEFAULT 0 NOT NULL,
+                link_topic_page_name VARCHAR(200) NOT NULL,
+                CONSTRAINT jam_p_topic_links PRIMARY KEY (topic_id, link_topic_namespace_id, link_topic_page_name),
+                CONSTRAINT jam_f_tlink_namesp FOREIGN KEY (link_topic_namespace_id) REFERENCES jam_namespace(namespace_id)
+              );
+  4. Once the database upgrades are complete the "Regenerate Topic Metadata
+     Records" tool should be invoked from the Special:Maintenance page.
 
 
   JAMWiki 1.0.5

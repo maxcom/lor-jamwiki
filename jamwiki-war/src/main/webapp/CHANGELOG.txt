@@ -51,6 +51,9 @@ Bugfixes:
   * Fix a CSS problem which caused the footer to overlap the left nav on short
     pages.
   * The "name" attribute for anchors has been deprecated in HTML 5 / XHTML.
+  * When a topic link is created in a case-insensitive way, such as "[[topic]]"
+    when the actual topic name is "Topic", Special:OrphanedPages and
+    Special:LinkTo will now recognize the link as being to the target topic.
 
 Translation Updates:
 

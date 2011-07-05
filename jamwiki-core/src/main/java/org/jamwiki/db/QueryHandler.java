@@ -569,13 +569,15 @@ public interface QueryHandler {
 	 * method will fail if an existing link of the same name is already associated
 	 * with the topic.
 	 *
-	 * @param links A list of topic link records to create.
+	 * @param topicLinks A list of topic link records to create.  These are passed in
+	 *  the form of Topic objects, which need to be populated only with namespace
+	 *  and page name.
 	 * @param topicId The ID of the topic record to which the links are being added.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	void insertTopicLinks(List<String> links, int topicId, Connection conn) throws SQLException;
+	void insertTopicLinks(List<Topic> topicLinks, int topicId, Connection conn) throws SQLException;
 
 	/**
 	 * Add a new topic version record to the database.  The topic version must
@@ -839,12 +841,15 @@ public interface QueryHandler {
 	 * Find the names for all topics that link to a specified topic.
 	 *
 	 * @param virtualWikiId The virtual wiki id for the topic being queried.
+	 * @param namespace The Namespace for the topic being queried.
+	 * @param pageName The topic pageName (topic name without the namespace) for
+	 *  the topic being queried.
 	 * @return A list of topic names for all topics that link to the
 	 *  specified topic.  If no results are found then an empty list is
 	 *  returned.
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
-	List<String> lookupTopicLinks(int virtualWikiId, String topicName) throws SQLException;
+	List<String> lookupTopicLinks(int virtualWikiId, Namespace namespace, String pageName) throws SQLException;
 
 	/**
 	 * Find the names for all un-linked topics in the main namespace.

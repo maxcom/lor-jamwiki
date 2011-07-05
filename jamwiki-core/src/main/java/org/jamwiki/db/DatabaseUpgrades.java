@@ -69,9 +69,6 @@ public class DatabaseUpgrades {
 			messages.add(new WikiMessage("upgrade.message.db.column.added", "site_name", "jam_virtual_wiki"));
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_100_ADD_VIRTUAL_WIKI_META_DESCRIPTION", conn);
 			messages.add(new WikiMessage("upgrade.message.db.column.added", "meta_description", "jam_virtual_wiki"));
-			// add the jam_topic_links table
-			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_LINKS_TABLE", conn);
-			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_topic_links"));
 			// add the interwiki table
 			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_INTERWIKI_TABLE", conn);
 			// populate the jam_interwiki table
@@ -98,9 +95,6 @@ public class DatabaseUpgrades {
 			// transaction since if it fails the upgrade can still be considered successful.
 			status = DatabaseConnection.startTransaction(getTransactionDefinition());
 			Connection conn = DatabaseConnection.getConnection();
-			// add an index to the jam_topic_links table
-			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_LINKS_INDEX", conn);
-			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic_links"));
 			// add an index to the jam_category table
 			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_CATEGORY_INDEX", conn);
 			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_category"));
@@ -147,6 +141,16 @@ public class DatabaseUpgrades {
 			// add the jam_user_block table
 			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_USER_BLOCK_TABLE", conn);
 			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_user_block"));
+			// drop & re-add the jam_topic_links table
+			try {
+				WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_DROP_TOPIC_LINKS_TABLE", conn);
+				WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_110_DROP_TOPIC_LINKS_INDEX", conn);
+				messages.add(new WikiMessage("upgrade.message.db.table.dropped", "jam_topic_links"));
+			} catch (SQLException e) {
+				// table may not exist if upgrading from prior to JAMWiki 1.0
+			}
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_LINKS_TABLE", conn);
+			messages.add(new WikiMessage("upgrade.message.db.table.added", "jam_topic_links"));
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			logger.error("Database failure during upgrade", e);
@@ -166,6 +170,9 @@ public class DatabaseUpgrades {
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_110_UPDATE_RECENT_CHANGE_LOG_SUB_TYPE_UNDELETE", conn);
 			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_110_UPDATE_RECENT_CHANGE_LOG_SUB_TYPE_DELETE", conn);
 			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_recent_change"));
+			// add an index to the jam_topic_links table
+			WikiBase.getDataHandler().executeUpgradeUpdate("STATEMENT_CREATE_TOPIC_LINKS_INDEX", conn);
+			messages.add(new WikiMessage("upgrade.message.db.data.updated", "jam_topic_links"));
 		} catch (SQLException e) {
 			messages.add(new WikiMessage("upgrade.error.nonfatal", e.getMessage()));
 			// do not throw this error and halt the upgrade process - populating the field

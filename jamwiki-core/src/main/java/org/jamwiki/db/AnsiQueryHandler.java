@@ -1842,16 +1842,17 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertTopicLinks(List<String> links, int topicId, Connection conn) throws SQLException {
+	public void insertTopicLinks(List<Topic> topicLinks, int topicId, Connection conn) throws SQLException {
 		if (topicId == -1) {
 			throw new SQLException("Invalid topicId passed to method AnsiQueryHandler.insertTopicLinks");
 		}
 		PreparedStatement stmt = null;
 		try {
 			stmt = conn.prepareStatement(STATEMENT_INSERT_TOPIC_LINKS);
-			for (String link : links) {
+			for (Topic topicLink : topicLinks) {
 				stmt.setInt(1, topicId);
-				stmt.setString(2, link);
+				stmt.setInt(2, topicLink.getNamespace().getId());
+				stmt.setString(3, topicLink.getPageName());
 				stmt.addBatch();
 			}
 			stmt.executeBatch();
@@ -2482,7 +2483,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public List<String> lookupTopicLinks(int virtualWikiId, String topicName) throws SQLException {
+	public List<String> lookupTopicLinks(int virtualWikiId, Namespace namespace, String pageName) throws SQLException {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -2490,7 +2491,8 @@ public class AnsiQueryHandler implements QueryHandler {
 			conn = DatabaseConnection.getConnection();
 			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_LINKS);
 			stmt.setInt(1, virtualWikiId);
-			stmt.setString(2, topicName);
+			stmt.setInt(2, namespace.getId());
+			stmt.setString(3, pageName);
 			rs = stmt.executeQuery();
 			List<String> results = new ArrayList<String>();
 			while (rs.next()) {

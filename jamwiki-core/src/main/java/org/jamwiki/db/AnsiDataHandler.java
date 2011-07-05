@@ -157,17 +157,23 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private void addTopicLinks(List<String> links, int topicId, Connection conn) throws DataAccessException {
+	private void addTopicLinks(List<String> links, String virtualWiki, int topicId, Connection conn) throws DataAccessException {
 		// strip any links longer than 200 characters and any duplicates
-		Map<String, String> linksMap = new HashMap<String, String>();
+		Map<String, Topic> linksMap = new HashMap<String, Topic>();
 		for (String link : links) {
 			if (link.length() <= 200) {
-				linksMap.put(link, link);
+				Namespace namespace = LinkUtil.retrieveTopicNamespace(virtualWiki, link);
+				String pageName = LinkUtil.retrieveTopicPageName(namespace, virtualWiki, link);
+				// FIXE - link to records are always capitalized, which will cause problems for the
+				// rare case of two topics such as "eBay" and "EBay".
+				pageName = StringUtils.capitalize(pageName);
+				Topic topic = new Topic(virtualWiki, namespace, pageName);
+				linksMap.put(topic.getName(), topic);
 			}
 		}
-		links = new ArrayList<String>(linksMap.keySet());
+		List<Topic> topicLinks = new ArrayList<Topic>(linksMap.values());
 		try {
-			this.queryHandler().insertTopicLinks(links, topicId, conn);
+			this.queryHandler().insertTopicLinks(topicLinks, topicId, conn);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
@@ -1054,8 +1060,13 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	public List<String> lookupTopicLinks(String virtualWiki, String topicName) throws DataAccessException {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		Namespace namespace = LinkUtil.retrieveTopicNamespace(virtualWiki, topicName);
+		String pageName = LinkUtil.retrieveTopicPageName(namespace, virtualWiki, topicName);
+		// FIXE - link to records are always capitalized, which will cause problems for the
+		// rare case of two topics such as "eBay" and "EBay".
+		pageName = StringUtils.capitalize(pageName);
 		try {
-			return this.queryHandler().lookupTopicLinks(virtualWikiId, topicName);
+			return this.queryHandler().lookupTopicLinks(virtualWikiId, namespace, pageName);
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}
@@ -2062,7 +2073,7 @@ public class AnsiDataHandler implements DataHandler {
 				// add / remove links associated with the topic
 				this.deleteTopicLinks(topic.getTopicId(), conn);
 				if (topic.getDeleteDate() == null && !links.isEmpty()) {
-					this.addTopicLinks(links, topic.getTopicId(), conn);
+					this.addTopicLinks(links, topic.getVirtualWiki(), topic.getTopicId(), conn);
 				}
 			}
 			if (topicVersion != null) {
