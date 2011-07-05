@@ -36,7 +36,6 @@ import org.jamwiki.utils.WikiLogger;
 public class JFlexParserUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexParserUtil.class.getName());
-	private static JAMWikiHtmlProcessor JFLEX_HTML_PROCESSOR = null;
 
 	/**
 	 *
@@ -168,21 +167,17 @@ public class JFlexParserUtil {
 		}
 		// strip any newlines from the tag
 		tag = tag.replace('\n', ' ');
-		if (JFLEX_HTML_PROCESSOR == null) {
-			JFLEX_HTML_PROCESSOR = new JAMWikiHtmlProcessor(new StringReader(tag));
-		} else {
-			JFLEX_HTML_PROCESSOR.yyreset(new StringReader(tag));
-		}
+		JAMWikiHtmlProcessor lexer = new JAMWikiHtmlProcessor(new StringReader(tag));
 		StringBuilder result = new StringBuilder();
 		String line;
 		try {
-			while ((line = JFLEX_HTML_PROCESSOR.yylex()) != null) {
+			while ((line = lexer.yylex()) != null) {
 				result.append(line);
 			}
 		} catch (Exception e) {
 			throw new ParserException("Failure while parsing: " + tag, e);
 		}
-		return new HtmlTagItem(JFLEX_HTML_PROCESSOR.getTagType(), result.toString());
+		return new HtmlTagItem(lexer.getTagType(), result.toString());
 	}
 
 	/**
