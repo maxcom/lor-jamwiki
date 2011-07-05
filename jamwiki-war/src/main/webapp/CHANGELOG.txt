@@ -72,6 +72,8 @@ Bugfixes:
 
   * Fix an issue that broke the TOC for some browsers when using non-Latin
     characters.  Reported by by Felipe Avilis.
+  * Fix an issue where parsing multiple pages at the same time could generate
+    parser errors due to shared resource conflicts.
 
 Translation Updates:
 

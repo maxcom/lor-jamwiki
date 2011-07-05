@@ -17,6 +17,7 @@ college\-paper
 comment[0-9],
 depositfiles\.com
 display\:none
+extremeseotips\.com
 fhYj30Mxb55m1SpveOxt
 free\-site\-host
 freehost(ing)?\.(com|net)
@@ -41,5 +42,6 @@ russian(brides|girls)
 sedra\.net
 site2gb\.com
 trustedessays\.net
+virtual\-bubblewrap\.com
 webhost\.com
 xxxmovie
