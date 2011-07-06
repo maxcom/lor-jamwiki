@@ -31,6 +31,11 @@ public abstract class AbstractJAMWikiLexer extends JFlexLexer {
 	protected static final WikiLogger logger = WikiLogger.getLogger(AbstractJAMWikiLexer.class.getName());
 	/** Stack of currently parsed tag content. */
 	private Stack<JFlexTagItem> tagStack = new Stack<JFlexTagItem>();
+	/**
+	 * Running count of the number of expressions matched.  Useful for debugging and
+	 * for determining if an expression is the first match.
+	 */
+	private int yyMatchCount = 0;
 
 	/**
 	 * Append content to the current tag in the tag stack.
@@ -135,6 +140,7 @@ public abstract class AbstractJAMWikiLexer extends JFlexLexer {
 		String line;
 		while ((line = this.yylex()) != null) {
 			this.append(line);
+			this.yyMatchCount++;
 		}
 		return this.popAllTags();
 	}
@@ -149,6 +155,11 @@ public abstract class AbstractJAMWikiLexer extends JFlexLexer {
 			return;
 		}
 		int newlineCount = 0;
+		// if this is the start of the file then increment the newline count since the
+		// default count assumes previously-matched text.
+		if (this.yyMatchCount == 0) {
+			newlineCount++;
+		}
 		for (int i = 0; i < raw.length(); i++) {
 			if (raw.charAt(i) != '\n') {
 				// only count newlines for paragraph creation
@@ -193,6 +204,11 @@ public abstract class AbstractJAMWikiLexer extends JFlexLexer {
 			int newlineCount = StringUtils.countMatches(raw, "\n");
 			if (newlineCount > 0) {
 				pushback = StringUtils.stripStart(raw, " \n\r\t").length();
+			}
+			// if this is the start of the file then increment the newline count since the
+			// default count assumes previously-matched text.
+			if (this.yyMatchCount == 0) {
+				newlineCount++;
 			}
 			if (newlineCount == 2) {
 				// if the pattern matched two opening newlines then start the paragraph with a <br /> tag

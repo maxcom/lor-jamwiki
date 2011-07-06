@@ -291,9 +291,7 @@ public class ParserTest extends JAMWikiUnitTest {
 		List<String> failures = new ArrayList<String>();
 		failures.add("Heading5");
 		failures.add("Heading9"); // see JAMWIKI-27
-		failures.add("HtmlCommentTest2");
 		failures.add("HtmlMismatchTest3");
-		failures.add("ImageLink2"); // bad paragraph parsing - no <p> around <div> tags
 		failures.add("Inclusion~test"); // template params not parsed in parser functions
 		failures.add("NestedTable1"); // paragraphs in <td> tags
 		failures.add("Paragraph13"); // paragraphs in <td> tags

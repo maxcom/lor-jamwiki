@@ -54,6 +54,8 @@ Bugfixes:
   * When a topic link is created in a case-insensitive way, such as "[[topic]]"
     when the actual topic name is "Topic", Special:OrphanedPages and
     Special:LinkTo will now recognize the link as being to the target topic.
+  * Comments on their own lines should be completely removed when parsing and
+    not treated as blank lines in order to match Mediawiki behavior.
 
 Translation Updates:
 

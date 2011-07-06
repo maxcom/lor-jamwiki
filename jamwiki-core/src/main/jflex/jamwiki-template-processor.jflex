@@ -151,13 +151,16 @@ wikisignature      = ([~]{3,5})
 
     /* ----- comments ----- */
 
+    ^{htmlcomment} {newline} {
+        if (logger.isTraceEnabled()) logger.trace("htmlcomment + newline: " + yytext() + " (" + yystate() + ")");
+        // strip out the comment and newline
+        return (this.mode < JFlexParser.MODE_TEMPLATE) ? yytext() : "";
+    }
+
     {htmlcomment} {
         if (logger.isTraceEnabled()) logger.trace("htmlcomment: " + yytext() + " (" + yystate() + ")");
-        if (this.mode < JFlexParser.MODE_TEMPLATE) {
-            return yytext();
-        }
         // strip out the comment
-        return "";
+        return (this.mode < JFlexParser.MODE_TEMPLATE) ? yytext() : "";
     }
 
     /* ----- other ----- */
