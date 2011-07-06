@@ -121,6 +121,8 @@ public abstract class AbstractHeadingTag implements JFlexParserTag {
 		if (logger.isTraceEnabled()) {
 			logger.trace("heading: " + raw + " (" + lexer.yystate() + ")");
 		}
+		// the wikiheading tag may match a preceding newline, so strip it
+		raw = raw.trim();
 		int level = this.generateTagLevel(raw, args);
 		String tagText = this.generateTagText(raw, args);
 		if (lexer instanceof JAMWikiLexer && ((JAMWikiLexer)lexer).peekTag().getTagType().equals("p")) {

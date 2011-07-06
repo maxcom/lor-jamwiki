@@ -335,22 +335,22 @@ endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
     }
 }
 <YYINITIAL, PARAGRAPH, TABLE> {
-    ^{wikiheading6} {
+    ^{newline}? {wikiheading6} {
         return this.parse(TAG_TYPE_WIKI_HEADING, yytext(), 6);
     }
-    ^{wikiheading5} {
+    ^{newline}? {wikiheading5} {
         return this.parse(TAG_TYPE_WIKI_HEADING, yytext(), 5);
     }
-    ^{wikiheading4} {
+    ^{newline}? {wikiheading4} {
         return this.parse(TAG_TYPE_WIKI_HEADING, yytext(), 4);
     }
-    ^{wikiheading3} {
+    ^{newline}? {wikiheading3} {
         return this.parse(TAG_TYPE_WIKI_HEADING, yytext(), 3);
     }
-    ^{wikiheading2} {
+    ^{newline}? {wikiheading2} {
         return this.parse(TAG_TYPE_WIKI_HEADING, yytext(), 2);
     }
-    ^{wikiheading1} {
+    ^{newline}? {wikiheading1} {
         return this.parse(TAG_TYPE_WIKI_HEADING, yytext(), 1);
     }
     {htmlheading} {

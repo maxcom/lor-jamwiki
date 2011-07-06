@@ -289,7 +289,6 @@ public class ParserTest extends JAMWikiUnitTest {
 	// TODO - handle failure cases better.
 	private boolean knownFailure(String fileName) {
 		List<String> failures = new ArrayList<String>();
-		failures.add("Heading5");
 		failures.add("Heading9"); // see JAMWIKI-27
 		failures.add("HtmlMismatchTest3");
 		failures.add("Inclusion~test"); // template params not parsed in parser functions
