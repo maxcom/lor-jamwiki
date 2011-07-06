@@ -22,9 +22,9 @@ import org.jamwiki.utils.WikiLogger;
 /**
  * Abstract class that is extended by the template JFlex lexer.
  */
-public abstract class AbstractJAMTemplateLexer extends JFlexLexer {
+public abstract class AbstractJAMWikiTemplateLexer extends JFlexLexer {
 
-	protected static final WikiLogger logger = WikiLogger.getLogger(AbstractJAMTemplateLexer.class.getName());
+	protected static final WikiLogger logger = WikiLogger.getLogger(AbstractJAMWikiTemplateLexer.class.getName());
 	/** String used to build up current template tag content. */
 	protected String templateString = "";
 

@@ -12,7 +12,7 @@ import org.jamwiki.utils.Utilities;
 
 %public
 %class JAMWikiTemplateLexer
-%extends AbstractJAMTemplateLexer
+%extends AbstractJAMWikiTemplateLexer
 %type String
 %unicode
 %ignorecase
