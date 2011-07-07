@@ -55,6 +55,35 @@ public class DatabaseUpgrades {
 	}
 
 	/**
+	 * Per http://hsqldb.sourceforge.net/doc/2.0/guide/deployment-chapt.html#deployment_upgrade-sect
+	 * ("It is strongly recommended to execute SHTUDOWN COMPACT after an automatic
+	 * upgrade from previous versions") after upgrading from HSQL from 1.8 to 2.2
+	 * run a "SHUTDOWN COMPACT" to ensure that file data is successfully upgraded.
+	 */
+	public static void upgradeHsql22(List<WikiMessage> messages) throws WikiException {
+		TransactionStatus status = null;
+		try {
+			status = DatabaseConnection.startTransaction(getTransactionDefinition());
+			Connection conn = DatabaseConnection.getConnection();
+			logger.info("Compacting HSQL database after upgrade to HSQL 2.2");
+			WikiBase.getDataHandler().executeUpgradeUpdate("UPGRADE_110_HSQL_SHUTDOWN_COMPACT", conn);
+		} catch (SQLException e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			logger.error("Database failure during upgrade", e);
+			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
+		}
+		DatabaseConnection.commit(status);
+		try {
+			// database has been shut down, so close the current connection pool to
+			// refresh all database connections.
+			DatabaseConnection.closeConnectionPool();
+		} catch (SQLException e) {
+			logger.error("Unable to close database connection pool", e);
+			throw new WikiException(new WikiMessage("upgrade.error.fatal", e.getMessage()));
+		}
+	}
+
+	/**
 	 *
 	 */
 	public static void upgrade100(List<WikiMessage> messages) throws WikiException {

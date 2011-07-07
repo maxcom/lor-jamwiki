@@ -165,6 +165,10 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private boolean upgradeDatabase(boolean performUpgrade, List<WikiMessage> messages) throws WikiException {
 		boolean upgradeRequired = false;
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
+		if (oldVersion.before(1, 1, 0) && performUpgrade && StringUtils.equals(Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE), WikiBase.PERSISTENCE_INTERNAL)) {
+			// per HSQL guidelines, execute a shutdown compact to upgrade on-disk format
+			DatabaseUpgrades.upgradeHsql22(messages);
+		}
 		if (oldVersion.before(1, 0, 0)) {
 			upgradeRequired = true;
 			if (performUpgrade) {
