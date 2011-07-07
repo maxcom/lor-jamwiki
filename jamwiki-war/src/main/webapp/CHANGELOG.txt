@@ -35,6 +35,7 @@ New Features:
     task on the Special:Maintenance page to improve performance.
   * Include common virtual wiki and interwiki options on both the Special:Admin
     and Special:VirtualWiki pages.  Requested by floatingworld.
+  * Upgrade to HSQLDB 2.2.4.
   * Upgrade to Lucene Search 3.3.
   * Upgrade to Ehcache 2.4.2.
   * Upgrade to commons-codec 1.5.
