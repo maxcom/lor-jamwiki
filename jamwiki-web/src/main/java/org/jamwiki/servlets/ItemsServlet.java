@@ -84,6 +84,9 @@ public class ItemsServlet extends JAMWikiServlet {
 		next.addObject("itemCount", items.size());
 		next.addObject("items", items.values());
 		next.addObject("rootUrl", "Special:FileList");
+		if (items.isEmpty()) {
+			pageInfo.addMessage(new WikiMessage("allfiles.message.none"));
+		}
 		pageInfo.setPageTitle(new WikiMessage("allfiles.title"));
 		pageInfo.setContentJsp(JSP_ITEMS);
 		pageInfo.setSpecial(true);
@@ -104,9 +107,9 @@ public class ItemsServlet extends JAMWikiServlet {
 		allItems.addAll(WikiBase.getDataHandler().lookupTopicLinks(virtualWiki, topicName));
 		List<String> items = Pagination.retrievePaginatedSubset(pagination, allItems);
 		if (!allItems.isEmpty()) {
-			next.addObject("message", new WikiMessage("linkto.overview", topicName));
+			pageInfo.addMessage(new WikiMessage("linkto.overview", topicName));
 		} else {
-			next.addObject("message", new WikiMessage("linkto.none", topicName));
+			pageInfo.addMessage(new WikiMessage("linkto.none", topicName));
 		}
 		next.addObject("itemCount", items.size());
 		next.addObject("items", items);
@@ -130,6 +133,9 @@ public class ItemsServlet extends JAMWikiServlet {
 		List<String> items = Pagination.retrievePaginatedSubset(pagination, allItems);
 		next.addObject("itemCount", items.size());
 		next.addObject("items", items);
+		if (items.isEmpty()) {
+			pageInfo.addMessage(new WikiMessage("orphaned.message.none"));
+		}
 		String rootUrl = "Special:OrphanedPages";
 		if (request.getParameter("namespace") != null) {
 			rootUrl += "?namespace=" + namespaceId;
@@ -157,6 +163,9 @@ public class ItemsServlet extends JAMWikiServlet {
 		next.addObject("itemCount", items.size());
 		next.addObject("items", links);
 		next.addObject("rootUrl", "Special:ListUsers");
+		if (items.isEmpty()) {
+			pageInfo.addMessage(new WikiMessage("allusers.message.none"));
+		}
 		pageInfo.setPageTitle(new WikiMessage("allusers.title"));
 		pageInfo.setContentJsp(JSP_ITEMS);
 		pageInfo.setSpecial(true);
@@ -172,6 +181,9 @@ public class ItemsServlet extends JAMWikiServlet {
 		next.addObject("itemCount", items.size());
 		next.addObject("items", items.values());
 		next.addObject("rootUrl", "Special:ImageList");
+		if (items.isEmpty()) {
+			pageInfo.addMessage(new WikiMessage("allimages.message.none"));
+		}
 		pageInfo.setPageTitle(new WikiMessage("allimages.title"));
 		pageInfo.setContentJsp(JSP_ITEMS);
 		pageInfo.setSpecial(true);
@@ -191,6 +203,9 @@ public class ItemsServlet extends JAMWikiServlet {
 		Map<Integer, String> items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, topicType1, topicType2, namespaceId, pagination);
 		next.addObject("itemCount", items.size());
 		next.addObject("items", items.values());
+		if (items.isEmpty()) {
+			pageInfo.addMessage(new WikiMessage("alltopics.message.none"));
+		}
 		String rootUrl = "Special:AllPages";
 		if (request.getParameter("namespace") != null) {
 			rootUrl += "?namespace=" + namespaceId;
@@ -214,6 +229,9 @@ public class ItemsServlet extends JAMWikiServlet {
 		next.addObject("itemCount", items.size());
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:TopicsAdmin");
+		if (items.isEmpty()) {
+			pageInfo.addMessage(new WikiMessage("topicsadmin.message.none"));
+		}
 		pageInfo.setPageTitle(new WikiMessage("topicsadmin.title"));
 		pageInfo.setContentJsp(JSP_ITEMS);
 		pageInfo.setSpecial(true);

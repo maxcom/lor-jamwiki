@@ -48,8 +48,8 @@
 	</form>
 </div>
 </c:if>
-<c:if test="${!empty message}">
-<div class="message"><jamwiki_t:wikiMessage message="${message}" /></div>
+<c:if test="${!empty pageInfo.messages}">
+<div class="message"><c:forEach items="${pageInfo.messages}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
 </c:if>
 
 <ol start="<c:out value="${offset + 1}" />">

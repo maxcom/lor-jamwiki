@@ -57,6 +57,8 @@ Bugfixes:
     Special:LinkTo will now recognize the link as being to the target topic.
   * Comments on their own lines should be completely removed when parsing and
     not treated as blank lines in order to match Mediawiki behavior.
+  * Display a "no items found" message on pages such as Special:Categories and
+    Special:AllPages when there are no items available for display.
 
 Translation Updates:
 

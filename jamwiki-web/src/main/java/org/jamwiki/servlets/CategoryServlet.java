@@ -62,6 +62,9 @@ public class CategoryServlet extends JAMWikiServlet {
 		}
 		next.addObject("categoryCount", categories.size());
 		next.addObject("categories", categories);
+		if (categories.isEmpty()) {
+			pageInfo.addMessage(new WikiMessage("allcategories.message.none"));
+		}
 		pageInfo.setPageTitle(new WikiMessage("allcategories.title"));
 		pageInfo.setContentJsp(JSP_CATEGORIES);
 		pageInfo.setSpecial(true);

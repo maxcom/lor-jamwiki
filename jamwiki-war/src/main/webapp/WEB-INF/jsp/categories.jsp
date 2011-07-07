@@ -23,7 +23,13 @@
 
 <%@ include file="page-init.jsp" %>
 
+<c:if test="${!empty categories}">
 <div class="message"><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${categoryCount}" rootUrl="Special:Categories" /></div>
+</c:if>
+
+<c:if test="${!empty pageInfo.messages}">
+<div class="message"><c:forEach items="${pageInfo.messages}" var="message"><jamwiki_t:wikiMessage message="${message}" /><br /></c:forEach></div>
+</c:if>
 
 <ol start="<c:out value="${offset + 1}" />">
 <c:forEach items="${categories}" var="category">
