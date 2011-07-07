@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -105,11 +106,7 @@ public class MediaWikiXmlImporter extends DefaultHandler implements TopicImporte
 				throw new MigrationException(e);
 			}
 		} finally {
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException ignore) {}
-			}
+			IOUtils.closeQuietly(fis);
 		}
 	}
 

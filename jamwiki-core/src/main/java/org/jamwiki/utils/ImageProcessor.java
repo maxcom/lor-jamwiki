@@ -31,6 +31,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Utility methods that wrap native Java image processing functionality to allow
@@ -75,11 +76,7 @@ public class ImageProcessor {
 			}
 			return image;
 		} finally {
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {}
-			}
+			IOUtils.closeQuietly(fis);
 		}
 	}
 
@@ -163,13 +160,7 @@ public class ImageProcessor {
 					// ignore
 				}
 			}
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
+			IOUtils.closeQuietly(fis);
 		}
 		return dimensions;
 	}
@@ -197,11 +188,7 @@ public class ImageProcessor {
 				throw new IOException("No appropriate writer found when writing image: " + filename);
 			}
 		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException e) {}
-			}
+			IOUtils.closeQuietly(fos);
 		}
 	}
 }

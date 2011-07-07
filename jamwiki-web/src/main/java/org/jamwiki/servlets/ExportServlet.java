@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -118,20 +119,12 @@ public class ExportServlet extends JAMWikiServlet {
 			fileReader = new FileReader(file);
 			bufferedReader = new BufferedReader(fileReader);
 			String s;
-			while((s = bufferedReader.readLine()) != null) {
+			while ((s = bufferedReader.readLine()) != null) {
 				out.println(s);
 			}
 		} finally {
-			if (bufferedReader != null) {
-				try {
-					bufferedReader.close();
-				} catch (IOException ignore) {}
-			}
-			if (fileReader != null) {
-				try {
-					fileReader.close();
-				} catch (IOException ignore) {}
-			}
+			IOUtils.closeQuietly(bufferedReader);
+			IOUtils.closeQuietly(fileReader);
 		}
 		out.close();
 	}

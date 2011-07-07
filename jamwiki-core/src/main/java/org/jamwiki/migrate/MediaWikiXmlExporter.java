@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
@@ -66,11 +67,7 @@ public class MediaWikiXmlExporter implements TopicExporter {
 		} catch (IOException e) {
 			throw new MigrationException(e);
 		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException ignore) {}
-			}
+			IOUtils.closeQuietly(writer);
 			if (!success) {
 				// make sure partial files are deleted
 				file.delete();

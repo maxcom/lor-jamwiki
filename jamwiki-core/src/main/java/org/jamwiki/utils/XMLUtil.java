@@ -25,6 +25,7 @@ import java.text.ParseException;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -201,13 +202,7 @@ public class XMLUtil {
 				throw pe;
 			}
 		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					// safe to ignore
-				}
-			}
+			IOUtils.closeQuietly(stream);
 		}
 	}
 

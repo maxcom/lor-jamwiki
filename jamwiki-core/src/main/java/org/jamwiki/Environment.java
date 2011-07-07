@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 // FIXME - remove this import
@@ -430,13 +431,7 @@ public class Environment {
 		} catch (IOException e) {
 			logger.error("Failure while trying to load properties file " + file.getPath(), e);
 		} finally {
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					// NOPMD
-				}
-			}
+			IOUtils.closeQuietly(fis);
 		}
 		return properties;
 	}
@@ -541,13 +536,7 @@ public class Environment {
 			out = new FileOutputStream(file);
 			properties.store(out, comments);
 		} finally {
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e) {
-					// NOPMD ignore, unimportant if a close fails
-				}
-			}
+			IOUtils.closeQuietly(out);
 		}
 	}
 
