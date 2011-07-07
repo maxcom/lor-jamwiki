@@ -2999,15 +2999,19 @@ public class AnsiQueryHandler implements QueryHandler {
 			conn.setAutoCommit(false);
 			stmt = conn.prepareStatement(STATEMENT_UPDATE_TOPIC_VERSION_PREVIOUS_VERSION_ID);
 			Integer previousTopicVersionId = null;
+			boolean hasBatchData = false;
 			for (int topicVersionId : topicVersionIdList) {
 				if (previousTopicVersionId != null) {
 					stmt.setInt(1, previousTopicVersionId);
 					stmt.setInt(2, topicVersionId);
 					stmt.addBatch();
+					hasBatchData = true;
 				}
 				previousTopicVersionId = topicVersionId;
 			}
-			stmt.executeBatch();
+			if (hasBatchData) {
+				stmt.executeBatch();
+			}
 			TopicVersion topicVersion = this.lookupTopicVersion(previousTopicVersionId, conn);
 			topic.setCurrentVersionId(previousTopicVersionId);
 			topic.setTopicContent(topicVersion.getVersionContent());
