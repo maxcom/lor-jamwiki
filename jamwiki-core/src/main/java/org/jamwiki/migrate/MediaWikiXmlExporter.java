@@ -103,12 +103,11 @@ public class MediaWikiXmlExporter implements TopicExporter {
 		XMLUtil.buildTag(writer, "case", "case-sensitive", true);
 		writer.append("\n<namespaces>");
 		Map<String, String> attributes = new HashMap<String, String>();
-		String namespace = null;
-		for (Integer key : MediaWikiConstants.MEDIAWIKI_NAMESPACE_MAP.keySet()) {
-			namespace = MediaWikiConstants.MEDIAWIKI_NAMESPACE_MAP.get(key);
-			attributes.put("key", key.toString());
+		List<Namespace> namespaces = WikiBase.getDataHandler().lookupNamespaces();
+		for (Namespace namespace : namespaces) {
+			attributes.put("key", Integer.toString(namespace.getId()));
 			writer.append('\n');
-			XMLUtil.buildTag(writer, "namespace", namespace, attributes, true);
+			XMLUtil.buildTag(writer, "namespace", namespace.getLabel(virtualWikiName), attributes, true);
 		}
 		writer.append("\n</namespaces>");
 		writer.append("\n</siteinfo>");
@@ -124,7 +123,6 @@ public class MediaWikiXmlExporter implements TopicExporter {
 		// choose 100,000 as an arbitrary max
 		Pagination pagination = new Pagination(100000, 0);
 		List<Integer> topicVersionIds;
-		String versionContent;
 		Map<String, String> textAttributes = new HashMap<String, String>();
 		textAttributes.put("xml:space", "preserve");
 		for (String topicName : topicNames) {
@@ -172,9 +170,8 @@ public class MediaWikiXmlExporter implements TopicExporter {
 				writer.append("\n</contributor>");
 				writer.append('\n');
 				XMLUtil.buildTag(writer, "comment", topicVersion.getEditComment(), true);
-				versionContent = this.convertToMediawikiNamespaces(virtualWiki, topicVersion.getVersionContent());
 				writer.append('\n');
-				XMLUtil.buildTag(writer, "text", versionContent, textAttributes, true);
+				XMLUtil.buildTag(writer, "text", topicVersion.getVersionContent(), textAttributes, true);
 				writer.append("\n</revision>");
 			}
 			writer.append("\n</page>");
@@ -186,32 +183,5 @@ public class MediaWikiXmlExporter implements TopicExporter {
 	 */
 	private String parseJAMWikiTimestamp(Timestamp timestamp) {
 		return MEDIAWIKI_DATE_FORMATTER.format(timestamp);
-	}
-
-	/**
-	 * Convert all namespaces names from JAMWiki to MediaWiki local representation.
-	 */
-	private String convertToMediawikiNamespaces(String virtualWiki, String versionContent) throws DataAccessException {
-		Namespace jamwikiNamespace;
-		String mediawikiNamespace, mediawikiPattern, jamwikiPattern;
-		int start = 0;
-		for (Integer key : MediaWikiConstants.MEDIAWIKI_NAMESPACE_MAP.keySet()) {
-			// use the JAMWiki namespace if one exists
-			jamwikiNamespace = WikiBase.getDataHandler().lookupNamespaceById(key);
-			mediawikiNamespace = MediaWikiConstants.MEDIAWIKI_NAMESPACE_MAP.get(key);
-			if (jamwikiNamespace == null || StringUtils.equals(jamwikiNamespace.getLabel(virtualWiki), mediawikiNamespace)) {
-				continue;
-			}
-			mediawikiPattern = "[[" + mediawikiNamespace + ":";
-			jamwikiPattern = "[[" + jamwikiNamespace.getLabel(virtualWiki) + ":";
-			while ((start = versionContent.indexOf(jamwikiPattern, start + 1)) != -1) {
-				if (start == 0) {
-					versionContent = mediawikiPattern + versionContent.substring(start + jamwikiPattern.length());
-				} else {
-					versionContent = versionContent.substring(0, start) + mediawikiPattern + versionContent.substring(start + jamwikiPattern.length());
-				}
-			}
-		}
-		return versionContent;
 	}
 }
