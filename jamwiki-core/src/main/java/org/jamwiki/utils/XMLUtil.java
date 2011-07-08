@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.Map;
@@ -47,7 +49,7 @@ public class XMLUtil {
 	}
 
 	/**
-	 * Utiltiy method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * Utility method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
 	 *
 	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
 	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
@@ -56,21 +58,41 @@ public class XMLUtil {
 	 * @return An XML representations of the tagName and tagValue parameters.
 	 */
 	public static String buildTag(String tagName, String tagValue, boolean escape) {
-		if (tagValue == null) {
-			return "";
+		// note - closing a StringWriter is not necessary
+		Writer writer = new StringWriter();
+		try {
+			XMLUtil.buildTag(writer, tagName, tagValue, escape);
+		} catch (IOException e) {
+			// StringWriter never throws IOException, ignore
 		}
-		StringBuilder buffer = new StringBuilder();
-		buffer.append('<').append(tagName).append('>');
-		if (escape) {
-			tagValue = StringEscapeUtils.escapeXml(tagValue);
-		}
-		buffer.append(tagValue);
-		buffer.append("</").append(tagName).append('>');
-		return buffer.toString();
+		return writer.toString();
 	}
 
 	/**
-	 * Utiltiy method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * Utility method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
+	 *
+	 * @param writer The writer to write the XML tag output to.
+	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @param escape If <code>true</code> then any less than, greater than, quotation mark,
+	 *  apostrophe or ampersands in tagValue will be XML-escaped.
+	 * @throws IOException Thrown if an error occurs while writing to the writer.
+	 */
+	public static void buildTag(Writer writer, String tagName, String tagValue, boolean escape) throws IOException {
+		if (tagValue == null) {
+			return;
+		}
+		writer.append('<').append(tagName).append('>');
+		if (escape) {
+			StringEscapeUtils.escapeXml(writer, tagValue);
+		} else {
+			writer.append(tagValue);
+		}
+		writer.append("</").append(tagName).append('>');
+	}
+
+	/**
+	 * Utility method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
 	 *
 	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
 	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
@@ -80,31 +102,54 @@ public class XMLUtil {
 	 * @return An XML representations of the tagName and tagValue parameters.
 	 */
 	public static String buildTag(String tagName, String tagValue, Map<String, String> attributes, boolean escape) {
-		if (tagValue == null) {
-			return "";
+		// note - closing a StringWriter is not necessary
+		Writer writer = new StringWriter();
+		try {
+			XMLUtil.buildTag(writer, tagName, tagValue, escape);
+		} catch (IOException e) {
+			// StringWriter never throws IOException, ignore
 		}
-		StringBuilder buffer = new StringBuilder();
-		buffer.append('<').append(tagName);
-		String value = null;
-		for (String key : attributes.keySet()) {
-			value = attributes.get(key);
-			if (escape) {
-				key = StringEscapeUtils.escapeXml(key);
-				value = StringEscapeUtils.escapeXml(value);
-			}
-			buffer.append(" ").append(key).append("=\"").append(value).append("\"");
-		}
-		buffer.append('>');
-		if (escape) {
-			tagValue = StringEscapeUtils.escapeXml(tagValue);
-		}
-		buffer.append(tagValue);
-		buffer.append("</").append(tagName).append('>');
-		return buffer.toString();
+		return writer.toString();
 	}
 
 	/**
-	 * Utiltiy method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * Utility method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
+	 *
+	 * @param writer The writer to write the XML tag output to.
+	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @param attributes A map of attributes for the tag.
+	 * @param escape If <code>true</code> then any less than, greater than, quotation mark,
+	 *  apostrophe or ampersands in tagValue will be XML-escaped.
+	 * @throws IOException Thrown if an error occurs while writing to the writer.
+	 */
+	public static void buildTag(Writer writer, String tagName, String tagValue, Map<String, String> attributes, boolean escape) throws IOException {
+		if (tagValue == null) {
+			return;
+		}
+		writer.append('<').append(tagName);
+		for (String key : attributes.keySet()) {
+			writer.append(' ');
+			if (escape) {
+				StringEscapeUtils.escapeXml(writer, key);
+				writer.append("=\"");
+				StringEscapeUtils.escapeXml(writer, attributes.get(key));
+			} else {
+				writer.append(' ').append(key).append("=\"").append(attributes.get(key));
+			}
+			writer.append('\"');
+		}
+		writer.append('>');
+		if (escape) {
+			StringEscapeUtils.escapeXml(writer, tagValue);
+		} else {
+			writer.append(tagValue);
+		}
+		writer.append("</").append(tagName).append('>');
+	}
+
+	/**
+	 * Utility method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
 	 *
 	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
 	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
@@ -115,7 +160,19 @@ public class XMLUtil {
 	}
 
 	/**
-	 * Utiltiy method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * Utility method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
+	 *
+	 * @param writer The writer to write the XML tag output to.
+	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @throws IOException Thrown if an error occurs while writing to the writer.
+	 */
+	public static void buildTag(Writer writer, String tagName, int tagValue) throws IOException {
+		XMLUtil.buildTag(writer, tagName, Integer.toString(tagValue), false);
+	}
+
+	/**
+	 * Utility method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
 	 *
 	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
 	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
@@ -126,7 +183,19 @@ public class XMLUtil {
 	}
 
 	/**
-	 * Utiltiy method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * Utility method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
+	 *
+	 * @param writer The writer to write the XML tag output to.
+	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @throws IOException Thrown if an error occurs while writing to the writer.
+	 */
+	public static void buildTag(Writer writer, String tagName, Integer tagValue) throws IOException {
+		XMLUtil.buildTag(writer, tagName, tagValue.toString(), false);
+	}
+
+	/**
+	 * Utility method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
 	 *
 	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
 	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
@@ -137,7 +206,19 @@ public class XMLUtil {
 	}
 
 	/**
-	 * Utiltiy method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * Utility method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
+	 *
+	 * @param writer The writer to write the XML tag output to.
+	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @throws IOException Thrown if an error occurs while writing to the writer.
+	 */
+	public static void buildTag(Writer writer, String tagName, boolean tagValue) throws IOException {
+		XMLUtil.buildTag(writer, tagName, Boolean.toString(tagValue), false);
+	}
+
+	/**
+	 * Utility method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
 	 *
 	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
 	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
@@ -148,7 +229,19 @@ public class XMLUtil {
 	}
 
 	/**
-	 * Utiltiy method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * Utility method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
+	 *
+	 * @param writer The writer to write the XML tag output to.
+	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @throws IOException Thrown if an error occurs while writing to the writer.
+	 */
+	public static void buildTag(Writer writer, String tagName, Timestamp tagValue) throws IOException {
+		XMLUtil.buildTag(writer, tagName, tagValue.toString(), false);
+	}
+
+	/**
+	 * Utility method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
 	 *
 	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
 	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
@@ -156,6 +249,18 @@ public class XMLUtil {
 	 */
 	public static String buildTag(String tagName, long tagValue) {
 		return XMLUtil.buildTag(tagName, Long.toString(tagValue), false);
+	}
+
+	/**
+	 * Utility method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
+	 *
+	 * @param writer The writer to write the XML tag output to.
+	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @throws IOException Thrown if an error occurs while writing to the writer.
+	 */
+	public static void buildTag(Writer writer, String tagName, long tagValue) throws IOException {
+		XMLUtil.buildTag(writer, tagName, Long.toString(tagValue), false);
 	}
 
 	/**

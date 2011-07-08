@@ -48,6 +48,7 @@ import org.jamwiki.utils.XMLUtil;
 public class MediaWikiXmlExporter implements TopicExporter {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(MediaWikiXmlExporter.class.getName());
+	private static final SimpleDateFormat MEDIAWIKI_DATE_FORMATTER = new SimpleDateFormat(MediaWikiConstants.ISO_8601_DATE_FORMAT);
 
 	/**
 	 *
@@ -57,10 +58,10 @@ public class MediaWikiXmlExporter implements TopicExporter {
 		boolean success = false;
 		try {
 			writer = new FileWriter(file);
-			writer.write("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
+			writer.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
 			this.writeSiteInfo(writer, virtualWiki);
 			this.writePages(writer, virtualWiki, topicNames, excludeHistory);
-			writer.write("\n</mediawiki>");
+			writer.append("\n</mediawiki>");
 			success = true;
 		} catch (DataAccessException e) {
 			throw new MigrationException(e);
@@ -80,13 +81,16 @@ public class MediaWikiXmlExporter implements TopicExporter {
 	 */
 	private void writeSiteInfo(FileWriter writer, String virtualWikiName) throws DataAccessException, IOException {
 		VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
-		writer.write("\n<siteinfo>");
+		writer.append("\n<siteinfo>");
 		String sitename = virtualWiki.getSiteName();
-		writer.write('\n' + XMLUtil.buildTag("sitename", sitename, true));
+		writer.append('\n');
+		XMLUtil.buildTag(writer, "sitename", sitename, true);
 		String base = WikiUtil.getBaseUrl();
-		writer.write('\n' + XMLUtil.buildTag("base", base, true));
+		writer.append('\n');
+		XMLUtil.buildTag(writer, "base", base, true);
 		String generator = "JAMWiki " + WikiVersion.CURRENT_WIKI_VERSION;
-		writer.write('\n' + XMLUtil.buildTag("generator", generator, true));
+		writer.append('\n');
+		XMLUtil.buildTag(writer, "generator", generator, true);
 		/*
 		Cannot have two titles differing only by case of first letter.  Default behavior through 1.5, $wgCapitalLinks = true
 			<enumeration value="first-letter" />
@@ -95,17 +99,19 @@ public class MediaWikiXmlExporter implements TopicExporter {
 		Cannot have two titles differing only by case. Not yet implemented as of MediaWiki 1.5
 			<enumeration value="case-insensitive" />
 		*/
-		writer.write('\n' + XMLUtil.buildTag("case", "case-sensitive", true));
-		writer.write("\n<namespaces>");
+		writer.append('\n');
+		XMLUtil.buildTag(writer, "case", "case-sensitive", true);
+		writer.append("\n<namespaces>");
 		Map<String, String> attributes = new HashMap<String, String>();
 		String namespace = null;
 		for (Integer key : MediaWikiConstants.MEDIAWIKI_NAMESPACE_MAP.keySet()) {
 			namespace = MediaWikiConstants.MEDIAWIKI_NAMESPACE_MAP.get(key);
 			attributes.put("key", key.toString());
-			writer.write('\n' + XMLUtil.buildTag("namespace", namespace, attributes, true));
+			writer.append('\n');
+			XMLUtil.buildTag(writer, "namespace", namespace, attributes, true);
 		}
-		writer.write("\n</namespaces>");
-		writer.write("\n</siteinfo>");
+		writer.append("\n</namespaces>");
+		writer.append("\n</siteinfo>");
 	}
 
 	/**
@@ -127,9 +133,11 @@ public class MediaWikiXmlExporter implements TopicExporter {
 			if (topic == null) {
 				throw new MigrationException("Failure while exporting: topic " + topicName + " does not exist");
 			}
-			writer.write("\n<page>");
-			writer.write('\n' + XMLUtil.buildTag("title", topic.getName(), true));
-			writer.write('\n' + XMLUtil.buildTag("id", topic.getTopicId()));
+			writer.append("\n<page>");
+			writer.append('\n');
+			XMLUtil.buildTag(writer, "title", topic.getName(), true);
+			writer.append('\n');
+			XMLUtil.buildTag(writer, "id", topic.getTopicId());
 			if (excludeHistory) {
 				// only include the most recent version
 				topicVersionIds.add(topic.getCurrentVersionId());
@@ -142,26 +150,34 @@ public class MediaWikiXmlExporter implements TopicExporter {
 			}
 			for (int topicVersionId : topicVersionIds) {
 				topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId);
-				writer.write("\n<revision>");
-				writer.write('\n' + XMLUtil.buildTag("id", topicVersion.getTopicVersionId()));
-				writer.write('\n' + XMLUtil.buildTag("timestamp", this.parseJAMWikiTimestamp(topicVersion.getEditDate()), true));
-				writer.write("\n<contributor>");
+				writer.append("\n<revision>");
+				writer.append('\n');
+				XMLUtil.buildTag(writer, "id", topicVersion.getTopicVersionId());
+				writer.append('\n');
+				XMLUtil.buildTag(writer, "timestamp", this.parseJAMWikiTimestamp(topicVersion.getEditDate()), true);
+				writer.append("\n<contributor>");
 				user = (topicVersion.getAuthorId() != null) ? WikiBase.getDataHandler().lookupWikiUser(topicVersion.getAuthorId()) : null;
 				if (user != null) {
-					writer.write('\n' + XMLUtil.buildTag("username", user.getUsername(), true));
-					writer.write('\n' + XMLUtil.buildTag("id", user.getUserId()));
+					writer.append('\n');
+					XMLUtil.buildTag(writer, "username", user.getUsername(), true);
+					writer.append('\n');
+					XMLUtil.buildTag(writer, "id", user.getUserId());
 				} else if (Utilities.isIpAddress(topicVersion.getAuthorDisplay())) {
-					writer.write('\n' + XMLUtil.buildTag("ip", topicVersion.getAuthorDisplay(), true));
+					writer.append('\n');
+					XMLUtil.buildTag(writer, "ip", topicVersion.getAuthorDisplay(), true);
 				} else {
-					writer.write('\n' + XMLUtil.buildTag("username", topicVersion.getAuthorDisplay(), true));
+					writer.append('\n');
+					XMLUtil.buildTag(writer, "username", topicVersion.getAuthorDisplay(), true);
 				}
-				writer.write("\n</contributor>");
-				writer.write('\n' + XMLUtil.buildTag("comment", topicVersion.getEditComment(), true));
+				writer.append("\n</contributor>");
+				writer.append('\n');
+				XMLUtil.buildTag(writer, "comment", topicVersion.getEditComment(), true);
 				versionContent = this.convertToMediawikiNamespaces(virtualWiki, topicVersion.getVersionContent());
-				writer.write('\n' + XMLUtil.buildTag("text", versionContent, textAttributes, true));
-				writer.write("\n</revision>");
+				writer.append('\n');
+				XMLUtil.buildTag(writer, "text", versionContent, textAttributes, true);
+				writer.append("\n</revision>");
 			}
-			writer.write("\n</page>");
+			writer.append("\n</page>");
 		}
 	}
 
@@ -169,15 +185,13 @@ public class MediaWikiXmlExporter implements TopicExporter {
 	 *
 	 */
 	private String parseJAMWikiTimestamp(Timestamp timestamp) {
-		SimpleDateFormat sdf = new SimpleDateFormat(MediaWikiConstants.ISO_8601_DATE_FORMAT);
-		return sdf.format(timestamp);
+		return MEDIAWIKI_DATE_FORMATTER.format(timestamp);
 	}
 
 	/**
 	 * Convert all namespaces names from JAMWiki to MediaWiki local representation.
 	 */
-	private String convertToMediawikiNamespaces(String virtualWiki, String text) throws DataAccessException {
-		StringBuilder builder = new StringBuilder(text);
+	private String convertToMediawikiNamespaces(String virtualWiki, String versionContent) throws DataAccessException {
 		Namespace jamwikiNamespace;
 		String mediawikiNamespace, mediawikiPattern, jamwikiPattern;
 		int start = 0;
@@ -190,10 +204,14 @@ public class MediaWikiXmlExporter implements TopicExporter {
 			}
 			mediawikiPattern = "[[" + mediawikiNamespace + ":";
 			jamwikiPattern = "[[" + jamwikiNamespace.getLabel(virtualWiki) + ":";
-			while ((start = builder.indexOf(jamwikiPattern, start + 1)) != -1) {
-				builder.replace(start, start + jamwikiPattern.length(), mediawikiPattern);
+			while ((start = versionContent.indexOf(jamwikiPattern, start + 1)) != -1) {
+				if (start == 0) {
+					versionContent = mediawikiPattern + versionContent.substring(start + jamwikiPattern.length());
+				} else {
+					versionContent = versionContent.substring(0, start) + mediawikiPattern + versionContent.substring(start + jamwikiPattern.length());
+				}
 			}
 		}
-		return builder.toString();
+		return versionContent;
 	}
 }
