@@ -16,9 +16,11 @@
  */
 package org.jamwiki.migrate;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,21 +56,24 @@ public class MediaWikiXmlExporter implements TopicExporter {
 	 *
 	 */
 	public void exportToFile(File file, String virtualWiki, List<String> topicNames, boolean excludeHistory) throws MigrationException {
-		FileWriter writer = null;
+		FileWriter fileWriter = null;
+		BufferedWriter bufferedWriter = null;
 		boolean success = false;
 		try {
-			writer = new FileWriter(file);
-			writer.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
-			this.writeSiteInfo(writer, virtualWiki);
-			this.writePages(writer, virtualWiki, topicNames, excludeHistory);
-			writer.append("\n</mediawiki>");
+			fileWriter = new FileWriter(file);
+			bufferedWriter = new BufferedWriter(fileWriter);
+			bufferedWriter.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
+			this.writeSiteInfo(bufferedWriter, virtualWiki);
+			this.writePages(bufferedWriter, virtualWiki, topicNames, excludeHistory);
+			bufferedWriter.append("\n</mediawiki>");
 			success = true;
 		} catch (DataAccessException e) {
 			throw new MigrationException(e);
 		} catch (IOException e) {
 			throw new MigrationException(e);
 		} finally {
-			IOUtils.closeQuietly(writer);
+			IOUtils.closeQuietly(bufferedWriter);
+			IOUtils.closeQuietly(fileWriter);
 			if (!success) {
 				// make sure partial files are deleted
 				file.delete();
@@ -79,7 +84,7 @@ public class MediaWikiXmlExporter implements TopicExporter {
 	/**
 	 *
 	 */
-	private void writeSiteInfo(FileWriter writer, String virtualWikiName) throws DataAccessException, IOException {
+	private void writeSiteInfo(Writer writer, String virtualWikiName) throws DataAccessException, IOException {
 		VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
 		writer.append("\n<siteinfo>");
 		String sitename = virtualWiki.getSiteName();
@@ -116,7 +121,10 @@ public class MediaWikiXmlExporter implements TopicExporter {
 	/**
 	 *
 	 */
-	private void writePages(FileWriter writer, String virtualWiki, List<String> topicNames, boolean excludeHistory) throws DataAccessException, IOException, MigrationException {
+	private void writePages(Writer writer, String virtualWiki, List<String> topicNames, boolean excludeHistory) throws DataAccessException, IOException, MigrationException {
+		// note that effort is being made to re-use temporary objects as this
+		// code can generate an OOM "GC overhead limit exceeded" with HUGE (500MB) topics
+		// since the garbage collector ends up being invoked excessively.
 		TopicVersion topicVersion;
 		Topic topic;
 		WikiUser user;
@@ -173,6 +181,10 @@ public class MediaWikiXmlExporter implements TopicExporter {
 				writer.append('\n');
 				XMLUtil.buildTag(writer, "text", topicVersion.getVersionContent(), textAttributes, true);
 				writer.append("\n</revision>");
+				// explicitly null out temp variables to improve garbage collection and
+				// avoid OOM "GC overhead limit exceeded" errors on HUGE (500MB) topics
+				topicVersion = null;
+				user = null;
 			}
 			writer.append("\n</page>");
 		}

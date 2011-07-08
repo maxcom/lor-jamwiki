@@ -73,8 +73,7 @@ public class WikiCache {
 	 * @param value The object that is being stored in the cache.
 	 */
 	public static void addToCache(String cacheName, Object key, Object value) {
-		Cache cache = WikiCache.getCache(cacheName);
-		cache.put(new Element(key, value));
+		WikiCache.getCache(cacheName).put(new Element(key, value));
 	}
 
 	/**
