@@ -39,6 +39,7 @@ New Features:
   * Upgrade to Lucene Search 3.3.
   * Upgrade to Ehcache 2.4.2.
   * Upgrade to commons-codec 1.5.
+  * Upgrade to commons-lang 2.6.
   * Upgrade to commons-pool 1.5.6.
 
 Bugfixes:
