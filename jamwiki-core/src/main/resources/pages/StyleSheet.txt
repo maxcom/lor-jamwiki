@@ -582,17 +582,102 @@ div.gallerybox {
 table.gallery-cat div.gallerybox {
 	width: 155px;
 }
-#toolbar a {
-	border: none;
-	text-decoration: none;
+#edit-toolbar {
+	margin: 3px 0;
 }
-#toolbar a img {
-	padding: 0;
-	margin: 0 1px 0 0;
-	border: 1px solid #7E7ECB;
+.toolbar-group {
+	-moz-border-radius:5px;
+	-webkit-border-radius: 5px;
+	background-color: #f0f0f0;
+	border-radius: 5px;
+	display: inline-block;
+	margin-right: 6px;
+	margin-bottom: 5px;
+	padding-left: 3px;
 }
-#toolbar a img:hover {
-	border-color: #D8D8E7;
+.toolbar-button a {
+	border-radius: 3px;
+	cursor: default;
+	display: inline-block;
+	height: 24px;
+	outline: none;
+	padding: 2px 3px;
+}
+.toolbar-button {
+	border-right: 1px solid #fff;
+	cursor: pointer;
+	display: inline-block;
+	padding: 3px 3px 3px 0;
+	filter: alpha(opacity=70);
+	opacity: 0.70;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
+.toolbar-button a:hover, .toolbar-button a:focus, .toolbar-button a:active {
+	background-color: #bfd1ff;
+	border-bottom: none;
+}
+.toolbar-icon {
+	background: url(../images/toolbar-icons.png) 0 0 no-repeat;
+	cursor: default;
+	display: inline-block;
+	margin-top: 1px;
+	height: 22px;
+	width: 22px;
+}
+#button-bold .toolbar-icon {
+	background-position: 0 -66px !important;
+}
+#button-italic .toolbar-icon {
+	background-position: 0 -88px !important;
+}
+#button-underline .toolbar-icon {
+	background-position: 0 -110px !important;
+}
+#button-strike .toolbar-icon {
+	background-position: 0 -132px !important;
+}
+#button-subscript .toolbar-icon {
+	background-position: 0 -154px !important;
+}
+#button-superscript .toolbar-icon {
+	background-position: 0 -176px !important;
+}
+#button-nowiki .toolbar-icon {
+	background-position: 0 0 !important;
+}
+#button-orderedlist .toolbar-icon {
+	background-position: 0 -198px !important;
+}
+#button-unorderedlist .toolbar-icon {
+	background-position: 0 -220px !important;
+}
+#button-indent .toolbar-icon {
+	background-position: 0 -242px !important;
+}
+#button-wikilink .toolbar-icon {
+	background-position: 0 -264px !important;
+}
+#button-link .toolbar-icon {
+	background-position: 0 -22px !important;
+}
+#button-image .toolbar-icon {
+	background-position: 0 -286px !important;
+}
+#button-signature .toolbar-icon {
+	background-position: 0 -44px !important;
+}
+#button-hr .toolbar-icon {
+	background-position: 0 -308px !important;
+}
+#button-heading1 .toolbar-icon {
+	background-position: 0 -330px !important;
+}
+#button-heading2 .toolbar-icon {
+	background-position: 0 -352px !important;
+}
+#button-heading3 .toolbar-icon {
+	background-position: 0 -374px !important;
 }
 table.categories {
 	width: 100%;

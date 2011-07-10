@@ -13,6 +13,7 @@ New Features:
     weight topic names more heavily than topic content to improve accuracy.
     Existing JAMWiki installs should rebuild their search index using the
     tools on the Special:Maintenance page.
+  * Update the editing toolbar with new look & feel and new functions.
   * Add a "View Source" tab to allow users who do not have permission to edit
     a topic to view its wiki markup.
   * Add the ability for sysadmins to permanently delete topic versions from the

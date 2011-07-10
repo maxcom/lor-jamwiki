@@ -87,9 +87,8 @@ Non-Project Content
 The following files are included in JAMWiki but come from other projects and
 are released under free licenses:
 
-  Edit toolbar buttons
-    From http://commons.wikimedia.org/wiki/MediaWiki_edit_toolbar by
-    Yonidebest, Erasoft24, Olliminatore, and Rocket000 (GFDL 1.2+ / CC-SA 3.0)
-  /images/bullet.gif
-    From http://commons.wikimedia.org/wiki/File:Bullet.gif by AB-me and
-    Brian0918 (GFDL 1.2+ / CC-SA 3.0)
+  * Edit toolbar buttons & CSS fom http://ckeditor.com (LGPL)
+  * Edit toolbar buttons from http://commons.wikimedia.org/wiki/MediaWiki_edit_toolbar
+    by Erasoft24, Olliminatore, and Rocket000 (GFDL 1.2+ / CC-SA 3.0)
+  * /images/bullet.gif from http://commons.wikimedia.org/wiki/File:Bullet.gif
+    by AB-me and Brian0918 (GFDL 1.2+ / CC-SA 3.0)
