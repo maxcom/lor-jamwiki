@@ -78,7 +78,7 @@ public class SearchServlet extends JAMWikiServlet {
 	private void search(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		String searchField = request.getParameter("text");
-		if (request.getParameter("text") == null) {
+		if (StringUtils.isBlank(request.getParameter("text"))) {
 			pageInfo.setPageTitle(new WikiMessage("search.title"));
 		} else {
 			pageInfo.setPageTitle(new WikiMessage("searchresult.title", searchField));
