@@ -68,7 +68,9 @@ Bugfixes:
 Translation Updates:
 
   * Updated German translations (axelclk).
+  * Updated Japanese translations.
   * Updated Russian translations (shar).
+  * Updated Spanish translations.
 
 
 1.0.5
