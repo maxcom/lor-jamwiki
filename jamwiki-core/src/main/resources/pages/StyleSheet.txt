@@ -606,8 +606,6 @@ table.gallery-cat div.gallerybox {
 	cursor: pointer;
 	display: inline-block;
 	padding: 2px 2px 2px 0;
-	filter: alpha(opacity=70);
-	opacity: 0.70;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
 }
