@@ -113,50 +113,50 @@ JAMWiki.Editor = function() {
 	};
 }();
 JAMWiki.UI = function() {
-	// assign a CSS class to an element if it is not already assigned
-	function addClass(element, cssClassName) {
-		if (!hasClass(element, cssClassName)) {
-			if (element.className.length > 0) {
-				element.className += " " + cssClassName;
-			} else {
-				element.className = cssClassName;
-			}
-		}
-	}
-	// determine if an element currently has a CSS class
-	function hasClass(element, cssClassName) {
-		var classNames = element.className.split(" ");
-		for (var i=0; i < classNames.length; i++) {
-			if (classNames[i] == cssClassName) {
-				return true;
-			}
-		}
-		return false;
-	}
-	// remove a CSS class from an element if it is assigned
-	function removeClass(element, cssClassName) {
-		var classNames = element.className.split(" ");
-		var updatedClassNames = "";
-		for (var i=0; i < classNames.length; i++) {
-			if (classNames[i] == cssClassName) {
-				continue;
-			}
-			if (updatedClassNames.length > 0) {
-				updatedClassNames += " ";
-			}
-			updatedClassNames += classNames[i];
-		}
-		element.className = updatedClassNames;
-	}
-	// remove a CSS class from an element if it is assigned, otherwise add it.
-	function toggleClass(element, cssClassName) {
-		if (hasClass(element, cssClassName)) {
-			removeClass(element, cssClassName);
-		} else {
-			addClass(element, cssClassName);
-		}
-	}
 	return {
+		// assign a CSS class to an element if it is not already assigned
+		addClass: function(element, cssClassName) {
+			if (!JAMWiki.UI.hasClass(element, cssClassName)) {
+				if (element.className.length > 0) {
+					element.className += " " + cssClassName;
+				} else {
+					element.className = cssClassName;
+				}
+			}
+		},
+		// determine if an element currently has a CSS class
+		hasClass: function(element, cssClassName) {
+			var classNames = element.className.split(" ");
+			for (var i=0; i < classNames.length; i++) {
+				if (classNames[i] == cssClassName) {
+					return true;
+				}
+			}
+			return false;
+		},
+		// remove a CSS class from an element if it is assigned
+		removeClass: function(element, cssClassName) {
+			var classNames = element.className.split(" ");
+			var updatedClassNames = "";
+			for (var i=0; i < classNames.length; i++) {
+				if (classNames[i] == cssClassName) {
+					continue;
+				}
+				if (updatedClassNames.length > 0) {
+					updatedClassNames += " ";
+				}
+				updatedClassNames += classNames[i];
+			}
+			element.className = updatedClassNames;
+		},
+		// remove a CSS class from an element if it is assigned, otherwise add it.
+		toggleClass: function(element, cssClassName) {
+			if (JAMWiki.UI.hasClass(element, cssClassName)) {
+				JAMWiki.UI.removeClass(element, cssClassName);
+			} else {
+				JAMWiki.UI.addClass(element, cssClassName);
+			}
+		},
 		// enable/disable radio buttons before or after the current element
 		historyRadio: function(element, siblingName, disableLower) {
 			// since revision numbers are chronological this code compares revision 
@@ -181,8 +181,8 @@ JAMWiki.UI = function() {
 		// allow expanding/collapsing sections
 		initializeToggle: function(containerElement, toggleElement, expandedClass) {
 			// close by default
-			removeClass(containerElement, expandedClass);
-			toggleElement.onclick = toggleClass.bind(JAMWiki.UI, containerElement, expandedClass);
+			JAMWiki.UI.removeClass(containerElement, expandedClass);
+			toggleElement.onclick = JAMWiki.UI.toggleClass.bind(JAMWiki.UI, containerElement, expandedClass);
 		}
 	};
 }();

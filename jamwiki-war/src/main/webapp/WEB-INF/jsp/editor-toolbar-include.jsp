@@ -17,7 +17,7 @@
 
 --%>
 
-<div id="edit-toolbar">
+<div id="edit-toolbar" class="hidden">
 	<span class="toolbar-group">
 		<fmt:message key="edit.button.bold" var="toolbarButtonText" />
 		<span class="toolbar-button"><a id="button-bold" title="<c:out value="${toolbarButtonText}" />" href="#" title=""><span class="toolbar-icon">&#160;</span></a></span>
@@ -66,26 +66,27 @@
 
 <script type="text/javascript">
 /*<![CDATA[*/
-JAMWiki.Editor.initButton('button-bold', '\'\'\'', '\'\'\'', '<fmt:message key="edit.button.bold.text"/>');
-JAMWiki.Editor.initButton('button-italic', '\'\'', '\'\'', '<fmt:message key="edit.button.italic.text"/>');
-JAMWiki.Editor.initButton('button-underline', '<u>', '</u>', '<fmt:message key="edit.button.underline.text"/>');
-JAMWiki.Editor.initButton('button-strike', '<s>', '</s>', '<fmt:message key="edit.button.strike.text"/>');
-JAMWiki.Editor.initButton('button-subscript', '<sub>', '</sub>', '<fmt:message key="edit.button.subscript.text"/>');
-JAMWiki.Editor.initButton('button-superscript', '<sup>', '</sup>', '<fmt:message key="edit.button.superscript.text"/>');
-JAMWiki.Editor.initButton('button-nowiki', '<nowiki>', '</nowiki>', '<fmt:message key="edit.button.nowiki.text"/>');
+JAMWiki.UI.removeClass(document.getElementById("edit-toolbar"), "hidden");
+JAMWiki.Editor.initButton("button-bold", "'''", "'''", "<fmt:message key="edit.button.bold.text"/>");
+JAMWiki.Editor.initButton("button-italic", "''", "''", "<fmt:message key="edit.button.italic.text"/>");
+JAMWiki.Editor.initButton("button-underline", "<u>", "</u>", "<fmt:message key="edit.button.underline.text"/>");
+JAMWiki.Editor.initButton("button-strike", "<s>", "</s>", "<fmt:message key="edit.button.strike.text"/>");
+JAMWiki.Editor.initButton("button-subscript", "<sub>", "</sub>", "<fmt:message key="edit.button.subscript.text"/>");
+JAMWiki.Editor.initButton("button-superscript", "<sup>", "</sup>", "<fmt:message key="edit.button.superscript.text"/>");
+JAMWiki.Editor.initButton("button-nowiki", "<nowiki>", "</nowiki>", "<fmt:message key="edit.button.nowiki.text"/>");
 
-JAMWiki.Editor.initButton('button-orderedlist', '\n# ', '\n', '<fmt:message key="edit.button.ordered.list.text"/>');
-JAMWiki.Editor.initButton('button-unorderedlist', '\n* ', '\n', '<fmt:message key="edit.button.unordered.list.text"/>');
-JAMWiki.Editor.initButton('button-indent', '\n: ', '\n', '<fmt:message key="edit.button.indent.text"/>');
+JAMWiki.Editor.initButton("button-orderedlist", "\n# ", "\n", "<fmt:message key="edit.button.ordered.list.text"/>");
+JAMWiki.Editor.initButton("button-unorderedlist", "\n* ", "\n", "<fmt:message key="edit.button.unordered.list.text"/>");
+JAMWiki.Editor.initButton("button-indent", "\n: ", "\n", "<fmt:message key="edit.button.indent.text"/>");
 
-JAMWiki.Editor.initButton('button-wikilink', '[[', ']]', '<fmt:message key="edit.button.internal.link.text"/>');
-JAMWiki.Editor.initButton('button-link', '[', ']', '<fmt:message key="edit.button.external.link.text"/>');
-JAMWiki.Editor.initButton('button-image', '[[${pageInfo.namespaces[pageInfo.virtualWikiName]['Image']}:', ']]', '<fmt:message key="edit.button.image.text"/>');
-JAMWiki.Editor.initButton('button-signature', '-- ~~~~', '', '');
-JAMWiki.Editor.initButton('button-hr', '\n----\n', '', '');
+JAMWiki.Editor.initButton("button-wikilink", "[[", "]]", "<fmt:message key="edit.button.internal.link.text"/>");
+JAMWiki.Editor.initButton("button-link", "[", "]", "<fmt:message key="edit.button.external.link.text"/>");
+JAMWiki.Editor.initButton("button-image", "[[${pageInfo.namespaces[pageInfo.virtualWikiName]['Image']}:", "]]", "<fmt:message key="edit.button.image.text"/>");
+JAMWiki.Editor.initButton("button-signature", "-- ~~~~", "", "");
+JAMWiki.Editor.initButton("button-hr", "\n----\n", "", "");
 
-JAMWiki.Editor.initButton('button-heading1', '\n= ', ' =\n', '<fmt:message key="edit.button.head.text"/>');
-JAMWiki.Editor.initButton('button-heading2', '\n== ', ' ==\n', '<fmt:message key="edit.button.head.text"/>');
-JAMWiki.Editor.initButton('button-heading3', '\n=== ', ' ===\n', '<fmt:message key="edit.button.head.text"/>');
+JAMWiki.Editor.initButton("button-heading1", "\n= ", " =\n", "<fmt:message key="edit.button.head.text"/>");
+JAMWiki.Editor.initButton("button-heading2", "\n== ", " ==\n", "<fmt:message key="edit.button.head.text"/>");
+JAMWiki.Editor.initButton("button-heading3", "\n=== ", " ===\n", "<fmt:message key="edit.button.head.text"/>");
 /*]]>*/ 
 </script>
