@@ -296,7 +296,7 @@ public class ParserTest extends JAMWikiUnitTest {
 		failures.add("Paragraph13"); // paragraphs in <td> tags
 		failures.add("Paragraph15"); // failure parsing of empty paragraphs with <nowiki>
 		failures.add("PreformattedInvalid1");
-		failures.add("Template_-_Paramtest");
+		failures.add("Template_-_Paramtest"); // issues with params when parsing a template page
 		failures.add("UnbalancedTag1");
 		failures.add("UnbalancedTag3");
 		return (failures.indexOf(fileName) != -1);

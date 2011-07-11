@@ -5,10 +5,12 @@ New Features:
 
   * Support blocking specific users and IP addresses from editing and uploading
     via the new Special:Block, Special:Unblock and Special:BlockList pages.
-  * Add optional reCAPTCHA support for combatting spam on the Special:Register
-    and Special:Edit pages using captcha challenge-response.
+  * Add optional reCAPTCHA (http://www.google.com/recaptcha) support for
+    combatting spam on the Special:Account and Special:Edit pages using CAPTCHA
+    challenge-response.
   * Add support for the Mediawiki <gallery> tag for generating image galleries.
-  * Add a "Filter search results by namespace" option to the search page.
+  * Add a "Filter search results by namespace" option to the Special:Search
+    page.
   * Improve search performance, exclude redirects from search indexing, and
     weight topic names more heavily than topic content to improve accuracy.
     Existing JAMWiki installs should rebuild their search index using the
@@ -28,7 +30,7 @@ New Features:
     http://universaleditbutton.org for further details.
   * Add experimental support for custom parser tags for the JFlex parser.
   * Enable DBCP prepared statement pooling to improve performance.
-  * Reduce the number of fields presented to users on the Special:Register page
+  * Reduce the number of fields presented to users on the Special:Account page
     when creating an account.
   * Remove ability to automatically upgrade from versions prior to 0.9.0.
   * Add RankingAlgorithm search engine support (nnagarajayya).
@@ -723,7 +725,7 @@ New Features:
     form "#REDIRECT [[:virtual:Topic]]. Requested by tfschueller.
   * Login will now always take the user back to the page from which 'login' was
     clicked, as requested by many users and as implemented by Mediawiki.
-  * Allow updating of account information on Special:Register without entering
+  * Allow updating of account information on Special:Account without entering
     the old password EXCEPT when changing password.
   * Update CSS / HTML to use semantic code when possible - no visible changes.
   * Update the UI of the upgrade screen to provide additional information.
