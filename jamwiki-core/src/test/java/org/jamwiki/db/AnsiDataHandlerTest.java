@@ -25,7 +25,6 @@ import org.jamwiki.WikiException;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.utils.Pagination;
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
