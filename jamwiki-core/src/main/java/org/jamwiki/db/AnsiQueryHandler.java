@@ -211,7 +211,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_TOPIC_VERSION_NEXT_ID = null;
 	protected static String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_USER_BLOCKS = null;
-	protected static String STATEMENT_SELECT_USER_BLOCKS_SEQUENCE = null;
+	protected static String STATEMENT_SELECT_USER_BLOCK_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_USERS_AUTHENTICATION = null;
 	protected static String STATEMENT_SELECT_VIRTUAL_WIKIS = null;
 	protected static String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE = null;
@@ -1325,7 +1325,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_TOPIC_VERSION_NEXT_ID   = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION_NEXT_ID");
 		STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE  = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE");
 		STATEMENT_SELECT_USER_BLOCKS             = props.getProperty("STATEMENT_SELECT_USER_BLOCKS");
-		STATEMENT_SELECT_USER_BLOCKS_SEQUENCE    = props.getProperty("STATEMENT_SELECT_USER_BLOCKS_SEQUENCE");
+		STATEMENT_SELECT_USER_BLOCK_SEQUENCE     = props.getProperty("STATEMENT_SELECT_USER_BLOCK_SEQUENCE");
 		STATEMENT_SELECT_USERS_AUTHENTICATION    = props.getProperty("STATEMENT_SELECT_USERS_AUTHENTICATION");
 		STATEMENT_SELECT_VIRTUAL_WIKIS           = props.getProperty("STATEMENT_SELECT_VIRTUAL_WIKIS");
 		STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE   = props.getProperty("STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE");
@@ -2815,7 +2815,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 * @throws SQLException Thrown if any error occurs during method execution.
 	 */
 	private int nextUserBlockId(Connection conn) throws SQLException {
-		int nextId = DatabaseConnection.executeSequenceQuery(STATEMENT_SELECT_USER_BLOCKS_SEQUENCE, "user_block_id", conn);
+		int nextId = DatabaseConnection.executeSequenceQuery(STATEMENT_SELECT_USER_BLOCK_SEQUENCE, "user_block_id", conn);
 		// note - this returns the last id in the system, so add one
 		return nextId + 1;
 	}
