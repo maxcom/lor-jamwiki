@@ -607,7 +607,9 @@ public class AnsiQueryHandler implements QueryHandler {
 			return sql;
 		}
 		try {
-			return MessageFormat.format(sql, params);
+			// replace all single quotes with '' since otherwise MessageFormat
+			// will treat the content is a quoted string
+			return MessageFormat.format(sql.replaceAll("'", "''"), params);
 		} catch (IllegalArgumentException e) {
 			String msg = "Unable to format " + sql + " with values: ";
 			for (int i = 0; i < params.length; i++) {
@@ -1322,8 +1324,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_TOPIC_VERSION           = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION");
 		STATEMENT_SELECT_TOPIC_VERSION_NEXT_ID   = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION_NEXT_ID");
 		STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE  = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE");
-		STATEMENT_SELECT_USER_BLOCKS              = props.getProperty("STATEMENT_SELECT_USER_BLOCKS");
-		STATEMENT_SELECT_USER_BLOCKS_SEQUENCE     = props.getProperty("STATEMENT_SELECT_USER_BLOCKS_SEQUENCE");
+		STATEMENT_SELECT_USER_BLOCKS             = props.getProperty("STATEMENT_SELECT_USER_BLOCKS");
+		STATEMENT_SELECT_USER_BLOCKS_SEQUENCE    = props.getProperty("STATEMENT_SELECT_USER_BLOCKS_SEQUENCE");
 		STATEMENT_SELECT_USERS_AUTHENTICATION    = props.getProperty("STATEMENT_SELECT_USERS_AUTHENTICATION");
 		STATEMENT_SELECT_VIRTUAL_WIKIS           = props.getProperty("STATEMENT_SELECT_VIRTUAL_WIKIS");
 		STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE   = props.getProperty("STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE");
