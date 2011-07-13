@@ -209,7 +209,7 @@ public class Environment {
 		this.defaults.setProperty(PROP_CACHE_INDIVIDUAL_SIZE, "1500");
 		this.defaults.setProperty(PROP_CACHE_MAX_AGE, "300");
 		this.defaults.setProperty(PROP_CACHE_MAX_IDLE_AGE, "150");
-		this.defaults.setProperty(PROP_CACHE_TOTAL_SIZE, "3000");
+		this.defaults.setProperty(PROP_CACHE_TOTAL_SIZE, "5000");
 		this.defaults.setProperty(PROP_DATE_PATTERN_DATE_AND_TIME, "dd MMMM yyyy HH:mm");
 		this.defaults.setProperty(PROP_DATE_PATTERN_DATE_ONLY, "dd MMMM yyyy");
 		this.defaults.setProperty(PROP_DATE_PATTERN_TIME_ONLY, "HH:mm");
@@ -238,12 +238,12 @@ public class Environment {
 		this.defaults.setProperty(PROP_FILE_BLACKLIST, "bat,bin,exe,htm,html,js,jsp,php,sh");
 		this.defaults.setProperty(PROP_FILE_BLACKLIST_TYPE, String.valueOf(WikiBase.UPLOAD_BLACKLIST));
 		// size is in bytes
-		this.defaults.setProperty(PROP_FILE_MAX_FILE_SIZE, "2000000");
+		this.defaults.setProperty(PROP_FILE_MAX_FILE_SIZE, "5000000");
 		this.defaults.setProperty(PROP_FILE_SERVER_URL, "");
 		this.defaults.setProperty(PROP_FILE_WHITELIST, "bmp,gif,jpeg,jpg,pdf,png,properties,svg,txt,zip");
 		this.defaults.setProperty(PROP_IMAGE_RESIZE_INCREMENT, "100");
 		this.defaults.setProperty(PROP_MAX_RECENT_CHANGES, "10000");
-		this.defaults.setProperty(PROP_MAX_TOPIC_VERSION_EXPORT, "200");
+		this.defaults.setProperty(PROP_MAX_TOPIC_VERSION_EXPORT, "1000");
 		this.defaults.setProperty(PROP_PARSER_ALLOW_CAPITALIZATION, Boolean.TRUE.toString());
 		this.defaults.setProperty(PROP_PARSER_ALLOW_HTML, Boolean.TRUE.toString());
 		this.defaults.setProperty(PROP_PARSER_ALLOW_JAVASCRIPT, Boolean.FALSE.toString());
