@@ -66,6 +66,8 @@ Bugfixes:
     not treated as blank lines in order to match Mediawiki behavior.
   * Display a "no items found" message on pages such as Special:Categories and
     Special:AllPages when there are no items available for display.
+  * Recent changes will not always have a topic_version_id, so remove the
+    dependency on that field when migrating to a new database.
 
 Translation Updates:
 
