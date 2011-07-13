@@ -145,6 +145,19 @@ public class WikiMessage {
 	}
 
 	/**
+	 * Add a wiki link param to this WikiMessage object.
+	 *
+	 * @param wikiLinkParam A string that will be processed with the jamwiki:link tag
+	 *  when this wiki message is rendered.
+	 * @param wikiLinkParamText A string that will be used as text with the jamwiki:link
+	 *  tag when this wiki message is rendered.
+	 */
+	public void addWikiLinkParam(String wikiLinkParam, String wikiLinkParamText) {
+		WikiMessageParam wikiMessageParam = new WikiMessageParam(wikiLinkParam, wikiLinkParamText);
+		this.addParam(wikiMessageParam);
+	}
+
+	/**
 	 * Update the list of params for this WikiMessage, adding the new
 	 * param to the end of the parameter array.
 	 */

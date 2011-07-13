@@ -23,6 +23,7 @@ package org.jamwiki.utils;
 public class WikiMessageParam {
 
 	private String param = null;
+	private String paramText = null;
 	private boolean isWikiLink = false;
 
 	/**
@@ -44,11 +45,36 @@ public class WikiMessageParam {
 	}
 
 	/**
+	 * Create a WikiMessageParam that represents a wiki link, specifying both
+	 * the link target and the link text.
+	 */
+	public WikiMessageParam(String linkValue, String linkText) {
+		this.param = linkValue;
+		this.paramText = linkText;
+		this.isWikiLink = true;
+	}
+
+	/**
 	 * Return a flag indicating whether this message param should be formatted
 	 * as a wiki link.
 	 */
 	public boolean isWikiLink() {
 		return this.isWikiLink;
+	}
+
+	/**
+	 * Return the param value.
+	 */
+	public String getParam() {
+		return this.param;
+	}
+
+	/**
+	 * Return the param text (if set) or the param value if there is no param
+	 * text.
+	 */
+	public String getParamText() {
+		return (this.paramText == null) ? this.param : this.paramText;
 	}
 
 	/**
