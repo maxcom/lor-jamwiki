@@ -1437,7 +1437,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		if (logType > 0) {
 			change.setLogType(logType);
 			change.setLogSubType(logSubType);
-			change.initChangeWikiMessageForLog(logType, logSubType, rs.getString("log_params"), change.getTopicVersionId());
+			change.initChangeWikiMessageForLog(rs.getString("virtual_wiki_name"), logType, logSubType, rs.getString("log_params"), change.getTopicVersionId());
 		}
 		change.setVirtualWiki(rs.getString("virtual_wiki_name"));
 		return change;

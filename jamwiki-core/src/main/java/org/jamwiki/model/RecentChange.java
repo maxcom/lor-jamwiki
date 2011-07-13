@@ -85,15 +85,15 @@ public class RecentChange {
 		recentChange.setParamString(logItem.getLogParamString());
 		recentChange.setLogSubType(logItem.getLogSubType());
 		recentChange.setLogType(logItem.getLogType());
-		recentChange.initChangeWikiMessageForLog(logItem.getLogType(), logItem.getLogSubType(), logItem.getLogParamString(), logItem.getTopicVersionId());
+		recentChange.initChangeWikiMessageForLog(logItem.getVirtualWiki(), logItem.getLogType(), logItem.getLogSubType(), logItem.getLogParamString(), logItem.getTopicVersionId());
 		return recentChange;
 	}
 
 	/**
 	 *
 	 */
-	public void initChangeWikiMessageForLog(int logType, Integer logSubType, String logParamString, Integer topicVersionId) {
-		this.setChangeWikiMessage(LogItem.retrieveLogWikiMessage(logType, logSubType, logParamString, topicVersionId));
+	public void initChangeWikiMessageForLog(String virtualWiki, int logType, Integer logSubType, String logParamString, Integer topicVersionId) {
+		this.setChangeWikiMessage(LogItem.retrieveLogWikiMessage(virtualWiki, logType, logSubType, logParamString, topicVersionId));
 	}
 
 	/**

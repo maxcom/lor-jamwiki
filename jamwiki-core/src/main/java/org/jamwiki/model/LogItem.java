@@ -196,7 +196,7 @@ public class LogItem {
 	/**
 	 *
 	 */
-	public static WikiMessage retrieveLogWikiMessage(int logType, Integer logSubType, String logParamString, Integer topicVersionId) {
+	public static WikiMessage retrieveLogWikiMessage(String virtualWiki, int logType, Integer logSubType, String logParamString, Integer topicVersionId) {
 		String[] logParams = null;
 		if (!StringUtils.isBlank(logParamString)) {
 			logParams = logParamString.split("\\|");
@@ -210,14 +210,18 @@ public class LogItem {
 					logWikiMessage = new WikiMessage("log.message.block");
 				}
 				// params are the blocked user and the block expiration.
-				logWikiMessage.addWikiLinkParam(logParams[0]);
+				String username = logParams[0];
+				String userPage = Namespace.namespace(Namespace.USER_ID).getLabel(virtualWiki) + Namespace.SEPARATOR + username;
+				logWikiMessage.addWikiLinkParam(userPage, username);
 				if (logParams.length > 1) {
 					logWikiMessage.addParam(logParams[1]);
 				}
 			} else {
 				logWikiMessage = new WikiMessage("log.message.unblock");
 				// param is the unblocked user.
-				logWikiMessage.addWikiLinkParam(logParams[0]);
+				String username = logParams[0];
+				String userPage = Namespace.namespace(Namespace.USER_ID).getLabel(virtualWiki) + Namespace.SEPARATOR + username;
+				logWikiMessage.addWikiLinkParam(userPage, username);
 			}
 		} else if (logType == LogItem.LOG_TYPE_DELETE) {
 			if (logSubType != null && logSubType.intValue() == LOG_SUBTYPE_DELETE_UNDELETE) {
@@ -366,7 +370,7 @@ public class LogItem {
 	 * params.
 	 */
 	public WikiMessage getLogWikiMessage() {
-		return LogItem.retrieveLogWikiMessage(this.getLogType(), this.getLogSubType(), this.getLogParamString(), this.getTopicVersionId());
+		return LogItem.retrieveLogWikiMessage(this.getVirtualWiki(), this.getLogType(), this.getLogSubType(), this.getLogParamString(), this.getTopicVersionId());
 	}
 
 	/**
