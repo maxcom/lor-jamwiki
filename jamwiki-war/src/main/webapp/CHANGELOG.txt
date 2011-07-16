@@ -71,6 +71,8 @@ Bugfixes:
 
 Translation Updates:
 
+  * Updated Danish translations.
+  * Updated French translations.
   * Updated German translations (axelclk).
   * Updated Japanese translations.
   * Updated Russian translations (shar).
