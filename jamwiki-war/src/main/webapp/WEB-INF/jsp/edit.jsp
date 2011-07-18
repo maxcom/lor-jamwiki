@@ -47,6 +47,10 @@
 <input type="hidden" name="lastTopicVersionId" value="<c:out value="${lastTopicVersionId}" />" />
 <input type="hidden" name="section" value="<c:out value="${section}" />" />
 <input type="hidden" name="topicVersionId" value="<c:out value="${topicVersionId}" />" />
+<div id="antispam-container" style="display: none;">
+<label for="jamAntispam"><fmt:message key="edit.caption.antispam" /></label>
+<input type="text" name="jamAntispam" id="jamAntispam" value="" />
+</div>
 
 <c:choose>
 	<c:when test="${editor == 'toolbar'}">

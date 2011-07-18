@@ -173,14 +173,23 @@ public class ServletUtil {
 	 *  spam pattern, or the text that matches a spam pattern if one is found.
 	 */
 	protected static String checkForSpam(HttpServletRequest request, String topicName, String contents, String editComment) throws DataAccessException {
+		// check the blacklist
 		String result = SpamFilter.containsSpam(contents);
+		String message = null;
 		if (StringUtils.isBlank(result) && !StringUtils.isBlank(editComment)) {
+			message = "SPAM found in topic " + topicName;
 			result = SpamFilter.containsSpam(editComment);
+		}
+		// verify that the hidden input field is not populated
+		String honeyPotInput = request.getParameter("jamAntispam");
+		if (StringUtils.isBlank(result) && !StringUtils.isBlank(honeyPotInput)) {
+			message = "SPAM honey pot triggered for topic " + topicName;
+			result = (honeyPotInput.length() > 100) ? honeyPotInput.substring(0, 100) : honeyPotInput;
 		}
 		if (StringUtils.isBlank(result)) {
 			return null;
 		}
-		String message = "SPAM found in topic " + topicName + " (";
+		message += " (";
 		WikiUserDetailsImpl user = ServletUtil.currentUserDetails();
 		if (!user.hasRole(Role.ROLE_ANONYMOUS)) {
 			message += user.getUsername() + " / ";

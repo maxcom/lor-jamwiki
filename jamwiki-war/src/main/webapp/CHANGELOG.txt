@@ -8,6 +8,7 @@ New Features:
   * Add optional reCAPTCHA (http://www.google.com/recaptcha) support for
     combatting spam on the Special:Account and Special:Edit pages using CAPTCHA
     challenge-response.
+  * Add a honeypot input, similar to Mediawiki, to help deter spambots.
   * Add support for the Mediawiki <gallery> tag for generating image galleries.
   * Add a "Filter search results by namespace" option to the Special:Search
     page.
