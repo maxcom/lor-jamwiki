@@ -938,7 +938,8 @@ public class AnsiDataHandler implements DataHandler {
 				// to avoid caching something that might need to be rolled back
 				Topic cacheTopic = (topic == null) ? null : new Topic(topic);
 				WikiCache.addToCache(CACHE_TOPICS_BY_NAME, key, cacheTopic);
-				WikiCache.addToCache(CACHE_TOPIC_NAMES_BY_NAME, key, (cacheTopic == null) ? null : cacheTopic.getName());
+				// do not cache deleted topics
+				WikiCache.addToCache(CACHE_TOPIC_NAMES_BY_NAME, key, (cacheTopic == null || cacheTopic.getDeleteDate() != null) ? null : cacheTopic.getName());
 			}
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
