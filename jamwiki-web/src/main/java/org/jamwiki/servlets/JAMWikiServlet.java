@@ -16,6 +16,7 @@
  */
 package org.jamwiki.servlets;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -88,11 +89,19 @@ public abstract class JAMWikiServlet extends AbstractController {
 		String bottomArea = ServletUtil.cachedContent(request.getContextPath(), request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_BOTTOM_AREA, true);
 		next.addObject("bottomArea", bottomArea);
 		next.addObject(WikiUtil.PARAMETER_VIRTUAL_WIKI, virtualWiki.getName());
+		// add cache-buster parameters for CSS & JS to ensure that browsers update
+		// cache if files change.
 		int cssRevision = 0;
 		try {
 			cssRevision = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, false).getCurrentVersionId();
 		} catch (DataAccessException e) {}
 		next.addObject("cssRevision", cssRevision);
+		long jsRevision = 0;
+		try {
+			File jsFile = new File(request.getSession().getServletContext().getRealPath("/js/jamwiki.js"));
+			jsRevision = jsFile.lastModified();
+		} catch (Exception e) {}
+		next.addObject("jsRevision", jsRevision);
 	}
 
 	/**

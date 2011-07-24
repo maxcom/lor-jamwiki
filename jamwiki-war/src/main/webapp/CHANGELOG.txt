@@ -69,6 +69,8 @@ Bugfixes:
     Special:AllPages when there are no items available for display.
   * Recent changes will not always have a topic_version_id, so remove the
     dependency on that field when migrating to a new database.
+  * Use a cache-buster request parameter with the jamwiki.js file to ensure
+    that browsers do not use out-of-date Javascript.  Reported by shar.
 
 Translation Updates:
 
