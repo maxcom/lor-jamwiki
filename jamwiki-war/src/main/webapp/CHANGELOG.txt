@@ -71,6 +71,9 @@ Bugfixes:
     dependency on that field when migrating to a new database.
   * Use a cache-buster request parameter with the jamwiki.js file to ensure
     that browsers do not use out-of-date Javascript.  Reported by shar.
+  * Fix a corner case with the shared image repository where a file could fail
+    to load if it is in a shared repository but a virtual-wiki image
+    description page (with no associated file) has also been created.
 
 Translation Updates:
 

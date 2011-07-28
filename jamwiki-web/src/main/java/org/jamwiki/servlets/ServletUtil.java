@@ -53,6 +53,7 @@ import org.jamwiki.model.TopicType;
 import org.jamwiki.model.UserBlock;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
+import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserException;
@@ -893,8 +894,10 @@ public class ServletUtil {
 		pageInfo.setInterwikiLinks(parserOutput.getInterwikiLinks());
 		pageInfo.setVirtualWikiLinks(parserOutput.getVirtualWikiLinks());
 		if (topic.getTopicType() == TopicType.IMAGE || topic.getTopicType() == TopicType.FILE) {
+			WikiFile wikiFile = null;
 			List<WikiFileVersion> fileVersions = null;
 			try {
+				wikiFile = WikiBase.getDataHandler().lookupWikiFile(topic.getVirtualWiki(), topicName);
 				fileVersions = WikiBase.getDataHandler().getAllWikiFileVersions(topic.getVirtualWiki(), topicName, true);
 			} catch (DataAccessException e) {
 				throw new WikiException(new WikiMessage("error.unknown", e.getMessage()), e);
@@ -924,11 +927,20 @@ public class ServletUtil {
 			} else {
 				next.addObject("topicFile", true);
 			}
-			boolean sharedImage = !pageInfo.getVirtualWikiName().equals(virtualWiki);
-			next.addObject("sharedImage", sharedImage);
+			// use the WikiFile virtual wiki rather than the topic to work around
+			// a corner case where there could be an image page topic created for
+			// the virtual wiki even though the actual image file is only on the
+			// shared virtual wiki.
+			boolean sharedImage = !pageInfo.getVirtualWikiName().equals(wikiFile.getVirtualWiki());
 			if (sharedImage) {
 				try {
-					pageInfo.setCanonicalUrl(LinkUtil.buildTopicUrl(request.getContextPath(), virtualWiki, topic.getName(), false));
+					Topic sharedImageTopic = topic;
+					if (!StringUtils.equals(wikiFile.getVirtualWiki(), topic.getVirtualWiki())) {
+						// look up the shared topic file
+						sharedImageTopic = WikiBase.getDataHandler().lookupTopicById(wikiFile.getVirtualWiki(), wikiFile.getTopicId());
+					}
+					pageInfo.setCanonicalUrl(LinkUtil.buildTopicUrl(request.getContextPath(), sharedImageTopic.getVirtualWiki(), sharedImageTopic.getName(), false));
+					next.addObject("sharedImageTopicObject", sharedImageTopic);
 				} catch (DataAccessException e) {
 					throw new WikiException(new WikiMessage("error.unknown", e.getMessage()), e);
 				}
