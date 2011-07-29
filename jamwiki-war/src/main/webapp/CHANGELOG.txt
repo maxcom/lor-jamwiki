@@ -76,6 +76,7 @@ Bugfixes:
     description page (with no associated file) has also been created.
   * Fix a potential XSS issue that could affect some Special: pages.  Reported
     by an anonymous user.
+  * When handling whitespace the parser should treat spaces and tabs equally.
 
 Translation Updates:
 

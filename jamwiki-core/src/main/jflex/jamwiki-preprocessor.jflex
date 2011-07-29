@@ -18,13 +18,13 @@ newline            = "\n"
 whitespace         = {newline} | [ \t\f]
 
 /* nowiki */
-nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
+nowiki             = (<[ \t]*nowiki[ \t]*>) ~(<[ \t]*\/[ \t]*nowiki[ \t]*>)
 
 /* pre */
 htmlpreattributes  = class|dir|id|lang|style|title
-htmlpreattribute   = ([ ]+) {htmlpreattributes} ([ ]*=[^>\n]+[ ]*)*
-htmlprestart       = (<[ ]*pre ({htmlpreattribute})* [ ]* (\/)? [ ]*>)
-htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
+htmlpreattribute   = ([ \t]+) {htmlpreattributes} ([ \t]*=[^>\n]+[ \t]*)*
+htmlprestart       = (<[ \t]*pre ({htmlpreattribute})* [ \t]* (\/)? [ \t]*>)
+htmlpreend         = (<[ \t]*\/[ \t]*pre[ \t]*>)
 htmlpre            = ({htmlprestart}) ~({htmlpreend})
 wikipre            = (" ") ([^\n])+ ~({newline})
 wikipreend         = [^ ] | {newline}
@@ -42,7 +42,7 @@ wikilink           = "[[" ({wikilinkcontent})+ "]]" [a-z]*
 nestedwikilink     = "[[" ({wikilinkcontent})+ "|" ({wikilinkcontent} | {wikilink})+ "]]"
 
 /* redirect */
-redirect           = "#REDIRECT" [ ]* {wikilink}
+redirect           = "#REDIRECT" [ \t]* {wikilink}
 
 %state WIKIPRE
 
