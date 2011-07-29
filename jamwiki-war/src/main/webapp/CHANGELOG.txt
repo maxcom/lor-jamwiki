@@ -27,6 +27,8 @@ New Features:
     can be restored from the "Parser" tab of the Special:Admin page.
   * Automatically display virtual wiki links in the left nav for the
     Special:RecentChanges page.  This feature may be disabled from admin pages.
+  * Support the #language parser functions. Usage:
+    "{{#language: code | optional return code}}".
   * Add support for the universal edit button plugin.  See 
     http://universaleditbutton.org for further details.
   * Add experimental support for custom parser tags for the JFlex parser.

@@ -1,4 +1,4 @@
-<!-- parsing of {{ns:}} and {{nse:}} -->
+<!-- parsing of {{ns:}}, {{nse:}} and {{#language:}} -->
 1. {{ns:3}}
 
 2. {{nse:3}}
@@ -16,3 +16,11 @@
 8. {{ns:  3  }}
 
 9. {{ns:media}}
+
+10. {{#language:fr}}
+
+11. {{#language:fr|en}}
+
+12. {{#language:99}}
+
+13. {{#language:fr|99}}

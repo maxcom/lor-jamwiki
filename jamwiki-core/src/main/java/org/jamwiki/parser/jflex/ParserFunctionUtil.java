@@ -21,6 +21,8 @@ import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.jamwiki.DataAccessException;
@@ -48,6 +50,7 @@ public class ParserFunctionUtil {
 	private static final String PARSER_FUNCTION_IF = "#if:";
 	private static final String PARSER_FUNCTION_IF_EQUAL = "#ifeq:";
 	private static final String PARSER_FUNCTION_IF_EXIST = "#ifexist:";
+	private static final String PARSER_FUNCTION_LANGUAGE = "#language:";
 	private static final String PARSER_FUNCTION_LOCAL_URL = "localurl:";
 	private static final String PARSER_FUNCTION_LOWER_CASE = "lc:";
 	private static final String PARSER_FUNCTION_LOWER_CASE_FIRST = "lcfirst:";
@@ -69,6 +72,7 @@ public class ParserFunctionUtil {
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_IF);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_IF_EQUAL);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_IF_EXIST);
+		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LANGUAGE);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOCAL_URL);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOWER_CASE);
 		PARSER_FUNCTIONS.add(PARSER_FUNCTION_LOWER_CASE_FIRST);
@@ -127,6 +131,9 @@ public class ParserFunctionUtil {
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_IF_EXIST)) {
 			return ParserFunctionUtil.parseIfExist(parserInput, parserOutput, parserFunctionArgumentArray);
+		}
+		if (parserFunction.equals(PARSER_FUNCTION_LANGUAGE)) {
+			return ParserFunctionUtil.parseLanguage(parserInput, parserOutput, parserFunctionArgumentArray);
 		}
 		if (parserFunction.equals(PARSER_FUNCTION_LOCAL_URL)) {
 			return ParserFunctionUtil.parseLocalUrl(parserInput, parserFunctionArgumentArray);
@@ -327,6 +334,30 @@ public class ParserFunctionUtil {
 		} else {
 			return (parserFunctionArgumentArray.length >= 3) ? JFlexParserUtil.parseFragment(parserInput, parserOutput, parserFunctionArgumentArray[2], JFlexParser.MODE_TEMPLATE) : "";
 		}
+	}
+
+	/**
+	 * Parse the {{#language:}} parser function.  Usage: {{#language:code | optional return code}}.
+	 * "code" is the ISO code for the language name to return, and the optional return code
+	 * is used if the language should be returned in a language other than the default.  For
+	 * example, if the code is "fr" the default is "Francais", but if an optional return code
+	 * of "en" is specified then the return value will be "French".
+	 */
+	private static String parseLanguage(ParserInput parserInput, ParserOutput parserOutput, String[] parserFunctionArgumentArray) {
+		if (parserFunctionArgumentArray.length < 1) {
+			return "";
+		}
+		if (!ArrayUtils.contains(Locale.getISOLanguages(), parserFunctionArgumentArray[0])) {
+			// invalid locale
+			return parserFunctionArgumentArray[0];
+		}
+		Locale locale = new Locale(parserFunctionArgumentArray[0]);
+		String language = locale.getDisplayLanguage(locale);
+		if (parserFunctionArgumentArray.length >= 2 && ArrayUtils.contains(Locale.getISOLanguages(), parserFunctionArgumentArray[1])) {
+			Locale inLocale = new Locale(parserFunctionArgumentArray[1]);
+			language = locale.getDisplayLanguage(inLocale);
+		}
+		return StringUtils.capitalize(language);
 	}
 
 	/**
