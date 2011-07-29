@@ -131,7 +131,7 @@
 				<option value="${version.topicVersionId}"><fmt:formatDate value="${version.changeDate}" type="both" pattern="${pageInfo.datePatternDateAndTime}" /> - ${version.authorName}</option>
 				</c:forEach>
 				</select>
-				<p><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:Manage?topic=${pageInfo.topicName}" /></p>
+				<p><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:Manage?topic=${pageInfo.topicNameUrlEncoded}" /></p>
 			</span>
 		</div>
 		<div class="row">

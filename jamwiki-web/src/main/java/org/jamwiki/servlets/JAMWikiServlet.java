@@ -127,7 +127,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			// append query params for pages such as Special:Contributions that need it
 			String specialUrl = pageName;
 			if (!StringUtils.isBlank(request.getQueryString())) {
-				specialUrl = pageName + "?" + request.getQueryString();
+				specialUrl = pageName + "?" + Utilities.getQueryString(request);
 			}
 			links.put(specialUrl, new WikiMessage("tab.common.special"));
 		} else {
@@ -291,7 +291,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		}
 		if (target != null) {
 			if (request.getQueryString() != null) {
-				target += "?" + request.getQueryString();
+				target += "?" + Utilities.getQueryString(request);
 			}
 			ServletUtil.redirect(next, pageInfo.getVirtualWikiName(), target);
 		}

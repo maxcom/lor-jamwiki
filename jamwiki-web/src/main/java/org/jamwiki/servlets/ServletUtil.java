@@ -778,7 +778,7 @@ public class ServletUtil {
 			}
 			target = "/" + virtualWikiName + "/" + topic;
 			if (!StringUtils.isBlank(request.getQueryString())) {
-				target += "?" + request.getQueryString();
+				target += "?" + Utilities.getQueryString(request);
 			}
 		}
 		next.addObject("springSecurityTargetUrlField", JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_TARGET_URL_FIELD_NAME);

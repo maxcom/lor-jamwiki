@@ -168,3 +168,5 @@ caption test #8 [[Image:Test Image.jpg|thumb|Test [[ Caption]]
 caption test #9 [[Image:Test Image.jpg|thumb|Test ]] Caption]]
 
 caption test #10 [[Image:Test Image.jpg|thumb|caption1|caption2]]
+
+[[Image:Invalid Image "Name".jpg]]

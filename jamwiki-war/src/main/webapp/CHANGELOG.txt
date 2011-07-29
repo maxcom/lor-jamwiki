@@ -74,6 +74,8 @@ Bugfixes:
   * Fix a corner case with the shared image repository where a file could fail
     to load if it is in a shared repository but a virtual-wiki image
     description page (with no associated file) has also been created.
+  * Fix a potential XSS issue that could affect some Special: pages.  Reported
+    by an anonymous user.
 
 Translation Updates:
 
