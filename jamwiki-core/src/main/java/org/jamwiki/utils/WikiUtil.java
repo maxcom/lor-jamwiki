@@ -344,6 +344,9 @@ public class WikiUtil {
 	 */
 	public static String getTopicFromRequest(HttpServletRequest request) throws WikiException {
 		String topic = WikiUtil.getParameterFromRequest(request, WikiUtil.PARAMETER_TOPIC, true);
+		if (StringUtils.isBlank(topic)) {
+			return topic;
+		}
 		// check for XSS
 		Matcher m = WikiUtil.XSS_PATTERN.matcher(topic);
 		if (m.find()) {
