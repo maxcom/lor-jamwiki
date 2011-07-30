@@ -41,4 +41,4 @@
 			</c:choose>
 		</c:if>
 	</fmt:param>
-/fmt:message>
+</fmt:message>
