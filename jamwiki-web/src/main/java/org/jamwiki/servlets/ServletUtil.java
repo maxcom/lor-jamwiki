@@ -331,7 +331,7 @@ public class ServletUtil {
 	 *  initializing the topic object.
 	 */
 	protected static Topic initializeTopic(String virtualWiki, String topicName) throws WikiException {
-		WikiUtil.validateTopicName(virtualWiki, topicName);
+		WikiUtil.validateTopicName(virtualWiki, topicName, false);
 		Topic topic = null;
 		try {
 			topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false);
@@ -829,7 +829,7 @@ public class ServletUtil {
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		WikiUtil.validateTopicName(topic.getVirtualWiki(), topic.getName());
+		WikiUtil.validateTopicName(topic.getVirtualWiki(), topic.getName(), false);
 		if (allowRedirect && topic.getTopicType() == TopicType.REDIRECT && (request.getParameter("redirect") == null || !request.getParameter("redirect").equalsIgnoreCase("no"))) {
 			Topic child = null;
 			try {

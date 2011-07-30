@@ -19,6 +19,7 @@ package org.jamwiki.parser.jflex;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiException;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.parser.ParserException;
 import org.jamwiki.parser.ParserInput;
@@ -27,6 +28,7 @@ import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 
 /**
  * This class parses wiki links of the form <code>[[Topic to Link To|Link Text]]</code>.
@@ -55,6 +57,15 @@ public class WikiLinkTag implements JFlexParserTag {
 				int end = raw.lastIndexOf("]]");
 				String content = raw.substring(start + "[[".length(), end);
 				return "[[" + JFlexParserUtil.parseFragment(lexer.getParserInput(), lexer.getParserOutput(), content, lexer.getMode()) + "]]";
+			}
+		}
+		if (!StringUtils.isBlank(wikiLink.getDestination())) {
+			String virtualWiki = (wikiLink.getVirtualWiki() == null) ? lexer.getParserInput().getVirtualWiki() : wikiLink.getVirtualWiki().getName();
+			try {
+				// do not process the link if it's an invalid topic name
+				WikiUtil.validateTopicName(virtualWiki, wikiLink.getDestination(), true);
+			} catch (WikiException e) {
+				return raw;
 			}
 		}
 		raw = this.processLinkMetadata(lexer.getParserInput(), lexer.getParserOutput(), lexer.getMode(), raw, wikiLink);

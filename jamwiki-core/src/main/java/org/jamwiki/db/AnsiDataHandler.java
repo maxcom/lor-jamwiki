@@ -1872,7 +1872,7 @@ public class AnsiDataHandler implements DataHandler {
 		try {
 			status = DatabaseConnection.startTransaction();
 			Connection conn = DatabaseConnection.getConnection();
-			WikiUtil.validateTopicName(wikiFile.getVirtualWiki(), wikiFile.getFileName());
+			WikiUtil.validateTopicName(wikiFile.getVirtualWiki(), wikiFile.getFileName(), false);
 			if (wikiFile.getFileId() <= 0) {
 				addWikiFile(wikiFile, conn);
 			} else {
@@ -2043,7 +2043,7 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap<String, String> categories, List<String> links) throws DataAccessException, WikiException {
 		long start = System.currentTimeMillis();
-		WikiUtil.validateTopicName(topic.getVirtualWiki(), topic.getName());
+		WikiUtil.validateTopicName(topic.getVirtualWiki(), topic.getName(), false);
 		TransactionStatus status = null;
 		try {
 			status = DatabaseConnection.startTransaction();

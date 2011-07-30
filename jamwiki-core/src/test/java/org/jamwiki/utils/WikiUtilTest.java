@@ -228,7 +228,7 @@ public class WikiUtilTest extends JAMWikiUnitTest {
 	 */
 	@Test(expected=WikiException.class)
 	public void testValidateTopicNameThrowsNullPointerException() throws Throwable {
-		WikiUtil.validateTopicName(null, null);
+		WikiUtil.validateTopicName(null, null, false);
 	}
 
 	/**
@@ -237,7 +237,7 @@ public class WikiUtilTest extends JAMWikiUnitTest {
 	@Test
 	public void testValidateTopicNameThrowsWikiException1() throws Throwable {
 		try {
-			WikiUtil.validateTopicName("en", "");
+			WikiUtil.validateTopicName("en", "", false);
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertEquals("ex.getWikiMessage().getKey()", "common.exception.notopic", ex.getWikiMessage().getKey());
@@ -250,7 +250,7 @@ public class WikiUtilTest extends JAMWikiUnitTest {
 	@Test
 	public void testValidateTopicNameThrowsWikiException2() throws Throwable {
 		try {
-			WikiUtil.validateTopicName("en", "/Test");
+			WikiUtil.validateTopicName("en", "/Test", false);
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertEquals("ex.getWikiMessage().getKey()", "common.exception.name", ex.getWikiMessage().getKey());
@@ -263,7 +263,7 @@ public class WikiUtilTest extends JAMWikiUnitTest {
 	@Test
 	public void testValidateTopicNameThrowsWikiException3() throws Throwable {
 		try {
-			WikiUtil.validateTopicName("en", "Comments:/Test");
+			WikiUtil.validateTopicName("en", "Comments:/Test", false);
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertEquals("ex.getWikiMessage().getKey()", "common.exception.name", ex.getWikiMessage().getKey());
@@ -276,7 +276,7 @@ public class WikiUtilTest extends JAMWikiUnitTest {
 	@Test
 	public void testValidateTopicNameThrowsWikiException4() throws Throwable {
 		try {
-			WikiUtil.validateTopicName("en", "Comments: /Test");
+			WikiUtil.validateTopicName("en", "Comments: /Test", false);
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertEquals("ex.getWikiMessage().getKey()", "common.exception.name", ex.getWikiMessage().getKey());
@@ -289,7 +289,7 @@ public class WikiUtilTest extends JAMWikiUnitTest {
 	@Test
 	public void testValidateTopicNameThrowsWikiException5() throws Throwable {
 		try {
-			WikiUtil.validateTopicName("en", "Comments: /Test");
+			WikiUtil.validateTopicName("en", "Comments: /Test", false);
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertEquals("ex.getWikiMessage().getKey()", "common.exception.name", ex.getWikiMessage().getKey());
@@ -302,7 +302,7 @@ public class WikiUtilTest extends JAMWikiUnitTest {
 	@Test
 	public void testValidateTopicNameThrowsWikiException6() throws Throwable {
 		try {
-			WikiUtil.validateTopicName("en", "Test?");
+			WikiUtil.validateTopicName("en", "Test?", false);
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertEquals("ex.getWikiMessage().getKey()", "common.exception.name", ex.getWikiMessage().getKey());

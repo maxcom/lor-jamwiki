@@ -200,7 +200,7 @@ public class LinkUtil {
 		if (!wikiLink.getNamespace().getId().equals(Namespace.MEDIA_ID) && !StringUtils.isBlank(topic) && StringUtils.isBlank(style)) {
 			if (WikiBase.getDataHandler().lookupInterwiki(virtualWiki) != null) {
 				style = "interwiki";
-			} else if (LinkUtil.isExistingArticle(virtualWiki, topic) == null) {
+			} else if (LinkUtil.isExistingArticle(virtualWiki, topic) == null && !wikiLink.isSpecial()) {
 				style = "edit";
 			}
 		}
@@ -286,9 +286,9 @@ public class LinkUtil {
 				return url;
 			}
 			String targetTopic = LinkUtil.isExistingArticle(virtualWiki, topic);
-			if (targetTopic == null) {
+			if (targetTopic == null && !wikiLink.isSpecial()) {
 				url = LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, -1);
-			} else if (!StringUtils.equals(topic, targetTopic)) {
+			} else if (!StringUtils.equals(topic, targetTopic) && !wikiLink.isSpecial()) {
 				// add an additional check in case the link was case sensitive
 				url = LinkUtil.buildTopicUrlNoEdit(context, virtualWiki, targetTopic, section, query);
 			}

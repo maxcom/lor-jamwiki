@@ -676,16 +676,19 @@ public class WikiUtil {
 	 *
 	 * @param virtualWiki The current virtual wiki.
 	 * @param name The topic name to validate.
-	 * @throws WikiException Thrown if the user name is invalid.
+	 * @param allowSpecial Set to <code>true</code> if topics in the Special: namespace
+	 *  should be considered valid.  These topics cannot be created, so (for example)
+	 *  this method should not allow them when editing topics.
+	 * @throws WikiException Thrown if the topic name is invalid.
 	 */
-	public static void validateTopicName(String virtualWiki, String name) throws WikiException {
+	public static void validateTopicName(String virtualWiki, String name, boolean allowSpecial) throws WikiException {
 		if (StringUtils.isBlank(virtualWiki)) {
 			throw new WikiException(new WikiMessage("common.exception.novirtualwiki"));
 		}
 		if (StringUtils.isBlank(name)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		if (PseudoTopicHandler.isPseudoTopic(name)) {
+		if (!allowSpecial && PseudoTopicHandler.isPseudoTopic(name)) {
 			throw new WikiException(new WikiMessage("common.exception.pseudotopic", name));
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, name);
@@ -693,7 +696,7 @@ public class WikiUtil {
 		if (StringUtils.startsWith(article, "/")) {
 			throw new WikiException(new WikiMessage("common.exception.name", name));
 		}
-		if (wikiLink.getNamespace().getId().equals(Namespace.SPECIAL_ID)) {
+		if (!allowSpecial && wikiLink.getNamespace().getId().equals(Namespace.SPECIAL_ID)) {
 			throw new WikiException(new WikiMessage("common.exception.name", name));
 		}
 		Matcher m = WikiUtil.INVALID_TOPIC_NAME_PATTERN.matcher(name);

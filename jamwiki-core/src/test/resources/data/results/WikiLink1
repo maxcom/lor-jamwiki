@@ -43,3 +43,7 @@
 <p><a href="/wiki/en/WikiLink1#Section_1" title="WikiLink1">alt text</a></p>
 <p><a href="/wiki/en/Example1" title="example1">example1</a></p>
 <p><a href="/wiki/en/Special:Edit?topic=EXample1" class="edit" title="eXample1">eXample1</a></p>
+<p>[[Invalid<Topic]]</p>
+<p><a href="/wiki/en/Special:RecentChanges" title="Special:RecentChanges">Special:RecentChanges</a></p>
+<p><a href="/wiki/en/Special:RecentChanges" title="Special:RecentChanges">Recent Changes</a></p>
+<p><a href="/wiki/en/Special:Test" title="Special:Test">Special:Test</a></p>

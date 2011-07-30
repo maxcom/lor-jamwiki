@@ -147,6 +147,14 @@ public class WikiLink {
 	}
 
 	/**
+	 * Utility method for determining if this wiki link is in the Special:
+	 * namespace.
+	 */
+	public boolean isSpecial() {
+		return this.getNamespace().getId().equals(Namespace.SPECIAL_ID);
+	}
+
+	/**
 	 *
 	 */
 	public String getText() {

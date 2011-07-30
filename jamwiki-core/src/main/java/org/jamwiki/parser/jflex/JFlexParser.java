@@ -317,7 +317,7 @@ public class JFlexParser extends AbstractParser {
 			if (wikiLink.getVirtualWiki() != null) {
 				virtualWiki = wikiLink.getVirtualWiki().getName();
 			}
-			if (LinkUtil.isExistingArticle(virtualWiki, wikiLink.getDestination()) == null) {
+			if (LinkUtil.isExistingArticle(virtualWiki, wikiLink.getDestination()) == null && !wikiLink.isSpecial()) {
 				style = "edit redirect";
 			}
 			return LinkUtil.buildInternalLinkHtml(this.parserInput.getContext(), virtualWiki, wikiLink, null, style, null, false);

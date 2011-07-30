@@ -2,3 +2,5 @@
 {{localurl:Example1||}}
 
 {{localurl:}}
+
+{{#invalid:test}}

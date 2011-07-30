@@ -25,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
 import org.jamwiki.model.Namespace;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicType;
@@ -154,6 +155,12 @@ public class TemplateTag implements JFlexParserTag {
 		Topic templateTopic = null;
 		boolean inclusion = wikiLink.getColon();
 		String templateName = name;
+		try {
+			// do not process the template if it's an invalid topic name
+			WikiUtil.validateTopicName(parserInput.getVirtualWiki(), templateName, false);
+		} catch (WikiException e) {
+			return raw;
+		}
 		if (!wikiLink.getColon()) {
 			if (!wikiLink.getNamespace().equals(Namespace.namespace(Namespace.TEMPLATE_ID))) {
 				templateName = Namespace.namespace(Namespace.TEMPLATE_ID).getLabel(parserInput.getVirtualWiki()) + Namespace.SEPARATOR + StringUtils.capitalize(name);
