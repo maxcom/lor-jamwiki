@@ -47,7 +47,7 @@ public class WatchlistServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String topic = request.getParameter("topic");
+		String topic = WikiUtil.getTopicFromRequest(request);
 		if (!StringUtils.isBlank(topic)) {
 			update(request, next, pageInfo);
 		} else {

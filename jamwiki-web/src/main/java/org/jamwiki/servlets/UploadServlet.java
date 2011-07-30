@@ -32,6 +32,7 @@ import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.ImageUtil;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -155,7 +156,7 @@ public class UploadServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		pageInfo.setPageTitle(new WikiMessage("upload.title"));
 		pageInfo.setContentJsp(JSP_UPLOAD);
-		next.addObject("uploadDestination", request.getParameter("topic"));
+		next.addObject("uploadDestination", WikiUtil.getTopicFromRequest(request));
 		pageInfo.setSpecial(true);
 	}
 }

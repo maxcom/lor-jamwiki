@@ -16,6 +16,8 @@
  */
 package org.jamwiki.servlets;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -406,6 +408,17 @@ public class WikiPageInfo {
 	 */
 	public String getTopicName() {
 		return this.topicName;
+	}
+
+	/**
+	 * Utility method for returning a URL encoded version of the current
+	 * topic name.
+	 *
+	 * @return A URL encoded version of the name of the topic being displayed
+	 *  by the current page.
+	 */
+	public String getTopicNameUrlEncoded() throws UnsupportedEncodingException {
+		return (this.topicName != null) ? URLEncoder.encode(this.topicName, "UTF-8") : null;
 	}
 
 	/**

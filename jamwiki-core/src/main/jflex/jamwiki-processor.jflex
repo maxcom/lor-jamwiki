@@ -49,15 +49,15 @@ listend            = [^\*#\:;\n]+ (.)+
 listdt             = ":"
 
 /* nowiki */
-nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
+nowiki             = (<[ \t]*nowiki[ \t]*>) ~(<[ \t]*\/[ \t]*nowiki[ \t]*>)
 
 /* pre */
 attributeValueInQuotes = "\"" ~"\""
 attributeValueInSingleQuotes = "'" ~"'"
 attributeValueNoQuotes = [^>\n]+
-htmlattribute      = ([ ]+) [a-zA-Z:]+ ([ ]*=[ ]*({attributeValueInQuotes}|{attributeValueInSingleQuotes}|{attributeValueNoQuotes}))*
-htmlprestart       = (<[ ]*pre ({htmlattribute})* [ ]* (\/)? [ ]*>)
-htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
+htmlattribute      = ([ \t]+) [a-zA-Z:]+ ([ \t]*=[ \t]*({attributeValueInQuotes}|{attributeValueInSingleQuotes}|{attributeValueNoQuotes}))*
+htmlprestart       = (<[ \t]*pre ({htmlattribute})* [ \t]* (\/)? [ \t]*>)
+htmlpreend         = (<[ \t]*\/[ \t]*pre[ \t]*>)
 wikiprestart       = (" ")+ ([^ \t\n])
 wikiprecontinue    = (" ") ([ \t\n])
 wikipreend         = ([^ ]) | ({newline})
@@ -67,19 +67,19 @@ heading            = h1|h2|h3|h4|h5|h6
 inlinetag          = abbr|br|b|big|cite|code|del|em|font|i|ins|s|small|span|strike|strong|sub|sup|tt|u|var
 blockleveltag      = blockquote|caption|center|col|colgroup|dd|div|dl|dt|{heading}|hr|li|ol|p|table|tbody|td|tfoot|th|thead|tr|ul
 htmlkeyword        = {inlinetag}|{blockleveltag}
-htmlbr             = <[ ]* (\/)? [ ]* br ({htmlattribute})* [ ]* (\/)? [ ]*>
-htmlparagraphopen  = <[ ]* p ({htmlattribute})* [ ]* (\/)? [ ]*>
-htmlparagraphclose = (<[ ]*\/[ ]*) p ([ ]*>)
-inlinetagopen      = <[ ]* ({inlinetag}) ({htmlattribute})* [ ]* (\/)? [ ]*>
-blockleveltagopen  = <[ ]* ({blockleveltag}) ({htmlattribute})* [ ]* (\/)? [ ]*>
-blockleveltagclose = (<[ ]*\/[ ]*) {blockleveltag} ([ ]*>)
-htmltagopen        = <[ ]* ({htmlkeyword}) ({htmlattribute})* [ ]* (\/)? [ ]*>
-htmltagclose       = (<[ ]*\/[ ]*) {htmlkeyword} ([ ]*>)
-htmltagnocontent   = (<[ ]*) {htmlkeyword} ({htmlattribute})* ([ ]*\/[ ]*>)
-htmlheading        = (<[ ]*h[1-6][^>]*>) ~(<[ ]*\/[ ]*h[1-6][ ]*>)
+htmlbr             = <[ \t]* (\/)? [ \t]* br ({htmlattribute})* [ \t]* (\/)? [ \t]*>
+htmlparagraphopen  = <[ \t]* p ({htmlattribute})* [ \t]* (\/)? [ \t]*>
+htmlparagraphclose = (<[ \t]*\/[ \t]*) p ([ \t]*>)
+inlinetagopen      = <[ \t]* ({inlinetag}) ({htmlattribute})* [ \t]* (\/)? [ \t]*>
+blockleveltagopen  = <[ \t]* ({blockleveltag}) ({htmlattribute})* [ \t]* (\/)? [ \t]*>
+blockleveltagclose = (<[ \t]*\/[ \t]*) {blockleveltag} ([ \t]*>)
+htmltagopen        = <[ \t]* ({htmlkeyword}) ({htmlattribute})* [ \t]* (\/)? [ \t]*>
+htmltagclose       = (<[ \t]*\/[ \t]*) {htmlkeyword} ([ \t]*>)
+htmltagnocontent   = (<[ \t]*) {htmlkeyword} ({htmlattribute})* ([ \t]*\/[ \t]*>)
+htmlheading        = (<[ \t]*h[1-6][^>]*>) ~(<[ \t]*\/[ \t]*h[1-6][ \t]*>)
 
 /* javascript */
-javascript         = (<[ ]*script[^>]*>) ~(<[ ]*\/[ ]*script[ ]*>)
+javascript         = (<[ \t]*script[^>]*>) ~(<[ \t]*\/[ \t]*script[ \t]*>)
 
 /* processing commands */
 notoc              = "__NOTOC__"
@@ -87,14 +87,14 @@ toc                = "__TOC__"
 forcetoc           = "__FORCETOC__"
 
 /* tables */
-tableattribute     = ([ ]*) [a-zA-Z:]+ ([ ]*=[^>\n\|]+[ ]*)*
+tableattribute     = ([ \t]*) [a-zA-Z:]+ ([ \t]*=[^>\n\|]+[ \t]*)*
 tablestart         = "{|" (.)* {newline}
 tableend           = "|}" ({newline})?
 tablecell          = "|" [^\+\-\}] | "|" ({tableattribute})+ "|" [^\|]
 tablecells         = "||" | "!!"
 tablecellsstyle    = "||" ({tableattribute})+ "|" ([^|])
 tableheading       = "!" | "!" ({tableattribute})+ "|" [^\|]
-tablerow           = "|-" [ ]* ({tableattribute})* {newline}
+tablerow           = "|-" [ \t]* ({tableattribute})* {newline}
 tablecaption       = "|+" | "|+" ({tableattribute})+ "|" [^\|]
 
 /* wiki links */
@@ -107,9 +107,9 @@ wikilink           = "[[" ({wikilinkcontent})+ "]]" [a-z]*
 nestedwikilink     = "[[" ({wikilinkcontent})+ "|" ({wikilinkcontent} | {wikilink})+ "]]"
 
 /* references */
-reference          = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\/\n]+[ ]*)? ([ ]*>) ~(<[ ]*\/[ ]*ref[ ]*>)
-referencenocontent = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\/\n]+[ ]*) ([ ]*\/[ ]*>)
-references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
+reference          = (<[ \t]*) "ref" ([ \t]+name[ \t]*=[^>\/\n]+[ \t]*)? ([ \t]*>) ~(<[ \t]*\/[ \t]*ref[ \t]*>)
+referencenocontent = (<[ \t]*) "ref" ([ \t]+name[ \t]*=[^>\/\n]+[ \t]*) ([ \t]*\/[ \t]*>)
+references         = (<[ \t]*) "references" ([ \t]*[\/]?[ \t]*>)
 
 /* paragraphs */
 /* TODO: this pattern does not match text such as "< is a less than sign" */
