@@ -30,6 +30,7 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.model.SearchResultEntry;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -60,7 +61,7 @@ public class SearchServlet extends JAMWikiServlet {
 	 */
 	private void jumpTo(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
-		String topic = request.getParameter("text");
+		String topic = WikiUtil.getParameterFromRequest(request, "text", false);
 		String targetTopic = LinkUtil.isExistingArticle(virtualWiki, topic);
 		if (targetTopic != null) {
 			ServletUtil.redirect(next, virtualWiki, targetTopic);
@@ -75,8 +76,8 @@ public class SearchServlet extends JAMWikiServlet {
 	 */
 	private void search(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
-		String searchField = request.getParameter("text");
-		if (StringUtils.isBlank(request.getParameter("text"))) {
+		String searchField = WikiUtil.getParameterFromRequest(request, "text", false);
+		if (StringUtils.isBlank(searchField)) {
 			pageInfo.setPageTitle(new WikiMessage("search.title"));
 		} else {
 			pageInfo.setPageTitle(new WikiMessage("searchresult.title", searchField));
