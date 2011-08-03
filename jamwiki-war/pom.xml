@@ -30,10 +30,10 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-taglibs</artifactId>
 		</dependency>
-		<dependency>
+<!--		<dependency>
 			<groupId>info.bliki.wiki</groupId>
 			<artifactId>bliki-core</artifactId>
-		</dependency>
+		</dependency> -->
 	</dependencies>
 	<build>
 		<finalName>jamwiki-war</finalName>
