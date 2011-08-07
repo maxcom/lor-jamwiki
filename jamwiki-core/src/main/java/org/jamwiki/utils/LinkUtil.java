@@ -353,6 +353,9 @@ public class LinkUtil {
 			return null;
 		}
 		String url = wikiLink.getInterwiki().format(wikiLink.getDestination());
+		if (!StringUtils.isBlank(wikiLink.getSection())) {
+			url += "#" + wikiLink.getSection();
+		}
 		String text = wikiLink.getText();
 		if (StringUtils.isBlank(text)) {
 			text = wikiLink.getDestination();

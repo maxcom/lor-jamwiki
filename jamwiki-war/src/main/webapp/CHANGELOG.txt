@@ -75,6 +75,7 @@ Bugfixes:
     that browsers do not use out-of-date Javascript.  Reported by shar.
   * The parser should not generate edit links for invalid topic names such as
     "[[Invalid>Topic]]".
+  * Do not drop sections from interwiki links such as "[[:iw:Topic#Section]]".
 
 Translation Updates:
 
