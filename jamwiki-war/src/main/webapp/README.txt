@@ -15,6 +15,7 @@ supports the following specifications:
 
   Java 5 or later
   Servlet 2.4 or later
+  JSP 2.0 or later
   JDBC 3.0 or later (if using an external database)
 
 JAMWiki can be configured to store its data either in an external database or
@@ -35,7 +36,8 @@ built-in support for recent versions of the following databases:
   Sybase (experimental)
 
 Note that JAMWiki should work with any ANSI compliant database.  Also note that
-to support double-byte charaters the database should use UTF-8 encoding.
+to support double-byte characters (such as Chinese, Hindi or Japanese) the
+database should use UTF-8 encoding.
 
 
 INSTALLATION
@@ -78,9 +80,8 @@ after setup.  Configuration will request the following information:
   3. The relative path (with respect to the web/application server doc root)
      to the image upload directory.
   4. The login and password of an administrative user.
-  5. (Optional) If using an external database for persistency then the
-     database settings must be provided (see the "Database Settings" section
-     below).
+  5. (Optional) If using an external database for storage then the database
+     settings must be provided (see the "Database Settings" section below).
   6. (Optional) Once setup is complete, JAMWiki can be customized by using the
      Special:Admin page, accessible to admins by clicking on the "Admin" link
      on the top right portion of all JAMWiki pages.
@@ -88,8 +89,8 @@ after setup.  Configuration will request the following information:
 Once the configuration settings have been verified JAMWiki will create the
 admin user account, database tables (if using an external database), base
 properties, and default topics.  Once configuration is complete JAMWiki
-redirects to the starting page, ready for use.  If any problems occur during
-installation please review the detailed installation instructions on
+redirects to the wiki home page and is ready for use.  If any problems occur
+during installation please review the detailed installation instructions on
 http://jamwiki.org/wiki/en/Installation.  If your problem persists please
 report it on http://jamwiki.org/wiki/en/Bug_Reports and include any relevant
 information from your log files with the problem report.
@@ -98,11 +99,11 @@ information from your log files with the problem report.
 UPGRADES
 ========
 
-See the UPGRADE.txt document or http://jamwiki.org/wiki/en/Installation for
-detailed upgrade instructions.  In most cases the JAMWiki upgrade process can
-be handled using an automated process.  If an upgrade fails please report the
-error on jamwiki.org, and then follow the manual upgrade steps outlined in the
-UPGRADE.txt document.
+See the UPGRADE.txt file or http://jamwiki.org/wiki/en/Installation#Upgrades
+for detailed upgrade instructions.  In most cases the JAMWiki upgrade process
+can be handled using an automated process.  If an upgrade fails please report
+the error on jamwiki.org, and then follow the manual upgrade steps outlined in
+the UPGRADE.txt document.
 
 
 DATABASE SETTINGS
