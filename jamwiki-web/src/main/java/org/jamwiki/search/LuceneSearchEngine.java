@@ -47,6 +47,7 @@ import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
+import org.apache.lucene.store.LockObtainFailedException;
 import org.jamwiki.Environment;
 import org.jamwiki.SearchEngine;
 import org.jamwiki.WikiBase;
@@ -388,8 +389,15 @@ public class LuceneSearchEngine implements SearchEngine {
 			indexWriter = null;
 		}
 		if (indexWriter == null) {
-			FSDirectory fsDirectory = FSDirectory.open(getSearchIndexPath(virtualWiki));
-			indexWriter = new IndexWriter(fsDirectory, this.retrieveIndexWriterConfig(create));
+			File searchIndexPath = this.getSearchIndexPath(virtualWiki);
+			FSDirectory fsDirectory = FSDirectory.open(searchIndexPath);
+			try {
+				indexWriter = new IndexWriter(fsDirectory, this.retrieveIndexWriterConfig(create));
+			} catch (LockObtainFailedException e) {
+				logger.warn("Search index " + searchIndexPath.getAbsolutePath() + " found locked.  This can potentially occur after a JVM OOM error or if the search index is being accessed by multiple threads.  Attempting to forcibly unlock the index.");
+				fsDirectory.clearLock(IndexWriter.WRITE_LOCK_NAME);
+				indexWriter = new IndexWriter(fsDirectory, this.retrieveIndexWriterConfig(create));
+			}
 			if (!create) {
 				indexWriters.put(virtualWiki, indexWriter);
 			}
