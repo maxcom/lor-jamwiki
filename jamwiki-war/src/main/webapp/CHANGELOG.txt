@@ -43,6 +43,7 @@ New Features:
     and Special:VirtualWiki pages.  Requested by floatingworld.
   * Special:Export no longer converts namespaces to the Mediawiki namespace for
     performance reasons.  Namespaces will still be converted on import.
+  * Updated spam filter patterns.
   * Upgrade to HSQLDB 2.2.4.
   * Upgrade to Lucene Search 3.3.
   * Upgrade to Ehcache 2.4.2.

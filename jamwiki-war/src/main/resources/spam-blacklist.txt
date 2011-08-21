@@ -13,6 +13,7 @@
 adware[ -_\.]freeware
 airline\-tickets\-cheap
 cheap[\-\.]+tickets
+class\=\"plainlinks\"
 college\-paper
 comment[0-9],
 depositfiles\.com
