@@ -46,6 +46,7 @@ import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.jamwiki.Environment;
@@ -294,10 +295,51 @@ public class LuceneSearchEngine implements SearchEngine {
 		if (!child.exists()) {
 			// create the search instance
 			child.mkdirs();
-			IndexWriter writer = new IndexWriter(FSDirectory.open(child), this.retrieveIndexWriterConfig(true));
+			IndexWriter writer = this.openIndexWriter(child, true);
 			writer.close();
 		}
 		return child;
+	}
+
+	/**
+	 * Initialize an IndexWriter, performing cleanup if initialization fails.
+	 */
+	private IndexWriter initializeIndexWriter(FSDirectory fsDirectory, IndexWriterConfig indexWriterConfig) throws IOException {
+		try {
+			return new IndexWriter(fsDirectory, indexWriterConfig);
+		} catch (LockObtainFailedException e) {
+			logger.warn("Unable to obtain lock for " + fsDirectory.getDirectory().getAbsolutePath() + ".  This can potentially occur after a JVM OOM error, if the search index is being accessed by multiple threads, or on NFS filesystems.  Attempting to forcibly unlock the index.");
+			if (IndexWriter.isLocked(fsDirectory)) {
+				try {
+					IndexWriter.unlock(fsDirectory);
+				} catch (IOException ex) {
+					logger.warn("Unable to unlock search directory " + fsDirectory.getDirectory().getAbsolutePath() + " " + ex.toString());
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Open an IndexWriter, executing error handling as needed.
+	 */
+	private IndexWriter openIndexWriter(File searchIndexPath, boolean create) throws IOException {
+		FSDirectory fsDirectory = FSDirectory.open(searchIndexPath);
+		IndexWriterConfig indexWriterConfig = this.retrieveIndexWriterConfig(create);
+		IndexWriter indexWriter = this.initializeIndexWriter(fsDirectory, indexWriterConfig);
+		if (indexWriter == null) {
+			// try again, there could have been a stale lock
+			indexWriter = this.initializeIndexWriter(fsDirectory, indexWriterConfig);
+		}
+		if (indexWriter == null) {
+			// if the error occurs again try an index writer with SimpleFSLock.  NFS
+			// currently (Lucene 3.3) fails badly with default locking.
+			logger.warn("Unable to obtain standard search engine lock.  This can happen with NFS filesystems.  Defaulting to Lucene SimpleFSDirectory.");
+			fsDirectory.close();
+			FSDirectory simpleFsDirectory = SimpleFSDirectory.open(searchIndexPath);
+			indexWriter = this.initializeIndexWriter(simpleFsDirectory, indexWriterConfig);
+		}
+		return indexWriter;
 	}
 
 	/**
@@ -390,14 +432,7 @@ public class LuceneSearchEngine implements SearchEngine {
 		}
 		if (indexWriter == null) {
 			File searchIndexPath = this.getSearchIndexPath(virtualWiki);
-			FSDirectory fsDirectory = FSDirectory.open(searchIndexPath);
-			try {
-				indexWriter = new IndexWriter(fsDirectory, this.retrieveIndexWriterConfig(create));
-			} catch (LockObtainFailedException e) {
-				logger.warn("Search index " + searchIndexPath.getAbsolutePath() + " found locked.  This can potentially occur after a JVM OOM error or if the search index is being accessed by multiple threads.  Attempting to forcibly unlock the index.");
-				fsDirectory.clearLock(IndexWriter.WRITE_LOCK_NAME);
-				indexWriter = new IndexWriter(fsDirectory, this.retrieveIndexWriterConfig(create));
-			}
+			indexWriter = this.openIndexWriter(searchIndexPath, create);
 			if (!create) {
 				indexWriters.put(virtualWiki, indexWriter);
 			}

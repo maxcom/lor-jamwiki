@@ -77,6 +77,7 @@ Bugfixes:
   * The parser should not generate edit links for invalid topic names such as
     "[[Invalid>Topic]]".
   * Do not drop sections from interwiki links such as "[[:iw:Topic#Section]]".
+  * Fix search errors on NFS.  Reported by Mahyar Sepehr.
 
 Translation Updates:
 
