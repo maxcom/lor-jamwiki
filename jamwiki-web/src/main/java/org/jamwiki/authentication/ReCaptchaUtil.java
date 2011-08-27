@@ -122,7 +122,13 @@ public class ReCaptchaUtil {
 		reCaptcha.setPrivateKey(privateKey);
 		String challenge = request.getParameter("recaptcha_challenge_field");
 		String response = request.getParameter("recaptcha_response_field");
-		ReCaptchaResponse reCaptchaResponse = reCaptcha.checkAnswer(request.getRemoteAddr(), challenge, response);
-		return reCaptchaResponse.isValid();
+		boolean result = false;
+		if (!StringUtils.isBlank(challenge) && !StringUtils.isBlank(response)) {
+			// spambots sometimes fail to submit these fields, and checkAnswer
+			// throws a NPE without them
+			result = reCaptcha.checkAnswer(request.getRemoteAddr(), challenge, response).isValid();
+		}
+		logger.debug("Captcha validation " + (result ? "successful" : "failed") + " for " + request.getRemoteAddr());
+		return result;
 	}
 }

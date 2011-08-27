@@ -405,7 +405,11 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 */
 	private ModelAndView viewError(HttpServletRequest request, HttpServletResponse response, Throwable t) {
 		if (!(t instanceof WikiException)) {
-			logger.error("Servlet error", t);
+			String msg = "Failure while loading JSP: " + request.getServletPath();
+			if (request.getQueryString() != null) {
+				msg += "?" + request.getQueryString();
+			}
+			logger.error(msg, t);
 		}
 		response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		ModelAndView next = new ModelAndView("wiki");
@@ -425,7 +429,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 			WikiMessage wm = new WikiMessage("error.unknown", errorMessage);
 			pageInfo.addError(wm);
 			next.addObject("messageObject", wm);
-			logger.error("Failure while loading JSP: " + request.getServletPath(), t);
 		}
 		try {
 			this.loadLayout(request, next, pageInfo);
