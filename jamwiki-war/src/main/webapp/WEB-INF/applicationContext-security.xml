@@ -49,7 +49,7 @@
 		<remember-me key="jam35Wiki" services-alias="_rememberMeServices" />
 		<anonymous key="jam35Wiki" />
 		<!-- note that the JAMWiki LoginServlet will add the appropriate logout success URL to the request during logout -->
-		<logout />
+		<logout success-handler-ref="jamwikiLogoutSuccessHandler" />
 		<custom-filter position="FORM_LOGIN_FILTER" ref="authenticationProcessingFilter" />
 		<custom-filter before="EXCEPTION_TRANSLATION_FILTER" ref="jamwikiPostAuthenticationFilter" />
 	</http>
@@ -181,6 +181,11 @@
 		<b:property name="key" value="jam35Wiki" />
 		<b:property name="useJAMWikiAnonymousRoles" value="true" />
 	</b:bean>
+
+	<!--
+	This logout success handler redirects to the proper default topic and virtual wiki.
+	-->
+	<b:bean id="jamwikiLogoutSuccessHandler" class="org.jamwiki.authentication.JAMWikiLogoutSuccessHandler" />
 
 	<!--
 	Standard Spring Security integration with EhCache is available to implement object caching.
