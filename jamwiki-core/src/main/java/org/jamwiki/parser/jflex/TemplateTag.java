@@ -100,7 +100,7 @@ public class TemplateTag implements JFlexParserTag {
 		} catch (ExcessiveNestingException e) {
 			logger.warn("Excessive template nesting in topic " + lexer.getParserInput().getTopicName());
 			// convert to a link so that the user can fix the template
-			WikiLink wikiLink = this.parseTemplateName(lexer.getParserInput().getVirtualWiki(), templateContent);
+			WikiLink wikiLink = this.parseTemplateName(lexer.getParserInput(), lexer.getParserOutput(), templateContent);
 			String templateName = wikiLink.getDestination();
 			if (!wikiLink.getColon() && !wikiLink.getNamespace().equals(Namespace.namespace(Namespace.TEMPLATE_ID))) {
 				templateName = Namespace.namespace(Namespace.TEMPLATE_ID).getLabel(lexer.getParserInput().getVirtualWiki()) + Namespace.SEPARATOR + StringUtils.capitalize(templateName);
@@ -147,7 +147,7 @@ public class TemplateTag implements JFlexParserTag {
 			return subst;
 		}
 		// extract the template name
-		WikiLink wikiLink = this.parseTemplateName(parserInput.getVirtualWiki(), templateContent);
+		WikiLink wikiLink = this.parseTemplateName(parserInput, parserOutput, templateContent);
 		String name = wikiLink.getDestination();
 		// parse in case of something like "{{PAGENAME}}/template"
 		name = JFlexParserUtil.parseFragment(parserInput, parserOutput, name, JFlexParser.MODE_TEMPLATE);
@@ -314,9 +314,10 @@ public class TemplateTag implements JFlexParserTag {
 	 * Given a template call of the form "template|param|param", return
 	 * the template name.
 	 */
-	private WikiLink parseTemplateName(String virtualWiki, String raw) throws ParserException {
-		String name = raw;
-		int pos = raw.indexOf('|');
+	private WikiLink parseTemplateName(ParserInput parserInput, ParserOutput parserOutput, String raw) throws ParserException {
+		// parse to handle cases such as "Example{{padleft:3|2|0}}"
+		String name = JFlexParserUtil.parseFragment(parserInput, parserOutput, raw, JFlexParser.MODE_TEMPLATE);
+		int pos = name.indexOf('|');
 		if (pos != -1) {
 			name = name.substring(0, pos);
 		}
@@ -334,7 +335,7 @@ public class TemplateTag implements JFlexParserTag {
 			inclusion = true;
 			name = name.substring(1).trim();
 		}
-		WikiLink wikiLink = LinkUtil.parseWikiLink(virtualWiki, name);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(parserInput.getVirtualWiki(), name);
 		wikiLink.setColon(inclusion);
 		return wikiLink;
 	}

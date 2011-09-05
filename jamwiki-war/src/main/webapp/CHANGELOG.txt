@@ -15,6 +15,7 @@ Bugfixes:
     Aragão Mendes.
   * Remove the "plainlinks" pattern from the spam blacklist since that CSS
     class is commonly used on Mediawiki sites.
+  * Fix parsing of generated template names of the form "{{Name{{if:|1|2}}}}".
 
 Translation Updates:
 
