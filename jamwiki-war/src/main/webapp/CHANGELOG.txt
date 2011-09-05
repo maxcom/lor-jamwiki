@@ -11,6 +11,8 @@ Bugfixes:
     JAMWiki to redirect logout properly.  Note that this change modifies
     the applicationContext-security.xml file.  Reported by Leonardo Silva Kury
     Aragão Mendes.
+  * Remove the "plainlinks" pattern from the spam blacklist since that CSS
+    class is commonly used on Mediawiki sites.
 
 Translation Updates:
 
