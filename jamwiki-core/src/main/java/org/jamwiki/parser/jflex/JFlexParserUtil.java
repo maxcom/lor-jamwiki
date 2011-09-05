@@ -57,6 +57,24 @@ public class JFlexParserUtil {
 	}
 
 	/**
+	 * Provide a way to run the pre-processor against a fragment of text, such
+	 * as an image caption.  This method differs from @link{#parseFragment} in
+	 * that content that would normally be parsed as a beginning-of-line
+	 * expression such as wikipre or lists ("* item") will be treated as if
+	 * they are not beginning of line elements.
+	 */
+	public static String parseFragmentNonLineStart(ParserInput parserInput, ParserOutput parserOutput, String raw, int mode) throws ParserException {
+		if (raw == null) {
+			return raw;
+		}
+		// this is a hack.  pre-pend a character that will be stripped out
+		// prior to returning so that text like "#if" won't be treated as if
+		// it was its own line and parsed as a list.
+		raw = "x" + raw.trim();
+		return JFlexParserUtil.parseFragment(parserInput, parserOutput, raw, mode).substring(1);
+	}
+
+	/**
 	 * Parse a raw Wiki link of the form "[[link|text]]", and return a WikiLink
 	 * object representing the link.
 	 *

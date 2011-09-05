@@ -145,15 +145,7 @@ public abstract class AbstractHeadingTag implements JFlexParserTag {
 	 * Process all text inside of the equals signs.
 	 */
 	private String processTocText(ParserInput parserInput, ParserOutput parserOutput, String tagText, int mode) throws ParserException {
-		// special case - if text is of the form "=======text=======" then after stripping equals
-		// signs "=text=" will be left.  in this one case strip any opening equals signs before parsing.
-		String extraEqualSigns = "";
-		int pos = StringUtils.indexOfAnyBut(tagText, "= \t");
-		if (pos != -1) {
-			extraEqualSigns = tagText.substring(0, pos);
-			tagText = (pos < tagText.length()) ? tagText.substring(pos) : "";
-		}
-		return extraEqualSigns + JFlexParserUtil.parseFragment(parserInput, parserOutput, tagText, mode);
+		return JFlexParserUtil.parseFragmentNonLineStart(parserInput, parserOutput, tagText, mode);
 	}
 
 	/**
