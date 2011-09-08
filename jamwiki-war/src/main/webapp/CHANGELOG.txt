@@ -7,7 +7,8 @@ New Features:
 
 Bugfixes:
 
-  * None.
+  * The "Regenerate topic metadata" task should continue even if a single topic
+    update fails.  Reported by brian.
 
 Translation Updates:
 

@@ -110,8 +110,11 @@ public class UpgradeServlet extends JAMWikiServlet {
 					int topicCount = WikiBase.getDataHandler().lookupTopicCount(VirtualWiki.defaultVirtualWiki().getName(), null);
 					if (topicCount < 1000) {
 						// populate the jam_topic_links table
-						WikiDatabase.rebuildTopicMetadata();
-						messages.add(new WikiMessage("upgrade.message.db.data.added", "jam_topic_links"));
+						int[] resultArray = WikiDatabase.rebuildTopicMetadata();
+						messages.add(new WikiMessage("admin.maintenance.message.metadata", Integer.toString(resultArray[0])));
+						if (resultArray[1] != 0) {
+							messages.add(new WikiMessage("admin.maintenance.error.metadata", Integer.toString(resultArray[1])));
+						}
 					} else {
 						// print a message telling the user to do this step manually
 						messages.add(new WikiMessage("upgrade.message.100.topic.links"));

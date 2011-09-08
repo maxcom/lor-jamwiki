@@ -159,16 +159,12 @@ public class AdminServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void links(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
+	private void links(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws DataAccessException {
 		List<WikiMessage> errors = new ArrayList<WikiMessage>();
-		try {
-			int numUpdated = WikiDatabase.rebuildTopicMetadata();
-			next.addObject("message", new WikiMessage("admin.maintenance.message.topicsUpdated", Integer.toString(numUpdated)));
-		} catch (WikiException e) {
-			errors.add(e.getWikiMessage());
-		} catch (DataAccessException e) {
-			logger.error("Failure while regenerating topic metadata", e);
-			errors.add(new WikiMessage("admin.maintenance.error.linksfail", e.getMessage()));
+		int[] resultArray = WikiDatabase.rebuildTopicMetadata();
+		next.addObject("message", new WikiMessage("admin.maintenance.message.metadata", Integer.toString(resultArray[0])));
+		if (resultArray[1] != 0) {
+			errors.add(new WikiMessage("admin.maintenance.error.metadata", Integer.toString(resultArray[1])));
 		}
 		if (!errors.isEmpty()) {
 			next.addObject("errors", errors);
