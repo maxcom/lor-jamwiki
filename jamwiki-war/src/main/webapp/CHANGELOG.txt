@@ -124,6 +124,8 @@ Bugfixes:
 
   * The "Regenerate topic metadata" task should continue even if a single topic
     update fails.  Reported by brian.
+  * Fix a potential XSS vulnerability with the Special:Search page.  Reported
+    by Brian Clark.
 
 Translation Updates:
 

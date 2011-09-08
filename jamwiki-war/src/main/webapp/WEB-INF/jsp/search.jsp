@@ -37,11 +37,11 @@
 </form>
 
 <script type="text/javascript">document.searchForm.text.focus();</script>
-<c:if test="${!empty notopic}">
-	<%-- if "jump to" selected by no such topic exists --%>
-	<div class="message"><fmt:message key="topic.notcreated"><fmt:param value="${notopic}" /><fmt:param><jamwiki:link value="${notopic}" text="${notopic}" /></fmt:param></fmt:message></div>
-</c:if>
 <c:choose>
+	<c:when test="${!empty notopic}">
+		<%-- if "jump to" selected but no such topic exists --%>
+		<div class="message"><fmt:message key="topic.notcreated"><fmt:param><c:out value="${notopic}" /></fmt:param><fmt:param><jamwiki:link value="${notopic}" text="${notopic}" /></fmt:param></fmt:message></div>
+	</c:when>
 	<c:when test="${empty searchField}">
 		<div id="searchhints"><fmt:message key="search.hints"/></div>
 	</c:when>
