@@ -31,7 +31,7 @@ public class WikiVersion {
 	private final int patch;
 
 	/** Current software version.  If this differs from the version in the properties an upgrade is performed. */
-	public final static String CURRENT_WIKI_VERSION = "1.0.6";
+	public final static String CURRENT_WIKI_VERSION = "1.0.7";
 
 	/**
 	 * Constructor to create a new Wiki version object using a version string of

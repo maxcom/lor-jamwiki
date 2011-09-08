@@ -1,4 +1,20 @@
-﻿1.0.6
+﻿1.0.7
+=====
+
+New Features:
+
+  * None.
+
+Bugfixes:
+
+  * None.
+
+Translation Updates:
+
+  * None.
+
+
+1.0.6
 =====
 
 New Features:
