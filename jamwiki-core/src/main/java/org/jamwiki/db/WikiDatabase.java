@@ -494,8 +494,12 @@ public class WikiDatabase {
 	/**
 	 * Utility method for regenerating categories, "link to" records and other metadata
 	 * for all wiki topics.
+	 *
+	 * @return An array of two numerical values, the first one is the number of records
+	 *  updated successfully, the second is the number of records that failed.
 	 */
-	public static int rebuildTopicMetadata() throws DataAccessException, WikiException {
+	public static int[] rebuildTopicMetadata() throws DataAccessException {
+		int numErrors = 0;
 		int numUpdated = 0;
 		List<String> topicNames;
 		Topic topic;
@@ -507,22 +511,32 @@ public class WikiDatabase {
 				continue;
 			}
 			for (String topicName : topicNames) {
-				topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false);
-				if (topic == null) {
-					logger.warn("Invalid topic record found, possible database integrity issue: " + virtualWiki.getName() + " / " + topicName);
-					continue;
-				}
 				try {
+					topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false);
+					if (topic == null) {
+						logger.warn("Invalid topic record found, possible database integrity issue: " + virtualWiki.getName() + " / " + topicName);
+						numErrors++;
+						continue;
+					}
 					parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki.getName(), topicName);
+					WikiBase.getDataHandler().writeTopic(topic, null, parserOutput.getCategories(), parserOutput.getLinks());
+					numUpdated++;
 				} catch (ParserException e) {
-					logger.error("Failure while regenerating topic metadata", e);
-					continue;
+					logger.error("Failure while regenerating topic metadata for " + virtualWiki.getName() + " / " + topicName + ": " + e.getMessage());
+					numErrors++;
+				} catch (DataAccessException e) {
+					logger.error("Failure while regenerating topic metadata for " + virtualWiki.getName() + " / " + topicName + ": " + e.getMessage());
+					numErrors++;
+				} catch (WikiException e) {
+					logger.error("Failure while regenerating topic metadata for " + virtualWiki.getName() + " / " + topicName + ": " + e.getMessage());
+					numErrors++;
 				}
-				WikiBase.getDataHandler().writeTopic(topic, null, parserOutput.getCategories(), parserOutput.getLinks());
 			}
-			numUpdated += topicNames.size();
 		}
-		return numUpdated;
+		int[] resultArray = new int[2];
+		resultArray[0] = numUpdated;
+		resultArray[1] = numErrors;
+		return resultArray;
 	}
 
 	/**

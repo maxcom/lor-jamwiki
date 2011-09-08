@@ -113,6 +113,23 @@ Translation Updates:
   * Updated Spanish translations.
 
 
+1.0.7
+=====
+
+New Features:
+
+  * None.
+
+Bugfixes:
+
+  * The "Regenerate topic metadata" task should continue even if a single topic
+    update fails.  Reported by brian.
+
+Translation Updates:
+
+  * None.
+
+
 1.0.6
 =====
 

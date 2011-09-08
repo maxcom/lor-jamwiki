@@ -246,6 +246,13 @@ followed by 0.6.3.
      Records" tool should be invoked from the Special:Maintenance page.
 
 
+  JAMWiki 1.0.7
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "1.0.7".
+
+
   JAMWiki 1.0.6
   =============
 
