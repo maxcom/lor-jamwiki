@@ -23,7 +23,7 @@
 <%@ include file="page-init.jsp" %>
 
 <c:if test="${!empty notopic}">
-<div class="message"><fmt:message key="topic.notcreated"><fmt:param value="${notopic}" /><fmt:param><jamwiki:link value="${notopic}" text="${notopic}" /></fmt:param></fmt:message></div>
+<div class="message"><fmt:message key="topic.notcreated"><fmt:param><c:out value="${notopic}" /></fmt:param><fmt:param><jamwiki:link value="${notopic}" text="${notopic}" /></fmt:param></fmt:message></div>
 </c:if>
 <c:forEach items="${results}" var="result">
 <div class="searchresult"><jamwiki:link value="${result.topic}" text="${result.topic}" /></div>
