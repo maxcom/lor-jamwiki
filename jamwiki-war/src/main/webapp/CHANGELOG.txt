@@ -7,9 +7,9 @@ New Features:
 
 Bugfixes:
 
-  * Heading text that started with list tags (example: "#if") were improperly
-    being parsed as lists.
-  * Spring security 3.0 change how logout redirection is handled.  Update
+  * Heading text that starts with a list tag (example: "#if") was improperly
+    being parsed as a list item.
+  * Spring security 3.0 changed how logout redirection is handled.  Update
     JAMWiki to redirect logout properly.  Note that this change modifies
     the applicationContext-security.xml file.  Reported by Leonardo Silva Kury
     Aragão Mendes.
