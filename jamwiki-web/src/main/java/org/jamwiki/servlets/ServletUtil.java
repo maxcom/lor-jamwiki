@@ -611,6 +611,36 @@ public class ServletUtil {
 	}
 
 	/**
+	 * Generate a target URL for redirection after login if required by
+	 * Spring Security.
+	 */
+	private static String retrieveLoginTargetUrl(HttpServletRequest request, String virtualWikiName, String topic) {
+		String target = request.getParameter(JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_TARGET_URL_FIELD_NAME);
+		if (!StringUtils.isBlank(target) && !target.startsWith("/")) {
+			// Link hijacking is possible with a link such as
+			// Special:Login?spring-security-redirect=http://www.google.com
+			String message = "Possible link hijacking attempt from " + ServletUtil.getIpAddress(request);
+			message += " / request URL: " + request.getRequestURL();
+			if (!StringUtils.isBlank(request.getQueryString())) {
+				message += "?" + Utilities.getQueryString(request);
+			}
+			logger.warn(message);
+			return null;
+		}
+		if (StringUtils.isBlank(target)) {
+			if (StringUtils.isBlank(topic)) {
+				VirtualWiki virtualWiki = ServletUtil.retrieveVirtualWiki(virtualWikiName);
+				topic = virtualWiki.getRootTopicName();
+			}
+			target = "/" + virtualWikiName + "/" + topic;
+			if (!StringUtils.isBlank(request.getQueryString())) {
+				target += "?" + Utilities.getQueryString(request);
+			}
+		}
+		return target;
+	}
+
+	/**
 	 * Users can specify a default locale in their preferences, so determine
 	 * if the current user is logged-in and has chosen a locale.  If not, use
 	 * the default locale from the request object.
@@ -770,17 +800,6 @@ public class ServletUtil {
 		ModelAndView next = new ModelAndView("wiki");
 		pageInfo.reset();
 		String virtualWikiName = pageInfo.getVirtualWikiName();
-		String target = request.getParameter(JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_TARGET_URL_FIELD_NAME);
-		if (StringUtils.isBlank(target)) {
-			if (StringUtils.isBlank(topic)) {
-				VirtualWiki virtualWiki = ServletUtil.retrieveVirtualWiki(virtualWikiName);
-				topic = virtualWiki.getRootTopicName();
-			}
-			target = "/" + virtualWikiName + "/" + topic;
-			if (!StringUtils.isBlank(request.getQueryString())) {
-				target += "?" + Utilities.getQueryString(request);
-			}
-		}
 		next.addObject("springSecurityTargetUrlField", JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_TARGET_URL_FIELD_NAME);
 		HttpSession session = request.getSession(false);
 		if (request.getRequestURL().indexOf(request.getRequestURI()) != -1 && (session == null || session.getAttribute(JAMWikiAuthenticationConstants.SPRING_SECURITY_SAVED_REQUEST_SESSION_KEY) == null)) {
@@ -791,7 +810,10 @@ public class ServletUtil {
 			// to the URL provides a way of determining if the user was redirected.  Anyone who can create
 			// a check that reliably captures whether or not Spring Security has a saved request should
 			// feel free to modify the conditional above.
-			next.addObject("springSecurityTargetUrl", target);
+			String target = ServletUtil.retrieveLoginTargetUrl(request, virtualWikiName, topic);
+			if (target != null) {
+				next.addObject("springSecurityTargetUrl", target);
+			}
 		}
 		String springSecurityLoginUrl = "/" + virtualWikiName + JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_URL;
 		next.addObject("springSecurityLoginUrl", springSecurityLoginUrl);
