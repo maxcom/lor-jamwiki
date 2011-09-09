@@ -61,7 +61,8 @@ public class LoginServlet extends JAMWikiServlet {
 	 */
 	private void viewLogout(HttpServletRequest request, HttpServletResponse response, WikiPageInfo pageInfo) throws IOException {
 		String virtualWikiName = pageInfo.getVirtualWikiName();
-		String logoutSuccessUrl = request.getContextPath() + "/" + WikiUtil.findDefaultVirtualWikiUrl(virtualWikiName);
+		String logoutSuccessUrl = (request.getContextPath().endsWith("/") ? "" : request.getContextPath());
+		logoutSuccessUrl += WikiUtil.findDefaultVirtualWikiUrl(virtualWikiName);
 		try {
 			logoutSuccessUrl = URLEncoder.encode(logoutSuccessUrl, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
