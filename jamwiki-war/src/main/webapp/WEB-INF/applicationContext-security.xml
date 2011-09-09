@@ -30,6 +30,7 @@
 		<intercept-url pattern="/**/Special:Login" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<intercept-url pattern="/**/Special:Maintenance" access="ROLE_SYSADMIN" />
 		<intercept-url pattern="/**/Special:Manage" access="ROLE_ADMIN" />
+		<intercept-url pattern="/**/Special:ListUsers" access="ROLE_ADMIN" />
 		<intercept-url pattern="/**/Special:Move" access="ROLE_MOVE" />
 		<intercept-url pattern="/**/Special:RecentChangesFeed" filters="none" />
 		<intercept-url pattern="/**/Special:Roles" access="ROLE_SYSADMIN" />
