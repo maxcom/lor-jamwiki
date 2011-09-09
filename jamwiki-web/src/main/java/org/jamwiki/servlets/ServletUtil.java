@@ -546,6 +546,7 @@ public class ServletUtil {
 				message += "?" + Utilities.getQueryString(request);
 			}
 			logger.warn(message);
+			return null;
 		}
 		if (StringUtils.isBlank(target)) {
 			if (StringUtils.isBlank(topic)) {
