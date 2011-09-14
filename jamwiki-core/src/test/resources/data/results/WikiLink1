@@ -47,3 +47,5 @@
 <p><a href="/wiki/en/Special:RecentChanges" title="Special:RecentChanges">Special:RecentChanges</a></p>
 <p><a href="/wiki/en/Special:RecentChanges" title="Special:RecentChanges">Recent Changes</a></p>
 <p><a href="/wiki/en/Special:Test" title="Special:Test">Special:Test</a></p>
+<p><a href="/wiki/en/Example1" title="Example1">#text</a></p>
+<p><a href="/wiki/en/Special:Edit?topic=Comments:Example1" class="edit" title="Comments:Example1">#text</a></p>
