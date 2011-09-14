@@ -7,6 +7,7 @@ New Features:
 
 Bugfixes:
 
+  * Merge all fixes from JAMWiki 1.0.7.
   * Heading text and wiki link text that starts with a list tag (example:
     "#if" or "[[Link|#text]]") was improperly being parsed as a list item.
   * Spring security 3.0 changed how logout redirection is handled.  Update
