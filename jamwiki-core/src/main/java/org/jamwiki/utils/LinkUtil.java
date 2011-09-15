@@ -270,7 +270,7 @@ public class LinkUtil {
 			String filename = Namespace.namespace(Namespace.FILE_ID).getLabel(virtualWiki) + Namespace.SEPARATOR + wikiLink.getArticle();
 			url = ImageUtil.buildImageFileUrl(virtualWiki, filename);
 			if (url == null) {
-				url = LinkUtil.buildTopicUrlNoEdit(context, virtualWiki, "Special:Upload", null, "?topic=" + filename);
+				url = LinkUtil.buildTopicUrlNoEdit(context, virtualWiki, "Special:Upload", null, "?topic=" + Utilities.encodeAndEscapeTopicName(filename));
 			}
 		} else {
 			String topic = wikiLink.getDestination();

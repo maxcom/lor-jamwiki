@@ -1087,13 +1087,34 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public WikiFile lookupWikiFile(String virtualWiki, String topicName) throws DataAccessException {
-		Topic topic = this.lookupTopic(virtualWiki, topicName, false, null);
+		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(topicName)) {
+			return null;
+		}
+		Namespace namespace = LinkUtil.retrieveTopicNamespace(virtualWiki, topicName);
+		String pageName = LinkUtil.retrieveTopicPageName(namespace, virtualWiki, topicName);
+		return this.lookupWikiFile(virtualWiki, namespace, pageName);
+	}
+
+	/**
+	 *
+	 */
+	private WikiFile lookupWikiFile(String virtualWiki, Namespace namespace, String pageName) throws DataAccessException {
+		Topic topic = this.lookupTopic(virtualWiki, namespace, pageName, false, null);
 		if (topic == null) {
 			return null;
 		}
 		try {
 			int virtualWikiId = this.lookupVirtualWikiId(topic.getVirtualWiki());
-			return this.queryHandler().lookupWikiFile(virtualWikiId, topic.getVirtualWiki(), topic.getTopicId());
+			WikiFile wikiFile = this.queryHandler().lookupWikiFile(virtualWikiId, topic.getVirtualWiki(), topic.getTopicId());
+			if (wikiFile == null && this.useSharedVirtualWiki(topic.getVirtualWiki(), topic.getNamespace())) {
+				// this is a weird corner case.  if there is a shared virtual wiki
+				// then someone might have uploaded the image to the shared virtual
+				// wiki but then created a description on the non-shared image page,
+				// so check for a file on the shared virtual wiki.
+				String sharedVirtualWiki = Environment.getValue(Environment.PROP_SHARED_UPLOAD_VIRTUAL_WIKI);
+				wikiFile = this.lookupWikiFile(sharedVirtualWiki, namespace, pageName);
+			}
+			return wikiFile;
 		} catch (SQLException e) {
 			throw new DataAccessException(e);
 		}

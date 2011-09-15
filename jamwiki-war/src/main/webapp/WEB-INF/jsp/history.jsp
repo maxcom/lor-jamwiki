@@ -24,7 +24,7 @@
 
 <div id="change">
 
-<div class="message"><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:History?topic=${pageInfo.topicName}" /></div>
+<div class="message"><fmt:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:History?topic=${pageInfo.topicNameUrlEncoded}" /></div>
 
 <form action="<jamwiki:link value="Special:History" />" method="get" name="historyForm">
 <input type="hidden" name="topic" value='<c:out value="${pageInfo.topicName}"/>'/>

@@ -273,7 +273,7 @@ public class ImageUtil {
 	 *
 	 */
 	private static String buildUploadLink(String context, String virtualWiki, String topicName) throws DataAccessException {
-		WikiLink uploadLink = LinkUtil.parseWikiLink(virtualWiki, "Special:Upload?topic=" + topicName);
+		WikiLink uploadLink = LinkUtil.parseWikiLink(virtualWiki, "Special:Upload?topic=" + Utilities.encodeAndEscapeTopicName(topicName));
 		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, uploadLink, topicName, "edit", null, true);
 	}
 
@@ -524,7 +524,8 @@ public class ImageUtil {
 	public static Topic writeImageTopic(String virtualWiki, String topicName, String contents, WikiUser user, boolean isImage, String ipAddress) throws DataAccessException, ParserException, WikiException {
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		int charactersChanged = 0;
-		if (topic == null) {
+		if (topic == null || !StringUtils.equals(virtualWiki, topic.getVirtualWiki())) {
+			// if topic doesn't exist or the shared version was returned, create a new record
 			topic = new Topic(virtualWiki, topicName);
 			topic.setTopicContent(contents);
 			charactersChanged = StringUtils.length(contents);
@@ -567,7 +568,8 @@ public class ImageUtil {
 		}
 		wikiFileVersion.setAuthorId(authorId);
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(topic.getVirtualWiki(), topic.getName());
-		if (wikiFile == null) {
+		if (wikiFile == null || !StringUtils.equals(wikiFile.getVirtualWiki(), topic.getVirtualWiki())) {
+			// if file doesn't exist or the shared version was returned, create a new record
 			wikiFile = new WikiFile();
 			wikiFile.setVirtualWiki(topic.getVirtualWiki());
 		}

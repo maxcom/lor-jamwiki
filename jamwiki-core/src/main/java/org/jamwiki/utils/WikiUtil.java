@@ -56,6 +56,7 @@ public class WikiUtil {
 	private static final Pattern INVALID_TOPIC_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_TOPIC_NAME));
 	private static final Pattern VALID_USER_LOGIN_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_VALID_USER_LOGIN));
 	private static final Pattern VALID_VIRTUAL_WIKI_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_VALID_VIRTUAL_WIKI));
+	private static final Pattern XSS_PATTERN = Pattern.compile("[\\\"><]");
 	public static final String PARAMETER_TOPIC = "topic";
 	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
 	public static final String PARAMETER_WATCHLIST = "watchlist";
@@ -294,7 +295,7 @@ public class WikiUtil {
 			// not interpret non-ASCII characters properly.  This code attempts to work
 			// around that issue by manually decoding.  yes, this is ugly and it would be
 			// great if someone could eventually make it unnecessary.
-			String query = request.getQueryString();
+			String query = Utilities.getQueryString(request);
 			if (StringUtils.isBlank(query)) {
 				return null;
 			}
@@ -338,9 +339,20 @@ public class WikiUtil {
 	 *
 	 * @param request The servlet request object.
 	 * @return The decoded topic name retrieved from the request.
+	 * @throws WikiException If the topic name is invalid, such as values
+	 *  used in cross-site scripting attacks.
 	 */
-	public static String getTopicFromRequest(HttpServletRequest request) {
-		return WikiUtil.getParameterFromRequest(request, WikiUtil.PARAMETER_TOPIC, true);
+	public static String getTopicFromRequest(HttpServletRequest request) throws WikiException {
+		String topic = WikiUtil.getParameterFromRequest(request, WikiUtil.PARAMETER_TOPIC, true);
+		if (StringUtils.isBlank(topic)) {
+			return topic;
+		}
+		// check for XSS
+		Matcher m = WikiUtil.XSS_PATTERN.matcher(topic);
+		if (m.find()) {
+			throw new WikiException(new WikiMessage("common.exception.name", topic));
+		}
+		return topic;
 	}
 
 	/**

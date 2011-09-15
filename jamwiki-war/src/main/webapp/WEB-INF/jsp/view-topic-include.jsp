@@ -21,8 +21,8 @@
 	<c:when test="${empty notopic}">
 		<c:if test="${!empty topicObject}">
 			<div id="content-article">
-			<c:if test="${sharedImage}">
-				<div id="shared-image-message"><fmt:message key="topic.sharedImage"><fmt:param><jamwiki:link value="${topicObject.name}" virtualWiki="${topicObject.virtualWiki}" text="${topicObject.name}" style="interwikilink" /></fmt:param></fmt:message></div>
+			<c:if test="${!empty sharedImageTopicObject}">
+				<div id="shared-image-message"><fmt:message key="topic.sharedImage"><fmt:param><jamwiki:link value="${sharedImageTopicObject.name}" virtualWiki="${sharedImageTopicObject.virtualWiki}" text="${sharedImageTopicObject.name}" style="interwikilink" /></fmt:param></fmt:message></div>
 			</c:if>
 			<c:if test="${topicImage}"><a href="<c:out value="${fileVersions[0].url}" />" class="wikiimg"><jamwiki:image value="${topicObject.name}" virtualWiki="${topicObject.virtualWiki}" maxWidth="800" maxHeight="600" allowEnlarge="false" /></a></c:if>
 			<c:if test="${topicFile}"><div id="topic-file-download"><fmt:message key="topic.file.download" />:&#160;<a href="<c:out value="${fileVersions[0].url}" />"><c:out value="${topicObject.name}" /></a></div></c:if>
@@ -39,10 +39,15 @@
 					<a href="<c:out value="${fileVersion.url}" />"><fmt:formatDate value="${fileVersion.uploadDate}" type="both" pattern="${pageInfo.datePatternDateAndTime}" /></a>
 					&#160;(<fmt:message key="topic.filesize.bytes"><fmt:param value="${fileVersion.fileSize}" /></fmt:message>)
 					&#160;.&#160;.&#160;
-					<jamwiki:link value="${pageInfo.namespaces[topicObject.virtualWiki]['User']}:${fileVersion.authorDisplay}" virtualWiki="${topicObject.virtualWiki}" text="${fileVersion.authorDisplay}" style="${sharedImage ? 'interwikilink' : ''}"/>
-					<c:if test="${!sharedImage}">
-						(<jamwiki:link value="${pageInfo.namespaces[topicObject.virtualWiki]['User comments']}:${fileVersion.authorDisplay}" virtualWiki="${topicObject.virtualWiki}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions" virtualWiki="${topicObject.virtualWiki}"><jamwiki:linkParam key="contributor" value="${fileVersion.authorDisplay}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
-					</c:if>
+					<c:choose>
+						<c:when test="${!empty sharedImageTopicObject}">
+							<jamwiki:link value="${pageInfo.namespaces[sharedImageTopicObject.virtualWiki]['User']}:${fileVersion.authorDisplay}" virtualWiki="${sharedImageTopicObject.virtualWiki}" text="${fileVersion.authorDisplay}" style="interwikilink" />
+						</c:when>
+						<c:otherwise>
+							<jamwiki:link value="${pageInfo.namespaces[topicObject.virtualWiki]['User']}:${fileVersion.authorDisplay}" virtualWiki="${topicObject.virtualWiki}" text="${fileVersion.authorDisplay}" />
+							(<jamwiki:link value="${pageInfo.namespaces[topicObject.virtualWiki]['User comments']}:${fileVersion.authorDisplay}" virtualWiki="${topicObject.virtualWiki}"><fmt:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions" virtualWiki="${topicObject.virtualWiki}"><jamwiki:linkParam key="contributor" value="${fileVersion.authorDisplay}" /><fmt:message key="recentchanges.caption.contributions" /></jamwiki:link>)
+						</c:otherwise>
+					</c:choose>
 					<c:if test="${!empty fileVersion.uploadComment}">&#160;(<i><c:out value="${fileVersion.uploadComment}" /></i>)</c:if>
 					</li>
 					</c:forEach>

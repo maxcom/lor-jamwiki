@@ -40,13 +40,13 @@ newline            = "\n"
 whitespace         = {newline} | [ \t\f]
 
 /* nowiki */
-nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
+nowiki             = (<[ \t]*nowiki[ \t]*>) ~(<[ \t]*\/[ \t]*nowiki[ \t]*>)
 
 /* pre */
 htmlpreattributes  = class|dir|id|lang|style|title
-htmlpreattribute   = ([ ]+) {htmlpreattributes} ([ ]*=[^>\n]+[ ]*)*
-htmlprestart       = (<[ ]*pre ({htmlpreattribute})* [ ]* (\/)? [ ]*>)
-htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
+htmlpreattribute   = ([ \t]+) {htmlpreattributes} ([ \t]*=[^>\n]+[ \t]*)*
+htmlprestart       = (<[ \t]*pre ({htmlpreattribute})* [ \t]* (\/)? [ \t]*>)
+htmlpreend         = (<[ \t]*\/[ \t]*pre[ \t]*>)
 htmlpre            = ({htmlprestart}) ~({htmlpreend})
 
 /* comments */
@@ -56,9 +56,9 @@ htmlcomment        = "<!--" ~"-->"
 templatestart      = "{{" (.{2})
 templateendchar    = "}"
 templateparam      = "{{{" [^\{\}\n]+ "}}}"
-includeonly        = (<[ ]*includeonly[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*includeonly[ ]*>)
-noinclude          = (<[ ]*noinclude[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*noinclude[ ]*>)
-onlyinclude        = (<[ ]*onlyinclude[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*onlyinclude[ ]*>)
+includeonly        = (<[ \t]*includeonly[ \t]*[\/]?[ \t]*>) ~(<[ \t]*\/[ \t]*includeonly[ \t]*>)
+noinclude          = (<[ \t]*noinclude[ \t]*[\/]?[ \t]*>) ~(<[ \t]*\/[ \t]*noinclude[ \t]*>)
+onlyinclude        = (<[ \t]*onlyinclude[ \t]*[\/]?[ \t]*>) ~(<[ \t]*\/[ \t]*onlyinclude[ \t]*>)
 
 /* signatures */
 wikisignature      = ([~]{3,5})

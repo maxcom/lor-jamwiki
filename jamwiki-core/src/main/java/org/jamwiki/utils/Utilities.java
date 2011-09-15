@@ -412,6 +412,30 @@ public class Utilities {
 	}
 
 	/**
+	 * Utility method to help work around XSS attacks when executing request.getQueryString().
+	 * If the query string contains ", <, or > then assume it is malicious and escape.
+	 *
+	 * @param request The current servlet request.
+	 * @return The request query string, or an escaped version if it appears to be an XSS
+	 *  attack.
+	 */
+	public static String getQueryString(HttpServletRequest request) {
+		if (request == null) {
+			return null;
+		}
+		String queryString = request.getQueryString();
+		if (StringUtils.isBlank(queryString)) {
+			return queryString;
+		}
+		if (StringUtils.containsAny(queryString, "\"><")) {
+			queryString = queryString.replaceAll("\"", "%22");
+			queryString = queryString.replaceAll(">", "%3E");
+			queryString = queryString.replaceAll("<", "%3C");
+		}
+		return queryString;
+	}
+
+	/**
 	 * Given a request, determine the server URL.
 	 *
 	 * @return A Server URL of the form http://www.example.com/
