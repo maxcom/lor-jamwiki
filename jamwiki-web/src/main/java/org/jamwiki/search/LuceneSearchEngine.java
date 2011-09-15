@@ -79,7 +79,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	/** Name of the search index field that holds the un-processed topic namespace. */
 	private static final String FIELD_TOPIC_NAMESPACE = "topic_namespace";
 	/** Lucene compatibility version. */
-	protected static final Version USE_LUCENE_VERSION = Version.LUCENE_33;
+	protected static final Version USE_LUCENE_VERSION = Version.LUCENE_34;
 	/** Maximum number of results to return per search. */
 	// FIXME - make this configurable
 	protected static final int MAXIMUM_RESULTS_PER_SEARCH = 200;

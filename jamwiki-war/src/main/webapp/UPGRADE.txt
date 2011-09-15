@@ -83,6 +83,12 @@ followed by 0.6.3.
   JAMWiki 1.1.1
   =============
 
+  SPECIAL NOTES:
+
+  * The Lucene search engine has been updated in this release, but the search
+    index format has not changed and this update should be transparent for all
+    users.
+
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "1.1.1".
   2. The applicationContext-security.xml file has been modified to add a
