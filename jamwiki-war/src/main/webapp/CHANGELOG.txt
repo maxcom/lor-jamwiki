@@ -19,6 +19,7 @@ Bugfixes:
   * Fix parsing of generated template names of the form "{{Name{{if:|1|2}}}}".
   * Upgrade to Lucene Search 3.4, which fixes a bug where operating system or
     hardware crash, or power loss, could easily corrupt the index.
+  * Fix an issue where the cache isn't cleared when a topic version is purged.
 
 Translation Updates:
 

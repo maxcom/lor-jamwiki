@@ -1417,6 +1417,7 @@ public class AnsiDataHandler implements DataHandler {
 			this.addLogItem(logItem, conn);
 			RecentChange change = RecentChange.initRecentChange(logItem);
 			this.addRecentChange(change, conn);
+			WikiCache.removeFromCache(CACHE_TOPIC_VERSIONS, topicVersionId);
 		} catch (SQLException e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw new DataAccessException(e);
