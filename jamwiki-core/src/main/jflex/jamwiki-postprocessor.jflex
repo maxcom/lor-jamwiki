@@ -75,7 +75,7 @@ references         = (<[ \t]*) "references" ([ \t]*[\/]?[ \t]*>)
 
     {toc} {
         if (logger.isTraceEnabled()) logger.trace("toc: " + yytext() + " (" + yystate() + ")");
-        return this.parserInput.getTableOfContents().attemptTOCInsertion();
+        return this.parserInput.getTableOfContents().attemptTOCInsertion(this.parserInput);
     }
 
     /* ----- references ----- */

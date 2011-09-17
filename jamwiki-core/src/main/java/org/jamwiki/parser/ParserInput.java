@@ -28,6 +28,7 @@ import org.jamwiki.model.WikiUser;
 public class ParserInput {
 
 	private boolean allowSectionEdit = true;
+	private boolean allowTableOfContents = true;
 	private String context = null;
 	/** Depth is used to prevent infinite nesting of templates and other objects. */
 	private int depth = 0;
@@ -62,6 +63,7 @@ public class ParserInput {
 	 */
 	public ParserInput(ParserInput parserInput) {
 		this.allowSectionEdit = parserInput.allowSectionEdit;
+		this.allowTableOfContents = parserInput.allowTableOfContents;
 		this.context = parserInput.context;
 		this.depth = depth;
 		this.infiniteLoopCount = infiniteLoopCount;
@@ -95,6 +97,30 @@ public class ParserInput {
 	 */
 	public void setAllowSectionEdit(boolean allowSectionEdit) {
 		this.allowSectionEdit = allowSectionEdit;
+	}
+
+	/**
+	 * This method will return <code>true</code> if a table of contents
+	 * can be included in the parsed topic content.  System topics such
+	 * as the left menu and footer should not display a TOC.
+	 *
+	 * @return Returns <code>true</code> if a table of contents can be
+	 *  included in the parsed topic content.
+	 */
+	public boolean getAllowTableOfContents() {
+		return allowTableOfContents;
+	}
+
+	/**
+	 * Set method to indicate whether or not a table of contents can be
+	 * included in the parsed topic content.  System topics such as the
+	 * left menu and footer should not display a TOC.
+	 *
+	 * @param allowTableOfContents Set to <code>true</code> if a table of
+	 *  contents can be included in the parsed topic content.
+	 */
+	public void setAllowTableOfContents(boolean allowTableOfContents) {
+		this.allowTableOfContents = allowTableOfContents;
 	}
 
 	/**

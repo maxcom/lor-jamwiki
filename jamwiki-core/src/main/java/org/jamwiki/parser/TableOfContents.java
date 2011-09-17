@@ -91,12 +91,17 @@ public class TableOfContents {
 	 * This method checks to see if a TOC is allowed to be inserted, and if so
 	 * returns an HTML representation of the TOC.
 	 *
+	 * @param parserInput The current parser input configuration object.
 	 * @return An HTML representation of the current table of contents object,
 	 *  or an empty string if the table of contents can not be inserted due
 	 *  to an inadequate number of entries or some other reason.
 	 */
-	public String attemptTOCInsertion() {
+	public String attemptTOCInsertion(ParserInput parserInput) {
 		this.insertionAttempt++;
+		if (!parserInput.getAllowTableOfContents()) {
+			// TOC forbidden due to configuration
+			return "";
+		}
 		if (this.size() == 0 || (this.size() < MINIMUM_HEADINGS && !this.forceTOC)) {
 			// too few headings
 			return "";

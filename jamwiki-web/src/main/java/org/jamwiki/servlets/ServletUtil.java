@@ -146,6 +146,8 @@ public class ServletUtil {
 			content = topic.getTopicContent();
 			if (cook) {
 				ParserInput parserInput = new ParserInput(virtualWiki, topicName);
+				parserInput.setAllowSectionEdit(false);
+				parserInput.setAllowTableOfContents(false);
 				parserInput.setContext(context);
 				parserInput.setLocale(locale);
 				content = ParserUtil.parse(parserInput, null, content);
