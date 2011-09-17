@@ -20,6 +20,8 @@ Bugfixes:
   * Upgrade to Lucene Search 3.4, which fixes a bug where operating system or
     hardware crash, or power loss, could easily corrupt the index.
   * Fix an issue where the cache isn't cleared when a topic version is purged.
+  * System topics such as the LeftMenu and BottomArea should not display
+    section "edit" links or a table of contents.  Reported by Robert Hulme.
 
 Translation Updates:
 
