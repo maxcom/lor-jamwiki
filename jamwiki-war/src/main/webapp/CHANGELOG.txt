@@ -9,7 +9,7 @@ Bugfixes:
 
   * Merge all fixes from JAMWiki 1.0.7.
   * Heading text and wiki link text that starts with a list tag (example:
-    "#if" or "[[Link|#text]]") was improperly being parsed as a list item.
+    "==#if==" or "[[Link|#text]]") was improperly being parsed as a list item.
   * Spring security 3.0 changed how logout redirection is handled.  Update
     JAMWiki to redirect logout properly.  Note that this change modifies
     the applicationContext-security.xml file.  Reported by Leonardo Silva Kury
@@ -17,10 +17,11 @@ Bugfixes:
   * Remove the "plainlinks" pattern from the spam blacklist since that CSS
     class is commonly used on Mediawiki sites.
   * Fix parsing of generated template names of the form "{{Name{{if:|1|2}}}}".
-  * Upgrade to Lucene Search 3.4, which fixes a bug where operating system or
-    hardware crash, or power loss, could easily corrupt the index.
-  * Fix an issue where the cache isn't cleared when a topic version is purged.
-  * System topics such as the LeftMenu and BottomArea should not display
+  * Upgrade to Lucene Search 3.4 which fixes a bug where an operating system
+    crash, hardware crash, or power loss could easily corrupt the index.
+  * Fix an issue where the cache was not being properly cleared when a topic
+    version was purged using the Special:Manage tool.
+  * System topics such as the LeftMenu and BottomArea should never display
     section "edit" links or a table of contents.  Reported by Robert Hulme.
 
 Translation Updates:

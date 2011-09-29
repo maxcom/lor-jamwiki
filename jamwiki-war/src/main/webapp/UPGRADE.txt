@@ -88,11 +88,12 @@ followed by 0.6.3.
   * The Lucene search engine has been updated in this release, but the search
     index format has not changed and this update should be transparent for all
     users.
+  * The /WEB-INF/applicationContext-security.xml file has been modified to add
+    a logout success handler. If you have customized this file be sure to add
+    the jamwikiLogoutSuccessHandler to your custom version.
 
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "1.1.1".
-  2. The applicationContext-security.xml file has been modified to add a
-     logout success handler.
 
 
   JAMWiki 1.1.0
