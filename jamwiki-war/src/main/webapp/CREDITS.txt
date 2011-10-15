@@ -39,6 +39,7 @@ JAMWiki Contributors
      Polish:                Robert Matyja (dlpa)
      Portugese:             Manuel Meixide - bagonix.net (mmeixide)
      Portugese (Brazilian): Fernando Fernandes (leandes)
+                            leokury
      Russian:               Andrej Sharapov (shar)
      Sinhala:               Ruchira Bandara (ruchira56)
      Slovak:                Matus Majchrak (aryan)
