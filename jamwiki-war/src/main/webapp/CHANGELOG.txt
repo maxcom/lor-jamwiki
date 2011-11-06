@@ -3,7 +3,7 @@
 
 New Features:
 
-  * None.
+  * Updated spam filter patterns.
 
 Bugfixes:
 
