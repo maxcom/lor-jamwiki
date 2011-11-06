@@ -11,6 +11,7 @@ Bugfixes:
 
 Translation Updates:
 
+  * Updated Japanese translations (jfujikawa).
   * Updated Japanese translations (nattolover).
   * Updated Portugese (Brazilian) translations (leokury).
   * Updated Russian translations (shar).
