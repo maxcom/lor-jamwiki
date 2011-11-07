@@ -7,7 +7,7 @@ New Features:
 
 Bugfixes:
 
-  * None.
+  * "{{ns:}}" should return the same value as "{{ns:0}}" to match Mediawiki.
 
 Translation Updates:
 

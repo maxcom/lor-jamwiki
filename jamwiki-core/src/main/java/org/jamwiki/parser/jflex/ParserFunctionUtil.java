@@ -93,14 +93,19 @@ public class ParserFunctionUtil {
 	 */
 	protected static String[] parseParserFunctionInfo(ParserInput parserInput, int mode, String name) throws ParserException {
 		int pos = name.indexOf(':');
-		if (pos == -1 || (pos + 2) > name.length()) {
+		if (pos == -1) {
 			return null;
 		}
-		String parserFunction = name.substring(0, pos + 1).trim();
-		String parserFunctionArguments = name.substring(pos + 1).trim();
+		boolean hasArguments = ((pos + 2) <= name.length());
+		String parserFunction = (hasArguments) ? name.substring(0, pos + 1).trim() : name.trim();
 		if (!PARSER_FUNCTIONS.contains(parserFunction)) {
 			return null;
 		}
+		if (!hasArguments && !StringUtils.equals(parserFunction, PARSER_FUNCTION_NAMESPACE) && !StringUtils.equals(parserFunction, PARSER_FUNCTION_NAMESPACE_ESCAPED)) {
+			// no argument.  only valid with the namespace parser function.
+			return null;
+		}
+		String parserFunctionArguments = (hasArguments) ? name.substring(pos + 1).trim() : null;
 		return new String[]{parserFunction, parserFunctionArguments};
 	}
 
@@ -389,7 +394,10 @@ public class ParserFunctionUtil {
 	 * Parse the {{ns:}} and {{nse:}} parser functions.
 	 */
 	private static String parseNamespace(ParserInput parserInput, String[] parserFunctionArgumentArray, boolean escape) throws DataAccessException {
-		int namespaceId = NumberUtils.toInt(parserFunctionArgumentArray[0], -10);
+		int namespaceId = Namespace.MAIN_ID;
+		if (parserFunctionArgumentArray.length > 0 && !StringUtils.isBlank(parserFunctionArgumentArray[0])) {
+			namespaceId = NumberUtils.toInt(parserFunctionArgumentArray[0], -10);
+		}
 		Namespace namespace = null;
 		if (namespaceId != -10) {
 			namespace = WikiBase.getDataHandler().lookupNamespaceById(namespaceId);
