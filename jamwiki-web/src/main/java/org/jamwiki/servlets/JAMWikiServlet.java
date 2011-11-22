@@ -16,28 +16,21 @@
  */
 package org.jamwiki.servlets;
 
-import java.io.File;
-import java.util.LinkedHashMap;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.WikiUserDetailsImpl;
-import org.jamwiki.model.Namespace;
-import org.jamwiki.model.Role;
-import org.jamwiki.model.VirtualWiki;
-import org.jamwiki.model.Watchlist;
-import org.jamwiki.model.WikiUser;
-import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.Utilities;
-import org.jamwiki.utils.WikiLink;
-import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.WikiUtil;
+import org.jamwiki.model.*;
+import org.jamwiki.utils.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.util.LinkedHashMap;
 
 /**
  * Provides the infrastructure that is common to all JAMWiki servlets.  Unless
@@ -229,7 +222,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			links.put("Special:Account", new WikiMessage("usermenu.account"));
 		}
 		if (!userDetails.hasRole(Role.ROLE_ANONYMOUS) && !userDetails.hasRole(Role.ROLE_EMBEDDED)) {
-			links.put("Special:Logout", new WikiMessage("common.logout"));
+			links.put("Global:/logout.jsp", new WikiMessage("common.logout"));
 		}
 		if (userDetails.hasRole(Role.ROLE_SYSADMIN)) {
 			links.put("Special:Admin", new WikiMessage("usermenu.admin"));
