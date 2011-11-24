@@ -195,13 +195,12 @@ public abstract class JAMWikiServlet extends AbstractController {
 		LinkedHashMap<String, WikiMessage> links = new LinkedHashMap<String, WikiMessage>();
 		WikiUserDetailsImpl userDetails = ServletUtil.currentUserDetails();
 		if (userDetails.hasRole(Role.ROLE_ANONYMOUS) && !userDetails.hasRole(Role.ROLE_EMBEDDED)) {
-			// include the current page in the login link 
-			String loginLink = "Special:Login";
-			if (!StringUtils.startsWith(pageInfo.getTopicName(), "Special:Login")) {
+			// do not include the current page in the login link
+			String loginLink = "Global:/login.jsp";
+			/*if (!StringUtils.startsWith(pageInfo.getTopicName(), "Special:Login")) {
 				loginLink += LinkUtil.appendQueryParam("", PARAM_LOGIN_SUCCESS_TARGET, pageInfo.getTopicName());
-			}
+			} */
 			links.put(loginLink, new WikiMessage("common.login"));
-			links.put("Special:Account", new WikiMessage("usermenu.register"));
 		}
 		if (!userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 			WikiUser user = ServletUtil.currentWikiUser();
@@ -219,7 +218,9 @@ public abstract class JAMWikiServlet extends AbstractController {
 			links.put("Special:Watchlist", new WikiMessage("usermenu.watchlist"));
 		}
 		if (!userDetails.hasRole(Role.ROLE_ANONYMOUS) && !userDetails.hasRole(Role.ROLE_NO_ACCOUNT)) {
-			links.put("Special:Account", new WikiMessage("usermenu.account"));
+                        WikiUser user = ServletUtil.currentWikiUser();
+                        String accountLink = "Global:/people/" + user.getUsername() + "/profile";
+                        links.put(accountLink, new WikiMessage("usermenu.account"));
 		}
 		if (!userDetails.hasRole(Role.ROLE_ANONYMOUS) && !userDetails.hasRole(Role.ROLE_EMBEDDED)) {
 			links.put("Global:/logout.jsp", new WikiMessage("common.logout"));
