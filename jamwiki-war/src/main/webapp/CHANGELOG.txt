@@ -7,7 +7,8 @@ New Features:
 
 Bugfixes:
 
-  * None.
+  * Fix three instances where database connections were not being properly
+    released.  Reported with extensive debugging help by Igor Zhuk.
 
 Translation Updates:
 
