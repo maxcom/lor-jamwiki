@@ -9,6 +9,8 @@ Bugfixes:
 
   * Fix three instances where database connections were not being properly
     released.  Reported with extensive debugging help by Igor Zhuk.
+  * For images that do not specify frame or thumb format the caption should be
+    used as the alt and title tag.  Reported by Jun Fujikawa.
 
 Translation Updates:
 
