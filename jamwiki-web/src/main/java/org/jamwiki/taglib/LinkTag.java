@@ -16,10 +16,6 @@
  */
 package org.jamwiki.taglib;
 
-import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.BodyTagSupport;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.model.VirtualWiki;
@@ -27,6 +23,11 @@ import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.BodyTagSupport;
+import java.io.IOException;
 
 /**
  * JSP tag that creates an HTML link to a Wiki topic, generating the servlet
@@ -52,6 +53,21 @@ public class LinkTag extends BodyTagSupport {
 		if (!StringUtils.isBlank(this.target)) {
 			tagTarget = this.target;
 		}
+                if (this.value.startsWith("Global:")) {
+                  try {
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("<a href=\"");
+                    builder.append(this.value.substring(7)); // crop "Global:"
+                    builder.append("\">");
+                    builder.append(buildLinkText());
+                    builder.append("</a>");
+                    this.pageContext.getOut().print(builder.toString());
+                  } catch (IOException e) {
+                    logger.error("Failure while output " + this.value);
+                    throw new JspException(e);
+                  }
+                  return EVAL_PAGE;
+                }
 		String tagText = buildLinkText();
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		String url = null;
