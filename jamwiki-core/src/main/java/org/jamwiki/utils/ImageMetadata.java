@@ -48,6 +48,8 @@ public class ImageMetadata {
 	 */
 	private int maxWidth = -1;
 	private ImageVerticalAlignmentEnum verticalAlignment = ImageVerticalAlignmentEnum.NOT_SPECIFIED;
+	/** Link title for images that are wrapped by a link. */
+	private String title = null;
 
 	/**
 	 * Return a flag indicating whether the image can be resized larger than its
@@ -207,5 +209,23 @@ public class ImageMetadata {
 	 */
 	public void setVerticalAlignment(ImageVerticalAlignmentEnum verticalAlignment) {
 		this.verticalAlignment = verticalAlignment;
+	}
+
+	/**
+	 * Return the HTML title tag to use with the link surrounding the
+	 * image tag.  This value will not have been escaped so the link
+	 * builder will need to escape it.
+	 */
+	public String getTitle() {
+		return this.title;
+	}
+
+	/**
+	 * Return the HTML title tag to use with the link surrounding the
+	 * image tag.  This value will not have been escaped so the link
+	 * builder will need to escape it.
+	 */
+	public void setTitle(String title) {
+		this.title = title;
 	}
 }

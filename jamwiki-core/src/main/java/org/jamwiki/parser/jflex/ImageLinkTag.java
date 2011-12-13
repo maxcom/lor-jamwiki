@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.EnumSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataAccessException;
 import org.jamwiki.model.Namespace;
@@ -204,7 +205,17 @@ public class ImageLinkTag implements JFlexParserTag {
 			imageMetadata.setLink(null);
 		}
 		if (imageMetadata.getBorder() != ImageBorderEnum.THUMB && imageMetadata.getBorder() != ImageBorderEnum.FRAME && imageMetadata.getBorder() != ImageBorderEnum._GALLERY) {
-			// per spec, captions are only displayed for thumbnails, framed images and galleries
+			// per spec, captions are only displayed for thumbnails, framed images
+			// and galleries, but the caption will be used as the alt and title for
+			// other image types.
+			if (!StringUtils.isBlank(imageMetadata.getCaption())) {
+				// avoid double-escaping since the link builder escapes the title tag
+				imageMetadata.setTitle(StringEscapeUtils.unescapeHtml(imageMetadata.getCaption()));
+			}
+			if (imageMetadata.getAlt() == null) {
+				// avoid double-escaping since the link builder escapes the alt tag
+				imageMetadata.setAlt(StringEscapeUtils.unescapeHtml(imageMetadata.getCaption()));
+			}
 			imageMetadata.setCaption(null);
 		}
 		if (imageMetadata.getBorder() == ImageBorderEnum.FRAME) {

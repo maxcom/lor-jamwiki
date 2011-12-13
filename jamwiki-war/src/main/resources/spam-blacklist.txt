@@ -12,6 +12,8 @@
 [\.\/]km\.ru
 adware[ -_\.]freeware
 airline\-tickets\-cheap
+backlinkboomber\.com
+bestpills4weightloss
 cheap[\-\.]+tickets
 college\-paper
 comment[0-9],

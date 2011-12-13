@@ -154,7 +154,11 @@ public class ImageUtil {
 				// that the link is an image, so do not perform further validation and link to the
 				// CURRENT virtual wiki, even if it is a shared image
 				String link = LinkUtil.buildTopicUrl(context, linkVirtualWiki, topicName, false);
-				html.append("<a class=\"wikiimg\" href=\"").append(link).append("\">");
+				html.append("<a class=\"wikiimg\" href=\"").append(link).append("\"");
+				if (!StringUtils.isBlank(imageMetadata.getTitle())) {
+					html.append(" title=\"").append(StringEscapeUtils.escapeHtml(imageMetadata.getTitle())).append("\"");
+				}
+				html.append(">");
 			} else {
 				try {
 					// try to parse as an external link
@@ -165,7 +169,11 @@ public class ImageUtil {
 					WikiLink wikiLink = LinkUtil.parseWikiLink(topic.getVirtualWiki(), imageMetadata.getLink());
 					String internalLinkVirtualWiki = ((wikiLink.getVirtualWiki() != null) ? wikiLink.getVirtualWiki().getName() : linkVirtualWiki);
 					String link = LinkUtil.buildTopicUrl(context, internalLinkVirtualWiki, wikiLink);
-					html.append("<a class=\"wikiimg\" href=\"").append(link).append("\">");
+					html.append("<a class=\"wikiimg\" href=\"").append(link).append("\"");
+					if (!StringUtils.isBlank(imageMetadata.getTitle())) {
+						html.append(" title=\"").append(StringEscapeUtils.escapeHtml(imageMetadata.getTitle())).append("\"");
+					}
+					html.append(">");
 				}
 			}
 		}

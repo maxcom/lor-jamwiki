@@ -170,3 +170,11 @@ caption test #9 [[Image:Test Image.jpg|thumb|Test ]] Caption]]
 caption test #10 [[Image:Test Image.jpg|thumb|caption1|caption2]]
 
 [[Image:Invalid Image "Name".jpg]]
+
+caption test #11 [[Image:Test Image.jpg|caption]]
+
+caption test #12 [[Image:Test Image.jpg|noframe|caption]]
+
+caption test #13 [[Image:Test Image.jpg|border|caption]]
+
+caption test #14 [[Image:Test Image.jpg|caption " test]]
