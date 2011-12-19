@@ -16,12 +16,20 @@
  */
 package org.jamwiki.servlets;
 
-import java.io.PrintWriter;
+import java.io.*;
+import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.authentication.WikiUserDetailsImpl;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.WikiLogger;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.web.servlet.ModelAndView;
+import sun.nio.ch.FileKey;
 
 /**
  * Used to generate the jamwiki.css stylesheet.
@@ -35,7 +43,10 @@ public class StylesheetServlet extends JAMWikiServlet {
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
-		String stylesheet = ServletUtil.cachedContent(request.getContextPath(), request.getLocale(), virtualWiki, WikiBase.SPECIAL_PAGE_STYLESHEET, false);
+    String username = StringUtils.trim(request.getParameter("user"));
+    WikiUser user = ServletUtil.currentWikiUser();
+    String styleLink = WikiBase.SPECIAL_PAGE_STYLESHEET + ':' + user.getStyle();
+		String stylesheet = ServletUtil.cachedContent(request.getContextPath(), request.getLocale(), virtualWiki, styleLink, false);
 		response.setContentType("text/css");
 		response.setCharacterEncoding("UTF-8");
 		// cache for 30 minutes (60 * 30 = 1800)

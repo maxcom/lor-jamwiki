@@ -42,6 +42,7 @@ public class WikiUser implements Serializable {
 	private String signature = null;
 	private String username = null;
 	private int userId = -1;
+  private String style = "tango";
 
 	/**
 	 *
@@ -202,4 +203,12 @@ public class WikiUser implements Serializable {
 	public String getUsername() {
 		return username;
 	}
+
+  public String getStyle() {
+    return style;
+  }
+
+  public void setStyle(String style1) {
+    style = style1;
+  }
 }

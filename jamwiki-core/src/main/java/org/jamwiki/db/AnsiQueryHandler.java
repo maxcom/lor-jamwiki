@@ -1603,6 +1603,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		user.setEmail(rs.getString("email"));
 		user.setEditor(rs.getString("editor"));
 		user.setSignature(rs.getString("signature"));
+    user.setStyle(rs.getString("style"));
 		return user;
 	}
 
