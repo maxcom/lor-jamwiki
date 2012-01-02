@@ -7,7 +7,7 @@ New Features:
 
 Bugfixes:
 
-  * None.
+  * Image "alt" tag on image pages should not be "null".  Reported by Samuel.
 
 Translation Updates:
 
