@@ -8,6 +8,8 @@ New Features:
 Bugfixes:
 
   * Image "alt" tag on image pages should not be "null".  Reported by Samuel.
+  * The "File server URL" property was being ignored when generating image and
+    file URLs.  Reported by Samuel.
 
 Translation Updates:
 

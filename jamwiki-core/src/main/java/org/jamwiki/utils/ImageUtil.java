@@ -80,23 +80,37 @@ public class ImageUtil {
 	 *
 	 * @param virtualWiki The virtual wiki for the URL that is being created.
 	 * @param topicName The name of the image for which a link is being created.
+	 * @param forceAbsoluteUrl Set to <code>true</code> if the returned URL should
+	 *  always be absolute.  By default an absolute URL will only be returned if
+	 *  the PROP_FILE_SERVER_URL property is not empty and differs from the
+	 *  PROP_SERVER_URL property.
 	 * @return The URL to an image file (not the image topic) or <code>null</code>
 	 *  if the file does not exist.
 	 * @throws DataAccessException Thrown if any error occurs while retrieving file info.
 	 */
-	public static String buildImageFileUrl(String virtualWiki, String topicName) throws DataAccessException {
+	public static String buildImageFileUrl(String virtualWiki, String topicName, boolean forceAbsoluteUrl) throws DataAccessException {
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
 		if (wikiFile == null) {
 			return null;
 		}
-		return buildRelativeImageUrl(wikiFile.getUrl());
+		return buildImageUrl(wikiFile.getUrl(), forceAbsoluteUrl);
 	}
 
 	/**
 	 *
 	 */
-	private static String buildRelativeImageUrl(String filename) {
+	private static String buildImageUrl(String filename, boolean forceAbsoluteUrl) {
 		String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + filename);
+		String fileServerUrl = Environment.getValue(Environment.PROP_FILE_SERVER_URL);
+		String absoluteServerUrl = Environment.getValue(Environment.PROP_SERVER_URL);
+		if (!StringUtils.isBlank(fileServerUrl) && !StringUtils.equalsIgnoreCase(fileServerUrl, absoluteServerUrl)) {
+			// file server URL is not the same as server URL, so make the image URL absolute
+			url = LinkUtil.normalize(fileServerUrl + url);
+		} else if (forceAbsoluteUrl) {
+			// caller requested an absolute URL when one would not have otherwise been
+			// required, so use the server URL to generate an absolute URL
+			url = LinkUtil.normalize(absoluteServerUrl + url);
+		}
 		return FilenameUtils.separatorsToUnix(url);
 	}
 
@@ -124,7 +138,7 @@ public class ImageUtil {
 	 * @throws IOException Thrown if any error occurs while reading image information.
 	 */
 	public static String buildImageLinkHtml(String context, String linkVirtualWiki, String topicName, ImageMetadata imageMetadata, String style, boolean escapeHtml) throws DataAccessException, IOException {
-		String url = ImageUtil.buildImageFileUrl(linkVirtualWiki, topicName);
+		String url = ImageUtil.buildImageFileUrl(linkVirtualWiki, topicName, false);
 		if (url == null) {
 			return ImageUtil.buildUploadLink(context, linkVirtualWiki, topicName);
 		}
@@ -184,7 +198,7 @@ public class ImageUtil {
 			style += " thumbborder";
 		}
 		html.append("<img class=\"").append(style).append("\" src=\"");
-		html.append(buildRelativeImageUrl(wikiImage.getUrl()));
+		html.append(buildImageUrl(wikiImage.getUrl(), false));
 		html.append('\"');
 		html.append(" width=\"").append(wikiImage.getWidth()).append('\"');
 		html.append(" height=\"").append(wikiImage.getHeight()).append('\"');
