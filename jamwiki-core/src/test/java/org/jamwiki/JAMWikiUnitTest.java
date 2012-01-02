@@ -20,6 +20,7 @@ package org.jamwiki;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import org.apache.commons.io.FileUtils;
 import org.jamwiki.db.WikiDatabase;
@@ -61,6 +62,7 @@ public abstract class JAMWikiUnitTest {
 				// copy everything from src/test/resources/data/files to this directory
 				FileUtils.copyDirectory(testFilesDirectory, filesDirectory);
 			}
+			this.setupTopics();
 		}
 	}
 
@@ -114,6 +116,24 @@ public abstract class JAMWikiUnitTest {
 	protected void setupTopic(Topic topic) throws DataAccessException, WikiException {
 		TopicVersion topicVersion = new TopicVersion(null, "127.0.0.1", null, topic.getTopicContent(), topic.getTopicContent().length());
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null);
+	}
+
+	/**
+	 * Read and load default topics from the /jamwiki-core/src/test/resources/data/topics
+	 * folder.
+	 */
+	private void setupTopics() throws DataAccessException, IOException, WikiException {
+		File topicDir = TestFileUtil.getClassLoaderFile(TestFileUtil.TEST_TOPICS_DIR);
+		File[] topicFiles = topicDir.listFiles();
+		List<VirtualWiki> virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
+		for (VirtualWiki virtualWiki : virtualWikis) {
+			if (topicFiles != null) {
+				for (File topicFile : topicFiles) {
+					String fileName = topicFile.getName();
+					this.setupTopic(virtualWiki, fileName);
+				}
+			}
+		}
 	}
 
 	/**

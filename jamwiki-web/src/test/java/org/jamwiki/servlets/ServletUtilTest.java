@@ -25,41 +25,4 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ServletUtilTest extends JAMWikiUnitTest {
-
-	/**
-	 *
-	 */
-	@Test
-	public void testValidateSystemSettings1() throws Throwable {
-		Properties props = new Properties(new SortedProperties());
-		props.put("file-dir-full-path", ")%2F");
-		props.put("homeDir", "testString");
-		props.put("parser", "org.jamwiki.parser.AbstractParser");
-		props.put("url", "testString");
-		ServletUtil.validateSystemSettings(props);
-		assertTrue("Test completed without Exception", true);
-		// dependencies on static and environment state led to removal of 1 assertion(s)
-	}
-
-	/**
-	 *
-	 */
-	@Test
-	public void testValidateSystemSettings2() throws Throwable {
-		Properties props = new Properties();
-		props.put("file-dir-full-path", "testString");
-		props.put("homeDir", "testString");
-		props.put("url", "testString");
-		ServletUtil.validateSystemSettings(props);
-		assertTrue("Test completed without Exception", true);
-		// dependencies on static and environment state led to removal of 1 assertion(s)
-	}
-
-	/**
-	 *
-	 */
-	@Test(expected=NullPointerException.class)
-	public void testValidateSystemSettingsThrowsNullPointerException1() throws Throwable {
-		ServletUtil.validateSystemSettings(new Properties());
-	}
 }
