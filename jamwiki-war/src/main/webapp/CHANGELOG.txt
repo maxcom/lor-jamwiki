@@ -7,13 +7,14 @@ New Features:
 
 Bugfixes:
 
-  * Image "alt" tag on image pages should not be "null".  Reported by Samuel.
+  * Image "alt" tag on image pages should not be "null".  Reported by justme.
   * The "File server URL" property was being ignored when generating image and
-    file URLs.  Reported by Samuel.
+    file URLs.  Reported by justme.
 
 Translation Updates:
 
-  * None.
+  * Updated German translations (justme).
+  * Updated Russian translations (justme).
 
 
 1.1.3
