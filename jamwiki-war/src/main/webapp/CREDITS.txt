@@ -33,6 +33,7 @@ JAMWiki Contributors
      German:                Axel Kramer (axelclk)
                             Frank Reifenstahl (frareinif)
                             Rainer Schmitz (swift)
+                            Samuel (justme)
      Hungarian:             Csaba Tenkes (cstenkes)
                             Daniel Tar (bDaneE)
      Japanese:              Natto Lover (nattolover)

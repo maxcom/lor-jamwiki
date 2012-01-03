@@ -13,6 +13,7 @@ Bugfixes:
 
 Translation Updates:
 
+  * Updated German translations (axelclk).
   * Updated German translations (justme).
   * Updated Russian translations (justme).
 
