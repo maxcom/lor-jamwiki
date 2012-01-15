@@ -7,7 +7,8 @@ New Features:
 
 Bugfixes:
 
-  * None.
+  * The PROP_MAX_TOPIC_VERSION_EXPORT limit was being ignored when exporting
+    topic data.
 
 Translation Updates:
 
