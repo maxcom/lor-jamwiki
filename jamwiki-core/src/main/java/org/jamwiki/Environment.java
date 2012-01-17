@@ -17,7 +17,6 @@
 package org.jamwiki;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -179,10 +178,10 @@ public class Environment {
 	 *  either absolute or relative; if relative then the file will be loaded from
 	 *  the class path or from the directory from which the JVM was loaded.
 	 * @return A File object containing the properties file instance.
-	 * @throws FileNotFoundException Thrown if the specified property file cannot
+	 * @throws IOException Thrown if the specified property file cannot
 	 *  be located.
 	 */
-	private static File findProperties(String filename) throws FileNotFoundException {
+	private static File findProperties(String filename) throws IOException {
 		// read in properties file
 		File file = new File(filename);
 		if (file.exists()) {
@@ -490,12 +489,12 @@ public class Environment {
 	private static File retrievePropertyFile(String filename) {
 		try {
 			return Utilities.getClassLoaderFile(filename);
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			// NOPMD file might not exist
 		}
 		try {
 			return new File(Utilities.getClassLoaderRoot(), filename);
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			logger.error("Error while searching for resource " + filename, e);
 		}
 		return null;

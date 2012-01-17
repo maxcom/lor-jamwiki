@@ -17,7 +17,7 @@
 package org.jamwiki;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -150,7 +150,7 @@ public class WikiConfiguration {
 		} catch (ParseException e) {
 			// this should never happen unless someone mangles the config file
 			throw new IllegalStateException("Unable to parse configuration file " + JAMWIKI_CONFIGURATION_FILE, e);
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			// this should never happen unless someone deletes the file
 			throw new IllegalStateException("Unable to find configuration file " + JAMWIKI_CONFIGURATION_FILE, e);
 		}

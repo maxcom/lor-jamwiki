@@ -17,7 +17,7 @@
 package org.jamwiki.utils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
@@ -50,7 +50,7 @@ public class WikiCache {
 			Utilities.getClassLoaderFile(EHCACHE_XML_CONFIG_FILENAME);
 			logger.info("Initializing cache configuration from " + EHCACHE_XML_CONFIG_FILENAME + " file");
 			xmlConfig = true;
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			logger.info("No " + EHCACHE_XML_CONFIG_FILENAME + " file found, using default cache configuration");
 		}
 		USES_XML_CONFIG = xmlConfig;

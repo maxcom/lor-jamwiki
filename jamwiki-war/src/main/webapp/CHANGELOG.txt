@@ -9,6 +9,8 @@ Bugfixes:
 
   * The PROP_MAX_TOPIC_VERSION_EXPORT limit was being ignored when exporting
     topic data.
+  * Fix issues with classpath resolution on JBoss AS7.  Reported by anonymous
+    users.
 
 Translation Updates:
 

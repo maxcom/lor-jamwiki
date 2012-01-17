@@ -17,7 +17,6 @@
 package org.jamwiki;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -56,10 +55,10 @@ public class TestFileUtil {
 	/**
 	 *
 	 */
-	public static File getClassLoaderFile(String fileName) throws FileNotFoundException {
+	public static File getClassLoaderFile(String fileName) throws IOException {
 		try {
 			return Utilities.getClassLoaderFile(fileName);
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			// ignore
 		}
 		return new File(Utilities.getClassLoaderRoot(), fileName);
@@ -73,17 +72,17 @@ public class TestFileUtil {
 		String fullName = directory + fileName;
 		try {
 			return Utilities.getClassLoaderFile(fullName);
-		} catch (FileNotFoundException e) { }
+		} catch (IOException e) { }
 		try {
 			return new File(Utilities.getClassLoaderRoot(), fullName);
-		} catch (FileNotFoundException e) { }
+		} catch (IOException e) { }
 		return null;
 	}
 
 	/**
 	 *
 	 */
-	public static String retrieveFileContent(String directory, String fileName) throws IOException, FileNotFoundException {
+	public static String retrieveFileContent(String directory, String fileName) throws IOException {
 		File file = TestFileUtil.retrieveFile(directory, fileName);
 		if (file == null || !file.exists()) {
 			return null;
