@@ -7,10 +7,13 @@ New Features:
 
 Bugfixes:
 
+  * Fix issues with classpath resolution on JBoss AS7.  Reported by multiple
+    anonymous users.
   * The PROP_MAX_TOPIC_VERSION_EXPORT limit was being ignored when exporting
     topic data.
-  * Fix issues with classpath resolution on JBoss AS7.  Reported by anonymous
-    users.
+  * Switch statement grouping ("{{#switch: first | first | second = result }}")
+    should return the fall-through element ("second = result").  Reported by an
+    anonymous user.
 
 Translation Updates:
 

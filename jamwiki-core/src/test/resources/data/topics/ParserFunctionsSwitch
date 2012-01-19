@@ -21,3 +21,9 @@
  | first = this is the first
  | second = this is the second
 }}
+
+9: {{#switch: first | first | second | this is the default }}
+
+10: {{#switch: second | first = this is first | second | third = this is the third | this is the default }}
+
+11: {{#switch: third | first | second = this is second | third | fourth = this is fourth }}

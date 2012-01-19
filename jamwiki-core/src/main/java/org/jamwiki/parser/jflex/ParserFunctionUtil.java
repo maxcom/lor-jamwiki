@@ -417,26 +417,35 @@ public class ParserFunctionUtil {
 		String condition = ((parserFunctionArgumentArray.length >= 1) ? parserFunctionArgumentArray[0].trim() : "#default");
 		String defaultCondition = null;
 		int pos = 0;
-		String caseCondition, caseResult;
+		String caseResult;
+		List<String> caseConditions = new ArrayList<String>();
 		for (int i = 1; i < parserFunctionArgumentArray.length; i++) {
 			pos = parserFunctionArgumentArray[i].indexOf('=');
+			if (pos == 0) {
+				// invalid argument
+				continue;
+			}
 			if (pos == -1 && i == (parserFunctionArgumentArray.length - 1)) {
 				// last argument is the default when no case is specified
 				defaultCondition = parserFunctionArgumentArray[i].trim();
 				continue;
 			}
-			if (pos == -1 || pos == 0) {
-				// invalid argument
+			if (pos == -1) {
+				// no equals sign means default to the next element, ie "first | second = first & second"
+				caseConditions.add(parserFunctionArgumentArray[i].trim());
 				continue;
 			}
-			caseCondition = parserFunctionArgumentArray[i].substring(0, pos).trim();
+			caseConditions.add(parserFunctionArgumentArray[i].substring(0, pos).trim());
 			caseResult = (pos < (parserFunctionArgumentArray[i].length() - 1)) ? parserFunctionArgumentArray[i].substring(pos + 1).trim() : "";
-			if (StringUtils.equals(condition, caseCondition)) {
-				return caseResult;
+			for (String caseCondition : caseConditions) {
+				if (StringUtils.equals(condition, caseCondition)) {
+					return caseResult;
+				}
+				if (StringUtils.equals(caseCondition, "#default")) {
+					defaultCondition = caseResult;
+				}
 			}
-			if (StringUtils.equals(caseCondition, "#default")) {
-				defaultCondition = caseResult;
-			}
+			caseConditions.clear();
 		}
 		return (defaultCondition != null) ? defaultCondition : "";
 	}
