@@ -14,6 +14,8 @@ Bugfixes:
   * Switch statement grouping ("{{#switch: first | first | second = result }}")
     should return the fall-through element ("second = result").  Reported by an
     anonymous user.
+  * If the Special:Contributors URL is invoked without a contributor the error
+    should be handled more gracefully.  Reported by Philip Whitehouse.
 
 Translation Updates:
 

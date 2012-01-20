@@ -19,7 +19,9 @@ package org.jamwiki.servlets;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.utils.Pagination;
@@ -50,6 +52,9 @@ public class ContributionsServlet extends JAMWikiServlet {
 	private void contributions(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		String userString = WikiUtil.getParameterFromRequest(request, "contributor", false);
+		if (StringUtils.isBlank(userString)) {
+			throw new WikiException(new WikiMessage("common.exception.missingparameter", "contributor"));
+		}
 		Pagination pagination = ServletUtil.loadPagination(request, next);
 		List<RecentChange> contributions = WikiBase.getDataHandler().getUserContributions(virtualWiki, userString, pagination, true);
 		next.addObject("contributions", contributions);
