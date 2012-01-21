@@ -19,7 +19,7 @@ Bugfixes:
 
 Translation Updates:
 
-  * None.
+  * Updated Hungarian translations (cstenkes).
 
 
 1.1.4
