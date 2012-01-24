@@ -21,7 +21,7 @@ import org.jamwiki.utils.Utilities;
 /* character expressions */
 newline            = "\n"
 whitespace         = [ \n\t\f]
-entity             = (&#[Xx]?([0-9]{2,4});) | (&[A-Za-z]{2,6};)
+entity             = (&#[Xx]([0-9a-fA-F]{2,4});) | (&#([0-9]{2,4});) | (&[A-Za-z]{2,6};)
 emptyline          = ([ \t])* ({newline})
 
 /* non-container expressions */

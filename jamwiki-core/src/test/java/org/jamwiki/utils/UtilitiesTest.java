@@ -275,6 +275,11 @@ public class UtilitiesTest extends JAMWikiUnitTest {
 		assertTrue("Invalid HTML entity test #4", Utilities.isHtmlEntity("&#38;"));
 		assertTrue("Invalid HTML entity test #5", Utilities.isHtmlEntity("&#x26;"));
 		assertFalse("Invalid HTML entity test #6", Utilities.isHtmlEntity("&bogus;"));
+		assertTrue("Invalid HTML entity test #7", Utilities.isHtmlEntity("&#x2dc;"));
+		assertTrue("Invalid HTML entity test #8", Utilities.isHtmlEntity("&#x2DC;"));
+		assertFalse("Invalid HTML entity test #9", Utilities.isHtmlEntity("&#x2GG;"));
+		assertTrue("Invalid HTML entity test #10", Utilities.isHtmlEntity("&#xffff;"));
+		assertFalse("Invalid HTML entity test #11", Utilities.isHtmlEntity("&#xfffff;"));
 	}
 
 	/**
