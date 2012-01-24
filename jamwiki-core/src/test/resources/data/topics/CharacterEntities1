@@ -1,4 +1,0 @@
-<!-- test invalid XHTML entities to ensure that they are properly escaped -->
-&
-
-& "

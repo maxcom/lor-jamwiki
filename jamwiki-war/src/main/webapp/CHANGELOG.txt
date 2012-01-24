@@ -16,6 +16,8 @@ Bugfixes:
     anonymous user.
   * If the Special:Contributors URL is invoked without a contributor the error
     should be handled more gracefully.  Reported by Philip Whitehouse.
+  * HTML entities using hex codes of the form "&#x26;" were being improperly
+    escaped.  Reported by Constantine.
 
 Translation Updates:
 
