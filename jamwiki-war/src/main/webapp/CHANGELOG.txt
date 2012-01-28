@@ -21,6 +21,7 @@ Bugfixes:
 
 Translation Updates:
 
+  * Updated German translations (axelclk).
   * Updated Hungarian translations (cstenkes).
 
 
