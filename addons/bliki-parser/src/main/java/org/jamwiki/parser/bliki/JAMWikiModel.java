@@ -111,10 +111,20 @@ public class JAMWikiModel extends AbstractWikiModel {
 		}
 	}
 
+	/**
+	 *
+	 */
 	@Override
 	public void appendInternalLink(String topic, String hashSection, String topicDescription, String cssClass, boolean parseRecursive) {
+		String virtualWiki = fParserInput.getVirtualWiki();
+		this.appendInternalLink(topic, hashSection, topicDescription, cssClass, parseRecursive, virtualWiki);
+	}
+
+	/**
+	 *
+	 */
+	public void appendInternalLink(String topic, String hashSection, String topicDescription, String cssClass, boolean parseRecursive, String virtualWiki) {
 		try {
-			String virtualWiki = fParserInput.getVirtualWiki();
 			WikiLink wikiLink;
 			if (hashSection != null) {
 				wikiLink = LinkUtil.parseWikiLink(virtualWiki, topic + "#" + hashSection);
@@ -358,4 +368,34 @@ public class JAMWikiModel extends AbstractWikiModel {
 		return buf.toString();
 	}
 
+	/**
+	 * Override the parent method to check for virtual wikis.  If one is found
+	 * process it specially, otherwise defer to standard Bliki parsing.
+	 */
+	@Override
+	public boolean appendRawNamespaceLinks(String rawNamespaceTopic, String viewableLinkDescription, boolean containsNoPipe) {
+		int colonIndex = rawNamespaceTopic.indexOf(':');
+		if (colonIndex != (-1)) {
+			String nameSpace = rawNamespaceTopic.substring(0, colonIndex);
+			if (isVirtualWiki(nameSpace)) {
+				String title = rawNamespaceTopic.substring(colonIndex + 1);
+				if (title != null && title.length() > 0) {
+					appendInternalLink(title, null, viewableLinkDescription, null, true, nameSpace);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Utility method for determining if a given prefix represents a virtual wiki.
+	 */
+	public boolean isVirtualWiki(String namespace) {
+		try {
+			return (WikiBase.getDataHandler().lookupVirtualWiki(namespace) != null);
+		} catch (DataAccessException e) {
+			return false;
+		}
+	}
 }

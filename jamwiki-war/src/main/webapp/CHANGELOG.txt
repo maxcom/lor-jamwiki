@@ -18,6 +18,8 @@ Bugfixes:
     should be handled more gracefully.  Reported by Philip Whitehouse.
   * HTML entities using hex codes of the form "&#x26;" were being improperly
     escaped.  Reported by Constantine.
+  * The Bliki parser was not handling virtual wikis correctly.  Reported by
+    Constantine and Alexander Aparzev.
 
 Translation Updates:
 
