@@ -385,7 +385,7 @@ public class JAMWikiModel extends AbstractWikiModel {
 				}
 			}
 		}
-		return false;
+		return super.appendRawNamespaceLinks(rawNamespaceTopic, viewableLinkDescription, containsNoPipe);
 	}
 
 	/**
