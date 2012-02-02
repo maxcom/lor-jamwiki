@@ -53,7 +53,7 @@ public class SolrSearchEngine implements SearchEngine {
   }
   
   private String genId(Topic topic) {
-    return String.format("WIKI%d", topic.getTopicId());
+    return String.format("%s-%d", topic.getVirtualWiki(), topic.getTopicId());
   }
   
   public void addToIndex(Topic topic) {
@@ -63,24 +63,25 @@ public class SolrSearchEngine implements SearchEngine {
     try {
       SolrInputDocument doc = new SolrInputDocument();
       doc.addField("id", genId(topic));
-      doc.addField("section_id", 0);
+      doc.addField("section", "wiki");
 
       List<RecentChange> changes = WikiBase.getDataHandler().getTopicHistory(topic, new Pagination(1, 0), true);
       if(changes.isEmpty()) {
-        doc.addField("user_id", 0);
+        doc.addField("user_id", 1);
+        doc.addField("topic_user_id", 1);
         doc.addField("postdate", new Timestamp(0));
       } else {
         RecentChange lastChange = changes.get(0);
         doc.addField("user_id", lastChange.getAuthorId());
+        doc.addField("topic_user_id", lastChange.getAuthorId());
         doc.addField("postdate", lastChange.getChangeDate());
       }
-      doc.addField("topic_user_id", 0);
+
       doc.addField("topic_id", topic.getTopicId());
       doc.addField("group_id", 0);
       doc.addField("title", topic.getName());
       doc.addField("topic_title", topic.getName());
       doc.addField("message", topic.getTopicContent());
-      ;
       doc.addField("is_comment", false);
       solrServer.add(doc);
       commit(autoCommit);
@@ -111,6 +112,7 @@ public class SolrSearchEngine implements SearchEngine {
   }
 
   public void refreshIndex() throws Exception {
+    solrServer.deleteByQuery("section:wiki");
     List<VirtualWiki> allWikis = WikiBase.getDataHandler().getVirtualWikiList();
     Topic topic;
     for (VirtualWiki virtualWiki : allWikis) {
