@@ -33,6 +33,8 @@ public interface SearchEngine {
 	public static final String SEARCH_ENGINE_LUCENE = "org.jamwiki.search.LuceneSearchEngine";
 	/** RankingAlgorithm search engine class */
 	public static final String SEARCH_ENGINE_RANKINGALGORITHM = "org.jamwiki.search.RankingAlgorithmSearchEngine";
+  
+  public static final String SEARCH_ENGINE_APACHE_SOLR = "org.jamwiki.search.SolrSearchEngine";
 	/**
 	 * Add a topic to the search index.
 	 *

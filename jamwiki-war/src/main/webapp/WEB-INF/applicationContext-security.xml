@@ -41,7 +41,7 @@
 		<intercept-url pattern="/**/Special:Upgrade" access="ROLE_SYSADMIN" />
 		<intercept-url pattern="/**/Special:VirtualWiki" access="ROLE_SYSADMIN" />
 		<intercept-url pattern="/**/*.jsp" filters="none" />
-		<intercept-url pattern="/**/*.css" filters="none" />
+		<intercept-url pattern="/**/*.css" access="ROLE_VIEW" />
 		<intercept-url pattern="/images/**" filters="none" />
 		<intercept-url pattern="/js/**" filters="none" />
 		<intercept-url pattern="/upload/**" filters="none" />
