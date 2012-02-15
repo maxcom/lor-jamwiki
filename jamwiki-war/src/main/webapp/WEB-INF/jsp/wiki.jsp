@@ -36,14 +36,14 @@
 	<c:out value="${leftMenu}" escapeXml="false" />
 	</div>
 	</c:if>
-	<div id="nav-search" class="portlet">
+	<%-- <div id="nav-search" class="portlet">
 	<form method="get" action="<jamwiki:link value="Special:Search" />">
 	<input type="text" name="text" value="" />
 	<br />
 	<input type="submit" name="search" value='<fmt:message key="generalmenu.search"/>'/>
 	<input type="submit" name="jumpto" value='<fmt:message key="generalmenu.jumpto"/>'/>
 	</form>
-	</div>
+	</div> --%>
 	<c:if test="${!empty pageInfo.virtualWikiLinks}">
 	<div id="p-lang" class="portlet">
 	<h5><fmt:message key="generalmenu.title.virtualwiki" /></h5>
