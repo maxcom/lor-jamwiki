@@ -16,6 +16,11 @@
  */
 package org.jamwiki.search;
 
+import org.apache.commons.httpclient.Credentials;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
@@ -43,7 +48,18 @@ public class SolrSearchEngine implements SearchEngine {
   private boolean autoCommit = true;
 
   public SolrSearchEngine() throws Exception {
-    solrServer = new CommonsHttpSolrServer(Environment.getValue(Environment.PROP_BASE_SEARCH_SOLR_URL));
+    String user = Environment.getValue(Environment.PROP_BASE_SEARCH_SOLR_URL);
+    String password = Environment.getValue(Environment.PROP_BASE_SEARCH_SOLR_PASSWORD);
+    String url = Environment.getValue(Environment.PROP_BASE_SEARCH_SOLR_URL);        
+    
+    HttpClient httpclient = new HttpClient(new MultiThreadedHttpConnectionManager());
+    solrServer = new CommonsHttpSolrServer(url, httpclient);
+    if(!user.isEmpty()) {
+      httpclient.getParams().setAuthenticationPreemptive(true);
+      Credentials defaultcreds = new UsernamePasswordCredentials(user,password);
+      httpclient.getState().setCredentials(AuthScope.ANY, defaultcreds);
+
+    }
   }
 
   private void commit(boolean commitNow) throws SolrServerException, IOException {
