@@ -84,9 +84,13 @@ public abstract class JAMWikiServlet extends AbstractController {
 		next.addObject(WikiUtil.PARAMETER_VIRTUAL_WIKI, virtualWiki.getName());
 		// add cache-buster parameters for CSS & JS to ensure that browsers update
 		// cache if files change.
+    WikiUser user = ServletUtil.currentWikiUser();
+    String styleURL = WikiBase.SPECIAL_URL_STYLESHEET + '-' + user.getStyle() + ".css";
+    String stylePage = WikiBase.SPECIAL_PAGE_STYLESHEET + ':' + user.getStyle();
+    next.addObject("stylesheetURL", styleURL);
 		int cssRevision = 0;
 		try {
-			cssRevision = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, false).getCurrentVersionId();
+			cssRevision = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), stylePage, false).getCurrentVersionId();
 		} catch (DataAccessException e) {}
 		next.addObject("cssRevision", cssRevision);
 		long jsRevision = 0;
