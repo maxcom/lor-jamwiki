@@ -59,6 +59,8 @@ public class WikiBase {
 	public static final String SPECIAL_PAGE_BOTTOM_AREA = "BottomArea";
 	/** Name of the default jamwiki.css topic. */
 	public static final String SPECIAL_PAGE_STYLESHEET = "StyleSheet";
+  public static final String SPECIAL_URL_STYLESHEET = "jamwiki";
+  public static final String SPECIAL_DEFAULT_STYLESHEET = "tango";
 	/** Allow file uploads of any file type. */
 	public static final int UPLOAD_ALL = 0;
 	/** Use a blacklist to determine what file types can be uploaded. */
