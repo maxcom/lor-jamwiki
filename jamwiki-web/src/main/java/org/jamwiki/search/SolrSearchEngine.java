@@ -48,7 +48,7 @@ public class SolrSearchEngine implements SearchEngine {
   private boolean autoCommit = true;
 
   public SolrSearchEngine() throws Exception {
-    String user = Environment.getValue(Environment.PROP_BASE_SEARCH_SOLR_URL);
+    String user = Environment.getValue(Environment.PROP_BASE_SEARCH_SOLR_USER);
     String password = Environment.getValue(Environment.PROP_BASE_SEARCH_SOLR_PASSWORD);
     String url = Environment.getValue(Environment.PROP_BASE_SEARCH_SOLR_URL);        
     
