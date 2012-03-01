@@ -196,7 +196,6 @@ public class SetupServlet extends JAMWikiServlet {
 		} else {
 			WikiDatabase.setupDefaultDatabase(Environment.getInstance());
 		}
-		Environment.setValue(Environment.PROP_FILE_SERVER_URL, Utilities.getServerUrl(request));
 		Environment.setValue(Environment.PROP_SERVER_URL, Utilities.getServerUrl(request));
 	}
 

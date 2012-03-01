@@ -1,2 +1,0 @@
-<!-- test an invalid XHTML entity to make sure it is properly escaped -->
-&bogus;

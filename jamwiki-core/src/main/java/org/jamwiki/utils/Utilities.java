@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
@@ -39,11 +38,13 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.util.ClassUtils;
 
 /**
  * This class provides a variety of basic utility methods that are not
@@ -353,44 +354,34 @@ public class Utilities {
 	 *  file name is not guaranteed to match the filename passed to this method
 	 *  since (for example) the file might be found in a JAR file and thus will
 	 *  need to be copied to a temporary location for reading.
-	 * @throws FileNotFoundException Thrown if the classloader can not be found or if
+	 * @throws IOException Thrown if the classloader can not be found or if
 	 *  the file can not be found in the classpath.
 	 */
-	public static File getClassLoaderFile(String filename) throws FileNotFoundException {
+	public static File getClassLoaderFile(String filename) throws IOException {
 		// note that this method is used when initializing logging, so it must
 		// not attempt to log anything.
-		File file = null;
-		ClassLoader loader = Utilities.getClassLoader();
-		// Windows machines will have "\" in the path, convert to "/"
-		filename = filename.replace('\\', '/');
-		URL url = loader.getResource(filename);
-		if (url == null) {
-			url = ClassLoader.getSystemResource(filename);
+		Resource resource = new ClassPathResource(filename);
+		try {
+			return resource.getFile();
+		} catch (IOException e) {
+			// does not resolve to a file, possibly a JAR URL
 		}
-		if (url == null) {
-			throw new FileNotFoundException("Unable to find " + filename);
+		InputStream is = null;
+		FileOutputStream os = null;
+		try {
+			// url exists but file cannot be read, so perhaps it's not a "file:" url (an example
+			// would be a "jar:" url).  as a workaround, copy the file to a temp file and return
+			// the temp file.
+			String tempFilename = RandomStringUtils.randomAlphanumeric(20);
+			File file = File.createTempFile(tempFilename, null);
+			is = resource.getInputStream();
+			os = new FileOutputStream(file);
+			IOUtils.copy(is, os);
+			return file;
+		} finally {
+			IOUtils.closeQuietly(is);
+			IOUtils.closeQuietly(os);
 		}
-		file = FileUtils.toFile(url);
-		if (file == null || !file.exists()) {
-			InputStream is = null;
-			FileOutputStream os = null;
-			try {
-				// url exists but file cannot be read, so perhaps it's not a "file:" url (an example
-				// would be a "jar:" url).  as a workaround, copy the file to a temp file and return
-				// the temp file.
-				String tempFilename = RandomStringUtils.randomAlphanumeric(20);
-				file = File.createTempFile(tempFilename, null);
-				is = loader.getResourceAsStream(filename);
-				os = new FileOutputStream(file);
-				IOUtils.copy(is, os);
-			} catch (IOException e) {
-				throw new FileNotFoundException("Unable to load file with URL " + url);
-			} finally {
-				IOUtils.closeQuietly(is);
-				IOUtils.closeQuietly(os);
-			}
-		}
-		return file;
 	}
 
 	/**
@@ -399,14 +390,14 @@ public class Utilities {
 	 * and then returning its parent directory.
 	 *
 	 * @return Returns a file indicating the directory of the class loader.
-	 * @throws FileNotFoundException Thrown if the class loader can not be found,
+	 * @throws IOException Thrown if the class loader can not be found,
 	 *  which may occur if this class is deployed without the jamwiki-war package.
 	 */
-	public static File getClassLoaderRoot() throws FileNotFoundException {
+	public static File getClassLoaderRoot() throws IOException {
 		// The file hard-coded here MUST exist in the class loader directory.
 		File file = Utilities.getClassLoaderFile("sql/sql.ansi.properties");
 		if (!file.exists()) {
-			throw new FileNotFoundException("Unable to find class loader root");
+			throw new IOException("Unable to find class loader root");
 		}
 		return file.getParentFile().getParentFile();
 	}
@@ -482,7 +473,7 @@ public class Utilities {
 		}
 		logger.debug("Instantiating class: " + className);
 		try {
-			Class clazz = ClassUtils.getClass(className);
+			Class clazz = ClassUtils.forName(className, ClassUtils.getDefaultClassLoader());
 			Class[] parameterTypes = new Class[0];
 			Constructor constructor = clazz.getConstructor(parameterTypes);
 			Object[] initArgs = new Object[0];

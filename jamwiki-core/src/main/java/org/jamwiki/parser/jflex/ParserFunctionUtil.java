@@ -179,11 +179,10 @@ public class ParserFunctionUtil {
 	private static String parseFilePath(ParserInput parserInput, String[] parserFunctionArgumentArray) throws DataAccessException {
 		// pre-pend the image namespace to the file name
 		String filename = Namespace.namespace(Namespace.FILE_ID).getLabel(parserInput.getVirtualWiki()) + Namespace.SEPARATOR + parserFunctionArgumentArray[0];
-		String result = ImageUtil.buildImageFileUrl(parserInput.getVirtualWiki(), filename);
+		String result = ImageUtil.buildImageFileUrl(parserInput.getVirtualWiki(), filename, true);
 		if (result == null) {
 			return "";
 		}
-		result = LinkUtil.normalize(Environment.getValue(Environment.PROP_FILE_SERVER_URL) + result);
 		if (parserFunctionArgumentArray.length > 1 && parserFunctionArgumentArray[1].equalsIgnoreCase("nowiki")) {
 			// add nowiki tags so that the next round of parsing does not convert to an HTML link
 			result = "<nowiki>" + result + "</nowiki>";
@@ -418,26 +417,35 @@ public class ParserFunctionUtil {
 		String condition = ((parserFunctionArgumentArray.length >= 1) ? parserFunctionArgumentArray[0].trim() : "#default");
 		String defaultCondition = null;
 		int pos = 0;
-		String caseCondition, caseResult;
+		String caseResult;
+		List<String> caseConditions = new ArrayList<String>();
 		for (int i = 1; i < parserFunctionArgumentArray.length; i++) {
 			pos = parserFunctionArgumentArray[i].indexOf('=');
+			if (pos == 0) {
+				// invalid argument
+				continue;
+			}
 			if (pos == -1 && i == (parserFunctionArgumentArray.length - 1)) {
 				// last argument is the default when no case is specified
 				defaultCondition = parserFunctionArgumentArray[i].trim();
 				continue;
 			}
-			if (pos == -1 || pos == 0) {
-				// invalid argument
+			if (pos == -1) {
+				// no equals sign means default to the next element, ie "first | second = first & second"
+				caseConditions.add(parserFunctionArgumentArray[i].trim());
 				continue;
 			}
-			caseCondition = parserFunctionArgumentArray[i].substring(0, pos).trim();
+			caseConditions.add(parserFunctionArgumentArray[i].substring(0, pos).trim());
 			caseResult = (pos < (parserFunctionArgumentArray[i].length() - 1)) ? parserFunctionArgumentArray[i].substring(pos + 1).trim() : "";
-			if (StringUtils.equals(condition, caseCondition)) {
-				return caseResult;
+			for (String caseCondition : caseConditions) {
+				if (StringUtils.equals(condition, caseCondition)) {
+					return caseResult;
+				}
+				if (StringUtils.equals(caseCondition, "#default")) {
+					defaultCondition = caseResult;
+				}
 			}
-			if (StringUtils.equals(caseCondition, "#default")) {
-				defaultCondition = caseResult;
-			}
+			caseConditions.clear();
 		}
 		return (defaultCondition != null) ? defaultCondition : "";
 	}
