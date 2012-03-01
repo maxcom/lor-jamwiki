@@ -41,12 +41,17 @@ public class StylesheetServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {    
+    String uri = request.getRequestURI(); // jamwiki-{style}.css
+    int start = uri.lastIndexOf(WikiBase.SPECIAL_URL_STYLESHEET + '-') + WikiBase.SPECIAL_URL_STYLESHEET.length() + 1;
+    String style = uri.substring(start, uri.length()-4);    
 		String virtualWiki = pageInfo.getVirtualWikiName();
-    String username = StringUtils.trim(request.getParameter("user"));
-    WikiUser user = ServletUtil.currentWikiUser();
-    String styleLink = WikiBase.SPECIAL_PAGE_STYLESHEET + ':' + user.getStyle();
-		String stylesheet = ServletUtil.cachedContent(request.getContextPath(), request.getLocale(), virtualWiki, styleLink, false);
+    String styleLink = WikiBase.SPECIAL_PAGE_STYLESHEET + ':' + style;
+    String stylesheet = ServletUtil.cachedContent(request.getContextPath(), request.getLocale(), virtualWiki, styleLink, false);
+    if(stylesheet == null) {
+      String defaultStyleLink = WikiBase.SPECIAL_PAGE_STYLESHEET + ':' + WikiBase.SPECIAL_DEFAULT_STYLESHEET;
+      stylesheet = ServletUtil.cachedContent(request.getContextPath(), request.getLocale(), virtualWiki, defaultStyleLink, false);
+    }
 		response.setContentType("text/css");
 		response.setCharacterEncoding("UTF-8");
 		// cache for 30 minutes (60 * 30 = 1800)
