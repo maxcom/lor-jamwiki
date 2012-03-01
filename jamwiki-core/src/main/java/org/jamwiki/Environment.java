@@ -52,6 +52,8 @@ public class Environment {
 	public static final String PROP_BASE_PERSISTENCE_TYPE = "persistenceType";
 	public static final String PROP_BASE_SEARCH_ENGINE = "search-engine";
   public static final String PROP_BASE_SEARCH_SOLR_URL = "search-solr-url";
+  public static final String PROP_BASE_SEARCH_SOLR_USER = "search-solr-user";
+  public static final String PROP_BASE_SEARCH_SOLR_PASSWORD = "search-solr-password";
 	public static final String PROP_BASE_WIKI_VERSION = "wiki-version";
 	public static final String PROP_CACHE_INDIVIDUAL_SIZE = "cache-individual-size";
 	public static final String PROP_CACHE_MAX_AGE = "cache-max-age";
@@ -207,6 +209,8 @@ public class Environment {
 		this.defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, WikiBase.PERSISTENCE_INTERNAL);
 		this.defaults.setProperty(PROP_BASE_SEARCH_ENGINE, SearchEngine.SEARCH_ENGINE_LUCENE);
     this.defaults.setProperty(PROP_BASE_SEARCH_SOLR_URL, "http://127.0.0.1:8080/solr");
+    this.defaults.setProperty(PROP_BASE_SEARCH_SOLR_USER, "");
+    this.defaults.setProperty(PROP_BASE_SEARCH_SOLR_PASSWORD, "");
 		this.defaults.setProperty(PROP_BASE_WIKI_VERSION, "0.0.0");
 		this.defaults.setProperty(PROP_CACHE_INDIVIDUAL_SIZE, "1500");
 		this.defaults.setProperty(PROP_CACHE_MAX_AGE, "300");

@@ -154,7 +154,7 @@ public class ServletUtil {
 			}
 			WikiCache.addToCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key, content);
 		} catch (Exception e) {
-			logger.warn("error getting cached page " + virtualWiki + " / " + topicName, e);
+			logger.warn("error getting cached page " + virtualWiki + " / " + topicName);
 			return null;
 		}
 		return content;

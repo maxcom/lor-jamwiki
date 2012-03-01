@@ -44,7 +44,7 @@
 	<link rel="alternate" type="application/rss+xml" title="<c:out value="${pageInfo.RSSTitle}" /> (<c:out value="${virtualWiki}"/>): <fmt:message key="recentchanges.rss.feed3" />" href="<jamwiki:link value="Special:RecentChangesFeed?linkToVersion=true"/>" />
 	<link rel="alternate" type="application/rss+xml" title="<c:out value="${pageInfo.RSSTitle}" /> (<c:out value="${virtualWiki}"/>): <fmt:message key="recentchanges.rss.feed4" />" href="<jamwiki:link value="Special:RecentChangesFeed?minorEdits=true&amp;linkToVersion=true"/>" />
 </jamwiki:enabled>
-	<link href="<jamwiki:link value="jamwiki.css?${cssRevision}" />" type="text/css" rel="stylesheet" />
+	<link href="<c:url value="/en/${stylesheetURL}?${cssRevision}" />" type="text/css" rel="stylesheet" />
 	<script type="text/javascript" src="<c:url value="/js/jamwiki.js?${jsRevision}" />"></script>
 </head>
 <script type="text/javascript">
