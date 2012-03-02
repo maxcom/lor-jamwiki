@@ -131,6 +131,7 @@ public class SolrSearchEngine implements SearchEngine {
     solrServer.deleteByQuery("section:wiki");
     List<VirtualWiki> allWikis = WikiBase.getDataHandler().getVirtualWikiList();
     Topic topic;
+    autoCommit = false;
     for (VirtualWiki virtualWiki : allWikis) {
       List<String> topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName(), false);
       for (String topicName : topicNames) {
@@ -138,6 +139,8 @@ public class SolrSearchEngine implements SearchEngine {
         addToIndex(topic);
       }
     }
+    autoCommit = true;
+    commit(autoCommit);
   }
 
   public void setAutoCommit(boolean autoCommit) {
