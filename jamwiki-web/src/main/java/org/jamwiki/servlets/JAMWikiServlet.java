@@ -91,7 +91,9 @@ public abstract class JAMWikiServlet extends AbstractController {
 		int cssRevision = 0;
 		try {
 			cssRevision = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), stylePage, false).getCurrentVersionId();
-		} catch (DataAccessException e) {}
+		} catch (Exception e) {
+      logger.warn(e.getMessage()); // if StyleSheet:tango and any not found
+    }
 		next.addObject("cssRevision", cssRevision);
 		long jsRevision = 0;
 		try {
