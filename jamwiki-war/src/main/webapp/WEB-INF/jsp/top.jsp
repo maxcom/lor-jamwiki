@@ -51,9 +51,10 @@
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='t
 </script>
+<body>
 <script type="text/javascript">
 try {
 var pageTracker = _gat._getTracker("UA-2184304-1");
 pageTracker._trackPageview();
 } catch(err) {}</script>
-<body>
+
