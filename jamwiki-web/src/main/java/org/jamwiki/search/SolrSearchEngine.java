@@ -88,9 +88,9 @@ public class SolrSearchEngine implements SearchEngine {
         doc.addField("postdate", new Timestamp(0));
       } else {
         RecentChange lastChange = changes.get(0);
-        doc.addField("user_id", lastChange.getAuthorId());
-        doc.addField("topic_user_id", lastChange.getAuthorId());
-        doc.addField("postdate", lastChange.getChangeDate());
+        doc.addField("user_id", lastChange.getAuthorId() == null ? 1 : lastChange.getAuthorId());
+        doc.addField("topic_user_id", lastChange.getAuthorId() == null ? 1 : lastChange.getAuthorId());
+        doc.addField("postdate", lastChange.getChangeDate() == null ? new Timestamp(0) : lastChange.getChangeDate());
       }
 
       doc.addField("topic_id", topic.getTopicId());
