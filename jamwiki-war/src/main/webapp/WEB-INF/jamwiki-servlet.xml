@@ -52,6 +52,7 @@
 				<prop key="/**/Special:VirtualWiki">VirtualWiki</prop>
 				<prop key="/**/Special:Watchlist">Watchlist</prop>
 				<prop key="/**/jamwiki-tango.css">Stylesheet</prop>
+				<prop key="/**/jamwiki-waltz.css">Stylesheet</prop>
                 <prop key="/**/jamwiki-white.css">Stylesheet</prop>
                 <prop key="/**/jamwiki-white2.css">Stylesheet</prop>
                 <prop key="/**/jamwiki-black.css">Stylesheet</prop>
