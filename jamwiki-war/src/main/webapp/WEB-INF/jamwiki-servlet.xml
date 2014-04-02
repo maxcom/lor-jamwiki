@@ -57,6 +57,7 @@
                 <prop key="/**/jamwiki-white2.css">Stylesheet</prop>
                 <prop key="/**/jamwiki-black.css">Stylesheet</prop>
                 <prop key="/**/jamwiki-swamp.css">Stylesheet</prop>
+                <prop key="/**/jamwiki-zomg_ponies.css">Stylesheet</prop>
 				<prop key="/**/*">Topic</prop>
 				<prop key="/**/">Topic</prop>
 			</props>

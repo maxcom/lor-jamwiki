@@ -44,6 +44,7 @@ public class WikiUser implements Serializable {
 	private int userId = -1;
   private String style = "tango";
   private String style = "waltz";
+  private String style = "zomg_ponies";
 	/**
 	 *
 	 */
